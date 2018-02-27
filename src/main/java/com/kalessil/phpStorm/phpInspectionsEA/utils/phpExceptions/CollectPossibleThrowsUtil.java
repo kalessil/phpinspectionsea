@@ -1,12 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils.phpExceptions;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPlatformResolverUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.phpDoc.ThrowsResolveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +31,7 @@ final public class CollectPossibleThrowsUtil {
                     final HashMap<PhpClass, HashSet<PsiElement>> nestedTryExceptions = collectNestedAndWorkflowExceptions(nestedTry, processed, holder);
 //holder.registerProblem(nestedTry.getFirstChild(), "Nested: " + nestedTryExceptions.toString(), ProblemHighlightType.WEAK_WARNING);
                     if (nestedTryExceptions.size() > 0) {
-                        for (Map.Entry<PhpClass, HashSet<PsiElement>> nestedTryExceptionsPair : nestedTryExceptions.entrySet()) {
+                        for (final Map.Entry<PhpClass, HashSet<PsiElement>> nestedTryExceptionsPair : nestedTryExceptions.entrySet()) {
                             /* extract pairs Exception class => source expressions */
                             final PhpClass key                              = nestedTryExceptionsPair.getKey();
                             final HashSet<PsiElement> expressionsToDispatch = nestedTryExceptionsPair.getValue();
@@ -131,23 +133,27 @@ final public class CollectPossibleThrowsUtil {
         }
 
         /* process throws - some of them might not use new-expression */
-        PhpIndex objIndex = PhpIndex.getInstance(holder.getProject());
+        final Project project   = holder.getProject();
+        final PhpIndex objIndex = PhpIndex.getInstance(project);
         Collection<PhpThrow> throwExpressions = PsiTreeUtil.findChildrenOfType(scope, PhpThrow.class);
-        if (throwExpressions.size() > 0) {
-            for (PhpThrow throwExpression : throwExpressions) {
+        if (!throwExpressions.isEmpty()) {
+            for (final PhpThrow throwExpression : throwExpressions) {
                 /* skip processed */
                 if (processed.contains(throwExpression)) {
                     continue;
                 }
 
                 /* resolve argument */
-                PsiElement argument = throwExpression.getArgument();
-                if (null != argument) {
+                final PsiElement argument = throwExpression.getArgument();
+                if (argument instanceof PhpTypedElement) {
                     /* resolve argument types */
                     final HashSet<String> types = new HashSet<>();
-                    TypeFromPlatformResolverUtil.resolveExpressionType(argument, types);
+                    final PhpType resolved      = OpenapiResolveUtil.resolveType((PhpTypedElement) argument, project);
+                    if (resolved != null) {
+                        resolved.getTypes().forEach(t -> types.add(Types.getType(t)));
+                    }
 
-                    if (types.size() > 0) {
+                    if (!types.isEmpty()) {
                         /* remove extra definition of \Exception unexpectedly added by PhpStorm */
                         final boolean dropExtraDefinitions = argument instanceof Variable && types.size() > 1 && types.contains("\\Exception");
                         if (dropExtraDefinitions) {

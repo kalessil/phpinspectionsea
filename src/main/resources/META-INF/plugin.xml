@@ -46,10 +46,10 @@ Bug-fixes and new inspections:<br/>
 <br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/43664">v2.3.18</a><br/>
 <br/>
-- InstanceofCanBeUsedInspector: new patterns<br/>
-- ArrayValuesMissUseInspector: implemented<br/>
-- CallableParameterUseCaseInTypeContextInspection: new patterns<br/>
-- KeysFragmentationWithArrayFilterInspector: new patterns<br/>
+- Callable parameter usage violates definition: new patterns<br/>
+- Instanceof can be used: new patterns<br/>
+- 'array_filter(...)' result keys set fragmentation: new patterns<br/>
+- 'array_values(...)' misused: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

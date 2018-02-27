@@ -109,7 +109,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                     return;
                                 }
                                 /* '<string>->method(...)' breaks at runtime */
-                                else if (type.getTypes().stream().map(Types::getType).anyMatch(t -> t.equals(Types.strString))) {
+                                else if (type.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strString))) {
                                     return;
                                 }
                             }

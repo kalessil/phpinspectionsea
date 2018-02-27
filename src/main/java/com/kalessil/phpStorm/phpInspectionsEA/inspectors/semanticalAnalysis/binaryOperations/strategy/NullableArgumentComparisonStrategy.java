@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,15 +54,16 @@ final public class NullableArgumentComparisonStrategy {
                 if (OpenapiTypesUtil.is(target.getOperation(), PhpTokenTypes.opNOT)) {
                     final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) argument, expression.getProject());
                     if (type != null && !type.hasUnknown()) {
-                        final Set<String> types = type.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
-                        final boolean isTarget  = types.contains(Types.strNull) || types.contains(Types.strBoolean);
-                        if (isTarget) {
+                        final Set<String> types = new HashSet<>();
+                        type.getTypes().forEach(t -> types.add(Types.getType(t)));
+                        if (types.contains(Types.strNull) || types.contains(Types.strBoolean)) {
                             final String replacement
                                     = String.format("%s %s %s", argument.getText(), mapping.get(operator), value.getText());
                             final String message = String.format(messagePattern, replacement);
                             holder.registerProblem(target, message, new NullableArgumentComparisonFix(replacement));
                             result = true;
                         }
+                        types.clear();
                     }
                 }
             }

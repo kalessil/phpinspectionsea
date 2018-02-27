@@ -161,10 +161,8 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 for (Parameter parameter: method.getParameters()) {
                     parameters.add('$' + parameter.getName());
                 }
-                final Set<String> types =
-                        method.getType().global(project).filterUnknown().getTypes().stream()
-                                .map(Types::getType)
-                                .collect(Collectors.toSet());
+                final Set<String> types = new HashSet<>();
+                method.getType().global(project).filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
                 types.remove(Types.strVoid);
 
                 /* generate replacement and release resources */

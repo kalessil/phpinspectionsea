@@ -94,21 +94,6 @@ In order to emphasize on this, lets read more carefully the _WARNING_ that comes
 [return value](http://php.net/manual/en/function.array-search.php#refsect1-function.array-search-returnvalues). Do you see how it is referenced
 again the issue with comparisons against loosely typed variables?
 
-## Generic objects
-
-The generic type `object` is too much of that: **Generic**. How do you get into more specificity from
-it? Take a look at the [pseudo types](http://php.net/manual/en/language.pseudo-types.php) documentation.
-
-Put yourself as user of an API which uses the `object` pseudo type as return types or parameter types. How do
-you know what is really being return or passed to method? Using `object` would be the same as saying any class
-instance can be returned. That's too general, users of your API (many times yourself after couple of months) will
-be forced to read the code and try to understand every part of it before using it.
-
-Take also into account that having a method which returns `object` (or `mixed` which is the same to this case) can
-indicate a code smell. Why is it needed to return/accept such a wide and "can be all" type? Is your method taking
-care of too much logic? Is your method doing more than one thing? Why does your method need it, instead of returning
-a specific data type?
-
 ## Parameter can be declared as array
 
 Reports if a callable parameter can be defined with the `array` type. Refactoring can affect class inheritance and

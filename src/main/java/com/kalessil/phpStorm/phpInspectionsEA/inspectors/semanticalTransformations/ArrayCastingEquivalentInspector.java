@@ -127,14 +127,14 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
                         valuesSet.clear();
                         /* ensure the subject type is array casting safe */
                         if (result) {
-                            final PhpType resolvedType
+                            final PhpType resolved
                                     = OpenapiResolveUtil.resolveType((PhpTypedElement) trueExpression, trueExpression.getProject());
-                            if (resolvedType == null || resolvedType.hasUnknown() || resolvedType.getTypes().isEmpty()) {
+                            if (resolved == null || resolved.isEmpty() || resolved.hasUnknown()) {
                                 /* well, types resolved partially - do not report */
                                 result = false;
                             } else {
                                 /* also, object casting to array "exports" it instead of wrapping */
-                                for (final String type : resolvedType.getTypes()) {
+                                for (final String type : resolved.getTypes()) {
                                     if (Types.getType(type).startsWith("\\")) {
                                         result = false;
                                         break;

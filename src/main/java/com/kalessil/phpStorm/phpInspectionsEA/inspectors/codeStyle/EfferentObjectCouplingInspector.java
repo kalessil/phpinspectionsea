@@ -77,9 +77,9 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addSpinner("Coupling limit:", optionCouplingLimit, (inputtedValue) -> optionCouplingLimit = inputtedValue);
-        });
+        return OptionsComponent.create((component) ->
+            component.addSpinner("Coupling limit:", optionCouplingLimit, (inputtedValue) -> optionCouplingLimit = inputtedValue)
+        );
     }
 }
 

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -44,13 +44,12 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fixes and new inspections:<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/43147">v2.3.17</a><br/>
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/43664">v2.3.18</a><br/>
 <br/>
-- Callable parameter usage violates definition: new patterns<br/>
-- Null reference: resolved false-positives (multiple cases)<br/>
-- Suspicious array element: implemented<br/>
-- Unsupported serialize types: implemented<br/>
-- 'array_filter(...)' result keys set fragmentation: implemented<br/>
+- InstanceofCanBeUsedInspector: new patterns<br/>
+- ArrayValuesMissUseInspector: implemented<br/>
+- CallableParameterUseCaseInTypeContextInspection: new patterns<br/>
+- KeysFragmentationWithArrayFilterInspector: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

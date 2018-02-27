@@ -14,3 +14,7 @@ function cases_holder(string $string)
 
     list(<error descr="Provokes a PHP Fatal error (cannot use string offset as an array).">$string[0]['...']</error>) = $one;
 }
+
+$string       = '...';
+$string[0]    = 'a';
+$string[0][0] = 'a';

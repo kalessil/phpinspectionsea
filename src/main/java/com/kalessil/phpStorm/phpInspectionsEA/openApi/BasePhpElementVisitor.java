@@ -35,11 +35,10 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         }
     }
 
-    public void visitPhpDeclare(@NotNull Declare declare) {}
-    public void visitPhpEval(@NotNull PhpEval eval)       {}
-    public void visitPhpDocTag(@NotNull PhpDocTag tag)    {}
-
-    public void visitPhpShellCommand(final PhpShellCommandExpression shellCommandExpression) {}
+    public void visitPhpDeclare(@NotNull Declare declare)                           {}
+    public void visitPhpEval(@NotNull PhpEval eval)                                 {}
+    public void visitPhpDocTag(@NotNull PhpDocTag tag)                              {}
+    public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
     @Override public void visitPhpFile(PhpFile PhpFile) {}
@@ -110,6 +109,6 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
             final Function function = (Function) resolved;
             result = function.getFQN().equals('\\' + function.getName());
         }
-        return result;
+        return result && !(reference.getParent() instanceof PhpUse);
     }
 }

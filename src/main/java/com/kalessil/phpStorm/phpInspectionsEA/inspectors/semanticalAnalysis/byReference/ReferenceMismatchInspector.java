@@ -285,19 +285,18 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
                         }
 
                         /* now check what is declared in resolved callable */
-                        Parameter[] usageCallableParameters = ((Function) callable).getParameters();
+                        final Parameter[] usageCallableParameters = ((Function) callable).getParameters();
                         if (usageCallableParameters.length >= indexInArguments + 1) {
-                            Parameter parameterForAnalysis = usageCallableParameters[indexInArguments];
-                            if (!parameterForAnalysis.isPassByRef()) {
+                            final Parameter parameter = usageCallableParameters[indexInArguments];
+                            if (!parameter.isPassByRef()) {
                                 /* additionally try filtering types for reducing false-positives on scalars */
-                                PhpType argumentType = parameterForAnalysis.getType().global(holder.getProject());
-                                if (!PhpType.isSubType(argumentType, legalizedTypesForMismatchingSet)) {
-                                    PsiElement itemToBeReported = reference.getParameters()[indexInArguments];
-                                    if (!reportedItemsRegistry.contains(itemToBeReported)) {
-                                        holder.registerProblem(itemToBeReported, "Reference mismatch, copy will be dispatched into function", ProblemHighlightType.WEAK_WARNING);
-                                        reportedItemsRegistry.add(itemToBeReported);
+                                final PhpType type = OpenapiResolveUtil.resolveType(parameter, holder.getProject());
+                                if (type != null && !PhpType.isSubType(type, legalizedTypesForMismatchingSet)) {
+                                    final PsiElement target = reference.getParameters()[indexInArguments];
+                                    if (!reportedItemsRegistry.contains(target)) {
+                                        holder.registerProblem(target, "Reference mismatch, copy will be dispatched into function", ProblemHighlightType.WEAK_WARNING);
+                                        reportedItemsRegistry.add(target);
                                     }
-
                                     continue;
                                 }
                             }

@@ -11,6 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -18,7 +19,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -153,16 +153,19 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof Method) {
+            if (expression instanceof Method && !project.isDisposed()) {
                 final Method method = (Method) expression;
 
                 /* pre-collect resources needed for generation */
                 final List<String> parameters = new ArrayList<>();
-                for (Parameter parameter: method.getParameters()) {
+                for (final Parameter parameter: method.getParameters()) {
                     parameters.add('$' + parameter.getName());
                 }
                 final Set<String> types = new HashSet<>();
-                method.getType().global(project).filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
+                final PhpType resolved  = OpenapiResolveUtil.resolveType(method, project);
+                if (resolved != null){
+                    resolved.filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
+                }
                 types.remove(Types.strVoid);
 
                 /* generate replacement and release resources */

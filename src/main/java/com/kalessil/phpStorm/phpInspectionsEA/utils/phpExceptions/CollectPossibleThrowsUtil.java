@@ -167,10 +167,7 @@ final public class CollectPossibleThrowsUtil {
                                 if (!classes.isEmpty()) {
                                     /* put an expression, create container if necessary */
                                     final PhpClass exception = classes.iterator().next();
-                                    if (!exceptions.containsKey(exception)) {
-                                        exceptions.put(exception, new HashSet<>());
-                                    }
-                                    exceptions.get(exception).add(throwExpression);
+                                    exceptions.computeIfAbsent(exception, e -> new HashSet<>()).add(throwExpression);
                                 }
                             }
                         }

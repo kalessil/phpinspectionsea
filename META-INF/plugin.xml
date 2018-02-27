@@ -195,10 +195,6 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
         shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
         groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="GenericObjectTypeUsageInspection"              displayName="Usage of object type in PhpDoc"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.GenericObjectTypeUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

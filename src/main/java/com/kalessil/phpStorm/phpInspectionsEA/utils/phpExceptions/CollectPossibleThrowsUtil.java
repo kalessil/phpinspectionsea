@@ -150,7 +150,7 @@ final public class CollectPossibleThrowsUtil {
                     final HashSet<String> types = new HashSet<>();
                     final PhpType resolved      = OpenapiResolveUtil.resolveType((PhpTypedElement) argument, project);
                     if (resolved != null) {
-                        resolved.getTypes().forEach(t -> types.add(Types.getType(t)));
+                        resolved.filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
                     }
 
                     if (!types.isEmpty()) {

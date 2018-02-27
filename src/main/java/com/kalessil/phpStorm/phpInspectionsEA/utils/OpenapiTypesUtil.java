@@ -42,7 +42,7 @@ final public class OpenapiTypesUtil {
     }
 
     static public boolean isLoop(@Nullable PsiElement expression) {
-        return null != expression &&
+        return expression != null &&
             (expression instanceof ForeachStatement || expression instanceof For || expression instanceof While || expression instanceof DoWhile);
     }
 

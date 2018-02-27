@@ -13,11 +13,21 @@ import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class AdditionOperationOnArraysInspection extends BasePhpInspection {
     private static final String message = "Perhaps array_merge/array_replace can be used instead. Feel free to disable the inspection if '+' is intended.";
@@ -31,9 +41,10 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpBinaryExpression(BinaryExpression expression) {
+            @Override
+            public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 final PsiElement operation = expression.getOperation();
-                if (null != operation && PhpTokenTypes.opPLUS == operation.getNode().getElementType()) {
+                if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS)) {
                     /* do not check nested operations */
                     if (expression.getParent() instanceof BinaryExpression){
                         return;
@@ -55,27 +66,28 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                     this.inspectExpression(operation, expression);
                 }
             }
-            public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression) {
+
+            @Override
+            public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
                 final PsiElement operation = expression.getOperation();
-                if (null != operation && PhpTokenTypes.opPLUS_ASGN == operation.getNode().getElementType()) {
+                if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS_ASGN)) {
                     /* Do not report '... += []' */
                     if (expression.getValue() instanceof ArrayCreationExpression) {
                         return;
                     }
-
                     this.inspectExpression(operation, expression);
                 }
             }
 
             /* inspection itself */
-            private void inspectExpression(@NotNull PsiElement objOperation, @NotNull PsiElement expression) {
+            private void inspectExpression(@NotNull PsiElement operation, @NotNull PsiElement expression) {
                 final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                 final Function scope = ExpressionSemanticUtil.getScope(expression);
 
                 final HashSet<String> typesResolved = new HashSet<>();
                 TypeFromPsiResolvingUtil.resolveExpressionType(expression, scope, index, typesResolved);
                 if (1 == typesResolved.size() && typesResolved.iterator().next().equals(Types.strArray)) {
-                    holder.registerProblem(objOperation, message, ProblemHighlightType.ERROR);
+                    holder.registerProblem(operation, message, ProblemHighlightType.ERROR);
                 }
                 typesResolved.clear();
             }

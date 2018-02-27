@@ -146,7 +146,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             PsiElement dropFrom     = this.dropFrom.getElement();
             final PsiElement dropTo = this.dropTo.getElement();
-            if (dropFrom != null && dropTo != null) {
+            if (dropFrom != null && dropTo != null && !project.isDisposed()) {
                 PsiElement   previous = dropFrom.getPrevSibling();
                 IElementType prevType = previous == null ? null : previous.getNode().getElementType();
                 while (

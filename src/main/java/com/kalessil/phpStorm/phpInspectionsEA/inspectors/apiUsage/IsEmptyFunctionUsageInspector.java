@@ -4,9 +4,9 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -62,10 +62,13 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     final boolean isInverted   = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
 
                     /* extract types */
-                    final PhpIndex index                = PhpIndex.getInstance(holder.getProject());
-                    final Function scope                = ExpressionSemanticUtil.getScope(emptyExpression);
-                    final HashSet<String> resolvedTypes = new HashSet<>();
-                    TypeFromPsiResolvingUtil.resolveExpressionType(subject, scope, index, resolvedTypes);
+                    final Set<String> resolvedTypes = new HashSet<>();
+                    if (subject instanceof PhpTypedElement) {
+                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) subject, holder.getProject());
+                        if (resolved != null) {
+                            resolved.filterUnknown().getTypes().forEach(t -> resolvedTypes.add(Types.getType(t)));
+                        }
+                    }
 
                     /* Case 1: empty(array) - hidden logic - empty array */
                     if (this.isArrayType(resolvedTypes)) {

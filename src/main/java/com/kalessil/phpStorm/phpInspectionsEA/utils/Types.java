@@ -23,9 +23,6 @@ final public class Types {
     final static public String strObject   = "object";
     final static public String strEmptySet = "ø";
 
-    final static public String strResolvingAbortedOnPsiLevel = "\\aborted-on-psi-level";
-    final static public String strClassNotResolved           = "\\class-not-resolved";
-
     final static private Map<String, String> mapping = new HashMap<>();
     static  {
         mapping.put(strArray,     strArray);

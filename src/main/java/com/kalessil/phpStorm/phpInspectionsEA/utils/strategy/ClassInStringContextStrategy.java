@@ -4,15 +4,20 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -34,22 +39,27 @@ final public class ClassInStringContextStrategy {
             return false;
         }
 
-        final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-        final Function scope = ExpressionSemanticUtil.getScope(nonStringOperand);
-
-        final HashSet<String> resolvedTypes = new HashSet<>();
-        TypeFromPsiResolvingUtil.resolveExpressionType(nonStringOperand, scope, index, resolvedTypes);
+        final Set<String> resolvedTypes = new HashSet<>();
+        if (nonStringOperand instanceof PhpTypedElement) {
+            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) nonStringOperand, holder.getProject());
+            if (resolved != null) {
+                resolved.filterUnknown().getTypes().forEach(t -> resolvedTypes.add(Types.getType(t)));
+            }
+        }
         if (!TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes)) {
+            resolvedTypes.clear();
             return false;
         }
 
         /* collect classes to check if __toString() is there */
+        final PhpIndex index             = PhpIndex.getInstance(holder.getProject());
         final List<PhpClass> listClasses = new ArrayList<>();
         for (final String classFqn : resolvedTypes) {
             if (classFqn.charAt(0) == '\\') {
                 listClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFqn, index, false));
             }
         }
+        resolvedTypes.clear();
 
         /* check methods, error on first one violated requirements */
         for (final PhpClass clazz : listClasses) {

@@ -74,13 +74,17 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                 final Set<String> parameters = arguments.length > 0 ? this.getSuppliedVariables(arguments[0]) : null;
                 for (final PhpExpression argument : arguments) {
                     /* support array accesses: extract variables */
-                    PsiElement normalizedArgument = argument;
-                    while (normalizedArgument instanceof ArrayAccessExpression) {
-                        normalizedArgument = ((ArrayAccessExpression) normalizedArgument).getValue();
+                    PsiElement subject = argument;
+                    while (subject instanceof ArrayAccessExpression || subject instanceof MemberReference) {
+                        if (subject instanceof MemberReference) {
+                            subject = ((MemberReference) subject).getClassReference();
+                        } else {
+                            subject = ((ArrayAccessExpression) subject).getValue();
+                        }
                     }
                     /* now check variable existence */
-                    if (normalizedArgument instanceof Variable) {
-                        final Variable variable = (Variable) normalizedArgument;
+                    if (subject instanceof Variable) {
+                        final Variable variable = (Variable) subject;
                         if (!this.isSuppliedFromOutside(variable, parameters)) {
                             analyzeExistence(variable);
                         }

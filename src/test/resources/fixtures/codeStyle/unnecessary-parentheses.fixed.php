@@ -44,3 +44,5 @@
 
     $object = new stdClass();
     (function() { })->call($object);
+
+    $x = (/** PhpDoc */ $x = $object) instanceof \Clazz;

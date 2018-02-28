@@ -2,6 +2,10 @@
 
 class CasesHolder
 {
+    public function variableVariables($x): array {
+        return [ ${$x}, ${$x[0]}, ${$x->property} ];
+    }
+
     public function interfaceVariables($x): array
     {
         $a = function ($y) use ($x) {

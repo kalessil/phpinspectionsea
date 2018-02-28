@@ -28,12 +28,12 @@ import java.util.Set;
  */
 
 public class IssetArgumentExistenceInspector extends BasePhpInspection {
-    private static final String messagePattern = "'$%v%' seems to be not defined in the scope.";
+    private static final String messagePattern = "'$%s' seems to be not defined in the scope.";
 
-    private static final Set<String> magicVariables = new HashSet<>();
+    private static final Set<String> speciaVariables = new HashSet<>(ExpressionCostEstimateUtil.predefinedVars);
     static {
-        magicVariables.add("this");
-        magicVariables.add("php_errormsg");
+        speciaVariables.add("this");
+        speciaVariables.add("php_errormsg");
     }
 
     @NotNull
@@ -79,21 +79,29 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
             }
 
             private void analyzeExistence (@NotNull Variable variable) {
-                final Function scope      = ExpressionSemanticUtil.getScope(variable);
-                final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                 final String variableName = variable.getName();
-                if (body != null && !magicVariables.contains(variableName) && !ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
-                    for (final Variable reference : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
-                        if (reference.getName().equals(variableName)) {
-                            boolean report = reference == variable;
-                            if (!report && reference.getParent() instanceof AssignmentExpression) {
-                                report = PsiTreeUtil.findCommonParent(reference, variable) == reference.getParent();
+                if (!variableName.isEmpty() && !speciaVariables.contains(variableName)) {
+                    final Function scope      = ExpressionSemanticUtil.getScope(variable);
+                    final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                    if (body != null) {
+                        for (final Variable reference : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
+                            if (reference.getName().equals(variableName)) {
+                                boolean report = reference == variable;
+                                if (!report) {
+                                    final PsiElement parent = reference.getParent();
+                                    if (parent instanceof AssignmentExpression) {
+                                        report = PsiTreeUtil.findCommonParent(reference, variable) == parent;
+                                    }
+                                }
+                                if (report) {
+                                    holder.registerProblem(
+                                            variable,
+                                            String.format(messagePattern, variableName),
+                                            ProblemHighlightType.GENERIC_ERROR
+                                    );
+                                }
+                                break;
                             }
-                            if (report) {
-                                final String message = messagePattern.replace("%v%", variableName);
-                                holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
-                            }
-                            break;
                         }
                     }
                 }

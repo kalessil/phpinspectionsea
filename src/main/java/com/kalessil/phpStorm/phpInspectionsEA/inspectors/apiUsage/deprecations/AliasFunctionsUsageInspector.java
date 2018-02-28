@@ -35,6 +35,8 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     private static final Map<String, String> relevantAliases   = new HashMap<>();
     private static final Map<String, String> deprecatedAliases = new HashMap<>();
     static {
+        /* See also: http://php.net/manual/en/aliases.php */
+        relevantAliases.put("close",                  "closedir");
         relevantAliases.put("is_double",              "is_float");
         relevantAliases.put("is_integer",             "is_int");
         relevantAliases.put("is_long",                "is_int");
@@ -52,9 +54,6 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         relevantAliases.put("strchr",                 "strstr");
         relevantAliases.put("set_file_buffer",        "stream_set_write_buffer");
         relevantAliases.put("session_commit",         "session_write_close");
-        relevantAliases.put("mysqli_escape_string",   "mysqli_real_escape_string");
-        relevantAliases.put("recode",                 "recode_string");
-        relevantAliases.put("imap_listmailbox",       "imap_list");
         relevantAliases.put("socket_getopt",          "socket_get_option");
         relevantAliases.put("socket_setopt",          "socket_set_option");
         relevantAliases.put("openssl_get_privatekey", "openssl_pkey_get_private");
@@ -62,15 +61,16 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         relevantAliases.put("ldap_close",             "ldap_unbind");
         relevantAliases.put("pcntl_errno",            "pcntl_get_last_error");
         relevantAliases.put("ftp_quit",               "ftp_close");
-        relevantAliases.put("odbc_do",                "odbc_exec");
         relevantAliases.put("socket_set_blocking",    "stream_set_blocking");
         relevantAliases.put("stream_register_wrapper","stream_wrapper_register");
         relevantAliases.put("socket_set_timeout",     "stream_set_timeout");
         relevantAliases.put("socket_get_status",      "stream_get_meta_data");
         relevantAliases.put("diskfreespace",          "disk_free_space");
+        relevantAliases.put("odbc_do",                "odbc_exec");
         relevantAliases.put("odbc_field_precision",   "odbc_field_len");
+        relevantAliases.put("recode",                 "recode_string");
+        relevantAliases.put("mysqli_escape_string",   "mysqli_real_escape_string");
         relevantAliases.put("mysqli_execute",         "mysqli_stmt_execute");
-        relevantAliases.put("imap_header",            "imap_headerinfo");
         /* aliases covered by other inspections: rand -> mt_rand, srand -> mt_srand */
 
         /* aliases affected by backward-incompatible changes */

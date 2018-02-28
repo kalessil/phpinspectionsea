@@ -23,4 +23,9 @@ function cases_holder() {
     $x = " $y";
     $x = "$y ";
     $x = "{$y}{$y}";
+
+    $x = $x * 1;
+    $x = 1 * $x;
+
+    $x = $x * -1;
 }

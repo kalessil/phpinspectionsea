@@ -23,4 +23,9 @@ function cases_holder() {
     $x = " $y";
     $x = "$y ";
     $x = "{$y}{$y}";
+
+    $x = <warning descr="Casting to int or float should be used instead (up to 6x times faster).">$x * 1</warning>;
+    $x = <warning descr="Casting to int or float should be used instead (up to 6x times faster).">1 * $x</warning>;
+
+    $x = $x * -1;
 }

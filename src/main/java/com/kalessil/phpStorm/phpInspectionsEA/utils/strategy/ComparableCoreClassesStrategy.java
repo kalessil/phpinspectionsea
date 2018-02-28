@@ -5,10 +5,9 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 final public class ComparableCoreClassesStrategy {
     private final static HashSet<String> comparableObjects = new HashSet<>();
@@ -41,13 +41,18 @@ final public class ComparableCoreClassesStrategy {
             return false;
         }
         final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-        return isComparableObject(leftOperand, scope, index) && isComparableObject(rightOperand, scope, index);
+        return isComparableObject(leftOperand, index) && isComparableObject(rightOperand, index);
     }
 
-    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull Function scope, @NotNull PhpIndex projectIndex) {
+    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull PhpIndex projectIndex) {
         /* extract types of operand, check if classes are/inherited from \DateTime */
-        final HashSet<String> operandTypes = new HashSet<>();
-        TypeFromPsiResolvingUtil.resolveExpressionType(operand, scope, projectIndex, operandTypes);
+        final Set<String> operandTypes = new HashSet<>();
+        if (operand instanceof PhpTypedElement) {
+            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
+            if (resolved != null) {
+                resolved.filterUnknown().getTypes().forEach(t -> operandTypes.add(Types.getType(t)));
+            }
+        }
         if (!TypesSemanticsUtil.isNullableObjectInterface(operandTypes)) {
             operandTypes.clear();
             return false;

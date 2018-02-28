@@ -19,7 +19,6 @@
     echo <warning descr="'session_commit(...)' is an alias function, consider using 'session_write_close(...)' instead.">session_commit()</warning>;
     echo <warning descr="'mysqli_escape_string(...)' is an alias function, consider using 'mysqli_real_escape_string(...)' instead.">mysqli_escape_string()</warning>;
     echo <warning descr="'recode(...)' is an alias function, consider using 'recode_string(...)' instead.">recode()</warning>;
-    echo <warning descr="'imap_listmailbox(...)' is an alias function, consider using 'imap_list(...)' instead.">imap_listmailbox()</warning>;
     echo <warning descr="'socket_getopt(...)' is an alias function, consider using 'socket_get_option(...)' instead.">socket_getopt()</warning>;
     echo <warning descr="'socket_setopt(...)' is an alias function, consider using 'socket_set_option(...)' instead.">socket_setopt()</warning>;
     echo <warning descr="'openssl_get_privatekey(...)' is an alias function, consider using 'openssl_pkey_get_private(...)' instead.">openssl_get_privatekey()</warning>;
@@ -35,7 +34,6 @@
     echo <warning descr="'diskfreespace(...)' is an alias function, consider using 'disk_free_space(...)' instead.">diskfreespace()</warning>;
     echo <warning descr="'odbc_field_precision(...)' is an alias function, consider using 'odbc_field_len(...)' instead.">odbc_field_precision()</warning>;
     echo <warning descr="'mysqli_execute(...)' is an alias function, consider using 'mysqli_stmt_execute(...)' instead.">mysqli_execute()</warning>;
-    echo <warning descr="'imap_header(...)' is an alias function, consider using 'imap_headerinfo(...)' instead.">imap_header()</warning>;
 
     echo <warning descr="This alias has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 7.0.0.">magic_quotes_runtime()</warning>;
     echo <warning descr="This alias has been DEPRECATED as of PHP 5.4.0. Relying on this alias is highly discouraged.">ocifreecursor()</warning>;

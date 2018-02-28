@@ -1,15 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
-import java.util.HashSet;
+import java.util.Set;
 
 final public class TypesSemanticsUtil {
 
     /** check if nullable object interfaces */
-    public static boolean isNullableObjectInterface(HashSet<String> resolvedTypesSet) {
+    public static boolean isNullableObjectInterface(Set<String> resolvedTypesSet) {
         int intCountTypesToInspect = resolvedTypesSet.size();
-        if (resolvedTypesSet.contains(Types.strClassNotResolved)) {
-            --intCountTypesToInspect;
-        }
         if (resolvedTypesSet.contains(Types.strNull)) {
             --intCountTypesToInspect;
         }

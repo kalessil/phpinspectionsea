@@ -20,9 +20,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUt
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -96,8 +96,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 if (resolvedType == null) {
                     return;
                 }
-                final Set<String> types = resolvedType.filterUnknown().getTypes().stream()
-                        .map(Types::getType).collect(Collectors.toSet());
+                final Set<String> types = new HashSet<>();
+                resolvedType.filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
                 if (types.isEmpty()) {
                     /* false-positives: pre-defined variables */
                     if (container instanceof Variable) {

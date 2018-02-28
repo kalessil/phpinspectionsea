@@ -42,8 +42,10 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     return;
                 }
 
-                final PhpPsiElement argument = expression.getArgument();
-                final PsiElement parent      = expression.getParent();
+                /* expression.getArgument() returns the first child, but it can be more */
+                final PsiElement[] children = expression.getChildren();
+                final PsiElement argument   = children.length > 0 ? children[children.length - 1] : null;
+                final PsiElement parent     = expression.getParent();
                 if (null == argument || null == parent) {
                     return;
                 }

@@ -84,9 +84,8 @@ final public class NullableVariablesStrategy {
         if (assignmentValue instanceof PhpTypedElement) {
             final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) assignmentValue, project);
             if (resolved != null) {
-                final Set<String> types = resolved.filterUnknown().getTypes().stream()
-                        .map(Types::getType)
-                        .collect(Collectors.toSet());
+                final Set<String> types = new HashSet<>();
+                resolved.filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
                 if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
                     types.remove(Types.strNull);
                     types.remove(Types.strVoid);
@@ -119,9 +118,8 @@ final public class NullableVariablesStrategy {
     public static void applyToParameters(@NotNull Function function, @NotNull ProblemsHolder holder) {
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
         for (final Parameter parameter : function.getParameters()) {
-            final Set<String> declaredTypes = parameter.getDeclaredType().getTypes().stream()
-                    .map(Types::getType)
-                    .collect(Collectors.toSet());
+            final Set<String> declaredTypes = new HashSet<>();
+            parameter.getDeclaredType().getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
             if (declaredTypes.contains(Types.strNull) || PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                 declaredTypes.remove(Types.strNull);
 
@@ -265,9 +263,8 @@ final public class NullableVariablesStrategy {
 
                     /* lookup types, if no null declarations - report class-only declarations */
                     final Parameter parameter       = parameters[position];
-                    final Set<String> declaredTypes = parameter.getDeclaredType().getTypes().stream()
-                            .map(Types::getType)
-                            .collect(Collectors.toSet());
+                    final Set<String> declaredTypes = new HashSet<>();
+                    parameter.getDeclaredType().getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
                     if (!declaredTypes.contains(Types.strNull) && !PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                         declaredTypes.remove(Types.strNull);
 

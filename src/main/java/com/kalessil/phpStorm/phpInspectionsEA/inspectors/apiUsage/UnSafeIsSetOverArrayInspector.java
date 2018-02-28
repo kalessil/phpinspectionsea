@@ -8,15 +8,20 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -150,12 +155,15 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
             private  boolean isArrayAccess(@NotNull ArrayAccessExpression expression) {
                 /* ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later */
                 final PsiElement container = expression.getValue();
-                if (null == container) {
+                if (!(container instanceof PhpTypedElement)) {
                     return false;
                 }
 
-                final HashSet<String> containerTypes = new HashSet<>();
-                TypeFromPlatformResolverUtil.resolveExpressionType(container, containerTypes);
+                final Set<String> containerTypes = new HashSet<>();
+                final PhpType resolved           = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
+                if (resolved != null) {
+                    resolved.filterUnknown().getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
+                }
                 /* failed to resolve, don't try to guess anything */
                 if (containerTypes.isEmpty()) {
                     return false;

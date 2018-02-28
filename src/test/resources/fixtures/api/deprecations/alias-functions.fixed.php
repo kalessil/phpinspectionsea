@@ -19,7 +19,6 @@
     echo session_write_close();
     echo mysqli_real_escape_string();
     echo recode_string();
-    echo imap_list();
     echo socket_get_option();
     echo socket_set_option();
     echo openssl_pkey_get_private();
@@ -35,7 +34,6 @@
     echo disk_free_space();
     echo odbc_field_len();
     echo mysqli_stmt_execute();
-    echo imap_headerinfo();
 
     echo magic_quotes_runtime();
     echo ocifreecursor();

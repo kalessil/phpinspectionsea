@@ -12,13 +12,13 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypeFromPsiResolvingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -81,15 +81,17 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
 
             /* inspection itself */
             private void inspectExpression(@NotNull PsiElement operation, @NotNull PsiElement expression) {
-                final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-                final Function scope = ExpressionSemanticUtil.getScope(expression);
-
-                final HashSet<String> typesResolved = new HashSet<>();
-                TypeFromPsiResolvingUtil.resolveExpressionType(expression, scope, index, typesResolved);
-                if (1 == typesResolved.size() && typesResolved.iterator().next().equals(Types.strArray)) {
-                    holder.registerProblem(operation, message, ProblemHighlightType.ERROR);
+                if (expression instanceof PhpTypedElement) {
+                    final Set<String> types = new HashSet<>();
+                    final PhpType resolved  = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, holder.getProject());
+                    if (resolved != null) {
+                        resolved.filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
+                    }
+                    if (types.size() == 1 && types.contains(Types.strArray)) {
+                        holder.registerProblem(operation, message, ProblemHighlightType.ERROR);
+                    }
+                    types.clear();
                 }
-                typesResolved.clear();
             }
         };
     }

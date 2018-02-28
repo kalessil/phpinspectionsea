@@ -8,14 +8,15 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -66,9 +67,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     if (indexValue instanceof PhpTypedElement) {
                         final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) indexValue, indexValue.getProject());
                         if (resolved != null) {
-                            final Set<String> indexTypes = resolved.filterUnknown().getTypes().stream()
-                                    .map(Types::getType)
-                                    .collect(Collectors.toSet());
+                            final Set<String> indexTypes = new HashSet<>();
+                            resolved.filterUnknown().getTypes().forEach(t -> indexTypes.add(Types.getType(t)));
                             if (!indexTypes.isEmpty()) {
                                 filterPossibleTypesWhichAreNotAllowed(indexTypes, allowedIndexTypes);
                                 if (!indexTypes.isEmpty()) {
@@ -98,31 +98,13 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             return false;
         }
 
-        boolean isWrongResolvedArrayPush = false;
-        if (expression.getParent() instanceof AssignmentExpression) {
-            if (((AssignmentExpression) expression.getParent()).getVariable() == expression) {
-                isWrongResolvedArrayPush = (null == expression.getIndex() || null == expression.getIndex().getValue());
-            }
-        }
-
-        // TODO: report to JB and get rid of this workarounds, move workaround into TypeFromPlatformResolverUtil.resolveExpressionType
-        final HashSet<String> containerTypes = new HashSet<>();
+        final Set<String> containerTypes = new HashSet<>();
         if (container instanceof PhpTypedElement) {
-            if (isWrongResolvedArrayPush) {
-                TypeFromPsiResolvingUtil.resolveExpressionType(
-                        container,
-                        ExpressionSemanticUtil.getScope(expression),
-                        PhpIndex.getInstance(expression.getProject()),
-                        containerTypes
-                );
-            } else {
-                final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
-                if (type != null && !type.hasUnknown()) {
-                    type.getTypes().stream().map(Types::getType).forEach(containerTypes::add);
-                }
+            final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
+            if (type != null && !type.hasUnknown()) {
+                type.getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
             }
         }
-
 
         /* === cleanup resolved types === */
         if (containerTypes.contains(Types.strMixed)) {      // mixed are not analyzable
@@ -147,17 +129,14 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         containerTypes.remove(Types.strEmptySet); // don't process mysterious empty set type
 
         /* === if we could not resolve container, do nothing === */
-        if (0 == containerTypes.size()) {
+        if (containerTypes.isEmpty()) {
             return true;
         }
 
 
         final PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
         boolean supportsOffsets = false;
-        for (String typeToCheck : containerTypes) {
-            /* FIXME: appeared e.g. \array, see #65  */
-            typeToCheck = Types.getType(typeToCheck);
-
+        for (final String typeToCheck : containerTypes) {
             // commonly used case: string and array
             if (typeToCheck.equals(Types.strArray) || typeToCheck.equals(Types.strString)) {
                 supportsOffsets = true;

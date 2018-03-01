@@ -8,7 +8,6 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import org.jetbrains.annotations.NotNull;
@@ -54,11 +53,9 @@ final public class ClassInStringContextStrategy {
         /* collect classes to check if __toString() is there */
         final PhpIndex index             = PhpIndex.getInstance(holder.getProject());
         final List<PhpClass> listClasses = new ArrayList<>();
-        for (final String classFqn : resolvedTypes) {
-            if (classFqn.charAt(0) == '\\') {
-                listClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFqn, index, false));
-            }
-        }
+        resolvedTypes.stream()
+                .filter(fqn  -> fqn.charAt(0) == '\\')
+                .forEach(fqn -> listClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqn, index)));
         resolvedTypes.clear();
 
         /* check methods, error on first one violated requirements */

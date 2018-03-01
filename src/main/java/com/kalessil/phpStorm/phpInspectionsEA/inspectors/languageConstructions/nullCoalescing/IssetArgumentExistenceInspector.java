@@ -13,7 +13,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,12 +28,12 @@ import java.util.Set;
  */
 
 public class IssetArgumentExistenceInspector extends BasePhpInspection {
-    private static final String messagePattern = "'$%v%' seems to be not defined in the scope.";
+    private static final String messagePattern = "'$%s' seems to be not defined in the scope.";
 
-    private static final Set<String> magicVariables = new HashSet<>();
+    private static final Set<String> specialVariables = new HashSet<>(ExpressionCostEstimateUtil.predefinedVars);
     static {
-        magicVariables.add("this");
-        magicVariables.add("php_errormsg");
+        specialVariables.add("this");
+        specialVariables.add("php_errormsg");
     }
 
     @NotNull
@@ -93,47 +92,49 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
             }
 
             private void analyzeExistence (@NotNull Variable variable) {
-                final Function scope      = ExpressionSemanticUtil.getScope(variable);
-                final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                 final String variableName = variable.getName();
-                if (body != null && !magicVariables.contains(variableName) && !ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
-                    for (final Variable reference : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
-                        if (reference.getName().equals(variableName)) {
-                            boolean report = reference == variable;
-                            if (!report && reference.getParent() instanceof AssignmentExpression) {
-                                report = PsiTreeUtil.findCommonParent(reference, variable) == reference.getParent();
+                if (!variableName.isEmpty() && !specialVariables.contains(variableName)) {
+                    final Function scope      = ExpressionSemanticUtil.getScope(variable);
+                    final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                    if (body != null) {
+                        for (final Variable reference : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
+                            if (reference.getName().equals(variableName)) {
+                                boolean report = reference == variable;
+                                if (!report) {
+                                    final PsiElement parent = reference.getParent();
+                                    if (parent instanceof AssignmentExpression) {
+                                        report = PsiTreeUtil.findCommonParent(reference, variable) == parent;
+                                    }
+                                }
+                                if (report) {
+                                    holder.registerProblem(
+                                            variable,
+                                            String.format(messagePattern, variableName),
+                                            ProblemHighlightType.GENERIC_ERROR
+                                    );
+                                }
+                                break;
                             }
-                            if (report) {
-                                final String message = messagePattern.replace("%v%", variableName);
-                                holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
-                            }
-                            break;
                         }
                     }
                 }
             }
 
-            @Nullable
+            @NotNull
             private Set<String> getSuppliedVariables(@NotNull PsiElement expression) {
-                final Function scope  = ExpressionSemanticUtil.getScope(expression);
-                Set<String> variables = null;
+                final Set<String> result = new HashSet<>();
+                final Function scope     = ExpressionSemanticUtil.getScope(expression);
                 if (scope != null) {
-                    variables = new HashSet<>();
                     for (final Parameter parameter : scope.getParameters()) {
-                        variables.add(parameter.getName());
+                        result.add(parameter.getName());
                     }
-                    final List<Variable> usedVariables = ExpressionSemanticUtil.getUseListVariables(scope);
-                    if (usedVariables != null) {
-                        for (final Variable usedVariable : usedVariables) {
-                            variables.add(usedVariable.getName());
-                        }
+                    final List<Variable> used = ExpressionSemanticUtil.getUseListVariables(scope);
+                    if (used != null && !used.isEmpty()) {
+                        used.forEach(v -> result.add(v.getName()));
+                        used.clear();
                     }
                 }
-                return variables;
-            }
-
-            private boolean isSuppliedFromOutside(@NotNull Variable variable, @Nullable Set<String> suppliedVariables) {
-                return suppliedVariables != null && suppliedVariables.contains(variable.getName());
+                return result;
             }
         };
     }

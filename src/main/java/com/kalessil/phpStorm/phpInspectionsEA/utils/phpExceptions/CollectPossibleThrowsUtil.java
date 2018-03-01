@@ -160,7 +160,7 @@ final public class CollectPossibleThrowsUtil {
                             types.remove("\\Exception");
                         }
 
-                        for (String type : types) {
+                        for (final String type : types) {
                             if (type.startsWith("\\")) {
                                 /* process classes references */
                                 final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(type, objIndex);

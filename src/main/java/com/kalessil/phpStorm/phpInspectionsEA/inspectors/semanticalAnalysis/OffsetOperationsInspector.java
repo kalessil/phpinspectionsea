@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
@@ -9,13 +10,13 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /*
@@ -133,8 +134,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             return true;
         }
 
-
-        final PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
+        final Project project   = container.getProject();
+        final PhpIndex index    = PhpIndex.getInstance(project);
         boolean supportsOffsets = false;
         for (final String typeToCheck : containerTypes) {
             // commonly used case: string and array
@@ -149,13 +150,14 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             }
 
             // some of possible types are scalars, what's wrong
-            if (!StringUtils.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
+            if (!typeToCheck.isEmpty() && typeToCheck.charAt(0) != '\\') {
                 supportsOffsets = false;
                 break;
             }
 
             // now we are at point when analyzing classes only
-            for (final PhpClass clazz : PhpIndexUtil.getObjectInterfaces(typeToCheck, objIndex, false)) {
+            final List<PhpClass> classes = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(typeToCheck, index);
+            for (final PhpClass clazz : classes) {
                 /* custom offsets management, follow annotated types */
                 for (final String methodName : Arrays.asList("offsetGet", "offsetSet", "__get", "__set")) {
                     final Method method = OpenapiResolveUtil.resolveMethod(clazz, methodName);
@@ -169,7 +171,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                         else {
                             final Parameter[] parameters = method.getParameters();
                             if (parameters.length > 0) {
-                                final PhpType type = OpenapiResolveUtil.resolveType(parameters[0], method.getProject());
+                                final PhpType type = OpenapiResolveUtil.resolveType(parameters[0], project);
                                 if (type != null) {
                                     type.filterUnknown().getTypes().forEach(t -> indexTypesSupported.add(Types.getType(t)));
                                 }
@@ -179,7 +181,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     }
                 }
             }
-
+            classes.clear();
         }
 
         // when might not support offset access, reuse types container to report back why
@@ -210,7 +212,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 continue;
             }
 
-            if (isAnyObjectAllowed && !StringUtils.isEmpty(possibleType) && possibleType.charAt(0) == '\\') {
+            if (isAnyObjectAllowed && !possibleType.isEmpty() && possibleType.charAt(0) == '\\') {
                 continue;
             }
 

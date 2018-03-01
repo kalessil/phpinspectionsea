@@ -7,7 +7,10 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +47,7 @@ final public class ComparableCoreClassesStrategy {
         return isComparableObject(leftOperand, index) && isComparableObject(rightOperand, index);
     }
 
-    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull PhpIndex projectIndex) {
+    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull PhpIndex index) {
         /* extract types of operand, check if classes are/inherited from \DateTime */
         final Set<String> operandTypes = new HashSet<>();
         if (operand instanceof PhpTypedElement) {
@@ -60,11 +63,9 @@ final public class ComparableCoreClassesStrategy {
 
         /* collect classes to check for \DateTime relationship */
         final List<PhpClass> operandClasses = new ArrayList<>();
-        for (final String classFQN : operandTypes) {
-            if (classFQN.charAt(0) == '\\') {
-                operandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFQN, projectIndex, false));
-            }
-        }
+        operandTypes.stream()
+                .filter(fqn  -> fqn.charAt(0) == '\\')
+                .forEach(fqn -> operandClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqn, index)));
         operandTypes.clear();
 
         /* inspect classes for being a/child of special once */

@@ -26,8 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -123,23 +123,20 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                     /* if we could find an appropriate candidate and resolved the class => report (case must match) */
                     if (1 == namesToLookup.size()) {
-                        final String fqnToLookup = namesToLookup.iterator().next();
-                        final PhpIndex index     = PhpIndex.getInstance(project);
-
-                        /* try searching interfaces and classes for the given FQN */
-                        Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqnToLookup, index);
-                        if (classes.isEmpty()) {
-                            classes = OpenapiResolveUtil.resolveInterfacesByFQN(fqnToLookup, index);
-                        }
-
+                        final String fqn             = namesToLookup.iterator().next();
+                        final PhpIndex index         = PhpIndex.getInstance(project);
+                        final List<PhpClass> classes = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqn, index);
                         /* check resolved items */
-                        if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
-                            final String message = messagePattern.replace("%c%", normalizedContents);
-                            holder.registerProblem(
-                                expression,
-                                message,
-                                new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
-                            );
+                        if (!classes.isEmpty()) {
+                            if (1 == classes.size() && classes.get(0).getFQN().equals(fqn)) {
+                                final String message = messagePattern.replace("%c%", normalizedContents);
+                                holder.registerProblem(
+                                        expression,
+                                        message,
+                                        new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
+                                );
+                            }
+                            classes.clear();
                         }
                     }
                     namesToLookup.clear();

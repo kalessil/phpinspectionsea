@@ -90,6 +90,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phan/phan");
         developmentPackages.add("phpro/grumphp");
         developmentPackages.add("wimg/php-compatibility");
+        developmentPackages.add("sstalle/php7cc");
 
         /* build and package management tools */
         developmentPackages.add("phing/phing");

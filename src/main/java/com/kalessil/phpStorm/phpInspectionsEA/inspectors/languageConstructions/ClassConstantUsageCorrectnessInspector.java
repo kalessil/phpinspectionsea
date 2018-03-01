@@ -56,8 +56,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                             /* the resolved class will accumulate case issue in its FQN */
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);
                             if (!variants.isEmpty()) {
-                                final String implicitQn = variants.iterator().next();
-                                if (!implicitQn.equals(referencedQn)) {
+                                if (!variants.get(0).equals(referencedQn)) {
                                     holder.registerProblem(reference, message);
                                 }
                                 variants.clear();

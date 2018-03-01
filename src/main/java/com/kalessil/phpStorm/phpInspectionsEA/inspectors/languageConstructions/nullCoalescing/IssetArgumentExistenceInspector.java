@@ -70,22 +70,24 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
             }
 
             private void analyzeArgumentsExistence(@NotNull PhpExpression[] arguments) {
-                final Set<String> parameters = arguments.length > 0 ? this.getSuppliedVariables(arguments[0]) : null;
-                for (final PhpExpression argument : arguments) {
-                    /* support array accesses: extract variables */
-                    PsiElement subject = argument;
-                    while (subject instanceof ArrayAccessExpression || subject instanceof MemberReference) {
-                        if (subject instanceof MemberReference) {
-                            subject = ((MemberReference) subject).getClassReference();
-                        } else {
-                            subject = ((ArrayAccessExpression) subject).getValue();
+                if (arguments.length > 0) {
+                    final Set<String> parameters = this.getSuppliedVariables(arguments[0]);
+                    for (final PhpExpression argument : arguments) {
+                        /* support array accesses: extract variables */
+                        PsiElement subject = argument;
+                        while (subject instanceof ArrayAccessExpression || subject instanceof MemberReference) {
+                            if (subject instanceof MemberReference) {
+                                subject = ((MemberReference) subject).getClassReference();
+                            } else {
+                                subject = ((ArrayAccessExpression) subject).getValue();
+                            }
                         }
-                    }
-                    /* now check variable existence */
-                    if (subject instanceof Variable) {
-                        final Variable variable = (Variable) subject;
-                        if (!this.isSuppliedFromOutside(variable, parameters)) {
-                            analyzeExistence(variable);
+                        /* now check variable existence */
+                        if (subject instanceof Variable) {
+                            final Variable variable = (Variable) subject;
+                            if (!parameters.contains(variable.getName())) {
+                                this.analyzeExistence(variable);
+                            }
                         }
                     }
                 }

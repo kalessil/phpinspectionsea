@@ -12,7 +12,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,10 +29,10 @@ import java.util.Set;
 public class IssetArgumentExistenceInspector extends BasePhpInspection {
     private static final String messagePattern = "'$%s' seems to be not defined in the scope.";
 
-    private static final Set<String> speciaVariables = new HashSet<>(ExpressionCostEstimateUtil.predefinedVars);
+    private static final Set<String> specialVariables = new HashSet<>(ExpressionCostEstimateUtil.predefinedVars);
     static {
-        speciaVariables.add("this");
-        speciaVariables.add("php_errormsg");
+        specialVariables.add("this");
+        specialVariables.add("php_errormsg");
     }
 
     @NotNull
@@ -47,10 +46,10 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                final PsiElement leftOperand = expression.getLeftOperand();
-                if (leftOperand instanceof Variable && PhpTokenTypes.opCOALESCE == expression.getOperationType()) {
-                    final Variable variable = (Variable) leftOperand;
-                    if (!this.isSuppliedFromOutside(variable, this.getSuppliedVariables(expression))) {
+                final PsiElement candidate = expression.getLeftOperand();
+                if (candidate instanceof Variable && PhpTokenTypes.opCOALESCE == expression.getOperationType()) {
+                    final Variable variable = (Variable) candidate;
+                    if (!this.getSuppliedVariables(expression).contains(variable.getName())) {
                         analyzeExistence(variable);
                     }
                 }
@@ -67,12 +66,11 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
             }
 
             private void analyzeArgumentsExistence(@NotNull PhpExpression[] arguments) {
-                final Set<String> parameters = arguments.length > 0 ? this.getSuppliedVariables(arguments[0]) : null;
-                for (final PhpExpression argument : arguments) {
-                    if (argument instanceof Variable) {
-                        final Variable variable = (Variable) argument;
-                        if (!this.isSuppliedFromOutside(variable, parameters)) {
-                            analyzeExistence(variable);
+                if (arguments.length > 0) {
+                    final Set<String> parameters = this.getSuppliedVariables(arguments[0]);
+                    for (final PhpExpression argument : arguments) {
+                        if (argument instanceof Variable && !parameters.contains(argument.getName())) {
+                            this.analyzeExistence((Variable) argument);
                         }
                     }
                 }
@@ -80,7 +78,7 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
 
             private void analyzeExistence (@NotNull Variable variable) {
                 final String variableName = variable.getName();
-                if (!variableName.isEmpty() && !speciaVariables.contains(variableName)) {
+                if (!variableName.isEmpty() && !specialVariables.contains(variableName)) {
                     final Function scope      = ExpressionSemanticUtil.getScope(variable);
                     final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                     if (body != null) {
@@ -107,27 +105,21 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                 }
             }
 
-            @Nullable
+            @NotNull
             private Set<String> getSuppliedVariables(@NotNull PsiElement expression) {
-                final Function scope  = ExpressionSemanticUtil.getScope(expression);
-                Set<String> variables = null;
+                final Set<String> result = new HashSet<>();
+                final Function scope     = ExpressionSemanticUtil.getScope(expression);
                 if (scope != null) {
-                    variables = new HashSet<>();
                     for (final Parameter parameter : scope.getParameters()) {
-                        variables.add(parameter.getName());
+                        result.add(parameter.getName());
                     }
-                    final List<Variable> usedVariables = ExpressionSemanticUtil.getUseListVariables(scope);
-                    if (usedVariables != null) {
-                        for (final Variable usedVariable : usedVariables) {
-                            variables.add(usedVariable.getName());
-                        }
+                    final List<Variable> used = ExpressionSemanticUtil.getUseListVariables(scope);
+                    if (used != null && !used.isEmpty()) {
+                        used.forEach(v -> result.add(v.getName()));
+                        used.clear();
                     }
                 }
-                return variables;
-            }
-
-            private boolean isSuppliedFromOutside(@NotNull Variable variable, @Nullable Set<String> suppliedVariables) {
-                return suppliedVariables != null && suppliedVariables.contains(variable.getName());
+                return result;
             }
         };
     }

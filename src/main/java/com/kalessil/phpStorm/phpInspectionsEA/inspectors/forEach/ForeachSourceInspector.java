@@ -199,7 +199,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
 
                         /* check classes for the Traversable interface in the inheritance chain */
-                        final List<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index, true);
+                        final List<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index);
                         if (!classes.isEmpty()) {
                             boolean hasTraversable = false;
                             for (final PhpClass clazz : classes) {
@@ -213,6 +213,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                                 }
                             }
                             classes.clear();
+
                             if (!hasTraversable) {
                                 holder.registerProblem(container, String.format(patternObject, type));
                             }

@@ -10,16 +10,10 @@ import java.util.List;
 final public class PhpIndexUtil {
 
     @NotNull
-    static public List<PhpClass> getObjectInterfaces(@NotNull String name, @NotNull PhpIndex index, boolean strict) {
+    static public List<PhpClass> getObjectInterfaces(@NotNull String name, @NotNull PhpIndex index) {
         final List<PhpClass> result = new ArrayList<>();
-
-        result.addAll(index.getClassesByFQN(name));
-        result.addAll(index.getInterfacesByFQN(name));
-        if (!strict && result.isEmpty()) {
-            result.addAll(index.getClassesByName(name));
-            result.addAll(index.getInterfacesByName(name));
-        }
-
+        result.addAll(OpenapiResolveUtil.resolveClassesByFQN(name, index));
+        result.addAll(OpenapiResolveUtil.resolveInterfacesByFQN(name, index));
         return result;
     }
 }

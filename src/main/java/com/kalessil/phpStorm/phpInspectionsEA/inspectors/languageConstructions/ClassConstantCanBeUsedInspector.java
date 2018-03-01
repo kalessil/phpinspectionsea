@@ -21,7 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,19 +127,18 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         final PhpIndex index     = PhpIndex.getInstance(project);
 
                         /* try searching interfaces and classes for the given FQN */
-                        Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqnToLookup, index);
-                        if (classes.isEmpty()) {
-                            classes = OpenapiResolveUtil.resolveInterfacesByFQN(fqnToLookup, index);
-                        }
-
+                        final Collection<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(fqnToLookup, index);
                         /* check resolved items */
-                        if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
-                            final String message = messagePattern.replace("%c%", normalizedContents);
-                            holder.registerProblem(
-                                expression,
-                                message,
-                                new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
-                            );
+                        if (!classes.isEmpty()) {
+                            if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
+                                final String message = messagePattern.replace("%c%", normalizedContents);
+                                holder.registerProblem(
+                                        expression,
+                                        message,
+                                        new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
+                                );
+                            }
+                            classes.clear();
                         }
                     }
                     namesToLookup.clear();

@@ -54,11 +54,9 @@ final public class ClassInStringContextStrategy {
         /* collect classes to check if __toString() is there */
         final PhpIndex index             = PhpIndex.getInstance(holder.getProject());
         final List<PhpClass> listClasses = new ArrayList<>();
-        for (final String classFqn : resolvedTypes) {
-            if (classFqn.charAt(0) == '\\') {
-                listClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFqn, index, false));
-            }
-        }
+        resolvedTypes.stream()
+                .filter(classFqn  -> classFqn.charAt(0) == '\\')
+                .forEach(classFqn -> listClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFqn, index)));
         resolvedTypes.clear();
 
         /* check methods, error on first one violated requirements */

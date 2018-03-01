@@ -44,7 +44,7 @@ final public class ComparableCoreClassesStrategy {
         return isComparableObject(leftOperand, index) && isComparableObject(rightOperand, index);
     }
 
-    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull PhpIndex projectIndex) {
+    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull PhpIndex index) {
         /* extract types of operand, check if classes are/inherited from \DateTime */
         final Set<String> operandTypes = new HashSet<>();
         if (operand instanceof PhpTypedElement) {
@@ -60,11 +60,9 @@ final public class ComparableCoreClassesStrategy {
 
         /* collect classes to check for \DateTime relationship */
         final List<PhpClass> operandClasses = new ArrayList<>();
-        for (final String classFQN : operandTypes) {
-            if (classFQN.charAt(0) == '\\') {
-                operandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFQN, projectIndex, false));
-            }
-        }
+        operandTypes.stream()
+                .filter(classFqn  -> classFqn.charAt(0) == '\\')
+                .forEach(classFqn -> operandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFqn, index)));
         operandTypes.clear();
 
         /* inspect classes for being a/child of special once */

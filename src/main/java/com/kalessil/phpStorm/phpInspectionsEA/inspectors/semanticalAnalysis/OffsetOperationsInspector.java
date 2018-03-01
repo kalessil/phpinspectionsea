@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /*
@@ -134,7 +135,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         }
 
 
-        final PhpIndex objIndex = PhpIndex.getInstance(container.getProject());
+        final PhpIndex index    = PhpIndex.getInstance(container.getProject());
         boolean supportsOffsets = false;
         for (final String typeToCheck : containerTypes) {
             // commonly used case: string and array
@@ -155,7 +156,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             }
 
             // now we are at point when analyzing classes only
-            for (final PhpClass clazz : PhpIndexUtil.getObjectInterfaces(typeToCheck, objIndex, false)) {
+            final List<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(typeToCheck, index);
+            for (final PhpClass clazz : classes) {
                 /* custom offsets management, follow annotated types */
                 for (final String methodName : Arrays.asList("offsetGet", "offsetSet", "__get", "__set")) {
                     final Method method = OpenapiResolveUtil.resolveMethod(clazz, methodName);
@@ -179,7 +181,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                     }
                 }
             }
-
+            classes.clear();
         }
 
         // when might not support offset access, reuse types container to report back why

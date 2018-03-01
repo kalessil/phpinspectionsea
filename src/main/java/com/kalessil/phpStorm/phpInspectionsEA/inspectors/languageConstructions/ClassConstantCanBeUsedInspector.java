@@ -128,7 +128,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         final List<PhpClass> classes = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqn, index);
                         /* check resolved items */
                         if (!classes.isEmpty()) {
-                            if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqn)) {
+                            if (1 == classes.size() && classes.get(0).getFQN().equals(fqn)) {
                                 final String message = messagePattern.replace("%c%", normalizedContents);
                                 holder.registerProblem(
                                         expression,

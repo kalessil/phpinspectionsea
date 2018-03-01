@@ -66,7 +66,7 @@ final public class NullableVariablesStrategy {
         for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
             final List<AssignmentExpression> variableAssignments = pair.getValue();
             if (!variableAssignments.isEmpty()) {
-                final AssignmentExpression assignment = variableAssignments.iterator().next();
+                final AssignmentExpression assignment = variableAssignments.get(0);
                 if (isNullableResult(assignment, project)) {
                     /* find first nullable assignments, invoke analyzing statements after it */
                     apply(pair.getKey(), assignment, body, holder);

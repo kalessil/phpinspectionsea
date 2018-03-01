@@ -64,8 +64,8 @@ final public class ComparableCoreClassesStrategy {
         /* collect classes to check for \DateTime relationship */
         final List<PhpClass> operandClasses = new ArrayList<>();
         operandTypes.stream()
-                .filter(classFqn  -> classFqn.charAt(0) == '\\')
-                .forEach(classFqn -> operandClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(classFqn, index)));
+                .filter(fqn  -> fqn.charAt(0) == '\\')
+                .forEach(fqn -> operandClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqn, index)));
         operandTypes.clear();
 
         /* inspect classes for being a/child of special once */

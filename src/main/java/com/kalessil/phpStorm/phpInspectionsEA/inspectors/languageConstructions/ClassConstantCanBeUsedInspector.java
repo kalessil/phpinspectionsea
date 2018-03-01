@@ -123,14 +123,12 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                     /* if we could find an appropriate candidate and resolved the class => report (case must match) */
                     if (1 == namesToLookup.size()) {
-                        final String fqnToLookup = namesToLookup.iterator().next();
-                        final PhpIndex index     = PhpIndex.getInstance(project);
-
-                        /* try searching interfaces and classes for the given FQN */
-                        final List<PhpClass> classes = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqnToLookup, index);
+                        final String fqn             = namesToLookup.iterator().next();
+                        final PhpIndex index         = PhpIndex.getInstance(project);
+                        final List<PhpClass> classes = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqn, index);
                         /* check resolved items */
                         if (!classes.isEmpty()) {
-                            if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {
+                            if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqn)) {
                                 final String message = messagePattern.replace("%c%", normalizedContents);
                                 holder.registerProblem(
                                         expression,

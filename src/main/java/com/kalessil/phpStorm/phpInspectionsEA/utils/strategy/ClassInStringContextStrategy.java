@@ -54,8 +54,8 @@ final public class ClassInStringContextStrategy {
         final PhpIndex index             = PhpIndex.getInstance(holder.getProject());
         final List<PhpClass> listClasses = new ArrayList<>();
         resolvedTypes.stream()
-                .filter(classFqn  -> classFqn.charAt(0) == '\\')
-                .forEach(classFqn -> listClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(classFqn, index)));
+                .filter(fqn  -> fqn.charAt(0) == '\\')
+                .forEach(fqn -> listClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqn, index)));
         resolvedTypes.clear();
 
         /* check methods, error on first one violated requirements */

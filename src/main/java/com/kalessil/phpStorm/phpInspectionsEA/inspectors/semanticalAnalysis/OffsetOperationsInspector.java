@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
@@ -133,8 +134,8 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             return true;
         }
 
-
-        final PhpIndex index    = PhpIndex.getInstance(container.getProject());
+        final Project project   = container.getProject();
+        final PhpIndex index    = PhpIndex.getInstance(project);
         boolean supportsOffsets = false;
         for (final String typeToCheck : containerTypes) {
             // commonly used case: string and array
@@ -149,7 +150,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             }
 
             // some of possible types are scalars, what's wrong
-            if (!StringUtils.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
+            if (!typeToCheck.isEmpty() && typeToCheck.charAt(0) != '\\') {
                 supportsOffsets = false;
                 break;
             }
@@ -170,7 +171,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                         else {
                             final Parameter[] parameters = method.getParameters();
                             if (parameters.length > 0) {
-                                final PhpType type = OpenapiResolveUtil.resolveType(parameters[0], method.getProject());
+                                final PhpType type = OpenapiResolveUtil.resolveType(parameters[0], project);
                                 if (type != null) {
                                     type.filterUnknown().getTypes().forEach(t -> indexTypesSupported.add(Types.getType(t)));
                                 }
@@ -211,7 +212,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 continue;
             }
 
-            if (isAnyObjectAllowed && !StringUtils.isEmpty(possibleType) && possibleType.charAt(0) == '\\') {
+            if (isAnyObjectAllowed && !possibleType.isEmpty() && possibleType.charAt(0) == '\\') {
                 continue;
             }
 

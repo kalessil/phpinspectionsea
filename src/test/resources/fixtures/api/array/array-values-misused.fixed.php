@@ -1,6 +1,9 @@
 <?php
 
 function cases_holder() {
+    foreach ([] as $value) {}
+    foreach (array_values([]) as $key => $value) {}
+
     return [
         in_array('...', []),
         in_array('...', array_values()),

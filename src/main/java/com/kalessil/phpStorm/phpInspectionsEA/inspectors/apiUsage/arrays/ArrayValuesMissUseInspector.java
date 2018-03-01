@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArrayValuesMissUseInspector extends BasePhpInspection {
+    private static final String messageForeach       = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageStringReplace = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageInArray       = "'array_values(...)' is not making any sense here (just search in it's argument).";
     private static final String messageCount         = "'array_values(...)' is not making any sense here (just count it's argument).";
@@ -67,6 +69,11 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                             break;
                                     }
                                 }
+                            }
+                        } else if (parent instanceof ForeachStatement) {
+                            final ForeachStatement foreach = (ForeachStatement) parent;
+                            if (foreach.getKey() == null && !foreach.getVariables().isEmpty()) {
+                                holder.registerProblem(reference, messageForeach, new ReplaceFix(arguments[0].getText()));
                             }
                         }
                     }

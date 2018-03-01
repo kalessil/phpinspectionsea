@@ -8,7 +8,6 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +55,7 @@ final public class ClassInStringContextStrategy {
         final List<PhpClass> listClasses = new ArrayList<>();
         resolvedTypes.stream()
                 .filter(classFqn  -> classFqn.charAt(0) == '\\')
-                .forEach(classFqn -> listClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFqn, index)));
+                .forEach(classFqn -> listClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(classFqn, index)));
         resolvedTypes.clear();
 
         /* check methods, error on first one violated requirements */

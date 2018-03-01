@@ -199,7 +199,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         }
 
                         /* check classes for the Traversable interface in the inheritance chain */
-                        final List<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(type, index);
+                        final List<PhpClass> classes = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(type, index);
                         if (!classes.isEmpty()) {
                             boolean hasTraversable = false;
                             for (final PhpClass clazz : classes) {

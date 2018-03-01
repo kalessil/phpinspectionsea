@@ -7,7 +7,10 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +65,7 @@ final public class ComparableCoreClassesStrategy {
         final List<PhpClass> operandClasses = new ArrayList<>();
         operandTypes.stream()
                 .filter(classFqn  -> classFqn.charAt(0) == '\\')
-                .forEach(classFqn -> operandClasses.addAll(PhpIndexUtil.getObjectInterfaces(classFqn, index)));
+                .forEach(classFqn -> operandClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(classFqn, index)));
         operandTypes.clear();
 
         /* inspect classes for being a/child of special once */

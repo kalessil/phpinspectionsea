@@ -21,13 +21,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpIndexUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -127,7 +127,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         final PhpIndex index     = PhpIndex.getInstance(project);
 
                         /* try searching interfaces and classes for the given FQN */
-                        final Collection<PhpClass> classes = PhpIndexUtil.getObjectInterfaces(fqnToLookup, index);
+                        final List<PhpClass> classes = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqnToLookup, index);
                         /* check resolved items */
                         if (!classes.isEmpty()) {
                             if (1 == classes.size() && classes.iterator().next().getFQN().equals(fqnToLookup)) {

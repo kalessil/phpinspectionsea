@@ -110,6 +110,16 @@ final public class OpenapiResolveUtil {
     }
 
     @NotNull
+    static public List<PhpClass> resolveClassesAndInterfacesByFQN(@NotNull String name, @NotNull PhpIndex index) {
+        final Collection<PhpClass> classes    = resolveClassesByFQN(name, index);
+        final Collection<PhpClass> interfaces = resolveInterfacesByFQN(name, index);
+        final List<PhpClass> result           = new ArrayList<>(classes.size() + interfaces.size());
+        result.addAll(classes);
+        result.addAll(interfaces);
+        return result;
+    }
+
+    @NotNull
     static public Collection<PhpClass> resolveChildClasses(@NotNull String clazz, @NotNull PhpIndex index) {
         try {
             return index.getAllSubclasses(clazz);

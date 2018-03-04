@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -94,15 +95,21 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null) {
                     if (relevantAliases.containsKey(functionName) && this.isFromRootNamespace(reference)) {
-                        final String original = relevantAliases.get(functionName);
-                        holder.registerProblem(
-                                reference.getNameNode().getPsi(),
-                                String.format(messagePattern, functionName, original),
-                                ProblemHighlightType.LIKE_DEPRECATED,
-                                new TheLocalFix(original)
-                        );
+                        final ASTNode target = reference.getNameNode();
+                        if (target != null) {
+                            final String original = relevantAliases.get(functionName);
+                            holder.registerProblem(
+                                    target.getPsi(),
+                                    String.format(messagePattern, functionName, original),
+                                    ProblemHighlightType.LIKE_DEPRECATED,
+                                    new TheLocalFix(original)
+                            );
+                        }
                     } else if (deprecatedAliases.containsKey(functionName) && this.isFromRootNamespace(reference)) {
-                        holder.registerProblem(reference.getNameNode().getPsi(), deprecatedAliases.get(functionName));
+                        final ASTNode target = reference.getNameNode();
+                        if (target != null) {
+                            holder.registerProblem(target.getPsi(), deprecatedAliases.get(functionName));
+                        }
                     }
                 }
             }

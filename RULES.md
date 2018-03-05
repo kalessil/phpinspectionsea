@@ -198,6 +198,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | StringsFirstCharactersCompareInspection         | Strings N-character comparison flaws                      | yes | yes | yes  | no  |
 | Probable bugs        | SimpleXmlLoadFileUsageInspection                | 'simplexml_load_file(...)' usage correctness              | yes | yes | yes  | no  |
 | Probable bugs        | DateTimeSetTimeUsageInspection                  | 'DateTime::setTime(...)' usage correctness                | n/a | yes | n/a  | no  |
+| Probable bugs        | SuspiciousTernaryOperatorInspection             | Suspicious ternary operator                               | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

@@ -193,20 +193,27 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     }
 
                                     if (resolved.size() == 2) {
+                                        /* false-positives: core functions returning string|false, string|null */
+                                        if (resolved.contains(Types.strString)) {
+                                            if (resolved.contains(Types.strBoolean)) {
+                                                final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
+                                                if (isFunctionCall) {
+                                                    resolved.remove(Types.strBoolean);
+                                                }
+                                            } else if (resolved.contains(Types.strNull)) {
+                                                final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
+                                                if (isFunctionCall) {
+                                                    resolved.remove(Types.strNull);
+                                                }
+                                            }
+                                        }
                                         /* false-positives: nullable objects */
-                                        if (resolved.contains(Types.strNull)) {
+                                        else if (resolved.contains(Types.strNull)) {
                                             final boolean isNullableObject = paramTypes.stream().anyMatch(t ->
                                                 t.startsWith("\\") && !t.equals("\\Closure") || classReferences.contains(t)
                                             );
                                             if (isNullableObject) {
                                                 resolved.remove(Types.strNull);
-                                            }
-                                        }
-                                        /* false-positives: core functions returning string|false */
-                                        else if (resolved.contains(Types.strString) && resolved.contains(Types.strBoolean)) {
-                                            final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
-                                            if (isFunctionCall) {
-                                                resolved.remove(Types.strBoolean);
                                             }
                                         }
                                     }

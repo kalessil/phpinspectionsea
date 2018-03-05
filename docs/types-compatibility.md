@@ -28,6 +28,14 @@ may reveal new bugs or dead code. Also, here are some hints how to add types inf
     foreach ((array) $object as $property => $value) { /* implicit casting expresses the intention */
         ...
     }
+    
+    /* Case 3: complex expression iteration, when no other way is possible */
+
+    /* @var $localVariable \stdClass[] */
+    $localVariable = $object->property->property[0]; /* e.g. dynamic property from a 3rd party library */
+    foreach ($localVariable as $value) {
+        ...
+    }
 ```
 
 ## 'empty(...)' usage

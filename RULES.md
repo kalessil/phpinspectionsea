@@ -209,6 +209,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | UnsupportedSerializeTypesInspection             | Unsupported serialize types                               | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousArrayElementInspection                | Suspicious array element                                  | yes | yes | yes  | no  |
 | Probable bugs        | KeysFragmentationWithArrayFunctionsInspection   | Array keys set fragmentation                              | n/a | yes | n/a  | no  |
+| Probable bugs        | SuspiciousTernaryOperatorInspection             | Suspicious ternary operator                               | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

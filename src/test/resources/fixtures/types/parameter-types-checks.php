@@ -105,9 +105,10 @@
         $two = <warning descr="New value type (string) is not in annotated types.">''</warning>;
     }
 
-    /* false-positive: core functions returning string|false */
+    /* false-positive: core functions returning string|false, string|null */
     function core_api_functions_consistency(string $string) {
         $string = substr($string, -1);
+        $string = preg_replace('', '', $string);
     }
 
     /* false-positive: nullable objects */

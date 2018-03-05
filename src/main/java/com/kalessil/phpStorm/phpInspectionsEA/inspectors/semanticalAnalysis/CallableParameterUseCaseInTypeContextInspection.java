@@ -204,7 +204,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                                 final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
                                                 if (isFunctionCall) {
                                                     resolved.remove(Types.strNull);
-                                                /* preg_replace got better stub and brought lots of false-positives */
+                                                    /* preg_replace got better stub and brought lots of false-positives */
                                                     if ("preg_replace".equals(value.getName())) {
                                                         resolved.remove(Types.strArray);
                                                     }

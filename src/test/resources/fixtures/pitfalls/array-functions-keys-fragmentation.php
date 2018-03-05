@@ -1,6 +1,6 @@
 <?php
 
-function cases_holder_index_access() {
+function cases_holder_array_filter() {
     $fragmentedOne = <warning descr="Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([], function($v) { return (bool) $v; });
     $fragmentedTwo = <warning descr="Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([]);
     
@@ -13,6 +13,22 @@ function cases_holder_index_access() {
         /* false-positives: non-numeric keys */
         $fragmentedOne['...'],
         $fragmentedTwo['...'],
+
+        /* false-positives: de-fragmented arrays */
+        $defragmented[0]
+    ];
+}
+
+function cases_holder_array_unique() {
+    $fragmented = <warning descr="Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_unique</warning>([]);
+
+    $defragmented = array_values(array_unique([]));
+
+    return [
+        $fragmented[0],
+
+        /* false-positives: non-numeric keys */
+        $fragmented['...'],
 
         /* false-positives: de-fragmented arrays */
         $defragmented[0]

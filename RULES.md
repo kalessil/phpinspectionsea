@@ -208,7 +208,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MissingElseKeywordInspection                    | Missing else keyword                                      | n/a | yes | n/a  | no  |
 | Probable bugs        | UnsupportedSerializeTypesInspection             | Unsupported serialize types                               | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousArrayElementInspection                | Suspicious array element                                  | yes | yes | yes  | no  |
-| Probable bugs        | KeysFragmentationWithArrayFilterInspection      | 'array_filter(...)' result keys set fragmentation         | n/a | yes | n/a  | no  |
+| Probable bugs        | KeysFragmentationWithArrayFunctionsInspection   | Array keys set fragmentation                              | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

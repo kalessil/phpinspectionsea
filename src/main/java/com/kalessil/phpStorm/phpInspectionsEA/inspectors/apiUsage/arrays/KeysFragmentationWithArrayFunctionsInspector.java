@@ -13,6 +13,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -23,12 +25,18 @@ import java.util.Arrays;
  * file that was distributed with this source code.
  */
 
-public class KeysFragmentationWithArrayFilterInspector extends BasePhpInspection {
+public class KeysFragmentationWithArrayFunctionsInspector extends BasePhpInspection {
     private static final String message = "Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.";
+
+    final private static Set<String> targetFunctions = new HashSet<>();
+    static {
+        targetFunctions.add("array_filter");
+        targetFunctions.add("array_unique");
+    }
 
     @NotNull
     public String getShortName() {
-        return "KeysFragmentationWithArrayFilterInspection";
+        return "KeysFragmentationWithArrayFunctionsInspection";
     }
 
     @Override
@@ -40,7 +48,7 @@ public class KeysFragmentationWithArrayFilterInspector extends BasePhpInspection
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("array_filter")) {
+                if (functionName != null && targetFunctions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     final PsiElement parent      = reference.getParent();
                     if (arguments.length > 0) {

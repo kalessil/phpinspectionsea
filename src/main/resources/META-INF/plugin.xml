@@ -476,9 +476,9 @@ Bug-fixes and new inspections:<br/>
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousArrayElementInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="KeysFragmentationWithArrayFilterInspection"    displayName="'array_filter(...)' result keys set fragmentation"
+        shortName="KeysFragmentationWithArrayFunctionsInspection" displayName="Array keys set fragmentation"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.KeysFragmentationWithArrayFilterInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.KeysFragmentationWithArrayFunctionsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

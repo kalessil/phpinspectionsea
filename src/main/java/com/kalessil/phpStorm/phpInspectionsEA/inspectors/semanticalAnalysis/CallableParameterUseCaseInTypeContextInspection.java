@@ -212,7 +212,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                             }
                                         }
                                         /* false-positives: nullable objects */
-                                        else if (resolved.size() == 2 && resolved.contains(Types.strNull)) {
+                                        else if (resolved.contains(Types.strNull)) {
                                             final boolean isNullableObject = paramTypes.stream().anyMatch(t ->
                                                 t.startsWith("\\") && !t.equals("\\Closure") || classReferences.contains(t)
                                             );

@@ -192,31 +192,33 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         resolvedType.filterUnknown().getTypes().forEach(t -> resolved.add(Types.getType(t)));
                                     }
 
-                                    /* false-positives: core functions returning string|false, string|null */
-                                    if (resolved.size() >= 2 && resolved.contains(Types.strString)) {
-                                        if (resolved.contains(Types.strBoolean)) {
-                                            final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
-                                            if (isFunctionCall) {
-                                                resolved.remove(Types.strBoolean);
-                                            }
-                                        } else if (resolved.contains(Types.strNull)) {
-                                            final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
-                                            if (isFunctionCall) {
-                                                resolved.remove(Types.strNull);
+                                    if (resolved.size() >= 2) {
+                                        /* false-positives: core functions returning string|false, string|null */
+                                        if (resolved.contains(Types.strString)) {
+                                            if (resolved.contains(Types.strBoolean)) {
+                                                final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
+                                                if (isFunctionCall) {
+                                                    resolved.remove(Types.strBoolean);
+                                                }
+                                            } else if (resolved.contains(Types.strNull)) {
+                                                final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
+                                                if (isFunctionCall) {
+                                                    resolved.remove(Types.strNull);
                                                 /* preg_replace got better stub and brought lots of false-positives */
-                                                if ("preg_replace".equals(value.getName())) {
-                                                    resolved.remove(Types.strArray);
+                                                    if ("preg_replace".equals(value.getName())) {
+                                                        resolved.remove(Types.strArray);
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    /* false-positives: nullable objects */
-                                    else if (resolved.size() == 2 && resolved.contains(Types.strNull)) {
-                                        final boolean isNullableObject = paramTypes.stream().anyMatch(t ->
-                                            t.startsWith("\\") && !t.equals("\\Closure") || classReferences.contains(t)
-                                        );
-                                        if (isNullableObject) {
-                                            resolved.remove(Types.strNull);
+                                        /* false-positives: nullable objects */
+                                        else if (resolved.size() == 2 && resolved.contains(Types.strNull)) {
+                                            final boolean isNullableObject = paramTypes.stream().anyMatch(t ->
+                                                t.startsWith("\\") && !t.equals("\\Closure") || classReferences.contains(t)
+                                            );
+                                            if (isNullableObject) {
+                                                resolved.remove(Types.strNull);
+                                            }
                                         }
                                     }
 

@@ -1,15 +1,25 @@
 <?php
 
-    <weak_warning descr="Confusing statement: consider re-factoring.">return $x = function() {};</weak_warning>
+    function cases_holder($parameter) {
+        $lambda = function ($regular, & $reference) use (& $parameter) {
+            if ($parameter === null) {
+                return $parameter = '...';
+            }
+            if ($parameter === null) {
+                return $reference = '...';
+            }
+            if ($parameter === null) {
+                <weak_warning descr="Assignment here is not making much sense.">return $regular = '...';</weak_warning>
+            }
+        };
 
-    function multipleReturnsFunction($x) {
-        if (0 === $x) {
-            return;
-        }
+        <weak_warning descr="Assignment here is not making much sense.">return $parameter = $lambda;</weak_warning>
+    }
 
-        if ($x > 0) {
-            return;
-        }
+
+    function multiple_return_statements($parameter) {
+        if (0 === $parameter) { return; }
+        if ($parameter > 0)   { return; }
 
         <weak_warning descr="Senseless statement: return null implicitly or safely remove it.">return;</weak_warning>
     }

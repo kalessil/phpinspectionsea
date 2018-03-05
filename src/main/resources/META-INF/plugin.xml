@@ -479,6 +479,10 @@ Bug-fixes and new inspections:<br/>
         shortName="KeysFragmentationWithArrayFunctionsInspection" displayName="Array keys set fragmentation"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.KeysFragmentationWithArrayFunctionsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="SuspiciousTernaryOperatorInspection"           displayName="Suspicious ternary operator"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousTernaryOperatorInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -50,7 +50,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            void checkOneTimeUse(@NotNull PhpPsiElement construct, @NotNull Variable argument) {
+
+            private void checkOneTimeUse(@NotNull PhpPsiElement construct, @NotNull Variable argument) {
                 final String variableName = argument.getName();
                 final PsiElement previous = construct.getPrevPsiSibling();
                 /* verify preceding expression (assignment needed) */
@@ -109,9 +110,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             }
 
             @Override
-            public void visitPhpReturn(@NotNull PhpReturn returnStatement) {
+            public void visitPhpReturn(@NotNull PhpReturn expression) {
                 /* if function returning reference, do not inspect returns */
-                final Function callable   = ExpressionSemanticUtil.getScope(returnStatement);
+                final Function callable   = ExpressionSemanticUtil.getScope(expression);
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
                 if (null != callable && null != nameNode) {
                     /* is defined like returning reference */
@@ -125,11 +126,11 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
 
                 /* regular function, check one-time use variables */
-                final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnStatement.getArgument());
+                final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                 if (argument instanceof PhpPsiElement) {
                     final Variable variable = this.getVariable(argument);
-                    if (null != variable) {
-                        checkOneTimeUse(returnStatement, variable);
+                    if (variable != null) {
+                        this.checkOneTimeUse(expression, variable);
                     }
                 }
             }
@@ -152,13 +153,22 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
             }
 
-            /* TODO: once got bored, add foreach source pattern here =) I'm naive but nevertheless ^_^ */
-
             @Override
             public void visitPhpThrow(@NotNull PhpThrow expression) {
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                 if (argument instanceof PhpPsiElement) {
-                    final Variable variable = this.getVariable((PhpPsiElement) argument);
+                    final Variable variable = this.getVariable(argument);
+                    if (variable != null) {
+                        this.checkOneTimeUse(expression, variable);
+                    }
+                }
+            }
+
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement expression) {
+                final PsiElement source = expression.getArray();
+                if (source != null) {
+                    final Variable variable = this.getVariable(source);
                     if (variable != null) {
                         this.checkOneTimeUse(expression, variable);
                     }

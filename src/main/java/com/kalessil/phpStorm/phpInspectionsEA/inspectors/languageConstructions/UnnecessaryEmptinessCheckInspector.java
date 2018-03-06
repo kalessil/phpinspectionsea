@@ -231,7 +231,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         for (final PsiElement argument : arguments) {
                             final PsiElement context       = arguments.length == 1 ? expression : argument;
                             final Optional<PsiElement> key = result.keySet().stream()
-                                    .filter(e -> argument != null && OpeanapiEquivalenceUtil.areEqual(e, argument))
+                                    .filter(e -> e != null && argument != null && OpeanapiEquivalenceUtil.areEqual(e, argument))
                                     .findFirst();
                             if (!key.isPresent()) {
                                 result.put(argument, new ArrayList<>(Collections.singletonList(context)));

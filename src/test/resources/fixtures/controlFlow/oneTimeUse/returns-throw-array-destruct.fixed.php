@@ -10,7 +10,7 @@ return (clone $x)->x;
 
 throw new Exception();
 
-function listUnpack()
+function list_unpack()
 {
     list($a, $b) = array(1, 2);
     return $a + $b;

@@ -15,7 +15,7 @@ return $x->x;
 <warning descr="Variable $y is redundant.">$y</warning> = new Exception();
 throw $y;
 
-function listUnpack()
+function list_unpack()
 {
     <warning descr="Variable $list is redundant.">$list</warning> = array(1, 2);
     list($a, $b) = $list;

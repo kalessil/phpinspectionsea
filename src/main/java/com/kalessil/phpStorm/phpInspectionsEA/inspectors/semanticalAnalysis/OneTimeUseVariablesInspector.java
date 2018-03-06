@@ -40,7 +40,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     // Inspection options.
     public boolean ALLOW_LONG_STATEMENTS = false;
 
-    private static final String messagePattern = "Variable $%v% is redundant.";
+    private static final String messagePattern = "Variable $%s is redundant.";
 
     @NotNull
     public String getShortName() {
@@ -53,18 +53,23 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
 
             private void checkOneTimeUse(@NotNull PhpPsiElement construct, @NotNull Variable argument) {
-                final String variableName    = argument.getName();
                 final PhpPsiElement previous = construct.getPrevPsiSibling();
-                /* verify preceding expression (assignment needed) */
-                if (null != previous && OpenapiTypesUtil.isAssignment(previous.getFirstChild())) {
+                if (previous != null && OpenapiTypesUtil.isAssignment(previous.getFirstChild())) {
                     final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
 
                     /* ensure variables are the same */
                     final PhpPsiElement assignVariable = assign.getVariable();
                     final PsiElement value             = ExpressionSemanticUtil.getExpressionTroughParenthesis(assign.getValue());
                     if (value != null && assignVariable instanceof Variable) {
+                        final String variableName       = argument.getName();
                         final String assignVariableName = assignVariable.getName();
                         if (assignVariableName == null || !assignVariableName.equals(variableName)) {
+                            return;
+                        }
+
+
+                        /* too long return/throw statements can be decoupled as a variable */
+                        if (!ALLOW_LONG_STATEMENTS && assign.getTextLength() > 80) {
                             return;
                         }
 
@@ -80,11 +85,6 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                                     }
                                 }
                             }
-                        }
-
-                        /* too long return/throw statements can be decoupled as a variable */
-                        if (!ALLOW_LONG_STATEMENTS && assign.getText().length() > 80) {
-                            return;
                         }
 
                         final Function function = ExpressionSemanticUtil.getScope(construct);
@@ -117,7 +117,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
                         holder.registerProblem(
                                 assignVariable,
-                                messagePattern.replace("%v%", variableName),
+                                String.format(messagePattern, variableName),
                                 new TheLocalFix(assign.getParent(), argument, value)
                         );
                     }

@@ -146,3 +146,25 @@ variant is following: `!is_dir($folder) && !mkdir($folder) && !is_dir($folder)`.
 
 This issue is similar to `'mkdir(...)' race condition` case, but by default we are reporting only cases when php-content 
 is written into a file - in this case concurrency issues can result into compromised or corrupted application state.
+
+## Continue misbehaviour in switch
+
+Analyzes continue usage in switch-case context. Due to PHP's 
+[unusual continue syntax](https://secure.php.net/manual/en/control-structures.continue.php), new users who are used to 
+other languages might be confused by its behaviour. 
+
+Covers following case:
+```php
+foreach ([] as $value) {
+    switch($value) {
+        case 'value':
+            continue; /* behaves as 'break', 'continue 2' was intended */
+        /* more code here */
+    }
+} 
+```
+
+This is PHP-specific and mentioned in [documentation](https://secure.php.net/manual/en/control-structures.continue.php):
+
+> In PHP the switch statement is considered a looping structure for the purposes of continue. continue behaves like break 
+> (when no arguments are passed). If a switch is inside a loop, continue 2 will continue with the next iteration of the outer loop.

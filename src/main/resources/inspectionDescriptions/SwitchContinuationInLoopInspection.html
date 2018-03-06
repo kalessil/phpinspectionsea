@@ -1,31 +1,5 @@
 <html>
 <body>
-Analyzes continue usage in switch-case context. Due to PHP's
-<a href="https://secure.php.net/manual/en/control-structures.continue.php">unusual continue syntax</a>,
-new users who are used to other languages might be confused by its behaviour.
-<!-- tooltip end -->
-<p>
-Covers following case:
-</p>
-
-<code lang="php">
-    for (...) {
-        switch(...) {
-            case ...:
-                continue; /* should read 'continue 2' to continue with the next iteration of the outer loop */
-            ...
-        }
-    }
-</code>
-
-<p>
-This is PHP-specific and mentioned in <a href="https://secure.php.net/manual/en/control-structures.continue.php">documentation</a>:
-</p>
-
-<blockquote>
-    Note: In PHP the switch statement is considered a looping structure for the purposes of continue. continue behaves
-    like break (when no arguments are passed). If a switch is inside a loop, continue 2 will continue with the next
-    iteration of the outer loop.
-</blockquote>
+Documentation can be found <a href="https://github.com/kalessil/phpinspectionsea/blob/master/docs/probable-bugs.md#continue-misbehaviour-in-switch">here</a>
 </body>
 </html>

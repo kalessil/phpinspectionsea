@@ -156,7 +156,7 @@ other languages might be confused by its behaviour.
 Covers following case:
 ```php
 foreach ([] as $value) {
-    switch($value) {
+    switch ($value) {
         case 'value':
             continue; /* behaves as 'break', 'continue 2' was intended */
         /* more code here */

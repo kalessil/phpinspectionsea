@@ -5,11 +5,12 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.jetbrains.php.codeInsight.PhpScopeHolder;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
-import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocVariable;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -52,29 +53,32 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
 
             private void checkOneTimeUse(@NotNull PhpPsiElement construct, @NotNull Variable argument) {
-                final String variableName = argument.getName();
-                final PsiElement previous = construct.getPrevPsiSibling();
+                final String variableName    = argument.getName();
+                final PhpPsiElement previous = construct.getPrevPsiSibling();
                 /* verify preceding expression (assignment needed) */
                 if (null != previous && OpenapiTypesUtil.isAssignment(previous.getFirstChild())) {
                     final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
 
                     /* ensure variables are the same */
                     final PhpPsiElement assignVariable = assign.getVariable();
-                    final PsiElement assignValue       = ExpressionSemanticUtil.getExpressionTroughParenthesis(assign.getValue());
-                    if (null != assignValue && assignVariable instanceof Variable) {
+                    final PsiElement value             = ExpressionSemanticUtil.getExpressionTroughParenthesis(assign.getValue());
+                    if (value != null && assignVariable instanceof Variable) {
                         final String assignVariableName = assignVariable.getName();
                         if (assignVariableName == null || !assignVariableName.equals(variableName)) {
                             return;
                         }
 
-                        /* check if variable as a function/use(...) parameter by reference */
-                        final Function function = ExpressionSemanticUtil.getScope(construct);
-                        if (function != null) {
-                            final boolean isReference =
-                                    this.isArgumentReference(argument, function) ||
-                                    this.isBoundReference(argument, function);
-                            if (isReference) {
-                                return;
+                        /* intentionally introduced variables due to type re-specification */
+                        if (construct instanceof ForeachStatement) {
+                            final PsiElement phpdocCandidate = previous.getPrevPsiSibling();
+                            if (phpdocCandidate instanceof PhpDocComment) {
+                                final PhpDocTag[] hints = ((PhpDocComment) phpdocCandidate).getTagElementsByName("@var");
+                                if (hints.length == 1) {
+                                    final PhpDocVariable specifiedVariable = PsiTreeUtil.findChildOfType(hints[0], PhpDocVariable.class);
+                                    if (specifiedVariable != null && specifiedVariable.getName().equals(variableName)) {
+                                        return;
+                                    }
+                                }
                             }
                         }
 
@@ -83,17 +87,26 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             return;
                         }
 
-                        /* heavy part, find usage inside function/method to analyze multiple writes */
-                        final PhpScopeHolder parentScope = ExpressionSemanticUtil.getScope(assign);
-                        if (null != parentScope) {
-                            final PhpEntryPointInstruction entryPoint   = parentScope.getControlFlow().getEntryPoint();
-                            final PhpAccessVariableInstruction[] usages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, variableName, false);
+                        final Function function = ExpressionSemanticUtil.getScope(construct);
+                        if (function != null) {
+                            /* check if variable as a function/use(...) parameter by reference */
+                            final boolean isReference =
+                                    this.isArgumentReference(argument, function) ||
+                                    this.isBoundReference(argument, function);
+                            if (isReference) {
+                                return;
+                            }
 
+                            /* find usage inside function/method to analyze multiple writes */
+                            final PhpAccessVariableInstruction[] usages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(
+                                    function.getControlFlow().getEntryPoint(),
+                                    variableName,
+                                    false
+                            );
                             int countWrites = 0;
                             int countReads  = 0;
-                            for (PhpAccessVariableInstruction oneCase: usages) {
+                            for (final PhpAccessVariableInstruction oneCase: usages) {
                                 final boolean isWrite = oneCase.getAccess().isWrite();
-
                                 countWrites += isWrite ? 1 : 0;
                                 countReads  += isWrite ? 0 : 1;
                                 if (countWrites > 1 || countReads > 1) {
@@ -102,9 +115,11 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             }
                         }
 
-                        final String message    = messagePattern.replace("%v%", variableName);
-                        final TheLocalFix fixer = new TheLocalFix(assign.getParent(), argument, assignValue);
-                        holder.registerProblem(assignVariable, message, fixer);
+                        holder.registerProblem(
+                                assignVariable,
+                                messagePattern.replace("%v%", variableName),
+                                new TheLocalFix(assign.getParent(), argument, value)
+                        );
                     }
                 }
             }

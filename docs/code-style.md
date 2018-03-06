@@ -28,7 +28,7 @@ The aim is to improve code usability, by moving handling default logic into body
 
 > Note: the inspection has settings.
 
-The inspection reports missing class members (properties and methods) access modifiers in classes or interfaces.
+The inspection reports missing class (incl. interfaces and traits) members (properties and methods) access modifiers.
 
 When modifiers are missing visibility defaults to public access and breaks incapsulation principles (leading to coupling 
 application components and loosing control over object state and public APIs). Golden rule here is to make everything 

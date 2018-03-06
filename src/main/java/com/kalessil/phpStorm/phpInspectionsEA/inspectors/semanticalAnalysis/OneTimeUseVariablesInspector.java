@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
@@ -145,7 +144,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 /* regular function, check one-time use variables */
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnStatement.getArgument());
                 if (argument instanceof PhpPsiElement) {
-                    final Variable variable = this.getVariable((PhpPsiElement) argument);
+                    final Variable variable = this.getVariable(argument);
                     if (null != variable) {
                         checkOneTimeUse(returnStatement, variable);
                     }
@@ -153,14 +152,19 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             }
 
             @Override
-            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression multiassignmentExpression) {
-                final PsiElement firstChild = multiassignmentExpression.getFirstChild();
-                final IElementType nodeType = null == firstChild ? null : firstChild.getNode().getElementType();
-                if (null != nodeType && (PhpTokenTypes.kwLIST == nodeType || PhpTokenTypes.chLBRACKET == nodeType)) {
-                    final Variable variable = this.getVariable(multiassignmentExpression.getValue());
-                    final PsiElement parent = multiassignmentExpression.getParent();
-                    if (null != variable && OpenapiTypesUtil.isStatementImpl(parent)) {
-                        checkOneTimeUse((PhpPsiElement) parent, variable);
+            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
+                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
+                if (value != null) {
+                    final Variable variable = this.getVariable(value);
+                    final PsiElement parent = expression.getParent();
+                    if (variable != null && OpenapiTypesUtil.isStatementImpl(parent)) {
+                        final PsiElement first = expression.getFirstChild();
+                        final boolean isTarget =
+                                OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
+                                OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
+                        if (isTarget) {
+                            this.checkOneTimeUse((PhpPsiElement) parent, variable);
+                        }
                     }
                 }
             }
@@ -168,39 +172,34 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             /* TODO: once got bored, add foreach source pattern here =) I'm naive but nevertheless ^_^ */
 
             @Override
-            public void visitPhpThrow(@NotNull PhpThrow throwStatement) {
-                final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(throwStatement.getArgument());
+            public void visitPhpThrow(@NotNull PhpThrow expression) {
+                final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                 if (argument instanceof PhpPsiElement) {
                     final Variable variable = this.getVariable((PhpPsiElement) argument);
-                    if (null != variable) {
-                        checkOneTimeUse(throwStatement, variable);
+                    if (variable != null) {
+                        this.checkOneTimeUse(expression, variable);
                     }
                 }
             }
 
             @Nullable
-            private Variable getVariable(@Nullable PhpPsiElement expression) {
-                if (null == expression) {
-                    return null;
-                }
-
+            private Variable getVariable(@NotNull PsiElement expression) {
+                Variable result = null;
                 if (expression instanceof Variable) {
-                    return (Variable) expression;
-                }
-
-                if (expression instanceof FieldReference) {
-                    final FieldReference propertyAccess = (FieldReference) expression;
-                    if (propertyAccess.getFirstChild() instanceof Variable) {
-                        return (Variable) propertyAccess.getFirstChild();
+                    result = (Variable) expression;
+                } else if (expression instanceof FieldReference) {
+                    final PsiElement candidate = expression.getFirstChild();
+                    if (candidate instanceof Variable) {
+                        result = (Variable) candidate;
+                    }
+                } else if (OpenapiTypesUtil.isPhpExpressionImpl(expression)) {
+                    /* instanceof passes child classes as well, what isn't correct */
+                    final PsiElement candidate = expression.getFirstChild();
+                    if (candidate != null) {
+                        result = this.getVariable(candidate);
                     }
                 }
-
-                /* instanceof passes child classes as well, what isn't correct */
-                if (OpenapiTypesUtil.isPhpExpressionImpl(expression)) {
-                    return getVariable(expression.getFirstPsiChild());
-                }
-
-                return null;
+                return result;
             }
         };
     }

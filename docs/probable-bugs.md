@@ -3,11 +3,12 @@ This document provides help on getting your code bug free.
 
 ## Phar-incompatible 'realpath()' usage
 
-The realpath() expands all symbolic links and resolves references to '/./', '/../' and extra '/' characters in 
-the input path and returns the canonical absolute pathname. But what about streams, like phar://<file-path>?
+The [realpath()](http://php.net/manual/en/function.realpath.php) function expands all symbolic links and resolves references 
+to '/./', '/../' and extra '/' characters in the input path and returns the canonical absolute pathname. But what about 
+streams, like phar://<file-path>?
 
-In case of streams the realpath [will cause unexpected behaviour](https://bugs.php.net/bug.php?id=52769) and an 
-alternative is using dirname() function instead.
+In case of streams the realpath [will cause unexpected behaviour](https://bugs.php.net/bug.php?id=52769). An 
+alternative is to use the [dirname()](http://php.net/manual/en/function.dirname.php) function instead.
 
 ```php
     /* examples affected by stream context */
@@ -22,7 +23,7 @@ alternative is using dirname() function instead.
 ## Addition operator applied to arrays
 
 There are several ways of merging arrays in PHP: array_merge(), array_replace() and addition operators.
-Each of them has own strategy of dealing with overriding values, specifically addition operators applicable in several 
+Each of them has its own strategy of dealing with overriding values, specifically addition operators applicable in several 
 scenarios.
 
 ```php
@@ -57,37 +58,37 @@ scenarios.
 
 ## Forgotten debug statements
 
-> Note: you can register own debug methods in the inspections' settings (e.g. \My\Class::debug_method or \debug_function).
+> Note: you can register your own debug methods in the inspections' settings (e.g. \My\Class::debug_method or \debug_function).
 
-Forgotten debug statements can disclosure sensitive information, make serious impact to performance or break 
-application in production environment (e.g. headers already sent warning).
+Forgotten debug statements can disclose sensitive information, make serious impact to performance, or break 
+applications in their production environment (e.g. headers already sent warning).
 
 Due to this we recommended to check carefully all reported cases. If you discovered a false-positive or a new case, 
-don't hesitate [sharing with us](https://github.com/kalessil/phpinspectionsea/issues).
+don't hesitate to [share it with us](https://github.com/kalessil/phpinspectionsea/issues).
 
 ## Proper preg_quote() usage
 
-The most common used separators in PHP are `/@#~`, which are not escaped by default (by default escaped `.\+*?[^]$(){}=!<>|:-`).
-Though Php Inspections (EA Extended) reports all cases when preg_quote() call doesn't have the second argument.
+The most commonly used separators in PHP are `/@#~`, which are not escaped by default (escaped by default: `.\+*?[^]$(){}=!<>|:-`).
+Though Php Inspections (EA Extended) does report all cases where the preg_quote() call doesn't have the second argument.
 
-Ignoring this PHP specific can lead to introducing bugs and even [vulnerabilities](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5734).
+Ignoring this PHP detail can lead to the introduction of bugs and even [vulnerabilities](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5734).
 
 ## 'compact()' arguments existence
 
-PHP is not warning if a 'compact()' was called referencing non-existent variable. A typo or refactoring might cost 
-long debugging in this case.
+PHP does not generate a warning if 'compact()' was called with a non-existent variable. A typo or refactoring might cost 
+a long debugging session in this case.
 
 ## Class autoloading correctness
 
-> Note: the inspection is based on PSR-0 and psr-4 autoloading standards
+> Note: this inspection is based on PSR-0 and psr-4 autoloading standards.
 
-From time to time we name class and the file containing it with typos, or probably renaming class without renaming its' 
-file and breaking class autoloading. The inspection will spot class and file names mismatch before the issue popped up.
+From time to time we introduce typos in a class name or the file containing, probably when renaming a class without renaming its 
+file. This breaks class autoloading. The inspection will spot class and file name mismatches before the issue pops up.
 
-PHP´s magic [`::class`-constant](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class) will not canonical the casing of your imports.
+PHP´s magic [`::class`-constant](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class) will not 
+canonical the casing of your imports.
 
-This can lead to hard to debug errors when you a using a case sensitive service  `PSR-11`-locator like `Zend\ServiceManager`.
-
+This can lead to hard to debug errors when you a using a case sensitive `PSR-11`-locator service like `Zend\ServiceManager`.
 
 ```php
 namespace FirstNamespace;
@@ -108,17 +109,19 @@ $container->get(TestClass::class);
 Discussion on Twitter: https://twitter.com/benjamincremer/status/872695045757038593  
 Demo: https://3v4l.org/9uBKU
 
-Please note that this is not a bug in PHP but expected behaviour: "The class name resolution using ::class is a compile time transformation. That means at the time the class name string is created no autoloading has happened yet. As a consequence, class names are expanded even if the class does not exist. No error is issued in that case.". See: [php.net](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class)
+Please note that this is not a bug in PHP but expected behaviour: "The class name resolution using ::class is a compile 
+time transformation. That means at the time the class name string is created, no autoloading has happened yet. As a consequence, 
+class names are expanded even if the class does not exist. No error is issued in that case.". See: [php.net](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class)
 
 ## Null pointer exceptions prevention
 
-The inspection name is clearly taken from Java, we also actively enhancing the inspection towards similar checks in Java.
+This inspection name is clearly taken from Java. We're also actively enhancing this inspection towards similar checks in Java.
 
 Php specific is taken into account, but some limitations are exists: 
-- is_object(), is_null() and similar is_*() functions calls are not analyzed, instead we recommend to rely on null 
-  identity and instanceof operators;
-- the inspection doesn't rely on PhpDoc - types must be implicitly declared (parameters and return);
-- the inspection targets only methods for performance reasons;
+- `is_object()`, `is_null()` and similar `is_*()` function calls are not analyzed, instead we recommend to rely on null
+  identity and `instanceof` operators;
+- this inspection doesn't rely on PhpDoc - types must be implicitly declared (parameters and return);
+- this inspection targets only methods for performance reasons;
 
 Following cases currently supported (we'll keep extending the list):
 - method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`;
@@ -127,29 +130,29 @@ Following cases currently supported (we'll keep extending the list):
 
 ## 'mkdir(...)' race condition
 
-This issue is difficult to reproduce, as any of concurrency-related issues.
-It appears when several processes are attempting to create a directory which is not
-yet existing, but between is_dir() and mkdir() calls another process already
-managed to create a directory.
+This issue is difficult to reproduce, as any concurrency-related issues are.
+It appears when several processes are attempting to create a directory which does not
+yet exist. Specifically, when one process is between `is_dir()` and `mkdir()` after
+another process has already managed to create the directory.
 
-Apart of different code constructs which vulnerable to this issue type, the safe 
+Apart from different code constructs which are vulnerable to this type of issue, the safe 
 variant is following: `!is_dir($folder) && !mkdir($folder) && !is_dir($folder)`.
 
 ## 'file_put_contents(...)' race condition
 
-> Note: the inspection is part of Php Inspections (EA Ultimate)
+> Note: this inspection is part of Php Inspections (EA Ultimate).
 
-> Note: in order to report all cases, please check the inspection settings
+> Note: in order to report all cases, please check the inspection settings.
 
-> Note: in Vagrant environment using LOCK_EX might cause warnings: `file_put_contents(): Exclusive locks are not supported for this stream`
+> Note: in Vagrant environments, using LOCK_EX might cause warnings: `file_put_contents(): Exclusive locks are not supported for this stream`
 > , which can be solved [in multiple ways](https://github.com/thephpleague/flysystem/issues/445#issuecomment-191160239)
 
-This issue is similar to `'mkdir(...)' race condition` case, but by default we are reporting only cases when php-content 
-is written into a file - in this case concurrency issues can result into compromised or corrupted application state.
+This issue is similar to the `'mkdir(...)' race condition` case, but by default we are reporting only cases when php-content 
+is written into a file - in this case concurrency issues can result in compromised or corrupted application state.
 
 ## Continue misbehaviour in switch
 
-Analyzes continue usage in switch-case context. Due to PHP's 
+This inspection analyzes continue usage in switch-case context. Due to PHP's 
 [unusual continue syntax](https://secure.php.net/manual/en/control-structures.continue.php), new users who are used to 
 other languages might be confused by its behaviour. 
 
@@ -164,7 +167,7 @@ foreach ([] as $value) {
 } 
 ```
 
-This is PHP-specific and mentioned in [documentation](https://secure.php.net/manual/en/control-structures.continue.php):
+This is PHP-specific and mentioned in the [documentation](https://secure.php.net/manual/en/control-structures.continue.php):
 
 > In PHP the switch statement is considered a looping structure for the purposes of continue. continue behaves like break 
 > (when no arguments are passed). If a switch is inside a loop, continue 2 will continue with the next iteration of the outer loop.

@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Optional;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -67,30 +68,12 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
                         /* check if variable as a function/use(...) parameter by reference */
                         final Function function = ExpressionSemanticUtil.getScope(construct);
-                        if (null != function) {
-                            for (Parameter param: function.getParameters()) {
-                                if (param.isPassByRef() && param.getName().equals(variableName)) {
-                                    return;
-                                }
-                            }
-
-                            final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables(function);
-                            if (null != useList) {
-                                for (Variable param: useList) {
-                                    if (!param.getName().equals(variableName)) {
-                                        continue;
-                                    }
-
-                                    /* detect parameters by reference in use clause */
-                                    PsiElement ampersandCandidate = param.getPrevSibling();
-                                    if (ampersandCandidate instanceof PsiWhiteSpace) {
-                                        ampersandCandidate = ampersandCandidate.getPrevSibling();
-                                    }
-                                    if (null != ampersandCandidate && ampersandCandidate.getText().equals("&")) {
-                                        return;
-                                    }
-                                }
-                                useList.clear();
+                        if (function != null) {
+                            final boolean isReference =
+                                    this.isArgumentReference(argument, function) ||
+                                    this.isBoundReference(argument, function);
+                            if (isReference) {
+                                return;
                             }
                         }
 
@@ -198,6 +181,35 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     if (candidate != null) {
                         result = this.getVariable(candidate);
                     }
+                }
+                return result;
+            }
+
+            private boolean isArgumentReference(@NotNull Variable variable, @NotNull Function function) {
+                boolean result            = false;
+                final String variableName = variable.getName();
+                for (final Parameter parameter : function.getParameters()) {
+                    if (parameter.getName().equals(variableName) && parameter.isPassByRef()) {
+                        result = true;
+                        break;
+                    }
+                }
+                return result;
+
+            }
+
+            private boolean isBoundReference(@NotNull Variable variable, @NotNull Function function) {
+                boolean result            = false;
+                final List<Variable> used = ExpressionSemanticUtil.getUseListVariables(function);
+                if (used != null) {
+                    final String variableName      = variable.getName();
+                    final Optional<Variable> match = used.stream().filter(v -> v.getName().equals(variableName)).findFirst();
+                    if (match.isPresent()) {
+                        final PsiElement previous  = match.get().getPrevSibling();
+                        final PsiElement candidate = previous instanceof PsiWhiteSpace ? previous.getPrevSibling() : previous;
+                        result                     = OpenapiTypesUtil.is(candidate, PhpTokenTypes.opBIT_AND);
+                    }
+                    used.clear();
                 }
                 return result;
             }

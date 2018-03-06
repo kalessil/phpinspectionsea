@@ -104,7 +104,7 @@ use FirstNamespace\Testclass; // wrong case in last segment
 $instance = new TestClass(); // perfectly valid since php itself is not case sensitive for classnames
 
 $container->get(TestClass::class); 
-// TestClass::class expands to FirstNamespace\Testclass which is not registered in the $conainer
+// TestClass::class expands to FirstNamespace\Testclass which is not registered in the $container
 ```
 Discussion on Twitter: https://twitter.com/benjamincremer/status/872695045757038593  
 Demo: https://3v4l.org/9uBKU

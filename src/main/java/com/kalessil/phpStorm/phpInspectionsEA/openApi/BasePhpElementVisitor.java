@@ -55,6 +55,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {}
     @Override public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression)   {}
     @Override public void visitPhpParenthesizedExpression(ParenthesizedExpression expression)     {}
+    @Override public void visitPhpMultiassignmentExpression(MultiassignmentExpression expression) {}
 
     @Override public void visitPhpIf(If ifStatement)             {}
     @Override public void visitPhpElseIf(ElseIf elseIfStatement) {}

@@ -139,6 +139,7 @@ Inspections Lists (Language level migration)
 | Language level migration | UnsupportedStringOffsetOperationsInspection     | Unsupported string offset operations                | n/a | yes | n/a  | no  |
 | Language level migration | InstanceofCanBeUsedInspection                   | Instanceof can be used                              | yes | yes | yes  | no  |
 | Language level migration | DynamicCallsToScopeIntrospectionInspection      | Deprecated dynamic calls to scope introspection     | n/a | yes | n/a  | no  |
+| Language level migration | UnsupportedEmptyListAssignmentsInspection       | Unsupported empty list assignments                  | n/a | yes | n/a  | no  |
 
 Inspections Lists (Architecture)
 ---

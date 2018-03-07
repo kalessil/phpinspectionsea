@@ -10,10 +10,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import org.fest.util.Lists;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -40,14 +39,14 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpIf(If ifStatement) {
+            public void visitPhpIf(@NotNull If expression) {
                 /* context expectations: not if-else-if-* constructs */
-                if (ifStatement.getParent() instanceof Else) {
+                if (expression.getParent() instanceof Else) {
                     return;
                 }
                 /* general construct expectations: body wrapped into {} and has alternative branches */
-                final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(ifStatement);
-                if (null == ifBody || !ExpressionSemanticUtil.hasAlternativeBranches(ifStatement)) {
+                final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(expression);
+                if (ifBody == null || !ExpressionSemanticUtil.hasAlternativeBranches(expression)) {
                     return;
                 }
                 if (!OpenapiTypesUtil.is(ifBody.getFirstChild(), PhpTokenTypes.chLBRACE)) {
@@ -55,28 +54,27 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
                 }
 
                 /* collect alternative branches for reporting and QF binding */
-                final List<PhpPsiElement> alternativeBranches = new ArrayList<>();
-                final Else elseBranch                         = ifStatement.getElseBranch();
-                alternativeBranches.addAll(Arrays.asList(ifStatement.getElseIfBranches()));
-                if (null != elseBranch) {
+                final List<PhpPsiElement> alternativeBranches = Lists.newArrayList(expression.getElseIfBranches());
+                final Else elseBranch                         = expression.getElseBranch();
+                if (elseBranch != null) {
                     alternativeBranches.add(elseBranch);
                 }
 
                 /* alternative branch expectations */
                 final PhpPsiElement alternative      = alternativeBranches.get(0);
                 final GroupStatement alternativeBody = ExpressionSemanticUtil.getGroupStatement(alternative);
-                if (alternative instanceof ElseIf && null == alternativeBody) {
+                if (alternative instanceof ElseIf && alternativeBody == null) {
                     alternativeBranches.clear();
                     return;
                 }
-                if (alternative instanceof Else && null == alternativeBody && !(alternative.getFirstPsiChild() instanceof If)) {
+                if (alternative instanceof Else && alternativeBody == null && !(alternative.getFirstPsiChild() instanceof If)) {
                     alternativeBranches.clear();
                     return;
                 }
 
                 /* analyze last statement in if and report if matched inspection pattern */
                 final PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(ifBody);
-                if (null != lastStatement) {
+                if (lastStatement != null) {
                     final boolean isExitStatement = lastStatement.getFirstChild() instanceof PhpExit;
                     final boolean isReturnPoint   = isExitStatement ||
                                lastStatement instanceof PhpReturn   || lastStatement instanceof PhpThrow ||

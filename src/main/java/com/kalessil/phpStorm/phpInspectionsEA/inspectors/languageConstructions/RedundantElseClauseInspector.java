@@ -27,7 +27,8 @@ import java.util.List;
  */
 
 public class RedundantElseClauseInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%kw%' is not needed here (because of the last statement in if-branch).";
+    private static final String messageElse   = "Child instructions can be extracted here (clearer intention, lower complexity numbers).";
+    private static final String messageElseif = "Can be converted into if-branch (clearer intention, lower complexity numbers).";
 
     @NotNull
     public String getShortName() {
@@ -82,9 +83,11 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
                                lastStatement instanceof PhpContinue || lastStatement instanceof PhpBreak;
 
                     if (isReturnPoint) {
-                        final PsiElement target = alternative.getFirstChild();
-                        final String message    = messagePattern.replace("%kw%", target.getText());
-                        holder.registerProblem(target, message, new UnnecessaryElseFixer());
+                        holder.registerProblem(
+                                alternative.getFirstChild(),
+                                alternative instanceof Else ? messageElse : messageElseif,
+                                new UnnecessaryElseFixer()
+                        );
                     }
                 }
                 alternativeBranches.clear();

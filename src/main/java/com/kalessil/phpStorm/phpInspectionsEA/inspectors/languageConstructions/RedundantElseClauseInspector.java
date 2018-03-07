@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
                 }
 
                 /* collect alternative branches for reporting and QF binding */
-                final List<PhpPsiElement> alternativeBranches = Arrays.asList(expression.getElseIfBranches());
+                final List<PhpPsiElement> alternativeBranches = new ArrayList<>(Arrays.asList(expression.getElseIfBranches()));
                 final Else elseBranch                         = expression.getElseBranch();
                 if (elseBranch != null) {
                     alternativeBranches.add(elseBranch);

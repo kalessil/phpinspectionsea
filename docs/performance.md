@@ -64,3 +64,23 @@ When such variable is a reference, we can accidentally modify the original colle
 
 It'll be enough to place `unset($value)` after the foreach-loops to prevent the issue.
 
+## Non-optimized arrays mapping
+
+The inspection analyzes assignment statements and checks if both lef and right sides have repetitive functions and 
+methods calls, which can be reduced by introducing a local variable.
+
+```php
+    /* Case 1: repetitive function calls */
+    $array[trim($value)] = trim($value);
+    
+    /* instead we can use following approach */
+    $normalizedValue = trim($value);
+    $array[$normalizedValue] = trim($normalizedValue);
+    
+    /* Case 2: repetitive method calls */
+    $array[$normalizer->normalize($value)] = $normalizer->normalize($value);
+    
+    /* instead we can use following approach */
+    $normalizedValue = $normalizer->normalize($value);
+    $array[$normalizedValue] = trim($normalizedValue);
+```

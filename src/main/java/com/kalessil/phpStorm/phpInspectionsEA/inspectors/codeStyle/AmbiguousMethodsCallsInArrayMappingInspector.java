@@ -13,6 +13,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
     private static final String message = "Duplicated method calls should be moved to a local variable.";
 
@@ -25,53 +34,45 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpForeach(ForeachStatement foreach) {
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(foreach);
-                if (null != body) {
-                    /* do net search with utils, as we can have nested loops */
-                    for (PsiElement expression : body.getStatements()) {
-                        final PsiElement assignCandidate = expression.getFirstChild();
-                        if (assignCandidate instanceof AssignmentExpression) {
-                            this.isStatementMatchesInspection((AssignmentExpression) assignCandidate);
+                if (body != null) {
+                    for (final PsiElement instruction : body.getStatements()) {
+                        final PsiElement candidate = instruction.getFirstChild();
+                        if (candidate instanceof AssignmentExpression) {
+                            final AssignmentExpression assignment = (AssignmentExpression) candidate;
+                            final PsiElement value                = assignment.getValue();
+                            final PsiElement container            = assignment.getVariable();
+                            if (value != null && container instanceof ArrayAccessExpression) {
+                                this.analyze((ArrayAccessExpression) container, value);
+                            }
                         }
                     }
                 }
             }
 
-            private void isStatementMatchesInspection(@NotNull AssignmentExpression assignment) {
-                /* verify basic structure */
-                final PsiElement value    = assignment.getValue();
-                final PsiElement variable = assignment.getVariable();
-                if (null == value || !(variable instanceof ArrayAccessExpression)) {
-                    return;
-                }
-
-                /* verify if both parts contains calls */
-                final Collection<PsiElement> varCalls = PsiTreeUtil.findChildrenOfType(variable, FunctionReference.class);
-                if (0 == varCalls.size()) {
-                    return;
-                }
-                final Collection<PsiElement> valCalls = PsiTreeUtil.findChildrenOfType(value, FunctionReference.class);
-                if (0 == valCalls.size()) {
+            private void analyze(@NotNull ArrayAccessExpression container, @NotNull PsiElement value) {
+                final Collection<PsiElement> leftCalls = PsiTreeUtil.findChildrenOfType(container, FunctionReference.class);
+                if (!leftCalls.isEmpty()) {
+                    final Collection<PsiElement> rightCalls = PsiTreeUtil.findChildrenOfType(value, FunctionReference.class);
                     if (value instanceof FunctionReference) {
-                        valCalls.add(value);
-                    } else {
-                        return;
+                        rightCalls.add(value);
                     }
-                }
-
-                /* iterate over calls in the value, match them with calls in the variable */
-                for (final PsiElement inValue : valCalls) {
-                    for (final PsiElement inVariable : varCalls) {
-                        if (OpeanapiEquivalenceUtil.areEqual(inValue, inVariable)) {
-                            /* report an issue and continue with outer loop */
-                            holder.registerProblem(inValue, message);
-                            break;
+                    if (!rightCalls.isEmpty()) {
+                        iterate:
+                        for (final PsiElement rightOccurrence : rightCalls) {
+                            for (final PsiElement leftOccurrence : leftCalls) {
+                                if (OpeanapiEquivalenceUtil.areEqual(rightOccurrence, leftOccurrence)) {
+                                    holder.registerProblem(rightOccurrence, message);
+                                    break iterate;
+                                }
+                            }
                         }
+                        rightCalls.clear();
                     }
+                    leftCalls.clear();
                 }
-                valCalls.clear();
-                varCalls.clear();
             }
         };
     }

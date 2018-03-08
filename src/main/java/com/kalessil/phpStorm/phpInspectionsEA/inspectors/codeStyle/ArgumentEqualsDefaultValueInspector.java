@@ -143,19 +143,17 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         }
 
         @Override
-        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             PsiElement dropFrom     = this.dropFrom.getElement();
             final PsiElement dropTo = this.dropTo.getElement();
             if (dropFrom != null && dropTo != null && !project.isDisposed()) {
-                PsiElement   previous = dropFrom.getPrevSibling();
-                IElementType prevType = previous == null ? null : previous.getNode().getElementType();
+                PsiElement previous = dropFrom.getPrevSibling();
                 while (
-                    (prevType == PhpTokenTypes.opCOMMA && previous != null) ||
-                    previous instanceof PsiWhiteSpace || previous instanceof PsiComment
+                    previous instanceof PsiWhiteSpace || previous instanceof PsiComment ||
+                    OpenapiTypesUtil.is(previous, PhpTokenTypes.opCOMMA)
                 ) {
                     dropFrom = previous;
                     previous = previous.getPrevSibling();
-                    prevType = previous == null ? null : previous.getNode().getElementType();
                 }
                 dropFrom.getParent().deleteChildRange(dropFrom, dropTo);
             }

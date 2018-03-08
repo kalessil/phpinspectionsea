@@ -115,7 +115,7 @@ class names are expanded even if the class does not exist. No error is issued in
 
 ## Null pointer exceptions prevention
 
-> Note: the inspection is further developed in [Php Inspections (EA Extended)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-)
+> Note: the inspection is further developed in [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-)
 > where it covers more cases that described here.
 
 This inspection name is clearly taken from Java. We're also actively enhancing this inspection towards similar checks in Java.

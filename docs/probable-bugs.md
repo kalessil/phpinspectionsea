@@ -115,6 +115,9 @@ class names are expanded even if the class does not exist. No error is issued in
 
 ## Null pointer exceptions prevention
 
+> Note: the inspection is further developed in [Php Inspections (EA Extended)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-)
+> where it covers more cases that described here.
+
 This inspection name is clearly taken from Java. We're also actively enhancing this inspection towards similar checks in Java.
 
 Php specific is taken into account, but some limitations are exists: 
@@ -126,7 +129,6 @@ Php specific is taken into account, but some limitations are exists:
 Following cases currently supported (we'll keep extending the list):
 - method parameters (nullable objects), e.g. `public function method(?\stdClass $first, \stdClass $second = null) { ... }`;
 - method local variables initialized with potentially nullable values;
-- to be continued (when funding is found);
 
 ## 'mkdir(...)' race condition
 

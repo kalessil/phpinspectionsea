@@ -1,6 +1,6 @@
 <?php
 
-function AIFTestCases() {
+function cases_holder() {
     $source = array();
 
     foreach ($source as <error descr="Provokes a PHP Fatal error (key element cannot be a reference).">&</error> $id => $element) {

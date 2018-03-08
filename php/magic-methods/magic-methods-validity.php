@@ -5,7 +5,6 @@
         static function __destruct(&$arg1, &$arg2, &$arg3);
     }
 
-    /** @noinspection SingletonFactoryPatternViolationInspection */
     class classWithMagicMethods implements classContract {
         /** @noinspection PhpHierarchyChecksInspection */
         /* name (1) and return (2) are highlighted */

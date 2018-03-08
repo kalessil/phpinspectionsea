@@ -23,8 +23,7 @@ Let's start with an example demonstrating the case:
 ```php
     $options = [];
     foreach ($configurationSources as $source) {
-        /* more logic here */
-
+        /* somethig happens here */
         $options = array_merge($options, $source->getOptions());
     }
 ```
@@ -34,8 +33,7 @@ In order to reduce execution time we can modify the code and perform the merge o
     /* the inner empty array covers cases when no loops were made */
     $options = [[]];
     foreach ($configurationSources as $source) {
-        /* more logic here */
-
+        /* somethig happens here */
         $options[] = $source->getOptions(); // <- yes, we'll use a little bit more memory
     }
     /* PHP below 5.6 */
@@ -43,4 +41,46 @@ In order to reduce execution time we can modify the code and perform the merge o
 
     /* PHP 5.6+: more friendly to refactoring as less magic involved */
     $options = array_merge(...$options);
+```
+
+## Foreach variables reference usage correctness
+
+> Note: this inspection has settings.
+
+The inspection analyzes foreach statements for using variables by reference. It promotes using values by reference if 
+corresponding settings were applied and checks for possible side-effects. Main side-effect is that foreach variables 
+are remaining after loop finishes.
+
+When such variable is a reference, we can accidentally modify the original collection, like here:
+```php
+    $array = ['...'];
+    foreach ($array as &$value) {
+        /* somethig happens here */
+    }
+    
+    /* somethig happens here as well */
+    $value = null; /* $array now is [null] */
+```
+
+It'll be enough to place `unset($value)` after the foreach-loops to prevent the issue.
+
+## Non-optimized arrays mapping
+
+The inspection analyzes assignment statements and checks if the both left and right sides have repetitive functions and 
+methods calls, which can be reduced by introducing a local variable.
+
+```php
+    /* Case 1: repetitive function calls */
+    $array[trim($value)] = trim($value);
+    
+    /* instead we can use following approach */
+    $normalizedValue = trim($value);
+    $array[$normalizedValue] = $normalizedValue;
+    
+    /* Case 2: repetitive method calls */
+    $array[$normalizer->normalize($value)] = $normalizer->normalize($value);
+    
+    /* instead we can use following approach */
+    $normalizedValue = $normalizer->normalize($value);
+    $array[$normalizedValue] = $normalizedValue;
 ```

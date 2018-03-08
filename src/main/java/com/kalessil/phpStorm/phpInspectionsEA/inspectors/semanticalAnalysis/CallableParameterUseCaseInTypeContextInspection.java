@@ -79,6 +79,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             paramTypes.add(Types.strArray);
                             paramTypes.add(Types.strString);
                             paramTypes.add("\\Closure");
+                        } else if (typeNormalized.equals(Types.strIterable)) {
+                            paramTypes.add(Types.strArray);
+                            paramTypes.add("\\Traversable");
                         }
                         paramTypes.add(typeNormalized);
                     }

@@ -66,7 +66,7 @@ It'll be enough to place `unset($value)` after the foreach-loops to prevent the 
 
 ## Non-optimized arrays mapping
 
-The inspection analyzes assignment statements and checks if both lef and right sides have repetitive functions and 
+The inspection analyzes assignment statements and checks if the both left and right sides have repetitive functions and 
 methods calls, which can be reduced by introducing a local variable.
 
 ```php
@@ -75,12 +75,12 @@ methods calls, which can be reduced by introducing a local variable.
     
     /* instead we can use following approach */
     $normalizedValue = trim($value);
-    $array[$normalizedValue] = trim($normalizedValue);
+    $array[$normalizedValue] = $normalizedValue;
     
     /* Case 2: repetitive method calls */
     $array[$normalizer->normalize($value)] = $normalizer->normalize($value);
     
     /* instead we can use following approach */
     $normalizedValue = $normalizer->normalize($value);
-    $array[$normalizedValue] = trim($normalizedValue);
+    $array[$normalizedValue] = $normalizedValue;
 ```

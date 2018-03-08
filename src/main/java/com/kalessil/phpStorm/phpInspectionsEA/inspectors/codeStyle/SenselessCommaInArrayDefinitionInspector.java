@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -36,12 +37,10 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
-                PsiElement subject = expression.getLastChild().getPrevSibling();
-                if (subject instanceof PsiWhiteSpace) {
-                    subject = subject.getPrevSibling();
-                }
-                if (subject != null && subject.getNode().getElementType() == PhpTokenTypes.opCOMMA) {
-                    holder.registerProblem(subject, message, new TheLocalFix());
+                final PsiElement last      = expression.getLastChild().getPrevSibling();
+                final PsiElement candidate = last instanceof PsiWhiteSpace ? last.getPrevSibling() : last;
+                if (OpenapiTypesUtil.is(candidate, PhpTokenTypes.opCOMMA)) {
+                    holder.registerProblem(candidate, message, new TheLocalFix());
                 }
             }
         };
@@ -61,8 +60,11 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
         }
 
         @Override
-        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-            descriptor.getPsiElement().delete();
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null && !project.isDisposed()) {
+                target.delete();
+            }
         }
     }
 }

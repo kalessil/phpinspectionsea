@@ -19,6 +19,15 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class AlterInForeachInspector extends BasePhpInspection {
     // Inspection options.
     public boolean SUGGEST_USING_VALUE_BY_REF = false;
@@ -37,8 +46,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-
-            public void visitPhpForeach(ForeachStatement foreach) {
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 /* lookup for reference preceding value */
                 final Variable objForeachValue = foreach.getValue();
                 if (null != objForeachValue) {
@@ -151,7 +160,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
                 }
             }
 
-            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+            @Override
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 if (!SUGGEST_USING_VALUE_BY_REF /*|| ... PHP7 ...*/) {
                     return;
                 }

@@ -38,14 +38,6 @@ Since none of these consequences are positive, the following workflow might be h
 * Deprecate methods by adding `@deprecated` to the method's annotation
 * Run PHPStorm inspection tool and analyze where the deprecated method is used and plan to refactor your code
 
-## Class violates singleton/factory pattern definition
-
-> Note: The singleton pattern is recognized by searching for the method `getInstance` in the class. In case of false-positives consider giving the method an expected name (`create`, `getEntityInstance`, `getBuiltEntity`, etc.)
-
-The inspection searches for typical patterns violations:
-- Factory: the constructor is protected, but create*/from* methods are not defined
-- Singleton: the `getInstance` method exists and is public, but the constructor is public
-
 ## Multiple return statements usage
 
 > Note: the inspection is deactivated by default

@@ -5,9 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.AlterInForeachI
 
 final public class AlterInForeachInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        AlterInForeachInspector inspector    = new AlterInForeachInspector();
-        inspector.SUGGEST_USING_VALUE_BY_REF = true;
-
+        final AlterInForeachInspector inspector = new AlterInForeachInspector();
+        inspector.SUGGEST_USING_VALUE_BY_REF    = true;
         myFixture.configureByFile("fixtures/foreach/alter-in-foreach.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
@@ -15,7 +14,6 @@ final public class AlterInForeachInspectorTest extends PhpCodeInsightFixtureTest
 
     public void testFalsePositives() {
         myFixture.enableInspections(new AlterInForeachInspector());
-
         myFixture.configureByFile("fixtures/foreach/alter-in-foreach-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }

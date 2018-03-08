@@ -116,3 +116,8 @@
     function assigning_nullable_objects(stdClass $object) {
         $object = returns_nullable_object();
     }
+
+    /* false-positive: iterable */
+    function iterable_support(iterable $iterable = null) {
+        $iterable = $iterable ?? [];
+    }

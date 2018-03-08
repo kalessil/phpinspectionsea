@@ -23,8 +23,7 @@ Let's start with an example demonstrating the case:
 ```php
     $options = [];
     foreach ($configurationSources as $source) {
-        /* more logic here */
-
+        /* somethig happens here */
         $options = array_merge($options, $source->getOptions());
     }
 ```
@@ -34,8 +33,7 @@ In order to reduce execution time we can modify the code and perform the merge o
     /* the inner empty array covers cases when no loops were made */
     $options = [[]];
     foreach ($configurationSources as $source) {
-        /* more logic here */
-
+        /* somethig happens here */
         $options[] = $source->getOptions(); // <- yes, we'll use a little bit more memory
     }
     /* PHP below 5.6 */

@@ -44,3 +44,25 @@ In order to reduce execution time we can modify the code and perform the merge o
     /* PHP 5.6+: more friendly to refactoring as less magic involved */
     $options = array_merge(...$options);
 ```
+
+## Foreach variables reference usage correctness
+
+> Note: this inspection has settings.
+
+The inspection analyzes foreach statements for using variables by reference. It promotes using values by reference if 
+corresponding settings were applied and checks for possible side-effects. Main side-effect is that foreach variables 
+are remaining after loop finishes.
+
+When such variable is a reference, we can accidentally modify the original collection, like here:
+```php
+    $array = ['...'];
+    foreach ($array as &$value) {
+        /* somethig happens here */
+    }
+    
+    /* somethig happens here as well */
+    $value = null; /* $array now is [null] */
+```
+
+It'll be enough to place `unset($value)` after the foreach-loops to prevent the issue.
+

@@ -84,7 +84,7 @@ Bug-fixes and new inspections:<br/>
         groupName="Performance"                                     enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CaseInsensitiveStringFunctionsMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="AlterInForeachInspection"                      displayName="Slow alter in foreach"
+        shortName="AlterInForeachInspection"                      displayName="Foreach variables reference usage correctness"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.AlterInForeachInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
@@ -814,6 +814,11 @@ Bug-fixes and new inspections:<br/>
         shortName="DynamicCallsToScopeIntrospectionInspection"    displayName="Deprecated dynamic calls to scope introspection"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.DynamicCallsToScopeIntrospectionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnsupportedEmptyListAssignmentsInspection"     displayName="Unsupported empty list assignments"
+        groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnsupportedEmptyListAssignmentsInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="BadExceptionsProcessingInspection"               displayName="Badly organized exception handling"

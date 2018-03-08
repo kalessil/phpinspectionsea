@@ -372,6 +372,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                         final String normalizedType = Types.getType(type);
                         if (normalizedType.equals(Types.strCallable)) {
                             result.add(PhpType.ARRAY).add(PhpType.STRING).add(PhpType._CLOSURE);
+                        } else if (normalizedType.equals(Types.strIterable)) {
+                            result.add(PhpType.ARRAY).add("\\Traversable");
                         } else if (normalizedType.equals(Types.strMixed) || normalizedType.equals(Types.strObject)) {
                             result = new PhpType();
                             break;

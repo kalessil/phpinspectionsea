@@ -23,3 +23,12 @@
     foreach ([] as $key => $value) {
         $object->method($key)->method();
     }
+
+    $details = [
+        'name'  => <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName(),
+        'email' => $source->getUser()->getEmail()
+    ];
+    $details = array(
+        <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName(),
+        $source->getUser()->getEmail()
+    );

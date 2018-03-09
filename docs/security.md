@@ -186,4 +186,4 @@ The inspection is inspired by the following projects (which you can also use wit
 - https://github.com/gwillem/magento-malware-scanner
 - https://github.com/elcodigok/wphardening
 
-The inspection checks limited set of built-in PHP functions used by simple malware scripts and reports suspicious cases.
+The inspection checks limited set of built-in PHP functions used by malware scripts and reports suspicious cases.

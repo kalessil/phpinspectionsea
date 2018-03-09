@@ -120,7 +120,15 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     @Override
     public void readSettings(@NotNull Element node) throws InvalidDataException {
         super.readSettings(node);
-        optionConfiguration.addAll(optionConfigurationDefaults());
+
+        /* re-introduce default packages additionally to user-defined once */
+        final Set<String> entries = new HashSet<>(optionConfiguration);
+        entries.addAll(optionConfigurationDefaults());
+
+        /* re-fill configuration with unique entries */
+        optionConfiguration.clear();
+        optionConfiguration.addAll(entries);
+        Collections.sort(optionConfiguration);
     }
 
     private boolean isLibrary(@NotNull JsonObject manifest) {

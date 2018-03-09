@@ -36,7 +36,6 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     public boolean REPORT_MISSING_ROAVE_ADVISORIES = true;
     public boolean REPORT_MISPLACED_DEPENDENCIES   = true;
     public final List<String> optionConfiguration  = new ArrayList<>();
-    public boolean optionConfigurationMigrated;
 
     public static Collection<String> optionConfigurationDefaults() {
         final Collection<String> developmentPackages = new TreeSet<>();
@@ -119,13 +118,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     }
 
     @Override
-    public void readSettings(@NotNull final Element node) throws InvalidDataException {
+    public void readSettings(@NotNull Element node) throws InvalidDataException {
         super.readSettings(node);
-
-        if (!optionConfigurationMigrated || optionConfiguration.isEmpty()) {
-            optionConfiguration.addAll(optionConfigurationDefaults());
-            optionConfigurationMigrated = true;
-        }
+        optionConfiguration.addAll(optionConfigurationDefaults());
     }
 
     private boolean isLibrary(@NotNull JsonObject manifest) {
@@ -251,7 +246,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                     }
                 }
                 if (!hasAdvisories && hasThirdPartyPackages) {
-                    holder.registerProblem(productionRequire.getFirstChild(), message, new AddAdvisoriesFix(productionRequire));
+                    final JsonProperty target = developmentRequire == null ? productionRequire : developmentRequire;
+                    holder.registerProblem(target.getFirstChild(), message, new AddAdvisoriesFix(target));
                 }
             }
         }

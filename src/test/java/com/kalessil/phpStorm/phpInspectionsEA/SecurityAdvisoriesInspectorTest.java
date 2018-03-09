@@ -50,7 +50,6 @@ public final class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixture
     public void testDevDependenciesInDevPackage() {
         final SecurityAdvisoriesInspector securityAdvisoriesInspector = new SecurityAdvisoriesInspector();
         securityAdvisoriesInspector.optionConfiguration.addAll(SecurityAdvisoriesInspector.optionConfigurationDefaults());
-        securityAdvisoriesInspector.optionConfigurationMigrated = true;
 
         myFixture.enableInspections(securityAdvisoriesInspector);
         myFixture.configureByFile("fixtures/securityAdvisories/devDependenciesInDevPackage/composer.json");
@@ -60,7 +59,6 @@ public final class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixture
     public void testDevDependenciesInProdPackage() {
         final SecurityAdvisoriesInspector securityAdvisoriesInspector = new SecurityAdvisoriesInspector();
         securityAdvisoriesInspector.optionConfiguration.addAll(SecurityAdvisoriesInspector.optionConfigurationDefaults());
-        securityAdvisoriesInspector.optionConfigurationMigrated = true;
 
         myFixture.enableInspections(securityAdvisoriesInspector);
         myFixture.configureByFile("fixtures/securityAdvisories/devDependenciesInProdPackage/composer.json");

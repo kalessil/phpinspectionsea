@@ -95,6 +95,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         /* build and package management tools */
         developmentPackages.add("phing/phing");
         developmentPackages.add("composer/composer");
+        developmentPackages.add("roave/security-advisories");
 
         return developmentPackages;
     }
@@ -120,7 +121,6 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         });
     }
 
-    @SuppressWarnings ("ThrowsRuntimeException")
     @Override
     public void readSettings(@NotNull final Element node) throws InvalidDataException {
         super.readSettings(node);
@@ -129,6 +129,34 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             optionConfiguration.addAll(optionConfigurationDefaults());
             optionConfigurationMigrated = true;
         }
+    }
+
+    private boolean isLibrary(@NotNull JsonObject manifest) {
+        boolean result              = false;
+        final JsonProperty property = manifest.findProperty("type");
+        if (property != null) {
+            final JsonValue value = property.getValue();
+            result = value instanceof JsonStringLiteral && ((JsonStringLiteral) value).getValue().equals("library");
+        }
+        return result;
+    }
+
+    @Nullable
+    private String getVendorName(@NotNull JsonObject manifest) {
+        String result               = null;
+        final JsonProperty property = manifest.findProperty("name");
+        if (property != null) {
+            final JsonValue value = property.getValue();
+            if (value instanceof JsonStringLiteral) {
+                final String packageName = ((JsonStringLiteral) value).getValue();
+                if (optionConfiguration.contains(packageName)) {
+                    result = packageName;
+                } else if (packageName.indexOf('/') != -1) {
+                    result = packageName.substring(0, packageName.indexOf('/') + 1);
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -151,29 +179,15 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             return null;
         }
 
-        /* if library type is implicitly defined: if so, do not hit as we can break minimum stability requirements */
-        final JsonProperty typeProperty = config.findProperty("type");
-        if (typeProperty != null) {
-            final JsonValue type = typeProperty.getValue();
-            if (type instanceof JsonStringLiteral && "library".equals(((JsonStringLiteral) type).getValue())) {
-                return null;
-            }
+        /* skip analyzing libraries (we can break minimum stability requirements) */
+        if (this.isLibrary(config)) {
+            return null;
         }
 
-        final JsonProperty nameProperty     = config.findProperty("name");
-        String             ownPackagePrefix = null;
-
-        if (nameProperty != null) {
-            final JsonValue namePropertyValue = nameProperty.getValue();
-            if (namePropertyValue instanceof JsonStringLiteral) {
-                final String ownPackageName = ((JsonStringLiteral) namePropertyValue).getValue();
-                if (optionConfiguration.contains(ownPackageName)) {
-                    return null;
-                }
-                if (ownPackageName.indexOf('/') != -1) {
-                    ownPackagePrefix = ownPackageName.substring(0, ownPackageName.indexOf('/') + 1);
-                }
-            }
+        /* identify package owner; skip analyzing dev-packages */
+        final String ownPackagePrefix = this.getVendorName(config);
+        if (ownPackagePrefix != null && optionConfiguration.contains(ownPackagePrefix)) {
+            return null;
         }
 
         /* inspect packages, they should be by other owner */

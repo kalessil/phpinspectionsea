@@ -16,10 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -31,7 +28,7 @@ import java.util.TreeSet;
  */
 
 public class SecurityAdvisoriesInspector extends LocalInspectionTool {
-    private static final String message       = "Please add roave/security-advisories:dev-master as a firewall for vulnerable components.";
+    private static final String message       = "Please add roave/security-advisories:dev-master into require-dev as a firewall for vulnerable components.";
     private static final String useMaster     = "Please use dev-master instead.";
     private static final String useRequireDev = "Dev-packages have no security guaranties, invoke the package via require-dev instead.";
 
@@ -172,6 +169,21 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         return result;
     }
 
+    @NotNull
+    private Map<JsonProperty, JsonStringLiteral> getPackages(@NotNull JsonProperty group) {
+        Map<JsonProperty, JsonStringLiteral> result = new HashMap<>();
+        final JsonValue value                       = group.getValue();
+        if (value instanceof JsonObject) {
+            for (final JsonProperty entry : ((JsonObject) value).getPropertyList()) {
+                final JsonValue version = entry.getValue();
+                if (version instanceof JsonStringLiteral) {
+                    result.put(entry, (JsonStringLiteral) version);
+                }
+            }
+        }
+        return result;
+    }
+
     @Override
     @Nullable
     public ProblemDescriptor[] checkFile(@NotNull final PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
@@ -180,11 +192,6 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             return null;
         }
         final JsonObject manifest = (JsonObject) file.getFirstChild();
-
-        final JsonProperty require = this.getPackagesGroup(manifest, "require");
-        if (require == null) {
-            return null;
-        }
 
         /* skip analyzing libraries (we can break minimum stability requirements) */
         if (this.isLibrary(manifest)) {
@@ -197,40 +204,56 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             return null;
         }
 
-        /* inspect packages, they should be by other owner */
-        final ProblemsHolder holder                = new ProblemsHolder(manager, file, isOnTheFly);
-        boolean              hasAdvisories         = false;
-        boolean              hasThirdPartyPackages = false;
-
-        for (final JsonProperty component : ((JsonObject) require.getValue()).getPropertyList()) {
-            final JsonValue packageVersion = component.getValue();
-            if (!(packageVersion instanceof JsonStringLiteral)) {
-                continue;
-            }
-
-            /* if advisories already there, verify usage of dev-master */
-            final String packageName = component.getName().toLowerCase();
-            if ("roave/security-advisories".equals(packageName)) {
-                if (!"dev-master".equals(((JsonStringLiteral) packageVersion).getValue().toLowerCase())) {
-                    holder.registerProblem(packageVersion, useMaster);
+        final ProblemsHolder holder          = new ProblemsHolder(manager, file, isOnTheFly);
+        final JsonProperty productionRequire = this.getPackagesGroup(manifest, "require");
+        if (productionRequire != null) {
+            boolean hasThirdPartyPackages                                 = false;
+            final Map<JsonProperty, JsonStringLiteral> productionPackages = this.getPackages(productionRequire);
+            if (!productionPackages.isEmpty()) {
+                for (final Map.Entry<JsonProperty, JsonStringLiteral> pair : productionPackages.entrySet()) {
+                    final String packageName    = pair.getKey().getName().toLowerCase();
+                    final String packageVersion = pair.getValue().getValue().toLowerCase();
+                    if (!packageName.isEmpty() && !packageVersion.isEmpty()) {
+                        /* identify usage development components */
+                        if (REPORT_MISPLACED_DEPENDENCIES && optionConfiguration.contains(packageName)) {
+                            holder.registerProblem(pair.getKey().getFirstChild(), useRequireDev);
+                        }
+                        /* identify usage of third party components */
+                        if (packageName.indexOf('/') != -1) {
+                            if (ownPackagePrefix == null || !packageName.startsWith(ownPackagePrefix)) {
+                                hasThirdPartyPackages = true;
+                            }
+                        }
+                    }
                 }
-                hasAdvisories = true;
+                productionPackages.clear();
             }
 
-            if (REPORT_MISPLACED_DEPENDENCIES && optionConfiguration.contains(packageName)) {
-                holder.registerProblem(component.getFirstChild(), useRequireDev);
-            }
-
-            if (packageName.indexOf('/') != -1) {
-                if (ownPackagePrefix == null || !packageName.startsWith(ownPackagePrefix)) {
-                    hasThirdPartyPackages = true;
+            if (REPORT_MISSING_ROAVE_ADVISORIES) {
+                boolean hasAdvisories                 = false;
+                final JsonProperty developmentRequire = this.getPackagesGroup(manifest, "require-dev");
+                if (developmentRequire != null) {
+                    final Map<JsonProperty, JsonStringLiteral> developmentPackages = this.getPackages(developmentRequire);
+                    if (!developmentPackages.isEmpty()) {
+                        for (final Map.Entry<JsonProperty, JsonStringLiteral> pair : developmentPackages.entrySet()) {
+                            final String packageName    = pair.getKey().getName().toLowerCase();
+                            final String packageVersion = pair.getValue().getValue().toLowerCase();
+                            if (!packageName.isEmpty() && !packageVersion.isEmpty()) {
+                                if (packageName.equals("roave/security-advisories")) {
+                                    if (!packageVersion.equals("dev-master")) {
+                                        holder.registerProblem(pair.getValue(), useMaster);
+                                    }
+                                    hasAdvisories = true;
+                                }
+                            }
+                        }
+                        developmentPackages.clear();
+                    }
+                }
+                if (!hasAdvisories && hasThirdPartyPackages) {
+                    holder.registerProblem(productionRequire.getFirstChild(), message, new AddAdvisoriesFix(productionRequire));
                 }
             }
-        }
-
-        /* fire error message if we have any of 3rd-party packages */
-        if (REPORT_MISSING_ROAVE_ADVISORIES && hasThirdPartyPackages && !hasAdvisories) {
-            holder.registerProblem(require.getFirstChild(), message, new AddAdvisoriesFix(require));
         }
 
         return holder.getResultsArray();

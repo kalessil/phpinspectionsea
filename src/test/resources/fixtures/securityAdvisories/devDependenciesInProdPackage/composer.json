@@ -4,6 +4,6 @@
   "license":     "",
   "require":     {
     <warning descr="Dev-packages have no security guaranties, invoke the package via require-dev instead.">"phpunit/PHPUnit"</warning>: "*",
-    "roave/security-advisories": "dev-master"
+    <warning descr="Dev-packages have no security guaranties, invoke the package via require-dev instead.">"roave/security-advisories"</warning>: "dev-master"
   }
 }

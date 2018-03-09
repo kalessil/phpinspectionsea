@@ -202,8 +202,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         }
 
         /* identify package owner; skip analyzing dev-packages */
-        final String ownPackagePrefix = this.getVendorName(manifest);
-        if (ownPackagePrefix != null && optionConfiguration.contains(ownPackagePrefix)) {
+        final String vendorName = this.getVendorName(manifest);
+        if (vendorName != null && optionConfiguration.contains(vendorName)) {
             return null;
         }
 
@@ -222,10 +222,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                             holder.registerProblem(pair.getKey().getFirstChild(), useRequireDev);
                         }
                         /* identify usage of third party components */
-                        if (packageName.indexOf('/') != -1) {
-                            if (ownPackagePrefix == null || !packageName.startsWith(ownPackagePrefix)) {
-                                hasThirdPartyPackages = true;
-                            }
+                        if (!hasThirdPartyPackages && packageName.indexOf('/') != -1) {
+                            hasThirdPartyPackages = vendorName == null || !packageName.startsWith(vendorName);
                         }
                     }
                 }
@@ -247,6 +245,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                                         holder.registerProblem(pair.getValue(), useMaster);
                                     }
                                     hasAdvisories = true;
+                                    break;
                                 }
                             }
                         }

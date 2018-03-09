@@ -159,6 +159,19 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         return result;
     }
 
+    @Nullable
+    private JsonProperty getPackagesGroup(@NotNull JsonObject manifest, @NotNull String name) {
+        JsonProperty result         = null;
+        final JsonProperty property = manifest.findProperty(name);
+        if (property != null) {
+            final JsonValue value = property.getValue();
+            if (value instanceof JsonObject) {
+                result = property;
+            }
+        }
+        return result;
+    }
+
     @Override
     @Nullable
     public ProblemDescriptor[] checkFile(@NotNull final PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
@@ -166,26 +179,20 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         if (!"composer.json".equals(file.getName()) || !(file.getFirstChild() instanceof JsonObject)) {
             return null;
         }
+        final JsonObject manifest = (JsonObject) file.getFirstChild();
 
-        final JsonObject config = (JsonObject) file.getFirstChild();
-
-        /* find "require" section, it is required here */
-        final JsonProperty requireProperty = config.findProperty("require");
-        if (requireProperty == null) {
-            return null;
-        }
-        final JsonValue requiredPackagesList = requireProperty.getValue();
-        if (!(requiredPackagesList instanceof JsonObject)) {
+        final JsonProperty require = this.getPackagesGroup(manifest, "require");
+        if (require == null) {
             return null;
         }
 
         /* skip analyzing libraries (we can break minimum stability requirements) */
-        if (this.isLibrary(config)) {
+        if (this.isLibrary(manifest)) {
             return null;
         }
 
         /* identify package owner; skip analyzing dev-packages */
-        final String ownPackagePrefix = this.getVendorName(config);
+        final String ownPackagePrefix = this.getVendorName(manifest);
         if (ownPackagePrefix != null && optionConfiguration.contains(ownPackagePrefix)) {
             return null;
         }
@@ -195,7 +202,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         boolean              hasAdvisories         = false;
         boolean              hasThirdPartyPackages = false;
 
-        for (final JsonProperty component : ((JsonObject) requiredPackagesList).getPropertyList()) {
+        for (final JsonProperty component : ((JsonObject) require.getValue()).getPropertyList()) {
             final JsonValue packageVersion = component.getValue();
             if (!(packageVersion instanceof JsonStringLiteral)) {
                 continue;
@@ -223,7 +230,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* fire error message if we have any of 3rd-party packages */
         if (REPORT_MISSING_ROAVE_ADVISORIES && hasThirdPartyPackages && !hasAdvisories) {
-            holder.registerProblem(requireProperty.getFirstChild(), message, new AddAdvisoriesFix(requireProperty));
+            holder.registerProblem(require.getFirstChild(), message, new AddAdvisoriesFix(require));
         }
 
         return holder.getResultsArray();

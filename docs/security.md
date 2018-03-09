@@ -177,3 +177,13 @@ Padding modes for asymmetric algorithms such as OAEP may also be vulnerable to p
 Please reference following links for more details:
 - https://paragonie.com/blog/2016/12/everything-you-know-about-public-key-encryption-in-php-is-wrong (OpenSSL-specific)
 - https://paragonie.com/blog/2015/05/if-you-re-typing-word-mcrypt-into-your-code-you-re-doing-it-wrong (mcrypt-specific)
+
+## Basic malware patterns
+
+> Note: The inspection is not a full-scale security scanner, specialized products are still the thing to go with.
+
+The inspection is inspired by the following projects (which you can also use without IDE):
+- https://github.com/gwillem/magento-malware-scanner
+- https://github.com/elcodigok/wphardening
+
+The inspection checks limited set of built-in PHP functions used by simple malware scripts and reports suspicious cases.

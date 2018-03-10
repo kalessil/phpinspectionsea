@@ -60,19 +60,20 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
                                 final PsiElement zeroCandidate = OpenapiElementsUtil.getSecondOperand(binary, reference);
                                 if (zeroCandidate != null && zeroCandidate.getText().equals("0")) {
                                     final StringLiteralExpression literal = (StringLiteralExpression) arguments[1];
-                                    final String replacement              = String.format(
-                                            "%s(%s, %s, %s)",
-                                            mapping.get(functionName),
-                                            arguments[0].getText(),
-                                            arguments[1].getText(),
-                                            PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote()).length()
-                                    );
-
-                                    holder.registerProblem(
-                                            reference,
-                                            String.format(messagePattern, replacement),
-                                            new UseFirstCharactersCompareFix(replacement)
-                                    );
+                                    if (literal.getFirstPsiChild() == null) {
+                                        final String replacement = String.format(
+                                                "%s(%s, %s, %s)",
+                                                mapping.get(functionName),
+                                                arguments[0].getText(),
+                                                arguments[1].getText(),
+                                                PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote()).length()
+                                        );
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(messagePattern, replacement),
+                                                new UseFirstCharactersCompareFix(replacement)
+                                        );
+                                    }
                                 }
                             }
                         }

@@ -41,7 +41,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
-    @Override public void visitPhpFile(PhpFile PhpFile) {}
+    @Override public void visitPhpFile(PhpFile PhpFile)    {}
+    @Override public void visitPhpInclude(Include include) {}
 
     @Override public void visitPhpMethodReference(MethodReference reference) {}
     @Override public void visitPhpFunctionCall(FunctionReference reference)  {}

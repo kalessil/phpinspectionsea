@@ -8,6 +8,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocVariable;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -73,8 +75,27 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             return;
                         }
 
-                        /* intentionally introduced variables due to type re-specification */
+
                         if (construct instanceof ForeachStatement) {
+                            /* do not suggest inlining require and ternaries */
+                            if (value instanceof Include || value instanceof TernaryExpression) {
+                                return;
+                            }
+                            /* inlining is not possible when foreach value is a reference before PHP 5.5 */
+                            final PsiElement targetContainer = ((ForeachStatement) construct).getValue();
+                            if (targetContainer != null) {
+                                PsiElement referenceCandidate = targetContainer.getPrevSibling();
+                                if (referenceCandidate instanceof PsiWhiteSpace) {
+                                    referenceCandidate = referenceCandidate.getPrevSibling();
+                                }
+                                if (OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND)) {
+                                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                                    if (php.compareTo(PhpLanguageLevel.PHP550) < 0) {
+                                        return;
+                                    }
+                                }
+                            }
+                            /* intentionally introduced variables due to type re-specification */
                             final PsiElement phpdocCandidate = previous.getPrevPsiSibling();
                             if (phpdocCandidate instanceof PhpDocComment) {
                                 final PhpDocTag[] hints = ((PhpDocComment) phpdocCandidate).getTagElementsByName("@var");

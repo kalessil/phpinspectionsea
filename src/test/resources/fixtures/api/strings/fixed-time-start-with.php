@@ -12,4 +12,7 @@ return [
     /* false-positives: not targeted contexts */
     0 === strpos('', $what),
     0 === strpos('', 'what', 1),
+
+    /* false-positives: injections */
+    strpos('', "$what") !== 0,
 ];

@@ -37,8 +37,8 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
 
     final static private Pattern regexMarker;
     static {
-        // Original regex: [^\+\*]([\+\*]|\{\d\,\}|\{\d{2,}\}|\{\d,\d{2,}\})([^\+\)]|$)
-        regexMarker = Pattern.compile("[^\\+\\*]([\\+\\*]|\\{\\d\\,\\}|\\{\\d{2,}\\}|\\{\\d,\\d{2,}\\})([^\\+\\)]|$)");
+        // Original regex: [^+*]([+*]|\{\d\,\}|\{\d{2,}\}|\{\d,\d{2,}\})([^\+\)]|$)
+        regexMarker = Pattern.compile("[^+*]([+*]|\\{\\d\\,\\}|\\{\\d{2,}\\}|\\{\\d,\\d{2,}\\})([^\\+\\)]|$)");
     }
 
     static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -46,24 +45,22 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                 final PsiElement operation = expression.getOperation();
                 if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS)) {
                     /* do not check nested operations */
-                    if (expression.getParent() instanceof BinaryExpression){
-                        return;
+                    final boolean isNestedBinary = expression.getParent() instanceof BinaryExpression;
+                    if (!isNestedBinary) {
+                        /* do not report ' ... + []' and '[] + ...' */
+                        final PsiElement right = expression.getRightOperand();
+                        PsiElement left        = expression.getLeftOperand();
+                        while (left instanceof BinaryExpression) {
+                            left = ((BinaryExpression) left).getLeftOperand();
+                        }
+                        if (left != null && right != null) {
+                            final boolean addsImplicitArray
+                                    = left instanceof ArrayCreationExpression || right instanceof ArrayCreationExpression;
+                            if (!addsImplicitArray) {
+                                this.inspectExpression(operation, expression);
+                            }
+                        }
                     }
-
-                    /* do not report ' ... + []' and '[] + ...' */
-                    final PsiElement mostRight = expression.getRightOperand();
-                    PsiElement mostLeft        = expression.getLeftOperand();
-                    while (mostLeft instanceof BinaryExpression) {
-                        mostLeft = ((BinaryExpression) mostLeft).getLeftOperand();
-                    }
-                    if (
-                        null == mostLeft  || mostLeft instanceof ArrayCreationExpression ||
-                        null == mostRight || mostRight instanceof ArrayCreationExpression
-                    ) {
-                        return;
-                    }
-
-                    this.inspectExpression(operation, expression);
                 }
             }
 
@@ -71,11 +68,11 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
             public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
                 final PsiElement operation = expression.getOperation();
                 if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS_ASGN)) {
-                    /* Do not report '... += []' */
-                    if (expression.getValue() instanceof ArrayCreationExpression) {
-                        return;
+                    /* do not report '... += []' */
+                    final boolean addsImplicitArray = expression.getValue() instanceof ArrayCreationExpression;
+                    if (!addsImplicitArray) {
+                        this.inspectExpression(operation, expression);
                     }
-                    this.inspectExpression(operation, expression);
                 }
             }
 
@@ -88,7 +85,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                         resolved.filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
                     }
                     if (types.size() == 1 && types.contains(Types.strArray)) {
-                        holder.registerProblem(operation, message, ProblemHighlightType.ERROR);
+                        holder.registerProblem(operation, message);
                     }
                     types.clear();
                 }

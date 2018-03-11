@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiU
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.SuspiciousCharactersRangeSpecificationStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy.GreedyCharactersSetCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy.NotMutuallyExclusiveContiguousQuantifiedTokensStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy.QuantifierCompoundsQuantifierCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
@@ -162,6 +163,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 AmbiguousAnythingTrimCheckStrategy.apply(functionName, reference, regex, target, holder);
                 //NonGreedyTransformCheckStrategy.apply(regex, target, holder);
                 GreedyCharactersSetCheckStrategy.apply(regex, target, holder);
+                NotMutuallyExclusiveContiguousQuantifiedTokensStrategy.apply(regex, target, holder);
                 QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder);
 
                 /*

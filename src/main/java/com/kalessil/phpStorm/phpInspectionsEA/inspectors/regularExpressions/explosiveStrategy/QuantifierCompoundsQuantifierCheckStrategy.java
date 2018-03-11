@@ -3,13 +3,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.exp
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
+/*
  * Recognize (A+)* pattern.
  * See details here: http://www.rexegg.com/regex-explosive-quantifiers.html#compound
  *
@@ -23,56 +22,55 @@ import java.util.regex.Pattern;
  * - making the outer quantifier possessive, e.g. (?:\D+|0(?!1))*+ or
  * - enclosing the expression in an atomic group, e.g. (?>(?:\D+|0(?!1))*)
  */
-public class QuantifierCompoundsQuantifierCheckStrategy {
-    private static final String messagePattern = "(...%i%...)%o% might be exploited (ReDoS, Regular Expression Denial of Service).";
 
-    final static private Pattern regexMarker;
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+final public class QuantifierCompoundsQuantifierCheckStrategy {
+    private static final String messagePattern = "( %s )%s might be exploited (ReDoS, Regular Expression Denial of Service).";
+
+    final static private Pattern regexGroupsToSkip;
+    final static private Pattern regexOuterGroup;
     static {
-        // Original regex: [^\+\*]([\+\*]|\{\d\,\}|\{\d{2,}\}|\{\d,\d{2,}\})([^\+\)]|$)
-        regexMarker = Pattern.compile("[^\\+\\*]([\\+\\*]|\\{\\d\\,\\}|\\{\\d{2,}\\}|\\{\\d,\\d{2,}\\})([^\\+\\)]|$)");
+        // Original regex: 	([^\\])(\([^()]*[^\\]\))([^+*])
+        regexGroupsToSkip = Pattern.compile("([^\\\\])(\\([^()]*[^\\\\]\\))([^+*])");
+        // Original regex: 	(^|[^>])\(([^()]+)\)([+*])([^+]|$)
+        regexOuterGroup   = Pattern.compile("(^|[^>])\\(([^()]+)\\)([+*])([^+]|$)");
     }
 
-    static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        final Matcher externalQualifierMatcher = regexMarker.matcher(pattern);
-        while (externalQualifierMatcher.find()) {
-            final int quantifierStart = externalQualifierMatcher.start(1);
-            if (quantifierStart > 0 && pattern.charAt(quantifierStart - 1) == ')') {
-                String patternSegment = null;
-
-                /* try extracting inner expression from '(...)<qualifier>' */
-                int nestingLevel = 0;
-                int cursor       = quantifierStart - 1;
-                char character;
-                while (cursor >= 0) {
-                    character = pattern.charAt(cursor);
-                    if (character == ')') {
-                        ++nestingLevel;
-                        --cursor;
-                        continue;
+    static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+        if (!pattern.isEmpty()) {
+            /* get rid of un-captured groups markers */
+            String normalizedPattern = pattern.replaceAll("\\(\\?:", "(");
+            /* get rid of nested groups */
+            while (regexGroupsToSkip.matcher(normalizedPattern).find()) {
+                final Matcher matcher = regexGroupsToSkip.matcher(normalizedPattern);
+                if (matcher.find()) {
+                    final String fragment = matcher.group(0);
+                    if (fragment != null) {
+                        normalizedPattern = normalizedPattern.replace(fragment, matcher.group(1) + matcher.group(3));
                     }
-
-                    if (character == '(') {
-                        --nestingLevel;
-                        if (0 == nestingLevel) {
-                            patternSegment = pattern.substring(cursor + 1, quantifierStart - 1);
+                }
+            }
+            final Matcher matcher = regexOuterGroup.matcher(normalizedPattern);
+            while (matcher.find()) {
+                final String fragment = matcher.group(2);
+                if (fragment != null) {
+                    for (final String candidate : fragment.split("\\|")) {
+                        if (!candidate.isEmpty() && candidate.matches("^\\\\[dDwWsS][*+]$")) {
+                            holder.registerProblem(
+                                    target,
+                                    String.format(messagePattern, candidate, matcher.group(3)),
+                                    ProblemHighlightType.GENERIC_ERROR
+                            );
                             break;
                         }
-                        --cursor;
-                        continue;
-                    }
-
-                    --cursor;
-                }
-
-                /* extracted,*/
-                if (!StringUtils.isEmpty(patternSegment)) {
-                    final Matcher internalQualifierMatcher = regexMarker.matcher(patternSegment);
-                    if (internalQualifierMatcher.find()) {
-                        final String message = messagePattern
-                                .replace("%i%", internalQualifierMatcher.group(1))
-                                .replace("%o%", externalQualifierMatcher.group(1));
-                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR);
-                        return;
                     }
                 }
             }

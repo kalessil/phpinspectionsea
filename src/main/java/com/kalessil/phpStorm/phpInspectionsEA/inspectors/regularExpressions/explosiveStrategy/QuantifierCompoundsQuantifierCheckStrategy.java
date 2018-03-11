@@ -3,13 +3,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.exp
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
+/*
  * Recognize (A+)* pattern.
  * See details here: http://www.rexegg.com/regex-explosive-quantifiers.html#compound
  *
@@ -23,7 +22,17 @@ import java.util.regex.Pattern;
  * - making the outer quantifier possessive, e.g. (?:\D+|0(?!1))*+ or
  * - enclosing the expression in an atomic group, e.g. (?>(?:\D+|0(?!1))*)
  */
-public class QuantifierCompoundsQuantifierCheckStrategy {
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+final public class QuantifierCompoundsQuantifierCheckStrategy {
     private static final String messagePattern = "(...%i%...)%o% might be exploited (ReDoS, Regular Expression Denial of Service).";
 
     final static private Pattern regexMarker;
@@ -32,7 +41,7 @@ public class QuantifierCompoundsQuantifierCheckStrategy {
         regexMarker = Pattern.compile("[^\\+\\*]([\\+\\*]|\\{\\d\\,\\}|\\{\\d{2,}\\}|\\{\\d,\\d{2,}\\})([^\\+\\)]|$)");
     }
 
-    static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
+    static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
         final Matcher externalQualifierMatcher = regexMarker.matcher(pattern);
         while (externalQualifierMatcher.find()) {
             final int quantifierStart = externalQualifierMatcher.start(1);
@@ -65,7 +74,7 @@ public class QuantifierCompoundsQuantifierCheckStrategy {
                 }
 
                 /* extracted,*/
-                if (!StringUtils.isEmpty(patternSegment)) {
+                if (patternSegment != null && !patternSegment.isEmpty()) {
                     final Matcher internalQualifierMatcher = regexMarker.matcher(patternSegment);
                     if (internalQualifierMatcher.find()) {
                         final String message = messagePattern

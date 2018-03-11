@@ -40,8 +40,8 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
     static {
         // Original regex: 	([^\\])(\([^()]*[^\\]\))([^+*])
         regexGroupsToSkip = Pattern.compile("([^\\\\])(\\([^()]*[^\\\\]\\))([^+*])");
-        // Original regex: 	(^|[^>])\(([^()]+)\)[+*]([^+]|$)
-        regexOuterGroup   = Pattern.compile("(^|[^>])\\(([^()]+)\\)[+*]([^+]|$)");
+        // Original regex: 	(^|[^>])\(([^()]+)\)([+*])([^+]|$)
+        regexOuterGroup   = Pattern.compile("(^|[^>])\\(([^()]+)\\)([+*])([^+]|$)");
     }
 
     static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {

@@ -4,11 +4,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector;
 
 final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsightFixtureTestCase {
-    public void testFindNotMutuallyExclusiveContiguousQuantifiedTokens() {
-        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
-        myFixture.configureByFile("fixtures/regularExpressions/not-mutually-exclusive-contiguous-quantified-tokens.php");
-        myFixture.testHighlighting(true, false, true);
-    }
     public void testFindGreedyCharacterSets() {
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
         myFixture.configureByFile("fixtures/regularExpressions/greedy-character-sets.php");

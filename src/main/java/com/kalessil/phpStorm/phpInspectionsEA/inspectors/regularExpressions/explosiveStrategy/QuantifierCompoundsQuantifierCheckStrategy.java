@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.explosiveStrategy;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
  */
 
 final public class QuantifierCompoundsQuantifierCheckStrategy {
-    private static final String messagePattern = "(...%i%...)%o% might be exploited (ReDoS, Regular Expression Denial of Service).";
+    private static final String messagePattern = "( %s )%s might be exploited (ReDoS, Regular Expression Denial of Service).";
 
     final static private Pattern regexGroupsToSkip;
     final static private Pattern regexOuterGroup;
@@ -62,11 +63,17 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                 final String fragment = matcher.group(2);
                 if (fragment != null) {
                     for (final String candidate : fragment.split("[^|]|")) {
-
+                        if (!candidate.isEmpty() && candidate.matches("\\\\[dDwWsS][*+]")) {
+                            holder.registerProblem(
+                                    target,
+                                    String.format(messagePattern, candidate, matcher.group(3)),
+                                    ProblemHighlightType.GENERIC_ERROR
+                            );
+                            break;
+                        }
                     }
                 }
             }
         }
-        // target content: equals \\[sSdDWw] start with \\[sSdDWw]|, ends with |\\[sSdDWw], contains |\\[sSdDWw]|
     }
 }

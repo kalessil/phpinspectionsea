@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -88,7 +87,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                         resolved.filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
                     }
                     if (types.size() == 1 && types.contains(Types.strArray)) {
-                        holder.registerProblem(operation, message, ProblemHighlightType.ERROR);
+                        holder.registerProblem(operation, message);
                     }
                     types.clear();
                 }

@@ -38,18 +38,18 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
     final static private Pattern regexGroupsToSkip;
     final static private Pattern regexOuterGroup;
     static {
-        // Original regex: [^\\](\([^()]*[^\\]\))[^+*]
-        regexGroupsToSkip = Pattern.compile("[^\\\\](\\([^()]*[^\\\\]\\))[^+*]");
-        // Origin regex: ([^>]?\(([^)]+)\)[+*][^+]?)
-        regexOuterGroup   = Pattern.compile("([^>]?\\(([^)]+)\\)[+*][^+]?)");
+        // Original regex: 	([^\\])(\([^()]*[^\\]\))([^+*])
+        regexGroupsToSkip = Pattern.compile("([^\\\\])(\\([^()]*[^\\\\]\\))([^+*])");
+        // Original regex: 	(^|[^>])\(([^()]+)\)[+*]([^+]|$)
+        regexOuterGroup   = Pattern.compile("(^|[^>])\\(([^()]+)\\)[+*]([^+]|$)");
     }
 
     static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
         if (!pattern.isEmpty()) {
             /* get rid of un-captured groups markers */
-            String normalizedPattern = pattern.replaceAll("\\(?:", "(");
+            String normalizedPattern = pattern.replaceAll("\\(\\?:", "(");
             /* get rid of nested groups */
-            while (regexGroupsToSkip.matcher(normalizedPattern).matches()) {
+            while (regexGroupsToSkip.matcher(normalizedPattern).find()) {
                 final Matcher matcher = regexGroupsToSkip.matcher(normalizedPattern);
                 if (matcher.find()) {
                     final String fragment = matcher.group(0);
@@ -58,15 +58,15 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                     }
                 }
             }
-            final Matcher matcher = regexOuterGroup.matcher(pattern);
+            final Matcher matcher = regexOuterGroup.matcher(normalizedPattern);
             while (matcher.find()) {
                 final String fragment = matcher.group(2);
                 if (fragment != null) {
-                    for (final String candidate : fragment.split("[^|]|")) {
-                        if (!candidate.isEmpty() && candidate.matches("\\\\[dDwWsS][*+]")) {
+                    for (final String candidate : fragment.split("\\|")) {
+                        if (!candidate.isEmpty() && candidate.matches("^\\\\[dDwWsS][*+]$")) {
                             holder.registerProblem(
                                     target,
-                                    String.format(messagePattern, candidate, matcher.group(3)),
+                                    String.format(messagePattern, candidate, " --- " /*matcher.group(3)*/),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                             break;

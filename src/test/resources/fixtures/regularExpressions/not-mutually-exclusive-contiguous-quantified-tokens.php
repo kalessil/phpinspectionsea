@@ -5,7 +5,6 @@
     preg_match(<error descr="\D and \W are not mutually exclusive in '\D*\W+' which can be exploited (ReDoS, Regular Expression Denial of Service).">'/\D*\W+/'</error>, '');
     preg_match(<error descr="\D and \W are not mutually exclusive in '\W+\D*' which can be exploited (ReDoS, Regular Expression Denial of Service).">'/\W+\D*/'</error>, '');
 
-
     preg_match('/\d\w/', '');
     preg_match('/\w\d/', '');
     preg_match('/\D\W/', '');

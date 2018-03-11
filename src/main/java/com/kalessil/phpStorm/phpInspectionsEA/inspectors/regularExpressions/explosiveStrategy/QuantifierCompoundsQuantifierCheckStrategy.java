@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +35,8 @@ import java.util.regex.Pattern;
  */
 
 final public class QuantifierCompoundsQuantifierCheckStrategy {
-    private static final String messagePattern = "( %s )%s might be exploited (ReDoS, Regular Expression Denial of Service).";
+    private static final String patternCompound  = "( %s )%s might be exploited (ReDoS, Regular Expression Denial of Service).";
+    private static final String patternExclusive = "%s and %s are not mutually exclusive in '%s' which can be exploited (ReDoS, Regular Expression Denial of Service).";
 
     final static private Pattern regexGroupsToSkip;
     final static private Pattern regexOuterGroup;
@@ -62,15 +65,36 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
             while (matcher.find()) {
                 final String fragment = matcher.group(2);
                 if (fragment != null) {
+                    final Set<String> fragments = new HashSet<>();
                     for (final String candidate : fragment.split("\\|")) {
-                        if (!candidate.isEmpty() && candidate.matches("^\\\\[dDwWsS][*+]$")) {
-                            holder.registerProblem(
-                                    target,
-                                    String.format(messagePattern, candidate, matcher.group(3)),
-                                    ProblemHighlightType.GENERIC_ERROR
-                            );
-                            break;
+                        if (!candidate.isEmpty()) {
+                            fragments.add(candidate);
+                            if (candidate.matches("^\\\\[dDwWsS][*+]$")) {
+                                holder.registerProblem(
+                                        target,
+                                        String.format(patternCompound, candidate, matcher.group(3)),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
+                            }
                         }
+                    }
+                    if (!fragments.isEmpty()) {
+                        if (fragments.size() >= 2) {
+                            if (fragments.contains("\\d") && fragments.contains("\\w")) {
+                                holder.registerProblem(
+                                        target,
+                                        String.format(patternExclusive, "\\d", "\\w", fragment),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
+                            } else if (fragments.contains("\\D") && fragments.contains("\\W")) {
+                                holder.registerProblem(
+                                        target,
+                                        String.format(patternExclusive, "\\D", "\\W", fragment),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
+                            }
+                        }
+                        fragments.clear();
                     }
                 }
             }

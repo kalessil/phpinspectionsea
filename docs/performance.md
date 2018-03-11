@@ -84,3 +84,16 @@ methods calls, which can be reduced by introducing a local variable.
     $normalizedValue = $normalizer->normalize($value);
     $array[$normalizedValue] = $normalizedValue;
 ```
+
+## Non-optimal regular expression
+
+> Note: the inspection is further developed in [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-)
+
+The inspection applies multiple checks to regular expressions in preg_* functions:
+
+- possible plain string functions usage (the functions are always faster)
+- missing and ambiguous modifiers
+- promotes usage of pre-defined character sets (\d, \w and etc.)
+- identifies some cases of [catastrophic backtracking](http://www.rexegg.com/regex-explosive-quantifiers.html) (pre-defined character sets usage is recommended)
+
+It's also important to understand that often catastrophic backtracking vulnerable regexes are leading to CVEs.

@@ -66,7 +66,7 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                         if (!candidate.isEmpty() && candidate.matches("^\\\\[dDwWsS][*+]$")) {
                             holder.registerProblem(
                                     target,
-                                    String.format(messagePattern, candidate, " --- " /*matcher.group(3)*/),
+                                    String.format(messagePattern, candidate, matcher.group(3)),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                             break;

@@ -236,6 +236,7 @@ Inspections Lists (Security)
 | Security             | NonSecureHtmlspecialcharsUsageInspection           | Insecure 'htmlspecialchars(...)' usage (XSS attacks)                   | yes | yes | yes  | no  |
 | Security             | NonSecureShuffleUsageInspection                    | Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)     | n/a | yes | n/a  | no  |
 | Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                                | yes | yes | yes  | no  |
+| Security             | SecureCookiesTransferInspection                    | Secure cookies transfer                                                | yes | yes | yes  | no  |
 
 Inspections Lists (Performance)
 ---

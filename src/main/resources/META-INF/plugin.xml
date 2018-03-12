@@ -565,6 +565,11 @@ Bug-fixes and new inspections:<br/>
          shortName="BacktickOperatorUsageInspection"               displayName="Backtick operator usage"
          groupName="Security"                                      enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.BacktickOperatorUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="SecureCookiesTransferInspection"               displayName="Secure cookies transfer"
+         groupName="Security"                                      enabledByDefault="true" level="WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecureCookiesTransferInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"

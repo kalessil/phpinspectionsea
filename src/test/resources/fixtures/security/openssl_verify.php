@@ -21,6 +21,7 @@ function cases_holder($data, $signature, $key) {
     if ($result === 1)  {}
     if ($result === -1) {}
 
-    /* valid usage */
+    /* unsafe usages (better to return `... === 1`) */
+    return $result;
     return openssl_verify($data, $signature, $key);
 }

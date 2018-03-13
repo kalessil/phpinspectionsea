@@ -58,24 +58,21 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://www.patreon.com/kalessil">Patreon</a>.<br/>
 <br/>
-- Worked out crash reports for February<br/>
-- Usability tweaks (reporting style, more inspections skipping tests scope)<br/>
+- Worked out crash reports for March<br/>
 <br/>
 - Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
-- Foreach source to iterate over: resolved false-positives (multiple cases)<br/>
-- Insecure 'uniqid(...)' usage: resolved a false-positive (function import reported)<br/>
-- Statement could be decoupled from foreach: resolved false-positives (multiple cases)<br/>
-- Unnecessary type casting: resolved false-positives (null coalesce + globals)<br/>
-- Unsupported string offset operations: resolved false-positives (global context)<br/>
-- 'in_array(...)', 'array_search(...)' type unsafe usage: resolved false-positives (search in strings array)<br/>
-- 'str(i)str(...)' could be replaced with 'str(i)pos(...)': resolved false-positives (true constant equality)<br/>
+- Fixed-time string starts with checks: resolved false-positives (strings with injections)<br/>
+- Isset operations variables existence: resolved a false-positive (variable functions)<br/>
+- Non-optimal regular expression: resolved false-positives (compound qualifiers)<br/>
+- Unnecessary parentheses: resolved a false-positive (unexpected tree structure)<br/>
+- Useless return: resolved false-positives (by reference)<br/>
+- ::class can be used: QF bug-fix (current and imported class names conflict)<br/>
 <br/>
-- Alias functions usage: new patterns<br/>
-- Backtick operator usage: implemented (thank you David Rodrigues)<br/>
-- Deprecated dynamic calls to scope introspection: implemented<br/>
-- Deprecated configuration options: new patterns<br/>
-- Instanceof can be used: implemented<br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
+- Basic malware patterns: new patterns<br/>
+- Security advisories for Composer packages: new dev-packages<br/>
+- Suspicious ternary operator:: implemented<br/>
+- Unsupported empty list assignments: implemented<br/>
+- Usage of object type in PhpDoc: dropped<br/>
 <br/>
 <hr/>
   ]]></change-notes>

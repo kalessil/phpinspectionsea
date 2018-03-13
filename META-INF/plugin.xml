@@ -61,21 +61,19 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
 - Worked out crash reports for February<br/>
 - Usability tweaks (reporting style, more inspections skipping tests scope)<br/>
 <br/>
-- Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
-- Foreach source to iterate over: resolved false-positives (multiple cases)<br/>
-- Insecure 'uniqid(...)' usage: resolved a false-positive (function import reported)<br/>
-- Statement could be decoupled from foreach: resolved false-positives (multiple cases)<br/>
-- Unnecessary type casting: resolved false-positives (null coalesce + globals)<br/>
-- Unsupported string offset operations: resolved false-positives (global context)<br/>
-- 'in_array(...)', 'array_search(...)' type unsafe usage: resolved false-positives (search in strings array)<br/>
-- 'str(i)str(...)' could be replaced with 'str(i)pos(...)': resolved false-positives (true constant equality)<br/>
-<br/>
-- Alias functions usage: new patterns<br/>
-- Backtick operator usage: implemented (thank you David Rodrigues)<br/>
-- Deprecated dynamic calls to scope introspection: implemented<br/>
-- Deprecated configuration options: new patterns<br/>
-- Instanceof can be used: implemented<br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
+- PotentialMalwareInspector: new patterns<br/>
+- NotOptimalRegularExpressionsInspector: resolved false-positives (compound qualifiers)<br/>
+- ClassConstantCanBeUsedInspector: QF bug-fix (current and imported class names conflicts)<br/>
+- AdditionOperationOnArraysInspection: respect verbosity settings<br/>
+- FixedTimeStartWithInspector: resolved false-positives (strings with injections)<br/>
+- SecurityAdvisoriesInspector: new dev-packages<br/>
+- CallableParameterUseCaseInTypeContextInspection: resolved false-positives (multiple cases)<br/>
+- UnsupportedEmptyListAssignmentsInspector: implemented<br/>
+- SuspiciousTernaryOperatorInspector:: implemented<br/>
+- UselessReturnInspector: resolved false-positives (by reference)<br/>
+- IssetArgumentExistenceInspector: resolved a false-positive (variable functions)<br/>
+- UnnecessaryParenthesesInspector: resolved a false-positive (unexpected tree structure)<br/>
+- GenericObjectTypeUsageInspector: dropped<br/>
 <br/>
 <hr/>
   ]]></change-notes>

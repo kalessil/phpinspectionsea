@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -187,7 +188,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof StringLiteralExpression && !project.isDisposed()) {
                 String classForReplacement = fqn;
-                String className = classForReplacement.substring(1 + classForReplacement.lastIndexOf('\\'));
+                String className           = classForReplacement.substring(1 + classForReplacement.lastIndexOf('\\'));
 
                 synchronized (target.getContainingFile()) {
                     final PhpFile file            = (PhpFile) target.getContainingFile();
@@ -196,7 +197,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     PsiElement importMarker       = null;
 
                     /* check all use-statements and use imported name for QF */
-                    for (PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
+                    for (final PhpUseList use : PsiTreeUtil.findChildrenOfType(file, PhpUseList.class)) {
                         /* do not process `function() use () {}` constructs or class traits */
                         final PsiElement useParent = use.getParent();
                         if (useParent instanceof Function || useParent instanceof PhpClass) {
@@ -204,7 +205,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         }
 
                         importMarker = use;
-                        for (PsiElement used : use.getChildren()){
+                        for (final PsiElement used : use.getChildren()){
                             if (!(used instanceof PhpUse)) {
                                 continue;
                             }
@@ -222,7 +223,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         }
                     }
 
-                    if (!isImportedAlready && !isImportNameCollision && importClasses) {
+                    if (importClasses && !isImportedAlready && !isImportNameCollision) {
                         /* do not import classes from the root namespace */
                         boolean makesSense = StringUtils.countMatches(classForReplacement, "\\") > 1;
                         if (makesSense) {
@@ -231,18 +232,24 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                             /* identify marker/use relative QNs */
                             final PhpNamespace ns = PsiTreeUtil.findChildOfType(file, PhpNamespace.class);
-                            if (null != ns) {
-                                /* NS-ed file */
-                                if (null == importMarker && ns.getLastChild() instanceof GroupStatement) {
-                                    importMarker = ((GroupStatement) ns.getLastChild()).getFirstPsiChild();
-                                    insertBefore = true;
-                                }
-
-                                if (this.useRelativeQN) {
-                                    final String nsFQN = ns.getFQN() + '\\';
-                                    if (classForReplacement.startsWith(nsFQN)) {
-                                        classForReplacement = classForReplacement.replace(nsFQN, "");
-                                        useRelativeQN       = true;
+                            if (ns != null) {
+                                /* ensure that current NS doesn't have  */
+                                final Collection<PhpClass> classNameCollisions = OpenapiResolveUtil.resolveClassesByFQN(
+                                        ns.getFQN() + "\\" + className,
+                                        PhpIndex.getInstance(project)
+                                );
+                                if (classNameCollisions.isEmpty()) {
+                                    /* NS-ed file */
+                                    if (importMarker == null && ns.getLastChild() instanceof GroupStatement) {
+                                        importMarker = ((GroupStatement) ns.getLastChild()).getFirstPsiChild();
+                                        insertBefore = true;
+                                    }
+                                    if (this.useRelativeQN) {
+                                        final String nsFQN = ns.getFQN() + '\\';
+                                        if (classForReplacement.startsWith(nsFQN)) {
+                                            classForReplacement = classForReplacement.replace(nsFQN, "");
+                                            useRelativeQN       = true;
+                                        }
                                     }
                                 }
                             } else {
@@ -254,13 +261,13 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                             }
 
                             /* inject new import after the marker, if relative QN are not possible */
-                            if (null != importMarker && !useRelativeQN) {
+                            if (importMarker != null && !useRelativeQN) {
                                 final PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
 
                                 if (insertBefore) {
                                     importMarker.getParent().addBefore(use, importMarker);
                                     final PsiElement space = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n\n");
-                                    if (null != space) {
+                                    if (space != null) {
                                         use.getParent().addAfter(space, use);
                                     }
                                 } else {
@@ -273,8 +280,9 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     }
                 }
 
-                PsiElement replacement = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, classForReplacement + "::class");
-                if (null != replacement) {
+                final PsiElement replacement
+                        = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, classForReplacement + "::class");
+                if (replacement != null) {
                     target.replace(replacement);
                 }
             }

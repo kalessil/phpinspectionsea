@@ -97,7 +97,7 @@ Inspections Lists (Code style)
 | Code Style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes | yes | yes  | no  |
 | Code Style           | MissingOrEmptyGroupStatementInspection          | Missing or empty conditionals group statement       | no  | yes | no   | no  |
 | Code Style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | yes | yes | yes  | no  |
-| Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | yes  | no  |
+| Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | yes  | yes |
 | Code Style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes | yes | yes  | no  |
 | Code Style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | yes | yes | yes  | no  |
 | Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes | yes | no   | no  |
@@ -131,7 +131,7 @@ Inspections Lists (Language level migration)
 | Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes | yes | no   | no  |
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes | yes | no   | no  |
-| Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes | yes | no   | no  |
+| Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes | yes | yes  | yes |
 | Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes | yes | yes  | no  |
 | Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname(...) calls                        | yes | yes | no   | no  |
 | Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | no   | no  |
@@ -178,7 +178,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a | yes | n/a  | no  |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes | yes | no   | no  |
-| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes | yes | no   | no  |
+| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes | yes | no   | yes |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a | yes | n/a  | yes |
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a | yes | n/a  | no  |
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes | yes | no   | no  |
@@ -224,7 +224,7 @@ Inspections Lists (Security)
 | Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)              | n/a | yes | n/a  | yes |
 | Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                            | n/a | yes | n/a  | no  |
 | Security             | UnserializeExploitsInspection                      | Exploiting unserialize (PHP Object Injection Vulnerability)            | n/a | yes | n/a  | yes |
-| Security             | PotentialMalwareInspection                         | Basic malware patterns                                                 | n/a | yes | n/a  | no  |
+| Security             | PotentialMalwareInspection                         | Basic malware patterns                                                 | n/a | yes | n/a  | yes |
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                                    | n/a | yes | n/a  | yes |
 | Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)        | n/a | yes | n/a  | no  |
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                                    | n/a | yes | n/a  | no  |
@@ -242,17 +242,17 @@ Inspections Lists (Performance)
 ---
 | Group                | Short Name                                      | Full Name                                                                                         | QF  | UTs | QFTs | Doc |
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------------ | --: | --: | ---: | --: |
-| Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                      | n/a | yes | n/a  | no  |
+| Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                      | n/a | yes | n/a  | yes |
 | Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                        | yes | yes | yes  | no  |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                              | yes | yes | yes  | no  |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                                     | n/a | yes | n/a  | no  |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | n/a |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | no   | no  |
-| Performance          | AlterInForeachInspection                        | Foreach variables reference usage correctness                                                     | n/a | yes | n/a  | no  |
+| Performance          | AlterInForeachInspection                        | Foreach variables reference usage correctness                                                     | n/a | yes | n/a  | yes |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused                                                                         | yes | yes | no   | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                               | yes | yes | yes  | no  |
 | Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    | n/a |
-| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                          | yes | yes | yes  | no  |
+| Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                          | yes | yes | yes  | yes |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                                    | yes | yes | yes  | no  |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                           | yes | yes | yes  | no  |
 | Performance          | CaseInsensitiveStringFunctionsMissUseInspection | 'stristr(...)/stripos(...)/strripos(...)' could be replaced with 'strstr(...)/strpos()/strrpos()' | yes | yes | yes  | no  |

@@ -239,19 +239,20 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof FunctionReference || target instanceof ConstantReference) {
-                final PsiElement rootNs   = PhpPsiElementFactory.createNamespaceReference(project, "\\ ", false);
-                final PsiElement nameNode = target.getFirstChild();
-                nameNode.getParent().addBefore(rootNs, nameNode);
-            }
-            if (target instanceof StringLiteralExpression) {
-                final StringLiteralExpression expression = (StringLiteralExpression) target;
-                final String quote                       = expression.isSingleQuote() ? "'" : "\"";
-                final String rootNs                      = expression.isSingleQuote() ? "\\" : "\\\\";
-                final String pattern                     = quote + rootNs + expression.getContents() + quote;
-                final StringLiteralExpression replacement
-                        = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, pattern);
-                target.replace(replacement);
+            if (target != null && !project.isDisposed()) {
+                if (target instanceof FunctionReference || target instanceof ConstantReference) {
+                    final PsiElement rootNs   = PhpPsiElementFactory.createNamespaceReference(project, "\\ ", false);
+                    final PsiElement nameNode = target.getFirstChild();
+                    nameNode.getParent().addBefore(rootNs, nameNode);
+                } else if (target instanceof StringLiteralExpression) {
+                    final StringLiteralExpression expression = (StringLiteralExpression) target;
+                    final String quote                       = expression.isSingleQuote() ? "'" : "\"";
+                    final String rootNs                      = expression.isSingleQuote() ? "\\" : "\\\\";
+                    final String pattern                     = quote + rootNs + expression.getContents() + quote;
+                    final StringLiteralExpression replacement
+                            = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, pattern);
+                    target.replace(replacement);
+                }
             }
         }
     }

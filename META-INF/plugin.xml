@@ -58,22 +58,21 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://www.patreon.com/kalessil">Patreon</a>.<br/>
 <br/>
-- Worked out crash reports for February<br/>
-- Usability tweaks (reporting style, more inspections skipping tests scope)<br/>
+- Worked out crash reports for March<br/>
 <br/>
-- PotentialMalwareInspector: new patterns<br/>
-- NotOptimalRegularExpressionsInspector: resolved false-positives (compound qualifiers)<br/>
-- ClassConstantCanBeUsedInspector: QF bug-fix (current and imported class names conflicts)<br/>
-- AdditionOperationOnArraysInspection: respect verbosity settings<br/>
-- FixedTimeStartWithInspector: resolved false-positives (strings with injections)<br/>
-- SecurityAdvisoriesInspector: new dev-packages<br/>
-- CallableParameterUseCaseInTypeContextInspection: resolved false-positives (multiple cases)<br/>
-- UnsupportedEmptyListAssignmentsInspector: implemented<br/>
-- SuspiciousTernaryOperatorInspector:: implemented<br/>
-- UselessReturnInspector: resolved false-positives (by reference)<br/>
-- IssetArgumentExistenceInspector: resolved a false-positive (variable functions)<br/>
-- UnnecessaryParenthesesInspector: resolved a false-positive (unexpected tree structure)<br/>
-- GenericObjectTypeUsageInspector: dropped<br/>
+- Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
+- Fixed-time string starts with checks: resolved false-positives (strings with injections)<br/>
+- Isset operations variables existence: resolved a false-positive (variable functions)<br/>
+- Non-optimal regular expression: resolved false-positives (compound qualifiers)<br/>
+- Unnecessary parentheses: resolved a false-positive (unexpected tree structure)<br/>
+- Useless return: resolved false-positives (by reference)<br/>
+- ::class can be used: QF bug-fix (current and imported class names conflict)<br/>
+<br/>
+- Basic malware patterns: new patterns<br/>
+- Security advisories for Composer packages: new dev-packages<br/>
+- Suspicious ternary operator:: implemented<br/>
+- Unsupported empty list assignments: implemented<br/>
+- Usage of object type in PhpDoc: dropped<br/>
 <br/>
 <hr/>
   ]]></change-notes>

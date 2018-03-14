@@ -89,7 +89,9 @@ final public class NullableVariablesStrategy {
                 if (types.contains(Types.strNull) || types.contains(Types.strVoid)) {
                     types.remove(Types.strNull);
                     types.remove(Types.strVoid);
-                    result = types.stream().noneMatch(t -> !t.startsWith("\\") && !objectTypes.contains(t));
+                    if (!types.isEmpty()) {
+                        result = types.stream().noneMatch(t -> !t.startsWith("\\") && !objectTypes.contains(t));
+                    }
                 }
                 types.clear();
             }

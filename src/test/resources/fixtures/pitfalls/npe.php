@@ -129,6 +129,11 @@ class CasesHolder {
             return $second->nonExistingField;
         }
     }
+
+    public function npeSafeNullOnlyVariable() {
+        $variable = null;
+        $variable['...'] = '...';
+    }
 }
 
 function cases_holder(?CasesHolder $object) {

@@ -1,6 +1,6 @@
 
 [![Version](http://phpstorm.espend.de/badge/7622/version)](https://plugins.jetbrains.com/plugin/7622)
-[![Build Status](https://img.shields.io/travis/kalessil/phpinspectionsea.svg?branch=master)](https://travis-ci.org/kalessil/phpinspectionsea)
+[![Build Status](https://travis-ci.org/kalessil/phpinspectionsea.svg?branch=master)](https://travis-ci.org/kalessil/phpinspectionsea)
 [![Downloads](http://phpstorm.espend.de/badge/7622/downloads)](https://plugins.jetbrains.com/plugin/7622)
 [![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
 [![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/VReznichenko)
@@ -10,7 +10,7 @@ Php Inspections (EA Extended)
 ---
 <img src="https://user-images.githubusercontent.com/47294/26991958-2a7ee9f4-4d65-11e7-8d60-f57ca8cbb46a.png" alt="Php Inspections (EA Extended)" height="100" />
 
-This project is a Static Code Analysis [tool](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-) for PhpStorm (2016.2+) and Idea Ultimate.
+This project is an OSS Static Code Analysis [tool](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-) for PhpStorm (2016.2+) and Idea Ultimate.
 
 It covers:
 - architecture related issues
@@ -30,10 +30,13 @@ expressions. If this requirement is met then additional inspections are applied 
 
 On some projects CPU and therefore battery usage could be intensive, so it should be taken into account when traveling
 
-
 Installation and getting started
 ---
 Please follow this [documentation link](docs/getting-started.md).
+
+Enhancing the experience
+---
+Once you accommodated with the analyzer and want move further, check [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-) out.
 
 Acknowledgments
 ---

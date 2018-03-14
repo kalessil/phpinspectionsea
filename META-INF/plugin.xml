@@ -62,6 +62,7 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
 <br/>
 - Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
 - Fixed-time string starts with checks: resolved false-positives (strings with injections)<br/>
+- Instanceof can be used: resolved false-positives (incomplete classes)<br/>
 - Isset operations variables existence: resolved a false-positive (variable functions)<br/>
 - Non-optimal regular expression: resolved false-positives (compound qualifiers)<br/>
 - Null reference: resolved a false-positive (incomplete types)<br/>

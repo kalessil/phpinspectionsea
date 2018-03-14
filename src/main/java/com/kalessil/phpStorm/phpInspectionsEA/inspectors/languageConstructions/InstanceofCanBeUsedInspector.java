@@ -54,10 +54,10 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                             final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
                             if (second instanceof StringLiteralExpression) {
                                 final StringLiteralExpression string = (StringLiteralExpression) second;
-                                final String contents                = string.getContents();
-                                if (string.getFirstPsiChild() == null && contents.length() > 3) {
+                                final String clazz                   = string.getContents();
+                                if (clazz.length() > 3 && !clazz.equals("__PHP_Incomplete_Class") && string.getFirstPsiChild() == null) {
                                     final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
-                                    final String fqn                   = '\\' + contents.replaceAll("\\\\\\\\", "\\\\");
+                                    final String fqn                   = '\\' + clazz.replaceAll("\\\\\\\\", "\\\\");
                                     final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
                                     if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
                                         final boolean isInverted =

@@ -17,5 +17,8 @@ function cases_holder($object) {
 
         /* false-positives: has child classes */
         get_class($object) == 'ParentClass',
+
+        /* false-positives: incomplete classes */
+        get_class($object) == '__PHP_Incomplete_Class',
     ];
 }

@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +27,8 @@ import java.util.List;
  */
 
 public class NonSecureOpensslVerifyUsageInspector extends BasePhpInspection {
+    private static final String messageReturn = "Please return '... === 1' instead (to prevent any flaws).";
+    private static final String messageHarden = "Please compare with 1 instead (see openssl_verify(...) return codes).";
 
     @NotNull
     public String getShortName() {
@@ -68,14 +71,19 @@ public class NonSecureOpensslVerifyUsageInspector extends BasePhpInspection {
                     for (final PsiElement target : targets) {
                         final PsiElement parent = target.getParent();
                         if (parent instanceof BinaryExpression) {
-                            final BinaryExpression binary = (BinaryExpression) parent;
-                            if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binary.getOperationType())) {
-
+                            if (target instanceof FunctionReference) {
+                                final BinaryExpression binary = (BinaryExpression) parent;
+                                if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binary.getOperationType())) {
+                                    final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, target);
+                                    if (second != null && OpenapiTypesUtil.isNumber(second) && !second.getText().equals("1")) {
+                                        holder.registerProblem(target, messageHarden, ProblemHighlightType.GENERIC_ERROR);
+                                    }
+                                }
                             }
                         } else if (parent instanceof PhpReturn) {
-                            holder.registerProblem(target, "Please return '... === 1' instead (to prevent any flaws).", ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(target, messageReturn, ProblemHighlightType.GENERIC_ERROR);
                         } else if (ExpressionSemanticUtil.isUsedAsLogicalOperand(target)) {
-                            holder.registerProblem(target, "Please compare with 1 instead (see openssl_verify(...) return codes).", ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(target, messageHarden, ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
                     targets.clear();

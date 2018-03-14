@@ -237,6 +237,7 @@ Inspections Lists (Security)
 | Security             | NonSecureShuffleUsageInspection                    | Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)     | n/a | yes | n/a  | no  |
 | Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                                | yes | yes | yes  | no  |
 | Security             | SecureCookiesTransferInspection                    | Secure cookies transfer                                                | yes | yes | yes  | no  |
+| Security             | NonSecureOpensslVerifyUsageInspection              | Insecure 'openssl_verify(...)' usage                                   | n/a | yes | n/a  | no  |
 
 Inspections Lists (Performance)
 ---

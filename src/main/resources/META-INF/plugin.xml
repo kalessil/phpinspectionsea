@@ -569,6 +569,10 @@ Bug-fixes and new inspections:<br/>
          shortName="SecureCookiesTransferInspection"               displayName="Secure cookies transfer"
          groupName="Security"                                      enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecureCookiesTransferInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="NonSecureOpensslVerifyUsageInspection"         displayName="Insecure 'openssl_verify(...)' usage"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureOpensslVerifyUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

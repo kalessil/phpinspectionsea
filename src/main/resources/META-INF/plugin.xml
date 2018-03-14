@@ -46,10 +46,17 @@ Bug-fixes and new inspections:<br/>
 <br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/43664">v2.3.18</a><br/>
 <br/>
-- Callable parameter usage violates definition: new patterns<br/>
-- Instanceof can be used: new patterns<br/>
-- 'array_filter(...)' result keys set fragmentation: new patterns<br/>
-- 'array_values(...)' misused: implemented<br/>
+- Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
+<br/>
+- Array keys set fragmentation: new patterns<br/>
+- Insecure 'openssl_verify(...)' usage: implemented<br/>
+- Isset operations variables existence: new patterns<br/>
+- Non-optimal regular expression: new patterns<br/>
+- One-time use variables: new patterns<br/>
+- Repetitive method calls: new patterns<br/>
+- Secure cookies transfer: implemented<br/>
+- Type casting can be used: new patterns<br/>
+- 'array_values(...)' misused: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

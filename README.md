@@ -36,7 +36,7 @@ Please follow this [documentation link](docs/getting-started.md).
 
 Enhancing the experience
 ---
-Once you accommodated with the analyzer and want move further, check [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-) out.
+Once you have accommodated with the analyzer and want move to further, check [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-) out.
 
 Acknowledgments
 ---

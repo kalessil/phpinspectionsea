@@ -28,5 +28,8 @@ function cases_holder($object, $mixed, $string) {
         /* false-positives: string or mixed */
         in_array('stdClass', class_parents($mixed)),
         in_array('stdClass', class_parents($string)),
+
+        /* false-positives: incomplete classes */
+        get_class($object) == '__PHP_Incomplete_Class',
     ];
 }

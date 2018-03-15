@@ -59,7 +59,7 @@ class CasesHolder {
 
     public function npeCheckConstraints(\InvokableClass $first = null, \InvokableClass $second = null) {
         $first = $first ?: null;
-        $first->property = '...';
+        <warning descr="Null pointer exception may occur here.">$first</warning>->property = '...';
 
         $second = $second ?? null;
         <warning descr="Null pointer exception may occur here.">$second</warning>->property = '...';

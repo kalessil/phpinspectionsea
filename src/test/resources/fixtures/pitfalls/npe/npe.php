@@ -69,8 +69,8 @@ class CasesHolder {
         return clone <warning descr="Null pointer exception may occur here.">$one</warning>;
     }
 
-    public function npeCheckLocalVariables() {
-        $local = null;
+    public function npeCheckLocalVariables(?\stdClass $one) {
+        $local = $one;
         <warning descr="Null pointer exception may occur here.">$local</warning>->property = '...';
     }
 

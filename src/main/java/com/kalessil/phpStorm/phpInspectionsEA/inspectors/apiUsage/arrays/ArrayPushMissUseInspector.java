@@ -1,14 +1,18 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
+import com.jetbrains.php.lang.psi.elements.ArrayIndex;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArrayPushMissUseInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' should be used instead (2x faster).";
+    private static final String messageMisuse   = "'%s' here would be up to 2x faster.";
+    private static final String messageUnneeded = "It seems that the index can be omitted at all.";
 
     @NotNull
     public String getShortName() {
@@ -39,7 +44,6 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("array_push")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2 && OpenapiTypesUtil.isStatementImpl(reference.getParent())) {
-                        /* inspect given call: single instruction, 2nd parameter is not variadic */
                         PsiElement variadicCandidate = arguments[1].getPrevSibling();
                         if (variadicCandidate instanceof PsiWhiteSpace) {
                             variadicCandidate = variadicCandidate.getPrevSibling();
@@ -48,9 +52,34 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
                             final String replacement = String.format("%s[] = %s", arguments[0].getText(), arguments[1].getText());
                             holder.registerProblem(
                                     reference,
-                                    String.format(messagePattern, replacement),
+                                    String.format(messageMisuse, replacement),
                                     new UseElementPushFix(replacement)
                             );
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
+                final ArrayIndex index = expression.getIndex();
+                if (index != null) {
+                    final PsiElement candidate = index.getValue();
+                    if (candidate != null && OpenapiTypesUtil.isFunctionReference(candidate)) {
+                        final FunctionReference reference = (FunctionReference) candidate;
+                        final String functionName         = reference.getName();
+                        if (functionName != null && functionName.equals("count")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 1) {
+                                final PsiElement container = expression.getValue();
+                                if (container != null && OpeanapiEquivalenceUtil.areEqual(container, arguments[0])) {
+                                    holder.registerProblem(
+                                            reference,
+                                            messageUnneeded,
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                    );
+                                }
+                            }
                         }
                     }
                 }

@@ -15,3 +15,4 @@
 
     $array[] = '...';
     $array[count($array) + 1] = '...';
+    $variable = $array[count($array)];

@@ -8,6 +8,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.ArrayIndex;
+import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -62,22 +63,28 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
-                final ArrayIndex index = expression.getIndex();
-                if (index != null) {
-                    final PsiElement candidate = index.getValue();
-                    if (candidate != null && OpenapiTypesUtil.isFunctionReference(candidate)) {
-                        final FunctionReference reference = (FunctionReference) candidate;
-                        final String functionName         = reference.getName();
-                        if (functionName != null && functionName.equals("count")) {
-                            final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length == 1) {
-                                final PsiElement container = expression.getValue();
-                                if (container != null && OpeanapiEquivalenceUtil.areEqual(container, arguments[0])) {
-                                    holder.registerProblem(
-                                            reference,
-                                            messageUnneeded,
-                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                                    );
+                final PsiElement parent = expression.getParent();
+                if (OpenapiTypesUtil.isAssignment(parent)) {
+                    final PsiElement value = ((AssignmentExpression) parent).getValue();
+                    if (value != expression) {
+                        final ArrayIndex index = expression.getIndex();
+                        if (index != null) {
+                            final PsiElement candidate = index.getValue();
+                            if (candidate != null && OpenapiTypesUtil.isFunctionReference(candidate)) {
+                                final FunctionReference reference = (FunctionReference) candidate;
+                                final String functionName         = reference.getName();
+                                if (functionName != null && functionName.equals("count")) {
+                                    final PsiElement[] arguments = reference.getParameters();
+                                    if (arguments.length == 1) {
+                                        final PsiElement container = expression.getValue();
+                                        if (container != null && OpeanapiEquivalenceUtil.areEqual(container, arguments[0])) {
+                                            holder.registerProblem(
+                                                    reference,
+                                                    messageUnneeded,
+                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                            );
+                                        }
+                                    }
                                 }
                             }
                         }

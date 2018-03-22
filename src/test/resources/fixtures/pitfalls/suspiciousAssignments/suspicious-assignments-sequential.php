@@ -1,6 +1,6 @@
 <?php
 
-function immediateOverrides()
+function immediate_overrides()
 {
     /* case 1: possible override, if itself */
     if ($x) { $y1 = ''; }
@@ -54,8 +54,10 @@ function immediateOverrides()
     $y10[]['pos'] = 1;
 
     /* false-positives: self injection in strings */
-    $y11 = '';
+    $y11 = '...';
     $y11 = "$y11";
+    $y11 = "{$y11}";
+    $y11 = "... {$y11}";
 
     /* false-positive: conditional write-consume cycle */
     if ($x) {

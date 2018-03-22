@@ -29,18 +29,18 @@ final public class SequentialAssignmentsStrategy {
     static public void apply(@NotNull AssignmentExpression expression, @NotNull ProblemsHolder holder) {
         final PsiElement parent    = expression.getParent();
         final PsiElement container = expression.getVariable();
-        if (
-            container != null && OpenapiTypesUtil.isStatementImpl(parent) &&
-            !isArrayPush(container) && !isContainerUsed(container, expression)
-        ) {
-            final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
-            if (previous != null) {
-                if (previous instanceof If) {
-                    handlePrecedingIf(container, (If) previous, holder);
-                } else {
-                    final PsiElement assignmentCandidate = previous.getFirstChild();
-                    if (assignmentCandidate instanceof AssignmentExpression) {
-                        handlePrecedingAssignment(container, (AssignmentExpression) assignmentCandidate, holder);
+        if (container != null && OpenapiTypesUtil.isStatementImpl(parent)) {
+            final boolean isTargetExpression = !isArrayPush(container) && !isContainerUsed(container, expression);
+            if (isTargetExpression) {
+                final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
+                if (previous != null) {
+                    if (previous instanceof If) {
+                        handlePrecedingIf(container, (If) previous, holder);
+                    } else {
+                        final PsiElement assignmentCandidate = previous.getFirstChild();
+                        if (assignmentCandidate instanceof AssignmentExpression) {
+                            handlePrecedingAssignment(container, (AssignmentExpression) assignmentCandidate, holder);
+                        }
                     }
                 }
             }

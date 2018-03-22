@@ -70,7 +70,7 @@ final public class SequentialAssignmentsStrategy {
         if (assignment != null) {
             /* check if container is used */
             for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(assignment.getValue(), container.getClass())) {
-                if (candidate != container && OpeanapiEquivalenceUtil.areEqual(candidate, container)) {
+                if (OpeanapiEquivalenceUtil.areEqual(candidate, container)) {
                     result = true;
                     break;
                 }

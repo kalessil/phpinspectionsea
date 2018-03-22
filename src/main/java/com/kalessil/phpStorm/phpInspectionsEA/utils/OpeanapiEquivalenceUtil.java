@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.php.lang.psi.elements.Variable;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -18,11 +19,16 @@ final public class OpeanapiEquivalenceUtil {
     public static boolean areEqual(@NotNull PsiElement first, @NotNull PsiElement second) {
         boolean result;
         try {
-            result = PsiEquivalenceUtil.areElementsEquivalent(first, second);
-            if (!result) {
-                result = first.getClass() == second.getClass() && first.getText().equals(second.getText());
+            if (first instanceof Variable && second instanceof Variable) {
+                /* parser bug: "{$variable}" includes '{}' into variable node */
+                result = ((Variable) first).getName().equals(((Variable) second).getName());
+            } else {
+                result = PsiEquivalenceUtil.areElementsEquivalent(first, second);
+                if (!result) {
+                    result = first.getClass() == second.getClass() && first.getText().equals(second.getText());
+                }
             }
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
             }

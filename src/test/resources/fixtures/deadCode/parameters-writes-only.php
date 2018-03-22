@@ -55,6 +55,10 @@ class Container {
     }
 
     public function method5() {
-        return false === (<weak_warning descr="The variable seems to be not used.">$x</weak_warning> = array_search('', []));
+        return [
+            false === (<weak_warning descr="The variable seems to be not used.">$first</weak_warning> = array_search('...', [])),
+            false === <weak_warning descr="The variable seems to be not used.">$second</weak_warning> = array_search('...', []),
+        ];
     }
+
 }

@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspection {
-    private static final String message = "Provokes a PHP Fatal error (cannot use string offset as an array).";
+    private static final String messageOffset = "Provokes a PHP Fatal error (cannot use string offset as an array).";
+    private static final String messagePush   = "Provokes a PHP Fatal error ([] operator not supported for strings).";
 
     @NotNull
     public String getShortName() {
@@ -44,17 +45,21 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                 final Project project      = holder.getProject();
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                    PsiElement target          = null;
+                    String message             = null;
+                    boolean isTargetContext    = false;
+                    /* context identification phase */
                     final PsiElement candidate = expression.getValue();
                     if (candidate instanceof Variable || candidate instanceof FieldReference) {
                         final PsiElement parent = expression.getParent();
+                        /* case 1: unsupported casting to array */
                         if (parent instanceof ArrayAccessExpression) {
-                            /* identify context */
-                            PsiElement target = parent;
+                            message = messageOffset;
+                            target  = parent;
                             while (target.getParent() instanceof ArrayAccessExpression) {
                                 target = target.getParent();
                             }
-                            PsiElement context      = target.getParent();
-                            boolean isTargetContext = false;
+                            PsiElement context = target.getParent();
                             if (context instanceof AssignmentExpression) {
                                 isTargetContext = ((AssignmentExpression) context).getValue() != target;
                             } else if (OpenapiTypesUtil.is(context, PhpElementTypes.ARRAY_VALUE)) {
@@ -63,16 +68,28 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                                     isTargetContext = ((AssignmentExpression) context).getValue() != array;
                                 }
                             }
-                            /* check types if context identified as target one */
-                            if (isTargetContext && ExpressionSemanticUtil.getScope(target) != null) {
-                                final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, project);
-                                if (type != null) {
-                                    final boolean isTarget = type.filterUnknown().getTypes().stream()
-                                            .anyMatch(t -> Types.getType(t).equals(Types.strString));
-                                    if (isTarget) {
-                                        holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR);
-                                    }
+                        }
+                        /* case 2: array push operator is not supported by strings */
+                        else {
+                            final ArrayIndex index = expression.getIndex();
+                            if (index == null || index.getValue() == null) {
+                                final PsiElement context = expression.getParent();
+                                if (context instanceof AssignmentExpression) {
+                                    message         = messagePush;
+                                    target          = expression;
+                                    isTargetContext = ((AssignmentExpression) context).getValue() != expression;
                                 }
+                            }
+                        }
+                    }
+                    /* type verification and reporting phase */
+                    if (isTargetContext && ExpressionSemanticUtil.getScope(target) != null) {
+                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, project);
+                        if (resolved != null) {
+                            final boolean isTarget = resolved.filterUnknown().getTypes().stream()
+                                    .anyMatch(type -> Types.getType(type).equals(Types.strString));
+                            if (isTarget) {
+                                holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR);
                             }
                         }
                     }

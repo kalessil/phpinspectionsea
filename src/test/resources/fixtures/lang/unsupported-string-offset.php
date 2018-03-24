@@ -13,8 +13,11 @@ function cases_holder(string $string)
         = 0;
 
     list(<error descr="Provokes a PHP Fatal error (cannot use string offset as an array).">$string[0]['...']</error>) = $one;
+
+    <error descr="Provokes a PHP Fatal error ([] operator not supported for strings).">$string[]</error> = '';
 }
 
+/* global context is not checked */
 $string       = '...';
 $string[0]    = 'a';
 $string[0][0] = 'a';

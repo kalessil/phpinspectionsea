@@ -56,9 +56,9 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://www.patreon.com/kalessil">Patreon</a>.<br/>
+Major update. BTW, it would be awesome to get more supporters on <a href="https://www.patreon.com/kalessil">Patreon</a>.<br/>
 <br/>
-- Worked out crash reports for March<br/>
+- Reworked types resolving subsystem<br/>
 <br/>
 - Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
 - Fixed-time string starts with checks: resolved false-positives (strings with injections)<br/>

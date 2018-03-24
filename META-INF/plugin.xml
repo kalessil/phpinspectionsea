@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>2.3.18</version>
+  <version>3.0.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -66,15 +66,20 @@ Bug-fixes. BTW, it would be awesome to get more supporters on <a href="https://w
 - Isset operations variables existence: resolved a false-positive (variable functions)<br/>
 - Non-optimal regular expression: resolved false-positives (compound qualifiers)<br/>
 - Null reference: resolved a false-positive (incomplete types)<br/>
+- Suspicious assignments: resolved false-positives (multiple cases)<br/>
 - Unnecessary parentheses: resolved a false-positive (unexpected tree structure)<br/>
 - Useless return: resolved false-positives (by reference)<br/>
 - ::class can be used: QF bug-fix (current and imported class names conflict)<br/>
 <br/>
 - Basic malware patterns: new patterns<br/>
+- Exploiting unserialize: new patterns<br/>
+- Parameter/variable is not used: new patterns<br/>
 - Security advisories for Composer packages: new dev-packages<br/>
 - Suspicious ternary operator:: implemented<br/>
 - Unsupported empty list assignments: implemented<br/>
+- Unsupported string offset operations: new patterns<br/>
 - Usage of object type in PhpDoc: dropped<br/>
+- 'array_push(...)' misused: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

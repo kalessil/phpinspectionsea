@@ -25,7 +25,6 @@ function cases_holder($object, $mixed, $string) {
         /* false-positives: incomplete classes */
         get_class($object) == '__PHP_Incomplete_Class',
 
-
         <warning descr="'$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_parents($object))</warning>,
         <warning descr="'$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_implements($object), true)</warning>,
 

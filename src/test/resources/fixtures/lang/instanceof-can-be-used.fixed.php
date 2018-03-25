@@ -22,6 +22,9 @@ function cases_holder($object, $mixed, $string) {
         /* false-positives: has child classes */
         get_class($object) == 'ParentClass',
 
+        /* false-positives: incomplete classes */
+        get_class($object) == '__PHP_Incomplete_Class',
+
         $object instanceof \stdClass,
         $object instanceof \stdClass,
 

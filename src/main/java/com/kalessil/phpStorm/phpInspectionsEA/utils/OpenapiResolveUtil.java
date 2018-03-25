@@ -62,10 +62,27 @@ final public class OpenapiResolveUtil {
                             }
                         }
                         /* fallback resolving left operand to regular resolving */
-                        leftType                = leftType == null ? resolveType((PhpTypedElement) left, project) : leftType;
-                        final PhpType rightType = resolveType((PhpTypedElement) right, project);
-                        if (leftType != null && rightType != null) {
-                            result = new PhpType().add(leftType.filterNull()).add(rightType);
+                        leftType = leftType == null ? resolveType((PhpTypedElement) left, project) : leftType;
+                        if (leftType != null) {
+                            final PhpType rightType = resolveType((PhpTypedElement) right, project);
+                            if (rightType != null) {
+                                result = new PhpType().add(leftType.filterNull()).add(rightType);
+                            }
+                        }
+                    }
+                }
+            } if (expression instanceof TernaryExpression) {
+                final TernaryExpression ternary = (TernaryExpression) expression;
+                if (ternary.isShort()) {
+                    final PsiElement left  = ternary.getTrueVariant();
+                    final PsiElement right = ternary.getFalseVariant();
+                    if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
+                        final PhpType leftType = resolveType((PhpTypedElement) left, project);
+                        if (leftType != null) {
+                            final PhpType rightType = resolveType((PhpTypedElement) right, project);
+                            if (rightType != null) {
+                                result = new PhpType().add(leftType.filterNull()).add(rightType);
+                            }
                         }
                     }
                 }

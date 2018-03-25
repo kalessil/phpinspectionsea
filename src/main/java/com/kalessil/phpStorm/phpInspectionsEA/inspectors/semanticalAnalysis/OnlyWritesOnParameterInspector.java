@@ -86,19 +86,21 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     }
                     /* filter target contexts: we are supporting only certain of them */
                     final PsiElement parent = assignmentExpression.getParent();
-                    if (!(parent instanceof ParenthesizedExpression) && !OpenapiTypesUtil.isAssignment(parent)) {
-                        return;
-                    }
-
-                    final PsiElement scope = ExpressionSemanticUtil.getScope(assignmentExpression);
-                    if (scope != null) {
-                        final Function function   = (Function) scope;
-                        final boolean isParameter = Arrays.stream(function.getParameters()).anyMatch(p -> p.getName().equals(variableName));
-                        if (!isParameter) {
-                            final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(function);
-                            final boolean isUseVariable = uses != null && uses.stream().anyMatch(v -> v.getName().equals(variableName));
-                            if (!isUseVariable) {
-                                this.analyzeAndReturnUsagesCount(variableName, function);
+                    final boolean isTargetContext =
+                        parent instanceof ParenthesizedExpression ||
+                        (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
+                        OpenapiTypesUtil.isAssignment(parent);
+                    if (isTargetContext) {
+                        final PsiElement scope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                        if (scope != null) {
+                            final Function function   = (Function) scope;
+                            final boolean isParameter = Arrays.stream(function.getParameters()).anyMatch(parameter -> parameter.getName().equals(variableName));
+                            if (!isParameter) {
+                                final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(function);
+                                final boolean isUseVariable = uses != null && uses.stream().anyMatch(candidate -> candidate.getName().equals(variableName));
+                                if (!isUseVariable) {
+                                    this.analyzeAndReturnUsagesCount(variableName, function);
+                                }
                             }
                         }
                     }

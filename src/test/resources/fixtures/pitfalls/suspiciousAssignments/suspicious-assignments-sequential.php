@@ -1,6 +1,6 @@
 <?php
 
-function immediateOverrides()
+function immediate_overrides()
 {
     /* case 1: possible override, if itself */
     if ($x) { $y1 = ''; }
@@ -53,23 +53,28 @@ function immediateOverrides()
     $y10[]['pos'] = 0;
     $y10[]['pos'] = 1;
 
-    /* false-positives: self injection in strings */
-    $y11 = '';
+    /* false-positives: container based value generation */
+    $y11 = '...';
     $y11 = "$y11";
+    $y11 = "{$y11}";
+    $y11 = "... {$y11}";
+
+    /* false-positives: multiple usage of container in variable-expression */
+    $y12 = [];
+    $y12[count($y12)] = '...';
+    $y12[count($y12)] = '...';
 
     /* false-positive: conditional write-consume cycle */
     if ($x) {
-        $y12 = null;
-        if ($y12 === null) { return; }
-    }
-    $y12 = null;
-    if ($x) {
         $y13 = null;
-        $y13 = (string)$y13;
+        if ($y13 === null) { return; }
     }
     $y13 = null;
-
-    return [$y1, $y2, $y3, $y4, $y5, $y6, $y7, $y8, $y9, $y10, $y10, $y11, $y12, $y13];
+    if ($x) {
+        $y14 = null;
+        $y14 = (string)$y14;
+    }
+    $y14 = null;
 }
 
 function increments_decrements_cases_holder ()

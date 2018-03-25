@@ -13,6 +13,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -29,18 +32,18 @@ final public class SequentialAssignmentsStrategy {
     static public void apply(@NotNull AssignmentExpression expression, @NotNull ProblemsHolder holder) {
         final PsiElement parent    = expression.getParent();
         final PsiElement container = expression.getVariable();
-        if (
-            container != null && OpenapiTypesUtil.isStatementImpl(parent) &&
-            !isArrayPush(container) && !isContainerUsed(container, expression)
-        ) {
-            final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
-            if (previous != null) {
-                if (previous instanceof If) {
-                    handlePrecedingIf(container, (If) previous, holder);
-                } else {
-                    final PsiElement assignmentCandidate = previous.getFirstChild();
-                    if (assignmentCandidate instanceof AssignmentExpression) {
-                        handlePrecedingAssignment(container, (AssignmentExpression) assignmentCandidate, holder);
+        if (container != null && OpenapiTypesUtil.isStatementImpl(parent)) {
+            final boolean isTargetExpression = !isArrayPush(container) && !isContainerUsed(container, expression);
+            if (isTargetExpression) {
+                final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
+                if (previous != null) {
+                    if (previous instanceof If) {
+                        handlePrecedingIf(container, (If) previous, holder);
+                    } else {
+                        final PsiElement assignmentCandidate = previous.getFirstChild();
+                        if (assignmentCandidate instanceof AssignmentExpression) {
+                            handlePrecedingAssignment(container, (AssignmentExpression) assignmentCandidate, holder);
+                        }
                     }
                 }
             }
@@ -62,14 +65,27 @@ final public class SequentialAssignmentsStrategy {
         return result;
     }
 
-    static private boolean isContainerUsed(@NotNull PsiElement container, @Nullable PsiElement expression) {
+    static private boolean isContainerUsed(@NotNull PsiElement container, @Nullable AssignmentExpression assignment) {
         boolean result = false;
-        if (expression != null) {
-            for (final PsiElement matchCandidate : PsiTreeUtil.findChildrenOfType(expression, container.getClass())) {
-                if (matchCandidate != container && OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
+        if (assignment != null) {
+            /* check if container is used */
+            for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(assignment.getValue(), container.getClass())) {
+                if (OpeanapiEquivalenceUtil.areEqual(candidate, container)) {
                     result = true;
                     break;
                 }
+            }
+            /* check if container expression part are interconnected */
+            if (!result) {
+                final Set<String> variables = new HashSet<>();
+                for (final Variable variable : PsiTreeUtil.findChildrenOfType(container, Variable.class)) {
+                    final String variableName = variable.getName();
+                    if (!variableName.equals("this") && !variables.add(variableName)) {
+                        result = true;
+                        break;
+                    }
+                }
+                variables.clear();
             }
         }
         return result;

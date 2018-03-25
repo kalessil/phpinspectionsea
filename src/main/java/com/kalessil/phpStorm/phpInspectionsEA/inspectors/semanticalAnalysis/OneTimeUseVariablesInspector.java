@@ -16,6 +16,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -147,6 +148,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpReturn(@NotNull PhpReturn expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 /* if function returning reference, do not inspect returns */
                 final Function callable   = ExpressionSemanticUtil.getScope(expression);
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
@@ -173,6 +176,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
                 if (value != null) {
                     final Variable variable = this.getVariable(value);
@@ -191,6 +196,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpThrow(@NotNull PhpThrow expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                 if (argument instanceof PhpPsiElement) {
                     final Variable variable = this.getVariable(argument);
@@ -202,6 +209,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final PsiElement source = expression.getArray();
                 if (source != null) {
                     final Variable variable = this.getVariable(source);

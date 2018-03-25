@@ -41,9 +41,7 @@ public class NonSecureOpensslVerifyUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    return;
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("openssl_verify")) {

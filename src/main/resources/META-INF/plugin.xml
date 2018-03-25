@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>1.0.6</version>
+  <version>2.0.0</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -44,7 +44,7 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fixes and new inspections:<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/43664">v2.3.18</a><br/>
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/44413">v3.0.0</a><br/>
 <br/>
 - Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
 <br/>

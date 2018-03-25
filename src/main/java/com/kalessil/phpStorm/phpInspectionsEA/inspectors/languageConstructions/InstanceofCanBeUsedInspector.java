@@ -113,11 +113,11 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                     if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                         final PsiElement second = OpenapiElementsUtil.getSecondOperand(context, reference);
                         if (second instanceof StringLiteralExpression) {
-                            final StringLiteralExpression literal  = (StringLiteralExpression) second;
-                            final String contents                  = literal.getContents();
-                            if (literal.getFirstPsiChild() == null && contents.length() > 3) {
+                            final StringLiteralExpression literal = (StringLiteralExpression) second;
+                            final String clazz                    = literal.getContents();
+                            if (clazz.length() > 3 && !clazz.equals("__PHP_Incomplete_Class") && literal.getFirstPsiChild() == null) {
                                 final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
-                                final String fqn                   = '\\' + contents.replaceAll("\\\\\\\\", "\\\\");
+                                final String fqn                   = '\\' + clazz.replaceAll("\\\\\\\\", "\\\\");
                                 final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
                                 if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
                                     final boolean isInverted =

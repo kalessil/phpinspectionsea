@@ -75,11 +75,17 @@ public class StringNormalizationInspector extends BasePhpInspection {
                                     final String message      = patternInvertedNesting.replace("%e%", replacement);
                                     holder.registerProblem(reference, message, new NormalizationFix(replacement));
                                 } else if (caseManipulation.contains(functionName) && caseManipulation.contains(innerCallName)) {
-                                    if (!functionName.equals(innerCallName) && innerCaseManipulation.contains(innerCallName)) {
-                                        return;
+                                    if (functionName.equals(innerCallName)) {
+                                        final String message = patternSenselessNesting.replace("%i%", innerCallName);
+                                        holder.registerProblem(innerCall, message, new NormalizationFix(innerArguments[0].getText()));
+                                    } else if (!innerCaseManipulation.contains(innerCallName)) {
+                                        /* false-positives: ucwords with 2 arguments */
+                                        final boolean isTarget = !innerCallName.equals("ucwords") || innerArguments.length == 1;
+                                        if (isTarget) {
+                                            final String message = patternSenselessNesting.replace("%i%", innerCallName);
+                                            holder.registerProblem(innerCall, message, new NormalizationFix(innerArguments[0].getText()));
+                                        }
                                     }
-                                    final String message = patternSenselessNesting.replace("%i%", innerCallName);
-                                    holder.registerProblem(innerCall, message, new NormalizationFix(innerArguments[0].getText()));
                                 }
                             }
                         }

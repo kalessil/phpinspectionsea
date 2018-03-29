@@ -29,3 +29,6 @@
     echo ucwords(mb_convert_case($string));
     echo ucfirst(mb_strtolower($string));
     echo lcfirst(mb_strtoupper($string));
+
+    /* ucword-specific test case */
+    echo mb_convert_case(ucwords($string, '_'));

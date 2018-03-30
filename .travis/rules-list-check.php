@@ -43,9 +43,15 @@
         $valueObject->shortName   = $shortName;
         $valueObject->displayName = $displayName;
 
-        $implementationClass   = trim(end(explode('.', $attributes->implementationClass)));
-        $globPattern           = sprintf('%s/src/test/java/**/%sTest.java', $basePath, $implementationClass);
-        $valueObject->hasTests = count(glob($globPattern, GLOB_NOSORT | GLOB_ERR)) > 0;
+        $implementationClass   = substr($attributes->implementationClass, strrpos($attributes->implementationClass, '.') + 1);
+        $targetTestFile        = sprintf('%sTest.java', $implementationClass);
+        $valueObject->hasTests = false;
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($basePath . '/src/test/java/')) as $file) {
+            if ($targetTestFile === $file->getFilename()) {
+                $valueObject->hasTests = true;
+                break;
+            }
+        }
     }
 
     /* step 1: report un-documented inspections */

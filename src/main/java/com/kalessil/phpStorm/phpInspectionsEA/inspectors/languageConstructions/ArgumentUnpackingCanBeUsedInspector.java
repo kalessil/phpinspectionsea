@@ -5,10 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -24,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' should be used instead (3x+ faster)";
+    private static final String messagePattern = "'%s' should be used instead (3x+ faster)";
 
     @NotNull
     public String getShortName() {
@@ -45,17 +42,20 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                         if (arguments.length == 2) {
                             final boolean isContainerValid =
                                     arguments[1] instanceof Variable ||
+                                    arguments[1] instanceof FieldReference ||
                                     arguments[1] instanceof ArrayCreationExpression ||
                                     arguments[1] instanceof FunctionReference;
                             if (isContainerValid && arguments[0] instanceof StringLiteralExpression) {
                                 /* do not process strings with injections */
                                 final StringLiteralExpression targetFunction = (StringLiteralExpression) arguments[0];
-                                if (targetFunction.getFirstPsiChild() == null){
-                                    final String replacement = "%f%(...%a%)"
-                                            .replace("%a%", arguments[1].getText())
-                                            .replace("%f%", targetFunction.getContents());
-                                    final String message = messagePattern.replace("%e%", replacement);
-                                    holder.registerProblem(reference, message, new UnpackFix(replacement));
+                                if (targetFunction.getFirstPsiChild() == null) {
+                                    final String replacement
+                                            = String.format("%s(...%s)", targetFunction.getContents(), arguments[1].getText());
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(messagePattern, replacement),
+                                            new UnpackFix(replacement)
+                                    );
                                 }
                             }
                         }

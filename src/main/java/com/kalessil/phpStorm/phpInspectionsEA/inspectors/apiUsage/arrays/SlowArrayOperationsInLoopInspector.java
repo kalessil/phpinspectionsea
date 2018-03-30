@@ -7,7 +7,6 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
@@ -16,8 +15,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s%(...)' is used in a loop and is a resources greedy construction.";
+    private static final String messagePattern = "'%s(...)' is used in a loop and is a resources greedy construction.";
 
     @NotNull
     public String getShortName() {
@@ -39,40 +47,25 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || !functionsSet.contains(functionName)) {
-                    return;
-                }
-                PsiElement parent = reference.getParent();
-                if (!(parent instanceof AssignmentExpression)) {
-                    /* let's focus on assignment expressions */
-                    return;
-                }
-
-                while (parent != null && !(parent instanceof PhpFile)) {
-                    /* terminate if reached callable */
-                    if (parent instanceof Function) {
-                        return;
-                    }
-
-                    if (OpenapiTypesUtil.isLoop(parent)) {
-                        /* loop test is positive, check pattern */
-                        final PhpPsiElement objContainer = ((AssignmentExpression) reference.getParent()).getVariable();
-                        if (null == objContainer) {
-                            return;
-                        }
-
-                        /* pattern itself: container overridden */
-                        for (final PsiElement objParameter : reference.getParameters()) {
-                            if (OpeanapiEquivalenceUtil.areEqual(objContainer, objParameter)) {
-                                final String message = messagePattern.replace("%s%", functionName);
-                                holder.registerProblem(reference, message);
-
-                                return;
+                if (functionName != null && functionsSet.contains(functionName)) {
+                    PsiElement parent = reference.getParent();
+                    if (parent instanceof AssignmentExpression) {
+                        parent = parent.getParent();
+                        while (parent != null && !(parent instanceof PhpFile) && !(parent instanceof Function)) {
+                            if (OpenapiTypesUtil.isLoop(parent)) {
+                                final PsiElement container = ((AssignmentExpression) reference.getParent()).getVariable();
+                                if (container != null) {
+                                    for (final PsiElement parameter : reference.getParameters()) {
+                                        if (OpeanapiEquivalenceUtil.areEqual(container, parameter)) {
+                                            holder.registerProblem(reference, String.format(messagePattern, functionName));
+                                            return;
+                                        }
+                                    }
+                                }
                             }
+                            parent = parent.getParent();
                         }
                     }
-
-                    parent = parent.getParent();
                 }
             }
         };

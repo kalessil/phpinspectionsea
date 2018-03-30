@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.pitfalls.com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
+package com.kalessil.phpStorm.phpInspectionsEA.phpUnit;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingFinalClassesInspector;

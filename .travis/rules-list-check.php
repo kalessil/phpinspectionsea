@@ -45,7 +45,7 @@
 
         $implementationClass   = trim(end(explode('.', $attributes->implementationClass)));
         $globPattern           = sprintf('%s/src/test/java/**/%sTest.java', $basePath, $implementationClass);
-        $valueObject->hasTests = count(glob($globPattern, GLOB_NOSORT)) > 0;
+        $valueObject->hasTests = count(glob($globPattern, GLOB_NOSORT | GLOB_ERR)) > 0;
     }
 
     /* step 1: report un-documented inspections */

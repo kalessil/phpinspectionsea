@@ -211,15 +211,15 @@ Inspections Lists (Security)
 | Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                         | n/a | yes | n/a  | yes |
 | Security             | SecurityAdvisoriesInspection                       | Security advisories for Composer packages                         | yes | yes | yes  | yes |
 | Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)         | n/a | yes | n/a  | yes |
-| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                       | n/a | yes | n/a  | no  |
+| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                       | n/a | yes | n/a  | n/a |
 | Security             | UnserializeExploitsInspection                      | Exploiting unserialize (PHP Object Injection Vulnerability)       | n/a | yes | n/a  | yes |
 | Security             | PotentialMalwareInspection                         | Basic malware patterns                                            | n/a | yes | n/a  | yes |
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                               | n/a | yes | n/a  | yes |
-| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)   | n/a | yes | n/a  | no  |
+| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)   | n/a | yes | n/a  | n/a |
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                               | n/a | yes | n/a  | yes |
 | Security             | HostnameSubstitutionInspection                     | Hostname substitution                                             | n/a | yes | n/a  | no  |
 | Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                  | n/a | yes | n/a  | yes |
-| Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                           | yes | yes | yes  | no  |
+| Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                           | yes | yes | yes  | n/a |
 
 Inspections Lists (Performance)
 ---

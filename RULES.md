@@ -208,7 +208,7 @@ Inspections Lists (Security)
 | Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid(...)' usage (Insufficient Entropy Vulnerability) | yes | yes | yes  | no  |
 | Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage (Variable extract Vulnerability)    | n/a | yes | n/a  | yes |
 | Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage (Variable extract Vulnerability)  | n/a | yes | n/a  | yes |
-| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                         | n/a | yes | n/a  | no  |
+| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                         | n/a | yes | n/a  | yes |
 | Security             | SecurityAdvisoriesInspection                       | Security advisories for Composer packages                         | yes | yes | yes  | yes |
 | Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)         | n/a | yes | n/a  | yes |
 | Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                       | n/a | yes | n/a  | no  |

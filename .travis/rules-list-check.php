@@ -1,9 +1,9 @@
 <?php
 
-    $basePath = __DIR__ . '/../';
+    $basePath = __DIR__ . '/..';
 
-    $manifest = simplexml_load_string(file_get_contents($basePath . 'META-INF/plugin.xml'));
-    $rules    = file($basePath . 'RULES.md');
+    $manifest = simplexml_load_string(file_get_contents($basePath . '/META-INF/plugin.xml'));
+    $rules    = file($basePath . '/RULES.md');
     if (false === $manifest || false === $rules) {
         throw new \RuntimeException('Failed to load resources');
     }
@@ -14,15 +14,17 @@
         $lineContent = trim($lineContent);
         if (false !== stripos($lineContent, 'inspect') && false !== strpos($lineContent, '|')) {
             $fragments = explode('|', $lineContent);
-            if (count($fragments) >= 4) {
+            if (count($fragments) >= 5) {
                 $groupName   = trim($fragments[1]);
                 $shortName   = trim($fragments[2]);
                 $displayName = trim($fragments[3]);
+                $hasTests    = 'yes' === trim($fragments[5]);
 
                 $valueObject              = new \stdClass();
                 $valueObject->groupName   = $groupName;
                 $valueObject->shortName   = $shortName;
                 $valueObject->displayName = $displayName;
+                $valueObject->hasTests    = $hasTests;
 
                 $documentedRules[$shortName] = $valueObject;
             }
@@ -42,6 +44,10 @@
         $valueObject->groupName   = $groupName;
         $valueObject->shortName   = $shortName;
         $valueObject->displayName = $displayName;
+
+        $implementationClass   = trim(end(explode('.', $attributes->implementationClass)));
+        $globPattern           = sprintf('%s/src/test/java/**/%sTest.java', $basePath, $implementationClass);
+        $valueObject->hasTests = count(glob($globPattern, GLOB_NOSORT)) > 0;
 
         $definedRules[$shortName] = $valueObject;
     }
@@ -68,5 +74,17 @@
     }
     if (count($outdated) > 0) {
         echo 'Following inspections info is outdated: ' . PHP_EOL . implode(',' . PHP_EOL, $outdated) . PHP_EOL;
+        exit(-1);
+    }
+
+    /* step 4: report un-tested inspections */
+    $untested = array();
+    foreach ($definedRules as $shortName => $valueObject) {
+        if ($valueObject->hasTests === false) {
+            $untested []= $shortName;
+        }
+    }
+    if (count($untested) > 0) {
+        echo 'Following inspections are not tested: ' . PHP_EOL . implode(',' . PHP_EOL, $untested) . PHP_EOL;
         exit(-1);
     }

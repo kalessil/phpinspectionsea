@@ -24,12 +24,12 @@ Inspections Lists (Control flow)
 | Control Flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | yes | yes | yes  | no  |
 | Control Flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | no  |
 | Control Flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | yes  | no  |
-| Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a |
+| Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         |     |     |
 | Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | no  |
 | Control Flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                                                    | yes | yes | yes  | no  |
 | Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | no  |
-| Control Flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                | yes |
-| Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a |
+| Control Flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                |     |     |
+| Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   |     |     |
 | Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | no  |
 | Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | yes |
 | Control Flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | no  |
@@ -164,9 +164,9 @@ Inspections Lists (Probable bugs)
 | :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --: | --: | ---: | --: |
 | Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a | yes | n/a  | yes |
 | Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a | yes | n/a  | yes |
-| Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
+| Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    |     |     |
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a | yes | n/a  | no  |
-| Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
+| Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        |     |     |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | *printf/*scanf arguments count mismatches                 | n/a | yes | n/a  | no  |
 | Probable bugs        | RealpathInSteamContextInspection                | Phar-incompatible 'realpath(...)' usage                   | yes | yes | yes  | yes |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a | yes | n/a  | no  |
@@ -229,12 +229,12 @@ Inspections Lists (Performance)
 | Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                        | yes | yes | yes  | no  |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                              | yes | yes | yes  | no  |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                                     | n/a | yes | n/a  | no  |
-| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | n/a |
+| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  |     |     |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | no   | no  |
 | Performance          | AlterInForeachInspection                        | Foreach variables reference usage correctness                                                     | n/a | yes | n/a  | yes |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused                                                                         | yes | yes | no   | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                               | yes | yes | yes  | no  |
-| Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    | n/a |
+| Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    |     |     |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                          | yes | yes | yes  | yes |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                                    | yes | yes | yes  | no  |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                           | yes | yes | yes  | no  |

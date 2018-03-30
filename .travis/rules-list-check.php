@@ -20,13 +20,11 @@
                 $displayName = trim($fragments[3]);
                 $hasTests    = 'yes' === trim($fragments[5]);
 
-                $valueObject              = new \stdClass();
-                $valueObject->groupName   = $groupName;
-                $valueObject->shortName   = $shortName;
-                $valueObject->displayName = $displayName;
-                $valueObject->hasTests    = $hasTests;
-
-                $documentedRules[$shortName] = $valueObject;
+                $documentedRules[$shortName] = $valueObject = new \stdClass();
+                $valueObject->groupName      = $groupName;
+                $valueObject->shortName      = $shortName;
+                $valueObject->displayName    = $displayName;
+                $valueObject->hasTests       = $hasTests;
             }
         }
     }
@@ -40,7 +38,7 @@
         $shortName   = trim($attributes->shortName);
         $displayName = trim($attributes->displayName);
 
-        $valueObject              = new \stdClass();
+        $definedRules[$shortName] = $valueObject = new \stdClass();
         $valueObject->groupName   = $groupName;
         $valueObject->shortName   = $shortName;
         $valueObject->displayName = $displayName;
@@ -48,8 +46,6 @@
         $implementationClass   = trim(end(explode('.', $attributes->implementationClass)));
         $globPattern           = sprintf('%s/src/test/java/**/%sTest.java', $basePath, $implementationClass);
         $valueObject->hasTests = count(glob($globPattern, GLOB_NOSORT)) > 0;
-
-        $definedRules[$shortName] = $valueObject;
     }
 
     /* step 1: report un-documented inspections */

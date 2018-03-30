@@ -76,7 +76,7 @@
     /* step 4: report un-tested inspections */
     $untested = array();
     foreach ($definedRules as $shortName => $valueObject) {
-        if ($valueObject->hasTests === false) {
+        if (false === $valueObject->hasTests) {
             $untested []= $shortName;
         }
     }

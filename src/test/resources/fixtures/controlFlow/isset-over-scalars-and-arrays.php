@@ -24,8 +24,8 @@ if (isset(<warning descr="Concatenation is used in an index, it should be moved 
 function variablesScopeHolder(array $array)
 {
     try {
-        $x = isset(<weak_warning descr="'null !== $array' construction should be used instead.">$array</weak_warning>);
-        $y = !isset(<weak_warning descr="'null === $array' construction should be used instead.">$array</weak_warning>);
+        $x = <weak_warning descr="'null !== $array' construction should be used instead.">isset($array)</weak_warning>;
+        $y = <weak_warning descr="'null === $array' construction should be used instead.">!isset($array)</weak_warning>;
     } finally {
         $x = isset($array);
         $y = !isset($array);

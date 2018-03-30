@@ -197,10 +197,10 @@ application components.
 
 Real-life example: application B deployed with all dependencies onto a server where include_path contains application A.
 If both applications are shipped with the same component, the component for application B gets loaded from application A. 
-This introduces broken deployment pipelines: any update of application A can break application B at any moment.
+This introduces broken deployment pipelines: any update of the component in application A can break/compromise application B.
 
-What are alternatives:
+There are multiple options for resolving the issue:
 
-- migrate onto composer (recommended)
-- use `__DIR__` constant and use it for inclusion `require_once __DIR__ . '/include/something.php'` 
-- introduce e.g. `APPLICATION_ROOT` constant and use it for inclusion `require_once APPLICATION_ROOT . '/include/something.php'` 
+- migrate onto composer and remove include/require statements as much as possible (recommended)
+- use `__DIR__` constant in inclusion paths: `require_once __DIR__ . '/include/something.php'` 
+- introduce e.g. `APPLICATION_ROOT` constant and use it in inclusion paths: `require_once APPLICATION_ROOT . '/include/something.php'` 

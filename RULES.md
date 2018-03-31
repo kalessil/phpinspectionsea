@@ -21,15 +21,15 @@ Inspections Lists (Control flow)
 ---
 | Group                | Short Name                                      | Full Name                                                                         | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------------------------------------- | --: | --: | ---: | --: |
-| Control Flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | no  | yes | no   | no  |
+| Control Flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | yes | yes | yes  | no  |
 | Control Flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | no  |
 | Control Flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | yes  | no  |
-| Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a |
+| Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         |     | yes |
 | Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | no  |
 | Control Flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                                                    | yes | yes | yes  | no  |
 | Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | no  |
-| Control Flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                | yes |
-| Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a |
+| Control Flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                |     | yes |
+| Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | no  | yes | no   | no  |
 | Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | no  |
 | Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | yes |
 | Control Flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | no  |
@@ -95,7 +95,7 @@ Inspections Lists (Code style)
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Code Style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes | yes | yes  | no  |
-| Code Style           | MissingOrEmptyGroupStatementInspection          | Missing or empty conditionals group statement       | no  | yes | no   | no  |
+| Code Style           | MissingOrEmptyGroupStatementInspection          | Missing or empty conditionals group statement       | yes | yes | yes  | no  |
 | Code Style           | SenselessCommaInArrayDefinitionInspection       | Unnecessary last comma in array definition          | yes | yes | yes  | no  |
 | Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | yes  | yes |
 | Code Style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes | yes | yes  | no  |
@@ -136,7 +136,7 @@ Inspections Lists (Language level migration)
 | Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname(...) calls                        | yes | yes | no   | no  |
 | Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | no   | no  |
 | Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes | yes | yes  | no  |
-| Language level migration | ArgumentUnpackingCanBeUsedInspection            | Argument unpacking can be used                      | yes | yes | no   | no  |
+| Language level migration | ArgumentUnpackingCanBeUsedInspection            | Argument unpacking can be used                      | yes | yes | yes  | no  |
 | Language level migration | ReturnTypeCanBeDeclaredInspection               | Return type hint can be used                        | yes | yes | yes  | no  |
 | Language level migration | GetClassUsageInspection                         | 'get_class(...)' usage correctness                  | n/a | yes | n/a  | no  |
 | Language level migration | UnsupportedStringOffsetOperationsInspection     | Unsupported string offset operations                | n/a | yes | n/a  | no  |
@@ -167,14 +167,14 @@ Inspections Lists (Probable bugs)
 | :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --: | --: | ---: | --: |
 | Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a | yes | n/a  | yes |
 | Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a | yes | n/a  | yes |
-| Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a |
+| Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    |     | yes |
 | Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a | yes | n/a  | no  |
-| Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        | n/a |
+| Probable bugs        | ReferenceMismatchInspection                     | Reference mismatch                                        |     | yes |
 | Probable bugs        | PrintfScanfArgumentsInspection                  | *printf/*scanf arguments count mismatches                 | n/a | yes | n/a  | no  |
 | Probable bugs        | RealpathInSteamContextInspection                | Phar-incompatible 'realpath(...)' usage                   | yes | yes | yes  | yes |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a | yes | n/a  | no  |
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a | yes | n/a  | no  |
-| Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a | yes | n/a  | no  |
+| Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a | yes | n/a  | yes |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a | yes | n/a  | no  |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes | yes | no   | no  |
@@ -187,16 +187,16 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes | yes | yes  | no  |
 | Probable bugs        | SuspiciousReturnInspection                      | Suspicious returns                                        | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousBinaryOperationInspection             | Suspicious binary operations                              | n/a | yes | n/a  | no  |
-| Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes | yes | yes  | no  |
-| Probable bugs        | AutoloadingIssuesInspection                     | Class autoloading correctness                             | n/a | yes | n/a  | no  |
+| Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes | yes | no   | no  |
+| Probable bugs        | AutoloadingIssuesInspection                     | Class autoloading correctness                             | n/a | yes | n/a  | yes |
 | Probable bugs        | IssetArgumentExistenceInspection                | Isset operations variables existence                      | n/a | yes | n/a  | no  |
-| Probable bugs        | TraitsPropertiesConflictsInspection             | Traits properties conflicts resolution                    | n/a | yes | n/a  | no  |
+| Probable bugs        | TraitsPropertiesConflictsInspection             | Traits properties conflicts resolution                    | n/a | yes | n/a  | yes |
 | Probable bugs        | NullPointerExceptionInspection                  | Null reference                                            | n/a | yes | n/a  | yes |
 | Probable bugs        | MissingIssetImplementationInspection            | Empty/isset results correctness                           | n/a | yes | n/a  | no  |
 | Probable bugs        | CallableMethodValidityInspection                | Callable methods validity                                 | n/a | yes | n/a  | no  |
 | Probable bugs        | PassingByReferenceCorrectnessInspection         | Passing arguments by reference correctness                | n/a | yes | n/a  | no  |
 | Probable bugs        | MockingFinalClassesInspection                   | Mocking correctness                                       | n/a | yes | n/a  | no  |
-| Probable bugs        | ClassConstantUsageCorrectnessInspection         | ::class constant usage correctness                        | n/a | yes | n/a  | no  |
+| Probable bugs        | ClassConstantUsageCorrectnessInspection         | ::class constant usage correctness                        | n/a | yes | n/a  | yes |
 | Probable bugs        | DeclareDirectiveCorrectnessInspection           | Declare directive correctness                             | n/a | yes | n/a  | no  |
 | Probable bugs        | InfinityLoopInspection                          | Infinity loop detection                                   | n/a | yes | n/a  | no  |
 | Probable bugs        | StringsFirstCharactersCompareInspection         | Strings N-character comparison flaws                      | yes | yes | yes  | no  |
@@ -219,23 +219,23 @@ Inspections Lists (Security)
 | Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid(...)' usage (Insufficient Entropy Vulnerability)      | yes | yes | yes  | no  |
 | Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage (Variable extract Vulnerability)         | n/a | yes | n/a  | yes |
 | Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage (Variable extract Vulnerability)       | n/a | yes | n/a  | yes |
-| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                              | n/a | yes | n/a  | no  |
-| Security             | SecurityAdvisoriesInspection                       | Security advisories for Composer packages                              | no  | yes | no   | yes |
+| Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                              | n/a | yes | n/a  | yes |
+| Security             | SecurityAdvisoriesInspection                       | Security advisories for Composer packages                              | yes | yes | yes  | yes |
 | Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)              | n/a | yes | n/a  | yes |
-| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                            | n/a | yes | n/a  | no  |
+| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                            | n/a | yes | n/a  | n/a |
 | Security             | UnserializeExploitsInspection                      | Exploiting unserialize (PHP Object Injection Vulnerability)            | n/a | yes | n/a  | yes |
 | Security             | PotentialMalwareInspection                         | Basic malware patterns                                                 | n/a | yes | n/a  | yes |
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                                    | n/a | yes | n/a  | yes |
-| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)        | n/a | yes | n/a  | no  |
-| Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                                    | n/a | yes | n/a  | no  |
+| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)        | n/a | yes | n/a  | n/a |
+| Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                                    | n/a | yes | n/a  | yes |
 | Security             | HostnameSubstitutionInspection                     | Hostname substitution                                                  | n/a | yes | n/a  | no  |
-| Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                       | n/a | yes | n/a  | no  |
+| Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                       | n/a | yes | n/a  | yes |
 | Security             | NonSecureArrayRandUsageInspection                  | Insecure 'array_rand(...)' usage (Insufficient Entropy Vulnerability)  | n/a | yes | n/a  | no  |
 | Security             | NonSecureStrShuffleUsageInspection                 | Insecure 'str_shuffle(...)' usage (Insufficient Entropy Vulnerability) | n/a | yes | n/a  | no  |
 | Security             | NonSecureHtmlentitiesUsageInspection               | Insecure 'htmlentities(...)' usage (XSS attacks)                       | yes | yes | yes  | no  |
 | Security             | NonSecureHtmlspecialcharsUsageInspection           | Insecure 'htmlspecialchars(...)' usage (XSS attacks)                   | yes | yes | yes  | no  |
 | Security             | NonSecureShuffleUsageInspection                    | Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)     | n/a | yes | n/a  | no  |
-| Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                                | yes | yes | yes  | no  |
+| Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                                | yes | yes | yes  | n/a |
 | Security             | SecureCookiesTransferInspection                    | Secure cookies transfer                                                | yes | yes | yes  | no  |
 | Security             | NonSecureOpensslVerifyUsageInspection              | Insecure 'openssl_verify(...)' usage                                   | n/a | yes | n/a  | no  |
 
@@ -247,12 +247,12 @@ Inspections Lists (Performance)
 | Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                        | yes | yes | yes  | no  |
 | Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                              | yes | yes | yes  | no  |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                                     | n/a | yes | n/a  | no  |
-| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | n/a |
+| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | n/a | yes | n/a  | yes |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | no   | no  |
 | Performance          | AlterInForeachInspection                        | Foreach variables reference usage correctness                                                     | n/a | yes | n/a  | yes |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused                                                                         | yes | yes | no   | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                               | yes | yes | yes  | no  |
-| Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    | n/a |
+| Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    |     | yes |
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                          | yes | yes | yes  | yes |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                                    | yes | yes | yes  | no  |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                           | yes | yes | yes  | no  |
@@ -261,7 +261,7 @@ Inspections Lists (Performance)
 | Performance          | CascadeStringReplacementInspection              | Cascading 'str_replace(...)' calls                                                                | yes | yes | yes  | no  |
 | Performance          | StrtotimeUsageInspection                        | 'strtotime(...)' misused                                                                          | yes | yes | yes  | no  |
 | Performance          | FilePutContentsMissUseInspection                | 'file_put_contents(...)' misused                                                                  | yes | yes | yes  | no  |
-| Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                                    | no  | yes | no   | yes |
+| Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                                    | n/a | yes | n/a  | yes |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                           | yes | yes | yes  | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                            | yes | yes | yes  | no  |
 | Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                               | yes | yes | yes  | no  |

@@ -10,10 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-@State(
-    name = "EAUltimateSettings",
-    storages = @Storage(id = "other", file = "$APP_CONFIG$/ea_ultimate.xml")
-)
+@State(name = "EAUltimateSettings", storages = @Storage(file = "$APP_CONFIG$/ea_ultimate.xml"))
 public class EAUltimateSettings implements PersistentStateComponent<Element> {
     private String versionOldest;
     private String version;

@@ -14,17 +14,19 @@
         $lineContent = trim($lineContent);
         if (false !== stripos($lineContent, 'inspect') && false !== strpos($lineContent, '|')) {
             $fragments = explode('|', $lineContent);
-            if (count($fragments) >= 5) {
-                $groupName   = trim($fragments[1]);
-                $shortName   = trim($fragments[2]);
-                $displayName = trim($fragments[3]);
-                $hasTests    = 'yes' === trim($fragments[5]);
+            if (count($fragments) >= 8) {
+                $groupName        = trim($fragments[1]);
+                $shortName        = trim($fragments[2]);
+                $displayName      = trim($fragments[3]);
+                $hasTests         = 'yes' === trim($fragments[5]);
+                $hasDocumentation = 'yes' === trim($fragments[7]);
 
-                $documentedRules[$shortName] = $valueObject = new \stdClass();
-                $valueObject->groupName      = $groupName;
-                $valueObject->shortName      = $shortName;
-                $valueObject->displayName    = $displayName;
-                $valueObject->hasTests       = $hasTests;
+                $documentedRules[$shortName]   = $valueObject = new \stdClass();
+                $valueObject->groupName        = $groupName;
+                $valueObject->shortName        = $shortName;
+                $valueObject->displayName      = $displayName;
+                $valueObject->hasTests         = $hasTests;
+                $valueObject->hasDocumentation = $hasDocumentation;
             }
         }
     }
@@ -52,6 +54,12 @@
                 break;
             }
         }
+
+        $descriptionFile = sprintf('%s/src/main/resources/inspectionDescriptions/%s.html', $basePath, $shortName);
+        if (false === $description = file_get_contents($descriptionFile)) {
+            throw new \RuntimeException('Could not read description file: ' . $descriptionFile);
+        }
+        $valueObject->hasDocumentation = false !== strpos($description, '/kalessil/phpinspectionsea/blob/master/docs/');
     }
 
     /* step 1: report un-documented inspections */

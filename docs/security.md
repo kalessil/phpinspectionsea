@@ -185,3 +185,22 @@ The inspection is inspired by the following projects (which you can also use wit
 - https://github.com/elcodigok/wphardening
 
 The inspection checks limited set of built-in PHP functions used by malware scripts and reports suspicious cases.
+
+## Untrusted files inclusion
+
+>Note: the inspection is disabled by default
+
+The inspection spots include/require constructs with relative inclusion paths which are relying on include_path option.
+
+The problem here is that include_path is an environment configuration and we shouldn't rely on it when dealing with 
+application components.
+
+Real-life example: application B deployed with all dependencies onto a server where include_path contains application A.
+If both applications are shipped with the same component, the component for application B gets loaded from application A. 
+This introduces broken deployment pipelines: any update of the component in application A can break/compromise application B.
+
+There are multiple options for resolving the issue:
+
+- migrate onto composer and remove include/require statements as much as possible (recommended)
+- use `__DIR__` constant in inclusion paths: `require_once __DIR__ . '/include/something.php'` 
+- introduce e.g. `APPLICATION_ROOT` constant and use it in inclusion paths: `require_once APPLICATION_ROOT . '/include/something.php'` 

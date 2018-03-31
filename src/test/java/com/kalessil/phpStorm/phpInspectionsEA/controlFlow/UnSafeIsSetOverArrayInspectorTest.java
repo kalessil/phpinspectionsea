@@ -11,6 +11,8 @@ final public class UnSafeIsSetOverArrayInspectorTest extends PhpCodeInsightFixtu
         inspector.SUGGEST_TO_USE_ARRAY_KEY_EXISTS     = true;
         inspector.SUGGEST_TO_USE_NULL_COMPARISON      = true;
         inspector.REPORT_CONCATENATION_IN_INDEXES     = true;
+        inspector.PREFER_REGULAR_STYLE                = false;
+        inspector.PREFER_YODA_STYLE                   = true;
         return inspector;
     }
 
@@ -18,6 +20,10 @@ final public class UnSafeIsSetOverArrayInspectorTest extends PhpCodeInsightFixtu
         myFixture.enableInspections(getInspector());
         myFixture.configureByFile("fixtures/controlFlow/isset-over-scalars-and-arrays.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/controlFlow/isset-over-scalars-and-arrays.fixed.php");
     }
     public void testIfFindsClassPatterns() {
         myFixture.enableInspections(getInspector());

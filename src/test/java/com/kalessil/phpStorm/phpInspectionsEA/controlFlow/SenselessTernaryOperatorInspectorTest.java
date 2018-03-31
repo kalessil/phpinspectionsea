@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 final public class SenselessTernaryOperatorInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SenselessTernaryOperatorInspector());
-
         myFixture.configureByFile("fixtures/controlFlow/ternary-senseless.php");
         myFixture.testHighlighting(true, false, true);
 

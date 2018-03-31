@@ -9,19 +9,16 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -37,12 +34,13 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = false;
     public boolean SUGGEST_TO_USE_NULL_COMPARISON  = true;
     public boolean REPORT_CONCATENATION_IN_INDEXES = true;
+    public boolean PREFER_YODA_STYLE               = false;
+    public boolean PREFER_REGULAR_STYLE            = true;
 
     // static messages for triggered messages
     private static final String messageUseArrayKeyExists    = "'array_key_exists(...)' construction should be used for better data *structure* control.";
-    private static final String messageUseNullComparison    = "'null === %s%' construction should be used instead.";
-    private static final String messageUseNotNullComparison = "'null !== %s%' construction should be used instead.";
     private static final String messageConcatenationInIndex = "Concatenation is used in an index, it should be moved to a variable.";
+    private static final String patternUseNullComparison    = "'%s' construction should be used instead.";
 
     @NotNull
     public String getShortName() {
@@ -71,7 +69,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 boolean issetInverted  = false;
                 if (issetParent instanceof UnaryExpression) {
                     final PsiElement operator = ((UnaryExpression) issetParent).getOperation();
-                    if (null != operator && PhpTokenTypes.opNOT == operator.getNode().getElementType()) {
+                    if (OpenapiTypesUtil.is(operator, PhpTokenTypes.opNOT)) {
                         issetInverted = true;
                         issetParent   = issetParent.getParent();
                     }
@@ -113,9 +111,17 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     if (SUGGEST_TO_USE_NULL_COMPARISON) {
                         /* false-positives: finally, perhaps fallback to initialization in try */
                         if (PsiTreeUtil.getParentOfType(issetExpression, Finally.class) == null) {
-                            final String message = (issetInverted ? messageUseNullComparison : messageUseNotNullComparison)
-                                    .replace("%s%", argument.getText());
-                            holder.registerProblem(argument, message, ProblemHighlightType.WEAK_WARNING);
+                            final List<String> fragments = Arrays.asList(argument.getText(), issetInverted ? "===" : "!==", "null");
+                            if (PREFER_YODA_STYLE) {
+                                Collections.reverse(fragments);
+                            }
+                            final String replacement = String.join(" ", fragments);
+                            holder.registerProblem(
+                                    issetInverted ? issetExpression.getParent() : issetExpression,
+                                    String.format(patternUseNullComparison, replacement),
+                                    ProblemHighlightType.WEAK_WARNING,
+                                    new CompareToNullFix(replacement)
+                            );
                         }
                     }
                     return;
@@ -201,6 +207,23 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
             component.addCheckbox("Suggest to use array_key_exists()", SUGGEST_TO_USE_ARRAY_KEY_EXISTS, (isSelected) -> SUGGEST_TO_USE_ARRAY_KEY_EXISTS = isSelected);
             component.addCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
             component.addCheckbox("Report concatenations in indexes", REPORT_CONCATENATION_IN_INDEXES, (isSelected) -> REPORT_CONCATENATION_IN_INDEXES = isSelected);
+
+            component.delegateRadioCreation((radioComponent) -> {
+                radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
+                radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
+            });
         });
+    }
+
+    private class CompareToNullFix extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use null comparison instead";
+        }
+
+        CompareToNullFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

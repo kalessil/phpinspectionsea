@@ -163,11 +163,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     private JsonProperty getPackagesGroup(@NotNull JsonObject manifest, @NotNull String name) {
         JsonProperty result         = null;
         final JsonProperty property = manifest.findProperty(name);
-        if (property != null) {
-            final JsonValue value = property.getValue();
-            if (value instanceof JsonObject) {
-                result = property;
-            }
+        if (property != null && property.getValue() instanceof JsonObject) {
+            result = property;
         }
         return result;
     }

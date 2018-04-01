@@ -62,6 +62,12 @@ Bug-fixes and new inspections:<br/>
   ]]></change-notes>
 
   <extensions defaultExtensionNs="com.intellij">
+    <!-- indexers -->
+
+    <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer"/>
+
+    <!-- inspections -->
+
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="AmbiguousMethodsCallsInArrayMappingInspection" displayName="Non-optimized arrays mapping"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"

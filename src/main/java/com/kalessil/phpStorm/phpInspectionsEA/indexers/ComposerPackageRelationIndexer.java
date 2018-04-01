@@ -1,0 +1,103 @@
+package com.kalessil.phpStorm.phpInspectionsEA.indexers;
+
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.indexing.*;
+import com.intellij.util.io.DataExternalizer;
+import com.intellij.util.io.EnumeratorStringDescriptor;
+import com.intellij.util.io.KeyDescriptor;
+import com.jetbrains.php.lang.PhpFileType;
+import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+final public class ComposerPackageRelationIndexer extends FileBasedIndexExtension<String, String> {
+    public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.file_to_package");
+    private final KeyDescriptor<String> descriptor  = new EnumeratorStringDescriptor();
+
+    final static private Pattern regexPackageName;
+    static {
+        /* original regex: ^\s*"name"\s*:\s*"(\w+/\w+)"\s*$ */
+        regexPackageName = Pattern.compile("^\\s*\"name\"\\s*:\\s*\"(\\w+/\\w+)\"\\s*$", Pattern.MULTILINE);
+    }
+
+    @NotNull
+    @Override
+    public ID<String, String> getName() {
+        return identity;
+    }
+
+    @NotNull
+    @Override
+    public DataIndexer<String, String, FileContent> getIndexer() {
+        return fileContent -> {
+            final VirtualFile rootFolder     = fileContent.getProject().getBaseDir();
+            final Map<String, String> result = new THashMap<>();
+
+            /* identify manifest */
+            VirtualFile manifest = null, currentFolder = fileContent.getFile().getParent();
+            while (currentFolder != null) {
+                manifest = currentFolder.findChild("composer.json");
+                if (manifest != null || currentFolder.equals(rootFolder)) {
+                    break;
+                }
+                currentFolder = currentFolder.getParent();
+            }
+            /* identify package name */
+            String packageName = null;
+            if (manifest != null) {
+                try {
+                    final Matcher matcher = regexPackageName.matcher(new String(manifest.contentsToByteArray(true)));
+                    if (matcher.find()) {
+                        packageName = matcher.group(1);
+                    }
+                } catch (final IOException error) {
+                    /* do nothing here */
+                }
+            }
+            result.put(fileContent.getFile().getCanonicalPath(), packageName);
+
+            return result;
+        };
+    }
+
+    @NotNull
+    @Override
+    public KeyDescriptor<String> getKeyDescriptor() {
+        return descriptor;
+    }
+
+    @NotNull
+    @Override
+    public DataExternalizer<String> getValueExternalizer() {
+        return EnumeratorStringDescriptor.INSTANCE;
+    }
+
+    @Override
+    public int getVersion() {
+        return 0;
+    }
+
+    @NotNull
+    @Override
+    public FileBasedIndex.InputFilter getInputFilter() {
+        return file -> file.getFileType() == PhpFileType.INSTANCE;
+    }
+
+    @Override
+    public boolean dependsOnFileContent() {
+        return true;
+    }
+}

@@ -18,6 +18,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.Stream;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
 
     @NotNull
@@ -36,9 +45,9 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 if (currentManifest != null) {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                     if (resolved != null) {
-                        final String dependecyManifest = this.getManifest(resolved, project);
-                        if (dependecyManifest != null && !currentManifest.equals(dependecyManifest)) {
-                            final boolean isTarget = this.isTransitiveDependency(currentManifest, dependecyManifest, project);
+                        final String dependencyManifest = this.getManifest(resolved, project);
+                        if (dependencyManifest != null && !currentManifest.equals(dependencyManifest)) {
+                            final boolean isTarget = this.isTransitiveDependency(currentManifest, dependencyManifest, project);
                             if (isTarget) {
                                 holder.registerProblem(reference, "Nope: transitive dependency");
                             }
@@ -62,16 +71,16 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 return result;
             }
 
-            private boolean isTransitiveDependency(@NotNull String current, @NotNull String dependecy, @NotNull Project project) {
+            private boolean isTransitiveDependency(@NotNull String current, @NotNull String dependency, @NotNull Project project) {
                 boolean result                       = false;
                 final GlobalSearchScope scope        = GlobalSearchScope.allScope(project);
                 final List<String> dependencyDetails = FileBasedIndex.getInstance()
-                        .getValues(ComposerPackageManifestIndexer.identity, dependecy, scope);
+                        .getValues(ComposerPackageManifestIndexer.identity, dependency, scope);
                 if (dependencyDetails.size() == 1) {
                     final String dependencyName = dependencyDetails.get(0).split(":")[0];
                     if (!dependencyName.isEmpty()) {
                         final List<String> currentDetails = FileBasedIndex.getInstance()
-                                .getValues(ComposerPackageManifestIndexer.identity, dependecy, scope);
+                                .getValues(ComposerPackageManifestIndexer.identity, current, scope);
                         if (currentDetails.size() == 1) {
                             final String currentDependencies = currentDetails.get(0).split(":")[1];
                             result = Stream.of(currentDependencies.split(",")).anyMatch(d -> d.equals(dependencyName));

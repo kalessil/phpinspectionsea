@@ -46,7 +46,6 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
             final VirtualFile rootFolder     = fileContent.getProject().getBaseDir();
             final Map<String, String> result = new THashMap<>();
 
-            /* identify manifest */
             VirtualFile manifest = null, currentFolder = fileContent.getFile().getParent();
             while (currentFolder != null) {
                 manifest = currentFolder.findChild("composer.json");

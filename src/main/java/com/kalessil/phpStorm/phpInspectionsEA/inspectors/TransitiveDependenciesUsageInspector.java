@@ -83,7 +83,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                                 .getValues(ComposerPackageManifestIndexer.identity, current, scope);
                         if (currentDetails.size() == 1) {
                             final String currentDependencies = currentDetails.get(0).split(":")[1];
-                            result = Stream.of(currentDependencies.split(",")).anyMatch(d -> d.equals(dependencyName));
+                            result = Stream.of(currentDependencies.split(",")).noneMatch(d -> d.equals(dependencyName));
                         }
                         currentDetails.clear();
                     }

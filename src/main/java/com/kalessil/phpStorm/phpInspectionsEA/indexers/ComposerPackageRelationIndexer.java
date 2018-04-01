@@ -33,11 +33,11 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
     @NotNull
     @Override
     public DataIndexer<String, String, FileContent> getIndexer() {
-        return fileContent -> {
-            final VirtualFile rootFolder     = fileContent.getProject().getBaseDir();
+        return file -> {
+            final VirtualFile rootFolder     = file.getProject().getBaseDir();
             final Map<String, String> result = new THashMap<>();
 
-            VirtualFile manifest = null, currentFolder = fileContent.getFile().getParent();
+            VirtualFile manifest = null, currentFolder = file.getFile().getParent();
             while (currentFolder != null) {
                 manifest = currentFolder.findChild("composer.json");
                 if (manifest != null || currentFolder.equals(rootFolder)) {
@@ -45,7 +45,7 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
                 }
                 currentFolder = currentFolder.getParent();
             }
-            result.put(fileContent.getFile().getCanonicalPath(), manifest == null ? "" : manifest.getCanonicalPath());
+            result.put(file.getFile().getCanonicalPath(), manifest == null ? "" : manifest.getCanonicalPath());
 
             return result;
         };

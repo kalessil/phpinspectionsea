@@ -55,19 +55,7 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
                 }
                 currentFolder = currentFolder.getParent();
             }
-            /* identify package name */
-            String packageName = null;
-            if (manifest != null) {
-                try {
-                    final Matcher matcher = regexPackageName.matcher(new String(manifest.contentsToByteArray(true)));
-                    if (matcher.find()) {
-                        packageName = matcher.group(1);
-                    }
-                } catch (final IOException error) {
-                    /* do nothing here */
-                }
-            }
-            result.put(fileContent.getFile().getCanonicalPath(), packageName);
+            result.put(fileContent.getFile().getCanonicalPath(), manifest == null ? "" : manifest.getCanonicalPath());
 
             return result;
         };

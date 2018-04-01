@@ -65,6 +65,7 @@ Bug-fixes and new inspections:<br/>
     <!-- indexers -->
 
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer"/>
+    <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIndexer"/>
 
     <!-- inspections -->
 

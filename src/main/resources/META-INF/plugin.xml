@@ -891,6 +891,10 @@ Bug-fixes and new inspections:<br/>
         shortName="EfferentObjectCouplingInspection"                displayName="Efferent coupling between objects"
         groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.EfferentObjectCouplingInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="TransitiveDependenciesUsageInspection"           displayName="Transitive dependencies usage"
+        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.TransitiveDependenciesUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -91,7 +91,7 @@ public class ComposerPackageManifestIndexer extends FileBasedIndexExtension<Stri
 
     @Override
     public int getVersion() {
-        return 0;
+        return 1;
     }
 
     @NotNull

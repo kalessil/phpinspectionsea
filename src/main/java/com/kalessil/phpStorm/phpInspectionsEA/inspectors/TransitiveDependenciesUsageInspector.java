@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  */
 
 public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
-    private static final String message = "A transitive dependency has been introduced, please add the dependency into composer manifest.";
+    private static final String message = "A transitive dependency has been introduced, please actualize composer manifest dependencies.";
 
     @NotNull
     public String getShortName() {

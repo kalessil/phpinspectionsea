@@ -9,10 +9,7 @@ import com.jetbrains.php.lang.PhpFileType;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -26,12 +23,6 @@ import java.util.regex.Pattern;
 final public class ComposerPackageRelationIndexer extends FileBasedIndexExtension<String, String> {
     public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.file_to_package");
     private final KeyDescriptor<String> descriptor  = new EnumeratorStringDescriptor();
-
-    final static private Pattern regexPackageName;
-    static {
-        /* original regex: ^\s*"name"\s*:\s*"(\w+/\w+)"\s*$ */
-        regexPackageName = Pattern.compile("^\\s*\"name\"\\s*:\\s*\"(\\w+/\\w+)\"\\s*$", Pattern.MULTILINE);
-    }
 
     @NotNull
     @Override

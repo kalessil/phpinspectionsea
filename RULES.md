@@ -160,7 +160,7 @@ Inspections Lists (Architecture)
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times          | yes | yes | yes  | no  |
 | Architecture         | MultipleReturnStatementsInspection              | Multiple return statements usage                    | n/a | yes | n/a  | yes |
 | Architecture         | EfferentObjectCouplingInspection                | Efferent coupling between objects                   | n/a | yes | n/a  | no  |
-| Architecture         | TransitiveDependenciesUsageInspection           | Transitive dependencies usage                       | n/a | yes | n/a  | no  |
+| Architecture         | TransitiveDependenciesUsageInspection           | Transitive dependencies usage                       | n/a | yes | n/a  | yes |
 
 Inspections Lists (Probable bugs)
 ---

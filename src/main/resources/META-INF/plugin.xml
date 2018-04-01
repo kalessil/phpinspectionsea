@@ -893,7 +893,7 @@ Bug-fixes and new inspections:<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.EfferentObjectCouplingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="TransitiveDependenciesUsageInspection"           displayName="Transitive dependencies usage"
-        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.TransitiveDependenciesUsageInspector"/>
 
 

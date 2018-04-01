@@ -77,8 +77,7 @@ Means we have a design problem. E.g. in this case we can ask ourselves questions
 "why does this function have additional validation inside", "why the parent workflow doesn't guarantee string type to be dispatched",
 "why it was not introduced 2 functions here: isEmptyString, isEmptyStringTypeSafe" and so on.
 
-From this angle the inspection can spot existing architecture issues and alert when you about to introduce them during 
-development.
+From this angle the inspection can spot existing architecture issues and alert when you about to introduce them during development.
 
 ## Transitive dependencies usage
 
@@ -88,9 +87,9 @@ development.
 
 The inspection reports transitive dependencies usages when composer is being used as the package manager.
 
-Transitive dependencies (classes from packages which are not required in application manifest) are managed by
-implicitly declared dependencies and might be dropped or updated to incompatible/compromised version at any time when 
-application dependencies being updated.
+Transitive dependencies (classes from packages which are not required in application manifest) are managed by implicitly 
+declared dependencies and might be dropped or updated to incompatible/compromised version at any time when application 
+dependencies being updated.
 
 The issue can be resolved by adding the transitive dependency into require/require-dev section of applications' 
 composer.json file.  

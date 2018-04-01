@@ -142,7 +142,7 @@ variant is following: `!is_dir($folder) && !mkdir($folder) && !is_dir($folder)`.
 
 ## 'file_put_contents(...)' race condition
 
-> Note: this inspection is part of Php Inspections (EA Ultimate).
+> Note: this inspection is part of [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-).
 
 > Note: in order to report all cases, please check the inspection settings.
 

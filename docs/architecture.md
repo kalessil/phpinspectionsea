@@ -80,6 +80,17 @@ Means we have a design problem. E.g. in this case we can ask ourselves questions
 From this angle the inspection can spot existing architecture issues and alert when you about to introduce them during 
 development.
 
+## Transitive dependencies usage
 
+> Note: this inspection is part of [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-).
 
+> Note: it also worth checking [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker) for CI purposes
 
+The inspection reports transitive dependencies usages when composer is being used as the package manager.
+
+Transitive dependencies (classes from packages which are not required in application manifest) are managed by
+implicitly declared dependencies and might be dropped or updated to incompatible/compromised version at any time when 
+application dependencies being updated.
+
+The issue can be resolved by adding the transitive dependency into require/require-dev section of applications' 
+composer.json file.  

@@ -28,6 +28,7 @@ import java.util.stream.Stream;
  */
 
 public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
+    private static final String message = "A transitive dependency has been introduced, please add the dependency into composer manifest.";
 
     @NotNull
     public String getShortName() {
@@ -49,7 +50,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                         if (dependencyManifest != null && !currentManifest.equals(dependencyManifest)) {
                             final boolean isTarget = this.isTransitiveDependency(currentManifest, dependencyManifest, project);
                             if (isTarget) {
-                                holder.registerProblem(reference, "Nope: transitive dependency");
+                                holder.registerProblem(reference, message);
                             }
                         }
                     }

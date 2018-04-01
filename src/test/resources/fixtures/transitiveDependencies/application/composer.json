@@ -1,0 +1,6 @@
+{
+    "name": "company/project",
+    "require": {
+        "vendor/first": "*"
+    }
+}

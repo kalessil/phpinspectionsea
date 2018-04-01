@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -44,19 +44,7 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fixes and new inspections:<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/44413">v3.0.0</a><br/>
-<br/>
-- Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
-<br/>
-- Array keys set fragmentation: new patterns<br/>
-- Insecure 'openssl_verify(...)' usage: implemented<br/>
-- Isset operations variables existence: new patterns<br/>
-- Non-optimal regular expression: new patterns<br/>
-- One-time use variables: new patterns<br/>
-- Repetitive method calls: new patterns<br/>
-- Secure cookies transfer: implemented<br/>
-- Type casting can be used: new patterns<br/>
-- 'array_values(...)' misused: new patterns<br/>
+- Transitive dependencies usage: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -51,7 +51,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("mybuilder/phpunit-accelerator");
         developmentPackages.add("phpunit/phpunit-selenium");
 
-        /* frameworks: Symfony, ZF2, Yii2 */
+        /* frameworks: Symfony, ZF2, Yii2, Laravel */
         developmentPackages.add("symfony/phpunit-bridge");
         developmentPackages.add("symfony/debug");
         developmentPackages.add("symfony/var-dumper");
@@ -59,6 +59,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("zendframework/zend-debug");
         developmentPackages.add("yiisoft/yii2-gii");
         developmentPackages.add("yiisoft/yii2-debug");
+        developmentPackages.add("orchestra/testbench");
 
         /* more dev-packages  */
         developmentPackages.add("codeception/codeception");

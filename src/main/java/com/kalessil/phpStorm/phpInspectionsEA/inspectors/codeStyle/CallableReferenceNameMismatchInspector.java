@@ -63,7 +63,7 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
                     if (useCache && function.getFQN().equals('\\' + realName)) {
                         cache.putIfAbsent(realName, realName);
                     }
-                    if (!realName.equals(referenceName) && realName.equalsIgnoreCase(referenceName)) {
+                    if (!referenceName.equals(realName) && referenceName.equalsIgnoreCase(realName)) {
                         holder.registerProblem(
                                 reference,
                                 messagePattern.replace("%n%", realName),

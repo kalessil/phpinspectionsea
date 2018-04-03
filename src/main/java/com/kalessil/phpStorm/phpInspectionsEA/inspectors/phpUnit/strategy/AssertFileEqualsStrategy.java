@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  */
 
 final public class AssertFileEqualsStrategy {
+
     private final static Set<String> targetAssertions = new HashSet<>();
     static {
         targetAssertions.add("assertSame");

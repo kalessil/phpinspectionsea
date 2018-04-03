@@ -23,11 +23,15 @@ import java.util.Set;
  */
 
 final public class AssertStringEqualsFileStrategy {
-    private final static Set<String> targetAssertions = new HashSet<>();
 
+    private final static Set<String> validContexts    = new HashSet<>();
+    private final static Set<String> targetAssertions = new HashSet<>();
     static {
         targetAssertions.add("assertSame");
         targetAssertions.add("assertEquals");
+
+        validContexts.add("assertFileEquals");
+        validContexts.add("assertStringEqualsFile");
     }
 
     private final static String messagePattern = "'%s(...)' would fit more here.";
@@ -43,7 +47,7 @@ final public class AssertStringEqualsFileStrategy {
                     final PsiElement[] functionArguments = candidate.getParameters();
                     if (functionArguments.length == 1) {
                         final Function scope       = ExpressionSemanticUtil.getScope(reference);
-                        final boolean shouldReport = scope == null || !scope.getName().equals("assertStringEqualsFile");
+                        final boolean shouldReport = scope == null || !validContexts.contains(scope.getName());
                         if (shouldReport) {
                             final String[] suggestedArguments = new String[assertionArguments.length];
                             suggestedArguments[0] = functionArguments[0].getText();

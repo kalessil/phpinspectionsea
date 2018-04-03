@@ -45,7 +45,11 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
             }
 
             final Map<String, String> result = new THashMap<>();
-            result.put(file.getFile().getCanonicalPath(), manifest == null ? "" : manifest.getCanonicalPath());
+            final String key                 = file.getFile().getCanonicalPath();
+            final String value               = manifest == null ? null : manifest.getCanonicalPath();
+            if (key != null && value != null) {
+                result.put(key, value);
+            }
             return result;
         };
     }

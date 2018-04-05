@@ -138,14 +138,10 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
 
                 /* do reporting now: exceptions annotated, but not thrown */
                 if (REPORT_NON_THROWN_EXCEPTIONS && annotatedButNotThrownExceptions.size() > 0) {
-                    final List<String> toReport =
-                            annotatedButNotThrownExceptions.stream()
-                                    .map(PhpNamedElement::getFQN)
-                                    .collect(Collectors.toList());
-
-                    final String message = messagePatternUnthrown.replace("%c%", String.join(", ", toReport));
-                    holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
-
+                    final List<String> toReport = annotatedButNotThrownExceptions.stream()
+                            .map(PhpNamedElement::getFQN)
+                            .collect(Collectors.toList());
+                    holder.registerProblem(methodName, messagePatternUnthrown.replace("%c%", String.join(", ", toReport)));
                     toReport.clear();
                 }
                 annotatedButNotThrownExceptions.clear();
@@ -195,7 +191,7 @@ public class ExceptionsAnnotatingAndHandlingInspector extends BasePhpInspection 
                                 final String message = messagePattern.replace("%c%", thrown);
                                 for (final PsiElement blame : blamedExpressions) {
                                     final LocalQuickFix fix = hasPhpDoc ? new MissingThrowAnnotationLocalFix(method, thrown) : null;
-                                    holder.registerProblem(this.getReportingTarget(blame), message, ProblemHighlightType.WEAK_WARNING, fix);
+                                    holder.registerProblem(this.getReportingTarget(blame), message, fix);
                                 }
                             }
                             blamedExpressions.clear();

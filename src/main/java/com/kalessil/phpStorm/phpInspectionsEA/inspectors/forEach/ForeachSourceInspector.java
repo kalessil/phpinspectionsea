@@ -76,7 +76,9 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     if (conditions != null) {
                         for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(conditions, source.getClass())) {
                             if (OpeanapiEquivalenceUtil.areEqual(candidate, source)) {
-                                final PsiElement call = candidate.getParent() instanceof ParameterList ? candidate.getParent().getParent() : null;
+                                final PsiElement parent = candidate.getParent();
+                                final PsiElement target = parent instanceof AssignmentExpression ? parent.getParent() : parent;
+                                final PsiElement call   = target instanceof ParameterList ? target.getParent() : null;
                                 if (OpenapiTypesUtil.isFunctionReference(call)) {
                                     final String functionName = ((FunctionReference) call).getName();
                                     if (functionName != null && (functionName.equals("is_array") || functionName.equals("is_iterable"))) {

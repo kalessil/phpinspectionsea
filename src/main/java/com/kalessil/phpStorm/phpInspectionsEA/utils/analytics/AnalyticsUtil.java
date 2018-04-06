@@ -25,6 +25,7 @@ final public class AnalyticsUtil {
     private final static Set<String> stopList = new HashSet<>();
     static {
         /* ugly, but: PhpStorm 2016 compatibility + reducing crash-reports rate */
+        stopList.add("com.jetbrains.php.lang.parser.PhpParserException");
         stopList.add("com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments");
         stopList.add("com.intellij.openapi.progress.ProcessCanceledException");
         stopList.add("com.intellij.util.indexing.StorageException");

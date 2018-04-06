@@ -3,11 +3,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.ConcatenationExpression;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -50,13 +52,24 @@ public class MissingDirectorySeparatorInspector extends BasePhpInspection {
             private void analyze(@NotNull PsiElement expression) {
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof ConcatenationExpression) {
-                    final PsiElement second = OpenapiElementsUtil.getSecondOperand((BinaryExpression) parent, expression);
-                    if (second != null) {
-                        final PsiElement target = ExpressionSemanticUtil.resolveAsStringLiteral(second);
+                    final PsiElement grandParent = parent.getParent();
+                    /* identify the string literal candidate */
+                    final PsiElement candidate;
+                    final ConcatenationExpression concatenation = (ConcatenationExpression) parent;
+                    if (concatenation.getLeftOperand() == expression) {
+                        candidate = concatenation.getRightOperand();
+                    } else if (grandParent instanceof ConcatenationExpression) {
+                        candidate = ((ConcatenationExpression) grandParent).getRightOperand();
+                    } else {
+                        candidate = null;
+                    }
+                    /* inspect the candidate */
+                    if (candidate != null) {
+                        final StringLiteralExpression target = ExpressionSemanticUtil.resolveAsStringLiteral(candidate);
                         if (target != null) {
-                            final String content = ((StringLiteralExpression) target).getContents();
+                            final String content = target.getContents();
                             if (!content.startsWith("/") && !content.startsWith("\\")) {
-                                holder.registerProblem(second, message);
+                                holder.registerProblem(candidate, message);
                             }
                         }
                     }

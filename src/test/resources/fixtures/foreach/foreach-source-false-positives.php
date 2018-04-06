@@ -50,7 +50,7 @@
             foreach ($objectOrIterable as $value) {}
         }
         /* @var $objectOrArray object|array */
-        if (false || is_array($objectOrArray)) {
+        if (false || is_array($duplicate = $objectOrArray)) {
             foreach ($objectOrArray as $value) {}
         }
     }

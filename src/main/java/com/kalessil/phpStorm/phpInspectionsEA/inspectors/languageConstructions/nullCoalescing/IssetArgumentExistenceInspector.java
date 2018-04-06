@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCos
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -90,6 +91,7 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                             }
                         }
                     }
+                    parameters.clear();
                 }
             }
 
@@ -109,11 +111,28 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                                     }
                                 }
                                 if (report) {
-                                    holder.registerProblem(
-                                            variable,
-                                            String.format(messagePattern, variableName),
-                                            ProblemHighlightType.GENERIC_ERROR
-                                    );
+                                    /* variable created dynamically in a loop: hacky stuff, but nevertheless */
+                                    PsiElement loopCandidate = reference.getParent();
+                                    while (loopCandidate != null && loopCandidate != scope) {
+                                        if (OpenapiTypesUtil.isLoop(loopCandidate)) {
+                                            report = PsiTreeUtil.findChildrenOfType(loopCandidate, AssignmentExpression.class).stream()
+                                                    .noneMatch(assignment -> {
+                                                        final PsiElement container = assignment.getVariable();
+                                                        return
+                                                                container instanceof Variable &&
+                                                               ((Variable) container).getName().equals(variableName);
+                                                    });
+                                            break;
+                                        }
+                                        loopCandidate = loopCandidate.getParent();
+                                    }
+                                    if (report) {
+                                        holder.registerProblem(
+                                                variable,
+                                                String.format(messagePattern, variableName),
+                                                ProblemHighlightType.GENERIC_ERROR
+                                        );
+                                    }
                                 }
                                 break;
                             }

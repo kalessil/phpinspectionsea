@@ -27,7 +27,8 @@ import java.util.HashMap;
  */
 
 public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' should be used instead (up to 6x times faster).";
+    private static final String messagePattern  = "'%s' would be more performant here (up to 6x times faster).";
+    private static final String messageInlining = "'%s' would express the intention here better (less types coercion magic).";
 
     @NotNull
     public String getShortName() {
@@ -117,7 +118,7 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
                             );
                             holder.registerProblem(
                                     literal,
-                                    String.format(messagePattern, replacement),
+                                    String.format(messageInlining, replacement),
                                     new UseTypeCastingFix(replacement)
                             );
                         }

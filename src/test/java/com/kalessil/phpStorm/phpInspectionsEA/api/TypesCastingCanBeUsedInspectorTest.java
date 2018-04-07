@@ -5,7 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingCa
 
 final public class TypesCastingCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new TypesCastingCanBeUsedInspector());
+        final TypesCastingCanBeUsedInspector inspector = new TypesCastingCanBeUsedInspector();
+        inspector.REPORT_INLINES                       = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/api/type-casting-can-be-used.php");
         myFixture.testHighlighting(true, false, true);
 

@@ -11,10 +11,12 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashMap;
 
 /*
@@ -29,6 +31,9 @@ import java.util.HashMap;
 public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern  = "'%s' would be more performant here (up to 6x times faster).";
     private static final String messageInlining = "'%s' would express the intention here better (less types coercion magic).";
+
+    // Inspection options.
+    public boolean REPORT_INLINES = true;
 
     @NotNull
     public String getShortName() {
@@ -103,7 +108,11 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression literal) {
-                if (!literal.isHeredoc() && !(ExpressionSemanticUtil.getBlockScope(literal) instanceof PhpDocComment)) {
+                if (
+                    REPORT_INLINES &&
+                    !literal.isHeredoc() &&
+                    !(ExpressionSemanticUtil.getBlockScope(literal) instanceof PhpDocComment)
+                ) {
                     final PsiElement[] children = literal.getChildren();
                     if (children.length == 1) {
                         final boolean isTarget =
@@ -127,6 +136,13 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
             }
         };
     }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create(component ->
+            component.addCheckbox("Report \"$inlined\" cases", REPORT_INLINES, (isSelected) -> REPORT_INLINES = isSelected)
+        );
+    }
+
 
     private static class UseTypeCastingFix extends UseSuggestedReplacementFixer {
         @NotNull

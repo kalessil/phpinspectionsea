@@ -26,11 +26,11 @@ class CasesHolder {
         if ($x === $y) {
             return $x;
         } else {
-            return $y;
+            return <warning descr="Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$y</warning>;
         }
 
         if ($x !== $y) {
-            return $x;
+            return <warning descr="Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
         } else {
             return $y;
         }
@@ -38,23 +38,23 @@ class CasesHolder {
         if ($x === $y) {
             return $x;
         }
-        return $y;
+        return <warning descr="Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$y</warning>;
 
         if ($x !== $y) {
-            return $x;
+            return <warning descr="Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
         }
         return $y;
 
         if ($x === $y) {
             return $x;
         } else {
-            return $x;
+            return <warning descr="Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
         }
 
         if ($x === $y) {
             return $x;
         }
-        return $x;
+        return <warning descr="Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
     }
 
 }

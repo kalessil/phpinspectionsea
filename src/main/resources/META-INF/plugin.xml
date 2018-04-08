@@ -294,6 +294,10 @@ Hot-fixes<br/>
         shortName="UnnecessaryEmptinessCheckInspection"            displayName="Unnecessary emptiness check"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryEmptinessCheckInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="IllusionOfChoiceInspection"                     displayName="Illusion of choice"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.IllusionOfChoiceInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

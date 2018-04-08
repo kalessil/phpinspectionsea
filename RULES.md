@@ -48,6 +48,7 @@ Inspections Lists (Control flow)
 | Control Flow         | UnnecessaryVariableOverridesInspection          | Unnecessary variable overrides                                                    | yes | yes | yes  | no  |
 | Control Flow         | UnnecessaryContinueInspection                   | Unnecessary continue statements                                                   | yes | yes | yes  | no  |
 | Control Flow         | UnnecessaryEmptinessCheckInspection             | Unnecessary emptiness check                                                       | n/a | yes | n/a  | no  |
+| Control Flow         | IllusionOfChoiceInspection                      | Illusion of choice                                                                | yes | yes | yes  | no  |
 
 Inspections Lists (PhpUnit)
 ---

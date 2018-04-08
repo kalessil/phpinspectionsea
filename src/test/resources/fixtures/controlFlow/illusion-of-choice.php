@@ -2,7 +2,7 @@
 
 class CasesHolder {
 
-    public function ternaries() {
+    public function ternaries($x, $y) {
         ($x === $y) ? $x : <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
 
         $x === $y ? $x : <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
@@ -23,7 +23,7 @@ class CasesHolder {
         $x ? $x : $y;
     }
 
-    public function conditionals() {
+    public function conditionals($x, $y) {
         if ($x === $y) {
             return $x;
         } else {

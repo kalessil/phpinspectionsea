@@ -15,10 +15,9 @@ class CasesHolder {
         $x === 0 ? $x : <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">0</warning>;
         $x !== 0 ? <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">0</warning> : $x;
 
-        $x === $y ? $x : <warning descr="Same value is in the alternative variant. It's possible to simplify the construct.">$x</warning>;
-        $x !== $y ? <warning descr="Same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> : $x;
-
         /* false-positives */
+        $x === $y ? $x : $x;
+        $x !== $y ? $x : $x;
         $x >= $y ? $x : $y;
         $x ? $x : $y;
     }

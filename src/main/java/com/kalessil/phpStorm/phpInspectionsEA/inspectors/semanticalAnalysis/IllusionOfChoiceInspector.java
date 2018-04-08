@@ -116,8 +116,6 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                 @NotNull PsiElement replaceFrom,
                 @NotNull PsiElement replaceTo
             ) {
-//holder.registerProblem(trueVariant, "True variant");
-//holder.registerProblem(falseVariant, "False variant");
                 if (OpeanapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
                     if (isConditional) {
@@ -144,7 +142,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                             final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
                             final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
                             holder.registerProblem(
-                                    falseVariant,
+                                    falseValue,
                                     isConditional ? messageDegradedConditional : messageDegradedTernary,
                                     new SimplifyFix(replaceFrom, replaceTo, replacement)
                             );

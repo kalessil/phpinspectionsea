@@ -185,7 +185,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                 final PsiElement replacement;
                 if (this.replacement.startsWith("return ")) {
                     replacement = PhpPsiElementFactory
-                            .createPhpPsiFromText(project, PhpReturn.class, this.replacement + ";");
+                            .createPhpPsiFromText(project, PhpReturn.class, this.replacement + ';');
                 } else {
                     replacement = PhpPsiElementFactory
                             .createPhpPsiFromText(project, ParenthesizedExpression.class, '(' + this.replacement + ')')

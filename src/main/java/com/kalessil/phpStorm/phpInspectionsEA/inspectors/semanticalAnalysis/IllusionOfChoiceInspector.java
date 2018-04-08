@@ -15,10 +15,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class IllusionOfChoiceInspector extends BasePhpInspection {
-    private static final String messageSameValueConditional = "...";
-    private static final String messageSameValueTernary     = "...";
+    private static final String messageSameValueConditional = "Same value gets returned by the alternative return. It's possible to simplify the construct.";
+    private static final String messageSameValueTernary     = "Same value is in the alternative variant. It's possible to simplify the construct.";
+    private static final String messageDegradedConditional  = "Actually the same value gets returned by the alternative return. It's possible to simplify the construct.";
+    private static final String messageDegradedTernary      = "Actually the same value is in the alternative variant. It's possible to simplify the construct.";
 
     static private final Set<IElementType> targetOperations = new HashSet<>();
     static {
@@ -26,10 +38,6 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
         targetOperations.add(PhpTokenTypes.opNOT_IDENTICAL);
         targetOperations.add(PhpTokenTypes.opEQUAL);
         targetOperations.add(PhpTokenTypes.opNOT_EQUAL);
-        targetOperations.add(PhpTokenTypes.opLESS);
-        targetOperations.add(PhpTokenTypes.opLESS_OR_EQUAL);
-        targetOperations.add(PhpTokenTypes.opGREATER);
-        targetOperations.add(PhpTokenTypes.opGREATER_OR_EQUAL);
     }
 
     @NotNull
@@ -96,12 +104,32 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                 }
             }
 
-            private void analyze(@NotNull PsiElement target, @NotNull PsiElement trueVariant, @NotNull PsiElement falseVariant) {
+            private void analyze(@NotNull BinaryExpression binary, @NotNull PsiElement trueVariant, @NotNull PsiElement falseVariant) {
                 if (OpeanapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
-                    holder.registerProblem(falseVariant, isConditional ? messageSameValueConditional : messageSameValueTernary);
+                    holder.registerProblem(
+                            falseVariant,
+                            isConditional ? messageSameValueConditional : messageSameValueTernary
+                    );
                 } else {
-                    /* TODO: check if the construct makes sense at all */
+                    final PsiElement leftValue  = binary.getLeftOperand();
+                    final PsiElement rightValue = binary.getLeftOperand();
+                    if (leftValue != null && rightValue != null) {
+                        final IElementType operation = binary.getOperationType();
+                        final boolean isInverted     = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
+                        final PsiElement trueValue   = isInverted ? falseVariant : trueVariant;
+                        final PsiElement falseValue  = isInverted ? trueVariant : falseVariant; /* TODO: use for QF */
+                        final boolean isTarget       = Stream.of(leftValue, rightValue).allMatch(v ->
+                                OpeanapiEquivalenceUtil.areEqual(v, falseValue) && OpeanapiEquivalenceUtil.areEqual(v, trueValue)
+                        );
+                        if (isTarget) {
+                            final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
+                            holder.registerProblem(
+                                    falseVariant,
+                                    isConditional ? messageDegradedConditional : messageDegradedTernary
+                            );
+                        }
+                    }
                 }
             }
         };

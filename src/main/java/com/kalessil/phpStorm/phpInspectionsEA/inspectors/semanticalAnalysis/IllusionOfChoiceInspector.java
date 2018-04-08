@@ -116,6 +116,8 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                 @NotNull PsiElement replaceFrom,
                 @NotNull PsiElement replaceTo
             ) {
+//holder.registerProblem(trueVariant, "True variant");
+//holder.registerProblem(falseVariant, "False variant");
                 if (OpeanapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
                     if (isConditional) {
@@ -126,12 +128,13 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                                 new SimplifyFix(replaceFrom, replaceTo, replacement)
                         );
                     }
+                    /* ternaries covered by SuspiciousTernaryOperatorInspector in this case */
                 } else {
                     final PsiElement leftValue  = binary.getLeftOperand();
-                    final PsiElement rightValue = binary.getLeftOperand();
+                    final PsiElement rightValue = binary.getRightOperand();
                     if (leftValue != null && rightValue != null) {
                         final boolean isTarget = Stream.of(leftValue, rightValue).allMatch(v ->
-                                OpeanapiEquivalenceUtil.areEqual(v, trueVariant) &&
+                                OpeanapiEquivalenceUtil.areEqual(v, trueVariant) ||
                                 OpeanapiEquivalenceUtil.areEqual(v, falseVariant)
                         );
                         if (isTarget) {

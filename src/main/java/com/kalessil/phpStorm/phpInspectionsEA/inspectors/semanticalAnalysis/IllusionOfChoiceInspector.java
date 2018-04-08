@@ -82,7 +82,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                                     final PsiElement ifReturnValue   = ExpressionSemanticUtil.getReturnValue((PhpReturn) ifLast);
                                     final PsiElement elseReturnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) elseLast);
                                     if (ifReturnValue != null && elseReturnValue != null) {
-                                        this.analyze(binary, ifReturnValue, elseReturnValue);
+                                        this.analyze(binary, ifReturnValue, elseReturnValue, expression, expression);
                                     }
                                 }
                             } else {
@@ -95,7 +95,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                                     final PsiElement ifReturnValue   = ExpressionSemanticUtil.getReturnValue((PhpReturn) ifLast);
                                     final PsiElement nextReturnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) nextStatement);
                                     if (ifReturnValue != null && nextReturnValue != null) {
-                                        this.analyze(binary, ifReturnValue, nextReturnValue);
+                                        this.analyze(binary, ifReturnValue, nextReturnValue, expression, nextStatement);
                                     }
                                 }
                             }
@@ -104,12 +104,20 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                 }
             }
 
-            private void analyze(@NotNull BinaryExpression binary, @NotNull PsiElement trueVariant, @NotNull PsiElement falseVariant) {
+            private void analyze(
+                @NotNull BinaryExpression binary,
+                @NotNull PsiElement trueVariant,
+                @NotNull PsiElement falseVariant,
+                @NotNull PsiElement replaceFrom,
+                @NotNull PsiElement replaceTo
+            ) {
                 if (OpeanapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
+                    final String replacement    = String.format(isConditional ? "return %s;" : "%s", falseVariant.getText());
                     holder.registerProblem(
                             falseVariant,
-                            isConditional ? messageSameValueConditional : messageSameValueTernary
+                            isConditional ? messageSameValueConditional : messageSameValueTernary,
+                            new SimplifyFixer(replacement, replaceFrom, replaceTo)
                     );
                 } else {
                     final PsiElement leftValue  = binary.getLeftOperand();
@@ -118,15 +126,17 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                         final IElementType operation = binary.getOperationType();
                         final boolean isInverted     = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
                         final PsiElement trueValue   = isInverted ? falseVariant : trueVariant;
-                        final PsiElement falseValue  = isInverted ? trueVariant : falseVariant; /* TODO: use for QF */
+                        final PsiElement falseValue  = isInverted ? trueVariant : falseVariant;
                         final boolean isTarget       = Stream.of(leftValue, rightValue).allMatch(v ->
                                 OpeanapiEquivalenceUtil.areEqual(v, falseValue) && OpeanapiEquivalenceUtil.areEqual(v, trueValue)
                         );
                         if (isTarget) {
                             final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
+                            final String replacement    = String.format(isConditional ? "return %s;" : "%s", falseValue.getText());
                             holder.registerProblem(
                                     falseVariant,
-                                    isConditional ? messageDegradedConditional : messageDegradedTernary
+                                    isConditional ? messageDegradedConditional : messageDegradedTernary,
+                                    new SimplifyFixer(replacement, replaceFrom, replaceTo)
                             );
                         }
                     }

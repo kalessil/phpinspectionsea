@@ -1,11 +1,17 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -113,11 +119,11 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
             ) {
                 if (OpeanapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
-                    final String replacement    = String.format(isConditional ? "return %s;" : "%s", falseVariant.getText());
+                    final String replacement    = String.format(isConditional ? "return %s" : "%s", falseVariant.getText());
                     holder.registerProblem(
                             falseVariant,
                             isConditional ? messageSameValueConditional : messageSameValueTernary,
-                            new SimplifyFixer(replacement, replaceFrom, replaceTo)
+                            new SimplifyFix(replaceFrom, replaceTo, replacement)
                     );
                 } else {
                     final PsiElement leftValue  = binary.getLeftOperand();
@@ -132,16 +138,69 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                         );
                         if (isTarget) {
                             final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
-                            final String replacement    = String.format(isConditional ? "return %s;" : "%s", falseValue.getText());
+                            final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
                             holder.registerProblem(
                                     falseVariant,
                                     isConditional ? messageDegradedConditional : messageDegradedTernary,
-                                    new SimplifyFixer(replacement, replaceFrom, replaceTo)
+                                    new SimplifyFix(replaceFrom, replaceTo, replacement)
                             );
                         }
                     }
                 }
             }
         };
+    }
+
+    private static class SimplifyFix implements LocalQuickFix {
+        final private SmartPsiElementPointer<PsiElement> from;
+        final private SmartPsiElementPointer<PsiElement> to;
+        final String replacement;
+
+        SimplifyFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+
+            this.from        = factory.createSmartPsiElementPointer(from);
+            this.to          = factory.createSmartPsiElementPointer(to);
+            this.replacement = replacement;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Apply the simplification";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement from = this.from.getElement();
+            final PsiElement to   = this.to.getElement();
+            if (from != null && to != null && !project.isDisposed()) {
+                final PsiElement replacement;
+                if (this.replacement.startsWith("return ")) {
+                    replacement = PhpPsiElementFactory
+                            .createPhpPsiFromText(project, PhpReturn.class, this.replacement + ";");
+                } else {
+                    replacement = PhpPsiElementFactory
+                            .createPhpPsiFromText(project, ParenthesizedExpression.class, '(' + this.replacement + ')')
+                            .getArgument();
+                }
+                if (replacement != null) {
+                    if (from == to) {
+                        from.replace(replacement);
+                    } else {
+                        final PsiElement parent = from.getParent();
+                        parent.addBefore(replacement, from);
+                        parent.deleteChildRange(from, to);
+                    }
+                }
+            }
+        }
     }
 }

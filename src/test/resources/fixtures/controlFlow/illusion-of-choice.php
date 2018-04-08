@@ -24,7 +24,38 @@ class CasesHolder {
     }
 
     public function conditionals() {
+        if ($x === $y) {
+            return $x;
+        } else {
+            return $y;
+        }
 
+        if ($x !== $y) {
+            return $x;
+        } else {
+            return $y;
+        }
+
+        if ($x === $y) {
+            return $x;
+        }
+        return $y;
+
+        if ($x !== $y) {
+            return $x;
+        }
+        return $y;
+
+        if ($x === $y) {
+            return $x;
+        } else {
+            return $x;
+        }
+
+        if ($x === $y) {
+            return $x;
+        }
+        return $x;
     }
 
 }

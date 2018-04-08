@@ -593,10 +593,6 @@ Hot-fixes<br/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="SenselessTernaryOperatorInspection"            displayName="Suspicious ternary operator"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.SenselessTernaryOperatorInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ClassMethodNameMatchesFieldNameInspection"     displayName="Method name matches existing field name"
         groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassMethodNameMatchesFieldNameInspector"/>

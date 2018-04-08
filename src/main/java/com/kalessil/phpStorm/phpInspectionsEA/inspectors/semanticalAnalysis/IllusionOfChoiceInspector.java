@@ -130,14 +130,14 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                     final PsiElement leftValue  = binary.getLeftOperand();
                     final PsiElement rightValue = binary.getLeftOperand();
                     if (leftValue != null && rightValue != null) {
-                        final IElementType operation = binary.getOperationType();
-                        final boolean isInverted     = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
-                        final PsiElement trueValue   = isInverted ? falseVariant : trueVariant;
-                        final PsiElement falseValue  = isInverted ? trueVariant : falseVariant;
-                        final boolean isTarget       = Stream.of(leftValue, rightValue).allMatch(v ->
-                                OpeanapiEquivalenceUtil.areEqual(v, falseValue) && OpeanapiEquivalenceUtil.areEqual(v, trueValue)
+                        final boolean isTarget = Stream.of(leftValue, rightValue).allMatch(v ->
+                                OpeanapiEquivalenceUtil.areEqual(v, trueVariant) &&
+                                OpeanapiEquivalenceUtil.areEqual(v, falseVariant)
                         );
                         if (isTarget) {
+                            final IElementType operation = binary.getOperationType();
+                            final boolean isInverted    = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
+                            final PsiElement falseValue = isInverted ? trueVariant : falseVariant;
                             final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
                             final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
                             holder.registerProblem(

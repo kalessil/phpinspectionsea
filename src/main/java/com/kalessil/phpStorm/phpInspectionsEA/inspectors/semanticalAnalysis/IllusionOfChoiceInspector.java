@@ -34,7 +34,6 @@ import java.util.stream.Stream;
 
 public class IllusionOfChoiceInspector extends BasePhpInspection {
     private static final String messageSameValueConditional = "Same value gets returned by the alternative return. It's possible to simplify the construct.";
-    private static final String messageSameValueTernary     = "Same value is in the alternative variant. It's possible to simplify the construct.";
     private static final String messageDegradedConditional  = "Actually the same value gets returned by the alternative return. It's possible to simplify the construct.";
     private static final String messageDegradedTernary      = "Actually the same value is in the alternative variant. It's possible to simplify the construct.";
 
@@ -119,12 +118,14 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
             ) {
                 if (OpeanapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
-                    final String replacement    = String.format(isConditional ? "return %s" : "%s", falseVariant.getText());
-                    holder.registerProblem(
-                            falseVariant,
-                            isConditional ? messageSameValueConditional : messageSameValueTernary,
-                            new SimplifyFix(replaceFrom, replaceTo, replacement)
-                    );
+                    if (isConditional) {
+                        final String replacement = String.format("return %s", falseVariant.getText());
+                        holder.registerProblem(
+                                falseVariant,
+                                 messageSameValueConditional,
+                                new SimplifyFix(replaceFrom, replaceTo, replacement)
+                        );
+                    }
                 } else {
                     final PsiElement leftValue  = binary.getLeftOperand();
                     final PsiElement rightValue = binary.getLeftOperand();

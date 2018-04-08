@@ -55,6 +55,21 @@ class CasesHolder {
             return $x;
         }
         return <warning descr="Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
+
+
+        /* false-positives */
+        if ($x === $y) {
+            $this->ternaries($x, $y);
+            return $x;
+        } else {
+            return $y;
+        }
+
+        if ($x === $y) {
+            $this->ternaries($x, $y);
+            return $x;
+        }
+        return $y;
     }
 
 }

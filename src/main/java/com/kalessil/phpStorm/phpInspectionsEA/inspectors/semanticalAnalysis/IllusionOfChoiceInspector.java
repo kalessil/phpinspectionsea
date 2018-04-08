@@ -58,7 +58,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                         final PsiElement trueVariant  = expression.getTrueVariant();
                         final PsiElement falseVariant = expression.getFalseVariant();
                         if (trueVariant != null && falseVariant != null) {
-                            this.analyze(binary, trueVariant, falseVariant);
+                            this.analyze(binary, trueVariant, falseVariant, expression, expression);
                         }
                     }
                 }

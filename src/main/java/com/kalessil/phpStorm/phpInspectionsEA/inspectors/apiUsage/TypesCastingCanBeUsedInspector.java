@@ -35,7 +35,7 @@ import java.util.HashMap;
 public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern     = "'%s' would be more performant here (up to 6x times faster).";
     private static final String messageInlining    = "'%s' would express the intention here better (less types coercion magic).";
-    private static final String messageMultiplyOne = "Casting to int or float should be used instead (up to 6x times faster).";
+    private static final String messageMultiplyOne = "Casting to int or float would be more performant here (up to 6x times faster).";
 
     // Inspection options.
     public boolean REPORT_INLINES = true;

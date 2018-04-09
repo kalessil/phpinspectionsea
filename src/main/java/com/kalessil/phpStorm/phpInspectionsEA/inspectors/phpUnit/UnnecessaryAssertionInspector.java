@@ -15,11 +15,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -68,15 +70,24 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                 if (methodName != null && methodName.startsWith("assert") && targetPositions.containsKey(methodName)) {
                     final int position           = targetPositions.get(methodName);
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length >= position + 1 && arguments[position] instanceof FunctionReference) {
-                        final FunctionReference call = (FunctionReference) arguments[position];
-                        final PsiElement function    = OpenapiResolveUtil.resolveReference(call);
-                        if (function instanceof Function && OpenapiElementsUtil.getReturnType((Function) function) != null) {
-                            final PhpType resolved = OpenapiResolveUtil.resolveType(call, project);
-                            if (resolved != null && !resolved.hasUnknown() && resolved.size() == 1) {
-                                final String expected = targetType.get(methodName);
-                                if (expected == null || resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(expected))) {
-                                    holder.registerProblem(reference, message);
+                    if (arguments.length >= position + 1) {
+                        final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[position]);
+                        if (values.size() == 1) {
+                            final PsiElement candidate = values.iterator().next();
+                            if (candidate instanceof FunctionReference) {
+                                final FunctionReference call = (FunctionReference) candidate;
+                                final PsiElement function    = OpenapiResolveUtil.resolveReference(call);
+                                if (function instanceof Function && OpenapiElementsUtil.getReturnType((Function) function) != null) {
+                                    final PhpType resolved = OpenapiResolveUtil.resolveType(call, project);
+                                    if (resolved != null && !resolved.hasUnknown() && resolved.size() == 1) {
+                                        final String expected = targetType.get(methodName);
+                                        if (
+                                            expected == null ||
+                                            resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(expected))
+                                        ) {
+                                            holder.registerProblem(reference, message);
+                                        }
+                                    }
                                 }
                             }
                         }

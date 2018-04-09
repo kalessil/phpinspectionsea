@@ -19,6 +19,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Stream;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
@@ -199,11 +208,13 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     expectedRepeatedOperator.add(PhpTokenTypes.opDECREMENT);
                     expectedRepeatedOperator.add(PhpTokenTypes.opMINUS);
                     expectedRepeatedOperator.add(PhpTokenTypes.opMINUS_ASGN);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opDIV_ASGN);
                 }
                 else if (checkOperator == PhpTokenTypes.opLESS || checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
                     expectedRepeatedOperator.add(PhpTokenTypes.opINCREMENT);
                     expectedRepeatedOperator.add(PhpTokenTypes.opPLUS);
                     expectedRepeatedOperator.add(PhpTokenTypes.opPLUS_ASGN);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opMUL_ASGN);
                 }
 
                 if (!expectedRepeatedOperator.isEmpty()) {

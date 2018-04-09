@@ -91,6 +91,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                                 }
                             }
                         }
+                        values.clear();
                     }
                 }
             }

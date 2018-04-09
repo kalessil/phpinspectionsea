@@ -68,7 +68,7 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/phpUnit/assert-file-equals.fixed.php");
     }
-    public void testIfFindsAssetConstantPatterns() {
+    public void testIfFindsAssertConstantPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-constant.php");
         myFixture.testHighlighting(true, false, true);
@@ -100,12 +100,20 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/phpUnit/assert-internal-type.fixed.php");
     }
-    public void testIfFindsAssetResourceExistsPatterns() {
+    public void testIfFindsAssertResourceExistsPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("fixtures/phpUnit/assert-resource-exists.php");
         myFixture.testHighlighting(true, false, true);
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/phpUnit/assert-resource-exists.fixed.php");
+    }
+    public void testIfFindsAssertContainsPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("fixtures/phpUnit/assert-contains.php");
+        myFixture.testHighlighting(true, false, true);
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/phpUnit/assert-contains.fixed.php");
     }
 }

@@ -1,8 +1,6 @@
 <?php
 
 namespace RootNamespace {
-    use \RootNamespace\ChildNamespace\One;
-    use \RootNamespace\ChildNamespace\Two as Alias;
 
     class CasesHolder {
         /** @return \RootNamespace\ChildNamespace\One|null */
@@ -33,8 +31,9 @@ namespace RootNamespace {
         abstract public function methodReturnsStatic();
 
         private $unknownTypeProperty;
-        public function getUnknownTypeProperty() { return $this->unknownTypeProperty; }
+        public function unknownTypeProperty() { return $this->unknownTypeProperty; }
 
+        public function unknownTypeParameter($unknownTypeParameter = null) { return $unknownTypeParameter; }
     }
 }
 

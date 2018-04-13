@@ -29,7 +29,7 @@ abstract class ClassCasesHolder {
     /** @param $x stdClass */
     public function <weak_warning descr="': \stdClass' can be declared as return type hint.">returnClass</weak_warning>($x) { return $x; }
     /** @param $x void */
-    public function returnVoid($x) { return $x; }
+    public function <weak_warning descr="': void' can be declared as return type hint.">returnVoid</weak_warning>($x) { return $x; }
     /** @param $x null */
     public function returnNull($x) { return $x; }
     /** @param $x callable */

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>3.0.0</version>
+  <version>3.0.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -56,30 +56,19 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-Major update. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Reworked types resolving subsystem<br/>
+- Worked out crash-reports for April<br/>
 <br/>
-- Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
-- Fixed-time string starts with checks: resolved false-positives (strings with injections)<br/>
-- Instanceof can be used: resolved false-positives (incomplete classes)<br/>
-- Isset operations variables existence: resolved a false-positive (variable functions)<br/>
-- Non-optimal regular expression: resolved false-positives (compound qualifiers)<br/>
-- Null reference: resolved a false-positive (incomplete types)<br/>
-- Suspicious assignments: resolved false-positives (multiple cases)<br/>
-- Unnecessary parentheses: resolved a false-positive (unexpected tree structure)<br/>
-- Useless return: resolved false-positives (by reference)<br/>
-- ::class can be used: QF bug-fix (current and imported class names conflict)<br/>
+- Foreach source to iterate over: resolved a false-positive (preceding is_* check of an assignment)<br/>
+- Isset operations variables existence: resolved a false-positive (dynamic variables in loops)<br/>
+- PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
+- Return type hint can be used: resolved false-positives (void return type)<br/>
+- Strings normalization: resolved a false-positive (ucwords)<br/>
+- Suspicious loop: resolved false positives (*= and /= operators)<br/>
 <br/>
-- Basic malware patterns: new patterns<br/>
-- Exploiting unserialize: new patterns<br/>
-- Parameter/variable is not used: new patterns<br/>
-- Security advisories for Composer packages: new dev-packages<br/>
-- Suspicious ternary operator:: implemented<br/>
-- Unsupported empty list assignments: implemented<br/>
-- Unsupported string offset operations: new patterns<br/>
-- Usage of object type in PhpDoc: dropped<br/>
-- 'array_push(...)' misused: new patterns<br/>
+- PhpUnit: bugs and best practices: new patterns<br/>
+- Type casting can be used: introduced settings<br/>
 <br/>
 <hr/>
   ]]></change-notes>

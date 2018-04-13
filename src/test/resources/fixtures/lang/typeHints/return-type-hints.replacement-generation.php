@@ -1,6 +1,8 @@
 <?php
 
 namespace RootNamespace {
+    use \RootNamespace\ChildNamespace\One;
+    use \RootNamespace\ChildNamespace\Two as Alias;
 
     class CasesHolder {
         /** @return \RootNamespace\ChildNamespace\One|null */

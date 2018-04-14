@@ -3,15 +3,15 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.codeInsight.PhpScopeHolder;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
-import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,12 +30,13 @@ import java.util.Set;
  */
 
 public class ExplodeMissUseInspector extends BasePhpInspection {
-    private static final String messagePattern = "Consider using '%e%' instead (consumes less cpu and memory resources).";
+    private static final String messagePattern = "Consider using '%s' instead (consumes less cpu and memory resources).";
 
-    private static final Map<String, String> semanticMapping = new HashMap<>();
+    private static final Map<String, Integer> argumentMapping = new HashMap<>();
     static {
-        semanticMapping.put("count",   "substr_count(%s%, %f%) + 1");
-        // semanticMapping.put("current", "strstr(%s%, %f%, true)"); if fragment missing, strstr changes behaviour
+        argumentMapping.put("count", 0);   // -> "substr_count(%s%, %f%) + 1"
+        argumentMapping.put("implode", 1); // -> "str_replace(%f%, ?, %s%)"
+        // "current" -> "strstr(%s%, %f%, true)": if fragment missing, strstr changes behaviour
     }
 
     @NotNull
@@ -49,65 +50,57 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* general structure expectations */
-                final String functionName = reference.getName();
-                if (functionName == null || !semanticMapping.containsKey(functionName)) {
-                    return;
-                }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length != 1) {
-                    return;
-                }
-
-                /* discover possible values */
-                final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[0]);
-
-                /* do not analyze invariants */
-                if (1 == values.size()) {
-                    final PsiElement value = values.iterator().next();
-                    values.clear();
-
-                    if (OpenapiTypesUtil.isFunctionReference(value)) {
-                        /* inner call must be explode() */
-                        final FunctionReference innerCall = (FunctionReference) value;
-                        final String innerFunctionName    = innerCall.getName();
-                        if (innerFunctionName == null || !innerFunctionName.equals("explode")) {
-                            return;
-                        }
-                        final PsiElement[] innerArguments = innerCall.getParameters();
-                        if (innerArguments.length != 2) {
-                            return;
-                        }
-
-                        /* if the parameter is a variable, ensure it used only 2 times (write, read) */
-                        if (arguments[0] instanceof Variable) {
-                            final PhpScopeHolder parentScope = ExpressionSemanticUtil.getScope(reference);
-                            if (null != parentScope) {
-                                final PhpAccessVariableInstruction[] usages
-                                    = PhpControlFlowUtil.getFollowingVariableAccessInstructions
-                                      (
-                                          parentScope.getControlFlow().getEntryPoint(),
-                                          ((Variable) arguments[0]).getName(),
-                                          false
-                                      );
-                                if (2 != usages.length) {
-                                    return;
+                final String outerFunctionName = reference.getName();
+                if (outerFunctionName != null && argumentMapping.containsKey(outerFunctionName)) {
+                    final int targetArgumentPosition  = argumentMapping.get(outerFunctionName);
+                    final PsiElement[] outerArguments = reference.getParameters();
+                    if (outerArguments.length >= targetArgumentPosition + 1) {
+                        final PsiElement targetArgument = outerArguments[targetArgumentPosition];
+                        final Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(targetArgument);
+                        if (values.size() == 1) {
+                            final PsiElement candidate = values.iterator().next();
+                            if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                                final FunctionReference innerCall = (FunctionReference) candidate;
+                                final String innerFunctionName    = innerCall.getName();
+                                if (innerFunctionName != null && innerFunctionName.equals("explode")) {
+                                    final PsiElement[] innerArguments = innerCall.getParameters();
+                                    if (innerArguments.length == 2 && this.isExclusiveUse(candidate, reference)) {
+                                        final String replacement;
+                                        if (outerFunctionName.equals("count")) {
+                                            replacement = "...";
+                                        } else if (outerFunctionName.equals("implode")) {
+                                            replacement = "...";
+                                        } else {
+                                            replacement = "...";
+                                        }
+                                        final String message = String.format(messagePattern, replacement);
+                                        if (innerCall == targetArgument) {
+                                            holder.registerProblem(reference, message, new UseAlternativeFix(replacement));
+                                        } else {
+                                            holder.registerProblem(reference, message);
+                                        }
+                                    }
                                 }
                             }
                         }
-
-                        final String replacement = semanticMapping.get(functionName)
-                                .replace("%f%", innerArguments[0].getText())
-                                .replace("%s%", innerArguments[1].getText());
-                        final String message = messagePattern.replace("%e%", replacement);
-                        if (arguments[0] == value) {
-                            holder.registerProblem(reference, message, new UseAlternativeFix(replacement));
-                        } else {
-                            holder.registerProblem(reference, message);
-                        }
+                        values.clear();
                     }
                 }
-                values.clear();
+            }
+
+            private boolean isExclusiveUse(@NotNull PsiElement candidate, @NotNull FunctionReference outer) {
+                boolean result = candidate instanceof FunctionReference;
+                if (!result) {
+                    final Function scope      = ExpressionSemanticUtil.getScope(outer);
+                    final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                    if (body != null) {
+                        final long candidateUsages = PsiTreeUtil.findChildrenOfType(body, candidate.getClass()).stream()
+                                .filter(expression -> OpeanapiEquivalenceUtil.areEqual(expression, candidate))
+                                .count();
+                        result = candidateUsages == 2;
+                    }
+                }
+                return result;
             }
         };
     }

@@ -19,9 +19,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -92,34 +92,6 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                         final PsiElement returnedType     = OpenapiElementsUtil.getReturnType(referencedFunction);
                         if (returnedType != null) {
                             result = OpenapiResolveUtil.resolveType(referencedFunction, project);
-                        }
-                    }
-                } else if (expression instanceof BinaryExpression) {
-                    result = OpenapiResolveUtil.resolveType(expression, project);
-                    /* workaround for https://youtrack.jetbrains.com/issue/WI-37466 */
-                    if (result != null && PhpTokenTypes.tsMATH_OPS.contains(((BinaryExpression) expression).getOperationType())) {
-                        PsiElement candidate = (PsiElement) expression;
-                        while (candidate instanceof BinaryExpression) {
-                            final BinaryExpression binary   = (BinaryExpression) candidate;
-                            final List<PsiElement> operands = Stream.of(binary.getRightOperand(), binary.getLeftOperand())
-                                .map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
-                                .filter(operand -> operand instanceof PhpTypedElement)
-                                .collect(Collectors.toList());
-
-                            for (final PsiElement operand : operands) {
-                                final PhpType resolved  = OpenapiResolveUtil.resolveType((PhpTypedElement)operand, project);
-                                final Set<String> types = resolved == null || resolved.hasUnknown() ? new HashSet<>() : resolved.getTypes();
-                                if (types.stream().anyMatch(type -> Types.getType(type).equals(Types.strFloat))) {
-                                    final Set<String> patchedTypes = new HashSet<>(result.getTypes());
-                                    patchedTypes.addAll(PhpType.FLOAT.getTypes());
-                                    patchedTypes.removeAll(PhpType.INT.getTypes());
-                                    result = new PhpType();
-                                    patchedTypes.forEach(result::add);
-                                    break;
-                                }
-                            }
-
-                            candidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
                         }
                     }
                 } else {

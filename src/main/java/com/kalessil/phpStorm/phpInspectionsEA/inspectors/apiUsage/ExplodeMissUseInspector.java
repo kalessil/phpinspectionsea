@@ -7,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -50,6 +51,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final String outerFunctionName = reference.getName();
                 if (outerFunctionName != null && argumentMapping.containsKey(outerFunctionName)) {
                     final int targetArgumentPosition  = argumentMapping.get(outerFunctionName);
@@ -66,12 +69,25 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                     final PsiElement[] innerArguments = innerCall.getParameters();
                                     if (innerArguments.length == 2 && this.isExclusiveUse(candidate, reference)) {
                                         final String replacement;
-                                        if (outerFunctionName.equals("count")) {
-                                            replacement = "...";
-                                        } else if (outerFunctionName.equals("implode")) {
-                                            replacement = "...";
-                                        } else {
-                                            replacement = "...";
+                                        switch (outerFunctionName) {
+                                            case "implode":
+                                                replacement = String.format(
+                                                        "str_replace(%s, %s, %s)",
+                                                        innerArguments[0].getText(),
+                                                        outerArguments[0].getText(),
+                                                        innerArguments[1].getText()
+                                                );
+                                                break;
+                                            case "count":
+                                                replacement = String.format(
+                                                        "substr_count(%s, %s) + 1",
+                                                        innerArguments[1].getText(),
+                                                        innerArguments[0].getText()
+                                                );
+                                                break;
+                                            default:
+                                                replacement = "...";
+                                                break;
                                         }
                                         final String message = String.format(messagePattern, replacement);
                                         if (innerCall == targetArgument) {

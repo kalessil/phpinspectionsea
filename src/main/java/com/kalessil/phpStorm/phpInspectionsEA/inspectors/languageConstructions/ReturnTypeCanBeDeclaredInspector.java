@@ -117,8 +117,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 /* ignore DocBlock, resolve and normalize types instead (DocBlock is involved, but nevertheless) */
                 final Set<String> normalizedTypes = resolvedReturnType.filterUnknown().getTypes().stream().
                         map(Types::getType).collect(Collectors.toSet());
-                checkNonImplicitNullReturn(method, normalizedTypes);
                 checkUnrecognizedGenerator(method, normalizedTypes);
+                checkReturnStatements(method, normalizedTypes);
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
@@ -232,12 +232,25 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 }
             }
 
-            private void checkNonImplicitNullReturn(@NotNull Method method, @NotNull Set<String> types) {
-                if (!method.isAbstract() && !types.isEmpty() && !types.contains(Types.strNull) && !types.contains(Types.strVoid)) {
-                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
-                    final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
-                    if (last == null || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
-                        types.add(Types.strNull);
+            private void checkReturnStatements(@NotNull Method method, @NotNull Set<String> types) {
+                if (!method.isAbstract() && !types.isEmpty()) {
+                    /* non-implicit null return: omitted last return statement */
+                    if (!types.contains(Types.strNull) && !types.contains(Types.strVoid)) {
+                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                        final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
+                        if (last == null || (!(last instanceof PhpReturn) && !(last instanceof PhpThrow))) {
+                            types.add(Types.strNull);
+                        }
+                    }
+                    /* buggy parameter type resolving: no type, but null as default value */
+                    if (types.size() == 1 && types.contains(Types.strNull)) {
+                        final PhpReturn expression = PsiTreeUtil.findChildOfType(method, PhpReturn.class);
+                        if (expression != null ) {
+                            final PsiElement value = ExpressionSemanticUtil.getReturnValue(expression);
+                            if (value != null && !PhpLanguageUtil.isNull(value)) {
+                                types.remove(Types.strNull);
+                            }
+                        }
                     }
                 }
             }

@@ -31,7 +31,7 @@ abstract class ClassCasesHolder {
     /** @param $x void */
     public function <weak_warning descr="': void' can be declared as return type hint.">returnVoid</weak_warning>($x) { return $x; }
     /** @param $x null */
-    public function <weak_warning descr="': void' can be declared as return type hint.">returnNull</weak_warning>($x) { return $x; }
+    public function returnNull($x) { return $x; }
     /** @param $x callable */
     public function <weak_warning descr="': callable' can be declared as return type hint.">returnCallable</weak_warning>($x) { return $x; }
     /** @param $x array */

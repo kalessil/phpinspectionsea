@@ -33,8 +33,7 @@ abstract class ClassCasesHolder {
     public function returnVoid($x): void
     { return $x; }
     /** @param $x null */
-    public function returnNull($x): void
-    { return $x; }
+    public function returnNull($x) { return $x; }
     /** @param $x callable */
     public function returnCallable($x): callable
     { return $x; }

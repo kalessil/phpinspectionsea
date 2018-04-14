@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.ConcatenationExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -35,17 +36,21 @@ public class MissingDirectorySeparatorInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
-                final String constantName = reference.getName();
-                if (constantName != null && constantName.equals("__DIR__")) {
-                    this.analyze(reference);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final String constantName = reference.getName();
+                    if (constantName != null && constantName.equals("__DIR__")) {
+                        this.analyze(reference);
+                    }
                 }
             }
 
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("dirname")) {
-                    this.analyze(reference);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final String functionName = reference.getName();
+                    if (functionName != null && functionName.equals("dirname")) {
+                        this.analyze(reference);
+                    }
                 }
             }
 

@@ -56,11 +56,10 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                 */
                 boolean knowsLegalCases = (
                     (
-                        argument instanceof BinaryExpression     ||
-                        argument instanceof TernaryExpression    ||
-                        argument instanceof UnaryExpression      ||
-                        argument instanceof AssignmentExpression ||
-                        argument instanceof PhpYield
+                        argument instanceof BinaryExpression   ||
+                        argument instanceof TernaryExpression  ||
+                        argument instanceof UnaryExpression    ||
+                        argument instanceof AssignmentExpression
                     ) && (
                         parent instanceof BinaryExpression     ||
                         parent instanceof TernaryExpression    ||
@@ -71,6 +70,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                 );
                 knowsLegalCases = knowsLegalCases ||
                     argument instanceof Include ||
+                    argument instanceof PhpYield ||
                     parent instanceof PhpCase ||
                     parent instanceof PhpEchoStatement ||
                     parent instanceof PhpPrintExpression ||

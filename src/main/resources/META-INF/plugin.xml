@@ -42,6 +42,7 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
+<a href="#" id="release-details"></a>
 Hot-fixes<br/>
 <br/>
 - Transitive dependencies usage: fixed OOBs<br/>

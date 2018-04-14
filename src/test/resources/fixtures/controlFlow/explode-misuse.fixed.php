@@ -6,7 +6,7 @@ function explode_misuse_count($arg) {
 
     /* case: misuse, with variants lookup */
     $a = explode('', $arg);
-    echo count ($a);
+    echo count($a);
 
     /* false-positive: the variable in not one-time use */
     $c = explode('', $arg);

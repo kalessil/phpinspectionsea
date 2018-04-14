@@ -74,7 +74,7 @@ class CasesHolder {
 
     public function operators($x) {
         return [
-            $x ?? null,
+            <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> ?? null,
         ];
     }
 }

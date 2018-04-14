@@ -68,7 +68,7 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 
     @NotNull

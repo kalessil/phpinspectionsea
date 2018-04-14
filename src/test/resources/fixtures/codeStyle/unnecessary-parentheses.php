@@ -47,6 +47,6 @@
 
     $x = (/** PhpDoc */ $x = $object) instanceof \Clazz;
 
-    function yeld_constructs($object) {
+    function yield_constructs($object) {
         return (yield $object->method()) !== false;
     }

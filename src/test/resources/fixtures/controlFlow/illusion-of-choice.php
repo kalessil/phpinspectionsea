@@ -72,4 +72,9 @@ class CasesHolder {
         return $y;
     }
 
+    public function operators($x) {
+        return [
+            $x ?? null,
+        ];
+    }
 }

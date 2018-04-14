@@ -18,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -37,6 +38,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
     private static final String messageSameValueConditional = "Same value gets returned by the alternative return. It's possible to simplify the construct.";
     private static final String messageDegradedConditional  = "Actually the same value gets returned by the alternative return. It's possible to simplify the construct.";
     private static final String messageDegradedTernary      = "Actually the same value is in the alternative variant. It's possible to simplify the construct.";
+    private static final String messageDegradedNullCoallesc = "Actually the same value is in the alternative variant. It's possible to simplify the construct.";
 
     static private final Set<IElementType> targetOperations = new HashSet<>();
     static {
@@ -110,6 +112,20 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                                 }
                             }
                         }
+                    }
+                }
+            }
+
+            @Override
+            public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (expression.getOperationType() == PhpTokenTypes.opCOALESCE) {
+                    final PsiElement left  = expression.getLeftOperand();
+                    if (left != null && PhpLanguageUtil.isNull(expression.getRightOperand())) {
+                        holder.registerProblem(
+                                left,
+                                messageDegradedNullCoallesc,
+                                new SimplifyFix(expression, expression, left.getText())
+                        );
                     }
                 }
             }

@@ -67,7 +67,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                 final String innerFunctionName    = innerCall.getName();
                                 if (innerFunctionName != null && innerFunctionName.equals("explode")) {
                                     final PsiElement[] innerArguments = innerCall.getParameters();
-                                    if (innerArguments.length == 2 && this.isExclusiveUse(candidate, reference)) {
+                                    if (innerArguments.length == 2 && this.isExclusiveUse(targetArgument, reference)) {
                                         final String replacement;
                                         switch (outerFunctionName) {
                                             case "implode":

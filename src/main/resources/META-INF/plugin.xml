@@ -49,6 +49,7 @@ Hot-fixes<br/>
 - Illusion of choice: implemented<br/>
 - Missing directory separators: implemented<br/>
 - Suspicious ternary operator: dropped<br/>
+- 'explode(...)' misused: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

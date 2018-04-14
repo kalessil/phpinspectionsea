@@ -44,8 +44,11 @@ the implementation.
   <change-notes><![CDATA[
 Hot-fixes<br/>
 <br/>
-- Worked out crash-reports from new indexing components<br/>
-- Transitive dependencies usage: updated message<br/>
+- Transitive dependencies usage: fixed OOBs<br/>
+<br/>
+- Illusion of choice: implemented<br/>
+- Missing directory separators: implemented<br/>
+- Suspicious ternary operator: dropped<br/>
 <br/>
 <hr/>
   ]]></change-notes>

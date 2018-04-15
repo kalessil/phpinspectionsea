@@ -86,7 +86,7 @@ final public class OpenapiResolveUtil {
                             final Set<String> leftTypes = new HashSet<>();
                             leftType.getTypes().forEach(type -> leftTypes.add(Types.getType(type)));
                             hasFloat = leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
-                            hasArray = leftTypes.contains(Types.strArray);
+                            hasArray = leftTypes.size() == 1 && leftTypes.contains(Types.strArray);
                             leftTypes.clear();
                             if (!hasFloat || !hasArray) {
                                 final PsiElement right
@@ -97,7 +97,7 @@ final public class OpenapiResolveUtil {
                                         final Set<String> rightTypes = new HashSet<>();
                                         rightType.getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
                                         hasFloat = rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
-                                        hasArray = rightTypes.contains(Types.strArray);
+                                        hasArray = rightTypes.size() == 1 && rightTypes.contains(Types.strArray);
                                         rightTypes.clear();
                                     }
                                 }

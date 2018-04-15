@@ -88,7 +88,7 @@ final public class OpenapiResolveUtil {
                             hasFloat = leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                             hasArray = leftTypes.contains(Types.strArray);
                             leftTypes.clear();
-                            if (!hasFloat && !hasArray) {
+                            if (!hasFloat) {
                                 final PsiElement right
                                         = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
                                 if (right instanceof PhpTypedElement) {
@@ -98,6 +98,7 @@ final public class OpenapiResolveUtil {
                                         rightType.getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
                                         hasFloat = rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                                         hasArray = rightTypes.contains(Types.strArray);
+                                        rightTypes.clear();
                                     }
                                 }
                             }

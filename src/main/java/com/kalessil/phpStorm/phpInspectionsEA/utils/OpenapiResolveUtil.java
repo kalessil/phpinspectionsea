@@ -109,7 +109,7 @@ final public class OpenapiResolveUtil {
                             : new PhpType().add(PhpType.INT);
                     result = hasArray
                             ? new PhpType().add(result).add(PhpType.ARRAY)
-                            : result
+                            : result;
                 }
             } if (expression instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) expression;

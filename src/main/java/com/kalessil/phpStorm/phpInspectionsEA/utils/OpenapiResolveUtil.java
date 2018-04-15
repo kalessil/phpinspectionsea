@@ -105,7 +105,7 @@ final public class OpenapiResolveUtil {
                         }
                     }
                     result = hasFloat
-                            ? new PhpType().add(PhpType.INT).add(PhpType.FLOAT)
+                            ? new PhpType().add(PhpType.FLOAT)
                             : new PhpType().add(PhpType.INT);
                     result = hasArray
                             ? new PhpType().add(PhpType.ARRAY)

@@ -78,7 +78,7 @@ final public class OpenapiResolveUtil {
                 ) {
                     /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
                     boolean hasFloat      = true;
-                    boolean hasArray      = true;
+                    boolean hasArray      = false;
                     final PsiElement left = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
                     if (left instanceof PhpTypedElement) {
                         final PhpType leftType = resolveType((PhpTypedElement) left, project);
@@ -88,7 +88,7 @@ final public class OpenapiResolveUtil {
                             hasFloat = leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                             hasArray = leftTypes.contains(Types.strArray);
                             leftTypes.clear();
-                            if (!hasFloat) {
+                            if (!hasFloat || !hasArray) {
                                 final PsiElement right
                                         = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
                                 if (right instanceof PhpTypedElement) {

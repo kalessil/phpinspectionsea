@@ -64,7 +64,9 @@ final public class OpenapiResolveUtil {
                             }
                         }
                         /* fallback resolving left operand to regular resolving */
-                        leftType = leftType == null ? resolveType((PhpTypedElement) left, project) : leftType;
+                        leftType = leftType == null
+                                ? resolveType((PhpTypedElement) left, project)
+                                : leftType;
                         if (leftType != null) {
                             final PhpType rightType = resolveType((PhpTypedElement) right, project);
                             if (rightType != null) {
@@ -78,7 +80,33 @@ final public class OpenapiResolveUtil {
                         operator == PhpTokenTypes.opMUL
                 ) {
                     /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
-                    /* iterate parts: consider float|int|number only, handle parenthesises; once met float -> float */
+                    boolean hasFloat      = true;
+                    final PsiElement left = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
+                    if (left instanceof PhpTypedElement) {
+                        final PhpType leftType = resolveType((PhpTypedElement) left, project);
+                        if (leftType != null) {
+                            hasFloat = leftType.getTypes().stream().anyMatch(type -> {
+                               final String normalized = Types.getType(type);
+                               return normalized.equals(Types.strFloat) || normalized.equals(Types.strNumber);
+                            });
+                            if (!hasFloat) {
+                                final PsiElement right
+                                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
+                                if (right instanceof PhpTypedElement) {
+                                    final PhpType rightType = resolveType((PhpTypedElement) right, project);
+                                    if (rightType != null) {
+                                        hasFloat = rightType.getTypes().stream().anyMatch(type -> {
+                                            final String normalized = Types.getType(type);
+                                            return normalized.equals(Types.strFloat) || normalized.equals(Types.strNumber);
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    result = hasFloat
+                            ? new PhpType().add(PhpType.INT).add(PhpType.FLOAT)
+                            : new PhpType().add(PhpType.INT)
                 }
             } if (expression instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) expression;
@@ -98,10 +126,14 @@ final public class OpenapiResolveUtil {
             } else if (expression instanceof FunctionReference) {
                 /* resolve function and get it's type or fallback to empty type */
                 final PsiElement function = resolveReference((FunctionReference) expression);
-                result = function instanceof Function ? ((Function) function).getType().global(project) : new PhpType();
+                result = function instanceof Function
+                        ? ((Function) function).getType().global(project)
+                        : new PhpType();
             }
             /* default behaviour */
-            result = result == null ? expression.getType().global(project) : result;
+            result = result == null
+                    ? expression.getType().global(project)
+                    : result;
         } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
@@ -173,7 +205,9 @@ final public class OpenapiResolveUtil {
     static public List<PhpClass> resolveImplementedInterfaces(@NotNull PhpClass clazz) {
         try {
             final PhpClass[] interfaces = clazz.getImplementedInterfaces();
-            return interfaces == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(interfaces));
+            return interfaces == null
+                    ? new ArrayList<>()
+                    : new ArrayList<>(Arrays.asList(interfaces));
         } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;

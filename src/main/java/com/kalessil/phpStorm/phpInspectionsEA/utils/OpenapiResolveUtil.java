@@ -106,7 +106,7 @@ final public class OpenapiResolveUtil {
                     }
                     result = hasFloat
                             ? new PhpType().add(PhpType.INT).add(PhpType.FLOAT)
-                            : new PhpType().add(PhpType.INT)
+                            : new PhpType().add(PhpType.INT);
                 }
             } if (expression instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) expression;

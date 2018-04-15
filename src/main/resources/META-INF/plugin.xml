@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>2.0.1.1</version>
+  <version>2.0.2</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -42,10 +42,10 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-<a href="#" id="release-details"></a>
 Hot-fixes<br/>
 <br/>
-- Transitive dependencies usage: fixed OOBs<br/>
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/45038">v3.0.1</a><br/>
+- Transitive dependencies usage: fixed runtime exceptions<br/>
 <br/>
 - Illusion of choice: implemented<br/>
 - Missing directory separators: implemented<br/>

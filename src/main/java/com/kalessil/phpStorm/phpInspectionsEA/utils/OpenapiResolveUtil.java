@@ -13,10 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCos
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -81,24 +78,26 @@ final public class OpenapiResolveUtil {
                 ) {
                     /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
                     boolean hasFloat      = true;
+                    boolean hasArray      = true;
                     final PsiElement left = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
                     if (left instanceof PhpTypedElement) {
                         final PhpType leftType = resolveType((PhpTypedElement) left, project);
                         if (leftType != null) {
-                            hasFloat = leftType.getTypes().stream().anyMatch(type -> {
-                               final String normalized = Types.getType(type);
-                               return normalized.equals(Types.strFloat) || normalized.equals(Types.strNumber);
-                            });
-                            if (!hasFloat) {
+                            final Set<String> leftTypes = new HashSet<>();
+                            leftType.getTypes().forEach(type -> leftTypes.add(Types.getType(type)));
+                            hasFloat = leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                            hasArray = leftTypes.contains(Types.strArray);
+                            leftTypes.clear();
+                            if (!hasFloat && !hasArray) {
                                 final PsiElement right
                                         = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
                                 if (right instanceof PhpTypedElement) {
                                     final PhpType rightType = resolveType((PhpTypedElement) right, project);
                                     if (rightType != null) {
-                                        hasFloat = rightType.getTypes().stream().anyMatch(type -> {
-                                            final String normalized = Types.getType(type);
-                                            return normalized.equals(Types.strFloat) || normalized.equals(Types.strNumber);
-                                        });
+                                        final Set<String> rightTypes = new HashSet<>();
+                                        rightType.getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
+                                        hasFloat = rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                                        hasArray = rightTypes.contains(Types.strArray);
                                     }
                                 }
                             }
@@ -107,6 +106,9 @@ final public class OpenapiResolveUtil {
                     result = hasFloat
                             ? new PhpType().add(PhpType.INT).add(PhpType.FLOAT)
                             : new PhpType().add(PhpType.INT);
+                    result = hasArray
+                            ? new PhpType().add(result).add(PhpType.ARRAY)
+                            : result
                 }
             } if (expression instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) expression;

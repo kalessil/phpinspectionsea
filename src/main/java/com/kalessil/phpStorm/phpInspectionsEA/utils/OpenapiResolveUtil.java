@@ -88,7 +88,7 @@ final public class OpenapiResolveUtil {
                             hasFloat = leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                             hasArray = leftTypes.contains(Types.strArray);
                             leftTypes.clear();
-                            if (!hasFloat || (!hasArray /*&& operator == PhpTokenTypes.opPLUS*/)) {
+                            if (!hasFloat || (!hasArray && operator == PhpTokenTypes.opPLUS)) {
                                 final PsiElement right
                                         = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
                                 if (right instanceof PhpTypedElement) {

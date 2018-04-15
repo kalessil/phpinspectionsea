@@ -4,6 +4,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -12,10 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCos
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -43,10 +41,11 @@ final public class OpenapiResolveUtil {
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
         PhpType result = null;
         try {
-            /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
             if (expression instanceof BinaryExpression) {
                 final BinaryExpression binary = (BinaryExpression) expression;
-                if (binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
+                final IElementType operator   = binary.getOperationType();
+                if (operator == PhpTokenTypes.opCOALESCE) {
+                    /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
                     final PsiElement left  = binary.getLeftOperand();
                     final PsiElement right = binary.getRightOperand();
                     if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
@@ -62,7 +61,9 @@ final public class OpenapiResolveUtil {
                             }
                         }
                         /* fallback resolving left operand to regular resolving */
-                        leftType = leftType == null ? resolveType((PhpTypedElement) left, project) : leftType;
+                        leftType = leftType == null
+                                ? resolveType((PhpTypedElement) left, project)
+                                : leftType;
                         if (leftType != null) {
                             final PhpType rightType = resolveType((PhpTypedElement) right, project);
                             if (rightType != null) {
@@ -70,6 +71,45 @@ final public class OpenapiResolveUtil {
                             }
                         }
                     }
+                } else if (
+                        operator == PhpTokenTypes.opPLUS ||
+                        operator == PhpTokenTypes.opMINUS ||
+                        operator == PhpTokenTypes.opMUL
+                ) {
+                    /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
+                    boolean hasFloat      = true;
+                    boolean hasArray      = false;
+                    final PsiElement left = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
+                    if (left instanceof PhpTypedElement) {
+                        final PhpType leftType = resolveType((PhpTypedElement) left, project);
+                        if (leftType != null) {
+                            final Set<String> leftTypes = new HashSet<>();
+                            leftType.getTypes().forEach(type -> leftTypes.add(Types.getType(type)));
+                            hasFloat = leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                            hasArray = leftTypes.contains(Types.strArray);
+                            leftTypes.clear();
+                            if (!hasFloat || (!hasArray && operator == PhpTokenTypes.opPLUS)) {
+                                final PsiElement right
+                                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
+                                if (right instanceof PhpTypedElement) {
+                                    final PhpType rightType = resolveType((PhpTypedElement) right, project);
+                                    if (rightType != null) {
+                                        final Set<String> rightTypes = new HashSet<>();
+                                        rightType.getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
+                                        hasFloat = hasFloat || rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                                        hasArray = hasArray || rightTypes.contains(Types.strArray);
+                                        rightTypes.clear();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    result = hasFloat
+                            ? new PhpType().add(PhpType.FLOAT)
+                            : new PhpType().add(PhpType.INT);
+                    result = hasArray
+                            ? new PhpType().add(PhpType.ARRAY)
+                            : result;
                 }
             } if (expression instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) expression;
@@ -89,10 +129,14 @@ final public class OpenapiResolveUtil {
             } else if (expression instanceof FunctionReference) {
                 /* resolve function and get it's type or fallback to empty type */
                 final PsiElement function = resolveReference((FunctionReference) expression);
-                result = function instanceof Function ? ((Function) function).getType().global(project) : new PhpType();
+                result = function instanceof Function
+                        ? ((Function) function).getType().global(project)
+                        : new PhpType();
             }
             /* default behaviour */
-            result = result == null ? expression.getType().global(project) : result;
+            result = result == null
+                    ? expression.getType().global(project)
+                    : result;
         } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;
@@ -164,7 +208,9 @@ final public class OpenapiResolveUtil {
     static public List<PhpClass> resolveImplementedInterfaces(@NotNull PhpClass clazz) {
         try {
             final PhpClass[] interfaces = clazz.getImplementedInterfaces();
-            return interfaces == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(interfaces));
+            return interfaces == null
+                    ? new ArrayList<>()
+                    : new ArrayList<>(Arrays.asList(interfaces));
         } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;

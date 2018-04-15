@@ -121,3 +121,9 @@
     function iterable_support(iterable $iterable = null) {
         $iterable = $iterable ?? [];
     }
+
+    /* false-positives: issues with proper binary expression types identification */
+    function binary_expression_types(int $parameter) {
+        $parameter = 1 * $parameter * 1;
+        $parameter = <warning descr="New value type (float) is not in annotated types.">1 * 1.0 * $parameter * 1</warning>;
+    }

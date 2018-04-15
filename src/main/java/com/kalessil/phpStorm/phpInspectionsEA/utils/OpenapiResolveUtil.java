@@ -4,6 +4,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -43,10 +44,11 @@ final public class OpenapiResolveUtil {
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
         PhpType result = null;
         try {
-            /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
             if (expression instanceof BinaryExpression) {
                 final BinaryExpression binary = (BinaryExpression) expression;
-                if (binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
+                final IElementType operator   = binary.getOperationType();
+                if (operator == PhpTokenTypes.opCOALESCE) {
+                    /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
                     final PsiElement left  = binary.getLeftOperand();
                     final PsiElement right = binary.getRightOperand();
                     if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
@@ -70,6 +72,13 @@ final public class OpenapiResolveUtil {
                             }
                         }
                     }
+                } else if (
+                        operator == PhpTokenTypes.opPLUS ||
+                        operator == PhpTokenTypes.opMINUS ||
+                        operator == PhpTokenTypes.opMUL
+                ) {
+                    /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
+                    /* iterate parts: consider float|int|number only, handle parenthesises; once met float -> float */
                 }
             } if (expression instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) expression;

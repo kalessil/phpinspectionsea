@@ -70,7 +70,7 @@ Php Inspections (EA Extended) friendly way:
 
 ```php
     /* exception parameters injection (builder approach) */
-    throw (new UserNotFoundExeption())->withUserId($userId);
+    throw (new UserNotFoundException())->withUserId($userId);
     
     /* custom constructor */
     throw new UserNotFoundException($userId);

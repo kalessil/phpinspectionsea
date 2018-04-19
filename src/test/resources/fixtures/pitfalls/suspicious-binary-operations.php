@@ -44,8 +44,8 @@ $x = (
 
 /* a bug: ternary always returns the argument */
 $y = [
-    <error descr="The operation results to '(int)$x', please add missing parenthesises.">(int)$x</error> ?? 'whatever',
-    (<error descr="The operation results to '(string)$x', please add missing parenthesises.">(string)$x</error>) ?? 'whatever'
+    <error descr="The operation results to '(int)$x', please add missing parentheses.">(int)$x</error> ?? 'whatever',
+    (<error descr="The operation results to '(string)$x', please add missing parentheses.">(string)$x</error>) ?? 'whatever'
 ];
 
 /* operations priority issues */

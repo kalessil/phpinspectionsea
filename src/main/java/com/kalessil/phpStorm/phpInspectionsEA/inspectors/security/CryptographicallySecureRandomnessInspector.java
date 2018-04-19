@@ -75,7 +75,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
 
                 /* Case 3: unchecked generation result */
-                /* TODO: get parent thru parenthesises and silence operator - util method */
+                /* TODO: get parent thru parentheses and silence operator - util method */
                 /* unwrap reference if it silenced */
                 PsiElement parent = reference.getParent();
                 if (parent instanceof UnaryExpression) {

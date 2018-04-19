@@ -28,7 +28,7 @@ final public class UnclearOperationsPriorityStrategy {
         final IElementType operator = expression.getOperationType();
         final PsiElement parent     = expression.getParent();
         if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
-            /* binary expressions, already wrapped into parenthesises can be skipped */
+            /* binary expressions, already wrapped into parentheses can be skipped */
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
                 if (parentOperator != operator && (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR)) {
@@ -73,7 +73,7 @@ final public class UnclearOperationsPriorityStrategy {
         @NotNull
         @Override
         public String getName() {
-            return "Wrap with parenthesises as it is";
+            return "Wrap with parentheses as it is";
         }
 
         WrapItAsItIsFix(@NotNull String replacement) {

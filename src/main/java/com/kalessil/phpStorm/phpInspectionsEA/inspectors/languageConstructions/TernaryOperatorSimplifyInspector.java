@@ -80,9 +80,9 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                 }
 
                 final String replacement;
-                final boolean useParenthesises = !oppositeOperators.containsKey(operator);
-                final boolean isInverted       = PhpLanguageUtil.isFalse(trueVariant);
-                if (useParenthesises) {
+                final boolean useParentheses = !oppositeOperators.containsKey(operator);
+                final boolean isInverted     = PhpLanguageUtil.isFalse(trueVariant);
+                if (useParentheses) {
                     final boolean isLogical  = PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator;
                     final String boolCasting = isLogical ? "" : "(bool)";
                     replacement              = ((isInverted ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class NullCoalescingOperatorCorrectnessStrategy {
-    private static final String messagePattern = "The operation results to '%e%', please add missing parenthesises.";
+    private static final String messagePattern = "The operation results to '%e%', please add missing parentheses.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result = false;

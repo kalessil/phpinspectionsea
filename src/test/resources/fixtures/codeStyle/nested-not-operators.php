@@ -8,7 +8,7 @@
     $x = <weak_warning descr="Can be replaced with (bool)$x4.">!!!!$x4</weak_warning>;
     $x = <weak_warning descr="Can be replaced with (bool)$x2.">!!$x2</weak_warning>;
 
-    /* parenthesises handling */
+    /* parentheses handling */
     $x = <weak_warning descr="Can be replaced with (bool)$x2.">!(!(($x2)))</weak_warning>;
     $x = <weak_warning descr="Can be replaced with !$x2.">!(!((!$x2)))</weak_warning>;
 

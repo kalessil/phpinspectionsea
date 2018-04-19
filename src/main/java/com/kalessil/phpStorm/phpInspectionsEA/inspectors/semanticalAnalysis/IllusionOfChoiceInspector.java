@@ -118,14 +118,19 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 if (expression.getOperationType() == PhpTokenTypes.opCOALESCE) {
-                    final PsiElement left  = expression.getLeftOperand();
+                    final PsiElement left = expression.getLeftOperand();
                     if (left != null && PhpLanguageUtil.isNull(expression.getRightOperand())) {
-                        holder.registerProblem(
-                                left,
-                                messageDegradedNullCoallesc,
-                                new SimplifyFix(expression, expression, left.getText())
-                        );
+                        final boolean isGlobalContext = ExpressionSemanticUtil.getBlockScope(expression) == null;
+                        if (!isGlobalContext) {
+                            holder.registerProblem(
+                                    left,
+                                    messageDegradedNullCoallesc,
+                                    new SimplifyFix(expression, expression, left.getText())
+                            );
+                        }
                     }
                 }
             }

@@ -54,6 +54,7 @@ class CasesHolder {
     public function operators($x) {
         return [
             $x,
+            $x['...'] ?? null,
         ];
     }
 }

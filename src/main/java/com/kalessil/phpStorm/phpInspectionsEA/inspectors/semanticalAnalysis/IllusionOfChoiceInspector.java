@@ -122,9 +122,11 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
 
                 if (expression.getOperationType() == PhpTokenTypes.opCOALESCE) {
                     final PsiElement left = expression.getLeftOperand();
-                    if (left != null && PhpLanguageUtil.isNull(expression.getRightOperand())) {
-                        final boolean isGlobalContext = ExpressionSemanticUtil.getBlockScope(expression) == null;
-                        if (!isGlobalContext) {
+                    if (left != null && !(left instanceof ArrayAccessExpression)) {
+                        final boolean isTarget =
+                                PhpLanguageUtil.isNull(expression.getRightOperand()) &&
+                                ExpressionSemanticUtil.getBlockScope(expression) != null;
+                        if (isTarget) {
                             holder.registerProblem(
                                     left,
                                     messageDegradedNullCoallesc,

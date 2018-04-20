@@ -27,7 +27,9 @@ class PropertiesExample extends BasePropertiesExample {
     ;
 
     use PropertiesTrait;
-    public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning> = true;
-    private <error descr="PropertiesExample and PropertiesTrait define the same property different">$different</error> = true;
-    private $phpdoc;
+    public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning>
+        = true;
+    private <error descr="PropertiesExample and PropertiesTrait define the same property different">$different</error>
+        = true;
+    private $phpdoc = '...';
 }

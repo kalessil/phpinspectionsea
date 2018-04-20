@@ -8,6 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -24,19 +25,20 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
         return "TraitsPropertiesConflictsInspection";
     }
 
-        @Override
+    @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpClass(PhpClass clazz) {
+            @Override
+            public void visitPhpClass(@NotNull PhpClass clazz) {
                 /* ensure there are traits being used at all */
                 final PhpClass[] traits = clazz.getTraits();
-                if (0 == traits.length) {
+                if (traits.length == 0) {
                     return;
                 }
 
                 /* check conflict with own fields */
-                for (Field ownField : clazz.getOwnFields()) {
+                for (final Field ownField : clazz.getOwnFields()) {
                     /* get own field name and default value */
                     final PsiElement ownFieldNameNode = NamedElementUtil.getNameIdentifier(ownField);
                     if (null == ownFieldNameNode || ownField.isConstant() || ownField.getModifier().isAbstract()) {
@@ -47,11 +49,11 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
 
                     for (final PhpClass trait : traits) {
                         final Field traitField = OpenapiResolveUtil.resolveField(trait, ownFieldName);
-                        if (null != traitField) {
+                        if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
                             final PsiElement traitFieldDefault = traitField.getDefaultValue();
 
                             final boolean isError;
-                            if (null == ownFieldDefault || null == traitFieldDefault) {
+                            if (ownFieldDefault == null || traitFieldDefault == null) {
                                 isError = traitFieldDefault != ownFieldDefault;
                             } else {
                                 isError = !OpeanapiEquivalenceUtil.areEqual(traitFieldDefault, ownFieldDefault);

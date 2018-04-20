@@ -13,6 +13,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -24,6 +27,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class MissingDirectorySeparatorInspector extends BasePhpInspection {
     private static final String message = "Looks like a directory separator is missing here.";
+
+    final private static Set<String> targetFunctions = new HashSet<>();
+    static {
+        targetFunctions.add("getcwd");
+        targetFunctions.add("dirname");
+        targetFunctions.add("realpath");
+    }
 
     @NotNull
     public String getShortName() {
@@ -48,7 +58,7 @@ public class MissingDirectorySeparatorInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
                     final String functionName = reference.getName();
-                    if (functionName != null && functionName.equals("dirname")) {
+                    if (functionName != null && targetFunctions.contains(functionName)) {
                         this.analyze(reference);
                     }
                 }

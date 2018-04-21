@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -41,16 +42,21 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClassReference(@NotNull ClassReference reference) {
-                final Project project        = holder.getProject();
-                final String currentManifest = this.getManifest(reference, project);
-                if (currentManifest != null) {
-                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                    if (resolved != null) {
-                        final String dependencyManifest = this.getManifest(resolved, project);
-                        if (dependencyManifest != null && !currentManifest.equals(dependencyManifest)) {
-                            final boolean isTarget = this.isTransitiveDependency(currentManifest, dependencyManifest, project);
-                            if (isTarget) {
-                                holder.registerProblem(reference, message);
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
+                if (!this.isTestContext(reference)) {
+                    final Project project    = holder.getProject();
+                    final String ownManifest = this.getManifest(reference, project);
+                    if (ownManifest != null) {
+                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                        if (resolved != null) {
+                            final String dependencyManifest = this.getManifest(resolved, project);
+                            if (dependencyManifest != null && !ownManifest.equals(dependencyManifest)) {
+                                final boolean isTarget
+                                        = this.isTransitiveDependency(ownManifest, dependencyManifest, project);
+                                if (isTarget) {
+                                    holder.registerProblem(reference, message);
+                                }
                             }
                         }
                     }

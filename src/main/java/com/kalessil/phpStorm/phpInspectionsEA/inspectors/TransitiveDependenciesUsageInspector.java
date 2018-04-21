@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -12,11 +13,14 @@ import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIn
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import javax.swing.*;
+import java.util.*;
 import java.util.stream.Stream;
 
 /*
@@ -30,6 +34,9 @@ import java.util.stream.Stream;
 
 public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
     private static final String message = "The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json";
+
+    // Inspection options.
+    public final List<String> configuration  = new ArrayList<>();
 
     @NotNull
     public String getShortName() {
@@ -101,5 +108,30 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 return result;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component)
+            -> component.addList(
+                    "Ignored packages:",
+                    configuration,
+                    null,
+                    null,
+                    "Adding ignored package...",
+                    "Examples: 'psr/container', 'psr/*'")
+        );
+    }
+
+    @Override
+    public void readSettings(@NotNull Element node) throws InvalidDataException {
+        super.readSettings(node);
+
+        /* ensure entries are unique */
+        final Set<String> uniqueEntries = new HashSet<>(configuration);
+        configuration.clear();
+        configuration.addAll(uniqueEntries);
+
+        /* sort entries */
+        Collections.sort(configuration);
     }
 }

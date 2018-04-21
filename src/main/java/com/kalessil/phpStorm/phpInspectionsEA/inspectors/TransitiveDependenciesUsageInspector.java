@@ -93,7 +93,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 if (dependencyDetails.size() == 1) {
                     final String[] dependencySplit = dependencyDetails.get(0).split(":");
                     final String dependencyName    = dependencySplit.length == 2 ? dependencySplit[0] : "";
-                    if (!dependencyName.isEmpty()) {
+                    if (!dependencyName.isEmpty() && !this.isDependencyIgnored(dependencyName)) {
                         final List<String> currentDetails = FileBasedIndex.getInstance()
                                 .getValues(ComposerPackageManifestIndexer.identity, current, scope);
                         if (currentDetails.size() == 1) {
@@ -105,6 +105,15 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                     }
                 }
                 dependencyDetails.clear();
+                return result;
+            }
+
+            private boolean isDependencyIgnored(@NotNull String packageName) {
+                boolean result = configuration.contains(packageName);
+                if (!result) {
+                    final String[] packageDetails = packageName.split("/");
+                    result = packageDetails.length == 2 && configuration.contains(packageDetails[0] + "/*");
+                }
                 return result;
             }
         };

@@ -7,6 +7,8 @@ trait PropertiesTraitForBase1 {
 trait PropertiesTraitForBase2 {
     protected $baseDifferent2 = false;
 }
+
+/* @property $phpdoc */
 trait PropertiesTrait {
     public $same              = true;
     private $different        = false;
@@ -25,8 +27,7 @@ class PropertiesExample extends BasePropertiesExample {
     ;
 
     use PropertiesTrait;
-    public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning>
-        = true;
-    private <error descr="PropertiesExample and PropertiesTrait define the same property different">$different</error>
-        = true;
+    public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning> = true;
+    private $different = true;
+    private $phpdoc = '...';
 }

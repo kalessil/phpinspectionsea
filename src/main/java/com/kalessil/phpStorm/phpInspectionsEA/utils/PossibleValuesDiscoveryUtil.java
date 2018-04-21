@@ -32,7 +32,7 @@ public class PossibleValuesDiscoveryUtil {
 
     @NotNull
     static private Set<PsiElement> discover(@NotNull PsiElement expression, @NotNull Set<PsiElement> processed) {
-        /* un-wrap parenthesises to avoid false-positives */
+        /* un-wrap parentheses to avoid false-positives */
         expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
 
         /* do not process same expressions multiple times */

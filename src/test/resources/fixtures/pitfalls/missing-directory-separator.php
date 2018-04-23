@@ -13,6 +13,7 @@ class CasesHolder
             __DIR__ . DIRECTORY_SEPARATOR,
             __DIR__ . '/',
             __DIR__ . '\\',
+            __DIR__ . ' ...',
         ];
     }
 
@@ -26,6 +27,7 @@ class CasesHolder
             dirname(__DIR__) . DIRECTORY_SEPARATOR,
             dirname(__DIR__) . '/',
             dirname(__DIR__) . '\\',
+            dirname(__DIR__) . ' ...',
         ];
     }
 

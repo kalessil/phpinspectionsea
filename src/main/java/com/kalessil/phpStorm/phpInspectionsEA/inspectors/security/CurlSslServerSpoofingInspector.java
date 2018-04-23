@@ -68,11 +68,11 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                         final PsiElement[] params = call.getParameters();
                         if (params.length == 3 && params[2] != null) {
                             if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
-                                if (isHostVerifyDisabled(params[2])) {
+                                if (this.isHostVerifyDisabled(params[2])) {
                                     holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
                                 }
                             } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
-                                if (isPeerVerifyDisabled(params[2])) {
+                                if (this.isPeerVerifyDisabled(params[2])) {
                                     holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
                                 }
                             }

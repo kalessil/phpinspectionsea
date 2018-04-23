@@ -44,7 +44,7 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
             @Override
             public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
                 final String content = expression.getText();
-                if (content.length() > 5) {
+                if (content.length() >= 5) {
                     final String command   = content.substring(1, content.length() - 1);
                     final boolean isTarget = command.startsWith("su ") || command.startsWith("sudo ");
                     if (isTarget) {

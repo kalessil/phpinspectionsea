@@ -41,73 +41,56 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
-                if (constantName == null || !constantName.startsWith("CURLOPT_")) {
-                    return;
-                }
-
-                /* get 2nd parent level: ArrayHashElement, FunctionReference */
-                PsiElement parent = reference.getParent();
-                parent = null == parent ? null : parent.getParent();
-                if (null == parent) {
-                    return;
-                }
-
-                if (constantName.equals("CURLOPT_SSL_VERIFYHOST") || constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
-                    checkConstantUsage(parent, constantName, reference);
+                if (constantName != null && constantName.startsWith("CURLOPT_")) {
+                    /* get 2nd parent level: ArrayHashElement, FunctionReference */
+                    final PsiElement parent  = reference.getParent();
+                    final PsiElement context = parent == null ? null : parent.getParent();
+                    if (context != null) {
+                        final boolean isTarget =
+                                constantName.equals("CURLOPT_SSL_VERIFYHOST") ||
+                                constantName.equals("CURLOPT_SSL_VERIFYPEER");
+                        if (isTarget) {
+                            this.checkConstantUsage(context, constantName, reference);
+                        }
+                    }
                 }
             }
 
             private void checkConstantUsage(
                     @NotNull PsiElement parent,
-                    @NotNull String constantName, @NotNull ConstantReference constant
+                    @NotNull String constantName,
+                    @NotNull ConstantReference constant
             ) {
                 if (parent instanceof FunctionReference) {
                     final FunctionReference call = (FunctionReference) parent;
-                    final PsiElement[] params    = call.getParameters();
                     final String functionName    = call.getName();
-                    if (
-                        3 != params.length || null == params[2] ||
-                        functionName == null || !functionName.equals("curl_setopt")
-                    ) {
-                        return;
-                    }
-
-                    if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
-                        if (isHostVerifyDisabled(params[2])) {
-                            holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
+                    if (functionName != null && functionName.equals("curl_setopt")) {
+                        final PsiElement[] params = call.getParameters();
+                        if (params.length == 3 && params[2] != null) {
+                            if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
+                                if (isHostVerifyDisabled(params[2])) {
+                                    holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
+                                }
+                            } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
+                                if (isPeerVerifyDisabled(params[2])) {
+                                    holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
+                                }
+                            }
                         }
-                        return;
                     }
-                    if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
-                        if (isPeerVerifyDisabled(params[2])) {
-                            holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
-                        }
-                        return;
-                    }
-
-                    return;
-                }
-
-                if (parent instanceof ArrayHashElement && constant == ((ArrayHashElement) parent).getKey()) {
+                } else if (parent instanceof ArrayHashElement && constant == ((ArrayHashElement) parent).getKey()) {
                     final PsiElement value = ((ArrayHashElement) parent).getValue();
-                    if (null == value) {
-                        return;
-                    }
-
-                    if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
-                        if (isHostVerifyDisabled(value)) {
-                            holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
+                    if (value != null) {
+                        if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
+                            if (this.isHostVerifyDisabled(value)) {
+                                holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
+                            }
+                        }  else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
+                            if (this.isPeerVerifyDisabled(value)) {
+                                holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
+                            }
                         }
-                        return;
                     }
-                    if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
-                        if (isPeerVerifyDisabled(value)) {
-                            holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
-                        }
-                        // return;
-                    }
-
-                    // return;
                 }
             }
 
@@ -115,31 +98,24 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                 boolean result = false;
 
                 final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(value);
-                if (discovered.size() > 0) {
+                if (!discovered.isEmpty()) {
                     int countDisables = 0;
                     int countEnables  = 0;
 
-                    for (PsiElement possibleValue : discovered) {
+                    for (final PsiElement possibleValue : discovered) {
                         if (possibleValue instanceof StringLiteralExpression) {
                             boolean disabled = !((StringLiteralExpression) possibleValue).getContents().equals("2");
                             int dummy        = disabled ? ++countDisables : ++countEnables;
-                            continue;
-                        }
-                        if (possibleValue instanceof ConstantReference) {
+                        } else if (possibleValue instanceof ConstantReference) {
                             ++countDisables;
-                            continue;
-                        }
-                        if (1 == possibleValue.getTextLength()) {
+                        } else if (possibleValue.getTextLength() == 1) {
                             boolean disabled = !possibleValue.getText().equals("2");
                             int dummy        = disabled ? ++countDisables : ++countEnables;
-                            //continue;
                         }
-
-                        /* other expressions are not supported currently */
                     }
                     discovered.clear();
 
-                    result = countDisables > 0 && 0 == countEnables;
+                    result = countDisables > 0 && countEnables == 0;
                 }
 
                 return result;
@@ -157,24 +133,18 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                         if (possibleValue instanceof StringLiteralExpression) {
                             boolean disabled = !((StringLiteralExpression) possibleValue).getContents().equals("1");
                             int dummy        = disabled ? ++countDisables : ++countEnables;
-                            continue;
-                        }
-                        if (possibleValue instanceof ConstantReference) {
+                        } else if (possibleValue instanceof ConstantReference) {
                             boolean disabled = !PhpLanguageUtil.isTrue(possibleValue);
                             int dummy        = disabled ? ++countDisables : ++countEnables;
-                            continue;
-                        }
-                        if (1 == possibleValue.getTextLength()) {
+                        } else if (possibleValue.getTextLength() == 1) {
                             boolean disabled = !possibleValue.getText().equals("1");
                             int dummy        = disabled ? ++countDisables : ++countEnables;
-                            // continue;
                         }
-
                         /* other expressions are not supported currently */
                     }
                     discovered.clear();
 
-                    result = countDisables > 0 && 0 == countEnables;
+                    result = countDisables > 0 && countEnables == 0;
                 }
 
                 return result;

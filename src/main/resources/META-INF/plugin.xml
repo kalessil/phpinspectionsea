@@ -589,6 +589,10 @@ Hot-fixes<br/>
          shortName="NonSecureOpensslVerifyUsageInspection"         displayName="Insecure 'openssl_verify(...)' usage"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureOpensslVerifyUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="CommandExecutionAsSuperUserInspection"         displayName="Command execution as super user"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CommandExecutionAsSuperUserInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

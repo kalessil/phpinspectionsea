@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UnnecessaryUseAliasInspector extends BasePhpInspection {
-    private static final String messagePattern = "' as %a%' is redundant here.";
+    private static final String messagePattern = "' as %s' is redundant here.";
 
     @NotNull
     public String getShortName() {
@@ -38,10 +38,9 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
                 if (!expression.isTraitImport()) {
                     final String alias = expression.getAliasName();
                     if (alias != null && !alias.isEmpty() && expression.getFQN().endsWith('\\' + alias)) {
-                        final String message = messagePattern.replace("%a%", alias);
                         holder.registerProblem(
                                 expression.getLastChild(),
-                                message,
+                                String.format(messagePattern, alias),
                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                 new TheLocalFix()
                         );

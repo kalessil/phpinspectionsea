@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.lang;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ArgumentUnpackingCanBeUsedInspector;
 
-public class ArgumentUnpackingCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class ArgumentUnpackingCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ArgumentUnpackingCanBeUsedInspector());
         myFixture.configureByFile("fixtures/lang/argument-unpacking.php");

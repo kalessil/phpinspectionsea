@@ -52,7 +52,8 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                     final int targetPosition     = closurePositions.get(functionName);
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > targetPosition && OpenapiTypesUtil.isLambda(arguments[targetPosition])) {
-                        final Function closure = (Function) arguments[targetPosition];
+                        final PsiElement expression = arguments[targetPosition];
+                        final Function closure      = (Function) (expression instanceof Function ? expression : expression.getFirstChild());
                         if (closure.getParameters().length > 0) {
                             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(closure);
                             if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
@@ -87,8 +88,9 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                     if (input.length == arguments.length && Arrays.stream(arguments).allMatch(a -> a instanceof Variable)) {
                         result = true;
                         for (int index = 0; index < arguments.length; ++index) {
-                            final Variable argument = (Variable) arguments[index];
-                            if (!argument.getName().equals(input[index].getName())) {
+                            final Variable argument       = (Variable) arguments[index];
+                            final boolean isEnforcingType = !input[index].getDeclaredType().isEmpty();
+                            if (isEnforcingType || !argument.getName().equals(input[index].getName())) {
                                 result = false;
                                 break;
                             }

@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,13 +84,11 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                 final PsiElement[] arguments = callback.getParameters();
                 if (arguments.length > 0) {
                     final Parameter[] input = closure.getParameters();
-                    if (input.length == arguments.length) {
+                    if (input.length == arguments.length && Arrays.stream(arguments).allMatch(a -> a instanceof Variable)) {
                         result = true;
                         for (int index = 0; index < arguments.length; ++index) {
-                            final boolean isMatch =
-                                arguments[index] instanceof Variable &&
-                                ((Variable) arguments[index]).getName().equals(input[index].getName());
-                            if (!isMatch) {
+                            final Variable argument = (Variable) arguments[index];
+                            if (!argument.getName().equals(input[index].getName())) {
                                 result = false;
                                 break;
                             }

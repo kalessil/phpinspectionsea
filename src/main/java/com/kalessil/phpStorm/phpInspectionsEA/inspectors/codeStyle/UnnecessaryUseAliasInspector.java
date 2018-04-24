@@ -10,8 +10,16 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class UnnecessaryUseAliasInspector extends BasePhpInspection {
     private static final String messagePattern = "' as %a%' is redundant here.";
@@ -25,15 +33,19 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpUse(PhpUse expression) {
-                if (expression.isTraitImport()) {
-                    return;
-                }
-
-                final String alias = expression.getAliasName();
-                if (!StringUtils.isEmpty(alias) && expression.getFQN().endsWith('\\' + alias)) {
-                    final String message = messagePattern.replace("%a%", alias);
-                    holder.registerProblem(expression.getLastChild(), message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
+            @Override
+            public void visitPhpUse(@NotNull PhpUse expression) {
+                if (!expression.isTraitImport()) {
+                    final String alias = expression.getAliasName();
+                    if (alias != null && !alias.isEmpty() && expression.getFQN().endsWith('\\' + alias)) {
+                        final String message = messagePattern.replace("%a%", alias);
+                        holder.registerProblem(
+                                expression.getLastChild(),
+                                message,
+                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                new TheLocalFix()
+                        );
+                    }
                 }
             }
         };
@@ -43,7 +55,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Remove alias";
+            return "Remove unnecessary alias";
         }
 
         @NotNull
@@ -55,7 +67,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof PhpUse) {
+            if (expression instanceof PhpUse && !project.isDisposed()) {
                 expression.getLastChild().delete(); // alias itself
                 expression.getLastChild().delete(); // "as" keyword
             }

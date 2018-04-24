@@ -28,8 +28,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspection {
-    private static final String messageOffset = "Provokes a PHP Fatal error (cannot use string offset as an array).";
-    private static final String messagePush   = "Provokes a PHP Fatal error ([] operator not supported for strings).";
+    private static final String messageOffset = "Could provoke a PHP Fatal error (cannot use string offset as an array).";
+    private static final String messagePush   = "Could provoke a PHP Fatal error ([] operator not supported for strings).";
 
     @NotNull
     public String getShortName() {

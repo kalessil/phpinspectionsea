@@ -1,6 +1,7 @@
 <?php
 
-function cases_holder(string $string)
+/** @param string[] $strings */
+function cases_holder(string $string, array $strings)
 {
     $one = $string[0][0];
     $one = [$string[0][0]];
@@ -14,7 +15,9 @@ function cases_holder(string $string)
 
     list(<error descr="Provokes a PHP Fatal error (cannot use string offset as an array).">$string[0]['...']</error>) = $one;
 
+
     <error descr="Provokes a PHP Fatal error ([] operator not supported for strings).">$string[]</error> = '';
+    <error descr="Provokes a PHP Fatal error ([] operator not supported for strings).">$strings[0][]</error> = '';
 }
 
 /* global context is not checked */

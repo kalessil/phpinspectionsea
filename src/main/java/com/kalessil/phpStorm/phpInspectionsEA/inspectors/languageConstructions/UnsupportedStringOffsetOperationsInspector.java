@@ -50,7 +50,11 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                     boolean isTargetContext    = false;
                     /* context identification phase */
                     final PsiElement candidate = expression.getValue();
-                    if (candidate instanceof Variable || candidate instanceof FieldReference) {
+                    if (
+                        candidate instanceof Variable ||
+                        candidate instanceof FieldReference ||
+                        candidate instanceof ArrayAccessExpression
+                    ) {
                         final PsiElement parent = expression.getParent();
                         /* case 1: unsupported casting to array */
                         if (parent instanceof ArrayAccessExpression) {

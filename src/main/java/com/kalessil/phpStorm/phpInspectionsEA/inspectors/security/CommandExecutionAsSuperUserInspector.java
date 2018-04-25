@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpShellCommandExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,23 +33,27 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression literal) {
-                final String content = literal.getContents();
-                if (content.length() >= 3) {
-                    final boolean isTarget = content.startsWith("su ") || content.startsWith("sudo ");
-                    if (isTarget) {
-                        holder.registerProblem(literal, message, ProblemHighlightType.GENERIC_ERROR);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final String content = literal.getContents();
+                    if (content.length() >= 3) {
+                        final boolean isTarget = content.startsWith("su ") || content.startsWith("sudo ");
+                        if (isTarget) {
+                            holder.registerProblem(literal, message, ProblemHighlightType.GENERIC_ERROR);
+                        }
                     }
                 }
             }
 
             @Override
             public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
-                final String content = expression.getText();
-                if (content.length() >= 5) {
-                    final String command   = content.substring(1, content.length() - 1);
-                    final boolean isTarget = command.startsWith("su ") || command.startsWith("sudo ");
-                    if (isTarget) {
-                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final String content = expression.getText();
+                    if (content.length() >= 5) {
+                        final String command   = content.substring(1, content.length() - 1);
+                        final boolean isTarget = command.startsWith("su ") || command.startsWith("sudo ");
+                        if (isTarget) {
+                            holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
+                        }
                     }
                 }
             }

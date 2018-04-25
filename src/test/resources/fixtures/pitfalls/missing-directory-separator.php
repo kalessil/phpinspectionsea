@@ -7,7 +7,7 @@ class CasesHolder
         return [
             __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
             '' . __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
-            __DIR__ . <warning descr="Looks like a directory separator is missing here.">''</warning> . 'vendor',
+            __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning> . '',
 
             /* valid cases */
             __DIR__ . DIRECTORY_SEPARATOR,
@@ -21,7 +21,7 @@ class CasesHolder
         return [
             dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
             '' . dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
-            dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning> . 'vendor',
+            dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning> . '',
 
             /* valid cases */
             dirname(__DIR__) . DIRECTORY_SEPARATOR,

@@ -5,9 +5,9 @@ class CasesHolder
 
     public function directoryConstant() {
         return [
-            __DIR__ . <warning descr="Looks like a directory separator is missing here.">''</warning>,
-            '' . __DIR__ . <warning descr="Looks like a directory separator is missing here.">''</warning>,
-            __DIR__ . <warning descr="Looks like a directory separator is missing here.">''</warning> . '',
+            __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
+            '' . __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
+            __DIR__ . <warning descr="Looks like a directory separator is missing here.">''</warning> . 'vendor',
 
             /* valid cases */
             __DIR__ . DIRECTORY_SEPARATOR,
@@ -19,9 +19,9 @@ class CasesHolder
 
     public function dirnameFunction() {
         return [
-            dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">''</warning>,
-            '' . dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">''</warning>,
-            dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">''</warning> . '',
+            dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
+            '' . dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
+            dirname(__DIR__) . <warning descr="Looks like a directory separator is missing here.">''</warning> . 'vendor',
 
             /* valid cases */
             dirname(__DIR__) . DIRECTORY_SEPARATOR,

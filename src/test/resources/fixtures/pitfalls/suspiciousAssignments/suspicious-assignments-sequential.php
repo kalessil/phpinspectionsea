@@ -95,3 +95,13 @@ function increments_decrements_cases_holder ()
 
     return [$x, $y, $z, $t];
 }
+
+function assign_selfassign_mix_cases_holder()
+{
+    $one = '';
+    $one .= '';
+
+    $two = '';
+    $two .= '';
+    $two = '';
+}

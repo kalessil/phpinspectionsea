@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -134,7 +135,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
 
     private class MergeConstructsFix implements LocalQuickFix {
         final private SmartPsiElementPointer<BinaryExpression> binary;
-        final private List<PsiElement> fragments;
+        final private List<String> fragments;
         final private SmartPsiElementPointer<PhpIsset> first;
         final private SmartPsiElementPointer<PhpIsset> second;
         final private IElementType operator;
@@ -160,7 +161,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
         ) {
             final SmartPointerManager factory = SmartPointerManager.getInstance(binary.getProject());
 
-            this.fragments = fragments;
+            this.fragments = fragments.stream().map(PsiElement::getText).collect(Collectors.toList());
             this.operator  = operator;
             this.binary    = factory.createSmartPsiElementPointer(binary);
             this.first     = factory.createSmartPsiElementPointer(first);
@@ -185,7 +186,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                 /* collect new binary fragments */
                 final List<String> fragments = new ArrayList<>();
                 fragments.add(isset);
-                this.fragments.forEach(fragment -> fragments.add(fragment.getText()));
+                fragments.addAll(this.fragments);
 
                 /* generate replacement */
                 final String delimiter   = operator == PhpTokenTypes.opAND ? " && " : " || ";

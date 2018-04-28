@@ -88,8 +88,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                             int hitsCount       = 0;
                             for (final PsiElement fragment : fragments) {
                                 if (fragment instanceof UnaryExpression) {
-                                    final PsiElement argument  = ((UnaryExpression) fragment).getValue();
-                                    final PsiElement candidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(argument);
+                                    final PsiElement candidate = ((UnaryExpression) fragment).getValue();
                                     if (candidate instanceof PhpIsset) {
                                         if (++hitsCount > 1 && firstHit != null) {
                                             fragments.remove(firstHit.getParent());

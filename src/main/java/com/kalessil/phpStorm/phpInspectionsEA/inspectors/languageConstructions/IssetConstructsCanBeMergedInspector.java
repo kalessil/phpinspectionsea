@@ -69,6 +69,8 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                             for (final PsiElement fragment : fragments) {
                                 if (fragment instanceof PhpIsset) {
                                     if (++hitsCount > 1 && firstHit != null) {
+                                        fragments.remove(firstHit);
+                                        fragments.remove(fragment);
                                         holder.registerProblem(
                                             fragment,
                                             messageIsset,
@@ -89,6 +91,8 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                                     final PsiElement candidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(argument);
                                     if (candidate instanceof PhpIsset) {
                                         if (++hitsCount > 1 && firstHit != null) {
+                                            fragments.remove(firstHit.getParent());
+                                            fragments.remove(fragment);
                                             holder.registerProblem(
                                                 candidate,
                                                 messageIvertedIsset,
@@ -181,9 +185,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                 /* collect new binary fragments */
                 final List<String> fragments = new ArrayList<>();
                 fragments.add(isset);
-                this.fragments.stream()
-                        .filter(fragment  -> fragment != first && fragment != second)
-                        .forEach(fragment -> fragments.add(fragment.getText()));
+                this.fragments.forEach(fragment -> fragments.add(fragment.getText()));
 
                 /* generate replacement */
                 final String delimiter   = operator == PhpTokenTypes.opAND ? " && " : " || ";

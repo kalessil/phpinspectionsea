@@ -1,11 +1,18 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -15,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -44,7 +52,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 final IElementType operator = expression.getOperationType();
-                if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
+                if (operator != null && (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR)) {
                     /* false-positives: part of another condition */
                     final PsiElement parent = expression.getParent();
                     if (parent instanceof BinaryExpression && ((BinaryExpression) parent).getOperationType() == operator) {
@@ -59,11 +67,11 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                             int hitsCount       = 0;
                             for (final PsiElement fragment : fragments) {
                                 if (fragment instanceof PhpIsset) {
-                                    if (++hitsCount > 1) {
+                                    if (++hitsCount > 1 && firstHit != null) {
                                         holder.registerProblem(
                                             fragment,
                                             messageIsset,
-                                            new MergeConstructsFix(expression, fragments, firstHit, fragment, operator)
+                                            new MergeConstructsFix(expression, fragments, (PhpIsset)firstHit, (PhpIsset)fragment, operator)
                                         );
                                         break;
                                     }
@@ -79,11 +87,11 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                                     final PsiElement argument  = ((UnaryExpression) fragment).getValue();
                                     final PsiElement candidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(argument);
                                     if (candidate instanceof PhpIsset) {
-                                        if (++hitsCount > 1) {
+                                        if (++hitsCount > 1 && firstHit != null) {
                                             holder.registerProblem(
                                                 candidate,
                                                 messageIvertedIsset,
-                                                new MergeConstructsFix(expression, fragments, firstHit, candidate, operator)
+                                                new MergeConstructsFix(expression, fragments, (PhpIsset)firstHit, (PhpIsset)candidate, operator)
                                             );
                                             break;
                                         }
@@ -117,5 +125,78 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                 return result;
             }
         };
+    }
+
+    private class MergeConstructsFix implements LocalQuickFix {
+        final private SmartPsiElementPointer<BinaryExpression> binary;
+        final private List<PsiElement> fragments;
+        final private SmartPsiElementPointer<PhpIsset> first;
+        final private SmartPsiElementPointer<PhpIsset> second;
+        final private IElementType operator;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Merge 'isset(...)' constructs";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        MergeConstructsFix(
+            @NotNull BinaryExpression binary,
+            @NotNull List<PsiElement> fragments,
+            @NotNull PhpIsset first,
+            @NotNull PhpIsset second,
+            @NotNull IElementType operator
+        ) {
+            final SmartPointerManager factory = SmartPointerManager.getInstance(binary.getProject());
+
+            this.fragments = fragments;
+            this.operator  = operator;
+            this.binary    = factory.createSmartPsiElementPointer(binary);
+            this.first     = factory.createSmartPsiElementPointer(first);
+            this.second    = factory.createSmartPsiElementPointer(second);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final BinaryExpression binary = this.binary.getElement();
+            final PhpIsset first          = this.first.getElement();
+            final PhpIsset second         = this.second.getElement();
+            if (binary != null && first != null && second != null && !project.isDisposed()) {
+                /* generate isset-statement */
+                final List<String> arguments = new ArrayList<>();
+                Stream.of(first, second).forEach(construct ->
+                    Arrays.stream(construct.getVariables()).forEach(argument -> arguments.add(argument.getText()))
+                );
+                final String patternIsset = operator == PhpTokenTypes.opAND ? "isset(%s)" : "!isset(%s)";
+                final String isset        = String.format(patternIsset, String.join(", ", arguments));
+                arguments.clear();
+
+                /* collect new binary fragments */
+                final List<String> fragments = new ArrayList<>();
+                fragments.add(isset);
+                this.fragments.stream()
+                        .filter(fragment  -> fragment != first && fragment != second)
+                        .forEach(fragment -> fragments.add(fragment.getText()));
+
+                /* generate replacement */
+                final String delimiter   = operator == PhpTokenTypes.opAND ? " && " : " || ";
+                final String replacement = '(' + String.join(delimiter, fragments) + ')';
+                fragments.clear();
+
+                /* replace expression */
+                final PsiElement donor = PhpPsiElementFactory
+                        .createPhpPsiFromText(project, ParenthesizedExpression.class, replacement)
+                        .getArgument();
+                if (donor != null) {
+                    binary.replace(donor);
+                }
+            }
+        }
     }
 }

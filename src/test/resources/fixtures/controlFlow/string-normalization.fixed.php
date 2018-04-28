@@ -7,6 +7,12 @@
     echo strtolower(substr($string, 1));
     echo strtolower(mb_substr($string, 1));
 
+    /* more trim-related cases */
+    echo strtolower(trim($string, '...'));
+    echo trim(strtolower($string), 'a');
+    echo trim(strtolower($string), "A");
+    echo trim(strtolower($string), $unknown);
+
     /* valid cases */
     echo $x->trim($x->strtolower($string));
     echo $x->trim(strtolower($string));

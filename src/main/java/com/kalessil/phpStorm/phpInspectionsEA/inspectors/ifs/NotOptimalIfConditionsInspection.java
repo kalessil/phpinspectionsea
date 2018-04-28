@@ -297,34 +297,23 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 if (operationType == PhpTokenTypes.opAND) {
                     int issetCallsCount = 0;
                     for (final PsiElement expression : conditions) {
-                        if (!(expression instanceof PhpIsset)) {
-                            continue;
-                        }
-
-                        ++issetCallsCount;
-                        if (issetCallsCount > 1) {
-                            holder.registerProblem(expression, messageIssetCanBeMergedAndCase);
+                        if (expression instanceof PhpIsset) {
+                            if (++issetCallsCount > 1) {
+                                holder.registerProblem(expression, messageIssetCanBeMergedAndCase);
+                            }
                         }
                     }
-
-                    return;
                 }
-
                 /* handle !isset || !isset ... */
-                if (operationType == PhpTokenTypes.opOR) {
+                else if (operationType == PhpTokenTypes.opOR) {
                     int issetCallsCount = 0;
-                    for (PsiElement expression : conditions) {
-                        if (!(expression instanceof UnaryExpression)) {
-                            continue;
-                        }
-                        expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) expression).getValue());
-                        if (!(expression instanceof PhpIsset)) {
-                            continue;
-                        }
-
-                        ++issetCallsCount;
-                        if (issetCallsCount > 1) {
-                            holder.registerProblem(expression, messageIssetCanBeMergedOrCase);
+                    for (final PsiElement expression : conditions) {
+                        if (expression instanceof UnaryExpression) {
+                            final PsiElement argument  = ((UnaryExpression) expression).getValue();
+                            final PsiElement candidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(argument);
+                            if (candidate instanceof PhpIsset && ++issetCallsCount > 1) {
+                                holder.registerProblem(candidate, messageIssetCanBeMergedOrCase);
+                            }
                         }
                     }
                 }

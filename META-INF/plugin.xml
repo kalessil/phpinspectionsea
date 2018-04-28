@@ -251,7 +251,7 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
          groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArraySearchUsedAsInArrayInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="SequentialUnSetCallsInspection"                displayName="'unset(...)' constructs can be merged"
+         shortName="UnsetConstructsCanBeMergedInspection"          displayName="'unset(...)' constructs can be merged"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnsetConstructsCanBeMergedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

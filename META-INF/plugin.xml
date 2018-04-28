@@ -287,8 +287,8 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         groupName="Control Flow"                                   enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.CompactCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="IssetConstructsCanBeMergedInspection"           displayName="'isset(...)' constructs could be merged"
-        groupName="Control Flow"                                   enabledByDefault="false" level="WEAK WARNING"
+        shortName="IssetConstructsCanBeMergedInspection"           displayName="'isset(...)' constructs can be merged"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IssetConstructsCanBeMergedInspector"/>
 
 

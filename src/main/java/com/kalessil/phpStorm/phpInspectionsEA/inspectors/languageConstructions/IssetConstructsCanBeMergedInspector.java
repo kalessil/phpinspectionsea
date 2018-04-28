@@ -54,8 +54,9 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                 final IElementType operator = expression.getOperationType();
                 if (operator != null && (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR)) {
                     /* false-positives: part of another condition */
-                    final PsiElement parent = expression.getParent();
-                    if (parent instanceof BinaryExpression && ((BinaryExpression) parent).getOperationType() == operator) {
+                    final PsiElement parent  = expression.getParent();
+                    final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
+                    if (context instanceof BinaryExpression && ((BinaryExpression) context).getOperationType() == operator) {
                         return;
                     }
 

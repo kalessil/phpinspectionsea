@@ -53,24 +53,41 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
 
                     final List<PsiElement> fragments = this.extract(expression, operator);
                     if (fragments.size() > 1) {
-                        /* handle isset && isset ... */
                         if (operator == PhpTokenTypes.opAND) {
-                            int hitsCount = 0;
+                            /* handle isset && isset ... */
+                            PsiElement firstHit = null;
+                            int hitsCount       = 0;
                             for (final PsiElement fragment : fragments) {
-                                if (fragment instanceof PhpIsset && ++hitsCount > 1) {
-                                    holder.registerProblem(fragment, messageIsset);
+                                if (fragment instanceof PhpIsset) {
+                                    if (++hitsCount > 1) {
+                                        holder.registerProblem(
+                                            fragment,
+                                            messageIsset,
+                                            new MergeConstructsFix(expression, fragments, firstHit, fragment, operator)
+                                        );
+                                        break;
+                                    }
+                                    firstHit = firstHit == null ? fragment : firstHit;
                                 }
                             }
-                        }
-                        /* handle !isset || !isset ... */
-                        else {
-                            int hitsCount = 0;
+                        } else {
+                            /* handle !isset || !isset ... */
+                            PsiElement firstHit = null;
+                            int hitsCount       = 0;
                             for (final PsiElement fragment : fragments) {
                                 if (fragment instanceof UnaryExpression) {
                                     final PsiElement argument  = ((UnaryExpression) fragment).getValue();
                                     final PsiElement candidate = ExpressionSemanticUtil.getExpressionTroughParenthesis(argument);
-                                    if (candidate instanceof PhpIsset && ++hitsCount > 1) {
-                                        holder.registerProblem(candidate, messageIvertedIsset);
+                                    if (candidate instanceof PhpIsset) {
+                                        if (++hitsCount > 1) {
+                                            holder.registerProblem(
+                                                candidate,
+                                                messageIvertedIsset,
+                                                new MergeConstructsFix(expression, fragments, firstHit, candidate, operator)
+                                            );
+                                            break;
+                                        }
+                                        firstHit = firstHit == null ? fragment : firstHit;
                                     }
                                 }
                             }

@@ -95,7 +95,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
                                             );
                                             break;
                                         }
-                                        firstHit = firstHit == null ? fragment : firstHit;
+                                        firstHit = firstHit == null ? candidate : firstHit;
                                     }
                                 }
                             }

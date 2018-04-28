@@ -36,6 +36,7 @@ final public class OpenapiTypesUtil {
     static public boolean isAssignment(@Nullable PsiElement expression) {
         boolean result = expression != null && expression.getNode().getElementType() == PhpElementTypes.ASSIGNMENT_EXPRESSION;
         if (result) {
+            /* see com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor.visitPhpAssignmentExpression */
             final AssignmentExpression assignment = (AssignmentExpression) expression;
             final PsiElement container            = assignment.getVariable();
             final PsiElement value                = assignment.getValue();

@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class SequentialUnSetCallsInspector extends BasePhpInspection {
+public class UnsetConstructsCanBeMergedInspector extends BasePhpInspection {
     private static final String message = "Can be safely replaced with 'unset(..., ...[, ...])' construction.";
 
     @NotNull
     public String getShortName() {
-        return "SequentialUnSetCallsInspection";
+        return "UnsetConstructsCanBeMergedInspection";
     }
 
     @Override

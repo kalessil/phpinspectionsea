@@ -1,11 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SequentialUnSetCallsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnsetConstructsCanBeMergedInspector;
 
-final public class SequentialUnSetCallsInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class UnsetConstructsCanBeMergedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new SequentialUnSetCallsInspector());
+        myFixture.enableInspections(new UnsetConstructsCanBeMergedInspector());
         myFixture.configureByFile("fixtures/controlFlow/unset-sequential.php");
         myFixture.testHighlighting(true, false, true);
 

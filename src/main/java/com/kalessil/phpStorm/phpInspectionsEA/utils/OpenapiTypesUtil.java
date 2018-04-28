@@ -34,7 +34,22 @@ final public class OpenapiTypesUtil {
     }
 
     static public boolean isAssignment(@Nullable PsiElement expression) {
-        return expression != null && expression.getNode().getElementType() == PhpElementTypes.ASSIGNMENT_EXPRESSION;
+        boolean result = expression != null && expression.getNode().getElementType() == PhpElementTypes.ASSIGNMENT_EXPRESSION;
+        if (result) {
+            final AssignmentExpression assignment = (AssignmentExpression) expression;
+            final PsiElement container            = assignment.getVariable();
+            final PsiElement value                = assignment.getValue();
+            if (container != null && value != null) {
+                PsiElement current = container;
+                while (current != null && current != value) {
+                    if (result = (current.getNode().getElementType() == PhpTokenTypes.opASGN)) {
+                        break;
+                    }
+                    current = current.getNextSibling();
+                }
+            }
+        }
+        return result;
     }
 
     static public boolean isFunctionReference(@Nullable PsiElement expression) {

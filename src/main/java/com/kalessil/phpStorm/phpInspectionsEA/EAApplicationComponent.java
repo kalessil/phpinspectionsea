@@ -30,26 +30,32 @@ public class EAApplicationComponent implements ApplicationComponent {
 
         final EASettings settings = EASettings.getInstance();
 
-        /* collect installation events (anonymous) */
-        this.updated = !plugin.getVersion().equals(settings.getVersion());
-        if (this.updated) {
+        /* collect version usage information */
+        final boolean sendVersionInformation = settings.getSendVersionInformation();
+        if (this.updated = !plugin.getVersion().equals(settings.getVersion())) {
             settings.setVersion(plugin.getVersion());
-            AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
+            if (sendVersionInformation) {
+                AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
+            }
         }
-        AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());
+        if (sendVersionInformation) {
+            AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());
+        }
 
         /* collect exceptions */
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
             final FileAppender appender = new FileAppender() {
                 @Override
                 public void append(@NotNull LoggingEvent event) {
-                    final ThrowableInformation exceptionDetails = event.getThrowableInformation();
-                    if (exceptionDetails != null) {
-                        AnalyticsUtil.registerLoggedException(
-                            settings.getVersion(),
-                            settings.getUuid(),
-                            exceptionDetails.getThrowable()
-                        );
+                    if (settings.getSendCrashReports()) {
+                        final ThrowableInformation exceptionDetails = event.getThrowableInformation();
+                        if (exceptionDetails != null) {
+                            AnalyticsUtil.registerLoggedException(
+                                settings.getVersion(),
+                                settings.getUuid(),
+                                exceptionDetails.getThrowable()
+                            );
+                        }
                     }
                 }
             };

@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
@@ -9,15 +8,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class EAApplicationConfiguration implements Configurable {
-    private JPanel configurationPanel;
-
     private boolean SEND_CRASH_REPORTS;
     private boolean SEND_VERSION_INFORMATION;
 
     @Nullable
     @Override
     public JComponent createComponent() {
-        return this.configurationPanel = OptionsComponent.create((component) -> {
+        final EASettings settings = EASettings.getInstance();
+        SEND_CRASH_REPORTS        = settings.getSendCrashReports();
+        SEND_VERSION_INFORMATION  = settings.getSendVersionInformation();
+
+        return OptionsComponent.create((component) -> {
             component.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected);
             component.addCheckbox("Automatically collect plugin updates", SEND_VERSION_INFORMATION, (isSelected) -> SEND_VERSION_INFORMATION = isSelected);
         });
@@ -25,18 +26,21 @@ public class EAApplicationConfiguration implements Configurable {
 
     @Override
     public boolean isModified() {
-        /* TODO: compare form and settings values */
-        return false;
+        final EASettings settings = EASettings.getInstance();
+        return SEND_CRASH_REPORTS != settings.getSendCrashReports() ||
+               SEND_VERSION_INFORMATION != settings.getSendVersionInformation();
     }
 
     @Override
-    public void apply() throws ConfigurationException {
-        /* get form settings, dispatch into settings */
+    public void apply() {
+        final EASettings settings = EASettings.getInstance();
+        settings.setSendCrashReports(SEND_CRASH_REPORTS);
+        settings.setSendVersionInformation(SEND_VERSION_INFORMATION);
     }
 
     @Override
     public void reset() {
-        /* TODO: update from settings */
+        /* nothing should happen here as losing settings here extremely frustrating */
     }
 
     @Override

@@ -12,6 +12,8 @@ import java.util.UUID;
 
 @State(name = "EASettings", storages = @Storage(file = "$APP_CONFIG$/ea_extended.xml"))
 public class EASettings implements PersistentStateComponent<Element> {
+    private String sendCrashReports;
+    private String sendVersionInformation;
     private String versionOldest;
     private String version;
     private String uuid;
@@ -25,14 +27,20 @@ public class EASettings implements PersistentStateComponent<Element> {
     public Element getState() {
         final Element element = new Element("EASettings");
 
-        if (null != this.versionOldest) {
+        if (this.versionOldest != null) {
             element.setAttribute("version", this.version);
         }
-        if (null != this.versionOldest) {
+        if (this.versionOldest != null) {
             element.setAttribute("versionOldest", this.versionOldest);
         }
-        if (null != this.uuid) {
+        if (this.uuid != null) {
             element.setAttribute("uuid", this.uuid);
+        }
+        if (this.sendCrashReports != null) {
+            element.setAttribute("sendCrashReports", this.sendCrashReports);
+        }
+        if (this.sendVersionInformation != null) {
+            element.setAttribute("sendVersionInformation", this.sendVersionInformation);
         }
 
         return element;
@@ -40,16 +48,23 @@ public class EASettings implements PersistentStateComponent<Element> {
 
     @Override
     public void loadState(Element element) {
+        /* version information */
         final String versionValue = element.getAttributeValue("version");
         if (versionValue != null) {
             this.version = versionValue;
         }
-
         final String versionOldestValue = element.getAttributeValue("versionOldest");
-        this.versionOldest              = (null == versionOldestValue ? versionValue : versionOldestValue);
+        this.versionOldest              = (versionOldestValue == null ? versionValue : versionOldestValue);
 
+        /* anonymous identity information */
         final String uuidValue = element.getAttributeValue("uuid");
-        this.uuid              = (null == uuidValue ? UUID.randomUUID().toString() : uuidValue);
+        this.uuid              = (uuidValue == null ? UUID.randomUUID().toString() : uuidValue);
+
+        /* misc. statistics collection */
+        final String sendCrashReportsValue       = element.getAttributeValue("sendCrashReports");
+        this.sendCrashReports                    = sendCrashReportsValue == null ? "true" : sendCrashReportsValue;
+        final String sendVersionInformationValue = element.getAttributeValue("sendVersionInformation");
+        this.sendVersionInformation              = sendVersionInformationValue == null ? "true" : sendVersionInformationValue;
     }
 
     public void setVersion(@NotNull String version) {
@@ -67,5 +82,19 @@ public class EASettings implements PersistentStateComponent<Element> {
 
     public String getOldestVersion() {
         return this.versionOldest;
+    }
+
+    public boolean getSendCrashReports() {
+        return this.sendCrashReports != null && this.sendCrashReports.equals("true");
+    }
+    public void setSendCrashReports(boolean value) {
+        this.sendCrashReports = (value ? "true" : "false");
+    }
+
+    public boolean getSendVersionInformation() {
+        return this.sendVersionInformation != null && this.sendVersionInformation.equals("true");
+    }
+    public void setSendVersionInformation(boolean value) {
+        this.sendVersionInformation = (value ? "true" : "false");
     }
 }

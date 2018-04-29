@@ -1,11 +1,17 @@
 <?php
 
     /* pattern: in-efficient nesting */
-    echo <weak_warning descr="'strtolower(trim($string))' should be used instead.">trim(strtolower($string))</weak_warning>;
-    echo <weak_warning descr="'strtolower(ltrim($string))' should be used instead.">ltrim(strtolower($string))</weak_warning>;
-    echo <weak_warning descr="'strtolower(rtrim($string))' should be used instead.">rtrim(strtolower($string))</weak_warning>;
-    echo <weak_warning descr="'strtolower(substr($string, 1))' should be used instead.">substr(strtolower($string), 1)</weak_warning>;
-    echo <weak_warning descr="'strtolower(mb_substr($string, 1))' should be used instead.">mb_substr(strtolower($string), 1)</weak_warning>;
+    echo <weak_warning descr="'strtolower(trim($string))' makes more sense here.">trim(strtolower($string))</weak_warning>;
+    echo <weak_warning descr="'strtolower(ltrim($string))' makes more sense here.">ltrim(strtolower($string))</weak_warning>;
+    echo <weak_warning descr="'strtolower(rtrim($string))' makes more sense here.">rtrim(strtolower($string))</weak_warning>;
+    echo <weak_warning descr="'strtolower(substr($string, 1))' makes more sense here.">substr(strtolower($string), 1)</weak_warning>;
+    echo <weak_warning descr="'strtolower(mb_substr($string, 1))' makes more sense here.">mb_substr(strtolower($string), 1)</weak_warning>;
+
+    /* more trim-related cases */
+    echo <weak_warning descr="'strtolower(trim($string, '...'))' makes more sense here.">trim(strtolower($string), '...')</weak_warning>;
+    echo trim(strtolower($string), 'a');
+    echo trim(strtolower($string), "A");
+    echo trim(strtolower($string), $unknown);
 
     /* valid cases */
     echo $x->trim($x->strtolower($string));

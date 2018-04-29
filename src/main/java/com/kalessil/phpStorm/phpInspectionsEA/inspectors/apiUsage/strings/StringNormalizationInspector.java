@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -23,8 +25,8 @@ import java.util.Set;
  */
 
 public class StringNormalizationInspector extends BasePhpInspection {
-    private static final String patternInvertedNesting  = "'%e%' should be used instead.";
-    private static final String patternSenselessNesting = "'%i%(...)' makes no sense here.";
+    private static final String patternInvertedNesting  = "'%s' makes more sense here.";
+    private static final String patternSenselessNesting = "'%s(...)' makes no sense here.";
 
     @NotNull
     public String getShortName() {
@@ -53,6 +55,11 @@ public class StringNormalizationInspector extends BasePhpInspection {
         lengthManipulation.add("mb_substr");
     }
 
+    final static private Pattern regexTrimmedCharacters;
+    static {
+        regexTrimmedCharacters = Pattern.compile("(['\"]).*\\p{L}.*\\1");
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
@@ -69,20 +76,26 @@ public class StringNormalizationInspector extends BasePhpInspection {
                             final PsiElement[] innerArguments = innerCall.getParameters();
                             if (innerArguments.length > 0) {
                                 if (lengthManipulation.contains(functionName) && caseManipulation.contains(innerCallName)) {
-                                    final String theString    = innerArguments[0].getText();
-                                    final String newInnerCall = reference.getText().replace(arguments[0].getText(), theString);
-                                    final String replacement  = innerCall.getText().replace(theString, newInnerCall);
-                                    final String message      = patternInvertedNesting.replace("%e%", replacement);
-                                    holder.registerProblem(reference, message, new NormalizationFix(replacement));
+                                    final boolean isTarget =
+                                        !functionName.endsWith("trim") ||
+                                        arguments.length == 1 ||
+                                        (arguments[1] instanceof  StringLiteralExpression && !regexTrimmedCharacters.matcher(arguments[1].getText()).matches());
+                                    if (isTarget) {
+                                        final String theString    = innerArguments[0].getText();
+                                        final String newInnerCall = reference.getText().replace(arguments[0].getText(), theString);
+                                        final String replacement  = innerCall.getText().replace(theString, newInnerCall);
+                                        final String message      = String.format(patternInvertedNesting, replacement);
+                                        holder.registerProblem(reference, message, new NormalizationFix(replacement));
+                                    }
                                 } else if (caseManipulation.contains(functionName) && caseManipulation.contains(innerCallName)) {
                                     if (functionName.equals(innerCallName)) {
-                                        final String message = patternSenselessNesting.replace("%i%", innerCallName);
+                                        final String message = String.format(patternSenselessNesting, innerCallName);
                                         holder.registerProblem(innerCall, message, new NormalizationFix(innerArguments[0].getText()));
                                     } else if (!innerCaseManipulation.contains(innerCallName)) {
                                         /* false-positives: ucwords with 2 arguments */
                                         final boolean isTarget = !innerCallName.equals("ucwords") || innerArguments.length == 1;
                                         if (isTarget) {
-                                            final String message = patternSenselessNesting.replace("%i%", innerCallName);
+                                            final String message = String.format(patternSenselessNesting, innerCallName);
                                             holder.registerProblem(innerCall, message, new NormalizationFix(innerArguments[0].getText()));
                                         }
                                     }

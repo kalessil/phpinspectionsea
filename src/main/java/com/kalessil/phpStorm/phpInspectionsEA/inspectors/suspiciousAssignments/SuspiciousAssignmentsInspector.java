@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -52,9 +53,12 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
             }
 
             @Override
-            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
-                SuspiciousOperatorFormattingStrategy.apply(assignmentExpression, holder);
-                SequentialAssignmentsStrategy.apply(assignmentExpression, holder);
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignment) {
+                /* because this hook fired e.g. for `.=` assignments */
+                if (OpenapiTypesUtil.isAssignment(assignment)) {
+                    SuspiciousOperatorFormattingStrategy.apply(assignment, holder);
+                    SequentialAssignmentsStrategy.apply(assignment, holder);
+                }
             }
         };
     }

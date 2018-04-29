@@ -40,9 +40,9 @@ final public class SequentialAssignmentsStrategy {
                     if (previous instanceof If) {
                         handlePrecedingIf(container, (If) previous, holder);
                     } else {
-                        final PsiElement assignmentCandidate = previous.getFirstChild();
-                        if (assignmentCandidate instanceof AssignmentExpression) {
-                            handlePrecedingAssignment(container, (AssignmentExpression) assignmentCandidate, holder);
+                        final PsiElement candidate = previous.getFirstChild();
+                        if (OpenapiTypesUtil.isAssignment(candidate)) {
+                            handlePrecedingAssignment(container, (AssignmentExpression) candidate, holder);
                         }
                     }
                 }

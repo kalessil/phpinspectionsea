@@ -43,7 +43,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public boolean REPORT_DUPLICATE_CONDITIONS   = true;
     public boolean REPORT_INSTANCE_OF_FLAWS      = true;
     public boolean REPORT_ISSET_FLAWS            = true;
-    public boolean SUGGEST_MERGING_ISSET         = true;
     public boolean SUGGEST_OPTIMIZING_CONDITIONS = true;
 
     private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
@@ -51,8 +50,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String messageOrdering                  = "This condition execution costs less than the previous one.";
     private static final String messageDuplicateConditions       = "This condition is duplicated in another if/elseif branch.";
     private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
-    private static final String messageIssetCanBeMergedAndCase   = "This can be merged into the previous 'isset(..., ...[, ...])'.";
-    private static final String messageIssetCanBeMergedOrCase    = "This can be merged into the previous '!isset(..., ...[, ...])'.";
 
     @NotNull
     public String getShortName() {
@@ -89,9 +86,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     if (REPORT_DUPLICATE_CONDITIONS) {
                         this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
                     }
-                    if (SUGGEST_MERGING_ISSET) {
-                        this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
-                    }
                     if (REPORT_INSTANCE_OF_FLAWS) {
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
                         this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
@@ -115,9 +109,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                         if (REPORT_DUPLICATE_CONDITIONS) {
                             this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
-                        }
-                        if (SUGGEST_MERGING_ISSET) {
-                            this.inspectConditionsForMultipleIsSet(objConditionsFromStatement, arrOperationHolder[0]);
                         }
                         if (REPORT_INSTANCE_OF_FLAWS) {
                             this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
@@ -287,44 +278,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                                     holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
                                 }
                             }
-                        }
-                    }
-                }
-            }
-
-            private void inspectConditionsForMultipleIsSet(@NotNull List<PsiElement> conditions, @Nullable IElementType operationType) {
-                /* handle isset && isset ... */
-                if (operationType == PhpTokenTypes.opAND) {
-                    int issetCallsCount = 0;
-                    for (final PsiElement expression : conditions) {
-                        if (!(expression instanceof PhpIsset)) {
-                            continue;
-                        }
-
-                        ++issetCallsCount;
-                        if (issetCallsCount > 1) {
-                            holder.registerProblem(expression, messageIssetCanBeMergedAndCase);
-                        }
-                    }
-
-                    return;
-                }
-
-                /* handle !isset || !isset ... */
-                if (operationType == PhpTokenTypes.opOR) {
-                    int issetCallsCount = 0;
-                    for (PsiElement expression : conditions) {
-                        if (!(expression instanceof UnaryExpression)) {
-                            continue;
-                        }
-                        expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) expression).getValue());
-                        if (!(expression instanceof PhpIsset)) {
-                            continue;
-                        }
-
-                        ++issetCallsCount;
-                        if (issetCallsCount > 1) {
-                            holder.registerProblem(expression, messageIssetCanBeMergedOrCase);
                         }
                     }
                 }
@@ -548,7 +501,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             component.addCheckbox("Report instanceof usage flaws", REPORT_INSTANCE_OF_FLAWS, (isSelected) -> REPORT_INSTANCE_OF_FLAWS = isSelected);
             component.addCheckbox("Report isset usage flaws", REPORT_ISSET_FLAWS, (isSelected) -> REPORT_ISSET_FLAWS = isSelected);
             component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
-            component.addCheckbox("Suggest merging isset constructs", SUGGEST_MERGING_ISSET, (isSelected) -> SUGGEST_MERGING_ISSET = isSelected);
             component.addCheckbox("Suggest optimizing conditions", SUGGEST_OPTIMIZING_CONDITIONS, (isSelected) -> SUGGEST_OPTIMIZING_CONDITIONS = isSelected);
         });
     }

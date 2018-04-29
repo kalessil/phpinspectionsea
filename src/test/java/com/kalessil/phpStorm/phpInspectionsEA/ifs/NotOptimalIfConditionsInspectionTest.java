@@ -52,14 +52,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.testHighlighting(true, false, true);
     }
 
-    public void testMergeIsset() {
-        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
-        inspector.SUGGEST_MERGING_ISSET            = true;
-        myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/if-merge-isset.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-
     public void testInstanceOfFlaws() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_INSTANCE_OF_FLAWS         = true;

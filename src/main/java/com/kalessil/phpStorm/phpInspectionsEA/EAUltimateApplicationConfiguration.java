@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class EAApplicationConfiguration implements Configurable {
+public class EAUltimateApplicationConfiguration implements Configurable {
     private boolean SEND_CRASH_REPORTS;
     private boolean SEND_VERSION_INFORMATION;
 

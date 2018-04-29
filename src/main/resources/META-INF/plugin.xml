@@ -922,9 +922,9 @@ New features release<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
 
 
-    <applicationService
-            serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings"
-            serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings" />
+    <applicationService      serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings"
+                             serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings"   />
+    <applicationConfigurable instance="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationConfiguration"/>
   </extensions>
 
   <application-components>

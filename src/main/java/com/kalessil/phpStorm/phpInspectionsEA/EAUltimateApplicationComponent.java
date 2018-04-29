@@ -88,13 +88,17 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
 
         final EAUltimateSettings settings = EAUltimateSettings.getInstance();
 
-        /* collect installation events (anonymous) */
-        this.updated = !plugin.getVersion().equals(settings.getVersion());
-        if (this.updated) {
+        /* collect version usage information */
+        final boolean sendVersionInformation = settings.getSendVersionInformation();
+        if (this.updated = !plugin.getVersion().equals(settings.getVersion())) {
             settings.setVersion(plugin.getVersion());
-            AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
+            if (sendVersionInformation) {
+                AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
+            }
         }
-        AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());
+        if (sendVersionInformation) {
+            AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());
+        }
 
         /* collect exceptions */
         if (!ApplicationManager.getApplication().isUnitTestMode()) {

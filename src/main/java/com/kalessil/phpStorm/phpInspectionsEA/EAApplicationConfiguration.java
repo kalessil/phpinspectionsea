@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 import com.intellij.openapi.options.Configurable;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -52,5 +53,11 @@ public class EAApplicationConfiguration implements Configurable {
     @Override
     public String getDisplayName() {
         return "Php Inspections (EA Extended)";
+    }
+
+    @Nullable
+    @NonNls
+    public String getHelpTopic() {
+        return null;
     }
 }

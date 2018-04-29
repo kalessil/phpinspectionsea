@@ -840,10 +840,9 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
 
 
-
-    <applicationService
-            serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EASettings"
-            serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EASettings" />
+    <applicationService      serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EASettings"
+                             serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EASettings"   />
+    <applicationConfigurable instance="com.kalessil.phpStorm.phpInspectionsEA.EAApplicationConfiguration"/>
   </extensions>
 
   <application-components>

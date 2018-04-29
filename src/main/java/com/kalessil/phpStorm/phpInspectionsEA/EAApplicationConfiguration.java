@@ -20,7 +20,7 @@ public class EAApplicationConfiguration implements Configurable {
 
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected);
-            component.addCheckbox("Automatically collect plugin updates", SEND_VERSION_INFORMATION, (isSelected) -> SEND_VERSION_INFORMATION = isSelected);
+            component.addCheckbox("Automatically collect plugin version info", SEND_VERSION_INFORMATION, (isSelected) -> SEND_VERSION_INFORMATION = isSelected);
         });
     }
 

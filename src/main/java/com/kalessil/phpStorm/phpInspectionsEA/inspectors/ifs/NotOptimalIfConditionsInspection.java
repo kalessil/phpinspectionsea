@@ -12,7 +12,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.IssetAndNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCouplingCheckUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -41,7 +40,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public boolean REPORT_LITERAL_OPERATORS      = true;
     public boolean REPORT_DUPLICATE_CONDITIONS   = true;
     public boolean REPORT_INSTANCE_OF_FLAWS      = true;
-    public boolean REPORT_ISSET_FLAWS            = true;
     public boolean SUGGEST_OPTIMIZING_CONDITIONS = true;
 
     private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
@@ -89,9 +87,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
                         this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
                     }
-                    if (REPORT_ISSET_FLAWS) {
-                        IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
-                    }
 
                     objConditionsFromStatement.clear();
 
@@ -111,9 +106,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         if (REPORT_INSTANCE_OF_FLAWS) {
                             this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
                             this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
-                        }
-                        if (REPORT_ISSET_FLAWS) {
-                            IssetAndNullComparisonStrategy.apply(objConditionsFromStatement, holder);
                         }
 
                         objConditionsFromStatement.clear();

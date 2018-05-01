@@ -20,14 +20,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.testHighlighting(true, false, true);
     }
 
-    public void testIssetAndNullComparisonPatterns() {
-        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
-        inspector.REPORT_ISSET_FLAWS               = true;
-        myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/if-isset-not-null.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-
     public void testLiteralOperatorsPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_LITERAL_OPERATORS         = true;
@@ -58,14 +50,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         inspector.REPORT_INSTANCE_OF_FLAWS         = true;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/ifs/if-instanceof-flaws-false-positives.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-
-    public void testIssetFlaws() {
-        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
-        inspector.REPORT_ISSET_FLAWS               = true;
-        myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/if-isset-flaws.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

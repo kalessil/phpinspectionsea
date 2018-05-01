@@ -63,10 +63,8 @@ class CasesHolder {
 
     private function reportingTargetsSelection() {
         return [
-            empty(<warning descr="'empty(...) && ... === null' here can be replaced with '!isset(...)'.">$x</warning>, $y) && $x === null,
             isset(<warning descr="'isset(...) && ...' here can be replaced with '!empty(...)'.">$x</warning>, $y) && $x,
-            isset($x) && empty(<warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">$x</warning>, $y),
-            !isset($x) && !empty(<warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">$x</warning>, $y),
+            !isset(<warning descr="'!isset(...) || !...' here can be replaced with 'empty(...)'.">$x</warning>, $y) || !$x,
         ];
     }
 }

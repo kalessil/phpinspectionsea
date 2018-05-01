@@ -176,16 +176,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             result = match.get();
                         }
                     }
-                } else if (expression instanceof PhpEmpty) {
-                    final PsiElement[] arguments = ((PhpEmpty) expression).getVariables();
-                    if (arguments.length > 1) {
-                        final Optional<PsiElement> match = Arrays.stream(arguments)
-                                .filter(argument -> OpeanapiEquivalenceUtil.areEqual(subject, argument))
-                                .findFirst();
-                        if (match.isPresent()) {
-                            result = match.get();
-                        }
-                    }
                 }
                 return result;
             }

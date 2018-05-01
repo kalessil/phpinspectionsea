@@ -10,10 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,26 +85,26 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
                             );
                             if (isTarget) {
-                                int accumulatedState = calculateState(contexts.get(0));
+                                int accumulatedState = this.calculateState(contexts.get(0));
                                 for (int index = 1; index < contextsCount; ++index) {
                                     final PsiElement target = contexts.get(index);
-                                    final int stateChange   = calculateState(target);
+                                    final int stateChange   = this.calculateState(target);
                                     final int newState      = accumulatedState | stateChange;
                                     if (accumulatedState == newState) {
                                         if (REPORT_NON_CONTRIBUTIONG) {
-                                            holder.registerProblem(target, messageNonContributing);
+                                            holder.registerProblem(this.target(target, argument), messageNonContributing);
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_NULL) == STATE_CONFLICTING_IS_NULL) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(target, messageControvertialNull);
+                                            holder.registerProblem(this.target(target, argument), messageControvertialNull);
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(target, messageControvertialFalsy);
+                                            holder.registerProblem(this.target(target, argument), messageControvertialFalsy);
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_SET) == STATE_CONFLICTING_IS_SET) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(target, messageControvertialIsset);
+                                            holder.registerProblem(this.target(target, argument), messageControvertialIsset);
                                         }
                                     }
                                     accumulatedState = newState;
@@ -123,11 +120,11 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                             if (candidate.isPresent()) {
                                                 if (operator == PhpTokenTypes.opAND) {
                                                     if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
-                                                        holder.registerProblem(isset.get(), messageNotEmpty);
+                                                        holder.registerProblem(this.target(isset.get(), argument), messageNotEmpty);
                                                     }
                                                 } else {
                                                     if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
-                                                        holder.registerProblem(isset.get(), messageEmpty);
+                                                        holder.registerProblem(this.target(isset.get(), argument), messageEmpty);
                                                     }
                                                 }
                                             }
@@ -151,7 +148,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                                         target instanceof BinaryExpression &&
                                                         ((BinaryExpression) target).getOperationType() == targetOperator
                                                     ) {
-                                                        holder.registerProblem(empty.get(), targetMessage);
+                                                        holder.registerProblem(this.target(empty.get(), argument), targetMessage);
                                                         break;
                                                     }
                                                 }
@@ -165,6 +162,32 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     });
                     grouping.clear();
                 }
+            }
+
+            private PsiElement target(@NotNull PsiElement expression, @NotNull PsiElement subject) {
+                PsiElement result = expression;
+                if (expression instanceof PhpIsset) {
+                    final PsiElement[] arguments = ((PhpIsset) expression).getVariables();
+                    if (arguments.length > 1) {
+                        final Optional<PsiElement> match = Arrays.stream(arguments)
+                                .filter(argument -> OpeanapiEquivalenceUtil.areEqual(subject, argument))
+                                .findFirst();
+                        if (match.isPresent()) {
+                            result = match.get();
+                        }
+                    }
+                } else if (expression instanceof PhpEmpty) {
+                    final PsiElement[] arguments = ((PhpEmpty) expression).getVariables();
+                    if (arguments.length > 1) {
+                        final Optional<PsiElement> match = Arrays.stream(arguments)
+                                .filter(argument -> OpeanapiEquivalenceUtil.areEqual(subject, argument))
+                                .findFirst();
+                        if (match.isPresent()) {
+                            result = match.get();
+                        }
+                    }
+                }
+                return result;
             }
 
             private boolean isInverted (@NotNull PsiElement expression) {
@@ -231,14 +254,13 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     /* perform expression to contexts mapping */
                     if (arguments != null && arguments.length > 0) {
                         for (final PsiElement argument : arguments) {
-                            final PsiElement context       = arguments.length == 1 ? expression : argument;
                             final Optional<PsiElement> key = result.keySet().stream()
                                     .filter(e -> e != null && argument != null && OpeanapiEquivalenceUtil.areEqual(e, argument))
                                     .findFirst();
                             if (!key.isPresent()) {
-                                result.put(argument, new ArrayList<>(Collections.singletonList(context)));
+                                result.put(argument, new ArrayList<>(Collections.singletonList(expression)));
                             } else {
-                                result.get(key.get()).add(context);
+                                result.get(key.get()).add(expression);
                             }
                         }
                     }

@@ -28,14 +28,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.testHighlighting(true, false, true);
     }
 
-    public void testNotEmptyPatterns() {
-        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
-        inspector.REPORT_ISSET_FLAWS               = true;
-        myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/not-empty.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-
     public void testLiteralOperatorsPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_LITERAL_OPERATORS         = true;

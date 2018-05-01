@@ -74,8 +74,9 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 final IElementType operator = expression.getOperationType();
                 if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
                     /* false-positives: part of another condition */
-                    final PsiElement parent = expression.getParent();
-                    if (parent instanceof BinaryExpression && ((BinaryExpression) parent).getOperationType() == operator) {
+                    final PsiElement parent  = expression.getParent();
+                    final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
+                    if (context instanceof BinaryExpression && ((BinaryExpression) context).getOperationType() == operator) {
                         return;
                     }
 
@@ -89,24 +90,24 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             if (isTarget) {
                                 int accumulatedState = calculateState(contexts.get(0));
                                 for (int index = 1; index < contextsCount; ++index) {
-                                    final PsiElement context = contexts.get(index);
-                                    final int stateChange    = calculateState(context);
-                                    final int newState       = accumulatedState | stateChange;
+                                    final PsiElement target = contexts.get(index);
+                                    final int stateChange   = calculateState(target);
+                                    final int newState      = accumulatedState | stateChange;
                                     if (accumulatedState == newState) {
                                         if (REPORT_NON_CONTRIBUTIONG) {
-                                            holder.registerProblem(context, messageNonContributing);
+                                            holder.registerProblem(target, messageNonContributing);
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_NULL) == STATE_CONFLICTING_IS_NULL) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(context, messageControvertialNull);
+                                            holder.registerProblem(target, messageControvertialNull);
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(context, messageControvertialFalsy);
+                                            holder.registerProblem(target, messageControvertialFalsy);
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_SET) == STATE_CONFLICTING_IS_SET) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(context, messageControvertialIsset);
+                                            holder.registerProblem(target, messageControvertialIsset);
                                         }
                                     }
                                     accumulatedState = newState;
@@ -145,12 +146,13 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                                 targetMessage  = messageIsset;
                                             }
                                             if (targetOperator != null) {
-                                                for (final PsiElement context : contexts) {
-                                                    if (context instanceof BinaryExpression) {
-                                                        if (((BinaryExpression) context).getOperationType() == targetOperator) {
-                                                            holder.registerProblem(empty.get(), targetMessage);
-                                                            break;
-                                                        }
+                                                for (final PsiElement target : contexts) {
+                                                    if (
+                                                        target instanceof BinaryExpression &&
+                                                        ((BinaryExpression) target).getOperationType() == targetOperator
+                                                    ) {
+                                                        holder.registerProblem(empty.get(), targetMessage);
+                                                        break;
                                                     }
                                                 }
                                             }

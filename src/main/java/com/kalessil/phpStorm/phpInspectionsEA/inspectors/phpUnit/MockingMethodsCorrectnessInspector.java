@@ -43,10 +43,14 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1 && arguments[0] instanceof MethodReference) {
                         final String innerMethodName = ((MethodReference) arguments[0]).getName();
-                        if (innerMethodName != null && innerMethodName.equals("returnCallback")) {
-                            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(reference);
-                            if (nameNode != null && this.isTestContext(reference)) {
-                                holder.registerProblem(nameNode, messageWillMethod, new UseWillMethodFix());
+                        if (innerMethodName != null) {
+                            final boolean isTarget
+                                    = innerMethodName.equals("returnCallback") || innerMethodName.equals("returnValue");
+                            if (isTarget) {
+                                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(reference);
+                                if (nameNode != null && this.isTestContext(reference)) {
+                                    holder.registerProblem(nameNode, messageWillMethod, new UseWillMethodFix());
+                                }
                             }
                         }
                     }

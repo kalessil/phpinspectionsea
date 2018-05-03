@@ -9,6 +9,7 @@ class CasesHolderTest
         $mock = $this->getMockBuilder(CasesHolderTest::class)->getMock();
         $mock->method('finalMethod')->willReturn(null);
         $mock->method('missingMethod')->willReturn(null);
+        $mock->method('method')->willReturn(null);
     }
 
     final public function finalMethod() {}

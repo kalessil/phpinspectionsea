@@ -70,7 +70,7 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement target = descriptor.getPsiElement();
+            final PsiElement target = descriptor.getPsiElement().getParent();
             if (target instanceof FunctionReference && !project.isDisposed()) {
                 ((FunctionReference) target).handleElementRename("will");
             }

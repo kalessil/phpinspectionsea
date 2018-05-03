@@ -57,6 +57,7 @@ Inspections Lists (PhpUnit)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | --:  | --: |
 | PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes | yes | yes  | no  |
 | PhpUnit              | UnnecessaryAssertionInspection                  | PhpUnit: unnecessary assertion                      | no  | yes | no   | no  |
+| PhpUnit              | MockingMethodsCorrectnessInspection             | PhpUnit: methods mocking issues                     | yes | yes | yes  | no  |
 
 Inspections Lists (Unused)
 ---

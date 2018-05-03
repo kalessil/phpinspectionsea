@@ -604,6 +604,10 @@ New features release<br/>
         shortName="UnnecessaryAssertionInspection"                displayName="PhpUnit: unnecessary assertion"
         groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.UnnecessaryAssertionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="MockingMethodsCorrectnessInspection"           displayName="PhpUnit: methods mocking issues"
+        groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingMethodsCorrectnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -86,8 +86,7 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
                                             final PsiElement[] builderArguments = builder.get().getParameters();
                                             if (builderArguments.length == 1 && builderArguments[0] instanceof ClassConstantReference) {
                                                 final ClassConstantReference clazz = (ClassConstantReference) builderArguments[0];
-                                                final String constantName          = clazz.getName();
-                                                if (constantName != null && constantName.equals("class")) {
+                                                if ("class".equals(clazz.getName())) {
                                                     final PsiElement classReference = clazz.getClassReference();
                                                     if (classReference instanceof ClassReference) {
                                                         final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) classReference);

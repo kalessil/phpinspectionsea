@@ -187,7 +187,7 @@ Features release. Supporters via <a href="https://www.patreon.com/kalessil">Patr
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
+        groupName="Type compatibility"                            enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
 
 

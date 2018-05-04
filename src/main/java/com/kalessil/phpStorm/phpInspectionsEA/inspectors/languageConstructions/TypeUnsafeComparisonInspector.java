@@ -113,11 +113,11 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof BinaryExpression) {
-                final PsiElement operation   = ((BinaryExpression) expression).getOperation();
+            final PsiElement target = descriptor.getPsiElement();
+            if (target instanceof BinaryExpression && !project.isDisposed()) {
+                final PsiElement operation   = ((BinaryExpression) target).getOperation();
                 final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, operator);
-                if (null != operation && null != replacement) {
+                if (operation != null && replacement != null) {
                     operation.replace(replacement);
                 }
             }

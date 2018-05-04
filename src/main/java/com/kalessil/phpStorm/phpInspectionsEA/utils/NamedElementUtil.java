@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
  */
 
 final public class NamedElementUtil {
-
     @Nullable
     static public PsiElement getNameIdentifier(@Nullable PsiNameIdentifierOwner element) {
         final PsiElement nameNode = element == null ? null : element.getNameIdentifier();
@@ -29,5 +28,4 @@ final public class NamedElementUtil {
         final ASTNode nameNode = reference.getNameNode();
         return nameNode == null ? null : nameNode.getPsi();
     }
-
 }

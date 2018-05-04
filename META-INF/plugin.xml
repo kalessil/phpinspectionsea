@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>3.0.1</version>
+  <version>3.0.2</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -56,19 +56,20 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Features release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
 - Worked out crash-reports for April<br/>
+- Introduced privacy settings (File -> Settings -> Other Settings -> Php Inspections (EA Extended))<br/>
 <br/>
-- Foreach source to iterate over: resolved a false-positive (preceding is_* check of an assignment)<br/>
-- Isset operations variables existence: resolved a false-positive (dynamic variables in loops)<br/>
-- PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
-- Return type hint can be used: resolved false-positives (void return type)<br/>
-- Strings normalization: resolved a false-positive (ucwords)<br/>
-- Suspicious loop: resolved false positives (*= and /= operators)<br/>
+- Strings normalization: resolved a false-positive (trim characters provided)<br/>
+- Suspicious assignments: resolved a false-positive (.=)<br/>
+- Traits properties conflicts resolution: resolved a false-positive (phpdoc)<br/>
+- Unnecessary parentheses: resolved false-positives (yield)<br/>
 <br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
-- Type casting can be used: introduced settings<br/>
+- PhpUnit: methods mocking issues: implemented<br/>
+- Unnecessary closures: implemented<br/>
+- Unsupported string offset operations: new cases<br/>
+- 'isset(...)' constructs can be merged: implemented<br/>
 <br/>
 <hr/>
   ]]></change-notes>

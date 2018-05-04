@@ -221,7 +221,7 @@ Features release. Supporters via <a href="https://www.patreon.com/kalessil">Patr
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
-        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        groupName="Control Flow"                                   enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.ExceptionsAnnotatingAndHandlingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
@@ -783,7 +783,7 @@ Features release. Supporters via <a href="https://www.patreon.com/kalessil">Patr
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.BadExceptionsProcessingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MoreThanThreeArgumentsInspection"                displayName="Too many parameters in a callable"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MoreThanThreeArgumentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CallableParameterUseCaseInTypeContextInspection" displayName="Callable parameter usage violates definition"

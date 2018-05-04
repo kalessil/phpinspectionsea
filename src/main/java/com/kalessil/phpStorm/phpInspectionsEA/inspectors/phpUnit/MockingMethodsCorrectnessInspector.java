@@ -51,12 +51,11 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
                         if (arguments.length == 1 && arguments[0] instanceof MethodReference) {
                             final String innerMethodName = ((MethodReference) arguments[0]).getName();
                             if (innerMethodName != null) {
-                                final boolean isTarget =
-                                        innerMethodName.equals("returnCallback") ||
-                                        innerMethodName.equals("returnValue");
-                                if (isTarget) {
+                                final boolean isTarget = innerMethodName.equals("returnCallback") ||
+                                                         innerMethodName.equals("returnValue");
+                                if (isTarget && this.isTestContext(reference)) {
                                     final PsiElement nameNode = NamedElementUtil.getNameIdentifier(reference);
-                                    if (nameNode != null && this.isTestContext(reference)) {
+                                    if (nameNode != null) {
                                         holder.registerProblem(nameNode, messageWillMethod, new UseWillMethodFix());
                                     }
                                 }
@@ -65,51 +64,53 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
                     } else if (methodName.equals("method")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 1 && arguments[0] instanceof StringLiteralExpression) {
-                            PsiElement mock = reference.getFirstPsiChild();
+                            PhpPsiElement mock = reference.getFirstPsiChild();
                             /* Handle following construct (->expect())->method('non-existing') */
-                            if (mock instanceof MethodReference) {
-                                final MethodReference previousCall = (MethodReference) mock;
-                                if ("expect".equals(previousCall.getName())) {
-                                    mock = previousCall.getFirstPsiChild();
-                                }
+                            if (mock instanceof MethodReference && "expect".equals(mock.getName())) {
+                                mock = mock.getFirstPsiChild();
                             }
-                            if (mock != null) {
-                                final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(mock);
-                                if (variants.size() == 1) {
-                                    /* Handle following construct ->getMockBuilder(::class)->getMock() +  */
-                                    final PsiElement source   = variants.iterator().next();
-                                    if (source instanceof MethodReference && "getMock".equals(((MethodReference) source).getName())) {
-                                        final Optional<MethodReference> builder = PsiTreeUtil.findChildrenOfType(source, MethodReference.class).stream()
-                                                .filter(m -> "getMockBuilder".equals(m.getName()))
-                                                .findFirst();
-                                        if (builder.isPresent()) {
-                                            final PsiElement[] builderArguments = builder.get().getParameters();
-                                            if (builderArguments.length == 1 && builderArguments[0] instanceof ClassConstantReference) {
-                                                final ClassConstantReference clazz = (ClassConstantReference) builderArguments[0];
-                                                if ("class".equals(clazz.getName())) {
-                                                    final PsiElement classReference = clazz.getClassReference();
-                                                    if (classReference instanceof ClassReference) {
-                                                        final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) classReference);
-                                                        if (resolved instanceof PhpClass) {
-                                                            final String mockedMethod = ((StringLiteralExpression) arguments[0]).getContents();
-                                                            final Method method       = OpenapiResolveUtil.resolveMethod((PhpClass) resolved, mockedMethod);
-                                                            if (method == null) {
-                                                                holder.registerProblem(arguments[0], messageUnresolvedMethod, ProblemHighlightType.GENERIC_ERROR);
-                                                            } else if (method.isFinal()) {
-                                                                holder.registerProblem(arguments[0], messageFinalMethod, ProblemHighlightType.GENERIC_ERROR);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                variants.clear();
+                            if (mock != null && this.isTestContext(reference)) {
+                                this.checkIfMockHasMethod(mock, (StringLiteralExpression) arguments[0]);
                             }
                         }
                     }
                 }
+            }
+
+            private void checkIfMockHasMethod(@NotNull PsiElement mock, @NotNull StringLiteralExpression methodName) {
+                final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(mock);
+                if (variants.size() == 1) {
+                    /* Handle following construct ->getMockBuilder(::class)->getMock() +  */
+                    final PsiElement source = variants.iterator().next();
+                    if (source instanceof MethodReference && "getMock".equals(((MethodReference) source).getName())) {
+                        final Optional<MethodReference> builder
+                                = PsiTreeUtil.findChildrenOfType(source, MethodReference.class).stream()
+                                    .filter(reference -> "getMockBuilder".equals(reference.getName()))
+                                    .findFirst();
+                        if (builder.isPresent()) {
+                            final PsiElement[] builderArguments = builder.get().getParameters();
+                            if (builderArguments.length == 1 && builderArguments[0] instanceof ClassConstantReference) {
+                                final ClassConstantReference clazz = (ClassConstantReference) builderArguments[0];
+                                if ("class".equals(clazz.getName())) {
+                                    final PsiElement classReference = clazz.getClassReference();
+                                    if (classReference instanceof ClassReference) {
+                                        final PsiElement resolved
+                                                = OpenapiResolveUtil.resolveReference((ClassReference) classReference);
+                                        if (resolved instanceof PhpClass) {
+                                            final Method method = OpenapiResolveUtil.resolveMethod((PhpClass) resolved, methodName.getContents());
+                                            if (method == null) {
+                                                holder.registerProblem(methodName, messageUnresolvedMethod, ProblemHighlightType.GENERIC_ERROR);
+                                            } else if (method.isFinal()) {
+                                                holder.registerProblem(methodName, messageFinalMethod, ProblemHighlightType.GENERIC_ERROR);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                variants.clear();
             }
         };
     }

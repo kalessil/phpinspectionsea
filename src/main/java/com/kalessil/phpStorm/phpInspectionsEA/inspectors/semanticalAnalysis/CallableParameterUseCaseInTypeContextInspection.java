@@ -70,20 +70,28 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 for (final Parameter parameter : parameters) {
                     /* normalize parameter types, skip analysis when mixed or object appears */
                     final Set<String> paramTypes = new HashSet<>();
-                    for (final String type : parameter.getType().global(project).filterUnknown().getTypes()) {
-                        final String typeNormalized = Types.getType(type);
-                        if (typeNormalized.equals(Types.strMixed) || typeNormalized.equals(Types.strObject)) {
-                            paramTypes.clear();
-                            break;
-                        } else if (typeNormalized.equals(Types.strCallable)) {
-                            paramTypes.add(Types.strArray);
-                            paramTypes.add(Types.strString);
-                            paramTypes.add("\\Closure");
-                        } else if (typeNormalized.equals(Types.strIterable)) {
-                            paramTypes.add(Types.strArray);
-                            paramTypes.add("\\Traversable");
+                    final PhpType parameterType  = OpenapiResolveUtil.resolveType(parameter, project);
+                    if (parameterType != null) {
+                        label:
+                        for (final String type : parameterType.filterUnknown().getTypes()) {
+                            final String typeNormalized = Types.getType(type);
+                            switch (typeNormalized) {
+                                case Types.strMixed:
+                                case Types.strObject:
+                                    paramTypes.clear();
+                                    break label;
+                                case Types.strCallable:
+                                    paramTypes.add(Types.strArray);
+                                    paramTypes.add(Types.strString);
+                                    paramTypes.add("\\Closure");
+                                    break;
+                                case Types.strIterable:
+                                    paramTypes.add(Types.strArray);
+                                    paramTypes.add("\\Traversable");
+                                    break;
+                            }
+                            paramTypes.add(typeNormalized);
                         }
-                        paramTypes.add(typeNormalized);
                     }
                     if (paramTypes.isEmpty()) {
                         continue;

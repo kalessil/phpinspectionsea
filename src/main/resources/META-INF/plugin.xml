@@ -184,7 +184,7 @@ New features release<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.strictInterfaces.ArrayTypeOfParameterByDefaultValueInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
+        groupName="Type compatibility"                            enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
 
 
@@ -218,7 +218,7 @@ New features release<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
-        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        groupName="Control Flow"                                   enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.ExceptionsAnnotatingAndHandlingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
@@ -860,7 +860,7 @@ New features release<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.BadExceptionsProcessingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="MoreThanThreeArgumentsInspection"                displayName="Too many parameters in a callable"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MoreThanThreeArgumentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="CallableParameterUseCaseInTypeContextInspection" displayName="Callable parameter usage violates definition"

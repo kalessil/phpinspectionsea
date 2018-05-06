@@ -9,10 +9,12 @@ import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -82,5 +84,11 @@ public class CompositionAndInheritanceInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component)
+            -> component.addCheckbox("Require all classes be final/abstract", FORCE_FINAL_OR_ABSTRACT, (isSelected) -> FORCE_FINAL_OR_ABSTRACT = isSelected)
+        );
     }
 }

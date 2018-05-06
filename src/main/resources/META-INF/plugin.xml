@@ -906,6 +906,10 @@ New features release<br/>
         shortName="TransitiveDependenciesUsageInspection"           displayName="Transitive dependencies usage"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.TransitiveDependenciesUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="CompositionAndInheritanceInspection"             displayName="Composition and inheritance"
+        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.CompositionAndInheritanceInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -908,7 +908,7 @@ New features release<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.TransitiveDependenciesUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="CompositionAndInheritanceInspection"             displayName="Composition and inheritance"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.CompositionAndInheritanceInspector"/>
 
 

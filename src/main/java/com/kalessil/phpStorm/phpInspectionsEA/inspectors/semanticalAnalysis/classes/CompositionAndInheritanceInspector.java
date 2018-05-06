@@ -22,7 +22,8 @@ public class CompositionAndInheritanceInspector extends BasePhpInspection {
     private static final String messageAbstract = "The class needs to be abstract (since it has children).";
     private static final String messageGeneric  = "The class needs to be either final (for aggregation) or abstract (for inheritance).";
 
-    /* TODO: option: require all classes be final/abstract */
+    // Inspection options.
+    public boolean FORCE_FINAL_OR_ABSTRACT = false;
 
     @NotNull
     public String getShortName() {
@@ -39,27 +40,31 @@ public class CompositionAndInheritanceInspector extends BasePhpInspection {
 
                 final boolean hasNeededModifiers = clazz.isFinal() || clazz.isAbstract();
                 if (!hasNeededModifiers && !clazz.isInterface() && !clazz.isTrait() && !clazz.isAnonymous()) {
-                    final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
-                    if (parent == null) {
-                        final List<PhpClass> contracts = OpenapiResolveUtil.resolveImplementedInterfaces(clazz);
-                        if (!contracts.isEmpty()) {
-                            final Set<String> methods = new HashSet<>();
-                            contracts.forEach(c -> c.getMethods().forEach(method -> methods.add(method.getName())));
-                            if (!methods.isEmpty()) {
-                                final boolean isTarget = Arrays.stream(clazz.getOwnMethods())
-                                        .filter(m -> m.getAccess().isPublic())
-                                        .map(PhpNamedElement::getName)
-                                        .allMatch(methods::contains);
-                                if (isTarget) {
-                                    this.report(clazz);
-                                }
-                                methods.clear();
-                            }
-                            contracts.clear();
-                        }
+                    if (FORCE_FINAL_OR_ABSTRACT) {
+                        this.report(clazz);
                     } else {
-                        if (parent.isAbstract()) {
-                            this.report(clazz);
+                        final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                        if (parent == null) {
+                            final List<PhpClass> contracts = OpenapiResolveUtil.resolveImplementedInterfaces(clazz);
+                            if (!contracts.isEmpty()) {
+                                final Set<String> methods = new HashSet<>();
+                                contracts.forEach(c -> c.getMethods().forEach(method -> methods.add(method.getName())));
+                                if (!methods.isEmpty()) {
+                                    final boolean isTarget = Arrays.stream(clazz.getOwnMethods())
+                                            .filter(m -> m.getAccess().isPublic())
+                                            .map(PhpNamedElement::getName)
+                                            .allMatch(methods::contains);
+                                    if (isTarget) {
+                                        this.report(clazz);
+                                    }
+                                    methods.clear();
+                                }
+                                contracts.clear();
+                            }
+                        } else {
+                            if (parent.isAbstract()) {
+                                this.report(clazz);
+                            }
                         }
                     }
                 }

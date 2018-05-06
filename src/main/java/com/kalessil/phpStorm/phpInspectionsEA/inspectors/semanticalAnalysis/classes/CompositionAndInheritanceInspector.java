@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -8,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,9 +19,8 @@ import java.util.List;
 import java.util.Set;
 
 public class CompositionAndInheritanceInspector extends BasePhpInspection {
-    private static final String messageForced   = "The class needs to be either final or abstract.";
     private static final String messageAbstract = "The class needs to be abstract (since it has children).";
-    private static final String messageFinal    = "The class needs to be final (for aggregation) or abstract (for inheritance).";
+    private static final String messageGeneric  = "The class needs to be either final (for aggregation) or abstract (for inheritance).";
 
     /* TODO: option: require all classes be final/abstract */
 
@@ -50,12 +51,7 @@ public class CompositionAndInheritanceInspector extends BasePhpInspection {
                                         .map(PhpNamedElement::getName)
                                         .allMatch(methods::contains);
                                 if (isTarget) {
-                                    final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-                                    if (OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).isEmpty()) {
-                                        // final
-                                    } else {
-                                        // abstract
-                                    }
+                                    this.report(clazz);
                                 }
                                 methods.clear();
                             }
@@ -63,13 +59,20 @@ public class CompositionAndInheritanceInspector extends BasePhpInspection {
                         }
                     } else {
                         if (parent.isAbstract()) {
-                            final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-                            if (OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).isEmpty()) {
-                                // final
-                            } else {
-                                // abstract
-                            }
+                            this.report(clazz);
                         }
+                    }
+                }
+            }
+
+            private void report(@NotNull PhpClass clazz) {
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
+                if (nameNode != null) {
+                    final PhpIndex index = PhpIndex.getInstance(holder.getProject());
+                    if (OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).isEmpty()) {
+                        holder.registerProblem(nameNode, messageGeneric);
+                    } else {
+                        holder.registerProblem(nameNode, messageAbstract);
                     }
                 }
             }

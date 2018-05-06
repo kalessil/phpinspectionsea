@@ -44,10 +44,9 @@ the implementation.
   <change-notes><![CDATA[
 New features release<br/>
 <br/>
-- Command execution as super user: implemented<br/>
-- Illusion of choice: resolved false-positives (multiple cases)<br/>
-- Missing directory separators: new patterns<br/>
-- Transitive dependencies usage: added configuration<br/>
+- CompositionAndInheritanceInspector: implemented<br/>
+- UnnecessaryEmptinessCheckInspector: new patterns<br/>
+- MissingDirectorySeparatorInspector: resolved false-positives (multiple cases)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

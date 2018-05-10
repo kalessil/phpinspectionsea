@@ -22,15 +22,15 @@ class ClassWithoutIsset
         $validObject   = new ClassWithIsset();
         $invalidObject = new ClassWithoutIsset();
         return [
-            isset($regularObject->privateProperty),
-            isset($regularObject->protectedProperty),
+            isset($regularObject-><error descr="Member has private access">privateProperty</error>),
+            isset($regularObject-><error descr="Member has protected access">protectedProperty</error>),
             isset($regularObject->publicProperty),
 
             isset($validObject->property),
             isset(<error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>),
 
-            empty($regularObject->privateProperty),
-            empty($regularObject->protectedProperty),
+            empty($regularObject-><error descr="Member has private access">privateProperty</error>),
+            empty($regularObject-><error descr="Member has protected access">protectedProperty</error>),
             empty($regularObject->publicProperty),
 
             empty($validObject->property),

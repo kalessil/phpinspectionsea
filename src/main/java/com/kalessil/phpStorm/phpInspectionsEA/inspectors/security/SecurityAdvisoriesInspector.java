@@ -50,6 +50,8 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phpunit/phpcov");
         developmentPackages.add("mybuilder/phpunit-accelerator");
         developmentPackages.add("phpunit/phpunit-selenium");
+        developmentPackages.add("codedungeon/phpunit-result-printer");
+        developmentPackages.add("spatie/phpunit-watcher");
 
         /* frameworks: Symfony, ZF2, Yii2, Laravel */
         developmentPackages.add("symfony/phpunit-bridge");

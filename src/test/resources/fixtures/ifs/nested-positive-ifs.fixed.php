@@ -1,6 +1,6 @@
 <?php
 
-function cases_holder() {
+function cases_holder_if_merge() {
     if ($a) {
         if ($b) {}
     } else {
@@ -34,5 +34,16 @@ function cases_holder() {
     if ($a) {
         if ($b || $c) {
         }
+    }
+}
+
+function cases_holder_else_merge() {
+    if ($a) {}
+    else if ($b) {
+    }
+
+    if ($a) {}
+    else if ($b) {
+    } else {
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-function cases_holder() {
+function cases_holder_if_merge() {
     if ($a) {
         if ($b) {}
     } else {
@@ -40,5 +40,18 @@ function cases_holder() {
     if ($a) {
         if ($b || $c) {
         }
+    }
+}
+
+function cases_holder_else_merge() {
+    if ($a) {}
+    else {
+        <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
+    }
+
+    if ($a) {}
+    else {
+        <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        else    {}
     }
 }

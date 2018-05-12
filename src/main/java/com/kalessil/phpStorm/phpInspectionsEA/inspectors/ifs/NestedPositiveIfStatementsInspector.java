@@ -62,11 +62,14 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                             }
                         }
                     } else if (parentConstruct instanceof Else) {
-                        holder.registerProblem(
-                                expression.getFirstChild(),
-                                message,
-                                new MergeIntoParentElseFix(expression, (Else) parentConstruct)
-                        );
+                        final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parent) == 1;
+                        if (isTarget) {
+                            holder.registerProblem(
+                                    expression.getFirstChild(),
+                                    message,
+                                    new MergeIntoParentElseFix(expression, (Else) parentConstruct)
+                            );
+                        }
                     }
                 }
             }

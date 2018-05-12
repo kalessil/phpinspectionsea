@@ -28,8 +28,8 @@ function cases_holder() {
     }
 
     if ($a || $b) {
-       if ($c || $d) {
-       }
+        if ($c || $d) {
+        }
     }
 
     if ($a || $b) {

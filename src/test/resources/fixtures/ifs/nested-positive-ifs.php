@@ -52,6 +52,6 @@ function cases_holder_else_merge() {
     if ($a) {}
     else {
         <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
-        else    {}
+        else {}
     }
 }

@@ -39,11 +39,9 @@ function cases_holder_if_merge() {
 
 function cases_holder_else_merge() {
     if ($a) {}
-    else if ($b) {
-    }
+    else if ($b) {}
 
     if ($a) {}
-    else if ($b) {
-    } else {
-    }
+    else if ($b) {}
+    else {}
 }

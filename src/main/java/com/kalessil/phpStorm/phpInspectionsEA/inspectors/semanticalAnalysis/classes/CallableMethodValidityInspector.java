@@ -5,11 +5,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.PhpCallbackFunctionUtil;
 import com.jetbrains.php.lang.PhpCallbackReferenceBase;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +31,9 @@ import java.util.Set;
  */
 
 public class CallableMethodValidityInspector extends BasePhpInspection {
-    private static final String patternNotPublic = "'%m%' should be public (e.g. $this usage in static context provokes fatal errors).";
-    private static final String patternNotStatic = "'%m%' should be static (e.g. $this usage in static context provokes fatal errors).";
+    private static final String patternNotPublic    = "'%s' should be public (e.g. $this usage in static context provokes fatal errors).";
+    private static final String patternNotStatic    = "'%s' should be static (e.g. $this usage in static context provokes fatal errors).";
+    private static final String messageUseThrowable = "\\Throwable should be used here (BC break introduced in PHP 7).";
 
     @NotNull
     public String getShortName() {
@@ -42,51 +47,68 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("is_callable")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1) {
-                        final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[0]);
-                        final PsiElement callable    = values.size() == 1 ? values.iterator().next() : null;
-                        if (callable != null && this.isTarget(callable)) {
-                            final PsiReference resolver = this.buildResolver(callable);
-                            if (resolver != null) {
-                                this.analyzeValidity(resolver.resolve(), arguments[0], callable);
+                if (functionName != null) {
+                    final boolean isExceptionHandler = functionName.equals("set_exception_handler");
+                    if (isExceptionHandler || functionName.equals("is_callable")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 1) {
+                            final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[0]);
+                            final PsiElement variant     = values.size() == 1 ? values.iterator().next() : null;
+                            if (variant != null) {
+                                final PsiElement resolved = this.resolve(variant);
+                                if (resolved instanceof Function) {
+                                    /* case 1: method accessibility */
+                                    this.analyzeValidity((Function) resolved, arguments[0], variant);
+                                    /* case 2: exception handler */
+                                    if (isExceptionHandler) {
+                                        this.analyzeExceptionHandler((Function) resolved, arguments[0]);
+                                    }
+                                }
                             }
+                            values.clear();
                         }
-                        values.clear();
                     }
                 }
             }
 
             @Nullable
-            private PsiReference buildResolver(@NotNull PsiElement callable) {
-                PsiReference result = null;
-                final PhpCallbackFunctionUtil.PhpCallbackInfoHolder callback = PhpCallbackFunctionUtil.createCallback(callable);
-                if (callback instanceof PhpCallbackFunctionUtil.PhpMemberCallbackInfoHolder) {
-                    PsiElement classReference = ((PhpCallbackFunctionUtil.PhpMemberCallbackInfoHolder) callback).getClassElement();
-                    result = PhpCallbackReferenceBase.createMemberReference(classReference, callback.getCallbackElement(), true);
+            private PsiElement resolve(@NotNull PsiElement callable) {
+                PsiElement result = null;
+                if (
+                    callable instanceof StringLiteralExpression ||
+                    (callable instanceof ArrayCreationExpression && callable.getChildren().length == 2)
+                ) {
+                    final PhpCallbackFunctionUtil.PhpCallbackInfoHolder callback = PhpCallbackFunctionUtil.createCallback(callable);
+                    if (callback instanceof PhpCallbackFunctionUtil.PhpMemberCallbackInfoHolder) {
+                        final PsiElement classReference = ((PhpCallbackFunctionUtil.PhpMemberCallbackInfoHolder) callback).getClassElement();
+                        final PsiReference resolver     = PhpCallbackReferenceBase.createMemberReference(classReference, callback.getCallbackElement(), true);
+                        result                          = resolver == null ? null : resolver.resolve();
+                    }
+                } else if (OpenapiTypesUtil.isLambda(callable)) {
+                    result = callable instanceof Function ? callable : callable.getFirstChild();
                 }
                 return result;
             }
 
-            private boolean isTarget(@NotNull PsiElement callback) {
-                boolean result = callback instanceof StringLiteralExpression;
-                if (!result && callback instanceof ArrayCreationExpression) {
-                    result = callback.getChildren().length == 2;
+            private void analyzeExceptionHandler(@NotNull Function resolved, @NotNull PsiElement argument) {
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                    final Parameter[] parameters = resolved.getParameters();
+                    if (parameters.length > 0) {
+                        final boolean isTarget = parameters[0].getDeclaredType().equals(new PhpType().add("\\Exception"));
+                        if (isTarget) {
+                            final PsiElement target = OpenapiTypesUtil.isLambda(argument) ? parameters[0] : argument;
+                            holder.registerProblem(target, messageUseThrowable);
+                        }
+                    }
                 }
-                return result;
             }
 
-            private void analyzeValidity(
-                    @Nullable PsiElement element,
-                    @NotNull PsiElement target,
-                    @NotNull PsiElement callable
-            ) {
-                if (element instanceof Method) {
-                    final Method method = (Method) element;
+            private void analyzeValidity(@NotNull Function resolved, @NotNull PsiElement target, @NotNull PsiElement callable) {
+                if (resolved instanceof Method) {
+                    final Method method = (Method) resolved;
                     if (!method.getAccess().isPublic()) {
-                        final String message = patternNotPublic.replace("%m%", method.getName());
-                        holder.registerProblem(target, message);
+                        holder.registerProblem(target, String.format(patternNotPublic, method.getName()));
                     }
 
                     boolean needStatic = false;
@@ -110,12 +132,11 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                         /* older PS compatibility: recognize ::class properly */
                         if (!needStatic && classCandidate instanceof ClassConstantReference) {
                             final String constantName = ((ClassConstantReference) classCandidate).getName();
-                            needStatic                = null != constantName && constantName.equals("class");
+                            needStatic                = constantName != null && constantName.equals("class");
                         }
                     }
                     if (needStatic) {
-                        final String message = patternNotStatic.replace("%m%", method.getName());
-                        holder.registerProblem(target, message);
+                        holder.registerProblem(target, String.format(patternNotStatic, method.getName()));
                     }
                 }
             }

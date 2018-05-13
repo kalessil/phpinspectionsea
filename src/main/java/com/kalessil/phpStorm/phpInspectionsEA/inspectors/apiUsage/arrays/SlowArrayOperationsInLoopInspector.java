@@ -4,11 +4,10 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpFile;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -50,8 +49,16 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                 if (functionName != null && functionsSet.contains(functionName)) {
                     PsiElement parent = reference.getParent();
                     if (parent instanceof AssignmentExpression) {
-                        parent = parent.getParent();
-                        while (parent != null && !(parent instanceof PhpFile) && !(parent instanceof Function)) {
+                        /* false-positives: return/break as last group statement expression */
+                        boolean canLoop = true;
+                        if (OpenapiTypesUtil.isStatementImpl(parent = parent.getParent())) {
+                            final PsiElement grandParent = parent.getParent();
+                            if (grandParent instanceof GroupStatement) {
+                                final PsiElement last = ExpressionSemanticUtil.getLastStatement((GroupStatement) grandParent);
+                                canLoop = !(last instanceof PhpBreak) && !(last instanceof PhpReturn);
+                            }
+                        }
+                        while (canLoop && parent != null && !(parent instanceof PhpFile) && !(parent instanceof Function)) {
                             if (OpenapiTypesUtil.isLoop(parent)) {
                                 final PsiElement container = ((AssignmentExpression) reference.getParent()).getVariable();
                                 if (container != null) {

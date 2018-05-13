@@ -8,16 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.If;
-import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
-    private static final String message = "If statement can be merged into parent.";
+    private static final String message = "If construct can be merged with parent one.";
 
     @NotNull
     public String getShortName() {
@@ -42,36 +43,56 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIf(@NotNull If expression) {
-                final PsiElement parentIfBodyCandidate = expression.getParent();
-                if (parentIfBodyCandidate instanceof GroupStatement) {
-                    final PsiElement parentIfCandidate = parentIfBodyCandidate.getParent();
-                    if (parentIfCandidate instanceof If) {
-                        final If parentIf      = (If) parentIfCandidate;
-                        final boolean isTarget =
-                            !ExpressionSemanticUtil.hasAlternativeBranches(expression) &&
-                            !ExpressionSemanticUtil.hasAlternativeBranches(parentIf) &&
-                            ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parentIfBodyCandidate) == 1;
-                        if (isTarget && expression.getCondition() != null) {
+                final PsiElement parent = expression.getParent();
+                if (parent instanceof GroupStatement) {
+                    final PsiElement parentConstruct = parent.getParent();
+                    if (parentConstruct instanceof If) {
+                        final If parentIf = (If) parentConstruct;
+                        if (this.worthMerging(expression.getCondition(), parentIf.getCondition())) {
+                            final boolean isTarget =
+                                !ExpressionSemanticUtil.hasAlternativeBranches(expression) &&
+                                !ExpressionSemanticUtil.hasAlternativeBranches(parentIf) &&
+                                ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parent) == 1;
+                            if (isTarget) {
+                                holder.registerProblem(
+                                        expression.getFirstChild(),
+                                        message,
+                                        new MergeIntoParentIfFix(expression, parentIf)
+                                );
+                            }
+                        }
+                    } else if (parentConstruct instanceof Else) {
+                        final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parent) == 1;
+                        if (isTarget) {
                             holder.registerProblem(
                                     expression.getFirstChild(),
                                     message,
-                                    new MergeIfsFix(expression, parentIf)
+                                    new MergeIntoParentElseFix(expression, (Else) parentConstruct)
                             );
                         }
                     }
                 }
             }
+
+            private boolean worthMerging(@Nullable PsiElement condition, @Nullable PsiElement parentCondition) {
+                return Stream.of(condition, parentCondition)
+                        .filter(expression    -> expression instanceof BinaryExpression)
+                        .noneMatch(expression -> {
+                            final IElementType operator = ((BinaryExpression) expression).getOperationType();
+                            return operator == PhpTokenTypes.opOR || operator == PhpTokenTypes.opLIT_OR;
+                        });
+            }
         };
     }
 
-    private static class MergeIfsFix implements LocalQuickFix {
+    private static class MergeIntoParentElseFix implements LocalQuickFix {
         final private SmartPsiElementPointer<If> target;
-        final private SmartPsiElementPointer<If> parent;
+        final private SmartPsiElementPointer<Else> parent;
 
         @NotNull
         @Override
         public String getName() {
-            return "Merge if-statements";
+            return "Merge into parent construct";
         }
 
         @NotNull
@@ -80,7 +101,43 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
             return getName();
         }
 
-        MergeIfsFix(@NotNull If target, @NotNull If parent) {
+        MergeIntoParentElseFix(@NotNull If target, @NotNull Else parent) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
+            this.target                       = factory.createSmartPsiElementPointer(target);
+            this.parent                       = factory.createSmartPsiElementPointer(parent);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final If target   = this.target.getElement();
+            final Else parent = this.parent.getElement();
+            if (target != null && parent != null && !project.isDisposed()) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(parent);
+                if (body != null) {
+                    body.replace(target);
+                }
+            }
+        }
+    }
+
+    private static class MergeIntoParentIfFix implements LocalQuickFix {
+        final private SmartPsiElementPointer<If> target;
+        final private SmartPsiElementPointer<If> parent;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Merge into parent construct";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        MergeIntoParentIfFix(@NotNull If target, @NotNull If parent) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
             this.target                       = factory.createSmartPsiElementPointer(target);
@@ -98,17 +155,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     final PsiElement body       = target.getStatement();
                     final PsiElement parentBody = parent.getStatement();
                     if (body != null && parentBody != null) {
-                        final boolean escapeFirst =
-                                parentCondition instanceof BinaryExpression &&
-                                ((BinaryExpression) parentCondition).getOperationType() == PhpTokenTypes.opOR;
-                        final boolean escapeSecond =
-                                condition instanceof BinaryExpression &&
-                                ((BinaryExpression) condition).getOperationType() == PhpTokenTypes.opOR;
-                        final String code = String.format(
-                                "(%s && %s)",
-                                String.format(escapeFirst  ? "(%s)" : "%s", parentCondition.getText()),
-                                String.format(escapeSecond ? "(%s)" : "%s", condition.getText())
-                        );
+                        final String code        = String.format("(%s && %s)", parentCondition.getText(), condition.getText());
                         final PsiElement implant = PhpPsiElementFactory
                                 .createPhpPsiFromText(project, ParenthesizedExpression.class, code)
                                 .getArgument();

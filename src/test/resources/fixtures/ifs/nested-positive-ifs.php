@@ -1,23 +1,57 @@
 <?php
 
-function cases_holder() {
+function cases_holder_if_merge() {
     if ($a) {
-       <weak_warning descr="If statement can be merged into parent.">if</weak_warning> ($b) {
+        if ($b) {}
+    } else {
+        /* alternative branch case */
+    }
+
+    if ($a) {
+        if ($b) {}
+        else    {}
+    }
+
+    if ($a) {
+       <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {
        }
     }
 
     if ($a && $b) {
-       <weak_warning descr="If statement can be merged into parent.">if</weak_warning> ($c) {
+       <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($c) {
+       }
+    }
+
+    if ($a) {
+       <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b && $c) {
        }
     }
 
     if ($a || $b) {
-       <weak_warning descr="If statement can be merged into parent.">if</weak_warning> ($c || $d) {
-       }
-    }
-
-    if ($a || $b) {
-        <weak_warning descr="If statement can be merged into parent.">if</weak_warning> ($c) {
+        if ($c || $d) {
         }
+    }
+
+    if ($a || $b) {
+        if ($c) {
+        }
+    }
+
+    if ($a) {
+        if ($b || $c) {
+        }
+    }
+}
+
+function cases_holder_else_merge() {
+    if ($a) {}
+    else {
+        <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
+    }
+
+    if ($a) {}
+    else {
+        <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        else {}
     }
 }

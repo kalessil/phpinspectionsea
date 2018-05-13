@@ -47,12 +47,12 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpEmpty(@NotNull PhpEmpty expression) {
-                analyzeDispatchedExpressions(expression.getVariables());
+                this.analyzeDispatchedExpressions(expression.getVariables());
             }
 
             @Override
             public void visitPhpIsset(@NotNull PhpIsset expression) {
-                analyzeDispatchedExpressions(expression.getVariables());
+                this.analyzeDispatchedExpressions(expression.getVariables());
             }
 
             private void analyzeDispatchedExpressions(@NotNull PhpExpression[] parameters) {

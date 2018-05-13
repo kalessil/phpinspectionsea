@@ -173,3 +173,13 @@ This is PHP-specific and mentioned in the [documentation](https://secure.php.net
 
 > In PHP the switch statement is considered a looping structure for the purposes of continue. continue behaves like break 
 > (when no arguments are passed). If a switch is inside a loop, continue 2 will continue with the next iteration of the outer loop.
+
+## Empty/isset results correctness
+
+The inspection is targeting isset(...) and empty(...) constructs applied to class property references. If the property 
+could not be resolved, the `__isset` method existence is verified and reported if missing.
+
+The main assumption made here is that codebase is not relying to dynamic properties, but on DTOs (Data Transfer Objects).
+With this assumption magic methods `__isset` (we check only this one), `__get`, `__set` are needed.
+
+If the `__isset` method is not implemented, the both target constructs will constantly return ``false`.

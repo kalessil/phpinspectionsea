@@ -33,7 +33,7 @@ import java.util.Set;
 public class CallableMethodValidityInspector extends BasePhpInspection {
     private static final String patternNotPublic    = "'%s' should be public (e.g. $this usage in static context provokes fatal errors).";
     private static final String patternNotStatic    = "'%s' should be static (e.g. $this usage in static context provokes fatal errors).";
-    private static final String messageUseThrowable = "\\Throwable should be used here (BC break introduced in PHP 7).";
+    private static final String messageUseThrowable = "\\Throwable instead of \\Exception should be used in the handler (BC break introduced in PHP 7).";
 
     @NotNull
     public String getShortName() {
@@ -79,10 +79,15 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     (callable instanceof ArrayCreationExpression && callable.getChildren().length == 2)
                 ) {
                     final PhpCallbackFunctionUtil.PhpCallbackInfoHolder callback = PhpCallbackFunctionUtil.createCallback(callable);
-                    if (callback instanceof PhpCallbackFunctionUtil.PhpMemberCallbackInfoHolder) {
-                        final PsiElement classReference = ((PhpCallbackFunctionUtil.PhpMemberCallbackInfoHolder) callback).getClassElement();
-                        final PsiReference resolver     = PhpCallbackReferenceBase.createMemberReference(classReference, callback.getCallbackElement(), true);
-                        result                          = resolver == null ? null : resolver.resolve();
+                    if (callback != null) {
+                        if (callback instanceof PhpCallbackFunctionUtil.PhpMemberCallbackInfoHolder) {
+                            final PsiElement classReference = ((PhpCallbackFunctionUtil.PhpMemberCallbackInfoHolder) callback).getClassElement();
+                            final PsiReference resolver     = PhpCallbackReferenceBase.createMemberReference(classReference, callback.getCallbackElement(), true);
+                            result                          = resolver == null ? null : resolver.resolve();
+                        } else {
+                            final PsiReference resolver = PhpCallbackReferenceBase.createFunctionReference(callback.getCallbackElement());
+                            result                      = resolver == null ? null : resolver.resolve();
+                        }
                     }
                 } else if (OpenapiTypesUtil.isLambda(callable)) {
                     result = callable instanceof Function ? callable : callable.getFirstChild();

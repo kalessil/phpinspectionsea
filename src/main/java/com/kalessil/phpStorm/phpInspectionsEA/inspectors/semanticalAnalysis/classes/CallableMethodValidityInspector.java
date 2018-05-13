@@ -61,7 +61,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                                     this.analyzeValidity((Function) resolved, arguments[0], variant);
                                     /* case 2: exception handler */
                                     if (isExceptionHandler) {
-                                        this.analyzeExceptionHandler((Function) resolved, arguments[0]);
+                                        this.analyzeExceptionsHandler((Function) resolved, arguments[0]);
                                     }
                                 }
                             }
@@ -95,7 +95,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                 return result;
             }
 
-            private void analyzeExceptionHandler(@NotNull Function resolved, @NotNull PsiElement argument) {
+            private void analyzeExceptionsHandler(@NotNull Function resolved, @NotNull PsiElement argument) {
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
                     final Parameter[] parameters = resolved.getParameters();

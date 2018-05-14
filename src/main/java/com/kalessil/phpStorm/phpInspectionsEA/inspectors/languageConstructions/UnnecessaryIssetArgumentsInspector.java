@@ -10,7 +10,9 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
+import com.jetbrains.php.lang.psi.elements.FieldReference;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
@@ -32,7 +34,7 @@ import java.util.Set;
  */
 
 public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
-    private static final String message = "This argument can be skipped (handled by its' array access).";
+    private static final String message = "This argument can be skipped (handled by its' nested element access).";
 
     @NotNull
     public String getShortName() {
@@ -45,17 +47,20 @@ public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIsset(@NotNull PhpIsset issetExpression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final PsiElement[] arguments = issetExpression.getVariables();
                 if (arguments.length > 1) {
                     final Set<PsiElement> reported = new HashSet<>();
                     for (final PsiElement current : arguments) {
-                        if (current instanceof ArrayAccessExpression && !reported.contains(current)) {
+                        final boolean isTarget = current instanceof ArrayAccessExpression ||
+                                                 current instanceof FieldReference;
+                        if (isTarget && !reported.contains(current)) {
                             /* collect current element bases */
                             final List<PsiElement> bases = new ArrayList<>();
                             PsiElement base              = current;
-                            while (base instanceof ArrayAccessExpression) {
-                                base = ((ArrayAccessExpression) base).getValue();
-                                if (base != null) {
+                            while (base instanceof ArrayAccessExpression || base instanceof FieldReference) {
+                                if ((base = base.getFirstChild()) != null) {
                                     bases.add(base);
                                 }
                             }
@@ -63,12 +68,12 @@ public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
                             if (!bases.isEmpty()) {
                                 for (final PsiElement discoveredBase : bases) {
                                     for (final PsiElement match : arguments) {
-                                        if (
-                                            match != current && !reported.contains(match) &&
-                                            OpeanapiEquivalenceUtil.areEqual(discoveredBase, match)
-                                        ) {
-                                            holder.registerProblem(match, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropArgumentFix());
-                                            reported.add(match);
+                                        if (match != current && !reported.contains(match)) {
+                                            final boolean canSkip = OpeanapiEquivalenceUtil.areEqual(discoveredBase, match); 
+                                            if (canSkip) {
+                                                holder.registerProblem(match, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropArgumentFix());
+                                                reported.add(match);
+                                            }
                                         }
                                     }
                                 }

@@ -7,6 +7,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -41,10 +42,14 @@ public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
                     if (functionName != null && functionName.equals("pow")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 2) {
+                            final boolean wrapBase   = arguments[0] instanceof BinaryExpression ||
+                                                       arguments[0] instanceof TernaryExpression;
+                            final boolean wrapPower  = arguments[1] instanceof BinaryExpression ||
+                                                       arguments[1] instanceof TernaryExpression;
                             final String replacement =
                                     (reference.getParent() instanceof BinaryExpression ? "(%b% ** %p%)" : "%b% ** %p%")
-                                            .replace("%p%", arguments[1] instanceof BinaryExpression ? "(%p%)" : "%p%" )
-                                            .replace("%b%", arguments[0] instanceof BinaryExpression ? "(%b%)" : "%b%")
+                                            .replace("%p%", wrapPower ? "(%p%)" : "%p%" )
+                                            .replace("%b%", wrapBase ? "(%b%)" : "%b%")
                                             .replace("%p%", arguments[1].getText())
                                             .replace("%b%", arguments[0].getText());
                             holder.registerProblem(

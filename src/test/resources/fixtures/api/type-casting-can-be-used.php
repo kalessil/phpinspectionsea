@@ -6,6 +6,9 @@ function cases_holder() {
     $x = <warning descr="'(string) $y' would be more performant here (up to 6x times faster).">strval($y)</warning>;
     $x = <warning descr="'(bool) $y' would be more performant here (up to 6x times faster).">boolval($y)</warning>;
 
+    $x = <warning descr="'(int) ($y ?? 1)' would be more performant here (up to 6x times faster).">intval($y ?? 1)</warning>;
+    $x = <warning descr="'(int) ($y ?: 1)' would be more performant here (up to 6x times faster).">intval($y ?: 1)</warning>;
+
     $x = intval(1 / 2, 16);
 
     <warning descr="'$x = (int) $x' would be more performant here (up to 6x times faster).">settype($x, 'int')</warning>;

@@ -28,7 +28,7 @@
         (int)(1 * 0.99 * 1)
     ];
 
-    /** @var string $string */
+F    /** @var string $string */
     function withWeakParameter($string) {
         return (string) $string;
     }
@@ -56,7 +56,8 @@
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $instance->withStrictReturn()
     ];
 
-    /* false-positives: globals entries are not resolved as strings */
-    function cases_holder_globals() {
+    /* false-positives: globals type resolving, null coalesce is problematic in general */
+    function cases_holder_null_coalesce() {
         $optional = (int)($_GET['parameter'] ?? -1);
+        $optional = (int)($whatever ?? 0);
     }

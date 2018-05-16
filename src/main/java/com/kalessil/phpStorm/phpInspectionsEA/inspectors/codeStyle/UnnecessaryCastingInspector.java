@@ -13,10 +13,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -62,15 +59,31 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     final Set<String> types = this.resolveStrictly((PhpTypedElement) argument).getTypes();
                     if (types.size() == 1 && typesMapping.get(operator).equals(Types.getType(types.iterator().next()))) {
                         if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
-                            holder.registerProblem(
-                                operation,
-                                message,
-                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                new ReplaceWithArgumentFix()
-                            );
+                            final boolean isTarget = !this.isNullCoalescingOnly(argument);
+                            if (isTarget) {
+                                holder.registerProblem(
+                                        operation,
+                                        message,
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                        new ReplaceWithArgumentFix()
+                                );
+                            }
                         }
                     }
                 }
+            }
+
+            private boolean isNullCoalescingOnly(@NotNull PsiElement argument) {
+                boolean result = false;
+                final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(argument);
+                if (variants.size() == 1) {
+                    final PsiElement variant = variants.iterator().next();
+                    if (variant instanceof BinaryExpression) {
+                        result = ((BinaryExpression) variant).getOperationType() == PhpTokenTypes.opCOALESCE;
+                    }
+                }
+                variants.clear();
+                return result;
             }
 
             @NotNull

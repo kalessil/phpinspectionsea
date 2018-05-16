@@ -71,11 +71,4 @@ class CasesHolder {
         }
         return $y;
     }
-
-    public function operators($x) {
-        return [
-            <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> ?? null,
-            $x['...'] ?? null,
-        ];
-    }
 }

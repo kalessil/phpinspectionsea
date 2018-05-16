@@ -133,13 +133,15 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof FunctionReference && !project.isDisposed()) {
+            if (!project.isDisposed()) {
                 final PsiElement operator = this.operator.getElement();
                 final PsiElement variable = this.variable.getElement();
-                if (null != operator && null != variable) {
-                    operator.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::"));
-                    variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
+                if (operator != null && variable != null) {
+                    final PsiElement operation = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::");
+                    if (operation != null) {
+                        operator.replace(operation);
+                        variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
+                    }
                 }
             }
         }

@@ -4,7 +4,10 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -35,8 +38,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     // Inspection options.
     public boolean RESPECT_PHPUNIT_STANDARDS = true;
 
-    private static final String messageThisUsed       = "'static::%m%(...)' should be used instead.";
-    private static final String messageExpressionUsed = "'...::%m%(...)' should be used instead.";
+    private static final String messageThisUsed       = "'static::%s(...)' should be used instead.";
+    private static final String messageExpressionUsed = "'...::%s(...)' should be used instead.";
 
     @NotNull
     public String getShortName() {
@@ -49,60 +52,45 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                /* Basic structure validation */
-                final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                if (!OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
-                    return;
-                }
-                final PsiReference psiReference = reference.getReference();
-                final String methodName         = reference.getName();
-                if (psiReference == null || methodName == null || methodName.startsWith("static")) {
-                    return;
-                }
-
-                /* check contexts: $this->, <expression>-> ; placed here due to performance optimization */
-                final PsiElement thisCandidate    = reference.getFirstChild();
-                final boolean contextOfThis       = thisCandidate.getText().equals("$this");
-                final PsiElement objectExpression = contextOfThis ? null : reference.getFirstPsiChild();
-                final boolean contextOfExpression = null != objectExpression && !(objectExpression instanceof FunctionReference);
-                if (!contextOfThis && !contextOfExpression) {
-                    return;
-                }
-
-                /* now analyze: contexts are valid  */
-                final PsiElement resolved = OpenapiResolveUtil.resolveReference(psiReference);
-                if (resolved instanceof Method) {
-                    final Method method = (Method) resolved;
-                    /* non-static methods and contract interfaces must not be reported */
-                    if (!method.isStatic() || method.isAbstract()) {
-                        return;
-                    }
-                    final PhpClass clazz = method.getContainingClass();
-                    if (clazz == null || clazz.isInterface()) {
-                        return;
-                    }
-
-                    /* PHP Unit's official docs saying to use $this, follow the guidance */
-                    if (RESPECT_PHPUNIT_STANDARDS) {
-                        final String classFqn = clazz.getFQN();
-                        if (classFqn.startsWith("\\PHPUnit_Framework_") || classFqn.startsWith("\\PHPUnit\\Framework\\")) {
-                            return;
+                final String methodName = reference.getName();
+                if (methodName != null && !methodName.startsWith("static")) { /* workaround for WI-33569 */
+                    final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                    if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
+                        final PsiElement base = reference.getFirstChild();
+                        if (base != null && !(base instanceof FunctionReference)) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                            if (resolved instanceof Method) {
+                                final Method method = (Method) resolved;
+                                if (method.isStatic() && !method.isAbstract()) {
+                                    final PhpClass clazz = method.getContainingClass();
+                                    if (clazz != null && !clazz.isInterface() && !clazz.isAbstract()) {
+                                        if (base.getText().equals("$this")) {
+                                            /* $this->static() */
+                                            this.handleLateStaticBinding(base, operator, method);
+                                        } else {
+                                            /* <expression>->static() */
+                                            holder.registerProblem(
+                                                    reference,
+                                                    String.format(messageExpressionUsed, method.getName())
+                                            );
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
+                }
+            }
 
-                    /* Case 1: $this-><static method>() */
-                    if (contextOfThis) {
-                        holder.registerProblem(
-                                thisCandidate,
-                                messageThisUsed.replace("%m%", methodName),
-                                new TheLocalFix(thisCandidate, operator)
-                        );
-                    }
-                    /* Case 2: <expression>-><static method>(); no chained calls; no QF - needs looking into cases */
-                    else {
-                        holder.registerProblem(reference, messageExpressionUsed.replace("%m%", methodName));
+            private void handleLateStaticBinding(@NotNull PsiElement base, @NotNull PsiElement operator, @NotNull Method method) {
+                if (RESPECT_PHPUNIT_STANDARDS) {
+                    final String fqn = method.getFQN();
+                    if (fqn.startsWith("\\PHPUnit") && fqn.replaceAll("_", "\\").startsWith("\\PHPUnit\\Framework\\")) {
+                        return;
                     }
                 }
+
+                holder.registerProblem(base, String.format(messageThisUsed, method.getName()), new TheLocalFix(base, operator));
             }
         };
     }

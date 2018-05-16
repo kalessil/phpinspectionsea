@@ -41,7 +41,16 @@ final public class OpenapiResolveUtil {
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
         PhpType result = null;
         try {
-            if (expression instanceof BinaryExpression) {
+            if (expression instanceof ArrayAccessExpression) {
+                /* `_GET[...] & co` gets resolved with missing string type */
+                final PsiElement globalCandidate = ((ArrayAccessExpression) expression).getValue();
+                if (globalCandidate instanceof Variable) {
+                    final String variableName = ((Variable) globalCandidate).getName();
+                    if (ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                        result = new PhpType().add(PhpType.STRING).add(PhpType.ARRAY);
+                    }
+                }
+            } else if (expression instanceof BinaryExpression) {
                 final BinaryExpression binary = (BinaryExpression) expression;
                 final IElementType operator   = binary.getOperationType();
                 if (operator == PhpTokenTypes.opCOALESCE) {
@@ -49,21 +58,7 @@ final public class OpenapiResolveUtil {
                     final PsiElement left  = binary.getLeftOperand();
                     final PsiElement right = binary.getRightOperand();
                     if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
-                        PhpType leftType = null;
-                        /* `_GET[...] ?? ...` gets resolved with missing string type */
-                        if (left instanceof ArrayAccessExpression) {
-                            final PsiElement globalCandidate = ((ArrayAccessExpression) left).getValue();
-                            if (globalCandidate instanceof Variable) {
-                                final String variableName = ((Variable) globalCandidate).getName();
-                                if (ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
-                                    leftType = new PhpType().add(PhpType.STRING).add(PhpType.ARRAY);
-                                }
-                            }
-                        }
-                        /* fallback resolving left operand to regular resolving */
-                        leftType = leftType == null
-                                ? resolveType((PhpTypedElement) left, project)
-                                : leftType;
+                        final PhpType leftType = resolveType((PhpTypedElement) left, project);
                         if (leftType != null) {
                             final PhpType rightType = resolveType((PhpTypedElement) right, project);
                             if (rightType != null) {

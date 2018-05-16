@@ -56,7 +56,6 @@
         $instance->withStrictReturn()
     ];
 
-
     /* false-positives: globals type resolving, null coalesce is problematic in general */
     function cases_holder_null_coalesce() {
         $optional = (int)($_GET['parameter'] ?? -1);

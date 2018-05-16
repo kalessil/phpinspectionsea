@@ -6,6 +6,9 @@ function cases_holder() {
     $x = (string)$y;
     $x = (bool)$y;
 
+    $x = (int)($y ?? 1);
+    $x = (int)($y ?: 1);
+
     $x = intval(1 / 2, 16);
 
     $x = (int)$x;

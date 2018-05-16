@@ -28,7 +28,7 @@
         (int)(1 * 0.99 * 1)
     ];
 
-F    /** @var string $string */
+    /** @var string $string */
     function withWeakParameter($string) {
         return (string) $string;
     }

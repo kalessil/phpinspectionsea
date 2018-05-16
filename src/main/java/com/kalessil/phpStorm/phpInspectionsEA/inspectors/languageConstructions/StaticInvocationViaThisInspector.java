@@ -38,7 +38,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     // Inspection options.
     public boolean RESPECT_PHPUNIT_STANDARDS = true;
 
-    private static final String messageThisUsed       = "'static::%s(...)' should be used instead.";
+    private static final String messageThisUsed       = "'self::%s(...)' should be used instead.";
     private static final String messageExpressionUsed = "'...::%s(...)' should be used instead.";
 
     @NotNull
@@ -110,7 +110,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use static::";
+            return "Use self::";
         }
 
         @NotNull
@@ -128,7 +128,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     final PsiElement operation = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::");
                     if (operation != null) {
                         operator.replace(operation);
-                        variable.replace(PhpPsiElementFactory.createClassReference(project, "static"));
+                        variable.replace(PhpPsiElementFactory.createClassReference(project, "self"));
                     }
                 }
             }

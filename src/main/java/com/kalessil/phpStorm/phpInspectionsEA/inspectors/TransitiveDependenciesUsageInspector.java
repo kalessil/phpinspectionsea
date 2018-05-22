@@ -77,8 +77,8 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 if (filePath != null) {
                     final FileBasedIndex index = this.getIndex();
                     if (index != null) {
-                        final List<String> manifests = index
-                                .getValues(ComposerPackageRelationIndexer.identity, filePath, GlobalSearchScope.allScope(project));
+                        final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+                        final List<String> manifests  = index.getValues(ComposerPackageRelationIndexer.identity, filePath, scope);
                         if (manifests.size() == 1) {
                             result = manifests.get(0);
                         }

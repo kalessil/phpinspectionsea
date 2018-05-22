@@ -10,5 +10,9 @@ final public class StaticInvocationViaThisInspectorTest extends PhpCodeInsightFi
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("fixtures/classes/static-method-invocation-via-this.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/classes/static-method-invocation-via-this.fixed.php");
     }
 }

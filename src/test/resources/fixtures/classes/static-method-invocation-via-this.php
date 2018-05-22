@@ -1,20 +1,20 @@
 <?php
 
-class staticObjectsKeeper {
-    public static function callMethod() {}
+class MethodsHolder {
+    public static function method() {}
 
-    public static function y() {
-        <error descr="$this is not accessible in static context"><warning descr="'static::callMethod(...)' should be used instead.">$this</warning></error>->callMethod();
+    public static function staticContext() {
+        <error descr="$this is not accessible in static context"><warning descr="'self::method(...)' should be used instead.">$this</warning></error>->method();
     }
 
-    public function z() {
-        <warning descr="'static::callMethod(...)' should be used instead.">$this</warning>->callMethod();
-    }
+    public function nonStaticContext() {
+        <warning descr="'self::method(...)' should be used instead.">$this</warning>->method();
 
-    public function p() {
-        static::callMethod();
+        static::method();
+        self::method();
     }
 }
 
-$o = new staticObjectsKeeper();
-<warning descr="'...::y(...)' should be used instead.">$o->y()</warning>;
+function cases_holder(MethodsHolder $one) {
+    <warning descr="'...::method(...)' should be used instead.">$one->method()</warning>;
+}

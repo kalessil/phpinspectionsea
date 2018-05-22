@@ -102,7 +102,7 @@ Inspections Lists (Code style)
 | Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | yes  | yes |
 | Code Style           | CallableReferenceNameMismatchInspection         | Callable name case mismatched in a call             | yes | yes | yes  | no  |
 | Code Style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | yes | yes | yes  | no  |
-| Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes | yes | no   | no  |
+| Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes | yes | yes  | no  |
 | Code Style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes | yes | yes  | no  |
 | Code Style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes | yes | no   | no  |
 | Code Style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes | yes | no   | no  |

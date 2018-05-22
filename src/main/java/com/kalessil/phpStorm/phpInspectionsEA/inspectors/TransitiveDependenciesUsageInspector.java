@@ -75,12 +75,20 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 String result         = null;
                 final String filePath = expression.getContainingFile().getVirtualFile().getCanonicalPath();
                 if (filePath != null) {
-                    final List<String> manifests = FileBasedIndex.getInstance()
-                            .getValues(ComposerPackageRelationIndexer.identity, filePath, GlobalSearchScope.allScope(project));
-                    if (manifests.size() == 1) {
-                        result = manifests.get(0);
+                    try {
+                        /* handle java.lang.NoClassDefFoundError (com/intellij/util/indexing/IndexId) */
+                        final List<String> manifests = FileBasedIndex.getInstance().getValues(
+                                ComposerPackageRelationIndexer.identity,
+                                filePath,
+                                GlobalSearchScope.allScope(project)
+                        );
+                        if (manifests.size() == 1) {
+                            result = manifests.get(0);
+                        }
+                        manifests.clear();
+                    } catch (Throwable failure) {
+                        result = null;
                     }
-                    manifests.clear();
                 }
                 return result;
             }

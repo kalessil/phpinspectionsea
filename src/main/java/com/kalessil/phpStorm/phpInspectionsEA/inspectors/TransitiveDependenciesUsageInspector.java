@@ -75,45 +75,50 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 String result         = null;
                 final String filePath = expression.getContainingFile().getVirtualFile().getCanonicalPath();
                 if (filePath != null) {
-                    try {
-                        /* handle java.lang.NoClassDefFoundError (com/intellij/util/indexing/IndexId) */
-                        final List<String> manifests = FileBasedIndex.getInstance().getValues(
-                                ComposerPackageRelationIndexer.identity,
-                                filePath,
-                                GlobalSearchScope.allScope(project)
-                        );
+                    final FileBasedIndex index = this.getIndex();
+                    if (index != null) {
+                        final List<String> manifests = index
+                                .getValues(ComposerPackageRelationIndexer.identity, filePath, GlobalSearchScope.allScope(project));
                         if (manifests.size() == 1) {
                             result = manifests.get(0);
                         }
                         manifests.clear();
-                    } catch (Throwable failure) {
-                        result = null;
                     }
                 }
                 return result;
             }
 
             private boolean isTransitiveDependency(@NotNull String current, @NotNull String dependency, @NotNull Project project) {
-                boolean result                       = false;
-                final GlobalSearchScope scope        = GlobalSearchScope.allScope(project);
-                final List<String> dependencyDetails = FileBasedIndex.getInstance()
-                        .getValues(ComposerPackageManifestIndexer.identity, dependency, scope);
-                if (dependencyDetails.size() == 1) {
-                    final String[] dependencySplit = dependencyDetails.get(0).split(":");
-                    final String dependencyName    = dependencySplit.length == 2 ? dependencySplit[0] : "";
-                    if (!dependencyName.isEmpty() && !this.isDependencyIgnored(dependencyName)) {
-                        final List<String> currentDetails = FileBasedIndex.getInstance()
-                                .getValues(ComposerPackageManifestIndexer.identity, current, scope);
-                        if (currentDetails.size() == 1) {
-                            final String[] currentSplit      = currentDetails.get(0).split(":");
-                            final String currentDependencies = currentSplit.length == 2 ? currentSplit[1] : "";
-                            result = Stream.of(currentDependencies.split(",")).noneMatch(d -> d.equals(dependencyName));
+                boolean result             = false;
+                final FileBasedIndex index = this.getIndex();
+                if (index != null) {
+                    final GlobalSearchScope scope        = GlobalSearchScope.allScope(project);
+                    final List<String> dependencyDetails = index.getValues(ComposerPackageManifestIndexer.identity, dependency, scope);
+                    if (dependencyDetails.size() == 1) {
+                        final String[] dependencySplit = dependencyDetails.get(0).split(":");
+                        final String dependencyName    = dependencySplit.length == 2 ? dependencySplit[0] : "";
+                        if (!dependencyName.isEmpty() && !this.isDependencyIgnored(dependencyName)) {
+                            final List<String> currentDetails = index.getValues(ComposerPackageManifestIndexer.identity, current, scope);
+                            if (currentDetails.size() == 1) {
+                                final String[] currentSplit      = currentDetails.get(0).split(":");
+                                final String currentDependencies = currentSplit.length == 2 ? currentSplit[1] : "";
+                                result = Stream.of(currentDependencies.split(",")).noneMatch(d -> d.equals(dependencyName));
+                            }
+                            currentDetails.clear();
                         }
-                        currentDetails.clear();
                     }
+                    dependencyDetails.clear();
                 }
-                dependencyDetails.clear();
                 return result;
+            }
+
+            @Nullable
+            private FileBasedIndex getIndex() {
+                try {
+                    return FileBasedIndex.getInstance();
+                } catch (Throwable failure) {
+                    return null;
+                }
             }
 
             private boolean isDependencyIgnored(@NotNull String packageName) {

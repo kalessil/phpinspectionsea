@@ -22,8 +22,14 @@ function list_unpack()
     return $a + $b;
 }
 
-function arrayAssembling()
+function array_assembly()
 {
     $filters = ['is_email_compatible' => 1];
     return ['widget_filters' => $filters];
+}
+
+function assignment() {
+    <warning descr="Variable $temporary is redundant.">$temporary</warning> = '...';
+    $result = $temporary;
+    return trim($result);
 }

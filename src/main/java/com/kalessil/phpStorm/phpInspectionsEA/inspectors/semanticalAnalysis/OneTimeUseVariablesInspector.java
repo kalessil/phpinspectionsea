@@ -70,12 +70,10 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             return;
                         }
 
-
                         /* too long return/throw statements can be decoupled as a variable */
                         if (!ALLOW_LONG_STATEMENTS && assign.getTextLength() > 80) {
                             return;
                         }
-
 
                         if (construct instanceof ForeachStatement) {
                             /* do not suggest inlining require and ternaries */
@@ -195,6 +193,20 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             }
 
             @Override
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
+                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
+                if (value != null && OpenapiTypesUtil.isAssignment(expression)) {
+                    final Variable variable = this.getVariable(value);
+                    final PsiElement parent = expression.getParent();
+                    if (variable != null && OpenapiTypesUtil.isStatementImpl(parent)) {
+                        this.checkOneTimeUse((PhpPsiElement) parent, variable);
+                    }
+                }
+            }
+
+            @Override
             public void visitPhpThrow(@NotNull PhpThrow expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
@@ -250,7 +262,6 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     }
                 }
                 return result;
-
             }
 
             private boolean isBoundReference(@NotNull Variable variable, @NotNull Function function) {

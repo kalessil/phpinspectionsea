@@ -15,7 +15,7 @@ trap 'handle_error $LINENO' ERR
 
 ideUrl="IU-2017.3"
 if [ "$IDE_ID" == "IU-2018.1" ]; then
-    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.4.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.3" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.3.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.2" ]; then

@@ -20,3 +20,7 @@
         public function avg($x = array())           {}
         public function fill(&$x = array(), $value) {}
     }
+
+    /* false-positive: mixed types */
+    /** @param null|array $x */
+    function mixed_types($x = []) {}

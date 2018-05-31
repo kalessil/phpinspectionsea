@@ -10,6 +10,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
@@ -78,9 +79,12 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
             }
 
             private boolean canBePrependedWithArrayType(@NotNull Parameter parameter) {
-                return
-                    parameter.getDefaultValue() instanceof ArrayCreationExpression &&
-                    parameter.getDeclaredType().isEmpty();
+                boolean result = false;
+                if (parameter.getDefaultValue() instanceof ArrayCreationExpression && parameter.getDeclaredType().isEmpty()) {
+                    final PhpType resolved = OpenapiResolveUtil.resolveType(parameter, parameter.getProject());
+                    result = resolved == null || resolved.size() == 1;
+                }
+                return result;
             }
         };
     }

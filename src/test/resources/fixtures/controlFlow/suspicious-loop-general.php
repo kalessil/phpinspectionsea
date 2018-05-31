@@ -60,3 +60,13 @@
     } else {
         foreach ($one as $value) {}
     }
+    /* related false-positives */
+    if (count($one) < 2) {
+        $one = [];
+        foreach ($one as $value) {}
+    } elseif (count($two) < 2) {
+        $one = [];
+        foreach ($one as $value) {}
+    } else {
+        foreach ($one as $value) {}
+    }

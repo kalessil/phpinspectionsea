@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -90,9 +91,11 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                         /* process condition and continue */
                         if (condition != null) {
                             final PsiElement anomaly = this.findFirstConditionAnomaly(source, condition);
-                            if (anomaly != null) {
-                                final String message = String.format(patternConditionAnomaly, anomaly.getText());
-                                holder.registerProblem(statement.getFirstChild(), message);
+                            if (anomaly != null && !this.isOverridden(source, condition.getParent())) {
+                                holder.registerProblem(
+                                        statement.getFirstChild(),
+                                        String.format(patternConditionAnomaly, anomaly.getText())
+                                );
 
                                 break;
                             }
@@ -100,6 +103,23 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                         parent = parent.getParent();
                     }
                 }
+            }
+
+            private boolean isOverridden(@NotNull PsiElement source, @NotNull PsiElement branch) {
+                boolean result = false;
+                for (final PsiElement child: PsiTreeUtil.findChildrenOfType(branch, source.getClass())) {
+                    if (child == source) {
+                        break;
+                    }
+                    final PsiElement parent = child.getParent();
+                    if (OpenapiTypesUtil.isAssignment(parent) && OpeanapiEquivalenceUtil.areEqual(source, child)) {
+                        final AssignmentExpression assignment = (AssignmentExpression) parent;
+                        if (result = assignment.getValue() != child) {
+                            break;
+                        }
+                    }
+                }
+                return result;
             }
 
             private PsiElement findFirstConditionAnomaly(@NotNull PsiElement source, @NotNull PsiElement condition) {
@@ -133,7 +153,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             final BinaryExpression binary = (BinaryExpression) outerContext;
                             if (call == binary.getLeftOperand()) {
                                 final PsiElement threshold = binary.getRightOperand();
-                                if (OpenapiTypesUtil.isNumber(threshold)) {
+                                if (threshold != null && OpenapiTypesUtil.isNumber(threshold)) {
                                     final String number   = threshold.getText();
                                     final IElementType op = binary.getOperationType();
                                     if (op == PhpTokenTypes.opLESS && number.equals("2")) {

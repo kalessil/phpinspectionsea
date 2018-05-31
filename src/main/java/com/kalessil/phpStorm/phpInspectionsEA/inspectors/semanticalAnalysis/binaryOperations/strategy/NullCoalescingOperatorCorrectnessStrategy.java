@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
@@ -18,17 +19,18 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class NullCoalescingOperatorCorrectnessStrategy {
-    private static final String messagePattern = "The operation results to '%e%', please add missing parentheses.";
+    private static final String messagePattern = "The operation results to '%s', please add missing parentheses.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result = false;
         if (expression.getOperationType() == PhpTokenTypes.opCOALESCE) {
             final PsiElement left      = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getLeftOperand());
             final PsiElement operation = left instanceof UnaryExpression ? ((UnaryExpression) left).getOperation() : null;
-            if (operation != null && PhpTokenTypes.tsCAST_OPS.contains(operation.getNode().getElementType())) {
-                final String message = messagePattern.replace("%e%", left.getText());
-                holder.registerProblem(left, message);
-                result = true;
+            if (operation != null) {
+                final IElementType operator = operation.getNode().getElementType();
+                if (result = (operator == PhpTokenTypes.opNOT || PhpTokenTypes.tsCAST_OPS.contains(operator))) {
+                    holder.registerProblem(left, String.format(messagePattern, left.getText()));
+                }
             }
         }
         return result;

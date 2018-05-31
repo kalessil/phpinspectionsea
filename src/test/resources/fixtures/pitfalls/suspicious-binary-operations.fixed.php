@@ -44,8 +44,9 @@ $x = (
 
 /* a bug: ternary always returns the argument */
 $y = [
-    (int)$x ?? 'whatever',
-    ((string)$x) ?? 'whatever'
+    (int)$x ?? '...',
+    ((string)$x) ?? '...',
+    (!$x) ?? '...',
 ];
 
 /* operations priority issues */

@@ -36,6 +36,7 @@
     (function(){})();
     ($x = function(){})();
     ('Class'.'::method')();
+    ($x ?? '...')();
 
     $x = !($first = $x->prop)->with('data');
 

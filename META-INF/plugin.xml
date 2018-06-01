@@ -63,6 +63,7 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
 - Slow array function used in loop: resoled false-positives (following break/return)<br/>
 - Suspicious loop: resolved a false-positive (variable write)<br/>
 - Type casting can be used: resolved false-positives (multiple cases)<br/>
+- Unnecessary parentheses: resolved a false-positive ((... ?? ...)())<br/>
 - Unnecessary type casting: resolved false-positives (`??`)<br/>
 <br/>
 - Nested positive ifs: new cases<br/>

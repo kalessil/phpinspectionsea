@@ -56,20 +56,17 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-Features release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Worked out crash-reports for April<br/>
-- Introduced privacy settings (File -> Settings -> Other Settings -> Php Inspections (EA Extended))<br/>
+- Nested positive ifs: resolved false-positives (multiple cases)<br/>
+- Parameter could be declared as array: resolved false-positives (mixed types)<br/>
+- Slow array function used in loop: resoled false-positives (following break/return)<br/>
+- Suspicious loop: resolved a false-positive (variable write)<br/>
+- Type casting can be used: resolved false-positives (multiple cases)<br/>
+- Unnecessary type casting: resolved false-positives (`??`)<br/>
 <br/>
-- Strings normalization: resolved a false-positive (trim characters provided)<br/>
-- Suspicious assignments: resolved a false-positive (.=)<br/>
-- Traits properties conflicts resolution: resolved a false-positive (phpdoc)<br/>
-- Unnecessary parentheses: resolved false-positives (yield)<br/>
-<br/>
-- PhpUnit: methods mocking issues: implemented<br/>
-- Unnecessary closures: implemented<br/>
-- Unsupported string offset operations: new cases<br/>
-- 'isset(...)' constructs can be merged: implemented<br/>
+- Nested positive ifs: new cases<br/>
+- Suspicious binary operations: new cases<br/>
 <br/>
 <hr/>
   ]]></change-notes>

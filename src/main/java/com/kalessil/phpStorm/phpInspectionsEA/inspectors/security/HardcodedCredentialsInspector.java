@@ -114,17 +114,19 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpNewExpression(@NotNull NewExpression expression) {
-                final ClassReference reference = expression.getClassReference();
-                if (reference != null) {
-                    final PsiElement[] arguments = expression.getParameters();
-                    if (arguments.length > 0) {
-                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                        if (resolved instanceof PhpClass) {
-                            final String fqn = ((PhpClass) resolved).getFQN().toLowerCase() + ".__construct";
-                            if (targetFunctions.containsKey(fqn)) {
-                                final int index = targetFunctions.get(fqn);
-                                if (arguments.length >= index + 1 && !this.isTestContext(expression)) {
-                                    this.analyzeTarget(arguments[index]);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final ClassReference reference = expression.getClassReference();
+                    if (reference != null) {
+                        final PsiElement[] arguments = expression.getParameters();
+                        if (arguments.length > 0) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                            if (resolved instanceof PhpClass) {
+                                final String fqn = ((PhpClass) resolved).getFQN().toLowerCase() + ".__construct";
+                                if (targetFunctions.containsKey(fqn)) {
+                                    final int index = targetFunctions.get(fqn);
+                                    if (arguments.length >= index + 1 && !this.isTestContext(expression)) {
+                                        this.analyzeTarget(arguments[index]);
+                                    }
                                 }
                             }
                         }

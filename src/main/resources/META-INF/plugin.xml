@@ -44,13 +44,12 @@ the implementation.
   <change-notes><![CDATA[
 New features release<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-">v3.0.2</a><br />
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-">v3.0.3</a><br />
 <br />
-- Callable methods validity: new patterns<br/>
-- Composition and inheritance: implemented (needs activation)<br/>
-- Missing directory separators: resolved false-positives (multiple cases)<br/>
-- Unnecessary emptiness check: new patterns<br/>
-- Unnecessary isset arguments specification: new patterns<br/>
+- ArrayKeysMissUseInspector: new patterns<br/>
+- ArrayValuesMissUseInspector: new patterns<br/>
+- OneTimeUseVariablesInspector: new patterns<br/>
+- IllusionOfChoiceInspector: dropped `??` analysis<br/>
 <br/>
 <hr/>
   ]]></change-notes>

@@ -9,7 +9,8 @@ function cases_holder() {
         array_unique(array_keyz(), SORT_STRING),
 
         count([]),
+        count(array_keys([], 'search')),
 
-        count(array_keys([], 'search'))
+        array_keys(array_slice([]), 0),
     ];
 }

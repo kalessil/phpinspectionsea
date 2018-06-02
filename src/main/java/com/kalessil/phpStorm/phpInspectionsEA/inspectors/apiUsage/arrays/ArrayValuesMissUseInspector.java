@@ -53,7 +53,6 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                 final FunctionReference outerCall = (FunctionReference) grandParent;
                                 final String outerCallName        = outerCall.getName();
                                 if (outerCallName != null) {
-                                    final PsiElement[] outerArguments = outerCall.getParameters();
                                     switch (outerCallName) {
                                         case "count":
                                             holder.registerProblem(reference, messageCount, new ReplaceFix(innerArguments[0].getText()));
@@ -62,15 +61,17 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                             holder.registerProblem(reference, messageInArray, new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "str_replace":
-                                            if (outerArguments.length == 3 && outerArguments[1] == reference) {
+                                            final PsiElement[] replaceArguments = outerCall.getParameters();
+                                            if (replaceArguments.length == 3 && replaceArguments[1] == reference) {
                                                 holder.registerProblem(reference, messageStringReplace, new ReplaceFix(innerArguments[0].getText()));
                                             }
                                             break;
                                         case "array_slice":
-                                            final String theArray     = innerArguments[0].getText();
-                                            final String newInnerCall = outerCall.getText().replace(outerArguments[0].getText(), theArray);
-                                            final String replacement  = reference.getText().replace(theArray, newInnerCall);
-                                            final String message      = String.format(messageArraySlice, replacement);
+                                            final PsiElement[] sliceArguments = outerCall.getParameters();
+                                            final String theArray             = innerArguments[0].getText();
+                                            final String newInnerCall         = outerCall.getText().replace(sliceArguments[0].getText(), theArray);
+                                            final String replacement          = reference.getText().replace(theArray, newInnerCall);
+                                            final String message              = String.format(messageArraySlice, replacement);
                                             holder.registerProblem(outerCall, message, new ReplaceFix(replacement));
                                             break;
                                         default:

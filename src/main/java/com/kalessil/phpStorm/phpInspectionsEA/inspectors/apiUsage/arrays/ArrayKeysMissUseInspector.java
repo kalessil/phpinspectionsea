@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class ArrayKeysMissUseInspector extends BasePhpInspection {
     private static final String messageArrayUnique = "'array_unique(...)' is not making any sense here (array keys are unique).";
     private static final String messageCount       = "'array_keys(...)' is not making any sense here (just count it's argument).";
+    private static final String messageArraySlice  = "'%s' is making more sense here (reduces amount of processed elements).";
 
     @NotNull
     public String getShortName() {
@@ -40,19 +41,32 @@ public class ArrayKeysMissUseInspector extends BasePhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("array_keys")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1) {
+                    final PsiElement[] innerArguments = reference.getParameters();
+                    if (innerArguments.length == 1) {
                         final PsiElement parent = reference.getParent();
                         if (parent instanceof ParameterList) {
                             final PsiElement grandParent = parent.getParent();
                             if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
-                                final FunctionReference parentCall = (FunctionReference) grandParent;
-                                final String parentCallName        = parentCall.getName();
-                                if (parentCallName != null) {
-                                    if (parentCallName.equals("count")) {
-                                        holder.registerProblem(reference, messageCount, new ReplaceFix(arguments[0].getText()));
-                                    } else if (parentCallName.equals("array_unique")) {
-                                        holder.registerProblem(parentCall, messageArrayUnique, new ReplaceFix(reference.getText()));
+                                final FunctionReference outerCall = (FunctionReference) grandParent;
+                                final String outerCallName        = outerCall.getName();
+                                if (outerCallName != null) {
+                                    switch (outerCallName) {
+                                        case "count":
+                                            holder.registerProblem(reference, messageCount, new ReplaceFix(innerArguments[0].getText()));
+                                            break;
+                                        case "array_unique":
+                                            holder.registerProblem(outerCall, messageArrayUnique, new ReplaceFix(reference.getText()));
+                                            break;
+                                        case "array_slice":
+                                            final PsiElement[] sliceArguments = outerCall.getParameters();
+                                            final String theArray             = innerArguments[0].getText();
+                                            final String newInnerCall         = outerCall.getText().replace(sliceArguments[0].getText(), theArray);
+                                            final String replacement          = reference.getText().replace(theArray, newInnerCall);
+                                            final String message              = String.format(messageArraySlice, replacement);
+                                            holder.registerProblem(outerCall, message, new ReplaceFix(replacement));
+                                            break;
+                                        default:
+                                            break;
                                     }
                                 }
                             }

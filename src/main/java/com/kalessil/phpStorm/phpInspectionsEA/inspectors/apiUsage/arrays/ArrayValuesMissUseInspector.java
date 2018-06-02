@@ -27,6 +27,7 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
     private static final String messageStringReplace = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageInArray       = "'array_values(...)' is not making any sense here (just search in it's argument).";
     private static final String messageCount         = "'array_values(...)' is not making any sense here (just count it's argument).";
+    private static final String messageArraySlice    = "'%s' is making more sense here (reduces amount of processed elements).";
 
     @NotNull
     public String getShortName() {
@@ -43,27 +44,34 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("array_values")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1) {
+                    final PsiElement[] innerArguments = reference.getParameters();
+                    if (innerArguments.length == 1) {
                         final PsiElement parent = reference.getParent();
                         if (parent instanceof ParameterList) {
                             final PsiElement grandParent = parent.getParent();
                             if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
-                                final FunctionReference parentCall = (FunctionReference) grandParent;
-                                final String parentCallName        = parentCall.getName();
-                                if (parentCallName != null) {
-                                    switch (parentCallName) {
+                                final FunctionReference outerCall = (FunctionReference) grandParent;
+                                final String outerCallName        = outerCall.getName();
+                                if (outerCallName != null) {
+                                    final PsiElement[] outerArguments = outerCall.getParameters();
+                                    switch (outerCallName) {
                                         case "count":
-                                            holder.registerProblem(reference, messageCount, new ReplaceFix(arguments[0].getText()));
+                                            holder.registerProblem(reference, messageCount, new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "in_array":
-                                            holder.registerProblem(reference, messageInArray, new ReplaceFix(arguments[0].getText()));
+                                            holder.registerProblem(reference, messageInArray, new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "str_replace":
-                                            final PsiElement[] parentArguments = parentCall.getParameters();
-                                            if (parentArguments.length == 3 && parentArguments[1] == reference) {
-                                                holder.registerProblem(reference, messageStringReplace, new ReplaceFix(arguments[0].getText()));
+                                            if (outerArguments.length == 3 && outerArguments[1] == reference) {
+                                                holder.registerProblem(reference, messageStringReplace, new ReplaceFix(innerArguments[0].getText()));
                                             }
+                                            break;
+                                        case "array_slice":
+                                            final String theArray     = innerArguments[0].getText();
+                                            final String newInnerCall = outerCall.getText().replace(outerArguments[0].getText(), theArray);
+                                            final String replacement  = reference.getText().replace(theArray, newInnerCall);
+                                            final String message      = String.format(messageArraySlice, replacement);
+                                            holder.registerProblem(outerCall, message, new ReplaceFix(replacement));
                                             break;
                                         default:
                                             break;
@@ -73,7 +81,7 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                         } else if (parent instanceof ForeachStatement) {
                             final ForeachStatement foreach = (ForeachStatement) parent;
                             if (foreach.getKey() == null && !foreach.getVariables().isEmpty()) {
-                                holder.registerProblem(reference, messageForeach, new ReplaceFix(arguments[0].getText()));
+                                holder.registerProblem(reference, messageForeach, new ReplaceFix(innerArguments[0].getText()));
                             }
                         }
                     }

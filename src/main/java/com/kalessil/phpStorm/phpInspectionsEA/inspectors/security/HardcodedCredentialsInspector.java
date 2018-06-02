@@ -1,15 +1,21 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -24,6 +30,7 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
     private static final String message = "It would be better idea to not hard-code credentials but to use a managed environment instead.";
 
     private static final Map<String, Integer> targetFunctions = new HashMap<>();
+    private static final Set<String> targetNames = new HashSet<>();
     static {
         targetFunctions.put("\\mysql_connect", 2);
         targetFunctions.put("\\mysql_pconnect", 2);
@@ -67,6 +74,11 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
         targetFunctions.put("\\mongodb.authenticate", 1);
         targetFunctions.put("\\rararchive.open", 1);
         targetFunctions.put("\\stomp.__construct", 2);
+
+        for (final String fqn : targetFunctions.keySet()) {
+            final String[] split = fqn.split("\\.");
+            targetNames.add(split[split.length - 1].replace("\\", ""));
+        }
     }
 
     @NotNull
@@ -80,9 +92,38 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final String name = reference.getName();
+                    if (name != null && targetNames.contains(name.toLowerCase())) {
+                        this.analyze(reference);
+                    }
+                }
             }
 
-            @Override public void visitPhpMethodReference(@NotNull MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final String name = reference.getName();
+                    if (name != null && targetNames.contains(name.toLowerCase())) {
+                        this.analyze(reference);
+                    }
+                }
+            }
+
+            private void analyze(@NotNull FunctionReference reference) {
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length > 0) {
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                    if (resolved instanceof Function) {
+                        final String fqn = ((Function) resolved).getFQN().toLowerCase();
+                        if (targetFunctions.containsKey(fqn)) {
+                            final int neededIndex = targetFunctions.get(fqn);
+                            if (arguments.length >= neededIndex + 1) {
+                                /* TODO: resolve it */
+                            }
+                        }
+                    }
+                }
             }
         };
     }

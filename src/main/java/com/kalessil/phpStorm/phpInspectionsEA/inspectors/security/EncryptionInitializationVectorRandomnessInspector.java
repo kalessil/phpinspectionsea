@@ -25,8 +25,7 @@ import java.util.*;
 public class EncryptionInitializationVectorRandomnessInspector extends BasePhpInspection {
     private static final String messagePattern = "%f%() should be used for IV, but found: %e%.";
 
-    @NotNull
-    private static final HashSet<String> secureFunctions = new HashSet<>();
+    private static final Set<String> secureFunctions = new HashSet<>();
     static {
         secureFunctions.add("random_bytes");
         secureFunctions.add("openssl_random_pseudo_bytes");

@@ -596,6 +596,10 @@ New features release<br/>
          shortName="CommandExecutionAsSuperUserInspection"         displayName="Command execution as super user"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CommandExecutionAsSuperUserInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="HardcodedCredentialsInspection"                displayName="Hardcoded credentials"
+         groupName="Security"                                      enabledByDefault="true" level="WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HardcodedCredentialsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

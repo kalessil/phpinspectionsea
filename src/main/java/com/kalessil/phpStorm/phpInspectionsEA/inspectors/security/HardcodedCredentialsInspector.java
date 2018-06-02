@@ -6,10 +6,12 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -55,7 +57,7 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
         targetFunctions.put("\\hash_hmac", 2);
         targetFunctions.put("\\hash_hmac_file", 2);
         targetFunctions.put("\\hash_pbkdf2", 1);
-        targetFunctions.put("\\password_hash", 1);
+        targetFunctions.put("\\password_hash", 0);
         targetFunctions.put("\\kadm5_create_principal", 2);
         targetFunctions.put("\\kadm5_chpass_principal", 2);
         targetFunctions.put("\\kadm5_init_with_password", 3);
@@ -68,6 +70,7 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
         targetFunctions.put("\\openssl_pkcs12_export", 3);
         targetFunctions.put("\\openssl_pkcs12_read", 2);
         targetFunctions.put("\\ziparchive.setPassword", 0);
+        targetFunctions.put("\\ziparchive.setEncryptionIndex", 2);
         targetFunctions.put("\\ziparchive.setEncryptionName", 2);
         targetFunctions.put("\\pdo.__construct", 2);
         targetFunctions.put("\\memcached.setSaslAuthData", 1);
@@ -114,12 +117,17 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
                 final PsiElement[] arguments = reference.getParameters();
                 if (arguments.length > 0) {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                    if (resolved instanceof Function) {
-                        final String fqn = ((Function) resolved).getFQN().toLowerCase();
-                        if (targetFunctions.containsKey(fqn)) {
-                            final int neededIndex = targetFunctions.get(fqn);
-                            if (arguments.length >= neededIndex + 1) {
-                                /* TODO: resolve it */
+                    final String fqn          = resolved instanceof Function ? ((Function) resolved).getFQN() : null;
+                    if (fqn != null && targetFunctions.containsKey(fqn.toLowerCase())) {
+                        final int index = targetFunctions.get(fqn);
+                        if (arguments.length >= index + 1 && !this.isTestContext(reference)) {
+                            final PsiElement target      = arguments[index];
+                            final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[index]);
+                            if (!values.isEmpty()) {
+                                if (values.stream().anyMatch(candidate -> candidate instanceof StringLiteralExpression)) {
+                                    holder.registerProblem(target, message);
+                                }
+                                values.clear();
                             }
                         }
                     }

@@ -69,11 +69,11 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
         targetFunctions.put("\\openssl_pkcs12_export_to_file", 3);
         targetFunctions.put("\\openssl_pkcs12_export", 3);
         targetFunctions.put("\\openssl_pkcs12_read", 2);
-        targetFunctions.put("\\ziparchive.setPassword", 0);
-        targetFunctions.put("\\ziparchive.setEncryptionIndex", 2);
-        targetFunctions.put("\\ziparchive.setEncryptionName", 2);
+        targetFunctions.put("\\ziparchive.setpassword", 0);
+        targetFunctions.put("\\ziparchive.setencryptionindex", 2);
+        targetFunctions.put("\\ziparchive.setencryptionname", 2);
         targetFunctions.put("\\pdo.__construct", 2);
-        targetFunctions.put("\\memcached.setSaslAuthData", 1);
+        targetFunctions.put("\\memcached.setsaslauthdata", 1);
         targetFunctions.put("\\mongodb.authenticate", 1);
         targetFunctions.put("\\rararchive.open", 1);
         targetFunctions.put("\\stomp.__construct", 2);

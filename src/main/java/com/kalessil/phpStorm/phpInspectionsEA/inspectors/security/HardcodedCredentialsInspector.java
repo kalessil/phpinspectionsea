@@ -3,10 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -100,7 +97,7 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
                 if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
                     final String name = reference.getName();
                     if (name != null && targetNames.contains(name.toLowerCase())) {
-                        this.analyze(reference);
+                        this.analyzeCall(reference);
                     }
                 }
             }
@@ -110,12 +107,42 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
                 if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
                     final String name = reference.getName();
                     if (name != null && targetNames.contains(name.toLowerCase())) {
-                        this.analyze(reference);
+                        this.analyzeCall(reference);
                     }
                 }
             }
 
-            private void analyze(@NotNull FunctionReference reference) {
+            @Override
+            public void visitPhpNewExpression(@NotNull NewExpression expression) {
+                final ClassReference reference = expression.getClassReference();
+                if (reference != null) {
+                    final PsiElement[] arguments = expression.getParameters();
+                    if (arguments.length > 0) {
+                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                        if (resolved instanceof PhpClass) {
+                            final String fqn = ((PhpClass) resolved).getFQN().toLowerCase() + ".__construct";
+                            if (targetFunctions.containsKey(fqn)) {
+                                final int index = targetFunctions.get(fqn);
+                                if (arguments.length >= index + 1 && !this.isTestContext(expression)) {
+                                    this.analyzeTarget(arguments[index]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            private void analyzeTarget(@NotNull PsiElement target) {
+                final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(target);
+                if (!values.isEmpty()) {
+                    if (values.stream().anyMatch(candidate -> candidate instanceof StringLiteralExpression)) {
+                        holder.registerProblem(target, message);
+                    }
+                    values.clear();
+                }
+            }
+
+            private void analyzeCall(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
                 if (arguments.length > 0) {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
@@ -123,14 +150,7 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
                     if (fqn != null && targetFunctions.containsKey(fqn)) {
                         final int index = targetFunctions.get(fqn);
                         if (arguments.length >= index + 1 && !this.isTestContext(reference)) {
-                            final PsiElement target      = arguments[index];
-                            final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[index]);
-                            if (!values.isEmpty()) {
-                                if (values.stream().anyMatch(candidate -> candidate instanceof StringLiteralExpression)) {
-                                    holder.registerProblem(target, message);
-                                }
-                                values.clear();
-                            }
+                            this.analyzeTarget(arguments[index]);
                         }
                     }
                 }

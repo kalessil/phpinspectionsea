@@ -11,6 +11,6 @@ function cases_holder() {
         count([]),
         count(array_keys([], 'search')),
 
-        array_keys(array_slice([]), 0),
+        array_keys(array_slice([], 0)),
     ];
 }

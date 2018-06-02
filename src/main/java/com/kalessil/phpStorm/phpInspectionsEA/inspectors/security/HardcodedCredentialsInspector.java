@@ -119,7 +119,10 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
                     if (reference != null) {
                         final PsiElement[] arguments = expression.getParameters();
                         if (arguments.length > 0) {
-                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                            PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                            if (resolved instanceof PhpClass) {
+                                resolved = OpenapiResolveUtil.resolveMethod((PhpClass) resolved, "__construct");
+                            }
                             if (resolved instanceof Method) {
                                 final String fqn = ((Method) resolved).getFQN().toLowerCase();
                                 if (targetFunctions.containsKey(fqn)) {

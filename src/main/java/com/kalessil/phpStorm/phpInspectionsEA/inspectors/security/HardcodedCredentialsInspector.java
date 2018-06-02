@@ -77,6 +77,8 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
         targetFunctions.put("\\mongodb.authenticate", 1);
         targetFunctions.put("\\rararchive.open", 1);
         targetFunctions.put("\\stomp.__construct", 2);
+        targetFunctions.put("\\mysqli.__construct", 2);
+        targetFunctions.put("\\mysqli.connect", 2);
 
         for (final String fqn : targetFunctions.keySet()) {
             final String[] split = fqn.split("\\.");

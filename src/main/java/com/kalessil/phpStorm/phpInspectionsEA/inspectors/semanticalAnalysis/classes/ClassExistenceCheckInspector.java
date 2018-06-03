@@ -2,19 +2,19 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
-import com.jetbrains.php.lang.psi.elements.ClassReference;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -31,7 +31,8 @@ import java.util.function.Function;
  */
 
 public class ClassExistenceCheckInspector extends BasePhpInspection {
-    private static final String message = "This call seems to always return false, please inspect the ::class expression.";
+    private static final String messageMismatch = "This call seems to always return false, please inspect the ::class expression.";
+    private static final String messageString   = "This call might work not as expected, please specify the third argument.";
 
     final private static Map<String, Function<PhpClass, Boolean>> callbacks = new HashMap<>();
     static {
@@ -55,19 +56,28 @@ public class ClassExistenceCheckInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
-                final PhpLanguageLevel php     = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final Project project          = holder.getProject();
+                final PhpLanguageLevel php     = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                 final boolean hasClassConstant = php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST);
                 final String functionName      = reference.getName();
                 if (hasClassConstant && functionName != null && callbacks.containsKey(functionName)) {
                     final PsiElement candidate;
                     final PsiElement[] arguments = reference.getParameters();
                     /* get target expression */
+                    final int argumentsCount = arguments.length;
                     if (functionName.equals("is_subclass_of") || functionName.equals("is_a")) {
-                        candidate = arguments.length >= 2 ? arguments[1] : null;
+                        /* case 2: the object is a string, but the third argument is missing */
+                        if (argumentsCount == 2 && arguments[0] instanceof PhpTypedElement) {
+                            final PhpType types = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], project);
+                            if (types != null && types.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strString))) {
+                                holder.registerProblem(reference, messageString, ProblemHighlightType.GENERIC_ERROR);
+                            }
+                        }
+                        candidate = argumentsCount >= 2 ? arguments[1] : null;
                     } else {
-                        candidate = arguments.length >= 1 ? arguments[0] : null;
+                        candidate = argumentsCount >= 1 ? arguments[0] : null;
                     }
-                    /* check target expression */
+                    /* case 1: the object mismatches the given class */
                     if (candidate instanceof ClassConstantReference) {
                         final ClassConstantReference argument = (ClassConstantReference) candidate;
                         final PsiElement targetClass          = argument.getClassReference();
@@ -75,7 +85,7 @@ public class ClassExistenceCheckInspector extends BasePhpInspection {
                         if (constantName != null && constantName.equals("class") && targetClass instanceof ClassReference) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) targetClass);
                             if (resolved instanceof PhpClass && !callbacks.get(functionName).apply((PhpClass) resolved)) {
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(reference, messageMismatch, ProblemHighlightType.GENERIC_ERROR);
                             }
                         }
                     }

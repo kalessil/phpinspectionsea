@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -15,9 +16,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -44,7 +42,6 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 final PsiElement operation = expression.getOperation();
                 if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS)) {
-                    /* do not check nested operations */
                     final boolean isNestedBinary = expression.getParent() instanceof BinaryExpression;
                     if (!isNestedBinary) {
                         /* do not report ' ... + []' and '[] + ...' */
@@ -53,11 +50,11 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                         while (left instanceof BinaryExpression) {
                             left = ((BinaryExpression) left).getLeftOperand();
                         }
-                        if (left != null && right != null) {
-                            final boolean addsImplicitArray
-                                    = left instanceof ArrayCreationExpression || right instanceof ArrayCreationExpression;
+                        if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
+                            final boolean addsImplicitArray = left instanceof ArrayCreationExpression ||
+                                                              right instanceof ArrayCreationExpression;
                             if (!addsImplicitArray) {
-                                this.inspectExpression(operation, expression);
+                                this.inspectExpression(operation, (PhpTypedElement) left, (PhpTypedElement) right);
                             }
                         }
                     }
@@ -69,25 +66,35 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                 final PsiElement operation = expression.getOperation();
                 if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS_ASGN)) {
                     /* do not report '... += []' */
-                    final boolean addsImplicitArray = expression.getValue() instanceof ArrayCreationExpression;
-                    if (!addsImplicitArray) {
-                        this.inspectExpression(operation, expression);
+                    final PsiElement variable       = expression.getVariable();
+                    final PsiElement value          = expression.getValue();
+                    final boolean addsImplicitArray = value instanceof ArrayCreationExpression;
+                    if (!addsImplicitArray && variable instanceof PhpTypedElement && value instanceof PhpTypedElement) {
+                        this.inspectExpression(operation, (PhpTypedElement) variable, (PhpTypedElement) value);
                     }
                 }
             }
 
-            /* inspection itself */
-            private void inspectExpression(@NotNull PsiElement operation, @NotNull PsiElement expression) {
-                if (expression instanceof PhpTypedElement) {
-                    final Set<String> types = new HashSet<>();
-                    final PhpType resolved  = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, holder.getProject());
-                    if (resolved != null) {
-                        resolved.filterUnknown().getTypes().forEach(t -> types.add(Types.getType(t)));
+            private void inspectExpression(
+                    @NotNull PsiElement operation,
+                    @NotNull PhpTypedElement left,
+                    @NotNull PhpTypedElement right
+            ) {
+                final Project project      = holder.getProject();
+                final PhpType leftResolved = OpenapiResolveUtil.resolveType(left, project);
+                if (leftResolved != null) {
+                    final boolean isLeftArray = leftResolved.filterUnknown().getTypes().stream()
+                            .anyMatch(type -> Types.getType(type).equals(Types.strArray));
+                    if (isLeftArray) {
+                        final PhpType rightResolved = OpenapiResolveUtil.resolveType(right, project);
+                        if (rightResolved != null) {
+                            final boolean isRightArray = rightResolved.filterUnknown().getTypes().stream()
+                                    .anyMatch(type -> Types.getType(type).equals(Types.strArray));
+                            if (isRightArray) {
+                                holder.registerProblem(operation, message);
+                            }
+                        }
                     }
-                    if (types.size() == 1 && types.contains(Types.strArray)) {
-                        holder.registerProblem(operation, message);
-                    }
-                    types.clear();
                 }
             }
         };

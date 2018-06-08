@@ -12,3 +12,7 @@
     $c = $y + $x + [];
     $d = $z + [];
     $z += [];
+
+    /* false-positives: summing up with non-array types */
+    $e = $x + '...';
+    $x += '...';

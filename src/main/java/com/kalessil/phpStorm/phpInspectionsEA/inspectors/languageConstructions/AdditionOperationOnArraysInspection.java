@@ -86,7 +86,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                     final boolean isLeftArray = leftResolved.filterUnknown().getTypes().stream()
                             .anyMatch(type -> Types.getType(type).equals(Types.strArray));
                     if (isLeftArray) {
-                        final PhpType rightResolved = OpenapiResolveUtil.resolveType(left, project);
+                        final PhpType rightResolved = OpenapiResolveUtil.resolveType(right, project);
                         if (rightResolved != null) {
                             final boolean isRightArray = rightResolved.filterUnknown().getTypes().stream()
                                     .anyMatch(type -> Types.getType(type).equals(Types.strArray));

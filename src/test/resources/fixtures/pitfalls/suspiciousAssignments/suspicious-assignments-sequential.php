@@ -105,3 +105,10 @@ function assign_selfassign_mix_cases_holder()
     $two .= '';
     $two = '';
 }
+
+function assign_line_constant()
+{
+    $array = [];
+    $array[__LINE__] = __LINE__;
+    $array[__LINE__] = __LINE__;
+}

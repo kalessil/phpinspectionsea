@@ -121,8 +121,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 }
 
                 return  resolvedTypesSet.contains(Types.strInteger) ||
-                        resolvedTypesSet.contains(Types.strFloat)   ||
-                        resolvedTypesSet.contains(Types.strString)  ||
+                        resolvedTypesSet.contains(Types.strFloat)   |
                         resolvedTypesSet.contains(Types.strBoolean) ||
                         resolvedTypesSet.contains(Types.strResource);
             }

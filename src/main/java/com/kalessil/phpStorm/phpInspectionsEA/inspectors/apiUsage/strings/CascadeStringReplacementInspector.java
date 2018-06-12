@@ -247,15 +247,16 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             final FunctionReference patch     = this.patch.getElement();
             final FunctionReference eliminate = this.eliminate.getElement();
             if (patch != null && eliminate != null) {
+                final boolean useShortSyntax = USE_SHORT_ARRAYS_SYNTAX;
                 synchronized (eliminate.getContainingFile()) {
-                    this.mergeReplaces(patch, eliminate);
-                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0]);
+                    this.mergeReplaces(patch, eliminate, useShortSyntax);
+                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0], useShortSyntax);
                     this.mergeSources(patch, eliminate);
                 }
             }
         }
 
-        private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from) {
+        private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from, boolean useShortSyntax) {
             final Project project  = to.getProject();
             if (to instanceof ArrayCreationExpression) {
                 final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
@@ -277,7 +278,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             } else {
                 if (from instanceof ArrayCreationExpression) {
                     final PsiElement comma       = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    final String pattern         = (USE_SHORT_ARRAYS_SYNTAX ? "[%1%]" : "array(%1%)").replace("%1%", to.getText());
+                    final String pattern         = (useShortSyntax ? "[%1%]" : "array(%1%)").replace("%1%", to.getText());
                     final PsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
                     final PsiElement firstValue  = ((ArrayCreationExpression) replacement).getFirstPsiChild();
                     final PsiElement marker      = firstValue == null ? null : firstValue.getPrevSibling();
@@ -291,7 +292,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         to.replace(replacement);
                     }
                 } else {
-                    final String pattern = (USE_SHORT_ARRAYS_SYNTAX ? "[%1%, %2%]" : "array(%1%, %2%)")
+                    final String pattern = (useShortSyntax ? "[%1%, %2%]" : "array(%1%, %2%)")
                             .replace("%2%", to.getText())
                             .replace("%1%", from.getText());
                     to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
@@ -313,7 +314,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             return what;
         }
 
-        private void mergeReplaces(@NotNull FunctionReference to, @NotNull FunctionReference from) {
+        private void mergeReplaces(@NotNull FunctionReference to, @NotNull FunctionReference from, boolean useShortSyntax) {
             /* normalization here */
             final PsiElement fromNormalized = this.unbox(from.getParameters()[1]);
             final PsiElement toRaw          = to.getParameters()[1];
@@ -333,13 +334,13 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
             if (needsFurtherFixing) {
                 /* in order to perform the proper merging we'll need to expand short-hand replacement definitions */
-                this.expandReplacement(to);
-                this.expandReplacement(from);
-                this.mergeArguments(to.getParameters()[1], from.getParameters()[1]);
+                this.expandReplacement(to, useShortSyntax);
+                this.expandReplacement(from, useShortSyntax);
+                this.mergeArguments(to.getParameters()[1], from.getParameters()[1], useShortSyntax);
             }
         }
 
-        private void expandReplacement(@NotNull FunctionReference call) {
+        private void expandReplacement(@NotNull FunctionReference call, boolean useShortSyntax) {
             final PsiElement[] arguments = call.getParameters();
             final PsiElement search      = arguments[0];
             final PsiElement replace     = arguments[1];
@@ -351,7 +352,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         PhpPsiElementFactory.createPhpPsiFromText(
                             call.getProject(),
                             ArrayCreationExpression.class,
-                            (USE_SHORT_ARRAYS_SYNTAX ? "[%a%]" : "array(%a%)").replace("%a%", String.join(", ", replaces))
+                            (useShortSyntax ? "[%a%]" : "array(%a%)").replace("%a%", String.join(", ", replaces))
                         )
                     );
                 }

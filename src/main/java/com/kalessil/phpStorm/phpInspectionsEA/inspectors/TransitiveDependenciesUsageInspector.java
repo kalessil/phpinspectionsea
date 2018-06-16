@@ -77,10 +77,14 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 if (filePath != null) {
                     final FileBasedIndex index = this.getIndex();
                     if (index != null) {
-                        final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-                        final List<String> manifests  = index.getValues(ComposerPackageRelationIndexer.identity, filePath, scope);
-                        if (manifests.size() == 1) {
-                            result = manifests.get(0);
+                        List<String> manifests;
+                        try {
+                            manifests = index.getValues(ComposerPackageRelationIndexer.identity, filePath, GlobalSearchScope.allScope(project));
+                            if (manifests.size() == 1) {
+                                result = manifests.get(0);
+                            }
+                        } catch (final Throwable failure) {
+                            manifests = new ArrayList<>();
                         }
                         manifests.clear();
                     }
@@ -116,7 +120,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
             private FileBasedIndex getIndex() {
                 try {
                     return FileBasedIndex.getInstance();
-                } catch (Throwable failure) {
+                } catch (final Throwable failure) {
                     return null;
                 }
             }

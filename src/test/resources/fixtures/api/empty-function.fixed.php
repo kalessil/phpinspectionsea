@@ -4,22 +4,19 @@
     echo 0 === count([]);
     echo 0 !== count([]);
 
-    function typedParams(?int $int, ?float $float, ?string $string, ?bool $boolean) {
+    function typedParams(?int $int, ?float $float, ?bool $boolean) {
         return [
             /* pattern: can be compared to null */
             null === $int,
             null === $float,
-            null === $string,
             null === $boolean
         ];
     }
 
-    function getNullableInt(?int $int)          { return $int; }
-    function getNullableString(?string $string) { return $string; }
+    function getNullableInt(?int $int) { return $int; }
     echo null === getNullableInt();
     echo null !== getNullableInt();
-    echo null === getNullableString();
-    echo null !== getNullableString();
 
     echo empty(1);
+    echo empty('...');
     echo empty(null);

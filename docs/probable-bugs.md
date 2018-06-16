@@ -182,4 +182,4 @@ could not be resolved, the `__isset` method existence is verified and reported i
 The main assumption made here is that codebase is not relying to dynamic properties, but on DTOs (Data Transfer Objects).
 With this assumption magic methods `__isset` (we check only this one), `__get`, `__set` are needed.
 
-If the `__isset` method is not implemented, the both target constructs will constantly return ``false`.
+If the `__isset` method is not implemented, the both target constructs will constantly return `false`.

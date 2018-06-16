@@ -85,8 +85,11 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
             private void handleLateStaticBinding(@NotNull PsiElement base, @NotNull PsiElement operator, @NotNull Method method) {
                 if (RESPECT_PHPUNIT_STANDARDS) {
                     final String fqn = method.getFQN();
-                    if (fqn.startsWith("\\PHPUnit") && fqn.replaceAll("_", "\\").startsWith("\\PHPUnit\\Framework\\")) {
-                        return;
+                    if (fqn.startsWith("\\PHPUnit")) {
+                        final String normalized = fqn.indexOf('_') == -1 ? fqn : fqn.replaceAll("_", "\\");
+                        if (normalized.startsWith("\\PHPUnit\\Framework\\")) {
+                            return;
+                        }
                     }
                 }
 

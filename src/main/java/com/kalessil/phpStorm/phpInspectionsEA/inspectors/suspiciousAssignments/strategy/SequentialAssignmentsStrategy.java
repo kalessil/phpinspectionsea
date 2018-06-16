@@ -33,7 +33,7 @@ final public class SequentialAssignmentsStrategy {
         final PsiElement parent    = expression.getParent();
         final PsiElement container = expression.getVariable();
         if (container != null && OpenapiTypesUtil.isStatementImpl(parent)) {
-            final boolean isTargetExpression = !isArrayPush(container) && !isContainerUsed(container, expression);
+            final boolean isTargetExpression = !isValidArrayWrite(container) && !isContainerUsed(container, expression);
             if (isTargetExpression) {
                 final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
                 if (previous != null) {
@@ -50,15 +50,21 @@ final public class SequentialAssignmentsStrategy {
         }
     }
 
-    /* TODO: ContextUtil::isArrayPush() - parent is assignment and [] is at any level */
-    static private boolean isArrayPush(@NotNull PsiElement container) {
+    static private boolean isValidArrayWrite(@NotNull PsiElement container) {
         boolean result = false;
         while (container instanceof ArrayAccessExpression) {
             final ArrayAccessExpression expression = (ArrayAccessExpression) container;
             final ArrayIndex index                 = expression.getIndex();
-            if (index != null && index.getValue() == null) {
-                result = true;
-                break;
+            if (index != null) {
+                final PsiElement indexValue = index.getValue();
+                if (result = (indexValue == null)) {
+                    break;
+                } else if (indexValue instanceof ConstantReference) {
+                    final String name = ((ConstantReference) indexValue).getName();
+                    if (result = (name != null && name.equals("__LINE__"))) {
+                        break;
+                    }
+                }
             }
             container = expression.getValue();
         }

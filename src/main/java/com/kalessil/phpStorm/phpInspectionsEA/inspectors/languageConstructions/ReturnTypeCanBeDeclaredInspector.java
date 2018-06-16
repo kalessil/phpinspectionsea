@@ -286,19 +286,22 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression != null && !project.isDisposed()) {
-                final Method method   = (Method) expression.getParent();
-                final PsiElement body = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
-                if (body != null) {
-                    PsiElement injectionPoint = body.getPrevSibling();
-                    if (injectionPoint instanceof PsiWhiteSpace) {
-                        injectionPoint = injectionPoint.getPrevSibling();
-                    }
-                    if (injectionPoint != null) {
-                        final Function donor = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
-                        PsiElement implant   = OpenapiElementsUtil.getReturnType(donor);
-                        while (implant != null && !OpenapiTypesUtil.is(implant, PhpTokenTypes.chRPAREN)) {
-                            injectionPoint.getParent().addAfter(implant, injectionPoint);
-                            implant = implant.getPrevSibling();
+                final PsiElement parent = expression.getParent();
+                if (parent instanceof Method) {
+                    final Method method   = (Method) parent;
+                    final PsiElement body = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
+                    if (body != null) {
+                        PsiElement injectionPoint = body.getPrevSibling();
+                        if (injectionPoint instanceof PsiWhiteSpace) {
+                            injectionPoint = injectionPoint.getPrevSibling();
+                        }
+                        if (injectionPoint != null) {
+                            final Function donor = PhpPsiElementFactory.createFunction(project, "function(): " + type + "{}");
+                            PsiElement implant   = OpenapiElementsUtil.getReturnType(donor);
+                            while (implant != null && !OpenapiTypesUtil.is(implant, PhpTokenTypes.chRPAREN)) {
+                                injectionPoint.getParent().addAfter(implant, injectionPoint);
+                                implant = implant.getPrevSibling();
+                            }
                         }
                     }
                 }

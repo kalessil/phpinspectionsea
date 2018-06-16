@@ -91,16 +91,16 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
         TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement object) {
             super();
-            SmartPointerManager manager =  SmartPointerManager.getInstance(operator.getProject());
+            final SmartPointerManager manager =  SmartPointerManager.getInstance(operator.getProject());
 
-            this.object   = null == object ? null : manager.createSmartPsiElementPointer(object);
+            this.object   = object == null ? null : manager.createSmartPsiElementPointer(object);
             this.operator = manager.createSmartPsiElementPointer(operator);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Use ->";
+            return "Use -> instead";
         }
 
         @NotNull
@@ -112,17 +112,13 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement operator = this.operator.getElement();
-            final PsiElement arrow    = PhpPsiElementFactory.createArrow(project);
-            if (null == operator || null == arrow) {
-                return;
-            }
+            if (operator != null && !project.isDisposed()) {
+                operator.replace(PhpPsiElementFactory.createArrow(project));
 
-            operator.replace(arrow);
-
-            final PsiElement object       = null == this.object ? null : this.object.getElement();
-            final PsiElement thisVariable = PhpPsiElementFactory.createVariable(project, "this", true);
-            if (null != object && null != thisVariable) {
-                object.replace(thisVariable);
+                final PsiElement object = this.object == null ? null : this.object.getElement();
+                if (object != null) {
+                    object.replace(PhpPsiElementFactory.createVariable(project, "this", true));
+                }
             }
         }
     }

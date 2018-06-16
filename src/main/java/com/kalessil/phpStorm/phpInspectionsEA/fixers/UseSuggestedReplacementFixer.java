@@ -44,7 +44,7 @@ public class UseSuggestedReplacementFixer implements LocalQuickFix {
             final PsiElement replacement = PhpPsiElementFactory
                     .createPhpPsiFromText(project, ParenthesizedExpression.class, '(' + this.expression + ')')
                     .getArgument();
-            if (replacement != null) {
+            if (replacement != null && !project.isDisposed()) {
                 expression.replace(replacement);
             }
         }

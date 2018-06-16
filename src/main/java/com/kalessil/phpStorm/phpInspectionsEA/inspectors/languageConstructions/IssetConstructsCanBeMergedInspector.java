@@ -160,7 +160,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
         ) {
             final SmartPointerManager factory = SmartPointerManager.getInstance(binary.getProject());
 
-            this.fragments = fragments.stream().map(PsiElement::getText).collect(Collectors.toList());
+            this.fragments = fragments.stream().filter(Objects::nonNull).map(PsiElement::getText).collect(Collectors.toList());
             this.operator  = operator;
             this.binary    = factory.createSmartPsiElementPointer(binary);
             this.first     = factory.createSmartPsiElementPointer(first);

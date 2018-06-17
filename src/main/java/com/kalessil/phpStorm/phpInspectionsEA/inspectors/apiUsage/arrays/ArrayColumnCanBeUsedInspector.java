@@ -8,7 +8,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +49,7 @@ public class ArrayColumnCanBeUsedInspector extends BasePhpInspection {
                                     if (candidate instanceof ArrayAccessExpression) {
                                         final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
                                         final PsiElement value             = access.getValue();
-                                        if (value instanceof Variable && OpeanapiEquivalenceUtil.areEqual(value, parameters[0])) {
+                                        if (value instanceof Variable && parameters[0].getName().equals(((Variable) value).getName())) {
                                             final ArrayIndex index = access.getIndex();
                                             final PsiElement key   = index == null ? null : index.getValue();
                                             if (key != null) {

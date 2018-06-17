@@ -92,9 +92,10 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
 
                         /* pattern 3: array_values(array_column(...)) */
                         if (OpenapiTypesUtil.isFunctionReference(innerArguments[0])) {
-                            final String argumentName = ((FunctionReference) innerArguments[0]).getName();
-                            if (argumentName != null && argumentName.equals("array_column")) {
-                                holder.registerProblem(reference, messageArrayColumn, new ReplaceFix(innerArguments[0].getText()));
+                            final FunctionReference argument = (FunctionReference) innerArguments[0];
+                            final String argumentName        = argument.getName();
+                            if (argumentName != null && argumentName.equals("array_column") && argument.getParameters().length == 2) {
+                                holder.registerProblem(reference, messageArrayColumn, new ReplaceFix(argument.getText()));
                             }
                         }
                     }

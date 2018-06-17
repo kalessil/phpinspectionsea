@@ -15,5 +15,8 @@ function cases_holder() {
         str_replace(array_values([]), array_keys([]), '...'),
 
         <warning descr="'array_values(array_slice([], 0))' is making more sense here (reduces amount of processed elements).">array_slice(array_values([]), 0)</warning>,
+
+        array_values(array_map('...', 'key')),
+        array_values(array_map('...', 'index', 'key')),
     ];
 }

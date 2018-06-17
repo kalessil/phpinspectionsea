@@ -15,5 +15,8 @@ function cases_holder() {
         str_replace(array_values([]), array_keys([]), '...'),
 
         array_values(array_slice([], 0)),
+
+        array_map('...', 'key'),
+        array_values(array_map('...', 'index', 'key')),
     ];
 }

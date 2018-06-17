@@ -3,7 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -21,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArrayColumnCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' would fit more here (it also faster).";
+    private static final String messagePattern = "'%s' would fit more here (it also faster, but loses original keys).";
 
     @NotNull
     public String getShortName() {
@@ -34,6 +37,11 @@ public class ArrayColumnCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled() || php.compareTo(PhpLanguageLevel.PHP550) < 0) {
+                    return;
+                }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("array_map")) {
                     final PsiElement[] arguments = reference.getParameters();

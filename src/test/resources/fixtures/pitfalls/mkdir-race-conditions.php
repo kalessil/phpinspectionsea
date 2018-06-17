@@ -22,3 +22,7 @@ function cases_holder() {
     if (!is_dir('...') && !mkdir('...') && !is_dir('...')) {}
     if (is_dir('...') || mkdir('...') || is_dir('...')) {}
 }
+
+function quickfix_with_variable() {
+    <error descr="Following construct should be used: 'if (!mkdir('...') && !is_dir(...)) { ... }'.">mkdir(trim('...'));</error>
+}

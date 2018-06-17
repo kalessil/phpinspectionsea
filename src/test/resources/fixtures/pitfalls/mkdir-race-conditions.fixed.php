@@ -28,3 +28,9 @@ function cases_holder() {
     if (!is_dir('...') && !mkdir('...') && !is_dir('...')) {}
     if (is_dir('...') || mkdir('...') || is_dir('...')) {}
 }
+
+function quickfix_with_variable() {
+    if (!mkdir($concurrentDirectory = trim('...')) && !is_dir($concurrentDirectory)) {
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+    }
+}

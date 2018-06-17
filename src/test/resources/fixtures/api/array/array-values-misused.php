@@ -16,7 +16,7 @@ function cases_holder() {
 
         <warning descr="'array_values(array_slice([], 0))' is making more sense here (reduces amount of processed elements).">array_slice(array_values([]), 0)</warning>,
 
-        <warning descr="'array_values(...)' is not making any sense here (just count it's argument).">array_values(array_map('...', 'key'))</warning>,
-        array_values(array_map('...', 'index', 'key')),
+        <warning descr="'array_values(...)' is not making any sense here (just count it's argument).">array_values(array_column([], 'index'))</warning>,
+        array_values(array_column([], 'index', 'key')),
     ];
 }

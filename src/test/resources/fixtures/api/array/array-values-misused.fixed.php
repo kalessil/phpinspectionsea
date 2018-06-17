@@ -16,7 +16,7 @@ function cases_holder() {
 
         array_values(array_slice([], 0)),
 
-        array_map('...', 'key'),
-        array_values(array_map('...', 'index', 'key')),
+        array_column([], 'index'),
+        array_values(array_column([], 'index', 'key')),
     ];
 }

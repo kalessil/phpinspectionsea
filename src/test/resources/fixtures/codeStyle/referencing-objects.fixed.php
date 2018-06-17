@@ -31,3 +31,10 @@
     function writingInto(stdClass &$param) {
         $param = new stdClass();
     }
+
+    /* false-positives: boolean context */
+    function booleanContext(stdClass &$one, stdClass &$two, stdClass &$three) {
+        if ($one) {}
+        while ($two) {}
+        do {} while ($three);
+    }

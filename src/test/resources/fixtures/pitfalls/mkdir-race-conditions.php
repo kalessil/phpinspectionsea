@@ -24,5 +24,5 @@ function cases_holder() {
 }
 
 function quickfix_with_variable() {
-    <error descr="Following construct should be used: 'if (!mkdir('...') && !is_dir(...)) { ... }'.">mkdir(trim('...'));</error>
+    <error descr="Following construct should be used: 'if (!mkdir(trim('...')) && !is_dir(...)) { ... }'.">mkdir(trim('...'));</error>
 }

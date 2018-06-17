@@ -32,9 +32,9 @@ import java.util.stream.Collectors;
  */
 
 public class MkdirRaceConditionInspector extends BasePhpInspection {
-    private static final String patternDirectCall   = "Following construct should be used: 'if (!mkdir(%s) && !is_dir(%s)) { ... }'.";
-    private static final String patternAndCondition = "Some check are missing: '!mkdir(%s) && !is_dir(%s)'.";
-    private static final String patternOrCondition  = "Some check are missing: 'mkdir(%s) || is_dir(%s)'.";
+    private static final String patternDirectCall   = "Following construct should be used: 'if (!mkdir(%s) && !is_dir(...)) { ... }'.";
+    private static final String patternAndCondition = "Some check are missing: '!mkdir(%s) && !is_dir(...)'.";
+    private static final String patternOrCondition  = "Some check are missing: 'mkdir(%s) || is_dir(...)'.";
 
     @NotNull
     public String getShortName() {
@@ -75,7 +75,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
                     final String binary               = searchResult.isInverted ? patternAndCondition : patternOrCondition;
                     final String messagePattern       = (context instanceof If ? binary : patternDirectCall);
-                    final String message              = String.format(messagePattern, String.join(", ", fixerArguments), arguments[0].getText());
+                    final String message              = String.format(messagePattern, String.join(", ", fixerArguments));
                     holder.registerProblem(
                             context instanceof If ? target : context,
                             message,

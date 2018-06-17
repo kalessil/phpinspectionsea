@@ -183,7 +183,7 @@ final public class ExpressionSemanticUtil {
 
     public static boolean isUsedAsLogicalOperand(@NotNull PsiElement expression) {
         final PsiElement parent = expression.getParent();
-        if (parent instanceof If || parent instanceof ElseIf) {
+        if (parent instanceof If || parent instanceof ElseIf || parent instanceof While || parent instanceof DoWhile) {
             return true;
         }
         if (parent instanceof UnaryExpression) {

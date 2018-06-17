@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class ArrayValuesMissUseInspector extends BasePhpInspection {
     private static final String messageForeach       = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageStringReplace = "'array_values(...)' is not making any sense here (just use it's argument).";
+    private static final String messageArrayColumn   = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageInArray       = "'array_values(...)' is not making any sense here (just search in it's argument).";
     private static final String messageCount         = "'array_values(...)' is not making any sense here (just count it's argument).";
     private static final String messageArraySlice    = "'%s' is making more sense here (reduces amount of processed elements).";
@@ -47,6 +48,7 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                     final PsiElement[] innerArguments = reference.getParameters();
                     if (innerArguments.length == 1) {
                         final PsiElement parent = reference.getParent();
+                        /* pattern 1: outer call doesn't need array_values */
                         if (parent instanceof ParameterList) {
                             final PsiElement grandParent = parent.getParent();
                             if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
@@ -79,10 +81,20 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                     }
                                 }
                             }
-                        } else if (parent instanceof ForeachStatement) {
+                        }
+                        /* pattern 2: foreach(array_values as ...) */
+                        else if (parent instanceof ForeachStatement) {
                             final ForeachStatement foreach = (ForeachStatement) parent;
                             if (foreach.getKey() == null && !foreach.getVariables().isEmpty()) {
                                 holder.registerProblem(reference, messageForeach, new ReplaceFix(innerArguments[0].getText()));
+                            }
+                        }
+
+                        /* pattern 3: array_values(array_column(...)) */
+                        if (OpenapiTypesUtil.isFunctionReference(innerArguments[0])) {
+                            final String argumentName = ((FunctionReference) innerArguments[0]).getName();
+                            if (argumentName != null && argumentName.equals("array_column")) {
+                                holder.registerProblem(reference, messageArrayColumn, new ReplaceFix(innerArguments[0].getText()));
                             }
                         }
                     }

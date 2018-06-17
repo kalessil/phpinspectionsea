@@ -53,7 +53,7 @@ public class ArrayColumnCanBeUsedInspector extends BasePhpInspection {
                                         if (value instanceof Variable && OpeanapiEquivalenceUtil.areEqual(value, parameters[0])) {
                                             final ArrayIndex index = access.getIndex();
                                             final PsiElement key   = index == null ? null : index.getValue();
-                                            if (key instanceof StringLiteralExpression || key instanceof Variable) {
+                                            if (key != null) {
                                                     final String replacement = String.format(
                                                             "array_column(%s, %s)",
                                                             arguments[1].getText(),

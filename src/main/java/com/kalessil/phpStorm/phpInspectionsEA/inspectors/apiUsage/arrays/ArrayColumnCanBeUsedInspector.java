@@ -4,10 +4,10 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -54,19 +54,16 @@ public class ArrayColumnCanBeUsedInspector extends BasePhpInspection {
                                             final ArrayIndex index = access.getIndex();
                                             final PsiElement key   = index == null ? null : index.getValue();
                                             if (key instanceof StringLiteralExpression || key instanceof Variable) {
-                                                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(reference);
-                                                if (nameNode != null) {
                                                     final String replacement = String.format(
                                                             "array_column(%s, %s)",
                                                             arguments[1].getText(),
                                                             key.getText()
                                                     );
                                                     holder.registerProblem(
-                                                            nameNode,
+                                                            reference,
                                                             String.format(messagePattern, replacement),
                                                             new UseArrayColumnFixer(replacement)
                                                     );
-                                                }
                                             }
                                         }
                                     }
@@ -77,5 +74,17 @@ public class ArrayColumnCanBeUsedInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    private class UseArrayColumnFixer extends UseSuggestedReplacementFixer {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Use array_column(...) instead";
+        }
+
+        UseArrayColumnFixer(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

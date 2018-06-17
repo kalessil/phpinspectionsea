@@ -38,6 +38,6 @@ function quickfix_with_variable() {
     /* case: incomplete conditions */
     if (!mkdir($concurrentDirectory = trim('...')) && !is_dir($concurrentDirectory)) {}
     if (!mkdir($concurrentDirectory = trim('...')) && !is_dir($concurrentDirectory)) {}
-    if (!is_dir('...') && !mkdir($concurrentDirectory = trim('...')) && !is_dir($concurrentDirectory)) {}
-    if (is_dir('...') || mkdir($concurrentDirectory = trim('...')) || is_dir($concurrentDirectory)) {}
+    if (!is_dir(trim('...')) && !mkdir($concurrentDirectory = trim('...')) && !is_dir($concurrentDirectory)) {}
+    if (is_dir(trim('...')) || mkdir($concurrentDirectory = trim('...')) || is_dir($concurrentDirectory)) {}
 }

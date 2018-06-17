@@ -280,37 +280,32 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 /* extract calls */
                 final List<PsiElement> callsExtracted = new ArrayList<>();
                 for (final PsiElement condition : conditions) {
-                    if (!(condition instanceof BinaryExpression)) {
-                        continue;
-                    }
-
-                    PsiElement tempExpression = ((BinaryExpression) condition).getLeftOperand();
-                    if (tempExpression instanceof FunctionReference) {
-                        callsExtracted.add(tempExpression);
-                    }
-                    tempExpression = ((BinaryExpression) condition).getRightOperand();
-                    if (tempExpression instanceof FunctionReference) {
-                        callsExtracted.add(tempExpression);
+                    if (condition instanceof BinaryExpression) {
+                        final PsiElement left = ((BinaryExpression) condition).getLeftOperand();
+                        if (left instanceof FunctionReference) {
+                            callsExtracted.add(left);
+                        }
+                        final PsiElement right = ((BinaryExpression) condition).getRightOperand();
+                        if (right instanceof FunctionReference) {
+                            callsExtracted.add(right);
+                        }
                     }
                 }
 
                 /* scan for duplicates */
                 for (final PsiElement expression : callsExtracted) {
-                    if (null == expression) {
-                        continue;
-                    }
-
-                    /* put a stub */
-                    callsExtracted.set(callsExtracted.indexOf(expression), null);
-                    /* search duplicates in current scope */
-                    for (final PsiElement innerLoopExpression : callsExtracted) {
-                        if (innerLoopExpression != null && OpeanapiEquivalenceUtil.areEqual(innerLoopExpression, expression)) {
-                            holder.registerProblem(innerLoopExpression, messageDuplicateConditionPart);
-                            callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
+                    if (expression != null) {
+                        /* put a stub */
+                        callsExtracted.set(callsExtracted.indexOf(expression), null);
+                        /* search duplicates in current scope */
+                        for (final PsiElement innerLoopExpression : callsExtracted) {
+                            if (innerLoopExpression != null && OpeanapiEquivalenceUtil.areEqual(innerLoopExpression, expression)) {
+                                holder.registerProblem(innerLoopExpression, messageDuplicateConditionPart);
+                                callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
+                            }
                         }
                     }
                 }
-
             }
 
             private List<String> getPreviouslyModifiedVariables(@NotNull If ifStatement) {
@@ -420,26 +415,29 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
 
                     /* search duplicates in current scope */
-                    for (final PsiElement objInnerLoopExpression : conditions) {
-                        if (objInnerLoopExpression != null) {
-                            if (OpeanapiEquivalenceUtil.areEqual(objInnerLoopExpression, objExpression)) {
-                                holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions);
-
-                                int intInnerIndex = conditions.indexOf(objInnerLoopExpression);
-                                conditions.set(intInnerIndex, null);
+                    for (final PsiElement innerLoopExpression : conditions) {
+                        if (innerLoopExpression != null && OpeanapiEquivalenceUtil.areEqual(innerLoopExpression, objExpression)) {
+                            /* false-positives: mkdir race conditions */
+                            final PsiElement extracted = objExpression instanceof UnaryExpression
+                                    ? ((UnaryExpression) objExpression).getValue()
+                                    : objExpression;
+                            if (OpenapiTypesUtil.isFunctionReference(extracted)) {
+                                final String functionName = ((FunctionReference) extracted).getName();
+                                if (functionName != null && functionName.equals("is_dir")) {
+                                    continue;
+                                }
                             }
+
+                            holder.registerProblem(innerLoopExpression, messageDuplicateConditions);
+                            conditions.set(conditions.indexOf(innerLoopExpression), null);
                         }
                     }
 
                     /* search duplicates in outer scopes */
                     for (final PsiElement objOuterScopeExpression : objParentConditions) {
-                        if (objOuterScopeExpression != null) {
-                            if (OpeanapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression)) {
-                                holder.registerProblem(objExpression, messageDuplicateConditions);
-
-                                int intOuterScopeIndex = objParentConditions.indexOf(objOuterScopeExpression);
-                                objParentConditions.set(intOuterScopeIndex, null);
-                            }
+                        if (objOuterScopeExpression != null && OpeanapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression)) {
+                            holder.registerProblem(objExpression, messageDuplicateConditions);
+                            objParentConditions.set(objParentConditions.indexOf(objOuterScopeExpression), null);
                         }
                     }
                 }

@@ -75,10 +75,15 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                             final String parameterName = parameter.getName();
                             final GroupStatement body  = ExpressionSemanticUtil.getGroupStatement(callable);
                             for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
-                                final PsiElement parent = variable.getParent();
-                                if (parent instanceof AssignmentExpression && parameterName.equals(variable.getName())) {
-                                    final AssignmentExpression assignment = (AssignmentExpression) parent;
-                                    if (assignment.getVariable() == variable) {
+                                if (parameterName.equals(variable.getName())) {
+                                    final PsiElement parent = variable.getParent();
+                                    if (parent instanceof AssignmentExpression) {
+                                        final boolean isWrite = ((AssignmentExpression) parent).getVariable() == variable;
+                                        if (isWrite) {
+                                            result = false;
+                                            break;
+                                        }
+                                    } else if (ExpressionSemanticUtil.isUsedAsLogicalOperand(variable)) {
                                         result = false;
                                         break;
                                     }
@@ -104,7 +109,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                             operation = operation.getPrevSibling();
                         }
 
-                        if (operation != null && operation.getText().replaceAll("\\s+","").equals("=&")) {
+                        if (operation != null && operation.getText().replaceAll("\\s+", "").equals("=&")) {
                             holder.registerProblem(expression, messageAssignment, new InstantiationLocalFix(operation));
                         }
                     }
@@ -139,9 +144,11 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement assignOperator = this.assignOperator.getElement();
-            if (assignOperator != null) {
-                LeafPsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
-                assignOperator.replace(replacement);
+            if (assignOperator != null && !project.isDisposed()) {
+                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
+                if (replacement != null) {
+                    assignOperator.replace(replacement);
+                }
             }
         }
     }
@@ -171,15 +178,13 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final Parameter parameter = this.parameter.getElement();
-            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(parameter);
-            if (nameNode != null) {
+            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(this.parameter.getElement());
+            if (nameNode != null && !project.isDisposed()) {
                 PsiElement previous = nameNode.getPrevSibling();
                 if (previous instanceof PsiWhiteSpace) {
                     previous = previous.getPrevSibling();
                     previous.getNextSibling().delete();
                 }
-
                 previous.delete();
             }
         }

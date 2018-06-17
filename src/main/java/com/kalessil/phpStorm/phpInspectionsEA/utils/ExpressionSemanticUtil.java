@@ -183,22 +183,20 @@ final public class ExpressionSemanticUtil {
 
     public static boolean isUsedAsLogicalOperand(@NotNull PsiElement expression) {
         final PsiElement parent = expression.getParent();
-        if (parent instanceof If || parent instanceof ElseIf) {
+        if (parent instanceof If || parent instanceof ElseIf || parent instanceof While || parent instanceof DoWhile) {
             return true;
-        }
-        if (parent instanceof UnaryExpression) {
+        } else if (parent instanceof UnaryExpression) {
             return OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT);
-        }
-        if (parent instanceof BinaryExpression) {
+        } else if (parent instanceof BinaryExpression) {
             final IElementType operation = ((BinaryExpression) parent).getOperationType();
             return PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ||
                    PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation);
-        }
-        if (parent instanceof TernaryExpression) {
+        } else if (parent instanceof TernaryExpression) {
             final TernaryExpression ternary = (TernaryExpression) parent;
             return !ternary.isShort() && expression == ternary.getCondition();
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Nullable

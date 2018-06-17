@@ -48,8 +48,8 @@ public class ArrayColumnCanBeUsedInspector extends BasePhpInspection {
                                     final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
                                     if (candidate instanceof ArrayAccessExpression) {
                                         final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
-                                        final PsiElement value             = access.getValue();
-                                        if (value instanceof Variable && parameters[0].getName().equals(((Variable) value).getName())) {
+                                        final PhpPsiElement value          = access.getValue();
+                                        if (value instanceof Variable && parameters[0].getName().equals(value.getName())) {
                                             final ArrayIndex index = access.getIndex();
                                             final PsiElement key   = index == null ? null : index.getValue();
                                             if (key != null) {

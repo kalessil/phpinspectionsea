@@ -30,6 +30,8 @@ public class ScandirUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            /* note: glob is also sorting by default, but it lacking sort-ing flag, hence glob inspection skipped */
+
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();

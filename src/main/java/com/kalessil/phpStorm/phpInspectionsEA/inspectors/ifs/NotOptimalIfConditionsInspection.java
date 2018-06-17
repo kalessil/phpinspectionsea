@@ -415,10 +415,21 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
 
                     /* search duplicates in current scope */
-                    for (final PsiElement objInnerLoopExpression : conditions) {
-                        if (objInnerLoopExpression != null && OpeanapiEquivalenceUtil.areEqual(objInnerLoopExpression, objExpression)) {
-                            holder.registerProblem(objInnerLoopExpression, messageDuplicateConditions);
-                            conditions.set(conditions.indexOf(objInnerLoopExpression), null);
+                    for (final PsiElement innerLoopExpression : conditions) {
+                        if (innerLoopExpression != null && OpeanapiEquivalenceUtil.areEqual(innerLoopExpression, objExpression)) {
+                            /* false-positives: mkdir race conditions */
+                            final PsiElement extracted = objExpression instanceof UnaryExpression
+                                    ? ((UnaryExpression) objExpression).getValue()
+                                    : objExpression;
+                            if (OpenapiTypesUtil.isFunctionReference(extracted)) {
+                                final String functionName = ((FunctionReference) extracted).getName();
+                                if (functionName != null && functionName.equals("is_dir")) {
+                                    continue;
+                                }
+                            }
+
+                            holder.registerProblem(innerLoopExpression, messageDuplicateConditions);
+                            conditions.set(conditions.indexOf(innerLoopExpression), null);
                         }
                     }
 

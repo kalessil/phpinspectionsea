@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>3.0.3</version>
+  <version>3.0.4</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -58,16 +58,16 @@ the implementation.
   <change-notes><![CDATA[
 Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Nested positive ifs: resolved false-positives (multiple cases)<br/>
-- Parameter could be declared as array: resolved false-positives (mixed types)<br/>
-- Slow array function used in loop: resoled false-positives (following break/return)<br/>
-- Suspicious loop: resolved a false-positive (variable write)<br/>
-- Type casting can be used: resolved false-positives (multiple cases)<br/>
-- Unnecessary parentheses: resolved a false-positive ((... ?? ...)())<br/>
-- Unnecessary type casting: resolved false-positives (`??`)<br/>
+- Fixed crash-reports for June<br/>
 <br/>
-- Nested positive ifs: new cases<br/>
-- Suspicious binary operations: new cases<br/>
+- Addition operator used on arrays: resolved a false-positive (multiple cases)<br/>
+- Cascading 'str_replace(...)' calls: bug-fix QF (mixed array syntax produced)<br/>
+- Exploiting unserialize: resolved a false-positive (classes specified)<br/>
+- Non-optimal if conditions: resolved a false-positive (mkdir race conditions)<br/>
+- Referencing objects: resolved false-positives (boolean context)<br/>
+- Suspicious assignments: resolved a false-positive (line contant)<br/>
+- 'empty(...)' usage: resolved a false-positive (strings)<br/>
+- 'mkdir(...)' race condition: enhanced Quick-Fix (complex directory expressions)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

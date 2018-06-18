@@ -60,14 +60,14 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
 <br/>
 - Fixed crash-reports for June<br/>
 <br/>
-- Addition operator used on arrays: resolved a false-positive (multiple cases)<br/>
-- Cascading 'str_replace(...)' calls: bug-fix QF (mixed array syntax produced)<br/>
+- Addition operator used on arrays: resolved false-positives (multiple cases)<br/>
+- Cascading 'str_replace(...)' calls: bug-fix Quick-Fix (mixed array syntax produced)<br/>
 - Exploiting unserialize: resolved a false-positive (classes specified)<br/>
 - Non-optimal if conditions: resolved a false-positive (mkdir race conditions)<br/>
-- Referencing objects: resolved false-positives (boolean context)<br/>
+- Referencing objects: resolved a false-positive (boolean context)<br/>
 - Suspicious assignments: resolved a false-positive (line contant)<br/>
 - 'empty(...)' usage: resolved a false-positive (strings)<br/>
-- 'mkdir(...)' race condition: enhanced Quick-Fix (complex directory expressions)<br/>
+- 'mkdir(...)' race condition: bug-fix Quick-Fix (complex directory expressions)<br/>
 <br/>
 <hr/>
   ]]></change-notes>

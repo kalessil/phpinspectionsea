@@ -3,7 +3,7 @@
     /** @param string[] $stringsArray */
     function arrayTypes (array $array, iterable $iterable, $stringsArray) {
         return
-            is_array($array) ||
+            <warning descr="Makes no sense, because of parameter type declaration.">is_array($array)</warning> ||
             is_array($iterable) ||
             is_array($stringsArray) ||
 

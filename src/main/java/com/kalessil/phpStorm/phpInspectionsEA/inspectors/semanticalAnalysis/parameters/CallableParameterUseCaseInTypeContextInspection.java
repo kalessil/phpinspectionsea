@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
     private static final String messageNoSense               = "Makes no sense, because it's always true according to annotations.";
+    private static final String messageTypeHint              = "Makes no sense, because of parameter type declaration.";
     private static final String messageViolationInCheck      = "Makes no sense, because this type is not defined in annotations.";
     private static final String patternViolationInAssignment = "New value type (%s%) is not in annotated types.";
 
@@ -74,6 +75,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 final PhpEntryPointInstruction entryPoint = scopeHolder.getControlFlow().getEntryPoint();
 
                 for (final Parameter parameter : parameters) {
+                    final boolean hasTypeDeclared    = !parameter.getDeclaredType().isEmpty();
                     /* normalize parameter types, skip analysis when mixed or object appears */
                     final Set<String> parameterTypes = this.getParameterType(parameter, project);
                     if (parameterTypes.isEmpty()) {
@@ -195,6 +197,10 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     isReversedCheck            = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
                                 }
                                 holder.registerProblem(functionCall, isReversedCheck ? messageNoSense : messageViolationInCheck);
+                            } else {
+                                if (hasTypeDeclared && parameterTypes.size() == 1) {
+                                    holder.registerProblem(functionCall, messageTypeHint);
+                                }
                             }
                             continue;
                         }

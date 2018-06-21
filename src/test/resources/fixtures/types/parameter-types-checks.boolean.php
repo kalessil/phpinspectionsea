@@ -18,7 +18,7 @@ class CasesHolder {
             $third != false,
 
             is_bool($first),
-            <warning descr="Makes no sense, because of parameter type declaration.">is_bool($second)</warning>,
+            is_bool($second),
             <warning descr="Makes no sense, because this type is not defined in annotations.">is_bool($third)</warning>,
         ];
     }

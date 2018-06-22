@@ -78,13 +78,13 @@ final public class AssertBoolOfComparisonStrategy {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested assertion";
+            return "Use suggested assertion instead";
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return getName() + " (assert same or equal)";
         }
 
         @Override

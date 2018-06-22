@@ -257,7 +257,7 @@ final public class NullableVariablesStrategy {
                         } else if (referenceContext instanceof PhpIsset) {
                             continue;
                         } else if (referenceContext instanceof MethodReference) {
-                            reportingTarget = referenceContext;
+                            reportingTarget = lastReference;
                         }
                     }
 

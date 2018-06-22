@@ -24,7 +24,7 @@ public class PhpUnitAssertFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getName() {
-        return "Use suggested assertion instead.";
+        return "Use suggested assertion instead";
     }
 
     @NotNull

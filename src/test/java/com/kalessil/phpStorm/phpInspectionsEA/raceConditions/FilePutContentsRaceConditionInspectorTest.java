@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.com.kalessil.phpStorm.phpInspectionsEA.inspectors.raceConditions;
+package com.kalessil.phpStorm.phpInspectionsEA.raceConditions;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.raceConditions.FilePutContentsRaceConditionInspector;

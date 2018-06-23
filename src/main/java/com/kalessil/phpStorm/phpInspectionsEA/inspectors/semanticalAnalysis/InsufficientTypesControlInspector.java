@@ -28,6 +28,9 @@ public class InsufficientTypesControlInspector extends BasePhpInspection {
     private static final Set<String> functions  = new HashSet<>();
     static {
         functions.add("array_search");
+        functions.add("array_shift");
+        functions.add("array_pop");
+
         functions.add("strpos");
         functions.add("stripos");
         functions.add("strrpos");
@@ -35,7 +38,14 @@ public class InsufficientTypesControlInspector extends BasePhpInspection {
         functions.add("strstr");
         functions.add("stristr");
         functions.add("substr");
-        // TODO: mb-invariants
+
+        functions.add("mb_strpos");
+        functions.add("mb_stripos");
+        functions.add("mb_strrpos");
+        functions.add("mb_strripos");
+        functions.add("mb_strstr");
+        functions.add("mb_stristr");
+        functions.add("mb_substr");
     }
 
     @NotNull
@@ -50,7 +60,7 @@ public class InsufficientTypesControlInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && functions.contains(functionName)) {
+                if (functionName != null && functions.contains(functionName) && reference.getParameters().length > 0) {
                     final boolean isTarget = ExpressionSemanticUtil.isUsedAsLogicalOperand(reference);
                     if (isTarget && this.isFromRootNamespace(reference)) {
                         final PsiElement target = NamedElementUtil.getNameIdentifier(reference);

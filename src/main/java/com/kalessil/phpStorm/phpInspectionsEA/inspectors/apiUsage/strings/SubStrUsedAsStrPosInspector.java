@@ -9,10 +9,12 @@ import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +28,10 @@ import java.util.Set;
  */
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean PREFER_YODA_STYLE    = true;
+    public boolean PREFER_REGULAR_STYLE = false;
+
     private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
 
     private static final Set<String> functions      = new HashSet<>();
@@ -94,20 +100,26 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 if (parentExpression instanceof BinaryExpression) {
                     final BinaryExpression parent = (BinaryExpression) parentExpression;
                     if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(parent.getOperationType())) {
-                        /* get second operand */
                         final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, highLevelCall);
                         final PsiElement operationNode = parent.getOperation();
                         if (secondOperand != null && operationNode != null) {
                             final String operator      = operationNode.getText();
                             final boolean isMbFunction = functionName.equals("mb_substr");
                             final boolean hasEncoding  = isMbFunction && 4 == arguments.length;
-                            final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
-                                .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
-                                .replace("%o%", operator.length() == 2 ? (operator + '=') : operator)
-                                .replace("%e%", hasEncoding ? (", " + arguments[3].getText()) : "")
-                                .replace("%p%", secondOperand.getText())
-                                .replace("%s%", arguments[0].getText())
-                                .replace("%i%", index);
+
+                            final String call          = String.format(
+                                    "%s(%s, %s%s)",
+                                    (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"),
+                                    arguments[0].getText(),
+                                    secondOperand.getText(),
+                                    hasEncoding ? (", " + arguments[3].getText()) : ""
+                            );
+                            final String replacement   = String.format(
+                                    "%s %s %s",
+                                    PREFER_YODA_STYLE ? index : call,
+                                    operator.length() == 2 ? (operator + '=') : operator,
+                                    PREFER_YODA_STYLE ? call : index
+                            );
                             holder.registerProblem(
                                     parentExpression,
                                     String.format(messagePattern, replacement),
@@ -118,6 +130,13 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
+            radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
+            radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
+        }));
     }
 
     private class UseStringSearchFix extends UseSuggestedReplacementFixer {

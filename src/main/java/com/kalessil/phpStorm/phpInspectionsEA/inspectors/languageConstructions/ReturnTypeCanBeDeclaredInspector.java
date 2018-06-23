@@ -104,12 +104,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     return;
                 } else if (resolvedReturnType.hasUnknown()) {
                     /* adding class interface leading to promise-type for interface method */
-                    boolean isPrimitiveInfluencedByInterface = false;
-                    if (resolvedReturnType.size() == 2) {
-                        final PhpType filtered           = resolvedReturnType.filterUnknown();
-                        isPrimitiveInfluencedByInterface = filtered.size() == 1 && filtered.filterPrimitives().size() == 0;
-                    }
-                    if (!isPrimitiveInfluencedByInterface) {
+                    boolean isInfluencedByInterface = resolvedReturnType.size() == 2 && resolvedReturnType.filterUnknown().size() == 1;
+                    if (!isInfluencedByInterface) {
                         return;
                     }
                 }

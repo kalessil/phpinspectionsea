@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>2.0.5</version>
+  <version>2.0.6</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -25,7 +25,7 @@ A commercial Static Code Analyzer based on <a href="https://plugins.jetbrains.co
 <a href="https://kalessil.github.io/php-inspections-ultimate.html#pricing-mark">Pricing</a>.<br />
 <br />
 Php Inspections (EA Ultimate) is further extending IDE code analysis capabilities, with focus on finding defects,
-security, performance issues and maintainability. To get a closer look at features (27 new and 13 enhanced inspections)
+security, performance issues and maintainability. To get a closer look at features (29 new and 13 enhanced inspections)
 you are welcome to try it 2 weeks for free.<br />
 <br />
 For Mac shortcuts, see <a href="https://www.jetbrains.com/phpstorm/help/keyboard-shortcuts-and-mouse-reference.html">this reference card</a>. Windows/Linux ones are:<br />
@@ -44,9 +44,13 @@ the implementation.
   <change-notes><![CDATA[
 New features release<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-">v3.0.3</a><br />
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-">v3.0.4</a><br />
 <br />
-- ClassExistenceCheckInspector: new patterns<br/>
+- Callable parameter usage violates definition: new patterns<br/>
+- Class existence and relation check correctness: new patterns<br/>
+- Insufficient types control: implemented<br/>
+- 'array_column(...)' can be used: implemented<br/>
+- 'array_values(...)' misused: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

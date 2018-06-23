@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -59,6 +60,8 @@ public class InsufficientTypesControlInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functions.contains(functionName) && reference.getParameters().length > 0) {
                     final boolean isTarget = ExpressionSemanticUtil.isUsedAsLogicalOperand(reference);

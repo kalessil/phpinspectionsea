@@ -13,6 +13,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -23,7 +26,20 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%r%' can be used instead (improves maintainability).";
+    private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
+
+    private static final Set<String> functions      = new HashSet<>();
+    private static final Set<String> outerFunctions = new HashSet<>();
+    static {
+        functions.add("substr");
+        functions.add("mb_substr");
+
+        outerFunctions.add("strtolower");
+        outerFunctions.add("strtoupper");
+        outerFunctions.add("mb_strtolower");
+        outerFunctions.add("mb_strtoupper");
+        outerFunctions.add("mb_convert_case");
+    }
 
     @NotNull
     public String getShortName() {
@@ -37,7 +53,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || (!functionName.equals("substr") && !functionName.equals("mb_substr"))) {
+                if (functionName == null || !functions.contains(functionName)) {
                     return;
                 }
                 final PsiElement[] arguments = reference.getParameters();
@@ -67,10 +83,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                     final FunctionReference parentCall = (FunctionReference) parentExpression;
                     final PsiElement[] parentArguments = parentCall.getParameters();
                     final String parentName            = parentCall.getName();
-                    if (
-                        parentName != null && parentArguments.length == 1 &&
-                        (parentName.equals("strtoupper") || parentName.equals("strtolower"))
-                    ) {
+                    if (parentName != null && parentArguments.length == 1 && outerFunctions.contains(parentName)) {
                         caseManipulated  = true;
                         highLevelCall    = parentExpression;
                         parentExpression = parentExpression.getParent();
@@ -89,14 +102,17 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                             final boolean isMbFunction = functionName.equals("mb_substr");
                             final boolean hasEncoding  = isMbFunction && 4 == arguments.length;
                             final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
+                                .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
+                                .replace("%o%", operator.length() == 2 ? (operator + '=') : operator)
                                 .replace("%e%", hasEncoding ? (", " + arguments[3].getText()) : "")
                                 .replace("%p%", secondOperand.getText())
                                 .replace("%s%", arguments[0].getText())
-                                .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
-                                .replace("%o%", operator.length() == 2 ? (operator + '=') : operator)
                                 .replace("%i%", index);
-                            final String message       = messagePattern.replace("%r%", replacement);
-                            holder.registerProblem(parentExpression, message, new UseStringSearchFix(replacement));
+                            holder.registerProblem(
+                                    parentExpression,
+                                    String.format(messagePattern, replacement),
+                                    new UseStringSearchFix(replacement)
+                            );
                         }
                     }
                 }

@@ -27,7 +27,15 @@ public class InsufficientTypesControlInspector extends BasePhpInspection {
 
     private static final Set<String> functions  = new HashSet<>();
     static {
+        functions.add("array_search");
         functions.add("strpos");
+        functions.add("stripos");
+        functions.add("strrpos");
+        functions.add("strripos");
+        functions.add("strstr");
+        functions.add("stristr");
+        functions.add("substr");
+        // TODO: mb-invariants
     }
 
     @NotNull

@@ -238,7 +238,6 @@ final public class NullableVariablesStrategy {
                 final MemberReference reference = (MemberReference) parent;
                 final PsiElement subject        = reference.getClassReference();
                 if (subject instanceof Variable && ((Variable) subject).getName().equals(variableName)) {
-                    PsiElement reportingTarget = subject;
 
                     /* false-positives: `$variable->property ?? ...`, isset($variable->property) */
                     if (parent instanceof FieldReference) {
@@ -256,12 +255,10 @@ final public class NullableVariablesStrategy {
                             }
                         } else if (referenceContext instanceof PhpIsset) {
                             continue;
-                        } else if (referenceContext instanceof MethodReference) {
-                            reportingTarget = lastReference;
                         }
                     }
 
-                    holder.registerProblem(reportingTarget, message);
+                    holder.registerProblem(subject, message);
                 }
             }
             /* cases when NPE can be introduced: __invoke calls */

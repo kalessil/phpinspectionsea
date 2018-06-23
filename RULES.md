@@ -217,6 +217,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | KeysFragmentationWithArrayFunctionsInspection   | Array keys set fragmentation                              | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousTernaryOperatorInspection             | Suspicious ternary operator                               | n/a | yes | n/a  | no  |
 | Probable bugs        | MissingDirectorySeparatorInspection             | Missing directory separators                              | n/a | yes | n/a  | no  |
+| Probable bugs        | InsufficientTypesControlInspection              | Insufficient types control                                | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

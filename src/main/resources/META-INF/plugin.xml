@@ -503,6 +503,10 @@ New features release<br/>
         shortName="MissingDirectorySeparatorInspection"           displayName="Missing directory separators"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MissingDirectorySeparatorInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="InsufficientTypesControlInspection"            displayName="Insufficient types control"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.InsufficientTypesControlInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -24,10 +24,6 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-/* TODO: === and !== on strings/numbers/constants (constant expressions) */
-/* ... == ... && ... == ... */
-/* ... != ... || ... != ... */
-
 final public class MultipleValuesEqualityStrategy {
     private static final String messageAlwaysTrue  = "'%s' seems to be always true.";
     private static final String messageAlwaysFalse = "'%s' seems to be always false.";
@@ -39,7 +35,7 @@ final public class MultipleValuesEqualityStrategy {
         equalOperators.put(PhpTokenTypes.opIDENTICAL, "%s === %s && %s === %s");
 
         notEqualOperators.put(PhpTokenTypes.opNOT_EQUAL, "%s != %s || %s != %s");
-        notEqualOperators.put(PhpTokenTypes.opNOT_IDENTICAL, "%s != %s || %s != %s");
+        notEqualOperators.put(PhpTokenTypes.opNOT_IDENTICAL, "%s !== %s || %s !== %s");
     }
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
@@ -104,6 +100,8 @@ final public class MultipleValuesEqualityStrategy {
                                     !(source instanceof ClassConstantReference) &&
                                     !OpenapiTypesUtil.isNumber(source)
                                 ) {
+                                    /* TODO: values only of those filtered types */
+
                                     final boolean isAndOperator = operator == PhpTokenTypes.opAND;
                                     final String fragment       = String.format(
                                             (isAndOperator ? equalOperators : notEqualOperators).get(operation),
@@ -115,7 +113,7 @@ final public class MultipleValuesEqualityStrategy {
                                     values.clear();
 
                                     holder.registerProblem(
-                                            following.getParent(),
+                                            following,
                                             String.format(isAndOperator ? messageAlwaysFalse : messageAlwaysTrue, fragment)
                                     );
                                     return true;

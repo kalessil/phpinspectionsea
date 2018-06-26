@@ -77,7 +77,7 @@ public class ArrayKeysMissUseInspector extends BasePhpInspection {
         };
     }
 
-    static private class ReplaceFix extends UseSuggestedReplacementFixer {
+    private static class ReplaceFix extends UseSuggestedReplacementFixer {
         private static final String title = "Remove unnecessary calls";
 
         @NotNull

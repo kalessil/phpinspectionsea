@@ -89,11 +89,13 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
         };
     }
 
-    private class SimplifyFix extends UseSuggestedReplacementFixer {
+    static private class SimplifyFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Simplify unnecessary case manipulation";
+
         @NotNull
         @Override
         public String getName() {
-            return "Simplify unnecessary case manipulation";
+            return title;
         }
 
         SimplifyFix(@NotNull String expression) {

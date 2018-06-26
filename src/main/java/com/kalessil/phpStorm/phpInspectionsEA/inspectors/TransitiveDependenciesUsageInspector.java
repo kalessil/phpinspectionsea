@@ -83,10 +83,10 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                             if (manifests.size() == 1) {
                                 result = manifests.get(0);
                             }
+                            manifests.clear();
                         } catch (final Throwable failure) {
-                            manifests = new ArrayList<>();
+                            result = null;
                         }
-                        manifests.clear();
                     }
                 }
                 return result;

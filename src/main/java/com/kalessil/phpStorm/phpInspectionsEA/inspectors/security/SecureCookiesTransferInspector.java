@@ -62,14 +62,12 @@ public class SecureCookiesTransferInspector extends LocalInspectionTool {
                     for (int index = 0; index < arguments.length; ++index) {
                         fragments.set(index, arguments[index].getText());
                     }
-                    /* generate replacement and report the issue */
-                    final String replacement = String.format("%s(%s)", reference.getName(), String.join(", ", fragments));
-                    fragments.clear();
                     holder.registerProblem(
                             reference,
-                            String.format(pattern, replacement),
-                            new AddArgumentsFix(replacement)
+                            pattern,
+                            new AddArgumentsFix(String.format("%s(%s)", reference.getName(), String.join(", ", fragments)))
                     );
+                    fragments.clear();
                 }
             }
         };

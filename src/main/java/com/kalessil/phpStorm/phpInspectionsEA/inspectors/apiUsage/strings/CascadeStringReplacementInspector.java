@@ -87,7 +87,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                                 holder.registerProblem(
                                     functionCall,
                                     messageCascading,
-                                    new MergeStringReplaceCallsFix(functionCall, previousCall)
+                                    new MergeStringReplaceCallsFix(functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
                                 );
                             }
                         }
@@ -140,7 +140,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         holder.registerProblem(
                             callCandidate,
                             messageNesting,
-                            new MergeStringReplaceCallsFix(parentCall, call)
+                            new MergeStringReplaceCallsFix(parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
                         );
                     }
                 }
@@ -225,13 +225,15 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
         final private SmartPsiElementPointer<FunctionReference> patch;
         final private SmartPsiElementPointer<FunctionReference> eliminate;
+        final private boolean useShortSyntax;
 
-        MergeStringReplaceCallsFix(@NotNull FunctionReference patch, @NotNull FunctionReference eliminate) {
+        MergeStringReplaceCallsFix(@NotNull FunctionReference patch, @NotNull FunctionReference eliminate, boolean useShortSyntax) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(patch.getProject());
 
-            this.patch     = factory.createSmartPsiElementPointer(patch);
-            this.eliminate = factory.createSmartPsiElementPointer(eliminate);
+            this.patch          = factory.createSmartPsiElementPointer(patch);
+            this.eliminate      = factory.createSmartPsiElementPointer(eliminate);
+            this.useShortSyntax = useShortSyntax;
         }
 
         @NotNull
@@ -251,10 +253,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             final FunctionReference patch     = this.patch.getElement();
             final FunctionReference eliminate = this.eliminate.getElement();
             if (patch != null && eliminate != null) {
-                final boolean useShortSyntax = USE_SHORT_ARRAYS_SYNTAX;
                 synchronized (eliminate.getContainingFile()) {
-                    this.mergeReplaces(patch, eliminate, useShortSyntax);
-                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0], useShortSyntax);
+                    this.mergeReplaces(patch, eliminate, this.useShortSyntax);
+                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0], this.useShortSyntax);
                     this.mergeSources(patch, eliminate);
                 }
             }

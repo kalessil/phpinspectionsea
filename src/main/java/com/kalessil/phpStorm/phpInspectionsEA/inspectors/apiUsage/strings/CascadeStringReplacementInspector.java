@@ -206,11 +206,13 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         );
     }
 
-    private class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
+    static private class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Simplify this argument";
+
         @NotNull
         @Override
         public String getName() {
-            return "Simplify this argument";
+            return title;
         }
 
         SimplifyReplacementFix(@NotNull String expression) {
@@ -218,7 +220,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         }
     }
 
-    private class MergeStringReplaceCallsFix implements LocalQuickFix {
+    static private class MergeStringReplaceCallsFix implements LocalQuickFix {
+        private static final String title = "Merge str_replace(...) calls";
+
         final private SmartPsiElementPointer<FunctionReference> patch;
         final private SmartPsiElementPointer<FunctionReference> eliminate;
 
@@ -233,7 +237,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Merge str_replace(...) calls";
+            return title;
         }
 
         @NotNull

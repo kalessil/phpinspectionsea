@@ -103,7 +103,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
         }));
     }
 
-    private class CompareToNullFix extends UseSuggestedReplacementFixer {
+    static private class CompareToNullFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use null comparison instead";
 
         @NotNull

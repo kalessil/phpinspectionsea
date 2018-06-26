@@ -108,7 +108,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
         };
     }
 
-    static private class SimplifyFix extends UseSuggestedReplacementFixer {
+    private static class SimplifyFix extends UseSuggestedReplacementFixer {
         private static final String title = "Simplify the expression";
 
         @NotNull

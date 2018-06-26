@@ -146,7 +146,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    static private class UseStaticFix extends UseSuggestedReplacementFixer {
+    private static class UseStaticFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use static::class instead.";
 
         @NotNull

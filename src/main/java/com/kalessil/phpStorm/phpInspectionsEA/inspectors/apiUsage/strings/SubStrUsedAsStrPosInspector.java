@@ -139,7 +139,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
         }));
     }
 
-    static private class UseStringSearchFix extends UseSuggestedReplacementFixer {
+    private static class UseStringSearchFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use substring search instead";
 
         @NotNull

@@ -70,7 +70,7 @@ public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
         };
     }
 
-    static private class LengthFix extends UseSuggestedReplacementFixer {
+    private static class LengthFix extends UseSuggestedReplacementFixer {
         private static final String title = "Set correct value for the length parameter";
 
         @NotNull

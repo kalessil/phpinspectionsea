@@ -92,7 +92,7 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
         };
     }
 
-    static private class SimplifyFix extends UseSuggestedReplacementFixer {
+    private static class SimplifyFix extends UseSuggestedReplacementFixer {
         private static final String title = "Simplify unnecessary case manipulation";
 
         @NotNull

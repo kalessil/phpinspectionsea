@@ -142,7 +142,7 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
     }
 
 
-    static private class UseIncrementFix extends UseSuggestedReplacementFixer {
+    private static class UseIncrementFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use increment operation instead";
 
         @NotNull
@@ -156,7 +156,7 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
         }
     }
 
-    static private class UseDecrementFix extends UseSuggestedReplacementFixer {
+    private static class UseDecrementFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use decrement operation instead";
 
         @NotNull

@@ -64,7 +64,7 @@ public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    static private class UseTheOperatorFix extends UseSuggestedReplacementFixer {
+    private static class UseTheOperatorFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use ** operator instead";
 
         @NotNull

@@ -211,7 +211,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
         return asString;
     }
 
-    static private class ReplaceFix extends UseSuggestedReplacementFixer {
+    private static class ReplaceFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use variable function instead";
 
         @NotNull
@@ -225,7 +225,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
         }
     }
 
-    static private class InlineFix extends UseSuggestedReplacementFixer {
+    private static class InlineFix extends UseSuggestedReplacementFixer {
         private static final String title = "Inline argument and inspect again";
 
         @NotNull

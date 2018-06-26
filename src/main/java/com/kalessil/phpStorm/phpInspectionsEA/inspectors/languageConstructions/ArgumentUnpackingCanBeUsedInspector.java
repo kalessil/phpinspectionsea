@@ -67,7 +67,7 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    static private class UnpackFix extends UseSuggestedReplacementFixer {
+    private static class UnpackFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use unpack argument syntax instead";
 
         @NotNull

@@ -206,7 +206,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         );
     }
 
-    static private class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
+    private static class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
         private static final String title = "Simplify this argument";
 
         @NotNull
@@ -220,7 +220,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         }
     }
 
-    static private class MergeStringReplaceCallsFix implements LocalQuickFix {
+    private static class MergeStringReplaceCallsFix implements LocalQuickFix {
         private static final String title = "Merge str_replace(...) calls";
 
         final private SmartPsiElementPointer<FunctionReference> patch;

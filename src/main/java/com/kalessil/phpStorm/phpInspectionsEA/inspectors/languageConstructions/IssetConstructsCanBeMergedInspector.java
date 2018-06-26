@@ -132,7 +132,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
         };
     }
 
-    static private class MergeConstructsFix implements LocalQuickFix {
+    private static class MergeConstructsFix implements LocalQuickFix {
         private static final String title = "Merge 'isset(...)' constructs";
 
         final private SmartPsiElementPointer<BinaryExpression> binary;

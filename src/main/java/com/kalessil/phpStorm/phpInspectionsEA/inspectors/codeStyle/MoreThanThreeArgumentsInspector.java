@@ -39,7 +39,7 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
         return new ProxyVisitor((PhpElementVisitor) super.buildVisitor(holder, isOnTheFly));
     }
 
-    static private class ProxyVisitor extends BasePhpElementVisitor {
+    private static class ProxyVisitor extends BasePhpElementVisitor {
         final PhpElementVisitor visitor;
 
         ProxyVisitor(@NotNull PhpElementVisitor visitor) {

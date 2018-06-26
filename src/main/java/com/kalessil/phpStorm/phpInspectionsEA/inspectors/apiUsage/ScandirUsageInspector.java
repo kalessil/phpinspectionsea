@@ -46,7 +46,7 @@ public class ScandirUsageInspector extends BasePhpInspection {
         };
     }
 
-    static private class NoSortFix extends UseSuggestedReplacementFixer {
+    private static class NoSortFix extends UseSuggestedReplacementFixer {
         private static final String title = "Disable sorting by default";
 
         @NotNull

@@ -141,7 +141,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
         });
     }
 
-    static private class CompareToNullFix extends UseSuggestedReplacementFixer {
+    private static class CompareToNullFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use null comparison instead";
 
         @NotNull
@@ -155,7 +155,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
         }
     }
 
-    static private class UseCountFix extends UseSuggestedReplacementFixer {
+    private static class UseCountFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use count(...) instead";
 
         @NotNull

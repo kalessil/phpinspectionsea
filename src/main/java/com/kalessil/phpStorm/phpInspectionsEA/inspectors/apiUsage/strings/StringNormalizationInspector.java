@@ -108,7 +108,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
         };
     }
 
-    static private class NormalizationFix extends UseSuggestedReplacementFixer {
+    private static class NormalizationFix extends UseSuggestedReplacementFixer {
         private static final String title = "Fix the string normalization";
 
         @NotNull

@@ -104,11 +104,13 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
         };
     }
 
-    private class ReplaceFix extends UseSuggestedReplacementFixer {
+    static private class ReplaceFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Remove unnecessary calls";
+
         @NotNull
         @Override
         public String getName() {
-            return "Remove unnecessary calls";
+            return title;
         }
 
         ReplaceFix(@NotNull String expression) {

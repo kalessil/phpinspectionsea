@@ -56,11 +56,13 @@ public class SuspiciousArrayElementInspector extends BasePhpInspection {
         };
     }
 
-    private class UseStringKeyFix extends UseSuggestedReplacementFixer {
+    static private class UseStringKeyFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Replace with string key";
+
         @NotNull
         @Override
         public String getName() {
-            return "Replace with string key";
+            return title;
         }
 
         UseStringKeyFix(@NotNull String expression) {

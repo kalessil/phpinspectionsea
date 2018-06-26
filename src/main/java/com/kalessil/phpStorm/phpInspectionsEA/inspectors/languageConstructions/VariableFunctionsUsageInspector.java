@@ -211,11 +211,13 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
         return asString;
     }
 
-    private class ReplaceFix extends UseSuggestedReplacementFixer {
+    static private class ReplaceFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use variable function instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use variable function instead";
+            return title;
         }
 
         ReplaceFix(@NotNull String expression) {

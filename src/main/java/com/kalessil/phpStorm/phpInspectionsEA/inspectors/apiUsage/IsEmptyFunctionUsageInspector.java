@@ -142,10 +142,12 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     }
 
     private class CompareToNullFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use null comparison instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use null comparison instead";
+            return title;
         }
 
         CompareToNullFix(@NotNull String expression) {
@@ -154,10 +156,12 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     }
 
     private class UseCountFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use count(...) instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use count(...) instead";
+            return title;
         }
 
         UseCountFix(@NotNull String expression) {

@@ -216,10 +216,12 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     }
 
     private class CompareToNullFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use null comparison instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use null comparison instead";
+            return title;
         }
 
         CompareToNullFix(@NotNull String expression) {

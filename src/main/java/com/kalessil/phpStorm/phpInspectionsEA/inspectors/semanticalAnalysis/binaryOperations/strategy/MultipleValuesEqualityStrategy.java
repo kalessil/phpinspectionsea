@@ -82,43 +82,33 @@ final public class MultipleValuesEqualityStrategy {
                             final PsiElement followingLeft  = following.getLeftOperand();
                             final PsiElement followingRight = following.getRightOperand();
                             if (followingLeft != null && followingRight != null) {
-                                PsiElement source             = null;
-                                final List<PsiElement> values = new ArrayList<>();
+                                PsiElement source      = null;
+                                PsiElement firstValue  = null;
+                                PsiElement secondValue = null;
                                 if (OpeanapiEquivalenceUtil.areEqual(currentLeft, followingLeft)) {
-                                    source = followingLeft;
-                                    values.add(currentRight);
-                                    values.add(followingRight);
+                                    source      = followingLeft;
+                                    firstValue  = currentRight;
+                                    secondValue = followingRight;
                                 } else if (OpeanapiEquivalenceUtil.areEqual(currentRight, followingRight)) {
-                                    source = followingRight;
-                                    values.add(currentLeft);
-                                    values.add(followingLeft);
+                                    source      = followingRight;
+                                    firstValue  = currentLeft;
+                                    secondValue = followingLeft;
                                 }
-                                if (
-                                    source != null &&
-                                    !(source instanceof StringLiteralExpression) &&
-                                    !(source instanceof ConstantReference) &&
-                                    !(source instanceof ClassConstantReference) &&
-                                    !OpenapiTypesUtil.isNumber(source)
-                                ) {
-                                    /* TODO: values only of those filtered types */
-
+                                if (source != null && !isValueType(source) && isValueType(firstValue) && isValueType(secondValue)) {
                                     final boolean isAndOperator = operator == PhpTokenTypes.opAND;
                                     final String fragment       = String.format(
                                             (isAndOperator ? equalOperators : notEqualOperators).get(operation),
                                             source.getText(),
-                                            values.get(0).getText(),
+                                            firstValue.getText(),
                                             source.getText(),
-                                            values.get(1).getText()
+                                            secondValue.getText()
                                     );
-                                    values.clear();
-
                                     holder.registerProblem(
                                             following,
                                             String.format(isAndOperator ? messageAlwaysFalse : messageAlwaysTrue, fragment)
                                     );
                                     return true;
                                 }
-                                values.clear();
                             }
                         }
                         reached = reached || following == current;
@@ -126,8 +116,14 @@ final public class MultipleValuesEqualityStrategy {
                 }
             }
         }
-
         return false;
+    }
+
+    private static boolean isValueType(@NotNull PsiElement element) {
+        return  element instanceof StringLiteralExpression ||
+                element instanceof ConstantReference ||
+                element instanceof ClassConstantReference ||
+                OpenapiTypesUtil.isNumber(element);
     }
 
     @NotNull

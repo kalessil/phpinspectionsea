@@ -81,11 +81,13 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         };
     }
 
-    private class AddMissingSprintfFix extends UseSuggestedReplacementFixer {
+    static private class AddMissingSprintfFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Wrap with sprintf(...)";
+
         @NotNull
         @Override
         public String getName() {
-            return "Wrap with sprintf(...)";
+            return title;
         }
 
         AddMissingSprintfFix(@NotNull String expression) {

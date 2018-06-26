@@ -223,11 +223,13 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
         }
     }
 
-    private class InlineFix extends UseSuggestedReplacementFixer {
+    static private class InlineFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Inline argument and inspect again";
+
         @NotNull
         @Override
         public String getName() {
-            return "Inline argument and inspect again";
+            return title;
         }
 
         InlineFix(@NotNull String expression) {

@@ -33,7 +33,7 @@ final public class MistypedLogicalOperatorsStrategy {
                         result = true;
                         holder.registerProblem(
                                 target,
-                                parentOperator == PhpTokenTypes.opAND ? messagePatternAnd : messagePatternOr
+                                operator == PhpTokenTypes.opBIT_AND ? messagePatternAnd : messagePatternOr
                         );
                     }
                 }

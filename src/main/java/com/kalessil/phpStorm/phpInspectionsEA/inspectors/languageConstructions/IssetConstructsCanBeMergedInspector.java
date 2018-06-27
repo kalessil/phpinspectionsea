@@ -160,6 +160,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
             @NotNull PhpIsset second,
             @NotNull IElementType operator
         ) {
+            super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(binary.getProject());
 
             this.operator = operator;

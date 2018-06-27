@@ -55,10 +55,9 @@ final public class AssertBoolInvertedStrategy {
 
         TheLocalFix(@NotNull String replacementFunction, @NotNull PsiElement argument) {
             super();
-            final SmartPointerManager manager = SmartPointerManager.getInstance(argument.getProject());
 
             this.replacementFunction = replacementFunction;
-            this.argument            = manager.createSmartPsiElementPointer(argument);
+            this.argument            = SmartPointerManager.getInstance(argument.getProject()).createSmartPsiElementPointer(argument);
         }
 
         @NotNull

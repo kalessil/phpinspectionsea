@@ -123,10 +123,9 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
 
         TheLocalFix(@NotNull String suggestedName, @NotNull PsiElement param, boolean isInverted) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(param.getProject());
 
             this.suggestedName = suggestedName;
-            this.param         = factory.createSmartPsiElementPointer(param);
+            this.param         = SmartPointerManager.getInstance(param.getProject()).createSmartPsiElementPointer(param);
             this.isInverted    = isInverted;
         }
 

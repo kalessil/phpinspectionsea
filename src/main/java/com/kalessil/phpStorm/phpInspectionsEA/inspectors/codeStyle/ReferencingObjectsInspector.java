@@ -125,9 +125,8 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
         InstantiationLocalFix(@NotNull PsiElement assignOperator) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(assignOperator.getProject());
 
-            this.assignOperator = factory.createSmartPsiElementPointer(assignOperator);
+            this.assignOperator = SmartPointerManager.getInstance(assignOperator.getProject()).createSmartPsiElementPointer(assignOperator);
         }
 
         @NotNull
@@ -161,9 +160,8 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
         ParameterLocalFix(@NotNull Parameter parameter) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(parameter.getProject());
 
-            this.parameter = factory.createSmartPsiElementPointer(parameter);
+            this.parameter = SmartPointerManager.getInstance(parameter.getProject()).createSmartPsiElementPointer(parameter);
         }
 
         @NotNull

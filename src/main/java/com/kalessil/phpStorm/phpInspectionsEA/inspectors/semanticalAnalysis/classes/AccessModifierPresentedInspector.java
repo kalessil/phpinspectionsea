@@ -119,8 +119,9 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         }
 
         MemberVisibilityFix(@NotNull PhpModifierList modifiers) {
-            final SmartPointerManager manager = SmartPointerManager.getInstance(modifiers.getProject());
-            this.modifiersReference           = manager.createSmartPsiElementPointer(modifiers);
+            super();
+
+            this.modifiersReference = SmartPointerManager.getInstance(modifiers.getProject()).createSmartPsiElementPointer(modifiers);
         }
 
         @Override
@@ -159,8 +160,9 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         }
 
         ConstantVisibilityFix(@NotNull Field constField) {
-            final SmartPointerManager manager = SmartPointerManager.getInstance(constField.getProject());
-            this.constFieldReference          = manager.createSmartPsiElementPointer(constField);
+            super();
+
+            this.constFieldReference = SmartPointerManager.getInstance(constField.getProject()).createSmartPsiElementPointer(constField);
         }
 
         @Override

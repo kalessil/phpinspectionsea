@@ -91,10 +91,10 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
 
         TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement object) {
             super();
-            final SmartPointerManager manager =  SmartPointerManager.getInstance(operator.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(operator.getProject());
 
-            this.object   = object == null ? null : manager.createSmartPsiElementPointer(object);
-            this.operator = manager.createSmartPsiElementPointer(operator);
+            this.object   = object == null ? null : factory.createSmartPsiElementPointer(object);
+            this.operator = factory.createSmartPsiElementPointer(operator);
         }
 
         @NotNull

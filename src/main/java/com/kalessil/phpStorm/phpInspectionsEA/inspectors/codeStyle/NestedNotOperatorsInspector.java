@@ -83,9 +83,8 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
 
         UseSingleNotLocalFix(@NotNull PsiElement value) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
 
-            this.value = factory.createSmartPsiElementPointer(value);
+            this.value = SmartPointerManager.getInstance(value.getProject()).createSmartPsiElementPointer(value);
         }
 
         @NotNull
@@ -117,9 +116,8 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
 
         UseCastingLocalFix(@NotNull PsiElement value) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
 
-            this.value = factory.createSmartPsiElementPointer(value);
+            this.value = SmartPointerManager.getInstance(value.getProject()).createSmartPsiElementPointer(value);
         }
 
         @NotNull

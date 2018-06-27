@@ -102,12 +102,14 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     }
 
     private static class MemberVisibilityFix implements LocalQuickFix {
+        private static final String title = "Declare the member public";
+
         final private SmartPsiElementPointer<PhpModifierList> modifiersReference;
 
         @NotNull
         @Override
         public String getName() {
-            return "Declare the member public";
+            return title;
         }
 
         @NotNull
@@ -140,12 +142,14 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     }
 
     private static class ConstantVisibilityFix implements LocalQuickFix {
+        private static final String title = "Declare the constant public";
+
         private final SmartPsiElementPointer<Field> constFieldReference;
 
         @NotNull
         @Override
         public String getName() {
-            return "Declare the constant public";
+            return title;
         }
 
         @NotNull

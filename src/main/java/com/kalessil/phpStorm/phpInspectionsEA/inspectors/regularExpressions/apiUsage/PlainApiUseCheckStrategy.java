@@ -160,7 +160,7 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseStringReplaceFix extends UseSuggestedReplacementFixer {
+    private static final class UseStringReplaceFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use plain string replacement instead";
 
         @NotNull
@@ -174,7 +174,7 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseStringPositionFix extends UseSuggestedReplacementFixer {
+    private static final class UseStringPositionFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use plain string search instead";
 
         @NotNull
@@ -188,7 +188,7 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseStringComparisonFix extends UseSuggestedReplacementFixer {
+    private static final class UseStringComparisonFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use string comparison instead";
 
         @NotNull
@@ -202,7 +202,7 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseTrimFix extends UseSuggestedReplacementFixer {
+    private static final class UseTrimFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use trim instead";
 
         @NotNull
@@ -216,7 +216,7 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseExplodeFix extends UseSuggestedReplacementFixer {
+    private static final class UseExplodeFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use explode instead";
 
         @NotNull

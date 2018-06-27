@@ -70,7 +70,7 @@ final public class NullableArgumentComparisonStrategy {
         return result;
     }
 
-    private static class NullableArgumentComparisonFix extends UseSuggestedReplacementFixer {
+    private static final class NullableArgumentComparisonFix extends UseSuggestedReplacementFixer {
         private static final String title = "Secure the comparison";
 
         @NotNull

@@ -206,7 +206,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         );
     }
 
-    private static class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
+    private static final class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
         private static final String title = "Simplify this argument";
 
         @NotNull

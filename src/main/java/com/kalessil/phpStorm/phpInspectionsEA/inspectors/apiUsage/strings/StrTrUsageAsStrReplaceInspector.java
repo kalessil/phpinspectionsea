@@ -57,7 +57,7 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseStringReplaceFix extends UseSuggestedReplacementFixer {
+    private static final class UseStringReplaceFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use str_replace(...) instead";
 
         @NotNull

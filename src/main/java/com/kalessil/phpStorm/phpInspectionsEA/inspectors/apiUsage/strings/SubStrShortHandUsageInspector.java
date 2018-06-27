@@ -146,7 +146,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         }
     }
 
-    private static class SimplifyFix extends UseSuggestedReplacementFixer {
+    private static final class SimplifyFix extends UseSuggestedReplacementFixer {
         private static final String title = "Simplify the third parameter";
 
         @NotNull

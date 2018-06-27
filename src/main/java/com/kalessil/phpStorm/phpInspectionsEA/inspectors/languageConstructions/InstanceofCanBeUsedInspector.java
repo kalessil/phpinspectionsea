@@ -83,7 +83,7 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseInstanceofFix extends UseSuggestedReplacementFixer {
+    private static final class UseInstanceofFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use instanceof operator instead";
 
         UseInstanceofFix(@NotNull String suggestedReplacement) {

@@ -102,7 +102,7 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseCallbackFix extends UseSuggestedReplacementFixer {
+    private static final class UseCallbackFix extends UseSuggestedReplacementFixer {
         private static final String title = "Inline the callable";
 
         @NotNull

@@ -110,7 +110,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         };
     }
 
-    private static class MakeSearchTypeSensitiveFix extends UseSuggestedReplacementFixer {
+    private static final class MakeSearchTypeSensitiveFix extends UseSuggestedReplacementFixer {
         private static final String title = "Add 'true' as the third argument";
 
         @NotNull

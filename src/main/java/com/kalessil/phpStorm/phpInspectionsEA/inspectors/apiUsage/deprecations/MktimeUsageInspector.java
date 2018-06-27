@@ -47,7 +47,7 @@ public class MktimeUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseTimeFunctionLocalFix extends UseSuggestedReplacementFixer {
+    private static final class UseTimeFunctionLocalFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use time() instead";
 
         @NotNull

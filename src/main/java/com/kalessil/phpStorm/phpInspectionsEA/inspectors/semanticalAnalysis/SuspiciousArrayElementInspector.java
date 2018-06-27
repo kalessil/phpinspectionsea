@@ -56,7 +56,7 @@ public class SuspiciousArrayElementInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseStringKeyFix extends UseSuggestedReplacementFixer {
+    private static final class UseStringKeyFix extends UseSuggestedReplacementFixer {
         private static final String title = "Replace with string key";
 
         @NotNull

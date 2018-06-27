@@ -111,7 +111,7 @@ public class SubstringCompareInspector extends BasePhpInspection {
         };
     }
 
-    private static class LengthFix extends UseSuggestedReplacementFixer {
+    private static final class LengthFix extends UseSuggestedReplacementFixer {
         private static final String title = "Set correct value for the length parameter";
 
         @NotNull

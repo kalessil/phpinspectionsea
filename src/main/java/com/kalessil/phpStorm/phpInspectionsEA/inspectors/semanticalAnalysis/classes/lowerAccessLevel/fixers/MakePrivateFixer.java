@@ -25,9 +25,9 @@ public class MakePrivateFixer implements LocalQuickFix {
     private final SmartPsiElementPointer<PsiElement> modifier;
 
     public MakePrivateFixer(@NotNull final PsiElement modifierElement) {
-        final SmartPointerManager manager = SmartPointerManager.getInstance(modifierElement.getProject());
+        super();
 
-        modifier = manager.createSmartPsiElementPointer(modifierElement);
+        modifier = SmartPointerManager.getInstance(modifierElement.getProject()).createSmartPsiElementPointer(modifierElement);
     }
 
     @NotNull

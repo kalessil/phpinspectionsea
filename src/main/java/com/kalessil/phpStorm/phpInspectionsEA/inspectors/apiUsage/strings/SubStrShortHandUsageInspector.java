@@ -111,9 +111,8 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
 
         Drop3rdParameterLocalFix(@NotNull FunctionReference call){
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(call.getProject());
 
-            this.call = factory.createSmartPsiElementPointer(call);
+            this.call = SmartPointerManager.getInstance(call.getProject()).createSmartPsiElementPointer(call);
         }
 
         @NotNull

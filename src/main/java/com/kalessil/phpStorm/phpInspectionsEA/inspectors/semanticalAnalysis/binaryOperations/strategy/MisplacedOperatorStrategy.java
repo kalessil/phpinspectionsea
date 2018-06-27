@@ -109,10 +109,10 @@ final public class MisplacedOperatorStrategy {
         }
 
         MisplacedOperatorFix(@NotNull String expression, @NotNull PsiElement call) {
-            this.expression = expression;
-            SmartPointerManager manager = SmartPointerManager.getInstance(call.getProject());
+            super();
 
-            this.call = manager.createSmartPsiElementPointer(call);
+            this.expression = expression;
+            this.call       = SmartPointerManager.getInstance(call.getProject()).createSmartPsiElementPointer(call);
         }
 
         @Override

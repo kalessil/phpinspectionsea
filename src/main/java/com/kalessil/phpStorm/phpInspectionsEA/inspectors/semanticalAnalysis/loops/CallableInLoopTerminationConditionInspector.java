@@ -63,6 +63,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
         private final SmartPsiElementPointer<BinaryExpression> condition;
 
         TheLocalFix(@NotNull For forStatement, @NotNull BinaryExpression condition) {
+            super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(forStatement.getProject());
 
             this.forStatement = factory.createSmartPsiElementPointer(forStatement);

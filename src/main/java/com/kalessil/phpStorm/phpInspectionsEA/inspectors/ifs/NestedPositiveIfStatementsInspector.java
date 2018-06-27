@@ -106,8 +106,9 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         MergeIntoParentElseFix(@NotNull If target, @NotNull Else parent) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
-            this.target                       = factory.createSmartPsiElementPointer(target);
-            this.parent                       = factory.createSmartPsiElementPointer(parent);
+
+            this.target = factory.createSmartPsiElementPointer(target);
+            this.parent = factory.createSmartPsiElementPointer(parent);
         }
 
         @Override
@@ -144,8 +145,9 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         MergeIntoParentIfFix(@NotNull If target, @NotNull If parent) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
-            this.target                       = factory.createSmartPsiElementPointer(target);
-            this.parent                       = factory.createSmartPsiElementPointer(parent);
+
+            this.target = factory.createSmartPsiElementPointer(target);
+            this.parent = factory.createSmartPsiElementPointer(parent);
         }
 
         @Override

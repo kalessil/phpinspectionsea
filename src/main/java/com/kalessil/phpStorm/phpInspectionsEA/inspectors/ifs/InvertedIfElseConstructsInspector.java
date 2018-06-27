@@ -101,6 +101,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
         private final SmartPsiElementPointer<PsiElement> condition;
 
         NormalizeWorkflowFix(@NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull PsiElement condition) {
+            super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(condition.getProject());
 
             this.ifBody    = factory.createSmartPsiElementPointer(ifBody);

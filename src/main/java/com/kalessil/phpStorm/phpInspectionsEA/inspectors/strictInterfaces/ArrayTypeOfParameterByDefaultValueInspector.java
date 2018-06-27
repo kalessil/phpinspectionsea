@@ -96,9 +96,8 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
 
         TheLocalFix(@NotNull Parameter param) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(param.getProject());
 
-            this.param = factory.createSmartPsiElementPointer(param);
+            this.param = SmartPointerManager.getInstance(param.getProject()).createSmartPsiElementPointer(param);
         }
 
         @NotNull

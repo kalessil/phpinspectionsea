@@ -5,7 +5,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,7 +36,9 @@ final public class MistypedLogicalOperatorsStrategy {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
                 if (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR) {
                     final PsiElement target = expression.getOperation();
-                    if (target != null) {
+                    final PsiElement left   = expression.getLeftOperand();
+                    final PsiElement right  = expression.getRightOperand();
+                    if (target != null && left != null && right != null && isIntegerType(left) && isIntegerType(right)) {
                         result = true;
                         holder.registerProblem(
                                 target,
@@ -37,6 +46,17 @@ final public class MistypedLogicalOperatorsStrategy {
                         );
                     }
                 }
+            }
+        }
+        return result;
+    }
+
+    private static boolean isIntegerType(@NotNull PsiElement operand) {
+        boolean result = false;
+        if (operand instanceof PhpTypedElement) {
+            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
+            if (resolved != null && !resolved.hasUnknown()) {
+                result = resolved.getTypes().stream().allMatch(type -> Types.getType(type).equals(Types.strInteger));
             }
         }
         return result;

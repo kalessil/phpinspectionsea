@@ -86,8 +86,10 @@ if ($x || $x <error descr="It was probably was intended to use && here (if not, 
 if ($x && $x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x) {}
 if ($x || $x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x) {}
 
-/* false-positives: parentheses and mixed operators */
+/* false-positives: parentheses, mixed operators, integer types */
 if ($x && ($x & $x)) {}
 if ($x || ($x & $x)) {}
 if ($x || ($x | $x)) {}
 if ($x && ($x | $x)) {}
+if ($x && 10 & 5) {}
+if ($x || 10 | 5) {}

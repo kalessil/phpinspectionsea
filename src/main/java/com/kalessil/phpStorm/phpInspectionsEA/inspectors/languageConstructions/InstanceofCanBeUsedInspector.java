@@ -84,6 +84,8 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
     }
 
     private static class UseInstanceofFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use instanceof operator instead";
+
         UseInstanceofFix(@NotNull String suggestedReplacement) {
             super(suggestedReplacement);
         }
@@ -91,7 +93,7 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use instanceof operator instead";
+            return title;
         }
     }
 }

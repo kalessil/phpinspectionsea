@@ -84,9 +84,9 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        @Nullable
+        private static final String title = "Use -> instead";
+
         private final SmartPsiElementPointer<PsiElement> object;
-        @NotNull
         private final SmartPsiElementPointer<PsiElement> operator;
 
         TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement object) {
@@ -100,7 +100,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         @NotNull
         @Override
         public String getName() {
-            return "Use -> instead";
+            return title;
         }
 
         @NotNull

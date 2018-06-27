@@ -57,10 +57,12 @@ final public class MissingUnderscoreStrategy {
     }
 
     private static class NameFix implements LocalQuickFix {
+        private static final String title = "Correct mistyped method name";
+
         @NotNull
         @Override
         public String getName() {
-            return "Correct mistyped method name";
+            return title;
         }
 
         @NotNull

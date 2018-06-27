@@ -70,7 +70,8 @@ final public class QueryUsageStrategy {
     }
 
     private static class UseQueryFix implements LocalQuickFix {
-        @NotNull
+        private static final String title = "Use '->query(...)' instead";
+
         private final SmartPsiElementPointer<MethodReference> prepare;
 
         UseQueryFix(@NotNull MethodReference prepare) {
@@ -83,7 +84,7 @@ final public class QueryUsageStrategy {
         @NotNull
         @Override
         public String getName() {
-            return "Use '->query(...)' instead";
+            return title;
         }
 
         @NotNull

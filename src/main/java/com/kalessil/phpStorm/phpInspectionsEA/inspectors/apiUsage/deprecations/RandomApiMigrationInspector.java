@@ -96,6 +96,8 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use the recommended function";
+
         final private String suggestedName;
 
         TheLocalFix(@NotNull String suggestedName) {
@@ -106,7 +108,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use the recommended function";
+            return title;
         }
 
         @NotNull

@@ -62,13 +62,15 @@ public class DateUsageInspector extends BasePhpInspection {
     }
 
     private static class DropTimeFunctionCallLocalFix implements LocalQuickFix {
+        private static final String title = "Drop unnecessary time() call";
+
         private final SmartPsiElementPointer<PsiElement> from;
         private final SmartPsiElementPointer<PsiElement> to;
 
         @NotNull
         @Override
         public String getName() {
-            return "Drop unnecessary time() call";
+            return title;
         }
 
         @NotNull

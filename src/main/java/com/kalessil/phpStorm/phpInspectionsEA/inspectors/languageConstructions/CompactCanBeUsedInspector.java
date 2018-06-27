@@ -64,12 +64,14 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
     }
 
     private static class UseCompactFix implements LocalQuickFix {
+        private static final String title = "Use 'compact(...)' instead.";
+
         private final String replacement;
 
         @NotNull
         @Override
         public String getName() {
-            return "Use 'compact(...)' instead.";
+            return title;
         }
 
         @NotNull

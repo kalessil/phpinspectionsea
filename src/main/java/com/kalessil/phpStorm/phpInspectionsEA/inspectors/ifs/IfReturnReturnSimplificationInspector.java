@@ -98,6 +98,8 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     }
 
     private static class SimplifyFix implements LocalQuickFix {
+        private static final String title = "Use return instead";
+
         final private SmartPsiElementPointer<PsiElement> from;
         final private SmartPsiElementPointer<PsiElement> to;
         final String replacement;
@@ -114,7 +116,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use return instead";
+            return title;
         }
 
         @NotNull

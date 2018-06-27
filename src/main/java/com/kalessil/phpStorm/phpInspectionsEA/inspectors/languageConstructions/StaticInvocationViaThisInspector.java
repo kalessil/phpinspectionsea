@@ -99,6 +99,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use self::";
+
         private final SmartPsiElementPointer<PsiElement> variable;
         private final SmartPsiElementPointer<PsiElement> operator;
 
@@ -113,7 +115,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use self::";
+            return title;
         }
 
         @NotNull

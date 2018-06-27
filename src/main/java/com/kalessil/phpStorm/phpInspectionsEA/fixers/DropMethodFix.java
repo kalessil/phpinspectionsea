@@ -11,10 +11,12 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import org.jetbrains.annotations.NotNull;
 
 public class DropMethodFix implements LocalQuickFix {
+    private static final String title = "Drop the method";
+
     @NotNull
     @Override
     public String getName() {
-        return "Drop the method";
+        return title;
     }
 
     @NotNull

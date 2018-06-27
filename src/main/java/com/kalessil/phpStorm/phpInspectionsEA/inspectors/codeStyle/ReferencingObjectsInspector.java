@@ -119,7 +119,8 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     }
 
     private static class InstantiationLocalFix implements LocalQuickFix {
-        @NotNull
+        private static final String title = "Replace with regular assignment";
+
         final private SmartPsiElementPointer<PsiElement> assignOperator;
 
         InstantiationLocalFix(@NotNull PsiElement assignOperator) {
@@ -132,7 +133,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Replace with regular assignment";
+            return title;
         }
 
         @NotNull
@@ -154,7 +155,8 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     }
 
     private static class ParameterLocalFix implements LocalQuickFix {
-        @NotNull
+        private static final String title = "Cleanup parameter definition";
+
         final private SmartPsiElementPointer<Parameter> parameter;
 
         ParameterLocalFix(@NotNull Parameter parameter) {
@@ -167,7 +169,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Cleanup parameter definition";
+            return title;
         }
 
         @NotNull

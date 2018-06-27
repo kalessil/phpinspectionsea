@@ -86,13 +86,15 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     }
 
     private static class MergeIntoParentElseFix implements LocalQuickFix {
+        private static final String title = "Merge into parent construct";
+
         final private SmartPsiElementPointer<If> target;
         final private SmartPsiElementPointer<Else> parent;
 
         @NotNull
         @Override
         public String getName() {
-            return "Merge into parent construct";
+            return title;
         }
 
         @NotNull
@@ -122,13 +124,15 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     }
 
     private static class MergeIntoParentIfFix implements LocalQuickFix {
+        private static final String title = "Merge into parent construct";
+
         final private SmartPsiElementPointer<If> target;
         final private SmartPsiElementPointer<If> parent;
 
         @NotNull
         @Override
         public String getName() {
-            return "Merge into parent construct";
+            return title;
         }
 
         @NotNull

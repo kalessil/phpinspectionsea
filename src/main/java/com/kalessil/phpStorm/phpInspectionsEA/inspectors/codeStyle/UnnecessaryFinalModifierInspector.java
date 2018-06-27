@@ -54,10 +54,12 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Drop final modifier";
+
         @NotNull
         @Override
         public String getName() {
-            return "Drop final modifier";
+            return title;
         }
 
         @NotNull

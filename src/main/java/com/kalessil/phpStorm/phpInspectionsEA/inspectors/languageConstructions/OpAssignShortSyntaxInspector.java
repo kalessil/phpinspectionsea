@@ -86,6 +86,8 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
     }
 
     private static class UseShorthandOperatorFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use the short notation";
+
         UseShorthandOperatorFix(@NotNull String suggestedReplacement) {
             super(suggestedReplacement);
         }
@@ -93,7 +95,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use the short notation";
+            return title;
         }
     }
 }

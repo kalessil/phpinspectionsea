@@ -87,10 +87,12 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use file_get_contents(...)";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use file_get_contents(...)";
+            return title;
         }
 
         @NotNull

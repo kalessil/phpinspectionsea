@@ -44,10 +44,12 @@ public class BacktickOperatorUsageInspector extends BasePhpInspection {
     }
 
     private static class UseShellExecFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Replace with shell_exec()";
+
         @NotNull
         @Override
         public String getName() {
-            return "Replace with shell_exec()";
+            return title;
         }
 
         UseShellExecFix(@NotNull String expression) {

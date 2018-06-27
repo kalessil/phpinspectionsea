@@ -111,10 +111,12 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
     }
 
     private static class UseStringCastingLocalFix implements LocalQuickFix {
+        private static final String title = "Use string casting";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use string casting";
+            return title;
         }
 
         @NotNull

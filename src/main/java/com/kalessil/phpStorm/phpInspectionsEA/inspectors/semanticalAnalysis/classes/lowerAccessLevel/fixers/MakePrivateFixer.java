@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MakePrivateFixer implements LocalQuickFix {
+    private static final String title = "Make it private";
+
     private final SmartPsiElementPointer<PsiElement> modifier;
 
     public MakePrivateFixer(@NotNull final PsiElement modifierElement) {
@@ -31,7 +33,7 @@ public class MakePrivateFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getName() {
-        return "Make it private";
+        return title;
     }
 
     @NotNull

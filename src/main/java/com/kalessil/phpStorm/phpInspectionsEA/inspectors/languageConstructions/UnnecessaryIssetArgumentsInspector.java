@@ -88,10 +88,12 @@ public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
     }
 
     private static class DropArgumentFix implements LocalQuickFix {
+        private static final String title = "Drop unnecessary argument";
+
         @NotNull
         @Override
         public String getName() {
-            return "Drop unnecessary argument";
+            return title;
         }
 
         @NotNull

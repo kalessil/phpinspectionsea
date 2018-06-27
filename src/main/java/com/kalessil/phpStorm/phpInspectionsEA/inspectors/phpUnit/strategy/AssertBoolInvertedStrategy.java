@@ -48,6 +48,8 @@ final public class AssertBoolInvertedStrategy {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use suggested assertion instead";
+
         final private String replacementFunction;
         final private SmartPsiElementPointer<PsiElement> argument;
 
@@ -62,7 +64,7 @@ final public class AssertBoolInvertedStrategy {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested assertion instead";
+            return title;
         }
 
         @NotNull

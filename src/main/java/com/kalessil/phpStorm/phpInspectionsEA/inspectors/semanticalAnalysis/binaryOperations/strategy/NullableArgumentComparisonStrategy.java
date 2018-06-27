@@ -71,10 +71,12 @@ final public class NullableArgumentComparisonStrategy {
     }
 
     private static class NullableArgumentComparisonFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Secure the comparison";
+
         @NotNull
         @Override
         public String getName() {
-            return "Secure the comparison";
+            return title;
         }
 
         NullableArgumentComparisonFix(@NotNull String expression) {

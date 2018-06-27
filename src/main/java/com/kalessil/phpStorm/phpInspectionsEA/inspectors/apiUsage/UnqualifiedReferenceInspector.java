@@ -227,10 +227,12 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use the qualified reference";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use the qualified reference";
+            return title;
         }
 
         @NotNull

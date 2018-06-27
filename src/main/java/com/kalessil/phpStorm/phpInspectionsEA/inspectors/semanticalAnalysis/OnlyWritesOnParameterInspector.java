@@ -139,11 +139,12 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 int intCountReadAccesses  = 0;
                 int intCountWriteAccesses = 0;
                 for (final PhpAccessVariableInstruction instruction : usages) {
-                    final PsiElement parent = instruction.getAnchor().getParent();
+                    final PsiElement variable = instruction.getAnchor();
+                    final PsiElement parent   = variable.getParent();
 
                     if (parent instanceof ArrayAccessExpression) {
                         /* find out which expression is holder */
-                        PsiElement objLastSemanticExpression = instruction.getAnchor();
+                        PsiElement objLastSemanticExpression = variable;
                         PsiElement objTopSemanticExpression  = objLastSemanticExpression.getParent();
                         /* TODO: iterator for array access expression */
                         while (objTopSemanticExpression instanceof ArrayAccessExpression) {
@@ -191,7 +192,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 /* when modifying the reference it's link READ and linked WRITE semantics */
                                 ++intCountReadAccesses;
                             } else {
-                                /* when modifying non non-reference, register as write only access for reporting */
+                                /* when modifying non-reference, register as write only access for reporting */
                                 targetExpressions.add(parent);
                             }
                         }
@@ -199,6 +200,24 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             ++intCountReadAccesses;
                         }
                         continue;
+                    }
+
+                    if (parent instanceof SelfAssignmentExpression) {
+                        final SelfAssignmentExpression selfAssignment = (SelfAssignmentExpression) parent;
+                        if (selfAssignment.getVariable() == variable) {
+                            ++intCountWriteAccesses;
+                            if (isReference) {
+                                /* when modifying the reference it's link READ and linked WRITE semantics */
+                                ++intCountReadAccesses;
+                            } else {
+                                /* when modifying non-reference, register as write only access for reporting */
+                                targetExpressions.add(variable);
+                            }
+                            if (!OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
+                                ++intCountReadAccesses;
+                            }
+                            continue;
+                        }
                     }
 
                     /* if variable assigned with reference, we need to preserve this information for correct checks */
@@ -248,7 +267,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     /* ok variable usage works well with openapi */
                     final PhpAccessInstruction.Access instructionAccess = instruction.getAccess();
                     if (instructionAccess.isWrite()) {
-                        targetExpressions.add(instruction.getAnchor());
+                        targetExpressions.add(variable);
                         ++intCountWriteAccesses;
                     } else if (instructionAccess.isRead()) {
                         ++intCountReadAccesses;

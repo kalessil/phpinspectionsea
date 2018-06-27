@@ -101,7 +101,8 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
     }
 
     private static final class TheLocalFix implements LocalQuickFix {
-        @NotNull
+        private static final String title = "Apply configured class reference style";
+
         private final String replacement;
 
         private TheLocalFix(@NotNull final String replacementName) {
@@ -111,7 +112,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Apply configured class reference style";
+            return title;
         }
 
         @NotNull

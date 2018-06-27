@@ -47,10 +47,12 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Safely drop comma";
+
         @NotNull
         @Override
         public String getName() {
-            return "Safely drop comma";
+            return title;
         }
 
         @NotNull

@@ -39,10 +39,12 @@ public class ShortOpenTagUsageInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use '<?php' instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use '<?php' instead";
+            return title;
         }
 
         @NotNull

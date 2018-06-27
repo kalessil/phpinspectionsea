@@ -239,7 +239,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                             if (ns != null) {
                                 /* ensure that current NS doesn't have  */
                                 final Collection<PhpClass> classNameCollisions = OpenapiResolveUtil.resolveClassesByFQN(
-                                        ns.getFQN() + "\\" + className,
+                                        ns.getFQN() + '\\' + className,
                                         PhpIndex.getInstance(project)
                                 );
                                 if (classNameCollisions.isEmpty()) {

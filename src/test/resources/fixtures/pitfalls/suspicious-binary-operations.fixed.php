@@ -86,7 +86,7 @@ if ($x || $x & $x) {}
 if ($x && $x | $x) {}
 if ($x || $x | $x) {}
 
-/* false-positives: parentheses and mixed operators */
+/* false-positives: parentheses, mixed operators, integer types */
 if ($x && ($x & $x)) {}
 if ($x || ($x & $x)) {}
 if ($x || ($x | $x)) {}

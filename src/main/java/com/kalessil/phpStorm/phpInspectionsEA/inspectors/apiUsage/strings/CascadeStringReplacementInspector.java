@@ -220,7 +220,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         }
     }
 
-    private static class MergeStringReplaceCallsFix implements LocalQuickFix {
+    private static final class MergeStringReplaceCallsFix implements LocalQuickFix {
         private static final String title = "Merge str_replace(...) calls";
 
         final private SmartPsiElementPointer<FunctionReference> patch;

@@ -73,7 +73,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use suggested function instead";
 
         final private String suggestedName;

@@ -266,7 +266,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         return holder.getResultsArray();
     }
 
-    private static class AddAdvisoriesFix implements LocalQuickFix {
+    private static final class AddAdvisoriesFix implements LocalQuickFix {
         private final SmartPsiElementPointer<JsonProperty> require;
 
         AddAdvisoriesFix(@NotNull JsonProperty require) {

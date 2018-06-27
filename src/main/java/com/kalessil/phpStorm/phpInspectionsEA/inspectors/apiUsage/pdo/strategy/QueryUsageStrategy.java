@@ -69,7 +69,7 @@ final public class QueryUsageStrategy {
         }
     }
 
-    private static class UseQueryFix implements LocalQuickFix {
+    private static final class UseQueryFix implements LocalQuickFix {
         private static final String title = "Use '->query(...)' instead";
 
         private final SmartPsiElementPointer<MethodReference> prepare;

@@ -61,7 +61,7 @@ final public class AssertBoolOfComparisonStrategy {
         return false;
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use suggested assertion instead";
 
         private final String replacementFunction;

@@ -104,7 +104,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class Drop3rdParameterLocalFix implements LocalQuickFix {
+    private static final class Drop3rdParameterLocalFix implements LocalQuickFix {
         private static final String title = "Remove ambiguous 3rd parameter";
 
         final private SmartPsiElementPointer<FunctionReference> call;

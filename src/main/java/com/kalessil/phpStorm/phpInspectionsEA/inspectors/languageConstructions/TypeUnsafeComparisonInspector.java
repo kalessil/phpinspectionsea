@@ -92,7 +92,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
         };
     }
 
-    private static class CompareStrictFix implements LocalQuickFix {
+    private static final class CompareStrictFix implements LocalQuickFix {
         private static final String title = "Apply strict comparison";
 
         final private String operator;

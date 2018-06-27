@@ -63,7 +63,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseContinue2LocalFix implements LocalQuickFix {
+    private static final class UseContinue2LocalFix implements LocalQuickFix {
         private static final String title = "Use 'continue 2;'";
 
         @NotNull

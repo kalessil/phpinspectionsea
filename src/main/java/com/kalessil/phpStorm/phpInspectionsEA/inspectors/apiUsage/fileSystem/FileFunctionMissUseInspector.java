@@ -86,7 +86,7 @@ public class FileFunctionMissUseInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use file_get_contents(...)";
 
         @NotNull

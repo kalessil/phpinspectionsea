@@ -89,7 +89,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Declare as array";
 
         final private SmartPsiElementPointer<Parameter> param;

@@ -56,7 +56,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Reduce the repetitive calls";
 
         private final SmartPsiElementPointer<For> forStatement;

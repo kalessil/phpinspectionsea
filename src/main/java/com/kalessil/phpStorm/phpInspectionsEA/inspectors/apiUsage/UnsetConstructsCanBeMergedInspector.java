@@ -54,7 +54,7 @@ public class UnsetConstructsCanBeMergedInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Merge unset statements";
 
         final private SmartPsiElementPointer<PhpUnset> unset;

@@ -121,7 +121,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Drop unneeded arguments";
 
         private final SmartPsiElementPointer<PsiElement> dropFrom;

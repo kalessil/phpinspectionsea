@@ -47,7 +47,7 @@ final public class AssertBoolInvertedStrategy {
         return false;
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use suggested assertion instead";
 
         final private String replacementFunction;

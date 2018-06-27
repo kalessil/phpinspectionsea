@@ -137,7 +137,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
         };
     }
 
-    private static class ProxyCallFix implements LocalQuickFix {
+    private static final class ProxyCallFix implements LocalQuickFix {
         private static final String title = "Proxy call to parent";
 
         @NotNull

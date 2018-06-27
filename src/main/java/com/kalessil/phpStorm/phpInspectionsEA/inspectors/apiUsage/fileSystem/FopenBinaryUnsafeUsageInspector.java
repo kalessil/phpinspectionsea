@@ -74,7 +74,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Make mode binary-safe";
 
         @NotNull

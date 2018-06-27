@@ -83,7 +83,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use -> instead";
 
         private final SmartPsiElementPointer<PsiElement> object;

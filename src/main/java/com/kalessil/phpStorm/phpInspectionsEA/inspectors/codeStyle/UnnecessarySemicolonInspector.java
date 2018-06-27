@@ -56,7 +56,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Drop it";
 
         @NotNull

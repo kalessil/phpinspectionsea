@@ -161,6 +161,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use ::class instead.";
+
         final String fqn;
         final boolean importClasses;
         final boolean useRelativeQN;
@@ -168,7 +170,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use ::class instead.";
+            return title;
         }
 
         @NotNull

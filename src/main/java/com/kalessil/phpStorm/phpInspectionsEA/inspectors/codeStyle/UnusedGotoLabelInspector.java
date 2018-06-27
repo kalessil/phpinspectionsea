@@ -67,10 +67,12 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Remove unused label";
+
         @NotNull
         @Override
         public String getName() {
-            return "Remove unused label";
+            return title;
         }
 
         @NotNull

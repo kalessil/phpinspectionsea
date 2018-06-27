@@ -107,11 +107,13 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
         };
     }
 
-    private class CompareToEmptyStringFix extends UseSuggestedReplacementFixer {
+    private static class CompareToEmptyStringFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use empty string comparison instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use empty string comparison instead";
+            return title;
         }
 
         CompareToEmptyStringFix(@NotNull String expression) {

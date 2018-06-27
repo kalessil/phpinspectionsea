@@ -112,11 +112,13 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
         };
     }
 
-    private class UseAlternativeFix extends UseSuggestedReplacementFixer {
+    private static class UseAlternativeFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use the suggested alternative";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use the suggested alternative";
+            return title;
         }
 
         UseAlternativeFix(@NotNull String expression) {

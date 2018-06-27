@@ -94,11 +94,13 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         };
     }
 
-    private class UseStrposFix extends UseSuggestedReplacementFixer {
+    private static class UseStrposFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use str[i]pos() instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use str[i]pos() instead";
+            return title;
         }
 
         UseStrposFix(@NotNull String expression) {

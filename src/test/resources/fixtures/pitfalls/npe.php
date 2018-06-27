@@ -150,3 +150,13 @@ function skip_before_assignment_case_holder(array $array) {
     }
     $item = null;
 }
+
+function skip_properties_in_isset_context(CasesHolder $parameter = null) {
+    return [
+        isset(<warning descr="Null pointer exception may occur here.">$parameter</warning>->property->method()->property) ? '...' : '...',
+        <warning descr="Null pointer exception may occur here.">$parameter</warning>->property->method()->property ?? '...',
+
+        isset($parameter->property) ? '...' : '...',
+        $parameter->property ?? '...',
+    ];
+}

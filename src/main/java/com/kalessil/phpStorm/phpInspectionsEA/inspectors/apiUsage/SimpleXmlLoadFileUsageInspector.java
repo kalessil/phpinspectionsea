@@ -53,11 +53,13 @@ public class SimpleXmlLoadFileUsageInspector extends BasePhpInspection {
         };
     }
 
-    private class LoadStringFix extends UseSuggestedReplacementFixer {
+    private static class LoadStringFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Replace with a similar call";
+
         @NotNull
         @Override
         public String getName() {
-            return "Replace with a similar call";
+            return title;
         }
 
         LoadStringFix(@NotNull String expression) {

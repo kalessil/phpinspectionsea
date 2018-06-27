@@ -73,11 +73,13 @@ public class FilePutContentsMissUseInspector extends BasePhpInspection {
         };
     }
 
-    private class UseCopyFix extends UseSuggestedReplacementFixer {
+    private static class UseCopyFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use copy(...) instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use copy(...) instead";
+            return title;
         }
 
         UseCopyFix(@NotNull String expression) {

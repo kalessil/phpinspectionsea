@@ -57,11 +57,13 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
         };
     }
 
-    private class UseStringReplaceFix extends UseSuggestedReplacementFixer {
+    private static class UseStringReplaceFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use str_replace(...) instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use str_replace(...) instead";
+            return title;
         }
 
         UseStringReplaceFix(@NotNull String expression) {

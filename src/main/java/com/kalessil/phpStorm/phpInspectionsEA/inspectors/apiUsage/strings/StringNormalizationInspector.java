@@ -108,11 +108,13 @@ public class StringNormalizationInspector extends BasePhpInspection {
         };
     }
 
-    private class NormalizationFix extends UseSuggestedReplacementFixer {
+    private static class NormalizationFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Fix the string normalization";
+
         @NotNull
         @Override
         public String getName() {
-            return "Fix the string normalization";
+            return title;
         }
 
         NormalizationFix(@NotNull String expression) {

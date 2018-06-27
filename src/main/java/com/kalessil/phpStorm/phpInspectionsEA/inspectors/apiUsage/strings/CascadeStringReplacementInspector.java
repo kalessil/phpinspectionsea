@@ -87,7 +87,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                                 holder.registerProblem(
                                     functionCall,
                                     messageCascading,
-                                    new MergeStringReplaceCallsFix(functionCall, previousCall)
+                                    new MergeStringReplaceCallsFix(functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
                                 );
                             }
                         }
@@ -140,7 +140,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         holder.registerProblem(
                             callCandidate,
                             messageNesting,
-                            new MergeStringReplaceCallsFix(parentCall, call)
+                            new MergeStringReplaceCallsFix(parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
                         );
                     }
                 }
@@ -206,11 +206,13 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         );
     }
 
-    private class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
+    private static class SimplifyReplacementFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Simplify this argument";
+
         @NotNull
         @Override
         public String getName() {
-            return "Simplify this argument";
+            return title;
         }
 
         SimplifyReplacementFix(@NotNull String expression) {
@@ -218,22 +220,26 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         }
     }
 
-    private class MergeStringReplaceCallsFix implements LocalQuickFix {
+    private static class MergeStringReplaceCallsFix implements LocalQuickFix {
+        private static final String title = "Merge str_replace(...) calls";
+
         final private SmartPsiElementPointer<FunctionReference> patch;
         final private SmartPsiElementPointer<FunctionReference> eliminate;
+        final private boolean useShortSyntax;
 
-        MergeStringReplaceCallsFix(@NotNull FunctionReference patch, @NotNull FunctionReference eliminate) {
+        MergeStringReplaceCallsFix(@NotNull FunctionReference patch, @NotNull FunctionReference eliminate, boolean useShortSyntax) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(patch.getProject());
 
-            this.patch     = factory.createSmartPsiElementPointer(patch);
-            this.eliminate = factory.createSmartPsiElementPointer(eliminate);
+            this.patch          = factory.createSmartPsiElementPointer(patch);
+            this.eliminate      = factory.createSmartPsiElementPointer(eliminate);
+            this.useShortSyntax = useShortSyntax;
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Merge str_replace(...) calls";
+            return title;
         }
 
         @NotNull
@@ -247,10 +253,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             final FunctionReference patch     = this.patch.getElement();
             final FunctionReference eliminate = this.eliminate.getElement();
             if (patch != null && eliminate != null) {
-                final boolean useShortSyntax = USE_SHORT_ARRAYS_SYNTAX;
                 synchronized (eliminate.getContainingFile()) {
-                    this.mergeReplaces(patch, eliminate, useShortSyntax);
-                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0], useShortSyntax);
+                    this.mergeReplaces(patch, eliminate, this.useShortSyntax);
+                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0], this.useShortSyntax);
                     this.mergeSources(patch, eliminate);
                 }
             }

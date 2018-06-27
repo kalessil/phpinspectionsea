@@ -19,7 +19,12 @@ import org.jetbrains.annotations.Nullable;
 final public class NamedElementUtil {
     @Nullable
     static public PsiElement getNameIdentifier(@Nullable PsiNameIdentifierOwner element) {
-        final PsiElement nameNode = element == null ? null : element.getNameIdentifier();
+        PsiElement nameNode;
+        try {
+            nameNode = element == null ? null : element.getNameIdentifier();
+        } catch (Throwable failure) {
+            nameNode = null;
+        }
         return nameNode != null && nameNode.getTextLength() > 0 ? nameNode : null;
     }
 

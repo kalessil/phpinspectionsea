@@ -9,9 +9,14 @@ import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -23,7 +28,24 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%r%' can be used instead (improves maintainability).";
+    // Inspection options.
+    public boolean PREFER_YODA_STYLE    = true;
+    public boolean PREFER_REGULAR_STYLE = false;
+
+    private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
+
+    private static final Set<String> functions      = new HashSet<>();
+    private static final Set<String> outerFunctions = new HashSet<>();
+    static {
+        functions.add("substr");
+        functions.add("mb_substr");
+
+        outerFunctions.add("strtolower");
+        outerFunctions.add("strtoupper");
+        outerFunctions.add("mb_strtolower");
+        outerFunctions.add("mb_strtoupper");
+        outerFunctions.add("mb_convert_case");
+    }
 
     @NotNull
     public String getShortName() {
@@ -37,7 +59,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || (!functionName.equals("substr") && !functionName.equals("mb_substr"))) {
+                if (functionName == null || !functions.contains(functionName)) {
                     return;
                 }
                 final PsiElement[] arguments = reference.getParameters();
@@ -67,10 +89,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                     final FunctionReference parentCall = (FunctionReference) parentExpression;
                     final PsiElement[] parentArguments = parentCall.getParameters();
                     final String parentName            = parentCall.getName();
-                    if (
-                        parentName != null && parentArguments.length == 1 &&
-                        (parentName.equals("strtoupper") || parentName.equals("strtolower"))
-                    ) {
+                    if (parentName != null && parentArguments.length == 1 && outerFunctions.contains(parentName)) {
                         caseManipulated  = true;
                         highLevelCall    = parentExpression;
                         parentExpression = parentExpression.getParent();
@@ -81,22 +100,31 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 if (parentExpression instanceof BinaryExpression) {
                     final BinaryExpression parent = (BinaryExpression) parentExpression;
                     if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(parent.getOperationType())) {
-                        /* get second operand */
                         final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, highLevelCall);
                         final PsiElement operationNode = parent.getOperation();
                         if (secondOperand != null && operationNode != null) {
                             final String operator      = operationNode.getText();
                             final boolean isMbFunction = functionName.equals("mb_substr");
                             final boolean hasEncoding  = isMbFunction && 4 == arguments.length;
-                            final String replacement   = "%i% %o% %f%(%s%, %p%%e%)"
-                                .replace("%e%", hasEncoding ? (", " + arguments[3].getText()) : "")
-                                .replace("%p%", secondOperand.getText())
-                                .replace("%s%", arguments[0].getText())
-                                .replace("%f%", (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"))
-                                .replace("%o%", operator.length() == 2 ? (operator + '=') : operator)
-                                .replace("%i%", index);
-                            final String message       = messagePattern.replace("%r%", replacement);
-                            holder.registerProblem(parentExpression, message, new UseStringSearchFix(replacement));
+
+                            final String call          = String.format(
+                                    "%s(%s, %s%s)",
+                                    (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"),
+                                    arguments[0].getText(),
+                                    secondOperand.getText(),
+                                    hasEncoding ? (", " + arguments[3].getText()) : ""
+                            );
+                            final String replacement   = String.format(
+                                    "%s %s %s",
+                                    PREFER_YODA_STYLE ? index : call,
+                                    operator.length() == 2 ? (operator + '=') : operator,
+                                    PREFER_YODA_STYLE ? call : index
+                            );
+                            holder.registerProblem(
+                                    parentExpression,
+                                    String.format(messagePattern, replacement),
+                                    new UseStringSearchFix(replacement)
+                            );
                         }
                     }
                 }
@@ -104,11 +132,20 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
         };
     }
 
-    private class UseStringSearchFix extends UseSuggestedReplacementFixer {
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
+            radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
+            radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
+        }));
+    }
+
+    private static class UseStringSearchFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use substring search instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use substring search instead";
+            return title;
         }
 
         UseStringSearchFix(@NotNull String expression) {

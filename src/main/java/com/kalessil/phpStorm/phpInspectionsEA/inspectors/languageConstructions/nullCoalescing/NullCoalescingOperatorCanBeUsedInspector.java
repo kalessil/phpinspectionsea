@@ -65,11 +65,13 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         };
     }
 
-    private class UseTheOperatorFix extends UseSuggestedReplacementFixer {
+    private static class UseTheOperatorFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use null coalescing operator instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use null coalescing operator instead";
+            return title;
         }
 
         UseTheOperatorFix(@NotNull String expression) {

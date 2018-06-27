@@ -18,12 +18,14 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UseSuggestedReplacementFixer implements LocalQuickFix {
+    private static final String title = "Use suggested replacement";
+
     final private String expression;
 
     @NotNull
     @Override
     public String getName() {
-        return "Use suggested replacement";
+        return title;
     }
 
     @NotNull

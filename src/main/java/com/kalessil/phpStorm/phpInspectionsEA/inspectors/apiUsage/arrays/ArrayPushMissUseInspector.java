@@ -94,11 +94,13 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
         };
     }
 
-    private class UseElementPushFix extends UseSuggestedReplacementFixer {
+    private static class UseElementPushFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use []= instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use []= instead";
+            return title;
         }
 
         UseElementPushFix(@NotNull String expression) {

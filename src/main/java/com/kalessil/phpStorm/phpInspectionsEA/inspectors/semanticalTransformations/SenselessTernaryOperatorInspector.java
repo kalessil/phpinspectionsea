@@ -73,11 +73,13 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
         };
     }
 
-    private class SimplifyFix extends UseSuggestedReplacementFixer {
+    private static class SimplifyFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Simplify the expression";
+
         @NotNull
         @Override
         public String getName() {
-            return "Simplify the expression";
+            return title;
         }
 
         SimplifyFix(@NotNull String expression) {

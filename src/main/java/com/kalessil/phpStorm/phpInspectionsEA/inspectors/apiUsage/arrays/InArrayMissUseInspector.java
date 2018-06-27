@@ -133,11 +133,13 @@ public class InArrayMissUseInspector extends BasePhpInspection {
         }));
     }
 
-    private class UseArrayKeyExistsFix extends UseSuggestedReplacementFixer {
+    private static class UseArrayKeyExistsFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use array_key_exists() instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use array_key_exists() instead";
+            return title;
         }
 
         UseArrayKeyExistsFix(@NotNull String expression) {
@@ -145,11 +147,13 @@ public class InArrayMissUseInspector extends BasePhpInspection {
         }
     }
 
-    private class UseComparisonFix extends UseSuggestedReplacementFixer {
+    private static class UseComparisonFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Compare elements instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Compare elements instead";
+            return title;
         }
 
         UseComparisonFix(@NotNull String expression) {

@@ -142,11 +142,13 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
     }
 
 
-    private class UseIncrementFix extends UseSuggestedReplacementFixer {
+    private static class UseIncrementFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use increment operation instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use increment operation instead";
+            return title;
         }
 
         UseIncrementFix(@NotNull String expression) {
@@ -154,11 +156,13 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
         }
     }
 
-    private class UseDecrementFix extends UseSuggestedReplacementFixer {
+    private static class UseDecrementFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use decrement operation instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use decrement operation instead";
+            return title;
         }
 
         UseDecrementFix(@NotNull String expression) {

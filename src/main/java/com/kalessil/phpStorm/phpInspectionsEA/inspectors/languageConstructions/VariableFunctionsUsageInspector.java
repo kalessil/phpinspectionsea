@@ -211,11 +211,13 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
         return asString;
     }
 
-    private class ReplaceFix extends UseSuggestedReplacementFixer {
+    private static class ReplaceFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use variable function instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use variable function instead";
+            return title;
         }
 
         ReplaceFix(@NotNull String expression) {
@@ -223,11 +225,13 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
         }
     }
 
-    private class InlineFix extends UseSuggestedReplacementFixer {
+    private static class InlineFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Inline argument and inspect again";
+
         @NotNull
         @Override
         public String getName() {
-            return "Inline argument and inspect again";
+            return title;
         }
 
         InlineFix(@NotNull String expression) {

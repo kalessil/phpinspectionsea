@@ -123,11 +123,13 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    private class UseConstantFix extends UseSuggestedReplacementFixer {
+    private static class UseConstantFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use the constant instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use the constant instead";
+            return title;
         }
 
         UseConstantFix(@NotNull String expression) {

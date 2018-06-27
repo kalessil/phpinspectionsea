@@ -197,7 +197,9 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         };
     }
 
-    private class UseForeachFix implements LocalQuickFix {
+    private static class UseForeachFix implements LocalQuickFix {
+        private static final String title = "Use foreach instead";
+
         @NotNull
         private final SmartPsiElementPointer<PsiElement> loop;
         @NotNull
@@ -210,7 +212,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use foreach instead";
+            return title;
         }
 
         @NotNull

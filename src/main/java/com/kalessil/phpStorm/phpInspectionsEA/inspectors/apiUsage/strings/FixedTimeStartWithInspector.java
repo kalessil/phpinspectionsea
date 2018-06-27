@@ -83,11 +83,13 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
         };
     }
 
-    private class UseFirstCharactersCompareFix extends UseSuggestedReplacementFixer {
+    private static class UseFirstCharactersCompareFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use fixed-time operation instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use fixed-time operation instead";
+            return title;
         }
 
         UseFirstCharactersCompareFix(@NotNull String expression) {

@@ -238,6 +238,26 @@ final public class NullableVariablesStrategy {
                 final MemberReference reference = (MemberReference) parent;
                 final PsiElement subject        = reference.getClassReference();
                 if (subject instanceof Variable && ((Variable) subject).getName().equals(variableName)) {
+
+                    /* false-positives: `$variable->property ?? ...`, isset($variable->property) */
+                    if (parent instanceof FieldReference) {
+                        PsiElement lastReference    = parent;
+                        PsiElement referenceContext = parent;
+                        while (referenceContext instanceof FieldReference) {
+                            lastReference    = referenceContext;
+                            referenceContext = referenceContext.getParent();
+                        }
+                        if (referenceContext instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) referenceContext;
+                            final boolean isCoalescing    = binary.getOperationType() == PhpTokenTypes.opCOALESCE;
+                            if (isCoalescing && lastReference == binary.getLeftOperand()) {
+                                continue;
+                            }
+                        } else if (referenceContext instanceof PhpIsset) {
+                            continue;
+                        }
+                    }
+
                     holder.registerProblem(subject, message);
                 }
             }

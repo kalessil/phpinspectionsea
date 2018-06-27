@@ -148,10 +148,12 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
     }
 
     private static class UseTypeCastingFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use type casting instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use type casting instead";
+            return title;
         }
 
         UseTypeCastingFix(@NotNull String expression) {

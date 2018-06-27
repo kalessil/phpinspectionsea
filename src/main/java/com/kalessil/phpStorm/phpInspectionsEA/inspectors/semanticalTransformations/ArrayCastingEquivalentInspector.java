@@ -152,13 +152,15 @@ public class ArrayCastingEquivalentInspector extends BasePhpInspection {
         };
     }
 
-    private class SimplifyFix extends UseSuggestedReplacementFixer {
+    private static class SimplifyFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use array casting instead";
+
         final private String expression;
 
         @NotNull
         @Override
         public String getName() {
-            return "Use array casting instead";
+            return title;
         }
 
         SimplifyFix(@NotNull String expression) {

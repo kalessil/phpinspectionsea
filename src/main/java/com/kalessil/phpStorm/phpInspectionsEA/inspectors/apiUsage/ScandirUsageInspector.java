@@ -46,11 +46,13 @@ public class ScandirUsageInspector extends BasePhpInspection {
         };
     }
 
-    private class NoSortFix extends UseSuggestedReplacementFixer {
+    private static class NoSortFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Disable sorting by default";
+
         @NotNull
         @Override
         public String getName() {
-            return "Disable sorting by default";
+            return title;
         }
 
         NoSortFix(@NotNull String expression) {

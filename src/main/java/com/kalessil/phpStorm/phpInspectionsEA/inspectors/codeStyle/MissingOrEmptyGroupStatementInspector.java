@@ -106,7 +106,7 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

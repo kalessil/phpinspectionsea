@@ -84,12 +84,14 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Sort modifiers";
+
         private final String modifiers;
 
         @NotNull
         @Override
         public String getName() {
-            return "Sort modifiers";
+            return title;
         }
 
         @NotNull

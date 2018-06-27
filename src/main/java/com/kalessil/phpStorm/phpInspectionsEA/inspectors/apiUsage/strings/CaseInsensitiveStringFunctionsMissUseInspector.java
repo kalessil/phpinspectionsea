@@ -74,6 +74,8 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use suggested function instead";
+
         final private String suggestedName;
 
         TheLocalFix(@NotNull String suggestedName) {
@@ -84,7 +86,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested function instead";
+            return title;
         }
 
         @NotNull

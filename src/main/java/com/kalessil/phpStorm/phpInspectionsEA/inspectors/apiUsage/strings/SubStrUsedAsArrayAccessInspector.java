@@ -68,10 +68,12 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use array access";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use array access";
+            return title;
         }
 
         TheLocalFix(@NotNull String expression) {

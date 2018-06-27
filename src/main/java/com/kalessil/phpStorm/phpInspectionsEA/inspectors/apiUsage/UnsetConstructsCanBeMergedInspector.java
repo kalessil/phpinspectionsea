@@ -55,12 +55,14 @@ public class UnsetConstructsCanBeMergedInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Merge unset statements";
+
         final private SmartPsiElementPointer<PhpUnset> unset;
 
         @NotNull
         @Override
         public String getName() {
-            return "Merge unset statements";
+            return title;
         }
 
         @NotNull

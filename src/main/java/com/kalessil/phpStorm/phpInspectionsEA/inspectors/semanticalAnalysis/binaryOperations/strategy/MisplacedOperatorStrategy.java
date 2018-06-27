@@ -105,7 +105,7 @@ final public class MisplacedOperatorStrategy {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         MisplacedOperatorFix(@NotNull String expression, @NotNull PsiElement call) {

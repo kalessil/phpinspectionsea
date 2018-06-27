@@ -215,7 +215,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
         });
     }
 
-    private static class CompareToNullFix extends UseSuggestedReplacementFixer {
+    private static final class CompareToNullFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use null comparison instead";
 
         @NotNull

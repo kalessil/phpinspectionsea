@@ -161,10 +161,12 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
     }
 
     private static class DropFieldDefaultValueFix implements LocalQuickFix {
+        private static final String title = "Remove default assignment";
+
         @NotNull
         @Override
         public String getName() {
-            return "Remove default assignment";
+            return title;
         }
 
         @NotNull

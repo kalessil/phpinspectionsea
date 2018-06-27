@@ -115,6 +115,8 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use suggested is_*(...) function instead";
+
         final private String suggestedName;
         final private boolean isInverted;
         final private SmartPsiElementPointer<PsiElement> param;
@@ -131,7 +133,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested is_*(...) function instead";
+            return title;
         }
 
         @NotNull

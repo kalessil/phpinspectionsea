@@ -76,7 +76,7 @@ final public class QueryUsageStrategy {
 
         UseQueryFix(@NotNull MethodReference prepare) {
             super();
-            SmartPointerManager manager =  SmartPointerManager.getInstance(prepare.getProject());
+            final SmartPointerManager manager = SmartPointerManager.getInstance(prepare.getProject());
 
             this.prepare = manager.createSmartPsiElementPointer(prepare);
         }

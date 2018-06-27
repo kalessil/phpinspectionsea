@@ -128,10 +128,11 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         private final SmartPsiElementPointer<PsiElement> dropTo;
 
         private TheLocalFix(@NotNull PsiElement dropFrom, @NotNull PsiElement dropTo) {
-            final SmartPointerManager manager = SmartPointerManager.getInstance(dropFrom.getProject());
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(dropFrom.getProject());
 
-            this.dropFrom = manager.createSmartPsiElementPointer(dropFrom);
-            this.dropTo   = manager.createSmartPsiElementPointer(dropTo);
+            this.dropFrom = factory.createSmartPsiElementPointer(dropFrom);
+            this.dropTo   = factory.createSmartPsiElementPointer(dropTo);
         }
 
         @NotNull

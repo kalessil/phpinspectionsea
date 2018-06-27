@@ -70,11 +70,11 @@ final public class AssertBoolOfComparisonStrategy {
 
         TheLocalFix(@NotNull String replacementFunction, @NotNull PsiElement first, @NotNull PsiElement second) {
             super();
-            SmartPointerManager manager =  SmartPointerManager.getInstance(first.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(first.getProject());
 
             this.replacementFunction = replacementFunction;
-            this.first               = manager.createSmartPsiElementPointer(first);
-            this.second              = manager.createSmartPsiElementPointer(second);
+            this.first               = factory.createSmartPsiElementPointer(first);
+            this.second              = factory.createSmartPsiElementPointer(second);
         }
 
         @NotNull

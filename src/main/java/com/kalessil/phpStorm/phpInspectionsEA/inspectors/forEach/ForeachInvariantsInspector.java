@@ -227,6 +227,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             @Nullable PsiElement value,
             @NotNull PsiElement container
         ) {
+            super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(loop.getProject());
 
             this.loop      = factory.createSmartPsiElementPointer(loop);

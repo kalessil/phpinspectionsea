@@ -50,7 +50,7 @@ public class ShortOpenTagUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

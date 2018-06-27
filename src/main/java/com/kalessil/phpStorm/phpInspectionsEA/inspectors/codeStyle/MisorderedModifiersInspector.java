@@ -97,7 +97,7 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         private TheLocalFix(@NotNull String modifiers) {

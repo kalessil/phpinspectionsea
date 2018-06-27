@@ -159,6 +159,8 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
     }
 
     private static class SimplifyFix implements LocalQuickFix {
+        private static final String title = "Apply the simplification";
+
         final private SmartPsiElementPointer<PsiElement> from;
         final private SmartPsiElementPointer<PsiElement> to;
         final String replacement;
@@ -175,7 +177,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Apply the simplification";
+            return title;
         }
 
         @NotNull

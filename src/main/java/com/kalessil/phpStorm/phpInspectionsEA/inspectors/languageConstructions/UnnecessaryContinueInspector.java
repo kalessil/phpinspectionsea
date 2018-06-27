@@ -93,10 +93,12 @@ public class UnnecessaryContinueInspector extends BasePhpInspection {
     }
 
     private static class RemoveUnnecessaryStatementFix implements LocalQuickFix {
+        private static final String title = "Remove unnecessary statement";
+
         @NotNull
         @Override
         public String getName() {
-            return "Remove unnecessary statement";
+            return title;
         }
 
         @NotNull

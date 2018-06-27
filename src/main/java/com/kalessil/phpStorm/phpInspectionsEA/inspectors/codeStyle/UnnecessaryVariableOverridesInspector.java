@@ -104,6 +104,8 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
     }
 
     private static class MergeCallsFix implements LocalQuickFix {
+        private static final String title = "Use a nested call instead";
+
         private final SmartPsiElementPointer<PsiElement> target;
         private final SmartPsiElementPointer<PsiElement> value;
         private final SmartPsiElementPointer<PsiElement> absolete;
@@ -111,7 +113,7 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use a nested call instead";
+            return title;
         }
 
         @NotNull

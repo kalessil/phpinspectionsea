@@ -145,10 +145,12 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
     }
 
     private static class AddMissingNewFix implements LocalQuickFix {
+        private static final String title = "Add missing new keyword";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add missing new keyword";
+            return title;
         }
 
         @NotNull

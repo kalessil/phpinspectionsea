@@ -74,10 +74,12 @@ public class SecureCookiesTransferInspector extends LocalInspectionTool {
     }
 
     private static class AddArgumentsFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Add missing arguments";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add missing arguments";
+            return title;
         }
 
         AddArgumentsFix(@NotNull String expression) {

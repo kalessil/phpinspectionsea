@@ -32,7 +32,7 @@ import java.util.Set;
 final public class NullableArgumentComparisonStrategy {
     private static final String messagePattern = "This might work not as expected (an argument can be null/false), use '%s' to be sure.";
 
-    private static Map<IElementType, String> mapping = new HashMap<>();
+    private static final Map<IElementType, String> mapping = new HashMap<>();
     static {
         mapping.put(PhpTokenTypes.opLESS,          ">=");
         mapping.put(PhpTokenTypes.opLESS_OR_EQUAL, ">");

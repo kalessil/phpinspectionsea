@@ -50,7 +50,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                     if (arguments[0] instanceof StringLiteralExpression) {
                         final StringLiteralExpression pattern = (StringLiteralExpression) arguments[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
-                            holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix("time()"));
+                            holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix());
                         }
                     }
                 }
@@ -82,8 +82,8 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
             return title;
         }
 
-        UseTimeFunctionLocalFix(@NotNull String expression) {
-            super(expression);
+        UseTimeFunctionLocalFix() {
+            super("time()");
         }
     }
 

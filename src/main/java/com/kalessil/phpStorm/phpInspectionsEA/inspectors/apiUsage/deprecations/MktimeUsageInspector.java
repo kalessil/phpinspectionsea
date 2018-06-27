@@ -38,7 +38,7 @@ public class MktimeUsageInspector extends BasePhpInspection {
                 if (functionName != null && (functionName.equals("mktime") || functionName.equals("gmmktime"))) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 0) {
-                        holder.registerProblem(reference, messageUseTime, ProblemHighlightType.WEAK_WARNING, new UseTimeFunctionLocalFix("time()"));
+                        holder.registerProblem(reference, messageUseTime, ProblemHighlightType.WEAK_WARNING, new UseTimeFunctionLocalFix());
                     } else if (arguments.length == 7 && !arguments[6].getText().isEmpty()) {
                         holder.registerProblem(arguments[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
                     }
@@ -56,8 +56,8 @@ public class MktimeUsageInspector extends BasePhpInspection {
             return title;
         }
 
-        UseTimeFunctionLocalFix(@NotNull String expression) {
-            super(expression);
+        UseTimeFunctionLocalFix() {
+            super("time()");
         }
     }
 }

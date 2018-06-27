@@ -73,7 +73,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     if (functionName != null && functionName.equals("get_called_class")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 0) {
-                            holder.registerProblem(reference, messageUseStatic, new UseStaticFix("static::class"));
+                            holder.registerProblem(reference, messageUseStatic, new UseStaticFix());
                         }
                     }
                 }
@@ -155,8 +155,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
             return title;
         }
 
-        UseStaticFix(@NotNull String expression) {
-            super(expression);
+        UseStaticFix() {
+            super("static::class");
         }
     }
 

@@ -14,7 +14,7 @@ final public class UnnecessaryCaseManipulationCheckStrategy {
     private static final String messageUnnecessary = "Unnecessary case manipulation (the regex is case-insensitive).";
     private static final String messageNotOptimal  = "Unnecessary case manipulation (use i-flag in regex for better performance).";
 
-    private static Set<String> targetFunctions = new HashSet<>();
+    private static final Set<String> targetFunctions = new HashSet<>();
     static {
         targetFunctions.add("strtolower");
         targetFunctions.add("strtoupper");

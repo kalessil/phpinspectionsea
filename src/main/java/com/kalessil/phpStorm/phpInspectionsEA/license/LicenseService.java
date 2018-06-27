@@ -48,7 +48,7 @@ final public class LicenseService {
         final String login = proxySettings.getProxyLogin();
         if (login != null && !login.isEmpty()) {
             final String password = proxySettings.getPlainProxyPassword();
-            credentials = login + (password == null ? "" : (":" + password)) + "@";
+            credentials = login + (password == null ? "" : (':' + password)) + '@';
         }
 
         return String.format("http://%s%s:%s/", credentials, host, proxySettings.PROXY_PORT);

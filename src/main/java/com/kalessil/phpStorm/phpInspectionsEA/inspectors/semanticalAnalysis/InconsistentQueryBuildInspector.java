@@ -78,10 +78,12 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Add SORT_STRING as a parameter";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add SORT_STRING as a parameter";
+            return title;
         }
 
         @NotNull

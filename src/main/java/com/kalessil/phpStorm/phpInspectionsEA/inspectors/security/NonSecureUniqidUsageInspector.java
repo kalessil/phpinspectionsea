@@ -83,10 +83,12 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
     }
 
     private static class UseLambdaFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Add missing arguments";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add missing arguments";
+            return title;
         }
 
         UseLambdaFix () {
@@ -95,10 +97,12 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
     }
 
     private static class AddMissingParametersFix implements LocalQuickFix {
+        private static final String title = "Add missing arguments";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add missing arguments";
+            return title;
         }
 
         @NotNull

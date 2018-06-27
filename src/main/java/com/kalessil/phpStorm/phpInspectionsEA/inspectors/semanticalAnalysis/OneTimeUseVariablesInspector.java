@@ -212,6 +212,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Inline value";
+
         private final SmartPsiElementPointer<PsiElement> assignment;
         private final SmartPsiElementPointer<PsiElement> value;
         private final SmartPsiElementPointer<Variable> variable;
@@ -228,7 +230,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Inline value";
+            return title;
         }
 
         @NotNull

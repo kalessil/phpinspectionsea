@@ -91,13 +91,15 @@ final public class MisplacedOperatorStrategy {
     }
 
     private static class MisplacedOperatorFix implements LocalQuickFix {
+        private static final String title = "Place the operator correctly";
+
         final private String expression;
         final private SmartPsiElementPointer<PsiElement> call;
 
         @NotNull
         @Override
         public String getName() {
-            return "Place the operator correctly";
+            return title;
         }
 
         @NotNull

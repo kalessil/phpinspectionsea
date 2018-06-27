@@ -182,7 +182,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ;
+            return title;
         }
 
         @NotNull

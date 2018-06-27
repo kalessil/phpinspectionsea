@@ -204,19 +204,23 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
                     if (parent instanceof SelfAssignmentExpression) {
                         final SelfAssignmentExpression selfAssignment = (SelfAssignmentExpression) parent;
-                        if (selfAssignment.getVariable() == variable) {
-                            ++intCountWriteAccesses;
-                            if (isReference) {
-                                /* when modifying the reference it's link READ and linked WRITE semantics */
-                                ++intCountReadAccesses;
-                            } else {
-                                /* when modifying non-reference, register as write only access for reporting */
-                                targetExpressions.add(variable);
+                        final PsiElement sameVariableCandidate        = selfAssignment.getVariable();
+                        if (sameVariableCandidate instanceof Variable) {
+                            final Variable candidate = (Variable) sameVariableCandidate;
+                            if (candidate.getName().equals(parameterName)) {
+                                ++intCountWriteAccesses;
+                                if (isReference) {
+                                    /* when modifying the reference it's link READ and linked WRITE semantics */
+                                    ++intCountReadAccesses;
+                                } else {
+                                    /* when modifying non-reference, register as write only access for reporting */
+                                    targetExpressions.add(variable);
+                                }
+                                if (!OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
+                                    ++intCountReadAccesses;
+                                }
+                                continue;
                             }
-                            if (!OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
-                                ++intCountReadAccesses;
-                            }
-                            continue;
                         }
                     }
 
@@ -224,9 +228,10 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     if (parent instanceof AssignmentExpression) {
                         /* ensure variable with the same name being written */
                         final AssignmentExpression referenceAssignmentCandidate = (AssignmentExpression) parent;
-                        if (referenceAssignmentCandidate.getVariable() instanceof Variable) {
-                            final Variable sameVariableCandidate = (Variable) referenceAssignmentCandidate.getVariable();
-                            if (sameVariableCandidate.getName().equals(parameterName)) {
+                        final PsiElement sameVariableCandidate                  = referenceAssignmentCandidate.getVariable();
+                        if (sameVariableCandidate instanceof Variable) {
+                            final Variable candidate = (Variable) sameVariableCandidate;
+                            if (candidate.getName().equals(parameterName)) {
                                 ++intCountWriteAccesses;
                                 if (isReference) {
                                     /* when modifying the reference it's link READ and linked WRITE semantics */

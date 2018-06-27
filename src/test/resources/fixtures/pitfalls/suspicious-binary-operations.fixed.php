@@ -79,3 +79,15 @@ if ('x' !== $x || 'y' !== $x) {}
 if ($x == 5 && $x === 6) {}
 if ($x != 'x' || $x !== 'y') {}
 if ($x == 5 && $x == $y) {}
+
+/* typos in logical operands */
+if ($x && $x & $x) {}
+if ($x || $x & $x) {}
+if ($x && $x | $x) {}
+if ($x || $x | $x) {}
+
+/* false-positives: parentheses and mixed operators */
+if ($x && ($x & $x)) {}
+if ($x || ($x & $x)) {}
+if ($x || ($x | $x)) {}
+if ($x && ($x | $x)) {}

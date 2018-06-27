@@ -79,3 +79,15 @@ if ('x' !== $x || <error descr="'$x !== 'x' || $x !== 'y'' seems to be always tr
 if ($x == 5 && $x === 6) {}
 if ($x != 'x' || $x !== 'y') {}
 if ($x == 5 && $x == $y) {}
+
+/* typos in logical operands */
+if ($x && $x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x) {}
+if ($x || $x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x) {}
+if ($x && $x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x) {}
+if ($x || $x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x) {}
+
+/* false-positives: parentheses and mixed operators */
+if ($x && ($x & $x)) {}
+if ($x || ($x & $x)) {}
+if ($x || ($x | $x)) {}
+if ($x && ($x | $x)) {}

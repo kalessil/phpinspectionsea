@@ -111,10 +111,12 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
     }
 
     private static class MakeSearchTypeSensitiveFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Add 'true' as the third argument";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add 'true' as the third argument";
+            return title;
         }
 
         MakeSearchTypeSensitiveFix(@NotNull String expression) {

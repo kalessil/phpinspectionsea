@@ -56,7 +56,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
     }
 
     private static final class TheLocalFix implements LocalQuickFix {
-        private static final String title = "Use ?: instead.";
+        private static final String title = "Use ?: instead";
 
         @NotNull
         @Override

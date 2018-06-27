@@ -147,7 +147,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     }
 
     private static final class UseStaticFix extends UseSuggestedReplacementFixer {
-        private static final String title = "Use static::class instead.";
+        private static final String title = "Use static::class instead";
 
         @NotNull
         @Override
@@ -161,7 +161,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     }
 
     private static final class TheLocalFix implements LocalQuickFix {
-        private static final String title = "Use ::class instead.";
+        private static final String title = "Use ::class instead";
 
         final String fqn;
         final boolean importClasses;

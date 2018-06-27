@@ -38,10 +38,12 @@ final public class ExecUsageStrategy {
     }
 
     private static class UseExecFix implements LocalQuickFix {
+        private static final String title = "Use '->exec(...)' instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use '->exec(...)' instead";
+            return title;
         }
 
         @NotNull

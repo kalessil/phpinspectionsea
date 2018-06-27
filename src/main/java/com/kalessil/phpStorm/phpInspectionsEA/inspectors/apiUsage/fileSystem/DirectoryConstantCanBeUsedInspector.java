@@ -52,10 +52,12 @@ public class DirectoryConstantCanBeUsedInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Replace by __DIR__";
+
         @NotNull
         @Override
         public String getName() {
-            return "Replace by __DIR__";
+            return title;
         }
 
         @NotNull

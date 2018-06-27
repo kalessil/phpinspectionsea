@@ -117,6 +117,8 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use origin function";
+
         final private String suggestedName;
 
         TheLocalFix(@NotNull String suggestedName) {
@@ -127,7 +129,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use origin function";
+            return title;
         }
 
         @NotNull

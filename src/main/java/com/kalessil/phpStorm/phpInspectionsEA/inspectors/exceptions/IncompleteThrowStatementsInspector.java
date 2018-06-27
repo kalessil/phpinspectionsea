@@ -144,7 +144,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         }
     }
 
-    private static class AddMissingNewFix implements LocalQuickFix {
+    private static final class AddMissingNewFix implements LocalQuickFix {
         private static final String title = "Add missing new keyword";
 
         @NotNull

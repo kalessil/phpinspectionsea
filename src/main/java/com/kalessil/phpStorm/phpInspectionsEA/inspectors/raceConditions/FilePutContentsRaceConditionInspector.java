@@ -78,7 +78,7 @@ public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
     }
 
 
-    private static class AddLockExFlagFix implements LocalQuickFix {
+    private static final class AddLockExFlagFix implements LocalQuickFix {
         private static final String title = "Add LOCK_EX as an argument";
 
         @NotNull

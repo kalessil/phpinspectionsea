@@ -103,7 +103,7 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
         };
     }
 
-    private static class MergeCallsFix implements LocalQuickFix {
+    private static final class MergeCallsFix implements LocalQuickFix {
         private static final String title = "Use a nested call instead";
 
         private final SmartPsiElementPointer<PsiElement> target;

@@ -69,7 +69,7 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use ATOM constant instead";
 
         @NotNull

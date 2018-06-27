@@ -77,7 +77,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         }));
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Reorder arguments";
 
         @NotNull

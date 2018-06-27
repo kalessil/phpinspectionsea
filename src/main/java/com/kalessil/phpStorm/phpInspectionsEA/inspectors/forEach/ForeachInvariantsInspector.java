@@ -197,7 +197,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseForeachFix implements LocalQuickFix {
+    private static final class UseForeachFix implements LocalQuickFix {
         private static final String title = "Use foreach instead";
 
         @NotNull

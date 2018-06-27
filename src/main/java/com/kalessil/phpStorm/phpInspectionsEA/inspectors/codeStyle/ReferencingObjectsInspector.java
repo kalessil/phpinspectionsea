@@ -118,7 +118,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         };
     }
 
-    private static class InstantiationLocalFix implements LocalQuickFix {
+    private static final class InstantiationLocalFix implements LocalQuickFix {
         private static final String title = "Replace with regular assignment";
 
         final private SmartPsiElementPointer<PsiElement> assignOperator;
@@ -153,7 +153,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         }
     }
 
-    private static class ParameterLocalFix implements LocalQuickFix {
+    private static final class ParameterLocalFix implements LocalQuickFix {
         private static final String title = "Cleanup parameter definition";
 
         final private SmartPsiElementPointer<Parameter> parameter;

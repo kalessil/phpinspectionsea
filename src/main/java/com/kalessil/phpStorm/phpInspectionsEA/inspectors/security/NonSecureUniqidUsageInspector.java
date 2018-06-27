@@ -96,7 +96,7 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
         }
     }
 
-    private static class AddMissingParametersFix implements LocalQuickFix {
+    private static final class AddMissingParametersFix implements LocalQuickFix {
         private static final String title = "Add missing arguments";
 
         @NotNull

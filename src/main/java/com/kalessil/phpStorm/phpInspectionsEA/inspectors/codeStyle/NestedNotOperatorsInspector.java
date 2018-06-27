@@ -76,7 +76,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseSingleNotLocalFix implements LocalQuickFix {
+    private static final class UseSingleNotLocalFix implements LocalQuickFix {
         private static final String title = "Use a single not operator";
 
         final SmartPsiElementPointer<PsiElement> value;
@@ -109,7 +109,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         }
     }
 
-    private static class UseCastingLocalFix implements LocalQuickFix {
+    private static final class UseCastingLocalFix implements LocalQuickFix {
         private static final String title = "Use boolean casting";
 
         final SmartPsiElementPointer<PsiElement> value;

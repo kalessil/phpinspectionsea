@@ -172,7 +172,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         }
     }
 
-    private static class ThrowExceptionFix implements LocalQuickFix {
+    private static final class ThrowExceptionFix implements LocalQuickFix {
         private static final String title = "Replace with conditional expression";
 
         private final String resource;
@@ -216,7 +216,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         }
     }
 
-    private static class HardenConditionFix implements LocalQuickFix {
+    private static final class HardenConditionFix implements LocalQuickFix {
         private static final String title = "Harden the condition";
 
         private final String resource;

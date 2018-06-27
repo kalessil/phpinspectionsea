@@ -49,7 +49,7 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use include/require instead.";
 
         @NotNull

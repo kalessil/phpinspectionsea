@@ -259,7 +259,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         );
     }
 
-    private static class DeclareReturnTypeFix implements LocalQuickFix {
+    private static final class DeclareReturnTypeFix implements LocalQuickFix {
         private static final String title = "Declare the return type";
 
         final private String type;

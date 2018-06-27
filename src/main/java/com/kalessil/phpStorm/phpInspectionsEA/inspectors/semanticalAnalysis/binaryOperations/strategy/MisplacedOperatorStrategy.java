@@ -90,7 +90,7 @@ final public class MisplacedOperatorStrategy {
         return false;
     }
 
-    private static class MisplacedOperatorFix implements LocalQuickFix {
+    private static final class MisplacedOperatorFix implements LocalQuickFix {
         private static final String title = "Place the operator correctly";
 
         final private String expression;

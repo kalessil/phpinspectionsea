@@ -83,7 +83,7 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Sort modifiers";
 
         private final String modifiers;

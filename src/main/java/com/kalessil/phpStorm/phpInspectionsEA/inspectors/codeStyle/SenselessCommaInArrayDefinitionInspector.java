@@ -46,7 +46,7 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Safely drop comma";
 
         @NotNull

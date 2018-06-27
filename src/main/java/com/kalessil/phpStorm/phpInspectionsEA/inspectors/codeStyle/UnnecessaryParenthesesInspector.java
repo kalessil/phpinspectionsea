@@ -132,7 +132,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Remove the brackets";
 
         @NotNull

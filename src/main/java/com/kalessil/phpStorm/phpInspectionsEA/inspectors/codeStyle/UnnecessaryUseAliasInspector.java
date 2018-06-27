@@ -50,7 +50,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Remove unnecessary alias";
 
         @NotNull

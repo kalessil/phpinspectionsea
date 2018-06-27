@@ -137,7 +137,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Collapse dirname(...) calls";
 
         final private String expression;

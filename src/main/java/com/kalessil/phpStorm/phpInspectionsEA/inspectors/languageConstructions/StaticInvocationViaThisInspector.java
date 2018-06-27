@@ -98,7 +98,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use self::";
 
         private final SmartPsiElementPointer<PsiElement> variable;

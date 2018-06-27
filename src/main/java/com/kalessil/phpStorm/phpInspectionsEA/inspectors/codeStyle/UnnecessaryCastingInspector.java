@@ -130,7 +130,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
         };
     }
 
-    private static class ReplaceWithArgumentFix implements LocalQuickFix {
+    private static final class ReplaceWithArgumentFix implements LocalQuickFix {
         private static final String title = "Remove unnecessary casting";
 
         @NotNull

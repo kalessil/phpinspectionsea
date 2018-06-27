@@ -96,7 +96,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override
@@ -129,7 +129,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

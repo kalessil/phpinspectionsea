@@ -77,7 +77,7 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         UseCompactFix(@NotNull String replacement) {

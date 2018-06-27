@@ -92,7 +92,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspe
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

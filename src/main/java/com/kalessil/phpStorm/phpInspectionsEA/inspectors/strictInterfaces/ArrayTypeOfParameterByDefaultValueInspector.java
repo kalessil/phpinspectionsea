@@ -109,7 +109,7 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

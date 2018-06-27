@@ -115,7 +115,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         MemberVisibilityFix(@NotNull PhpModifierList modifiers) {
@@ -156,7 +156,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         ConstantVisibilityFix(@NotNull Field constField) {

@@ -76,7 +76,7 @@ public class DateUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         DropTimeFunctionCallLocalFix(@NotNull PsiElement from, @NotNull PsiElement to) {

@@ -68,7 +68,7 @@ final public class MissingUnderscoreStrategy {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

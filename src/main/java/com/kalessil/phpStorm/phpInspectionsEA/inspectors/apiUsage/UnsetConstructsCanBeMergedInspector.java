@@ -68,14 +68,13 @@ public class UnsetConstructsCanBeMergedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         TheLocalFix(@NotNull PhpUnset unset) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(unset.getProject());
 
-            this.unset = factory.createSmartPsiElementPointer(unset);
+            this.unset = SmartPointerManager.getInstance(unset.getProject()).createSmartPsiElementPointer(unset);
         }
 
         @Override

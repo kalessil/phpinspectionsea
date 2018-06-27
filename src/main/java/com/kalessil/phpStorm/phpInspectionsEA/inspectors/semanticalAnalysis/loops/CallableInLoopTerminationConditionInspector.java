@@ -79,7 +79,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

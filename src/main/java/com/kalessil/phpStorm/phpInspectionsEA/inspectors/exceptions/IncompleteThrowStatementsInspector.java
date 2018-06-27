@@ -99,7 +99,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         };
     }
 
-    private static class AddMissingSprintfFix extends UseSuggestedReplacementFixer {
+    private static final class AddMissingSprintfFix extends UseSuggestedReplacementFixer {
         private static final String title = "Wrap with sprintf(...)";
 
         @NotNull

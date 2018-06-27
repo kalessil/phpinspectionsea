@@ -100,7 +100,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName() + " (else)";
+            return title + " (else)";
         }
 
         MergeIntoParentElseFix(@NotNull If target, @NotNull Else parent) {
@@ -139,7 +139,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName() + " (if)";
+            return title + " (if)";
         }
 
         MergeIntoParentIfFix(@NotNull If target, @NotNull If parent) {

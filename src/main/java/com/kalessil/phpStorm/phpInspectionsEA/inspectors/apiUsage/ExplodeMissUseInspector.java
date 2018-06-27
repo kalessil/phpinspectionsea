@@ -121,7 +121,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseAlternativeFix extends UseSuggestedReplacementFixer {
+    private static final class UseAlternativeFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use the suggested alternative";
 
         @NotNull

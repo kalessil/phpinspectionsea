@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class PhpUnitAssertFixer implements LocalQuickFix {
+final public class PhpUnitAssertFixer implements LocalQuickFix {
     private static final String title = "Use suggested assertion instead";
 
     private final String suggestedAssertion;
@@ -32,7 +32,7 @@ public class PhpUnitAssertFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getFamilyName() {
-        return getName();
+        return title;
     }
 
     public PhpUnitAssertFixer (@NotNull String suggestedAssertion, @NotNull String[] arguments) {

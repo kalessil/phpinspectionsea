@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class DropMethodFix implements LocalQuickFix {
+final public class DropMethodFix implements LocalQuickFix {
     private static final String title = "Drop the method";
 
     @NotNull
@@ -22,7 +22,7 @@ public class DropMethodFix implements LocalQuickFix {
     @NotNull
     @Override
     public String getFamilyName() {
-        return getName();
+        return title;
     }
 
     @Override

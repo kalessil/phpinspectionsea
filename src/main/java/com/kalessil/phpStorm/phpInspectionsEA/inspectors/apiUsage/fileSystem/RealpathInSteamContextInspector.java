@@ -121,7 +121,7 @@ public class RealpathInSteamContextInspector extends BasePhpInspection {
         return replacement;
     }
 
-    private static class SecureRealpathFix extends UseSuggestedReplacementFixer {
+    private static final class SecureRealpathFix extends UseSuggestedReplacementFixer {
         private static final String title = "Secure this realpath(...)";
 
         @NotNull

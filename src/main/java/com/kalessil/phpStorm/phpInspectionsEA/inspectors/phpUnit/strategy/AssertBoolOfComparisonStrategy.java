@@ -86,7 +86,7 @@ final public class AssertBoolOfComparisonStrategy {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName() + " (assert same or equal)";
+            return title + " (assert same or equal)";
         }
 
         @Override

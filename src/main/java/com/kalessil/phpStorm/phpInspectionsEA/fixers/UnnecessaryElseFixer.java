@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.elements.If;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class UnnecessaryElseFixer implements LocalQuickFix {
+final public class UnnecessaryElseFixer implements LocalQuickFix {
     private static final String title = "Split the workflows";
 
     @NotNull
@@ -25,7 +25,7 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getFamilyName() {
-        return getName();
+        return title;
     }
 
     @Override

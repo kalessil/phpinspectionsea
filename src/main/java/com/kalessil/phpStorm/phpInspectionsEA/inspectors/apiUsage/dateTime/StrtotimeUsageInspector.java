@@ -73,7 +73,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseTimeFunctionLocalFix extends UseSuggestedReplacementFixer {
+    private static final class UseTimeFunctionLocalFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use time() instead";
 
         @NotNull
@@ -87,7 +87,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
         }
     }
 
-    private static class DropTimeFunctionCallLocalFix extends UseSuggestedReplacementFixer {
+    private static final class DropTimeFunctionCallLocalFix extends UseSuggestedReplacementFixer {
         private static final String title = "Drop unnecessary time() call";
 
         @NotNull

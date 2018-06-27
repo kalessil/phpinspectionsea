@@ -69,7 +69,7 @@ final public class AssertBoolInvertedStrategy {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName() + " (assert not boolean)";
+            return title + " (assert not boolean)";
         }
 
         @Override

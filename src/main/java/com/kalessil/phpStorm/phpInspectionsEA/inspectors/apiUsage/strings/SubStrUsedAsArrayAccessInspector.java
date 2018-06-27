@@ -67,7 +67,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix extends UseSuggestedReplacementFixer {
+    private static final class TheLocalFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use array access";
 
         @NotNull

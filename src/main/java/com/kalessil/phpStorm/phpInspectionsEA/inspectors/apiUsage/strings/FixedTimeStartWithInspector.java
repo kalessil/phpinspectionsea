@@ -83,7 +83,7 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseFirstCharactersCompareFix extends UseSuggestedReplacementFixer {
+    private static final class UseFirstCharactersCompareFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use fixed-time operation instead";
 
         @NotNull

@@ -82,7 +82,7 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseLambdaFix extends UseSuggestedReplacementFixer {
+    private static final class UseLambdaFix extends UseSuggestedReplacementFixer {
         private static final String title = "Add missing arguments";
 
         @NotNull

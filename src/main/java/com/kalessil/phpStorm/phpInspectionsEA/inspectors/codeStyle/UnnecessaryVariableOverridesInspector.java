@@ -124,11 +124,11 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
 
         MergeCallsFix(@NotNull PsiElement target, @NotNull PsiElement value, @NotNull PsiElement absolete) {
             super();
-            final SmartPointerManager manager = SmartPointerManager.getInstance(target.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
 
-            this.target   = manager.createSmartPsiElementPointer(target);
-            this.value    = manager.createSmartPsiElementPointer(value);
-            this.absolete = manager.createSmartPsiElementPointer(absolete);
+            this.target   = factory.createSmartPsiElementPointer(target);
+            this.value    = factory.createSmartPsiElementPointer(value);
+            this.absolete = factory.createSmartPsiElementPointer(absolete);
         }
 
         @Override

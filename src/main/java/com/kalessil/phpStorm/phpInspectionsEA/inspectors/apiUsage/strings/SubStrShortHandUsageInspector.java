@@ -124,7 +124,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

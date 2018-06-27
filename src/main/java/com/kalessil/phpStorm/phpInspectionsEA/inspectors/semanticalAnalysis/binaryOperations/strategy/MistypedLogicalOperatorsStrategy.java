@@ -35,7 +35,7 @@ final public class MistypedLogicalOperatorsStrategy {
                     final PsiElement target = expression.getOperation();
                     final PsiElement left   = expression.getLeftOperand();
                     final PsiElement right  = expression.getRightOperand();
-                    if (target != null && left != null && right != null && !isIntegerType(left) && !isIntegerType(right)) {
+                    if (target != null && left != null && right != null && (!isIntegerType(left) || !isIntegerType(right))) {
                         result = true;
                         holder.registerProblem(
                                 target,

@@ -119,7 +119,7 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         MergeCallsFix(@NotNull PsiElement target, @NotNull PsiElement value, @NotNull PsiElement absolete) {

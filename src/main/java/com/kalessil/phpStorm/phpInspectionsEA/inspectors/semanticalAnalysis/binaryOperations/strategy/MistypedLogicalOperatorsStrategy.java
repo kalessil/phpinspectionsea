@@ -50,7 +50,7 @@ final public class MistypedLogicalOperatorsStrategy {
 
     private static boolean isIntegerType(@NotNull PsiElement operand) {
         boolean result = false;
-        if (operand instanceof PhpTypedElement) {
+        if (operand instanceof PhpTypedElement && !(operand instanceof BinaryExpression)) {
             final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
             if (resolved != null && !resolved.hasUnknown()) {
                 result = resolved.getTypes().stream().allMatch(type -> Types.getType(type).equals(Types.strInteger));

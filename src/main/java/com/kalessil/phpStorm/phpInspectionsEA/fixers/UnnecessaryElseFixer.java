@@ -25,7 +25,7 @@ public class UnnecessaryElseFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getFamilyName() {
-        return getName();
+        return title;
     }
 
     @Override

@@ -22,7 +22,7 @@ public class DropMethodFix implements LocalQuickFix {
     @NotNull
     @Override
     public String getFamilyName() {
-        return getName();
+        return title;
     }
 
     @Override

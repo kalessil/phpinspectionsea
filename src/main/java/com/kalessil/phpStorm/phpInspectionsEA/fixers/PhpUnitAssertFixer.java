@@ -32,7 +32,7 @@ public class PhpUnitAssertFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getFamilyName() {
-        return getName();
+        return title;
     }
 
     public PhpUnitAssertFixer (@NotNull String suggestedAssertion, @NotNull String[] arguments) {

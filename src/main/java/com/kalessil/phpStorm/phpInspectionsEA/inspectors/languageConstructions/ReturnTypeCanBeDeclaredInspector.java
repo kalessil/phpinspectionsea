@@ -273,7 +273,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         DeclareReturnTypeFix(@NotNull String type) {

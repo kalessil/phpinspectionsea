@@ -188,7 +188,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         ThrowExceptionFix(@Nullable PsiElement directory, @NotNull List<String> arguments) {
@@ -232,7 +232,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         HardenConditionFix(@Nullable PsiElement directory, @NotNull List<String> arguments) {

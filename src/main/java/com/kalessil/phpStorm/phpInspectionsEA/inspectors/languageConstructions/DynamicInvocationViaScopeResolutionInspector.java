@@ -106,7 +106,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

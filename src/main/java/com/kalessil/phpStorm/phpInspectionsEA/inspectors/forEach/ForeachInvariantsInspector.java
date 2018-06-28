@@ -197,7 +197,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseForeachFix implements LocalQuickFix {
+    private static final class UseForeachFix implements LocalQuickFix {
         private static final String title = "Use foreach instead";
 
         @NotNull
@@ -218,7 +218,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         UseForeachFix(
@@ -227,6 +227,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             @Nullable PsiElement value,
             @NotNull PsiElement container
         ) {
+            super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(loop.getProject());
 
             this.loop      = factory.createSmartPsiElementPointer(loop);

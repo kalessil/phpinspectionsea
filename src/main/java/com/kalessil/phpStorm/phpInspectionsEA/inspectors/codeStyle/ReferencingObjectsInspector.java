@@ -118,27 +118,27 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         };
     }
 
-    private static class InstantiationLocalFix implements LocalQuickFix {
-        @NotNull
+    private static final class InstantiationLocalFix implements LocalQuickFix {
+        private static final String title = "Replace with regular assignment";
+
         final private SmartPsiElementPointer<PsiElement> assignOperator;
 
         InstantiationLocalFix(@NotNull PsiElement assignOperator) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(assignOperator.getProject());
 
-            this.assignOperator = factory.createSmartPsiElementPointer(assignOperator);
+            this.assignOperator = SmartPointerManager.getInstance(assignOperator.getProject()).createSmartPsiElementPointer(assignOperator);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Replace with regular assignment";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override
@@ -153,27 +153,27 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         }
     }
 
-    private static class ParameterLocalFix implements LocalQuickFix {
-        @NotNull
+    private static final class ParameterLocalFix implements LocalQuickFix {
+        private static final String title = "Cleanup parameter definition";
+
         final private SmartPsiElementPointer<Parameter> parameter;
 
         ParameterLocalFix(@NotNull Parameter parameter) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(parameter.getProject());
 
-            this.parameter = factory.createSmartPsiElementPointer(parameter);
+            this.parameter = SmartPointerManager.getInstance(parameter.getProject()).createSmartPsiElementPointer(parameter);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Cleanup parameter definition";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

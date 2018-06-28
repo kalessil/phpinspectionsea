@@ -59,7 +59,6 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         this.customMethods.clear();
         this.customMethodsNames.clear();
 
-        final List<String> customDebugFQNs = new ArrayList<>();
         if (!this.migratedIntoUserSpace) {
             /* prepare migrated list */
             final Set<String> migrated = optionConfigurationDefaults();
@@ -73,9 +72,9 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             /* cleanup */
             migrated.clear();
         }
-        customDebugFQNs.addAll(this.configuration);
 
         /* parse what was provided FQNs */
+        final List<String> customDebugFQNs = new ArrayList<>(this.configuration);
         for (String stringDescriptor : customDebugFQNs) {
             stringDescriptor = stringDescriptor.trim();
             if (!stringDescriptor.contains("::")) {
@@ -90,6 +89,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             );
             customMethodsNames.add(disassembledDescriptor[1]);
         }
+        customDebugFQNs.clear();
     }
 
     @NotNull

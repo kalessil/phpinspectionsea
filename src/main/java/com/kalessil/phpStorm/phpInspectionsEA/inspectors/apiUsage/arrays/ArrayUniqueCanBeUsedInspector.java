@@ -63,7 +63,7 @@ public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    private static class ReplaceFix extends UseSuggestedReplacementFixer {
+    private static final class ReplaceFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use array_unique(...) instead";
 
         @NotNull

@@ -53,7 +53,7 @@ public class SimpleXmlLoadFileUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class LoadStringFix extends UseSuggestedReplacementFixer {
+    private static final class LoadStringFix extends UseSuggestedReplacementFixer {
         private static final String title = "Replace with a similar call";
 
         @NotNull

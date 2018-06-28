@@ -44,17 +44,19 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Rename to __construct";
+
         @NotNull
         @Override
         public String getName() {
-            return "Rename to __construct";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

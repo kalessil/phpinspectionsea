@@ -69,11 +69,13 @@ final public class UnclearOperationsPriorityStrategy {
         return false;
     }
 
-    private static class WrapItAsItIsFix extends UseSuggestedReplacementFixer {
+    private static final class WrapItAsItIsFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Wrap with parentheses as it is";
+
         @NotNull
         @Override
         public String getName() {
-            return "Wrap with parentheses as it is";
+            return title;
         }
 
         WrapItAsItIsFix(@NotNull String replacement) {

@@ -115,17 +115,19 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseWillMethodFix implements LocalQuickFix {
+    private static final class UseWillMethodFix implements LocalQuickFix {
+        private static final String title = "Use '->will(...)' instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use '->will(...)' instead";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

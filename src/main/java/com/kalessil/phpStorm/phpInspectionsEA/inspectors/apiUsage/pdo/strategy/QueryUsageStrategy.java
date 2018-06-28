@@ -69,27 +69,27 @@ final public class QueryUsageStrategy {
         }
     }
 
-    private static class UseQueryFix implements LocalQuickFix {
-        @NotNull
+    private static final class UseQueryFix implements LocalQuickFix {
+        private static final String title = "Use '->query(...)' instead";
+
         private final SmartPsiElementPointer<MethodReference> prepare;
 
         UseQueryFix(@NotNull MethodReference prepare) {
             super();
-            SmartPointerManager manager =  SmartPointerManager.getInstance(prepare.getProject());
 
-            this.prepare = manager.createSmartPsiElementPointer(prepare);
+            this.prepare = SmartPointerManager.getInstance(prepare.getProject()).createSmartPsiElementPointer(prepare);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Use '->query(...)' instead";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

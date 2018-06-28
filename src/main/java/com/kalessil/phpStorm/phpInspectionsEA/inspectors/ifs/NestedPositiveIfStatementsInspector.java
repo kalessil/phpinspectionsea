@@ -85,27 +85,30 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         };
     }
 
-    private static class MergeIntoParentElseFix implements LocalQuickFix {
+    private static final class MergeIntoParentElseFix implements LocalQuickFix {
+        private static final String title = "Merge into parent construct";
+
         final private SmartPsiElementPointer<If> target;
         final private SmartPsiElementPointer<Else> parent;
 
         @NotNull
         @Override
         public String getName() {
-            return "Merge into parent construct";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName() + " (else)";
+            return title + " (else)";
         }
 
         MergeIntoParentElseFix(@NotNull If target, @NotNull Else parent) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
-            this.target                       = factory.createSmartPsiElementPointer(target);
-            this.parent                       = factory.createSmartPsiElementPointer(parent);
+
+            this.target = factory.createSmartPsiElementPointer(target);
+            this.parent = factory.createSmartPsiElementPointer(parent);
         }
 
         @Override
@@ -121,27 +124,30 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         }
     }
 
-    private static class MergeIntoParentIfFix implements LocalQuickFix {
+    private static final class MergeIntoParentIfFix implements LocalQuickFix {
+        private static final String title = "Merge into parent construct";
+
         final private SmartPsiElementPointer<If> target;
         final private SmartPsiElementPointer<If> parent;
 
         @NotNull
         @Override
         public String getName() {
-            return "Merge into parent construct";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName() + " (if)";
+            return title + " (if)";
         }
 
         MergeIntoParentIfFix(@NotNull If target, @NotNull If parent) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
-            this.target                       = factory.createSmartPsiElementPointer(target);
-            this.parent                       = factory.createSmartPsiElementPointer(parent);
+
+            this.target = factory.createSmartPsiElementPointer(target);
+            this.parent = factory.createSmartPsiElementPointer(parent);
         }
 
         @Override

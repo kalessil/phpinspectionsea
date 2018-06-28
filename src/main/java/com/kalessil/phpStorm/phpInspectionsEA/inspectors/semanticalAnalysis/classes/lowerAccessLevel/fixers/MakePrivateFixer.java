@@ -19,25 +19,27 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class MakePrivateFixer implements LocalQuickFix {
+final public class MakePrivateFixer implements LocalQuickFix {
+    private static final String title = "Make it private";
+
     private final SmartPsiElementPointer<PsiElement> modifier;
 
     public MakePrivateFixer(@NotNull final PsiElement modifierElement) {
-        final SmartPointerManager manager = SmartPointerManager.getInstance(modifierElement.getProject());
+        super();
 
-        modifier = manager.createSmartPsiElementPointer(modifierElement);
+        modifier = SmartPointerManager.getInstance(modifierElement.getProject()).createSmartPsiElementPointer(modifierElement);
     }
 
     @NotNull
     @Override
     public String getName() {
-        return "Make it private";
+        return title;
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return getName();
+        return title;
     }
 
     @Override

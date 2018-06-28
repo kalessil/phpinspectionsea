@@ -99,7 +99,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         };
     }
 
-    private static class AddMissingSprintfFix extends UseSuggestedReplacementFixer {
+    private static final class AddMissingSprintfFix extends UseSuggestedReplacementFixer {
         private static final String title = "Wrap with sprintf(...)";
 
         @NotNull
@@ -113,17 +113,19 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         }
     }
 
-    private static class AddMissingThrowFix implements LocalQuickFix {
+    private static final class AddMissingThrowFix implements LocalQuickFix {
+        private static final String title = "Add missing throw keyword";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add missing throw keyword";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override
@@ -142,17 +144,19 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
         }
     }
 
-    private static class AddMissingNewFix implements LocalQuickFix {
+    private static final class AddMissingNewFix implements LocalQuickFix {
+        private static final String title = "Add missing new keyword";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add missing new keyword";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

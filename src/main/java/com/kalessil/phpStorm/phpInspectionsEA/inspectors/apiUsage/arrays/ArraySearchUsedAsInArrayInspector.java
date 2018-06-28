@@ -82,17 +82,19 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use in_array(...)";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use in_array(...)";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

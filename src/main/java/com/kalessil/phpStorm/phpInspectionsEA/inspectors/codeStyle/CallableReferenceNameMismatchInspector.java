@@ -75,17 +75,19 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
         };
     }
 
-    private static class CallableReferenceNameMismatchQuickFix implements LocalQuickFix {
+    private static final class CallableReferenceNameMismatchQuickFix implements LocalQuickFix {
+        private static final String title = "Fix case mismatch";
+
         @NotNull
         @Override
         public String getName() {
-            return "Fix case mismatch";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

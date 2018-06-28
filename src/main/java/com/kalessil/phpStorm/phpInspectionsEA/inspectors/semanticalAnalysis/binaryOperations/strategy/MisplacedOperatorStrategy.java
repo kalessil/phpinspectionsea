@@ -90,27 +90,29 @@ final public class MisplacedOperatorStrategy {
         return false;
     }
 
-    private static class MisplacedOperatorFix implements LocalQuickFix {
+    private static final class MisplacedOperatorFix implements LocalQuickFix {
+        private static final String title = "Place the operator correctly";
+
         final private String expression;
         final private SmartPsiElementPointer<PsiElement> call;
 
         @NotNull
         @Override
         public String getName() {
-            return "Place the operator correctly";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         MisplacedOperatorFix(@NotNull String expression, @NotNull PsiElement call) {
-            this.expression = expression;
-            SmartPointerManager manager = SmartPointerManager.getInstance(call.getProject());
+            super();
 
-            this.call = manager.createSmartPsiElementPointer(call);
+            this.expression = expression;
+            this.call       = SmartPointerManager.getInstance(call.getProject()).createSmartPsiElementPointer(call);
         }
 
         @Override

@@ -83,30 +83,30 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
-        @Nullable
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use -> instead";
+
         private final SmartPsiElementPointer<PsiElement> object;
-        @NotNull
         private final SmartPsiElementPointer<PsiElement> operator;
 
         TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement object) {
             super();
-            final SmartPointerManager manager =  SmartPointerManager.getInstance(operator.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(operator.getProject());
 
-            this.object   = object == null ? null : manager.createSmartPsiElementPointer(object);
-            this.operator = manager.createSmartPsiElementPointer(operator);
+            this.object   = object == null ? null : factory.createSmartPsiElementPointer(object);
+            this.operator = factory.createSmartPsiElementPointer(operator);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Use -> instead";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

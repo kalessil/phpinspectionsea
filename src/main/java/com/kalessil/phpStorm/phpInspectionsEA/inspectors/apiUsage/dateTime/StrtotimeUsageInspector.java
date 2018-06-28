@@ -50,7 +50,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                     if (arguments[0] instanceof StringLiteralExpression) {
                         final StringLiteralExpression pattern = (StringLiteralExpression) arguments[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
-                            holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix("time()"));
+                            holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix());
                         }
                     }
                 }
@@ -73,23 +73,27 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseTimeFunctionLocalFix extends UseSuggestedReplacementFixer {
+    private static final class UseTimeFunctionLocalFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use time() instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use time() instead";
+            return title;
         }
 
-        UseTimeFunctionLocalFix(@NotNull String expression) {
-            super(expression);
+        UseTimeFunctionLocalFix() {
+            super("time()");
         }
     }
 
-    private static class DropTimeFunctionCallLocalFix extends UseSuggestedReplacementFixer {
+    private static final class DropTimeFunctionCallLocalFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Drop unnecessary time() call";
+
         @NotNull
         @Override
         public String getName() {
-            return "Drop unnecessary time() call";
+            return title;
         }
 
         DropTimeFunctionCallLocalFix(@NotNull String expression) {

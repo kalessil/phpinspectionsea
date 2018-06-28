@@ -213,17 +213,19 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         });
     }
 
-    private static class AmbiguousTestAnnotationLocalFix implements LocalQuickFix {
+    private static final class AmbiguousTestAnnotationLocalFix implements LocalQuickFix {
+        private static final String title = "Drop ambiguous @test";
+
         @NotNull
         @Override
         public String getName() {
-            return "Drop ambiguous @test";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

@@ -121,27 +121,30 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Drop unneeded arguments";
+
         private final SmartPsiElementPointer<PsiElement> dropFrom;
         private final SmartPsiElementPointer<PsiElement> dropTo;
 
         private TheLocalFix(@NotNull PsiElement dropFrom, @NotNull PsiElement dropTo) {
-            final SmartPointerManager manager = SmartPointerManager.getInstance(dropFrom.getProject());
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(dropFrom.getProject());
 
-            this.dropFrom = manager.createSmartPsiElementPointer(dropFrom);
-            this.dropTo   = manager.createSmartPsiElementPointer(dropTo);
+            this.dropFrom = factory.createSmartPsiElementPointer(dropFrom);
+            this.dropTo   = factory.createSmartPsiElementPointer(dropTo);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Drop unneeded arguments";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

@@ -94,7 +94,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseStrposFix extends UseSuggestedReplacementFixer {
+    private static final class UseStrposFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use str[i]pos() instead";
 
         @NotNull

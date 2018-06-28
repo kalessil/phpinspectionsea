@@ -83,7 +83,7 @@ public class ArrayColumnCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseArrayColumnFixer extends UseSuggestedReplacementFixer {
+    private static final class UseArrayColumnFixer extends UseSuggestedReplacementFixer {
         private static final String title = "Use array_column(...) instead";
 
         @NotNull

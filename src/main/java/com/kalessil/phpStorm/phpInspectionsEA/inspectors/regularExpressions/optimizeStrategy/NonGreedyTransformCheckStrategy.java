@@ -14,7 +14,7 @@ final public class NonGreedyTransformCheckStrategy {
 
     final static private Pattern regexNonGreedyPattern;
     static {
-        regexNonGreedyPattern = Pattern.compile("\\.(\\*|\\+)\\?([^\\(\\)\\$\\\\]|\\\\.)");
+        regexNonGreedyPattern = Pattern.compile("\\.([*+])\\?([^\\(\\)\\$\\\\]|\\\\.)");
     }
 
     /**

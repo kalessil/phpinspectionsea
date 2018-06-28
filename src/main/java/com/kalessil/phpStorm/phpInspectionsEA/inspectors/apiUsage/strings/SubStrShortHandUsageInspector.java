@@ -104,26 +104,27 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class Drop3rdParameterLocalFix implements LocalQuickFix {
+    private static final class Drop3rdParameterLocalFix implements LocalQuickFix {
+        private static final String title = "Remove ambiguous 3rd parameter";
+
         final private SmartPsiElementPointer<FunctionReference> call;
 
         Drop3rdParameterLocalFix(@NotNull FunctionReference call){
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(call.getProject());
 
-            this.call = factory.createSmartPsiElementPointer(call);
+            this.call = SmartPointerManager.getInstance(call.getProject()).createSmartPsiElementPointer(call);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Remove ambiguous 3rd parameter";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override
@@ -145,11 +146,13 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         }
     }
 
-    private static class SimplifyFix extends UseSuggestedReplacementFixer {
+    private static final class SimplifyFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Simplify the third parameter";
+
         @NotNull
         @Override
         public String getName() {
-            return "Simplify the third parameter";
+            return title;
         }
 
         SimplifyFix(@NotNull String expression) {

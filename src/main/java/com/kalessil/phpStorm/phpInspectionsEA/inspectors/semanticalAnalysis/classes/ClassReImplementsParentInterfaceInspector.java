@@ -99,17 +99,19 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Remove unnecessary implements entry";
+
         @NotNull
         @Override
         public String getName() {
-            return "Remove unnecessary implements entry";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

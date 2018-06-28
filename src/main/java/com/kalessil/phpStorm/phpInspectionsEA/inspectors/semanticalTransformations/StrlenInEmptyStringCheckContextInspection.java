@@ -107,7 +107,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
         };
     }
 
-    private static class CompareToEmptyStringFix extends UseSuggestedReplacementFixer {
+    private static final class CompareToEmptyStringFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use empty string comparison instead";
 
         @NotNull

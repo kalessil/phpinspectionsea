@@ -14,7 +14,7 @@ public class MissingDotAllCheckStrategy {
 
     final static private Pattern regexTagContentPattern;
     static {
-        regexTagContentPattern = Pattern.compile(".*>\\.(\\*|\\+)\\?<.*");
+        regexTagContentPattern = Pattern.compile(".*>\\.([*+])\\?<.*");
     }
 
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {

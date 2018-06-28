@@ -47,28 +47,29 @@ final public class AssertBoolInvertedStrategy {
         return false;
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use suggested assertion instead";
+
         final private String replacementFunction;
         final private SmartPsiElementPointer<PsiElement> argument;
 
         TheLocalFix(@NotNull String replacementFunction, @NotNull PsiElement argument) {
             super();
-            final SmartPointerManager manager = SmartPointerManager.getInstance(argument.getProject());
 
             this.replacementFunction = replacementFunction;
-            this.argument            = manager.createSmartPsiElementPointer(argument);
+            this.argument            = SmartPointerManager.getInstance(argument.getProject()).createSmartPsiElementPointer(argument);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested assertion instead";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName() + " (assert not boolean)";
+            return title + " (assert not boolean)";
         }
 
         @Override

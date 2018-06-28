@@ -89,26 +89,27 @@ public class ArrayTypeOfParameterByDefaultValueInspector extends BasePhpInspecti
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Declare as array";
+
         final private SmartPsiElementPointer<Parameter> param;
 
         TheLocalFix(@NotNull Parameter param) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(param.getProject());
 
-            this.param = factory.createSmartPsiElementPointer(param);
+            this.param = SmartPointerManager.getInstance(param.getProject()).createSmartPsiElementPointer(param);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Declare as array";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

@@ -60,17 +60,19 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Replace with single quotes";
+
         @NotNull
         @Override
         public String getName() {
-            return "Replace with single quotes";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

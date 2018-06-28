@@ -160,11 +160,13 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseStringReplaceFix extends UseSuggestedReplacementFixer {
+    private static final class UseStringReplaceFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use plain string replacement instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use plain string replacement instead";
+            return title;
         }
 
         UseStringReplaceFix(@NotNull String expression) {
@@ -172,11 +174,13 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseStringPositionFix extends UseSuggestedReplacementFixer {
+    private static final class UseStringPositionFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use plain string search instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use plain string search instead";
+            return title;
         }
 
         UseStringPositionFix(@NotNull String expression) {
@@ -184,11 +188,13 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseStringComparisonFix extends UseSuggestedReplacementFixer {
+    private static final class UseStringComparisonFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use string comparison instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use string comparison instead";
+            return title;
         }
 
         UseStringComparisonFix(@NotNull String expression) {
@@ -196,11 +202,13 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseTrimFix extends UseSuggestedReplacementFixer {
+    private static final class UseTrimFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use trim instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use trim instead";
+            return title;
         }
 
         UseTrimFix(@NotNull String expression) {
@@ -208,11 +216,13 @@ final public class PlainApiUseCheckStrategy {
         }
     }
 
-    private static class UseExplodeFix extends UseSuggestedReplacementFixer {
+    private static final class UseExplodeFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use explode instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use explode instead";
+            return title;
         }
 
         UseExplodeFix(@NotNull String expression) {

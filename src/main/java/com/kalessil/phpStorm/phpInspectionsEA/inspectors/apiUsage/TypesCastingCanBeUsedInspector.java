@@ -167,7 +167,7 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
         );
     }
 
-    private static class UseTypeCastingFix extends UseSuggestedReplacementFixer {
+    private static final class UseTypeCastingFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use type casting instead";
 
         @NotNull

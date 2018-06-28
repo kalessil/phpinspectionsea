@@ -61,30 +61,32 @@ final public class AssertBoolOfComparisonStrategy {
         return false;
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use suggested assertion instead";
+
         private final String replacementFunction;
         private final SmartPsiElementPointer<PsiElement> first;
         private final SmartPsiElementPointer<PsiElement> second;
 
         TheLocalFix(@NotNull String replacementFunction, @NotNull PsiElement first, @NotNull PsiElement second) {
             super();
-            SmartPointerManager manager =  SmartPointerManager.getInstance(first.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(first.getProject());
 
             this.replacementFunction = replacementFunction;
-            this.first               = manager.createSmartPsiElementPointer(first);
-            this.second              = manager.createSmartPsiElementPointer(second);
+            this.first               = factory.createSmartPsiElementPointer(first);
+            this.second              = factory.createSmartPsiElementPointer(second);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Use suggested assertion instead";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName() + " (assert same or equal)";
+            return title + " (assert same or equal)";
         }
 
         @Override

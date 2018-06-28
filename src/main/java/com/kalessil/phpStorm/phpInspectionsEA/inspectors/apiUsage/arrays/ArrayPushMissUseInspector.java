@@ -94,7 +94,7 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseElementPushFix extends UseSuggestedReplacementFixer {
+    private static final class UseElementPushFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use []= instead";
 
         @NotNull

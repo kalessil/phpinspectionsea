@@ -103,7 +103,9 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
         };
     }
 
-    private static class MergeCallsFix implements LocalQuickFix {
+    private static final class MergeCallsFix implements LocalQuickFix {
+        private static final String title = "Use a nested call instead";
+
         private final SmartPsiElementPointer<PsiElement> target;
         private final SmartPsiElementPointer<PsiElement> value;
         private final SmartPsiElementPointer<PsiElement> absolete;
@@ -111,22 +113,22 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Use a nested call instead";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         MergeCallsFix(@NotNull PsiElement target, @NotNull PsiElement value, @NotNull PsiElement absolete) {
             super();
-            final SmartPointerManager manager = SmartPointerManager.getInstance(target.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
 
-            this.target   = manager.createSmartPsiElementPointer(target);
-            this.value    = manager.createSmartPsiElementPointer(value);
-            this.absolete = manager.createSmartPsiElementPointer(absolete);
+            this.target   = factory.createSmartPsiElementPointer(target);
+            this.value    = factory.createSmartPsiElementPointer(value);
+            this.absolete = factory.createSmartPsiElementPointer(absolete);
         }
 
         @Override

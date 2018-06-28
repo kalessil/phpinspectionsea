@@ -76,26 +76,27 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         };
     }
 
-    private static class UseSingleNotLocalFix implements LocalQuickFix {
+    private static final class UseSingleNotLocalFix implements LocalQuickFix {
+        private static final String title = "Use a single not operator";
+
         final SmartPsiElementPointer<PsiElement> value;
 
         UseSingleNotLocalFix(@NotNull PsiElement value) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
 
-            this.value = factory.createSmartPsiElementPointer(value);
+            this.value = SmartPointerManager.getInstance(value.getProject()).createSmartPsiElementPointer(value);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Use a single not operator";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override
@@ -108,26 +109,27 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         }
     }
 
-    private static class UseCastingLocalFix implements LocalQuickFix {
+    private static final class UseCastingLocalFix implements LocalQuickFix {
+        private static final String title = "Use boolean casting";
+
         final SmartPsiElementPointer<PsiElement> value;
 
         UseCastingLocalFix(@NotNull PsiElement value) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
 
-            this.value = factory.createSmartPsiElementPointer(value);
+            this.value = SmartPointerManager.getInstance(value.getProject()).createSmartPsiElementPointer(value);
         }
 
         @NotNull
         @Override
         public String getName() {
-            return "Use boolean casting";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

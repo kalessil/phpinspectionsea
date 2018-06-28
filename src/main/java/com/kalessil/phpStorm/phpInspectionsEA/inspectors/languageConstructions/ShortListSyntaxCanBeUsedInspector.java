@@ -82,17 +82,19 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    private static class TheLocalFix implements LocalQuickFix {
+    private static final class TheLocalFix implements LocalQuickFix {
+        private static final String title = "Use [...] instead";
+
         @NotNull
         @Override
         public String getName() {
-            return "Use [...] instead.";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

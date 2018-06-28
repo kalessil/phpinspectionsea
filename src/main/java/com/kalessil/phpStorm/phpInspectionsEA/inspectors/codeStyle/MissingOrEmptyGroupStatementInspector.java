@@ -94,17 +94,19 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
         );
     }
 
-    private static class WrapBodyFix implements LocalQuickFix {
+    private static final class WrapBodyFix implements LocalQuickFix {
+        private static final String title = "Add the group statement";
+
         @NotNull
         @Override
         public String getName() {
-            return "Add the group statement";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         @Override

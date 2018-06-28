@@ -86,11 +86,13 @@ public class NonSecureHtmlspecialcharsUsageInspector extends BasePhpInspection {
         };
     }
 
-    private static class EscapeAllQuotesFix extends UseSuggestedReplacementFixer {
+    private static final class EscapeAllQuotesFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Escape single and double quotes";
+
         @NotNull
         @Override
         public String getName() {
-            return "Escape single and double quotes";
+            return title;
         }
 
         EscapeAllQuotesFix (@NotNull String expression) {

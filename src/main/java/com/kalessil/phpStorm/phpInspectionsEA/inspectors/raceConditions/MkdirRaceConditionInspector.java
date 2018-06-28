@@ -172,7 +172,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         }
     }
 
-    private static class ThrowExceptionFix implements LocalQuickFix {
+    private static final class ThrowExceptionFix implements LocalQuickFix {
+        private static final String title = "Replace with conditional expression";
+
         private final String resource;
         private final String arguments;
         private final boolean withVariable;
@@ -180,13 +182,13 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Replace with conditional expression";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         ThrowExceptionFix(@Nullable PsiElement directory, @NotNull List<String> arguments) {
@@ -214,7 +216,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         }
     }
 
-    private static class HardenConditionFix implements LocalQuickFix {
+    private static final class HardenConditionFix implements LocalQuickFix {
+        private static final String title = "Harden the condition";
+
         private final String resource;
         private final String arguments;
         private final boolean withVariable;
@@ -222,13 +226,13 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return "Harden the condition";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         HardenConditionFix(@Nullable PsiElement directory, @NotNull List<String> arguments) {

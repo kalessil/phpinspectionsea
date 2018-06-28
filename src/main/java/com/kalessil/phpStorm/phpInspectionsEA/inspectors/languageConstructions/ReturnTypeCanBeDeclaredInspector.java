@@ -259,19 +259,21 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         );
     }
 
-    private static class DeclareReturnTypeFix implements LocalQuickFix {
+    private static final class DeclareReturnTypeFix implements LocalQuickFix {
+        private static final String title = "Declare the return type";
+
         final private String type;
 
         @NotNull
         @Override
         public String getName() {
-            return "Declare the return type";
+            return title;
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         DeclareReturnTypeFix(@NotNull String type) {

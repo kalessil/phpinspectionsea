@@ -139,35 +139,37 @@ public class PossibleValuesDiscoveryUtil {
         final PsiElement field = (name == null || name.isEmpty()) ? null : OpenapiResolveUtil.resolveReference(reference);
         if (field instanceof Field) {
             /* TODO: properties without defaults returning variable as default are difficult to identify */
-            /* TODO: multi-assignments */
             final PsiElement defaultValue = ((Field) field).getDefaultValue();
             if (defaultValue != null && !defaultValue.getText().endsWith(name)) {
                 result.add(defaultValue);
             }
         }
 
-        /* TODO: inspect own constructor for overriding property there */
-        final Function callable   = ExpressionSemanticUtil.getScope(reference);
-        final GroupStatement body = callable == null ? null : ExpressionSemanticUtil.getGroupStatement(callable);
-        for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-            if (OpenapiTypesUtil.isAssignment(expression)) {
-                final PsiElement container = expression.getVariable();
-                if (container != null && OpeanapiEquivalenceUtil.areEqual(container, reference)) {
-                    /* handle multiple assignments */
-                    PsiElement storedValue = expression.getValue();
-                    while (storedValue != null && OpenapiTypesUtil.isAssignment(storedValue)) {
-                        storedValue = ((AssignmentExpression) storedValue).getValue();
-                    }
-                    if (storedValue != null) {
-                        final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
-                        if (!discoveredWrites.isEmpty()) {
-                            result.addAll(discoveredWrites);
-                            discoveredWrites.clear();
+        final Function callable    = ExpressionSemanticUtil.getScope(reference);
+        final PhpClass clazz       = callable instanceof Method ? ((Method) callable).getContainingClass() : null;
+        final Function constructor = clazz == null ? null : clazz.getConstructor();
+        Stream.of(callable, constructor).filter(Objects::nonNull).forEach(method -> {
+            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+            for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
+                if (OpenapiTypesUtil.isAssignment(expression)) {
+                    final PsiElement container = expression.getVariable();
+                    if (container != null && OpeanapiEquivalenceUtil.areEqual(container, reference)) {
+                        /* handle multiple assignments */
+                        PsiElement storedValue = expression.getValue();
+                        while (storedValue != null && OpenapiTypesUtil.isAssignment(storedValue)) {
+                            storedValue = ((AssignmentExpression) storedValue).getValue();
+                        }
+                        if (storedValue != null) {
+                            final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
+                            if (!discoveredWrites.isEmpty()) {
+                                result.addAll(discoveredWrites);
+                                discoveredWrites.clear();
+                            }
                         }
                     }
                 }
             }
-        }
+        });
     }
 
     static private void handleTernary(

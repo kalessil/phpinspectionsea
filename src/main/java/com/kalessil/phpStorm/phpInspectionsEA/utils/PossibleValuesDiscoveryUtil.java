@@ -96,12 +96,19 @@ public class PossibleValuesDiscoveryUtil {
 
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
         for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-            final PsiElement storedValue = expression.getValue();
-            if (storedValue != null && !OpeanapiEquivalenceUtil.areEqual(storedValue, variable)) {
-                final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
-                if (!discoveredWrites.isEmpty()) {
-                    result.addAll(discoveredWrites);
-                    discoveredWrites.clear();
+            /* TODO: multi-assignments */
+            if (OpenapiTypesUtil.isAssignment(expression)) {
+                final PsiElement container   = expression.getVariable();
+                final PsiElement storedValue = expression.getValue();
+                if (storedValue != null && container instanceof Variable) {
+                    final String containerName = ((Variable) container).getName();
+                    if (containerName.equals(variableName)) {
+                        final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
+                        if (!discoveredWrites.isEmpty()) {
+                            result.addAll(discoveredWrites);
+                            discoveredWrites.clear();
+                        }
+                    }
                 }
             }
         }

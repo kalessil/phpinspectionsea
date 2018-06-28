@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -119,9 +120,9 @@ public class PossibleValuesDiscoveryUtil {
         final String name      = reference.getName();
         final PsiElement field = (name == null || name.isEmpty()) ? null : OpenapiResolveUtil.resolveReference(reference);
         if (field instanceof Field) {
-            final PsiElement value = ((Field) field).getDefaultValue();
-            if (value != null) {
-                result.add(value);
+            final PsiElement defaultValue = ((Field) field).getDefaultValue();
+            if (defaultValue != null) {
+                result.add(defaultValue);
             }
         }
     }
@@ -180,18 +181,13 @@ public class PossibleValuesDiscoveryUtil {
         final PsiElement trueVariant  = ternary.getTrueVariant();
         final PsiElement falseVariant = ternary.getFalseVariant();
         if (trueVariant != null && falseVariant != null) {
-            /* discover true and false branches */
-            final Set<PsiElement> trueVariants = discover(trueVariant, processed);
-            if (!trueVariants.isEmpty()) {
-                result.addAll(trueVariants);
-                trueVariants.clear();
-            }
-
-            final Set<PsiElement> falseVariants = discover(falseVariant, processed);
-            if (!falseVariants.isEmpty()) {
-                result.addAll(falseVariants);
-                falseVariants.clear();
-            }
+            Stream.of(trueVariant, falseVariant).forEach(variant -> {
+                final Set<PsiElement> variants = discover(variant, processed);
+                if (!variants.isEmpty()) {
+                    result.addAll(variants);
+                    variants.clear();
+                }
+            });
         }
     }
 }

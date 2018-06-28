@@ -96,6 +96,7 @@ public class PossibleValuesDiscoveryUtil {
 
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
         for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
+            /* TODO: multi-assignments */
             if (OpenapiTypesUtil.isAssignment(expression)) {
                 final PsiElement container   = expression.getVariable();
                 final PsiElement storedValue = expression.getValue();
@@ -144,24 +145,16 @@ public class PossibleValuesDiscoveryUtil {
         }
 
         /* TODO: inspect own constructor for overriding property there */
-        final Function callable = ExpressionSemanticUtil.getScope(reference);
-        if (null != callable) {
-            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
-            for (AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-                /* TODO: probable bug - self-assignment does not override instance of */
-                /* TODO: multi-assignments */
-                if (expression instanceof SelfAssignmentExpression) {
-                    continue;
-                }
-
+        final Function callable   = ExpressionSemanticUtil.getScope(reference);
+        final GroupStatement body = callable == null ? null : ExpressionSemanticUtil.getGroupStatement(callable);
+        for (AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
+            /* TODO: multi-assignments */
+            if (OpenapiTypesUtil.isAssignment(expression)) {
                 final PsiElement container   = expression.getVariable();
                 final PsiElement storedValue = expression.getValue();
-                if (null != storedValue && container instanceof FieldReference) {
+                if (storedValue != null && container instanceof FieldReference) {
                     final String containerName = ((FieldReference) container).getName();
-                    if (
-                        null != containerName && containerName.equals(name) &&
-                        OpeanapiEquivalenceUtil.areEqual(container, reference)
-                    ) {
+                    if (containerName != null && containerName.equals(name) && OpeanapiEquivalenceUtil.areEqual(container, reference)) {
                         final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
                         if (!discoveredWrites.isEmpty()) {
                             result.addAll(discoveredWrites);

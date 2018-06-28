@@ -144,10 +144,10 @@ public class PossibleValuesDiscoveryUtil {
                 result.add(defaultValue);
             }
         }
-
-        final Function callable    = ExpressionSemanticUtil.getScope(reference);
-        final PhpClass clazz       = callable instanceof Method ? ((Method) callable).getContainingClass() : null;
+        final PhpClass clazz       = field instanceof Field ? ((Field) field).getContainingClass() : null;
         final Function constructor = clazz == null ? null : clazz.getConstructor();
+
+        final Function callable = ExpressionSemanticUtil.getScope(reference);
         Stream.of(callable, constructor).filter(Objects::nonNull).forEach(method -> {
             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
             for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {

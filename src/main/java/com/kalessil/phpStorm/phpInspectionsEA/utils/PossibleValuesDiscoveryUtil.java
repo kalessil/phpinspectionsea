@@ -150,13 +150,15 @@ public class PossibleValuesDiscoveryUtil {
         final Function callable   = ExpressionSemanticUtil.getScope(reference);
         final GroupStatement body = callable == null ? null : ExpressionSemanticUtil.getGroupStatement(callable);
         for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-            /* TODO: multi-assignments */
             if (OpenapiTypesUtil.isAssignment(expression)) {
-                final PsiElement container   = expression.getVariable();
-                final PsiElement storedValue = expression.getValue();
-                if (storedValue != null && container instanceof FieldReference) {
-                    final String containerName = ((FieldReference) container).getName();
-                    if (containerName != null && containerName.equals(name) && OpeanapiEquivalenceUtil.areEqual(container, reference)) {
+                final PsiElement container = expression.getVariable();
+                if (container != null && OpeanapiEquivalenceUtil.areEqual(container, reference)) {
+                    /* handle multiple assignments */
+                    PsiElement storedValue = expression.getValue();
+                    while (storedValue != null && OpenapiTypesUtil.isAssignment(storedValue)) {
+                        storedValue = ((AssignmentExpression) storedValue).getValue();
+                    }
+                    if (storedValue != null) {
                         final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
                         if (!discoveredWrites.isEmpty()) {
                             result.addAll(discoveredWrites);

@@ -63,7 +63,7 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                         case "in_array":
                                             holder.registerProblem(reference, messageInArray, new ReplaceFix(innerArguments[0].getText()));
                                             break;
-                                        // TODO: array_column, array_map, array_filter and array_values itself
+                                        // TODO: array_column and array_values itself
                                         case "array_combine":
                                             holder.registerProblem(reference, messageArrayCombine, new ReplaceFix(innerArguments[0].getText()));
                                             break;

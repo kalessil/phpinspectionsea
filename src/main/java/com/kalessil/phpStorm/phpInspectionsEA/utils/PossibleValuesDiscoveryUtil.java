@@ -98,14 +98,11 @@ public class PossibleValuesDiscoveryUtil {
         for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
             if (expression instanceof MultiassignmentExpression || OpenapiTypesUtil.isAssignment(expression)) {
                 final PsiElement storedValue = expression.getValue();
-                if (storedValue != null) {
-                    final String storedVariableName = storedValue instanceof Variable ? ((Variable) storedValue).getName() : null;
-                    if (!variableName.equals(storedVariableName)) {
-                        final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
-                        if (!discoveredWrites.isEmpty()) {
-                            result.addAll(discoveredWrites);
-                            discoveredWrites.clear();
-                        }
+                if (storedValue != null && !OpeanapiEquivalenceUtil.areEqual(variable, storedValue)) {
+                    final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
+                    if (!discoveredWrites.isEmpty()) {
+                        result.addAll(discoveredWrites);
+                        discoveredWrites.clear();
                     }
                 }
             }

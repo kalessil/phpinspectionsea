@@ -8,8 +8,8 @@ function cases_holder() {
         in_array('...', <warning descr="'array_values(...)' is not making any sense here (just search in it's argument).">array_values([])</warning>),
         in_array('...', array_values()),
 
-        array_combine([], <warning descr="'array_values(...)' is not making any sense here (just search in it's argument).">array_values([])</warning>),
-        array_combine(<warning descr="'array_values(...)' is not making any sense here (just search in it's argument).">array_values([])</warning>, []),
+        array_combine([], <warning descr="'array_values(...)' is not making any sense here (just use it's argument).">array_values([])</warning>),
+        array_combine(<warning descr="'array_values(...)' is not making any sense here (just use it's argument).">array_values([])</warning>, []),
         array_combine([], array_values()),
         array_combine(array_values(), []),
 

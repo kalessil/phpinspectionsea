@@ -42,7 +42,8 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
 
         Set<PsiElement> values  = PossibleValuesDiscoveryUtil.discover(expression);
         assertEquals(2, values.size());
-        assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
+        assertTrue(values.stream().anyMatch(variant -> variant instanceof StringLiteralExpression));
+        assertTrue(values.stream().anyMatch(variant -> variant instanceof ConstantReference));
     }
 
     public void testClassConstantReferenceDiscovery() {
@@ -99,7 +100,7 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
     }
 
     public void testVariableDiscoveryForOverriddenVariables() {
-        String pattern    = "function test() { $x = null; $x = $y = false; $x .= 0; list($x, $y) = [0, 0]; return $x; }";
+        String pattern    = "function test() { $x = null; $x = $y = '...'; $x .= 0; list($x, $y) = [0, 0]; return $x; }";
         Function callable = PhpPsiElementFactory.createFromText(myFixture.getProject(), Function.class, pattern);
         assertNotNull(callable);
 
@@ -110,6 +111,7 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
 
         Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
         assertEquals(2, values.size());
-        assertInstanceOf(values.iterator().next(), ConstantReference.class);
+        assertTrue(values.stream().anyMatch(variant -> variant instanceof StringLiteralExpression));
+        assertTrue(values.stream().anyMatch(variant -> variant instanceof ConstantReference));
     }
 }

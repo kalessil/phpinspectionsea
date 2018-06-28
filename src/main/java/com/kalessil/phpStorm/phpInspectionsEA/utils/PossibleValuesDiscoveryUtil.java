@@ -79,21 +79,18 @@ public class PossibleValuesDiscoveryUtil {
     ) {
         final String variableName = variable.getName();
         final Function callable   = variableName.isEmpty() ? null : ExpressionSemanticUtil.getScope(variable);
-        if (callable == null) {
-            return;
-        }
-
-        for (final Parameter parameter : callable.getParameters()) {
-            if (parameter.getName().equals(variableName)) {
-                final PsiElement defaultValue = parameter.getDefaultValue();
-                if (defaultValue != null) {
-                    result.add(defaultValue);
+        if (callable != null) {
+            for (final Parameter parameter : callable.getParameters()) {
+                if (parameter.getName().equals(variableName)) {
+                    final PsiElement defaultValue = parameter.getDefaultValue();
+                    if (defaultValue != null) {
+                        result.add(defaultValue);
+                    }
+                    break;
                 }
-                break;
             }
+            handleAssignmentsInScope(callable, variable, result, processed);
         }
-
-        handleAssignmentsInScope(callable, variable, result, processed);
     }
 
     static private void handleClassConstantReference(

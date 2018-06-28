@@ -8,6 +8,11 @@ function cases_holder() {
         in_array('...', []),
         in_array('...', array_values()),
 
+        array_combine([], []),
+        array_combine([], []),
+        array_combine([], array_values()),
+        array_combine(array_values(), []),
+
         count([]),
         count(array_values()),
 

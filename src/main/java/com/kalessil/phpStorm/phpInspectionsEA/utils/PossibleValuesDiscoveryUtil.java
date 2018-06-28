@@ -83,7 +83,6 @@ public class PossibleValuesDiscoveryUtil {
             return;
         }
 
-        /* collect default value if variable is a parameter */
         for (final Parameter parameter : callable.getParameters()) {
             if (parameter.getName().equals(variableName)) {
                 final PsiElement defaultValue = parameter.getDefaultValue();
@@ -94,26 +93,7 @@ public class PossibleValuesDiscoveryUtil {
             }
         }
 
-        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
-        for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-            if (OpenapiTypesUtil.isAssignment(expression)) {
-                final PsiElement container = expression.getVariable();
-                if (container != null && OpeanapiEquivalenceUtil.areEqual(container, variable)) {
-                    /* handle multiple assignments */
-                    PsiElement storedValue = expression.getValue();
-                    while (storedValue != null && OpenapiTypesUtil.isAssignment(storedValue)) {
-                        storedValue = ((AssignmentExpression) storedValue).getValue();
-                    }
-                    if (storedValue != null) {
-                        final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
-                        if (!discoveredWrites.isEmpty()) {
-                            result.addAll(discoveredWrites);
-                            discoveredWrites.clear();
-                        }
-                    }
-                }
-            }
-        }
+        handleAssignmentsInScope(callable, variable, result, processed);
     }
 
     static private void handleClassConstantReference(
@@ -146,30 +126,10 @@ public class PossibleValuesDiscoveryUtil {
         }
         final PhpClass clazz       = field instanceof Field ? ((Field) field).getContainingClass() : null;
         final Function constructor = clazz == null ? null : clazz.getConstructor();
-
-        final Function callable = ExpressionSemanticUtil.getScope(reference);
-        Stream.of(callable, constructor).filter(Objects::nonNull).forEach(method -> {
-            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
-            for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-                if (OpenapiTypesUtil.isAssignment(expression)) {
-                    final PsiElement container = expression.getVariable();
-                    if (container != null && OpeanapiEquivalenceUtil.areEqual(container, reference)) {
-                        /* handle multiple assignments */
-                        PsiElement storedValue = expression.getValue();
-                        while (storedValue != null && OpenapiTypesUtil.isAssignment(storedValue)) {
-                            storedValue = ((AssignmentExpression) storedValue).getValue();
-                        }
-                        if (storedValue != null) {
-                            final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
-                            if (!discoveredWrites.isEmpty()) {
-                                result.addAll(discoveredWrites);
-                                discoveredWrites.clear();
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        final Function callable    = ExpressionSemanticUtil.getScope(reference);
+        Stream.of(callable, constructor)
+                .filter(Objects::nonNull)
+                .forEach(method -> handleAssignmentsInScope(method, reference, result, processed));
     }
 
     static private void handleTernary(
@@ -187,6 +147,34 @@ public class PossibleValuesDiscoveryUtil {
                     variants.clear();
                 }
             });
+        }
+    }
+
+    static private void handleAssignmentsInScope(
+            @NotNull Function callable,
+            @NotNull PsiElement target,
+            @NotNull Set<PsiElement> result,
+            @NotNull Set<PsiElement> processed
+    ) {
+        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
+        for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
+            if (OpenapiTypesUtil.isAssignment(expression)) {
+                final PsiElement container = expression.getVariable();
+                if (container != null && OpeanapiEquivalenceUtil.areEqual(container, target)) {
+                    /* handle multiple assignments */
+                    PsiElement storedValue = expression.getValue();
+                    while (storedValue != null && OpenapiTypesUtil.isAssignment(storedValue)) {
+                        storedValue = ((AssignmentExpression) storedValue).getValue();
+                    }
+                    if (storedValue != null) {
+                        final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
+                        if (!discoveredWrites.isEmpty()) {
+                            result.addAll(discoveredWrites);
+                            discoveredWrites.clear();
+                        }
+                    }
+                }
+            }
         }
     }
 }

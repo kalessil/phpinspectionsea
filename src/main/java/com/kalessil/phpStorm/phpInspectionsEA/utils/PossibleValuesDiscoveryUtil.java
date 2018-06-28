@@ -96,13 +96,11 @@ public class PossibleValuesDiscoveryUtil {
 
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(callable);
         for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
-            /* TODO: multi-assignments */
-            if (OpenapiTypesUtil.isAssignment(expression)) {
-                final PsiElement container   = expression.getVariable();
+            if (expression instanceof MultiassignmentExpression || OpenapiTypesUtil.isAssignment(expression)) {
                 final PsiElement storedValue = expression.getValue();
-                if (storedValue != null && container instanceof Variable) {
-                    final String containerName = ((Variable) container).getName();
-                    if (containerName.equals(variableName)) {
+                if (storedValue != null) {
+                    final String storedVariableName = storedValue instanceof Variable ? ((Variable) storedValue).getName() : null;
+                    if (!variableName.equals(storedVariableName)) {
                         final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
                         if (!discoveredWrites.isEmpty()) {
                             result.addAll(discoveredWrites);
@@ -147,7 +145,7 @@ public class PossibleValuesDiscoveryUtil {
         /* TODO: inspect own constructor for overriding property there */
         final Function callable   = ExpressionSemanticUtil.getScope(reference);
         final GroupStatement body = callable == null ? null : ExpressionSemanticUtil.getGroupStatement(callable);
-        for (AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
+        for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
             /* TODO: multi-assignments */
             if (OpenapiTypesUtil.isAssignment(expression)) {
                 final PsiElement container   = expression.getVariable();

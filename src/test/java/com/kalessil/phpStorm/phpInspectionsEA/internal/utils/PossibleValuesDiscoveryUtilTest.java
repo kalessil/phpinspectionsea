@@ -80,7 +80,7 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
     }
 
     public void testVariableDiscoveryForOverriddenVariables() {
-        String pattern    = "function test() { $x = null; $x .= 0; list($x, $y) = [0, 0]; return $x; }";
+        String pattern    = "function test() { $x = null; $y = $x = false; $x .= 0; list($x, $y) = [0, 0]; return $x; }";
         Function callable = PhpPsiElementFactory.createFromText(myFixture.getProject(), Function.class, pattern);
         assertNotNull(callable);
 
@@ -90,7 +90,7 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
         assertNotNull(expression);
 
         Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
-        assertEquals(1, values.size());
+        assertEquals(2, values.size());
         assertInstanceOf(values.iterator().next(), ConstantReference.class);
     }
 }

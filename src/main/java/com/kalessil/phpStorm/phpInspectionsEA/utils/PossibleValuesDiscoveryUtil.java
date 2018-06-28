@@ -99,10 +99,10 @@ public class PossibleValuesDiscoveryUtil {
             if (expression instanceof MultiassignmentExpression || OpenapiTypesUtil.isAssignment(expression)) {
                 final PsiElement storedValue = expression.getValue();
                 if (storedValue != null && !OpeanapiEquivalenceUtil.areEqual(variable, storedValue)) {
-                    final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
-                    if (!discoveredWrites.isEmpty()) {
-                        result.addAll(discoveredWrites);
-                        discoveredWrites.clear();
+                    final Set<PsiElement> discoveredValues = discover(storedValue, processed);
+                    if (!discoveredValues.isEmpty()) {
+                        result.addAll(discoveredValues);
+                        discoveredValues.clear();
                     }
                 }
             }

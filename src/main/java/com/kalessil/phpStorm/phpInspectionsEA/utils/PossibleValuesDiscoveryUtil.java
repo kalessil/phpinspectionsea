@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,25 +44,34 @@ public class PossibleValuesDiscoveryUtil {
         }
         processed.add(expression);
 
-        /* Case 1: ternary, recursively check variants */
+        /* Case 1: ternary operator, recursively check variants */
         if (expression instanceof TernaryExpression) {
             handleTernary((TernaryExpression) expression, result, processed);
             return result;
         }
 
-        /* Case 2: parameter defaults, assignments */
+        /* Case 2: null coalescing operator, recursively check variants */
+        if (expression instanceof BinaryExpression) {
+            final BinaryExpression binary = (BinaryExpression) expression;
+            if (binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
+                handleNullCoalesce(binary, result, processed);
+                return result;
+            }
+        }
+
+        /* Case 3: parameter defaults, assignments */
         if (expression instanceof Variable) {
             handleVariable((Variable) expression, result, processed);
             return result;
         }
 
-        /* Case 3: default value discovery */
+        /* Case 4: default value discovery */
         if (expression instanceof FieldReference) {
             handleClassFieldReference((FieldReference) expression, result, processed);
             return result;
         }
 
-        /* Case 4: constants value discovery */
+        /* Case 5: constants value discovery */
         if (expression instanceof ClassConstantReference) {
             handleClassConstantReference((ClassConstantReference) expression, result);
             return result;
@@ -134,17 +144,27 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull Set<PsiElement> result,
             @NotNull Set<PsiElement> processed
     ) {
-        final PsiElement trueVariant  = ternary.getTrueVariant();
-        final PsiElement falseVariant = ternary.getFalseVariant();
-        if (trueVariant != null && falseVariant != null) {
-            Stream.of(trueVariant, falseVariant).forEach(variant -> {
-                final Set<PsiElement> variants = discover(variant, processed);
-                if (!variants.isEmpty()) {
-                    result.addAll(variants);
-                    variants.clear();
-                }
-            });
-        }
+        Stream.of(ternary.getTrueVariant(), ternary.getFalseVariant()).filter(Objects::nonNull).forEach(variant -> {
+            final Set<PsiElement> variants = discover(variant, processed);
+            if (!variants.isEmpty()) {
+                result.addAll(variants);
+                variants.clear();
+            }
+        });
+    }
+
+    static private void handleNullCoalesce(
+            @NotNull BinaryExpression binary,
+            @NotNull Set<PsiElement> result,
+            @NotNull Set<PsiElement> processed
+    ) {
+        Stream.of(binary.getLeftOperand(), binary.getRightOperand()).filter(Objects::nonNull).forEach(variant -> {
+            final Set<PsiElement> variants = discover(variant, processed);
+            if (!variants.isEmpty()) {
+                result.addAll(variants);
+                variants.clear();
+            }
+        });
     }
 
     static private void handleAssignmentsInScope(

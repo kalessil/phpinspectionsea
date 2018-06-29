@@ -17,7 +17,17 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
 
         Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
         assertEquals(2, values.size());
-        assertInstanceOf(values.iterator().next(), ConstantReference.class);
+        assertTrue(values.stream().allMatch(variant -> variant instanceof ConstantReference));
+    }
+
+    public void testNullCoalescDiscovery() {
+        String pattern        = "$x ?? false;";
+        PsiElement expression = PhpPsiElementFactory.createFromText(myFixture.getProject(), BinaryExpression.class, pattern);
+        assertNotNull(expression);
+
+        Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
+        assertEquals(1, values.size());
+        assertTrue(values.stream().allMatch(variant -> variant instanceof ConstantReference));
     }
 
     public void testClassFieldReferenceDiscovery() {

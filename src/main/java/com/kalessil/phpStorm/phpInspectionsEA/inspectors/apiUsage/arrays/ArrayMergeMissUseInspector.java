@@ -70,6 +70,8 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                                 }
                             }
                         }
+
+                        /* TODO: same arguments */
                     }
                 }
             }

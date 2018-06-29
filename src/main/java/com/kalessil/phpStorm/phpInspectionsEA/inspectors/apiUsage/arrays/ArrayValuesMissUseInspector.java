@@ -23,10 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArrayValuesMissUseInspector extends BasePhpInspection {
-    private static final String messageForeach       = "'array_values(...)' is not making any sense here (just use it's argument).";
-    private static final String messageArrayCombine  = "'array_values(...)' is not making any sense here (just use it's argument).";
-    private static final String messageStringReplace = "'array_values(...)' is not making any sense here (just use it's argument).";
-    private static final String messageArrayColumn   = "'array_values(...)' is not making any sense here (just use it's argument).";
+    private static final String messageGeneric       = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageInArray       = "'array_values(...)' is not making any sense here (just search in it's argument).";
     private static final String messageCount         = "'array_values(...)' is not making any sense here (just count it's argument).";
     private static final String messageArraySlice    = "'%s' is making more sense here (reduces amount of processed elements).";
@@ -63,14 +60,15 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                         case "in_array":
                                             holder.registerProblem(reference, messageInArray, new ReplaceFix(innerArguments[0].getText()));
                                             break;
-                                        // TODO: array_column and array_values itself
+                                        case "array_column":
                                         case "array_combine":
-                                            holder.registerProblem(reference, messageArrayCombine, new ReplaceFix(innerArguments[0].getText()));
+                                        case "array_values":
+                                            holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "str_replace":
                                             final PsiElement[] replaceArguments = outerCall.getParameters();
                                             if (replaceArguments.length == 3 && replaceArguments[1] == reference) {
-                                                holder.registerProblem(reference, messageStringReplace, new ReplaceFix(innerArguments[0].getText()));
+                                                holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
                                             }
                                             break;
                                         case "array_slice":
@@ -91,7 +89,7 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                         else if (parent instanceof ForeachStatement) {
                             final ForeachStatement foreach = (ForeachStatement) parent;
                             if (foreach.getKey() == null && !foreach.getVariables().isEmpty()) {
-                                holder.registerProblem(reference, messageForeach, new ReplaceFix(innerArguments[0].getText()));
+                                holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
                             }
                         }
 
@@ -100,7 +98,7 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                             final FunctionReference argument = (FunctionReference) innerArguments[0];
                             final String argumentName        = argument.getName();
                             if (argumentName != null && argumentName.equals("array_column") && argument.getParameters().length == 2) {
-                                holder.registerProblem(reference, messageArrayColumn, new ReplaceFix(argument.getText()));
+                                holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
                             }
                         }
                     }

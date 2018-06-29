@@ -13,6 +13,12 @@ function cases_holder() {
         array_combine([], array_values()),
         array_combine(array_values(), []),
 
+        array_column(<warning descr="'array_values(...)' is not making any sense here (just use it's argument).">array_values([])</warning>, '...'),
+        array_column(array_values(), '...'),
+
+        array_values(<warning descr="'array_values(...)' is not making any sense here (just use it's argument).">array_values([])</warning>),
+        array_values(array_values()),
+
         count(<warning descr="'array_values(...)' is not making any sense here (just count it's argument).">array_values([])</warning>),
         count(array_values()),
 

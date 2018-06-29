@@ -77,9 +77,9 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                 boolean result = false;
                 final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(argument);
                 if (variants.size() == 1) {
-                    final PsiElement variant = variants.iterator().next();
-                    if (variant instanceof BinaryExpression) {
-                        result = ((BinaryExpression) variant).getOperationType() == PhpTokenTypes.opCOALESCE;
+                    final PsiElement candidate = variants.iterator().next().getParent();
+                    if (candidate instanceof BinaryExpression) {
+                        result = ((BinaryExpression) candidate).getOperationType() == PhpTokenTypes.opCOALESCE;
                     }
                 }
                 variants.clear();

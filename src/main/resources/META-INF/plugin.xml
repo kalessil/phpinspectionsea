@@ -175,6 +175,10 @@ New features release<br/>
         shortName="ArrayFlipCanBeUsedInspection"                  displayName="'array_flip(...)' can be used"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayFlipCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ArrayMergeMissUseInspection"                   displayName="'array_merge(...)' misused"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayMergeMissUseInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -26,7 +26,8 @@ import java.util.Arrays;
  */
 
 public class ArrayMergeMissUseInspector extends BasePhpInspection {
-    private static final String messageArrayPush  = "'array_push()' would fit more here (it also faster).";
+    private static final String messageArrayPush   = "'array_push(...)' would fit more here (it also faster).";
+    private static final String messageNestedMerge = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
     @NotNull
     public String getShortName() {
@@ -60,6 +61,15 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                         }
 
                         /* case 2: `array_merge(..., array_merge(), ...)` */
+                        for (final PsiElement argument : arguments) {
+                            if (OpenapiTypesUtil.isFunctionReference(argument)) {
+                                final String innerFunctionName = ((FunctionReference) argument).getName();
+                                if (innerFunctionName != null && innerFunctionName.equals("array_merge")) {
+                                    holder.registerProblem(reference, messageNestedMerge);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }

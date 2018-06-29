@@ -279,3 +279,4 @@ Inspections Lists (Performance)
 | Performance          | RepetitiveMethodCallsInspection                 | Repetitive method calls                                                                           | n/a | yes | n/a  | no  |
 | Performance          | ArrayValuesMissUseInspection                    | 'array_values(...)' misused                                                                       | yes | yes | yes  | no  |
 | Performance          | ArrayColumnCanBeUsedInspection                  | 'array_column(...)' can be used                                                                   | yes | yes | yes  | no  |
+| Performance          | ArrayFlipCanBeUsedInspection                    | 'array_flip(...)' can be used                                                                     | yes | yes | yes  | no  |

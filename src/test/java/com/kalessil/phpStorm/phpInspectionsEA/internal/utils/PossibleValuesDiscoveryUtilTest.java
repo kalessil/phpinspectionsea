@@ -22,16 +22,28 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
 
     public void testClassFieldReferenceDiscovery() {
         /* let's cover simple case, without complicating test cases */
-        String pattern   = "class test { var $property = 'default'; function say(){ echo $this->property; } }";
-        PsiElement clazz = PhpPsiElementFactory.createFromText(myFixture.getProject(), PhpClass.class, pattern);
-        assertNotNull(clazz);
+        String pattern   =
+                "class test { " +
+                    "var $property = 'default'; " +
+                    "function __construct() { " +
+                        "$this->property = false; " +
+                    " } " +
+                    "function say(){ " +
+                        "return $this->property; " +
+                    "} " +
+                " }";
+        Function callable = PhpPsiElementFactory.createFromText(myFixture.getProject(), Function.class, pattern);
+        assertNotNull(callable);
 
-        PsiElement expression = PsiTreeUtil.findChildOfType(clazz, FieldReference.class);
+        PsiElement expression = PsiTreeUtil.findChildOfType(callable, PhpReturn.class);
+        assertNotNull(expression);
+        expression = PsiTreeUtil.findChildOfType(expression, FieldReference.class);
         assertNotNull(expression);
 
-        Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
-        assertEquals(1, values.size());
-        assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
+        Set<PsiElement> values  = PossibleValuesDiscoveryUtil.discover(expression);
+        assertEquals(2, values.size());
+        assertTrue(values.stream().anyMatch(variant -> variant instanceof StringLiteralExpression));
+        assertTrue(values.stream().anyMatch(variant -> variant instanceof ConstantReference));
     }
 
     public void testClassConstantReferenceDiscovery() {
@@ -48,9 +60,17 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
     }
 
     public void testOverriddenFieldReferenceDiscovery() {
-        String pattern   = "class test { var $x; function test(){ " +
-                "$this->x = 'default'; $this->x .= 0; list($this->x, $y) = [0, 0]; " +
-                "return $this->x; } }";
+        String pattern   =
+                "class test { " +
+                    "var $x; " +
+                    "function test(){ " +
+                        "$this->x = 'default'; " +
+                        "$this->x = $y = 'default'; " +
+                        "$this->x .= 0; " +
+                        "list($this->x, $y) = [0, 0]; " +
+                        "return $this->x; " +
+                    "} " +
+                " }";
         Function callable = PhpPsiElementFactory.createFromText(myFixture.getProject(), Function.class, pattern);
         assertNotNull(callable);
 
@@ -60,7 +80,7 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
         assertNotNull(expression);
 
         Set<PsiElement> values  = PossibleValuesDiscoveryUtil.discover(expression);
-        assertEquals(1, values.size());
+        assertEquals(2, values.size());
         assertInstanceOf(values.iterator().next(), StringLiteralExpression.class);
     }
 
@@ -80,7 +100,7 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
     }
 
     public void testVariableDiscoveryForOverriddenVariables() {
-        String pattern    = "function test() { $x = null; $x .= 0; list($x, $y) = [0, 0]; return $x; }";
+        String pattern    = "function test() { $x = null; $x = $y = '...'; $x .= 0; list($x, $y) = [0, 0]; return $x; }";
         Function callable = PhpPsiElementFactory.createFromText(myFixture.getProject(), Function.class, pattern);
         assertNotNull(callable);
 
@@ -90,7 +110,8 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
         assertNotNull(expression);
 
         Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(expression);
-        assertEquals(1, values.size());
-        assertInstanceOf(values.iterator().next(), ConstantReference.class);
+        assertEquals(2, values.size());
+        assertTrue(values.stream().anyMatch(variant -> variant instanceof StringLiteralExpression));
+        assertTrue(values.stream().anyMatch(variant -> variant instanceof ConstantReference));
     }
 }

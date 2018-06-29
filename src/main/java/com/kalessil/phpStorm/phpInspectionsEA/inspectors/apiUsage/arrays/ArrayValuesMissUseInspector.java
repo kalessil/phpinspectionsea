@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArrayValuesMissUseInspector extends BasePhpInspection {
     private static final String messageForeach       = "'array_values(...)' is not making any sense here (just use it's argument).";
+    private static final String messageArrayCombine  = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageStringReplace = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageArrayColumn   = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageInArray       = "'array_values(...)' is not making any sense here (just search in it's argument).";
@@ -61,6 +62,10 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                             break;
                                         case "in_array":
                                             holder.registerProblem(reference, messageInArray, new ReplaceFix(innerArguments[0].getText()));
+                                            break;
+                                        // TODO: array_column and array_values itself
+                                        case "array_combine":
+                                            holder.registerProblem(reference, messageArrayCombine, new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "str_replace":
                                             final PsiElement[] replaceArguments = outerCall.getParameters();

@@ -2,7 +2,7 @@
 
 function cases_holder($x) {
     return [
-        array_merge([], array_merge([], []), []),
+        array_merge([], [], [], []),
 
         array_push($x, 0),
         array_push($x, 0, 1, 2),

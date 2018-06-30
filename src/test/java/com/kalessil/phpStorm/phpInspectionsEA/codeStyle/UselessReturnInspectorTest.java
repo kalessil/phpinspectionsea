@@ -8,5 +8,9 @@ final public class UselessReturnInspectorTest extends PhpCodeInsightFixtureTestC
         myFixture.enableInspections(new UselessReturnInspector());
         myFixture.configureByFile("fixtures/codeStyle/useless-returns.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/codeStyle/useless-returns.fixed.php");
     }
 }

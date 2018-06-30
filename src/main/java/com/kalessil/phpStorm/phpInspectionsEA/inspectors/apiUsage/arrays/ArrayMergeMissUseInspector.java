@@ -29,9 +29,8 @@ import java.util.List;
  */
 
 public class ArrayMergeMissUseInspector extends BasePhpInspection {
-    private static final String messageArrayPush         = "'array_push(...)' would fit more here (it also faster).";
-    private static final String messageNestedMerge       = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
-    private static final String messageDuplicateArgument = "This value used as an argument multiple times (this occurrence can be dropped).";
+    private static final String messageArrayPush   = "'array_push(...)' would fit more here (it also faster).";
+    private static final String messageNestedMerge = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
     @NotNull
     public String getShortName() {
@@ -76,7 +75,22 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                             if (OpenapiTypesUtil.isFunctionReference(argument)) {
                                 final String innerFunctionName = ((FunctionReference) argument).getName();
                                 if (innerFunctionName != null && innerFunctionName.equals("array_merge")) {
-                                    holder.registerProblem(reference, messageNestedMerge);
+                                    final List<String> fragments = new ArrayList<>();
+                                    for (final PsiElement fragment : arguments) {
+                                        if (OpenapiTypesUtil.isFunctionReference(fragment)) {
+                                            final FunctionReference innerCall = (FunctionReference) fragment;
+                                            if (innerFunctionName.equals(innerCall.getName())) {
+                                                Arrays.stream(innerCall.getParameters()).forEach(p -> fragments.add(p.getText()));
+                                                continue;
+                                            }
+                                        }
+                                        fragments.add(fragment.getText());
+                                    }
+
+                                    final String replacement = String.format("array_merge(%s)", String.join(", ", fragments));
+                                    holder.registerProblem(reference, messageNestedMerge, new InlineNestedCallsFixer(replacement));
+
+                                    fragments.clear();
                                     break;
                                 }
                             }
@@ -97,6 +111,20 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
         }
 
         UseArrayPushFixer(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static final class InlineNestedCallsFixer extends UseSuggestedReplacementFixer {
+        private static final String title = "Inline nested array_merge(...) calls";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        InlineNestedCallsFixer(@NotNull String expression) {
             super(expression);
         }
     }

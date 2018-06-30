@@ -52,7 +52,7 @@ public class EAUltimateApplicationConfiguration implements Configurable {
     @Nls
     @Override
     public String getDisplayName() {
-        return "Php Inspections (EA Extended)";
+        return "Php Inspections (EA Ultimate)";
     }
 
     @Nullable

@@ -10,7 +10,5 @@ function cases_holder() {
 
         count(<warning descr="'array_keys(...)' is not making any sense here (just count it's argument).">array_keys([])</warning>),
         count(array_keys([], 'search')),
-
-        <warning descr="'array_keys(array_slice([], 0))' is making more sense here (reduces amount of processed elements).">array_slice(array_keys([]), 0)</warning>,
     ];
 }

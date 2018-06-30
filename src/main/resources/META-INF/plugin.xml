@@ -72,10 +72,6 @@ New features release<br/>
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="ArrayCastingEquivalentInspection"              displayName="Could be replaced with '(array) ...'"
-        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.ArrayCastingEquivalentInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="CallableInLoopTerminationConditionInspection"  displayName="Callable calls in loops termination condition"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.CallableInLoopTerminationConditionInspector"/>
@@ -231,10 +227,6 @@ New features release<br/>
         shortName="DisconnectedForeachInstructionInspection"      displayName="Statement could be decoupled from foreach"
         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
-        groupName="Control Flow"                                   enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.ExceptionsAnnotatingAndHandlingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"

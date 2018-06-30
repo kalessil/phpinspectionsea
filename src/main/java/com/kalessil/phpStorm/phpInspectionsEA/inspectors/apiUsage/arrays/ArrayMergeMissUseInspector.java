@@ -26,8 +26,9 @@ import java.util.Arrays;
  */
 
 public class ArrayMergeMissUseInspector extends BasePhpInspection {
-    private static final String messageArrayPush   = "'array_push(...)' would fit more here (it also faster).";
-    private static final String messageNestedMerge = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
+    private static final String messageArrayPush         = "'array_push(...)' would fit more here (it also faster).";
+    private static final String messageNestedMerge       = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
+    private static final String messageDuplicateArgument = "This value used as an argument multiple times (this occurrence can be dropped).";
 
     @NotNull
     public String getShortName() {
@@ -71,7 +72,17 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                             }
                         }
 
-                        /* TODO: same arguments */
+                        /* case 3: duplicate arguments */
+                        for (final PsiElement argument : arguments) {
+                            boolean reached = false;
+                            for (final PsiElement candidate : arguments) {
+                                if (reached && OpeanapiEquivalenceUtil.areEqual(candidate, argument)) {
+                                    holder.registerProblem(argument, messageDuplicateArgument);
+                                    break;
+                                }
+                                reached = reached || candidate == argument;
+                            }
+                        }
                     }
                 }
             }

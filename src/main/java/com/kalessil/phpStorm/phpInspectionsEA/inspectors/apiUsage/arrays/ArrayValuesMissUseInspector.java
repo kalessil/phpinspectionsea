@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -90,15 +91,25 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                             }
                         }
 
-                        /* pattern 3: array_values(array_column(...)) */
+                        /* pattern 3: array_values(array_column(...)), array_values(array_slice(...)),  */
                         if (OpenapiTypesUtil.isFunctionReference(innerArguments[0])) {
                             final FunctionReference argument = (FunctionReference) innerArguments[0];
                             final String argumentName        = argument.getName();
-                            if (argumentName != null && argumentName.equals("array_column") && argument.getParameters().length == 2) {
-                                holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
+                            if (argumentName != null) {
+                                if (argumentName.equals("array_column")) {
+                                    final PsiElement[] argumentArguments = argument.getParameters();
+                                    if (argumentArguments.length == 2) {
+                                        holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
+                                    }
+                                } else if (argumentName.equals("array_slice")) {
+                                    final PsiElement[] argumentArguments = argument.getParameters();
+                                    if (argumentArguments.length < 4) {
+                                        holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
+                                    } else if (argumentArguments.length == 4 && PhpLanguageUtil.isFalse(argumentArguments[3])) {
+                                        holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
+                                    }
+                                }
                             }
-                            /* TODO: array_values(array_slice(..., true))   -> array_slice(...) */
-                            /* TODO: array_values(array_slice(...[, false]) -> array_slice(...)*/
                         }
                     }
                 }

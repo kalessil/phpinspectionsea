@@ -3,8 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -53,6 +55,16 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
             @Override
             public void visitPhpIsset(@NotNull PhpIsset expression) {
                 this.analyzeDispatchedExpressions(expression.getVariables());
+            }
+
+            @Override
+            public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (expression.getOperationType() == PhpTokenTypes.opCOALESCE) {
+                    final PsiElement left = expression.getLeftOperand();
+                    if (left instanceof FieldReference) {
+                        this.analyzeDispatchedExpressions(new PhpExpression[]{(FieldReference) left});
+                    }
+                }
             }
 
             private void analyzeDispatchedExpressions(@NotNull PhpExpression[] parameters) {

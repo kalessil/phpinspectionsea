@@ -32,7 +32,6 @@ It covers:<br />
 - non-optimal, duplicate and suspicious "if" conditions<br />
 - validation of magic methods usage<br />
 - regular expressions<br />
-- validation of exception handling workflow<br />
 - compatibility issues<br />
 - variety of time-consuming bugs<br />
 - PhpUnit API usage<br />
@@ -213,10 +212,6 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         shortName="DisconnectedForeachInstructionInspection"      displayName="Statement could be decoupled from foreach"
         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.DisconnectedForeachInstructionInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ExceptionsAnnotatingAndHandlingInspection"      displayName="Exceptions handling and annotating"
-        groupName="Control Flow"                                   enabledByDefault="false" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.exceptions.ExceptionsAnnotatingAndHandlingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="DegradedSwitchInspection"                       displayName="Switch-case could be simplified"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"

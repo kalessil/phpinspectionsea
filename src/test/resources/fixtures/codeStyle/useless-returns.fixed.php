@@ -9,18 +9,18 @@ function cases_holder($parameter) {
             return $reference = '...';
         }
         if ($parameter === null) {
-            <weak_warning descr="Assignment here is not making much sense.">return $regular = '...';</weak_warning>
+            return '...';
         }
     };
 
-    <weak_warning descr="Assignment here is not making much sense.">return $parameter = $lambda;</weak_warning>
+    return $lambda;
 }
 
 function multiple_return_statements($parameter) {
     if (0 === $parameter) { return; }
     if ($parameter > 0)   { return; }
 
-    <weak_warning descr="Senseless statement: return null implicitly or safely remove it.">return;</weak_warning>
+    return;
 }
 
 function static_variables($parameter) {

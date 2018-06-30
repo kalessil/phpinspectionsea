@@ -88,7 +88,7 @@ Inspections Lists (Confusing constructs)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a | yes | n/a  | no  |
 | Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | no  | yes | no   | no  |
-| Confusing constructs | UselessReturnInspection                         | Useless return                                      | n/a | yes | n/a  | no  |
+| Confusing constructs | UselessReturnInspection                         | Useless return                                      | yes | yes | yes  | no  |
 | Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | yes  | no  |
 
 Inspections Lists (Code style)

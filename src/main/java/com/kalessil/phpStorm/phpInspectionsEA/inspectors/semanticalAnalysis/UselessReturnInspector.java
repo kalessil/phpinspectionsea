@@ -1,11 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -40,16 +45,21 @@ public class UselessReturnInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpReturn(@NotNull PhpReturn expression) {
-                final PhpExpression value = ExpressionSemanticUtil.getReturnValue(expression);
-                if (value instanceof AssignmentExpression) {
-                    final AssignmentExpression assignment = (AssignmentExpression) value;
-                    final PsiElement container            = assignment.getVariable();
-                    if (container instanceof Variable) {
+                final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(expression);
+                if (returnValue instanceof AssignmentExpression) {
+                    final AssignmentExpression assignment = (AssignmentExpression) returnValue;
+                    final PsiElement assignmentVariable   = assignment.getVariable();
+                    final PsiElement assignmentValue      = assignment.getValue();
+                    if (assignmentValue != null && assignmentVariable instanceof Variable) {
                         final Function scope = ExpressionSemanticUtil.getScope(expression);
                         if (scope != null) {
-                            final Variable variable = (Variable) container;
-                            if (!this.isArgumentReference(variable, scope) && !this.isBoundReference(variable, scope)) {
-                                holder.registerProblem(expression, messageConfusing);
+                            final Variable variable = (Variable) assignmentVariable;
+                            final boolean isTarget  = !this.isArgumentReference(variable, scope) &&
+                                                      !this.isBoundReference(variable, scope) &&
+                                                      !this.isStaticVariable(variable, scope);
+                            if (isTarget) {
+                                final String replacement = String.format("return %s;", assignmentValue.getText());
+                                holder.registerProblem(expression, messageConfusing, new SimplifyFix(replacement));
                             }
                         }
                     }
@@ -87,7 +97,6 @@ public class UselessReturnInspector extends BasePhpInspection {
                     }
                 }
                 return result;
-
             }
 
             private boolean isBoundReference(@NotNull Variable variable, @NotNull Function function) {
@@ -105,7 +114,56 @@ public class UselessReturnInspector extends BasePhpInspection {
                 }
                 return result;
             }
+
+            private boolean isStaticVariable(@NotNull Variable variable, @NotNull Function function) {
+                boolean result            = false;
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                if (body != null) {
+                    final String variableName = variable.getName();
+                    for (final PhpStaticStatement candidate : PsiTreeUtil.findChildrenOfType(body, PhpStaticStatement.class)) {
+                        result = candidate.getDeclarations().stream().anyMatch(declaration -> {
+                            final PhpPsiElement declared = declaration.getVariable();
+                            return declared instanceof Variable && variableName.equals(declared.getName());
+                        });
+                        if (result) {
+                            break;
+                        }
+                    }
+                }
+                return result;
+            }
         };
+    }
+
+    private static final class SimplifyFix implements LocalQuickFix {
+        private static final String title = "Remove unnecessary assignment";
+
+        final String replacement;
+
+        SimplifyFix(@NotNull String replacement) {
+            super();
+            this.replacement = replacement;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression != null && !project.isDisposed()) {
+                expression.replace(PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, this.replacement));
+            }
+        }
     }
 }
 

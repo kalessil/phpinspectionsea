@@ -16,8 +16,7 @@ class ClassWithIsset
 
 class ClassWithoutIsset
 {
-    public function casesHolder(): array
-    {
+    public function casesHolder(): array {
         $regularObject = new ClassWithProperty();
         $validObject   = new ClassWithIsset();
         $invalidObject = new ClassWithoutIsset();
@@ -28,18 +27,19 @@ class ClassWithoutIsset
 
             isset($validObject->property),
             isset(<error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>),
+            <error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error> ?? '...',
 
             empty($regularObject-><error descr="Member has private access">privateProperty</error>),
             empty($regularObject-><error descr="Member has protected access">protectedProperty</error>),
             empty($regularObject->publicProperty),
 
             empty($validObject->property),
-            empty(<error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>)
+            empty(<error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>),
+            <error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error> ?? '...',
         ];
     }
 
-    public function falsePositivesHolder()
-    {
+    public function falsePositivesHolder() {
         $stdObject = new \StdClass();
         return isset($stdObject->property);
     }

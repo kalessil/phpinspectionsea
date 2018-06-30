@@ -79,6 +79,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpFinally(Finally element) {}
 
     @Override public void visitPhpSwitch(PhpSwitch switchStatement) {}
+    @Override public void visitPhpReturn(PhpReturn returnStatement) {}
 
     protected boolean isTestContext(@NotNull PsiElement expression) {
         boolean result        = false;

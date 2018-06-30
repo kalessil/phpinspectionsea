@@ -23,10 +23,9 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArrayValuesMissUseInspector extends BasePhpInspection {
-    private static final String messageGeneric       = "'array_values(...)' is not making any sense here (just use it's argument).";
-    private static final String messageInArray       = "'array_values(...)' is not making any sense here (just search in it's argument).";
-    private static final String messageCount         = "'array_values(...)' is not making any sense here (just count it's argument).";
-    private static final String messageArraySlice    = "'%s' is making more sense here (reduces amount of processed elements).";
+    private static final String messageGeneric  = "'array_values(...)' is not making any sense here (just use it's argument).";
+    private static final String messageInArray  = "'array_values(...)' is not making any sense here (just search in it's argument).";
+    private static final String messageCount    = "'array_values(...)' is not making any sense here (just count it's argument).";
 
     @NotNull
     public String getShortName() {
@@ -73,11 +72,9 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                             break;
                                         case "array_slice":
                                             final PsiElement[] sliceArguments = outerCall.getParameters();
-                                            final String theArray             = innerArguments[0].getText();
-                                            final String newInnerCall         = outerCall.getText().replace(sliceArguments[0].getText(), theArray);
-                                            final String replacement          = reference.getText().replace(theArray, newInnerCall);
-                                            final String message              = String.format(messageArraySlice, replacement);
-                                            holder.registerProblem(outerCall, message, new ReplaceFix(replacement));
+                                            if (sliceArguments.length < 4) {
+                                                holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
+                                            }
                                             break;
                                         default:
                                             break;
@@ -100,6 +97,8 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                             if (argumentName != null && argumentName.equals("array_column") && argument.getParameters().length == 2) {
                                 holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
                             }
+                            /* TODO: array_values(array_slice(..., true))   -> array_slice(...) */
+                            /* TODO: array_values(array_slice(...[, false]) -> array_slice(...)*/
                         }
                     }
                 }

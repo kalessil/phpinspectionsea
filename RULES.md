@@ -28,7 +28,6 @@ Inspections Lists (Control flow)
 | Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | no  |
 | Control Flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                                                    | yes | yes | yes  | yes |
 | Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | no  |
-| Control Flow         | ExceptionsAnnotatingAndHandlingInspection       | Exceptions handling and annotating                                                | no  | yes | no   | no  |
 | Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | no  | yes | no   | no  |
 | Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | no  |
 | Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | no  |
@@ -254,7 +253,6 @@ Inspections Lists (Performance)
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------------ | --: | --: | ---: | --: |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                      | n/a | yes | n/a  | yes |
 | Performance          | StrlenInEmptyStringCheckContextInspection       | '(mb_)strlen(...)' misused                                                                        | yes | yes | yes  | no  |
-| Performance          | ArrayCastingEquivalentInspection                | Could be replaced with '(array) ...'                                                              | yes | yes | yes  | no  |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                                     | n/a | yes | n/a  | no  |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | n/a | yes | n/a  | yes |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | no   | no  |

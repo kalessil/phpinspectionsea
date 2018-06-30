@@ -1,32 +1,19 @@
 <?php
 
 class ClassToStringStatic {
-    static public function <error descr="__toString cannot be static.">__toString</error>()
-    {
+    static public function <error descr="__toString cannot be static.">__toString</error>() {
         return '';
     }
 }
 
 class ClassToStringWithArguments {
-    public function <error descr="__toString cannot accept arguments.">__toString</error>($argument)
-    {
+    public function <error descr="__toString cannot accept arguments.">__toString</error>($argument) {
         return '';
     }
 }
 
 class ClassToStringNotPublic {
-    protected function <error descr="__toString must be public.">__toString</error>()
-    {
-        return '';
-    }
-}
-
-class ClassToStringThrowsException {
-    public function __toString()
-    {
-        if ('' !== '-') {
-            <error descr="__toString: exceptions must not be raised (\RuntimeException thrown).">throw new \RuntimeException();</error>
-        }
+    protected function <error descr="__toString must be public.">__toString</error>() {
         return '';
     }
 }

@@ -51,12 +51,12 @@ public class UselessReturnInspector extends BasePhpInspection {
                     final PsiElement assignmentVariable   = assignment.getVariable();
                     final PsiElement assignmentValue      = assignment.getValue();
                     if (assignmentValue != null && assignmentVariable instanceof Variable) {
-                        final Variable variable = (Variable) assignmentVariable;
-                        final Function scope    = ExpressionSemanticUtil.getScope(expression);
+                        final Function scope = ExpressionSemanticUtil.getScope(expression);
                         if (scope != null) {
-                            final boolean isTarget = !this.isArgumentReference(variable, scope) &&
-                                                     !this.isBoundReference(variable, scope) &&
-                                                     !this.isStaticVariable(variable, scope);
+                            final Variable variable = (Variable) assignmentVariable;
+                            final boolean isTarget  = !this.isArgumentReference(variable, scope) &&
+                                                      !this.isBoundReference(variable, scope) &&
+                                                      !this.isStaticVariable(variable, scope);
                             if (isTarget) {
                                 final String replacement = String.format("return %s;", assignmentValue.getText());
                                 holder.registerProblem(expression, messageConfusing, new SimplifyFix(replacement));

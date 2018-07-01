@@ -63,7 +63,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                         if (parent instanceof BinaryExpression) {
                             final BinaryExpression binary = (BinaryExpression) parent;
                             if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
-                                holder.registerProblem(operation, messageGeneric, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
+                                holder.registerProblem(operation, messageConcatenate, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
                                 return;
                             }
                         }
@@ -71,7 +71,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                         else if (parent instanceof SelfAssignmentExpression) {
                             final SelfAssignmentExpression assignment = (SelfAssignmentExpression) parent;
                             if (assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN) {
-                                holder.registerProblem(operation, messageGeneric, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
+                                holder.registerProblem(operation, messageConcatenate, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
                                 return;
                             }
                         }

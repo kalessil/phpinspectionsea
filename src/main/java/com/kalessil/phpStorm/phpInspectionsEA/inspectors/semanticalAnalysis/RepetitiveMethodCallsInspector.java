@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +64,7 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                     for (final MethodReference first : references) {
                         for (final MethodReference second : references) {
                             if (first != second && !checked.contains(second)) {
-                                final boolean matches = OpeanapiEquivalenceUtil.areEqual(first, second);
+                                final boolean matches = OpenapiEquivalenceUtil.areEqual(first, second);
                                 if (matches) {
                                     holder.registerProblem(first, messageSequential);
                                     break iterate;
@@ -107,7 +107,7 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                             final PsiElement candidate = previous.getFirstChild();
                             if (candidate instanceof MethodReference) {
                                 final PsiElement previousBase = candidate.getFirstChild();
-                                if (OpeanapiEquivalenceUtil.areEqual(currentBase, previousBase) && !this.isTestContext(parent)) {
+                                if (OpenapiEquivalenceUtil.areEqual(currentBase, previousBase) && !this.isTestContext(parent)) {
                                     holder.registerProblem(currentBase, messageSequential);
                                 }
                             }

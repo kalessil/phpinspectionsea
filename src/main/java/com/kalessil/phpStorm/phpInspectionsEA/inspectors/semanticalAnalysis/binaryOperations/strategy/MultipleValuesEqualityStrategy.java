@@ -6,7 +6,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,11 +85,11 @@ final public class MultipleValuesEqualityStrategy {
                                 PsiElement source      = null;
                                 PsiElement firstValue  = null;
                                 PsiElement secondValue = null;
-                                if (OpeanapiEquivalenceUtil.areEqual(currentLeft, followingLeft)) {
+                                if (OpenapiEquivalenceUtil.areEqual(currentLeft, followingLeft)) {
                                     source      = followingLeft;
                                     firstValue  = currentRight;
                                     secondValue = followingRight;
-                                } else if (OpeanapiEquivalenceUtil.areEqual(currentRight, followingRight)) {
+                                } else if (OpenapiEquivalenceUtil.areEqual(currentRight, followingRight)) {
                                     source      = followingRight;
                                     firstValue  = currentLeft;
                                     secondValue = followingLeft;

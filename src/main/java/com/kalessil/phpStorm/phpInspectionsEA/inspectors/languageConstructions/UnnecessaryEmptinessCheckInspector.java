@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -173,7 +173,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     final PsiElement[] arguments = ((PhpIsset) expression).getVariables();
                     if (arguments.length > 1) {
                         final Optional<PsiElement> match = Arrays.stream(arguments)
-                                .filter(argument -> OpeanapiEquivalenceUtil.areEqual(subject, argument))
+                                .filter(argument -> OpenapiEquivalenceUtil.areEqual(subject, argument))
                                 .findFirst();
                         if (match.isPresent()) {
                             result = match.get();
@@ -248,7 +248,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     if (arguments != null && arguments.length > 0) {
                         for (final PsiElement argument : arguments) {
                             final Optional<PsiElement> key = result.keySet().stream()
-                                    .filter(e -> e != null && argument != null && OpeanapiEquivalenceUtil.areEqual(e, argument))
+                                    .filter(e -> e != null && argument != null && OpenapiEquivalenceUtil.areEqual(e, argument))
                                     .findFirst();
                             if (!key.isPresent()) {
                                 result.put(argument, new ArrayList<>(Collections.singletonList(expression)));

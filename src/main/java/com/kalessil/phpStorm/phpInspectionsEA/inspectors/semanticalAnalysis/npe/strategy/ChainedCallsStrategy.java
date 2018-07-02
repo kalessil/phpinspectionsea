@@ -53,7 +53,7 @@ final public class ChainedCallsStrategy {
                             for (final Map.Entry<MethodReference, String> entry : nullTestedReferences.entrySet()) {
                                 final String nullTestedMethodName = entry.getValue();
                                 if (nullTestedMethodName != null && nullTestedMethodName.equals(methodName)) {
-                                    final boolean areEqual = OpeanapiEquivalenceUtil.areEqual(entry.getKey(), baseCall);
+                                    final boolean areEqual = OpenapiEquivalenceUtil.areEqual(entry.getKey(), baseCall);
                                     if (areEqual) {
                                         isNullTested = true;
                                         break;

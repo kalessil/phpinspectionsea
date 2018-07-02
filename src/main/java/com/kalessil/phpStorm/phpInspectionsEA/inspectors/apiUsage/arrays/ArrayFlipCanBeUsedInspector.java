@@ -8,7 +8,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ public class ArrayFlipCanBeUsedInspector extends BasePhpInspection {
                         final String innerFunctionName    = innerCall.getName();
                         if (innerFunctionName != null && innerFunctionName.equals("array_keys")) {
                             final PsiElement[] innerArguments = innerCall.getParameters();
-                            if (innerArguments.length == 1 && OpeanapiEquivalenceUtil.areEqual(innerArguments[0], arguments[0])) {
+                            if (innerArguments.length == 1 && OpenapiEquivalenceUtil.areEqual(innerArguments[0], arguments[0])) {
                                 final String replacement = String.format("array_flip(%s)", arguments[0].getText());
                                 holder.registerProblem(
                                         reference,

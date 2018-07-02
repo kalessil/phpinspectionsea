@@ -17,7 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -121,7 +121,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                 @NotNull PsiElement replaceFrom,
                 @NotNull PsiElement replaceTo
             ) {
-                if (OpeanapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
+                if (OpenapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
                     if (isConditional) {
                         final String replacement = String.format("return %s", falseVariant.getText());
@@ -137,8 +137,8 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                     final PsiElement rightValue = binary.getRightOperand();
                     if (leftValue != null && rightValue != null) {
                         final boolean isTarget = Stream.of(leftValue, rightValue).allMatch(v ->
-                                OpeanapiEquivalenceUtil.areEqual(v, trueVariant) ||
-                                OpeanapiEquivalenceUtil.areEqual(v, falseVariant)
+                                OpenapiEquivalenceUtil.areEqual(v, trueVariant) ||
+                                OpenapiEquivalenceUtil.areEqual(v, falseVariant)
                         );
                         if (isTarget) {
                             final IElementType operation = binary.getOperationType();

@@ -12,7 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -111,7 +111,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                     final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                     if (body != null) {
                         final long candidateUsages = PsiTreeUtil.findChildrenOfType(body, candidate.getClass()).stream()
-                                .filter(expression -> OpeanapiEquivalenceUtil.areEqual(expression, candidate))
+                                .filter(expression -> OpenapiEquivalenceUtil.areEqual(expression, candidate))
                                 .count();
                         result = candidateUsages == 2;
                     }

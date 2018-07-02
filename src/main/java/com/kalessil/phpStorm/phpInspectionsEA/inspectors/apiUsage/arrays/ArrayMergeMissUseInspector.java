@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                                 final PsiElement parent = reference.getParent();
                                 if (OpenapiTypesUtil.isAssignment(parent)) {
                                     final PsiElement container = ((AssignmentExpression) parent).getVariable();
-                                    if (container != null && OpeanapiEquivalenceUtil.areEqual(container, arguments[0])) {
+                                    if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
                                         final List<String> fragments = new ArrayList<>();
                                         fragments.add(arguments[0].getText());
                                         Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));

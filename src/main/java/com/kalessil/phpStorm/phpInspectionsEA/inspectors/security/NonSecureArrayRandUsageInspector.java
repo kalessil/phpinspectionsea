@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -45,7 +45,7 @@ public class NonSecureArrayRandUsageInspector extends BasePhpInspection {
                         final PsiElement parent = reference.getParent();
                         if (parent instanceof ArrayIndex) {
                             final PsiElement container = ((ArrayAccessExpression) parent.getParent()).getValue();
-                            if (container != null && OpeanapiEquivalenceUtil.areEqual(container, arguments[0])) {
+                            if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
                                 holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
                             }
                         }

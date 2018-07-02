@@ -15,7 +15,7 @@ import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +69,7 @@ public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
                                 for (final PsiElement discoveredBase : bases) {
                                     for (final PsiElement match : arguments) {
                                         if (match != current && !reported.contains(match)) {
-                                            final boolean canSkip = OpeanapiEquivalenceUtil.areEqual(discoveredBase, match); 
+                                            final boolean canSkip = OpenapiEquivalenceUtil.areEqual(discoveredBase, match);
                                             if (canSkip) {
                                                 holder.registerProblem(match, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropArgumentFix());
                                                 reported.add(match);

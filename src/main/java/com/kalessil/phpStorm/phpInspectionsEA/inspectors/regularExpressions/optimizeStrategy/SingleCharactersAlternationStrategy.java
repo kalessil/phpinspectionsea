@@ -30,7 +30,7 @@ final public class SingleCharactersAlternationStrategy {
                 }
                 holder.registerProblem(
                         target,
-                        String.format(messagePattern, regexMatcher.group(0), String.format("([%s])", String.join("|", branches)))
+                        String.format(messagePattern, regexMatcher.group(0), String.format("([%s])", String.join("", branches)))
                 );
                 branches.clear();
             }

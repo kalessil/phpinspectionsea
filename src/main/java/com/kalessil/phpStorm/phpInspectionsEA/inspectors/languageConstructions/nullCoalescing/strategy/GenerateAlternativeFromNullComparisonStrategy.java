@@ -6,7 +6,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ final public class GenerateAlternativeFromNullComparisonStrategy {
         alternative                     = ExpressionSemanticUtil.getExpressionTroughParenthesis(alternative);
         if (
             null == subject || null == value || null == alternative ||
-            !OpeanapiEquivalenceUtil.areEqual(subject, value)
+            !OpenapiEquivalenceUtil.areEqual(subject, value)
         ) {
             return null;
         }

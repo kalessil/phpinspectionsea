@@ -55,7 +55,7 @@ final public class ChainedCallsStrategy {
                                 final String nullTestedMethodName = knownReference.getValue();
                                 if (
                                     nullTestedMethodName != null && nullTestedMethodName.equals(methodName) &&
-                                    OpeanapiEquivalenceUtil.areEqual(knownReference.getKey(), baseCall)
+                                    OpenapiEquivalenceUtil.areEqual(knownReference.getKey(), baseCall)
                                 ) {
                                     isNullTested = true;
                                     break;

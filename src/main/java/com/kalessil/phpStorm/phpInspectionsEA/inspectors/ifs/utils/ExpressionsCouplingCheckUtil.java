@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -39,7 +39,7 @@ final public class ExpressionsCouplingCheckUtil {
                     final Collection<PsiElement> findings = PsiTreeUtil.findChildrenOfType(second, expression.getClass());
                     if (findings.size() > 0) {
                         for (final PsiElement subject : findings) {
-                            if (OpeanapiEquivalenceUtil.areEqual(subject, expression)) {
+                            if (OpenapiEquivalenceUtil.areEqual(subject, expression)) {
                                 isCoupled = true;
                                 break;
                             }
@@ -95,7 +95,7 @@ final public class ExpressionsCouplingCheckUtil {
                                 continue;
                             }
 
-                            if (OpeanapiEquivalenceUtil.areEqual(subject, expression)) {
+                            if (OpenapiEquivalenceUtil.areEqual(subject, expression)) {
                                 isCoupled = true;
                                 break;
                             }

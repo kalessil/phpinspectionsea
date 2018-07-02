@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                             if (ownFieldDefault == null || traitFieldDefault == null) {
                                 isError = traitFieldDefault != ownFieldDefault;
                             } else {
-                                isError = !OpeanapiEquivalenceUtil.areEqual(traitFieldDefault, ownFieldDefault);
+                                isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, ownFieldDefault);
                             }
 
                             /* error case already covered by the IDEs */
@@ -111,7 +111,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                             if (null == parentFieldDefault || null == traitFieldDefault) {
                                 isError = traitFieldDefault != parentFieldDefault;
                             } else {
-                                isError = !OpeanapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);
+                                isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);
                             }
 
                             final PsiElement reportTarget = useReportTargets.get(trait);

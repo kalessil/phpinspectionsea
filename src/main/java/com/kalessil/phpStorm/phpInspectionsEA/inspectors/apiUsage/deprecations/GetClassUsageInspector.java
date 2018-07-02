@@ -71,7 +71,7 @@ public class GetClassUsageInspector extends BasePhpInspection {
                 if (scope != null) {
                     final GroupStatement body        = ExpressionSemanticUtil.getGroupStatement(scope);
                     final List<PsiElement> allUsages = PsiTreeUtil.findChildrenOfType(body, expression.getClass()).stream()
-                            .filter(e -> OpeanapiEquivalenceUtil.areEqual(e, expression))
+                            .filter(e -> OpenapiEquivalenceUtil.areEqual(e, expression))
                             .collect(Collectors.toList());
                     for (final PsiElement candidate : allUsages.subList(0, allUsages.indexOf(expression))) {
                         final PsiElement parent = candidate.getParent();

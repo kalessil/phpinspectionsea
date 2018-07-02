@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,7 +113,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                 final PsiElement ownContainer = getContainer(assignmentExpression);
                 if (ownContainer != null) {
                     final PsiElement previousContainer = getContainer((AssignmentExpression) previousExpression);
-                    if (previousContainer != null && OpeanapiEquivalenceUtil.areEqual(ownContainer, previousContainer)) {
+                    if (previousContainer != null && OpenapiEquivalenceUtil.areEqual(ownContainer, previousContainer)) {
                         final String message = messagePattern.replace("%a%", ownContainer.getText());
                         holder.registerProblem(assignmentExpression, message);
                     }

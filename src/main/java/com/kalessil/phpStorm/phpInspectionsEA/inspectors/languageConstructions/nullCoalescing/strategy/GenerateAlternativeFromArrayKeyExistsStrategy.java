@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -61,8 +61,8 @@ final public class GenerateAlternativeFromArrayKeyExistsStrategy {
             return null;
         }
         if (
-            !OpeanapiEquivalenceUtil.areEqual(params[1], container) ||
-            !OpeanapiEquivalenceUtil.areEqual(params[0], index)
+            !OpenapiEquivalenceUtil.areEqual(params[1], container) ||
+            !OpenapiEquivalenceUtil.areEqual(params[0], index)
         ) {
             return null;
         }

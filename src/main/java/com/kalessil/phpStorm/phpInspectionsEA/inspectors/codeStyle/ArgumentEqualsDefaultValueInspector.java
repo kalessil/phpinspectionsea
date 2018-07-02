@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +92,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                                         }
                                         /* false-positives: unmatched values */
                                         final PsiElement argument = arguments[index];
-                                        if (value == null || !OpeanapiEquivalenceUtil.areEqual(value, argument)) {
+                                        if (value == null || !OpenapiEquivalenceUtil.areEqual(value, argument)) {
                                             break;
                                         }
 

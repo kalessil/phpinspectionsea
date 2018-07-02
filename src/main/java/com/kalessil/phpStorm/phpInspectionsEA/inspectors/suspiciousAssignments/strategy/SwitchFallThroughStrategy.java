@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +44,7 @@ final public class SwitchFallThroughStrategy {
                         /* HashSet is not working here, hence manual checks */
                         boolean isOverridden = false;
                         for (final PsiElement writtenVariable : written) {
-                            if (OpeanapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
+                            if (OpenapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
                                 holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
 
@@ -72,7 +72,7 @@ final public class SwitchFallThroughStrategy {
                         /* HashSet is not working here, hence manual checks */
                         boolean isOverridden = false;
                         for (final PsiElement writtenVariable : written) {
-                            if (OpeanapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
+                            if (OpenapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
                                 holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
 
@@ -92,7 +92,7 @@ final public class SwitchFallThroughStrategy {
             for (PsiElement localVariable : writtenLocally) {
                 boolean isAddedAlready = false;
                 for (final PsiElement sharedVariable : written) {
-                    if (OpeanapiEquivalenceUtil.areEqual(localVariable, sharedVariable)) {
+                    if (OpenapiEquivalenceUtil.areEqual(localVariable, sharedVariable)) {
                         isAddedAlready = true;
                         break;
                     }

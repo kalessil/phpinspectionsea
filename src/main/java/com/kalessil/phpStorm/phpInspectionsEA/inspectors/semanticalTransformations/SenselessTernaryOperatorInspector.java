@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,12 +51,12 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                         final PsiElement subject      = binary.getLeftOperand();
                         if (trueVariant != null && falseVariant != null && value != null && subject != null) {
                             final boolean isLeftPartReturned = (
-                                OpeanapiEquivalenceUtil.areEqual(value, trueVariant) ||
-                                OpeanapiEquivalenceUtil.areEqual(value, falseVariant)
+                                OpenapiEquivalenceUtil.areEqual(value, trueVariant) ||
+                                OpenapiEquivalenceUtil.areEqual(value, falseVariant)
                             );
                             final boolean isRightPartReturned = (isLeftPartReturned && (
-                                OpeanapiEquivalenceUtil.areEqual(subject, falseVariant) ||
-                                OpeanapiEquivalenceUtil.areEqual(subject, trueVariant)
+                                OpenapiEquivalenceUtil.areEqual(subject, falseVariant) ||
+                                OpenapiEquivalenceUtil.areEqual(subject, trueVariant)
                             ));
                             if (isLeftPartReturned && isRightPartReturned) {
                                 final String replacement = falseVariant.getText();

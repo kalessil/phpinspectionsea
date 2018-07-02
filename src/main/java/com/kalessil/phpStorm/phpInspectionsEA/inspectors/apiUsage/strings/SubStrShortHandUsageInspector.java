@@ -17,7 +17,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,9 +78,9 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                     if (
                         1 == leftCallParams.length && leftCallName != null &&
                         (leftCallName.equals("strlen") || leftCallName.equals("mb_strlen")) &&
-                        OpeanapiEquivalenceUtil.areEqual(leftCallParams[0], arguments[0])
+                        OpenapiEquivalenceUtil.areEqual(leftCallParams[0], arguments[0])
                     ) {
-                        if (OpeanapiEquivalenceUtil.areEqual(candidate.getRightOperand(), arguments[1])) {
+                        if (OpenapiEquivalenceUtil.areEqual(candidate.getRightOperand(), arguments[1])) {
                             /* 3rd parameter not needed at all */
                             final String message = patternDropLength.replace("%l%", arguments[2].getText());
                             holder.registerProblem(arguments[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));

@@ -6,7 +6,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -41,7 +41,7 @@ final public class IdenticalOperandsStrategy {
         if (operationsToCheck.contains(expression.getOperationType())) {
             final PsiElement left  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getLeftOperand());
             final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getRightOperand());
-            if (left != null && right != null && OpeanapiEquivalenceUtil.areEqual(left, right)) {
+            if (left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, right)) {
                 holder.registerProblem(expression, message);
                 return true;
             }

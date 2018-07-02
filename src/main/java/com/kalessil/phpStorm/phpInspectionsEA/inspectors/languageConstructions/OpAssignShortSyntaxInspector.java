@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                         if (
                             null != variable && null != leftOperand && null != rightOperand &&
                             mapping.containsKey(operation) &&
-                            OpeanapiEquivalenceUtil.areEqual(variable, leftOperand)
+                            OpenapiEquivalenceUtil.areEqual(variable, leftOperand)
                         ) {
                             final String replacement = "%v% %o%= %e%"
                                 .replace("%e%", rightOperand.getText())

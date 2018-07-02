@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class OpeanapiEquivalenceUtil {
+final public class OpenapiEquivalenceUtil {
     public static boolean areEqual(@NotNull PsiElement first, @NotNull PsiElement second) {
         boolean result;
         try {

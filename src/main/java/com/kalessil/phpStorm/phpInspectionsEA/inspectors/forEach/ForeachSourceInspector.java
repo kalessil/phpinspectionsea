@@ -75,7 +75,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                     }
                     if (conditions != null) {
                         for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(conditions, source.getClass())) {
-                            if (OpeanapiEquivalenceUtil.areEqual(candidate, source)) {
+                            if (OpenapiEquivalenceUtil.areEqual(candidate, source)) {
                                 final PsiElement parent = candidate.getParent();
                                 final PsiElement target = parent instanceof AssignmentExpression ? parent.getParent() : parent;
                                 final PsiElement call   = target instanceof ParameterList ? target.getParent() : null;
@@ -136,7 +136,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                         final PsiElement parent = expression.getParent();
                         if (parent instanceof AssignmentExpression) {
                             final PsiElement matchCandidate = ((AssignmentExpression) parent).getVariable();
-                            if (matchCandidate != null && OpeanapiEquivalenceUtil.areEqual(matchCandidate, container)) {
+                            if (matchCandidate != null && OpenapiEquivalenceUtil.areEqual(matchCandidate, container)) {
                                 types.clear();
                                 return;
                             }

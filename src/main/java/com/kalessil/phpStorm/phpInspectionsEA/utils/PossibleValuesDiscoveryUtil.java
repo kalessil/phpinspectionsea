@@ -177,7 +177,7 @@ public class PossibleValuesDiscoveryUtil {
         for (final AssignmentExpression expression : PsiTreeUtil.findChildrenOfType(body, AssignmentExpression.class)) {
             if (OpenapiTypesUtil.isAssignment(expression)) {
                 final PsiElement container = expression.getVariable();
-                if (container != null && OpeanapiEquivalenceUtil.areEqual(container, target)) {
+                if (container != null && OpenapiEquivalenceUtil.areEqual(container, target)) {
                     /* handle multiple assignments */
                     PsiElement storedValue = expression.getValue();
                     while (storedValue != null && OpenapiTypesUtil.isAssignment(storedValue)) {

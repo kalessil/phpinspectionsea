@@ -43,7 +43,7 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
     ) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpClass(final PhpClass phpClass) {
+            public void visitPhpClass(@NotNull PhpClass phpClass) {
                 final PsiElement nameIdentifier = phpClass.getNameIdentifier();
 
                 if (nameIdentifier == null) {

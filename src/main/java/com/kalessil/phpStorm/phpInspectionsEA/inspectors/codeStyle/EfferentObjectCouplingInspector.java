@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
         @NotNull final ProblemsHolder holder,
         final boolean isOnTheFly
     ) {
-        return new PhpElementVisitor() {
+        return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(final PhpClass phpClass) {
                 final PsiElement nameIdentifier = phpClass.getNameIdentifier();

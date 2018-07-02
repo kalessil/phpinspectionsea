@@ -14,8 +14,8 @@ final public class SingleCharactersAlternationStrategy {
 
     final static private Pattern regexAlternations;
     static {
-        /* original regex: \((\\?.)(?:\|(\\?.))+\) */
-        regexAlternations = Pattern.compile("\\((\\\\?.)(?:\\|(\\\\?.))+\\)");
+        /* original regex: \((\\[dDwWsS]|\\?.)(?:\|(\\[dDwWsS]|\\?.))+\) */
+        regexAlternations = Pattern.compile("\\((\\\\[dDwWsS]|\\\\?.)(?:\\|(\\\\[dDwWsS]|\\\\?.))+\\)");
     }
 
     static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
@@ -23,7 +23,7 @@ final public class SingleCharactersAlternationStrategy {
             final Matcher regexMatcher = regexAlternations.matcher(pattern);
             if (regexMatcher.find()) {
                 final List<String> branches = new ArrayList<>();
-                for (int index = 1, branchesCount = regexMatcher.groupCount(); index < branchesCount; ++index) {
+                for (int index = 1, branchesCount = regexMatcher.groupCount(); index <= branchesCount; ++index) {
                     final String branch  = regexMatcher.group(index);
                     final char character = branch.charAt(branch.length() - 1);
                     branches.add((character == ']' || character == '\\' ? "\\" : "") + character);

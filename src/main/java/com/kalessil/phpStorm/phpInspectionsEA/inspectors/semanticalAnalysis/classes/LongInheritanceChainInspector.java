@@ -48,7 +48,8 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpClass(PhpClass clazz) {
+            @Override
+            public void visitPhpClass(@NotNull PhpClass clazz) {
                 final PsiElement psiClassName = NamedElementUtil.getNameIdentifier(clazz);
                 final String className        = clazz.getName();
                 /* skip un-reportable, exception and test classes */

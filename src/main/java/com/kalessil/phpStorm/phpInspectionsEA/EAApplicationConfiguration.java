@@ -16,8 +16,8 @@ public class EAApplicationConfiguration implements Configurable {
     @Override
     public JComponent createComponent() {
         final EASettings settings = EASettings.getInstance();
-        SEND_CRASH_REPORTS        = settings.getSendCrashReports();
-        SEND_VERSION_INFORMATION  = settings.getSendVersionInformation();
+        SEND_CRASH_REPORTS = settings.getSendCrashReports();
+        SEND_VERSION_INFORMATION = settings.getSendVersionInformation();
 
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected);

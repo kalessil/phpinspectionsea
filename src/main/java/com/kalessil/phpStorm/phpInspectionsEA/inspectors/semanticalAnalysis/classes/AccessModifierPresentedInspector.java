@@ -50,7 +50,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpClazz(@NotNull PhpClass clazz) {
+            public void visitPhpClass(@NotNull PhpClass clazz) {
                 /* community request: interfaces have only public methods, what is default access levels */
                 if (!ANALYZE_INTERFACES && clazz.isInterface()) {
                     return;

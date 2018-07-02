@@ -50,7 +50,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpClazz(@NotNull PhpClass clazz) {
+            public void visitPhpClass(@NotNull PhpClass clazz) {
                 if (clazz.isInterface() || clazz.isTrait()) {
                     return;
                 }

@@ -34,8 +34,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            @Override
-            public void visitPhpClazz(@NotNull PhpClass clazz) {
+            public void visitPhpClass(PhpClass clazz) {
                 final PhpLanguageLevel php    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 final boolean canUseConstants = php.compareTo(PhpLanguageLevel.PHP560) >= 0;
 

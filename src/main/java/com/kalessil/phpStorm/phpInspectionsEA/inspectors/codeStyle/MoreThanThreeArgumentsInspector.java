@@ -52,7 +52,7 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
         }
 
         @Override
-        public void visitPhpClazz(@NotNull PhpClass clazz) {
+        public void visitPhpClass(@NotNull PhpClass clazz) {
             if (!this.isTestContext(clazz)) {
                 visitor.visitPhpClass(clazz);
             }

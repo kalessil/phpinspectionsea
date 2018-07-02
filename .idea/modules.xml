@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PhpInspectionsEA.iml" filepath="$PROJECT_DIR$/PhpInspectionsEA.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phpinspectionsea.iml" filepath="$PROJECT_DIR$/phpinspectionsea.iml" />
     </modules>
   </component>
 </project>

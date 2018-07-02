@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -203,8 +203,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
                         /* report if aggressive optimization possible: foreach(... as &$value) */
                         if (
                             null != objForeachArray && null != objForeachKey && null != objForeachValue &&
-                            OpeanapiEquivalenceUtil.areEqual(objForeachKey, objForeachKeyCandidate) &&
-                            OpeanapiEquivalenceUtil.areEqual(objForeachArray, objForeachSourceCandidate)
+                            OpenapiEquivalenceUtil.areEqual(objForeachKey, objForeachKeyCandidate) &&
+                            OpenapiEquivalenceUtil.areEqual(objForeachArray, objForeachSourceCandidate)
                         ) {
                             final String strName = objForeachValue.getName();
                             if (!StringUtils.isEmpty(strName)) {

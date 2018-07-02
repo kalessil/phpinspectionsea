@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -112,7 +112,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                         break;
                     }
                     final PsiElement parent = child.getParent();
-                    if (OpenapiTypesUtil.isAssignment(parent) && OpeanapiEquivalenceUtil.areEqual(source, child)) {
+                    if (OpenapiTypesUtil.isAssignment(parent) && OpenapiEquivalenceUtil.areEqual(source, child)) {
                         final AssignmentExpression assignment = (AssignmentExpression) parent;
                         if (result = assignment.getValue() != child) {
                             break;
@@ -219,7 +219,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     final PsiElement right = condition.getRightOperand();
                     if (OpenapiTypesUtil.isNumber(condition.getLeftOperand())) {
                         checkOperator = operationsInversion.get(checkOperator);
-                    } else if (right != null && OpeanapiEquivalenceUtil.areEqual(index, right)) {
+                    } else if (right != null && OpenapiEquivalenceUtil.areEqual(index, right)) {
                         checkOperator = operationsInversion.get(checkOperator);
                     }
                 }

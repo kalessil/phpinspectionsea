@@ -60,7 +60,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                     } else if (fieldDefault instanceof PhpPsiElement && originDefault instanceof PhpPsiElement) {
                         final boolean isDefaultDuplicate =
                             !originField.getModifier().getAccess().isPrivate() &&
-                            OpeanapiEquivalenceUtil.areEqual(fieldDefault, originDefault);
+                            OpenapiEquivalenceUtil.areEqual(fieldDefault, originDefault);
                         if (isDefaultDuplicate) {
                             holder.registerProblem(fieldDefault, messageSenselessWrite, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                         }
@@ -123,7 +123,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         /* Pattern: written and default values are identical */
                         if (
                             (null == fieldDefault && PhpLanguageUtil.isNull(value)) ||
-                            (null != fieldDefault && OpeanapiEquivalenceUtil.areEqual(value, fieldDefault))
+                            (null != fieldDefault && OpenapiEquivalenceUtil.areEqual(value, fieldDefault))
                         ) {
                             holder.registerProblem(expression, messageSenselessWrite, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                             continue;
@@ -135,7 +135,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         /* false-positive: property is involved into generating new value */
                         boolean isPropertyReused = false;
                         for (final FieldReference candidate : PsiTreeUtil.findChildrenOfType(value, FieldReference.class)) {
-                            if (!OpeanapiEquivalenceUtil.areEqual(container, candidate)) {
+                            if (!OpenapiEquivalenceUtil.areEqual(container, candidate)) {
                                 continue;
                             }
 

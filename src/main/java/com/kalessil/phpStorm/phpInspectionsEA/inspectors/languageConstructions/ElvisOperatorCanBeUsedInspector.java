@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -48,7 +48,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
                 }
 
                 /* if true variant is the object or expressions are not equals */
-                if (condition != trueVariant && OpeanapiEquivalenceUtil.areEqual(condition, trueVariant)) {
+                if (condition != trueVariant && OpenapiEquivalenceUtil.areEqual(condition, trueVariant)) {
                     holder.registerProblem(expression.getTrueVariant(), strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }

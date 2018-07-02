@@ -259,7 +259,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                                 final BinaryExpression binary = (BinaryExpression) valueExtract;
                                                 if (binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
                                                     final PsiElement left = binary.getLeftOperand();
-                                                    if (left != null && OpeanapiEquivalenceUtil.areEqual(variable, left)) {
+                                                    if (left != null && OpenapiEquivalenceUtil.areEqual(variable, left)) {
                                                         final PsiElement right = binary.getRightOperand();
                                                         if (right != null) {
                                                             valueExtract = right;

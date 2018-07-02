@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -63,7 +63,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                         iterate:
                         for (final PsiElement rightOccurrence : rightCalls) {
                             for (final PsiElement leftOccurrence : leftCalls) {
-                                if (OpeanapiEquivalenceUtil.areEqual(rightOccurrence, leftOccurrence)) {
+                                if (OpenapiEquivalenceUtil.areEqual(rightOccurrence, leftOccurrence)) {
                                     holder.registerProblem(rightOccurrence, message);
                                     break iterate;
                                 }

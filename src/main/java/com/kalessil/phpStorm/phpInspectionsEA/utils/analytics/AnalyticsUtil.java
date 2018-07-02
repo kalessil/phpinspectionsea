@@ -33,7 +33,7 @@ final public class AnalyticsUtil {
         stopList.add("java.util.ConcurrentModificationException");
         stopList.add("java.lang.OutOfMemoryError");
         stopList.add("com.intellij.psi.impl.source.FileTrees");
-        stopList.add("OpeanapiEquivalenceUtil.java");
+        stopList.add("OpenapiEquivalenceUtil.java");
         stopList.add("OpenapiResolveUtil.java");
     }
 

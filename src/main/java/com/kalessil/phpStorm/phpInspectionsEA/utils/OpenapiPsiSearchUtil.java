@@ -53,7 +53,7 @@ final public class OpenapiPsiSearchUtil {
             throw new RuntimeException("Implement, use PhpControlFlowUtil.getFollowingVariableAccessInstructions");
         } else {
             PsiTreeUtil.findChildrenOfType(where, what.getClass()).stream()
-                .filter(expression -> OpeanapiEquivalenceUtil.areEqual(what, expression))
+                .filter(expression -> OpenapiEquivalenceUtil.areEqual(what, expression))
                 .forEach(result::add);
         }
         return result;

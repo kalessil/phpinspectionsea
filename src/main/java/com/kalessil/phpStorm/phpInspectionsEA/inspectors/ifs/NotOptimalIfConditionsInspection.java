@@ -169,7 +169,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     // push subject properly, as expressions can be different objects with the same semantics
                     PsiElement registeredSubject = null;
                     for (final PsiElement testSubject : mappedChecks.keySet()) {
-                        if (OpeanapiEquivalenceUtil.areEqual(subject, testSubject)) {
+                        if (OpenapiEquivalenceUtil.areEqual(subject, testSubject)) {
                             registeredSubject = testSubject;
                             break;
                         }
@@ -261,8 +261,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                                 OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
                             ) {
                                 if (
-                                    OpeanapiEquivalenceUtil.areEqual(testSubject, left) ||
-                                    OpeanapiEquivalenceUtil.areEqual(testSubject, right)
+                                    OpenapiEquivalenceUtil.areEqual(testSubject, left) ||
+                                    OpenapiEquivalenceUtil.areEqual(testSubject, right)
                                 ) {
                                     holder.registerProblem(expression, messageInstanceOfComplementarity, ProblemHighlightType.WEAK_WARNING);
                                 }
@@ -299,7 +299,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         callsExtracted.set(callsExtracted.indexOf(expression), null);
                         /* search duplicates in current scope */
                         for (final PsiElement innerLoopExpression : callsExtracted) {
-                            if (innerLoopExpression != null && OpeanapiEquivalenceUtil.areEqual(innerLoopExpression, expression)) {
+                            if (innerLoopExpression != null && OpenapiEquivalenceUtil.areEqual(innerLoopExpression, expression)) {
                                 holder.registerProblem(innerLoopExpression, messageDuplicateConditionPart);
                                 callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
                             }
@@ -416,7 +416,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     /* search duplicates in current scope */
                     for (final PsiElement innerLoopExpression : conditions) {
-                        if (innerLoopExpression != null && OpeanapiEquivalenceUtil.areEqual(innerLoopExpression, objExpression)) {
+                        if (innerLoopExpression != null && OpenapiEquivalenceUtil.areEqual(innerLoopExpression, objExpression)) {
                             /* false-positives: mkdir race conditions */
                             final PsiElement extracted = objExpression instanceof UnaryExpression
                                     ? ((UnaryExpression) objExpression).getValue()
@@ -435,7 +435,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     /* search duplicates in outer scopes */
                     for (final PsiElement objOuterScopeExpression : objParentConditions) {
-                        if (objOuterScopeExpression != null && OpeanapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression)) {
+                        if (objOuterScopeExpression != null && OpenapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression)) {
                             holder.registerProblem(objExpression, messageDuplicateConditions);
                             objParentConditions.set(objParentConditions.indexOf(objOuterScopeExpression), null);
                         }

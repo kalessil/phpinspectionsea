@@ -136,7 +136,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                             isChangingSignature = true;
                                             break;
                                         }
-                                        if (methodDefault != null && !OpeanapiEquivalenceUtil.areEqual(parentDefault, methodDefault)) {
+                                        if (methodDefault != null && !OpenapiEquivalenceUtil.areEqual(parentDefault, methodDefault)) {
                                             isChangingSignature = true;
                                             break;
                                         }
@@ -166,7 +166,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                     if (methodReturn != parentReturn) {
                                         isChangingSignature =
                                                 methodReturn == null || parentReturn == null ||
-                                                !OpeanapiEquivalenceUtil.areEqual(methodReturn, parentReturn);
+                                                !OpenapiEquivalenceUtil.areEqual(methodReturn, parentReturn);
                                     }
                                 }
                             } else {

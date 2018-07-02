@@ -89,7 +89,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     }
 
                     /* process comparing 2 nodes */
-                    if (!OpeanapiEquivalenceUtil.areEqual(ownExpression, parentExpression)) {
+                    if (!OpenapiEquivalenceUtil.areEqual(ownExpression, parentExpression)) {
                             return;
                     }
                     ownExpression    = ownExpression.getNextPsiSibling();

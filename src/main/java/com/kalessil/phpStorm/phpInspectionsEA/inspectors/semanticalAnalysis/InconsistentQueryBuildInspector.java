@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +63,7 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
                                 }
 
                                 /* pattern match: ksort and http_build_query operating on the same expression */
-                                if (OpeanapiEquivalenceUtil.areEqual(callArguments[0], arguments[0])) {
+                                if (OpenapiEquivalenceUtil.areEqual(callArguments[0], arguments[0])) {
                                     final String message = messagePattern.replace("%a%", arguments[0].getText());
                                     holder.registerProblem(reference, message, new TheLocalFix());
 

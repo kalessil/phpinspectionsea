@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +63,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                                 final PsiElement container = ((AssignmentExpression) reference.getParent()).getVariable();
                                 if (container != null) {
                                     for (final PsiElement parameter : reference.getParameters()) {
-                                        if (OpeanapiEquivalenceUtil.areEqual(container, parameter)) {
+                                        if (OpenapiEquivalenceUtil.areEqual(container, parameter)) {
                                             holder.registerProblem(reference, String.format(messagePattern, functionName));
                                             return;
                                         }

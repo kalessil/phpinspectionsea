@@ -7,7 +7,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +66,7 @@ final public class SelfAssignmentStrategy {
         /* now analysis itself */
         if (
             OpenapiTypesUtil.is(valueOperation, mapping.get(assignOperator)) &&
-            OpeanapiEquivalenceUtil.areEqual(variable, valueLeftPart)
+            OpenapiEquivalenceUtil.areEqual(variable, valueLeftPart)
         ) {
             holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
         }

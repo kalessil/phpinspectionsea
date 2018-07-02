@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,7 +76,7 @@ final public class SequentialAssignmentsStrategy {
         if (assignment != null) {
             /* check if container is used */
             for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(assignment.getValue(), container.getClass())) {
-                if (OpeanapiEquivalenceUtil.areEqual(candidate, container)) {
+                if (OpenapiEquivalenceUtil.areEqual(candidate, container)) {
                     result = true;
                     break;
                 }
@@ -117,7 +117,7 @@ final public class SequentialAssignmentsStrategy {
                     final PsiElement candidateExpression = bodyStatement.getFirstChild();
                     if (candidateExpression instanceof AssignmentExpression) {
                         final PsiElement candidate = ((AssignmentExpression) candidateExpression).getVariable();
-                        if (candidate != null && OpeanapiEquivalenceUtil.areEqual(candidate, container)) {
+                        if (candidate != null && OpenapiEquivalenceUtil.areEqual(candidate, container)) {
                             found = (PhpPsiElement) bodyStatement;
                             break;
                         }
@@ -129,7 +129,7 @@ final public class SequentialAssignmentsStrategy {
                     final PsiElement consumerCandidate = next instanceof If ? ((If) next).getCondition() : next;
                     final boolean isUsed               = consumerCandidate != null &&
                             PsiTreeUtil.findChildrenOfType(consumerCandidate, container.getClass()).stream()
-                                    .anyMatch(candidate -> OpeanapiEquivalenceUtil.areEqual(candidate, container));
+                                    .anyMatch(candidate -> OpenapiEquivalenceUtil.areEqual(candidate, container));
                     if (!isUsed) {
                         final String message = String.format(patternConditional, container.getText());
                         holder.registerProblem(container.getParent(), message, ProblemHighlightType.GENERIC_ERROR);
@@ -145,7 +145,7 @@ final public class SequentialAssignmentsStrategy {
         @NotNull ProblemsHolder holder
     ) {
         final PsiElement previousContainer = previous.getVariable();
-        if (previousContainer != null && OpeanapiEquivalenceUtil.areEqual(previousContainer, container)) {
+        if (previousContainer != null && OpenapiEquivalenceUtil.areEqual(previousContainer, container)) {
             PsiElement operation = previousContainer.getNextSibling();
             while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
                 operation = operation.getNextSibling();

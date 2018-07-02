@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpeanapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -62,7 +62,7 @@ public class SuspiciousTernaryOperatorInspector extends BasePhpInspection {
                 final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
 
                 /* Case 1: identical variants */
-                if (trueVariant != null && falseVariant != null && OpeanapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
+                if (trueVariant != null && falseVariant != null && OpenapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     holder.registerProblem(expression, messageVariantsIdentical, ProblemHighlightType.GENERIC_ERROR);
                 }
 

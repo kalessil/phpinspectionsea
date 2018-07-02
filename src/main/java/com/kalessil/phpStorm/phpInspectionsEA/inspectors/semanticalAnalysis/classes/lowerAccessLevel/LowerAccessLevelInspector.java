@@ -42,7 +42,7 @@ public class LowerAccessLevelInspector extends BasePhpInspection {
             }
 
             @Override
-            public void visitPhpClass(PhpClass clazz) {
+            public void visitPhpClazz(PhpClass clazz) {
                 PropertyUsedInPrivateContextStrategy.apply(clazz, problemsHolder);
             }
         };

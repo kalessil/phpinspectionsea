@@ -42,7 +42,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpClass(@NotNull PhpClass clazz) {
+            public void visitPhpClazz(@NotNull PhpClass clazz) {
                 final List<ClassReference> implemented = clazz.getImplementsList().getReferenceElements();
                 if (!implemented.isEmpty()) {
                     /* resolve own interfaces an maintain relation to original element */

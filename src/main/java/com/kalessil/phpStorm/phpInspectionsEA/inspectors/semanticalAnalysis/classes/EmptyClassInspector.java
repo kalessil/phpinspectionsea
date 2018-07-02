@@ -33,7 +33,7 @@ public class EmptyClassInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpClass(@NotNull PhpClass clazz) {
+            public void visitPhpClazz(@NotNull PhpClass clazz) {
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
                 if (nameNode != null) {
                     final boolean isEmpty = (clazz.getOwnFields().length + clazz.getOwnMethods().length == 0);

@@ -30,7 +30,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpClass(@NotNull PhpClass clazz) {
+            public void visitPhpClazz(@NotNull PhpClass clazz) {
                 /* ensure there are traits being used at all */
                 final PhpClass[] traits = clazz.getTraits();
                 if (traits.length == 0) {

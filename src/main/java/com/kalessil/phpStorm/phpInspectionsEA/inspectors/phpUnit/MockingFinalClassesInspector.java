@@ -51,7 +51,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpClass(@NotNull PhpClass clazz) {
+            public void visitPhpClazz(@NotNull PhpClass clazz) {
                 final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                 if (parent != null && parent.getFQN().equals("\\PhpSpec\\ObjectBehavior")) {
                     for (final Method method : clazz.getOwnMethods()) {

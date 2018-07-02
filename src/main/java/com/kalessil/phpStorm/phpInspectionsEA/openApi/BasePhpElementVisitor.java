@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
@@ -35,10 +36,18 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         }
     }
 
+    @Override
+    public void visitPhpClass(PhpClass clazz) {
+        if (clazz != null && clazz.getNode().getElementType() == PhpTokenTypes.kwCLASS) {
+            this.visitPhpClazz(clazz);
+        }
+    }
+
     public void visitPhpDeclare(@NotNull Declare declare)                           {}
     public void visitPhpEval(@NotNull PhpEval eval)                                 {}
     public void visitPhpDocTag(@NotNull PhpDocTag tag)                              {}
     public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
+    public void visitPhpClazz(@NotNull PhpClass clazz)                              {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
     @Override public void visitPhpFile(PhpFile PhpFile) {}
@@ -66,7 +75,6 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpUnset(PhpUnset unsetStatement)                {}
     @Override public void visitPhpEmpty(PhpEmpty emptyExpression)               {}
 
-    @Override public void visitPhpClass(PhpClass clazz)                                            {}
     @Override public void visitPhpConstantReference(ConstantReference reference)                   {}
     @Override public void visitPhpClassConstantReference(ClassConstantReference constantReference) {}
 

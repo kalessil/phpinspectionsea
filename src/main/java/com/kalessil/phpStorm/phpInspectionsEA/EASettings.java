@@ -4,6 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,9 @@ public class EASettings implements PersistentStateComponent<Element> {
     private String versionOldest;
     private String version;
     private String uuid;
+
+    /* comparison style */
+    private ComparisonStyle comparisonStyle;
 
     public static EASettings getInstance() {
         return ServiceManager.getService(EASettings.class);
@@ -47,6 +51,10 @@ public class EASettings implements PersistentStateComponent<Element> {
             element.setAttribute("sendVersionInformation", sendVersionInformation);
         }
 
+        if (comparisonStyle != null) {
+            element.setAttribute("comparisonStyle", comparisonStyle.getValue());
+        }
+
         return element;
     }
 
@@ -72,6 +80,10 @@ public class EASettings implements PersistentStateComponent<Element> {
 
         final String sendVersionInformationValue = element.getAttributeValue("sendVersionInformation");
         sendVersionInformation = sendVersionInformationValue == null ? "true" : sendVersionInformationValue;
+
+        /* comparison style */
+        final String comparisonStyleValue = element.getAttributeValue("comparisonStyle");
+        comparisonStyle = comparisonStyleValue.equals(ComparisonStyle.REGULAR.getValue()) ? ComparisonStyle.REGULAR : ComparisonStyle.YODA;
     }
 
     public void setVersion(@NotNull String version) {
@@ -105,5 +117,13 @@ public class EASettings implements PersistentStateComponent<Element> {
 
     void setSendVersionInformation(boolean value) {
         sendVersionInformation = (value ? "true" : "false");
+    }
+
+    void setComparisonStyle(final ComparisonStyle comparisonStyleValue) {
+        comparisonStyle = comparisonStyleValue;
+    }
+
+    ComparisonStyle getComparisonStyle() {
+        return comparisonStyle;
     }
 }

@@ -61,3 +61,10 @@
         $optional = (int)($_GET['parameter'] ?? -1);
         $optional = (int)($whatever ?? 0);
     }
+
+    function cases_holder_concatenations($one, $two) {
+        return [
+            $one .= $one,
+            $two . '...',
+        ];
+    }

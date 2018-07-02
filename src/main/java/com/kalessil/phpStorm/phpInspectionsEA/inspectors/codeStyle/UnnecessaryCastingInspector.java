@@ -30,7 +30,8 @@ import java.util.Set;
  */
 
 public class UnnecessaryCastingInspector extends BasePhpInspection {
-    private static final String message = "This type casting is not necessary, as the argument is of needed type.";
+    private static final String messageGeneric     = "This type casting is not necessary, as the argument is of needed type.";
+    private static final String messageConcatenate = "This type casting is not necessary, as concatenation casts the argument.";
 
     private static final Map<IElementType, String> typesMapping = new HashMap<>();
     static {
@@ -55,18 +56,35 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                 final PsiElement argument   = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
                 final PsiElement operation  = expression.getOperation();
                 final IElementType operator = operation == null ? null : operation.getNode().getElementType();
-                if (argument instanceof PhpTypedElement && operator != null && typesMapping.containsKey(operator)) {
-                    final Set<String> types = this.resolveStrictly((PhpTypedElement) argument).getTypes();
-                    if (types.size() == 1 && typesMapping.get(operator).equals(Types.getType(types.iterator().next()))) {
-                        if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
-                            final boolean isTarget = !this.isNullCoalescingOnly(argument);
-                            if (isTarget) {
-                                holder.registerProblem(
-                                        operation,
-                                        message,
-                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                        new ReplaceWithArgumentFix()
-                                );
+                if (operator != null && argument instanceof PhpTypedElement) {
+                    final PsiElement parent = expression.getParent();
+                    if (operator == PhpTokenTypes.opSTRING_CAST) {
+                        /* case 1: concatenation `... . (string)...` */
+                        if (parent instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) parent;
+                            if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
+                                holder.registerProblem(operation, messageConcatenate, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
+                                return;
+                            }
+                        }
+                        /* case 2: self assign with `... .=  (string)...` */
+                        else if (parent instanceof SelfAssignmentExpression) {
+                            final SelfAssignmentExpression assignment = (SelfAssignmentExpression) parent;
+                            if (assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN) {
+                                holder.registerProblem(operation, messageConcatenate, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
+                                return;
+                            }
+                        }
+                    }
+                    /* case 3: un-needed due to types */
+                    if (typesMapping.containsKey(operator)) {
+                        final Set<String> types = this.resolveStrictly((PhpTypedElement) argument).getTypes();
+                        if (types.size() == 1 && typesMapping.get(operator).equals(Types.getType(types.iterator().next()))) {
+                            if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
+                                final boolean isTarget = !this.isNullCoalescingOnly(argument);
+                                if (isTarget) {
+                                    holder.registerProblem(operation, messageGeneric, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
+                                }
                             }
                         }
                     }
@@ -74,7 +92,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
             }
 
             private boolean isNullCoalescingOnly(@NotNull PsiElement argument) {
-                boolean result = false;
+                boolean result                 = false;
                 final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(argument);
                 if (variants.size() == 1) {
                     final PsiElement candidate = variants.iterator().next().getParent();
@@ -114,7 +132,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
             }
 
             private boolean isWeakTypedParameter(@NotNull Variable variable) {
-                boolean result = false;
+                boolean result       = false;
                 final Function scope = ExpressionSemanticUtil.getScope(variable);
                 if (scope != null) {
                     final String variableName = variable.getName();

@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.expl
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.modifiersStrategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.AmbiguousAnythingTrimCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SingleCharactersAlternationStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.UnnecessaryCaseManipulationCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -165,6 +166,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 GreedyCharactersSetCheckStrategy.apply(regex, target, holder);
                 NotMutuallyExclusiveContiguousQuantifiedTokensStrategy.apply(regex, target, holder);
                 QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder);
+                SingleCharactersAlternationStrategy.apply(regex, target, holder);
 
                 /*
                  * Probably bugs:

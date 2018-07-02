@@ -14,6 +14,11 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("fixtures/regularExpressions/greedy-character-sets.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testSingleCharactersAlteration() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("fixtures/regularExpressions/single-characters-alteration.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testSuspiciousCharactersRange() {
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
         myFixture.configureByFile("fixtures/regularExpressions/suspicious-characters-range.php");

@@ -164,10 +164,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 AmbiguousAnythingTrimCheckStrategy.apply(functionName, reference, regex, target, holder);
                 //NonGreedyTransformCheckStrategy.apply(regex, target, holder);
                 GreedyCharactersSetCheckStrategy.apply(regex, target, holder);
-                if (
-                    !QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder) &&
-                    !NotMutuallyExclusiveContiguousQuantifiedTokensStrategy.apply(regex, target, holder)
-                ) {
+
+                boolean greedy = QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder);
+                greedy         = NotMutuallyExclusiveContiguousQuantifiedTokensStrategy.apply(regex, target, holder)|| greedy;
+                if (!greedy) {
                     SingleCharactersAlternationStrategy.apply(regex, target, holder);
                 }
 

@@ -46,7 +46,8 @@ final public class NotMutuallyExclusiveContiguousQuantifiedTokensStrategy {
         regexSequentialQuantifiedTokens = Pattern.compile("(?:\\\\[dDwW](?:[*+])){2,}");
     }
 
-    static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+        boolean result = false;
         if (!pattern.isEmpty()) {
             final Matcher regexMatcher = regexSequentialQuantifiedTokens.matcher(pattern);
             while (regexMatcher.find()) {
@@ -59,15 +60,18 @@ final public class NotMutuallyExclusiveContiguousQuantifiedTokensStrategy {
                                 String.format(messagePattern, "\\d", "\\w", fragment),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
+                        result = true;
                     } else if (normalized.contains("\\W\\D") || normalized.contains("\\D\\W")) {
                         holder.registerProblem(
                                 target,
                                 String.format(messagePattern, "\\D", "\\W", fragment),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
+                        result = true;
                     }
                 }
             }
         }
+        return result;
     }
 }

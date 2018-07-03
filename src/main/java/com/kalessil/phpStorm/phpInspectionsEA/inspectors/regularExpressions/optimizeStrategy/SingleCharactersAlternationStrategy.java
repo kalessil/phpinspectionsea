@@ -24,7 +24,11 @@ final public class SingleCharactersAlternationStrategy {
             if (regexMatcher.find()) {
                 final List<String> branches = new ArrayList<>();
                 for (final String branch : regexMatcher.group(1).split("\\|")) {
-                    branches.add(branch.length() == 1 && branch.equals("]") ? "\\" + branch : branch);
+                    branches.add(
+                            branch.length() == 1 && (branch.equals("]") || branch.equals("^"))
+                                    ? '\\' + branch
+                                    : branch
+                    );
                 }
                 holder.registerProblem(
                     target,

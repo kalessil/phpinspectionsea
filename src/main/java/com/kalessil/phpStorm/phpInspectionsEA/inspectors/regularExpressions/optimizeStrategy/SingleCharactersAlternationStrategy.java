@@ -24,13 +24,12 @@ final public class SingleCharactersAlternationStrategy {
             if (regexMatcher.find()) {
                 final List<String> branches = new ArrayList<>();
                 for (int index = 1, branchesCount = regexMatcher.groupCount(); index <= branchesCount; ++index) {
-                    final String branch  = regexMatcher.group(index);
-                    final char character = branch.charAt(branch.length() - 1);
-                    branches.add((character == ']' || character == '\\' ? "\\" : "") + character);
+                    final String branch = regexMatcher.group(index);
+                    branches.add(branch.length() == 1 && branch.equals("]") ? "\\" + branch : branch);
                 }
                 holder.registerProblem(
-                        target,
-                        String.format(messagePattern, regexMatcher.group(0), String.format("([%s])", String.join("", branches)))
+                    target,
+                    String.format(messagePattern, regexMatcher.group(0), String.format("([%s])", String.join("", branches)))
                 );
                 branches.clear();
             }

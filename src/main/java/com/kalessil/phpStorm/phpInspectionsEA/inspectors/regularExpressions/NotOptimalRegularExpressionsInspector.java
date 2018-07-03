@@ -165,8 +165,9 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 //NonGreedyTransformCheckStrategy.apply(regex, target, holder);
                 GreedyCharactersSetCheckStrategy.apply(regex, target, holder);
                 NotMutuallyExclusiveContiguousQuantifiedTokensStrategy.apply(regex, target, holder);
-                QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder);
-                SingleCharactersAlternationStrategy.apply(regex, target, holder);
+                if (!QuantifierCompoundsQuantifierCheckStrategy.apply(regex, target, holder)) {
+                    SingleCharactersAlternationStrategy.apply(regex, target, holder);
+                }
 
                 /*
                  * Probably bugs:

@@ -47,7 +47,8 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
         regexOuterGroup   = Pattern.compile("(^|[^>])\\(([^()]+)\\)([+*])([^+]|$)");
     }
 
-    static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+        boolean result = false;
         if (!pattern.isEmpty()) {
             /* get rid of un-captured groups markers */
             String normalizedPattern = pattern.replaceAll("\\(\\?:", "(");
@@ -75,6 +76,7 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                                         String.format(patternCompound, candidate, matcher.group(3)),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
+                                result = true;
                             }
                         }
                     }
@@ -86,12 +88,14 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                                         String.format(patternExclusive, "\\d", "\\w", fragment),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
+                                result = true;
                             } else if (fragments.contains("\\D") && fragments.contains("\\W")) {
                                 holder.registerProblem(
                                         target,
                                         String.format(patternExclusive, "\\D", "\\W", fragment),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
+                                result = true;
                             }
                         }
                         fragments.clear();
@@ -99,5 +103,6 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                 }
             }
         }
+        return result;
     }
 }

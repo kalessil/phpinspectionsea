@@ -65,25 +65,27 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
             }
 
             private void analyzeStatement(@NotNull ArrayAccessExpression container, @NotNull PsiElement value) {
-                final Collection<PsiElement> leftCalls = PsiTreeUtil.findChildrenOfType(container, FunctionReference.class);
-                if (!leftCalls.isEmpty()) {
-                    final Collection<PsiElement> rightCalls = PsiTreeUtil.findChildrenOfType(value, FunctionReference.class);
+                final Collection<FunctionReference> left = PsiTreeUtil.findChildrenOfType(container, FunctionReference.class);
+                if (!left.isEmpty()) {
+                    final Collection<FunctionReference> right = PsiTreeUtil.findChildrenOfType(value, FunctionReference.class);
                     if (value instanceof FunctionReference) {
-                        rightCalls.add(value);
+                        right.add((FunctionReference) value);
                     }
-                    if (!rightCalls.isEmpty()) {
+                    if (!right.isEmpty()) {
                         iterate:
-                        for (final PsiElement rightOccurrence : rightCalls) {
-                            for (final PsiElement leftOccurrence : leftCalls) {
-                                if (OpenapiEquivalenceUtil.areEqual(rightOccurrence, leftOccurrence)) {
-                                    holder.registerProblem(rightOccurrence, message);
+                        for (final FunctionReference current : right) {
+                            final String currentName = current.getName();
+                            for (final FunctionReference candidate : left) {
+                                final String candidateName = candidate.getName();
+                                if (currentName != null && currentName.equals(candidateName) && OpenapiEquivalenceUtil.areEqual(current, candidate)) {
+                                    holder.registerProblem(current, message);
                                     break iterate;
                                 }
                             }
                         }
-                        rightCalls.clear();
+                        right.clear();
                     }
-                    leftCalls.clear();
+                    left.clear();
                 }
             }
         };

@@ -237,11 +237,6 @@ final public class ExpressionSemanticUtil {
                     matched.clear();
                 }
             }
-        } else if (expression instanceof BinaryExpression) {
-            final BinaryExpression binary = (BinaryExpression) expression;
-            if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
-                /* TODO: all parts are string literals or constants */
-            }
         }
 
         return result;

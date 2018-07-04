@@ -1,13 +1,13 @@
 <?php
 
-    strtr('...', ' ', '_');
-    strtr('...', " ", "_");
+    str_replace(' ', '_', '...');
+    str_replace(" ", "_", '...');
     
-    strtr('...', '\\', '_');
-    strtr('...', "\\", '_');
+    str_replace('\\', '_', '...');
+    str_replace("\\", '_', '...');
     
-    strtr('...', '\'', '_');
-    strtr('...', "\"", '_');
+    str_replace('\'', '_', '...');
+    str_replace("\"", '_', '...');
 
     /* false-positives */
     strtr('...', '...', 'int');

@@ -2,10 +2,10 @@
 
     str_replace(' ', '_', '...');
     str_replace(" ", "_", '...');
-    
+
     str_replace('\\', '_', '...');
     str_replace("\\", '_', '...');
-    
+
     str_replace('\'', '_', '...');
     str_replace("\n", '_', '...');
 

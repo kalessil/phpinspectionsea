@@ -201,12 +201,11 @@ final public class ExpressionSemanticUtil {
 
     @Nullable
     public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement expression) {
-        if (null == expression) {
+        if ((expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression)) == null) {
             return null;
         }
-        expression                     = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
-        StringLiteralExpression result = null;
 
+        StringLiteralExpression result = null;
         if (expression instanceof StringLiteralExpression) {
             result = (StringLiteralExpression) expression;
         } else if (expression instanceof FieldReference || expression instanceof ClassConstantReference) {
@@ -238,7 +237,44 @@ final public class ExpressionSemanticUtil {
                 }
             }
         }
+        return result;
+    }
 
+    @Nullable
+    public static String resolveAsString(@Nullable PsiElement expression) {
+        String result                         = null;
+        final StringLiteralExpression literal = resolveAsStringLiteral(expression);
+        if (literal != null) {
+            if (literal.getFirstPsiChild() == null) {
+                result = literal.getContents();
+            }
+        } else {
+            expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
+            if (expression instanceof BinaryExpression) {
+                final BinaryExpression binary = (BinaryExpression) expression;
+                if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
+                    final List<PsiElement> fragments = getConditions(binary, PhpTokenTypes.opCONCAT);
+                    final boolean tryExtracting      = fragments.size() >= 2 &&
+                                                       fragments.stream().allMatch(fragment ->
+                                                            fragment instanceof StringLiteralExpression ||
+                                                            fragment instanceof ClassConstantReference
+                                                       );
+                    if (tryExtracting) {
+                        StringBuilder buffer = new StringBuilder();
+                        for (final PsiElement fragment : fragments) {
+                            final StringLiteralExpression extracted = resolveAsStringLiteral(fragment);
+                            if (extracted == null || extracted.getFirstPsiChild() != null) {
+                                buffer = null;
+                                break;
+                            }
+                            buffer.append(extracted.getContents());
+                        }
+                        result = buffer == null ? null : buffer.toString();
+                    }
+                    fragments.clear();
+                }
+            }
+        }
         return result;
     }
 }

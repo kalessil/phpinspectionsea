@@ -2,8 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opt
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ final public class AmbiguousAnythingTrimCheckStrategy {
             final String functionName,
             @NotNull final FunctionReference reference,
             final String pattern,
-            @NotNull final StringLiteralExpression target,
+            @NotNull final PsiElement target,
             @NotNull final ProblemsHolder holder
     ) {
         if (

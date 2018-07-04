@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.PlainApiUseCheckStrategy;
@@ -75,24 +74,28 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     final String pattern         = arguments.length > 0 ? ExpressionSemanticUtil.resolveAsString(arguments[0]) : null;
                     if (pattern != null && !pattern.isEmpty()) {
-                        final Matcher regularMatcher = regexWithModifiers.matcher(pattern);
+                        final Matcher regularMatcher           = regexWithModifiers.matcher(pattern);
+                        final Matcher matcherWithCurlyBrackets = regexWithModifiersCurvy.matcher(pattern);
                         if (regularMatcher.find()) {
                             final String phpRegexPattern   = regularMatcher.group(2);
                             final String phpRegexModifiers = regularMatcher.group(3);
-                            this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                        } else {
-                            final Matcher matcherWithCurlyBrackets = regexWithModifiersCurvy.matcher(pattern);
-                            if (matcherWithCurlyBrackets.find()) {
-                                final String phpRegexPattern   = matcherWithCurlyBrackets.group(1);
-                                final String phpRegexModifiers = matcherWithCurlyBrackets.group(2);
-                                this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                            }
+                            this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                        } else if (matcherWithCurlyBrackets.find()) {
+                            final String phpRegexPattern   = matcherWithCurlyBrackets.group(1);
+                            final String phpRegexModifiers = matcherWithCurlyBrackets.group(2);
+                            this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
                         }
                     }
                 }
             }
 
-            private void checkCall (String functionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
+            private void checkCall (
+                    @NotNull String functionName,
+                    @NotNull FunctionReference reference,
+                    @NotNull PsiElement target,
+                    String regex,
+                    String modifiers
+            ) {
                 /* Modifiers validity (done):
                  * + /no-az-chars/i => /no-az-chars/
                  * + /no-dot-char/s => /no-dot-char/

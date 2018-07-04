@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ final public class SingleCharactersAlternationStrategy {
         regexAlternations = Pattern.compile("(?:\\(((?:\\\\[dDwWsS]|\\\\?.)(?:\\|(?:\\\\[dDwWsS]|\\\\?.))+)\\))");
     }
 
-    static public void apply(@NotNull String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+    static public void apply(@NotNull String pattern, @NotNull PsiElement target, @NotNull ProblemsHolder holder) {
         if (!pattern.isEmpty() && pattern.indexOf('|') >= 0) {
             final Matcher regexMatcher = regexAlternations.matcher(pattern);
             if (regexMatcher.find()) {

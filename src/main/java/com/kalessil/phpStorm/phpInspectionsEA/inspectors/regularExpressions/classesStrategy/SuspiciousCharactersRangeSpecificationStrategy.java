@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.cla
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
         regexGreedyCharacterSet = Pattern.compile("\\[([^\\[\\]]+)\\]");
     }
 
-    static public void apply(final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
+    static public void apply(final String pattern, @NotNull final PsiElement target, @NotNull final ProblemsHolder holder) {
         if (!StringUtils.isEmpty(pattern) && pattern.indexOf('[') >= 0) {
             final Matcher regexMatcher = regexGreedyCharacterSet.matcher(pattern);
             while (regexMatcher.find()) {

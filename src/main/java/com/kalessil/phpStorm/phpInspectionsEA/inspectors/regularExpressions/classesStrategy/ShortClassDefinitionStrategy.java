@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.cla
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public class ShortClassDefinitionStrategy {
         mapping.put("[^\\s]",        "\\S");
     }
 
-    static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
+    static public void apply(final String modifiers, final String pattern, @NotNull final PsiElement target, @NotNull final ProblemsHolder holder) {
         if (!StringUtils.isEmpty(pattern)) {
             final boolean isUnicodeMode = !StringUtils.isEmpty(modifiers) && modifiers.indexOf('u') != -1;
             final String safetyHint     = isUnicodeMode ? "risky, will match extended sets due to /u" : "safe in non-unicode mode";

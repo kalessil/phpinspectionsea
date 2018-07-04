@@ -25,6 +25,9 @@ function cases_holder() {
         str_replace(array_keys([]), [], '...'),
         str_replace(array_values([]), array_keys([]), '...'),
 
+        preg_replace(array_keys([]), [], '...'),
+        preg_replace(array_values([]), array_keys([]), '...'),
+
         array_slice([], 0),
         array_slice([], 0, 1),
         array_slice(array_values([]), 0, 1, true),

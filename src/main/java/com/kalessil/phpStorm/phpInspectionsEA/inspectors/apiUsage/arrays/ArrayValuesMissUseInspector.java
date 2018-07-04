@@ -66,8 +66,9 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                             holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "str_replace":
+                                        case "preg_replace":
                                             final PsiElement[] replaceArguments = outerCall.getParameters();
-                                            if (replaceArguments.length == 3 && replaceArguments[1] == reference) {
+                                            if (replaceArguments.length >= 3 && replaceArguments[1] == reference) {
                                                 holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
                                             }
                                             break;

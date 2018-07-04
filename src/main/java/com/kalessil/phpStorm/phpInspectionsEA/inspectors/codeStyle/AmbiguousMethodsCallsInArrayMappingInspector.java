@@ -35,24 +35,36 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(foreach);
+            public void visitPhpFor(@NotNull For loop) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (body != null) {
-                    for (final PsiElement instruction : body.getStatements()) {
-                        final PsiElement candidate = instruction.getFirstChild();
-                        if (candidate instanceof AssignmentExpression) {
-                            final AssignmentExpression assignment = (AssignmentExpression) candidate;
-                            final PsiElement value                = assignment.getValue();
-                            final PsiElement container            = assignment.getVariable();
-                            if (value != null && container instanceof ArrayAccessExpression) {
-                                this.analyze((ArrayAccessExpression) container, value);
-                            }
+                    this.analyzeBody(body);
+                }
+            }
+
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement loop) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
+                if (body != null) {
+                    this.analyzeBody(body);
+                }
+            }
+
+            private void analyzeBody(@NotNull GroupStatement body) {
+                for (final PsiElement instruction : body.getStatements()) {
+                    final PsiElement candidate = instruction.getFirstChild();
+                    if (candidate instanceof AssignmentExpression) {
+                        final AssignmentExpression assignment = (AssignmentExpression) candidate;
+                        final PsiElement value                = assignment.getValue();
+                        final PsiElement container            = assignment.getVariable();
+                        if (value != null && container instanceof ArrayAccessExpression) {
+                            this.analyzeStatement((ArrayAccessExpression) container, value);
                         }
                     }
                 }
             }
 
-            private void analyze(@NotNull ArrayAccessExpression container, @NotNull PsiElement value) {
+            private void analyzeStatement(@NotNull ArrayAccessExpression container, @NotNull PsiElement value) {
                 final Collection<PsiElement> leftCalls = PsiTreeUtil.findChildrenOfType(container, FunctionReference.class);
                 if (!leftCalls.isEmpty()) {
                     final Collection<PsiElement> rightCalls = PsiTreeUtil.findChildrenOfType(value, FunctionReference.class);

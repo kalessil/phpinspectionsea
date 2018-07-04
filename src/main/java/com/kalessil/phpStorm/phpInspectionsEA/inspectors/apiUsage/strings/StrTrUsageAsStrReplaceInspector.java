@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' can be used instead (improves maintainability).";
+    private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
 
     @NotNull
     public String getShortName() {
@@ -40,15 +40,29 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
                     if (arguments.length == 3) {
                         /* ensure multiple search-replace are not packed into strings */
                         final StringLiteralExpression search = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[1]);
-                        if (search != null && !search.getContents().isEmpty()) {
-                            final String searchContent = search.getContents().replaceAll("\\\\(.)", "$1");
-                            if (searchContent.length() == 1) {
-                                final String replacement = "str_replace(%s%, %r%, %t%)"
-                                        .replace("%t%", arguments[0].getText())
-                                        .replace("%r%", arguments[2].getText())
-                                        .replace("%s%", arguments[1].getText());
-                                final String message = messagePattern.replace("%e%", replacement);
-                                holder.registerProblem(reference, message, new UseStringReplaceFix(replacement));
+                        if (search != null) {
+                            final String content = search.getContents();
+                            if (!content.isEmpty() && content.length() < 3) {
+                                final boolean isTarget;
+                                if (search.isSingleQuote()) {
+                                    /* original regex: ^(.|\\[\\'])$ */
+                                    isTarget = content.matches("^(.|\\\\[\\\\'])$");
+                                } else {
+                                    /* original regex: ^(.|\\[\\"$rnt])$*/
+                                    isTarget = content.matches("^(.|\\\\[\\\\\"$rnt])$");
+                                }
+                                if (isTarget) {
+                                    final String replacement = String.format("str_replace(%s, %s, %s)",
+                                            arguments[1].getText(),
+                                            arguments[2].getText(),
+                                            arguments[0].getText()
+                                    );
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(messagePattern, replacement),
+                                            new UseStringReplaceFix(replacement)
+                                    );
+                                }
                             }
                         }
                     }

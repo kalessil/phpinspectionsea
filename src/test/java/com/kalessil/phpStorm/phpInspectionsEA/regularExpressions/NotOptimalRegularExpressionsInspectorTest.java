@@ -63,4 +63,9 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/regularExpressions/plain-api-usage.fixed.php");
     }
+    public void testRegexDiscovery() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("fixtures/regularExpressions/regex-discovery.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

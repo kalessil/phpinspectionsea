@@ -11,6 +11,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.regex.Pattern;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -22,6 +24,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
+
+    final static private Pattern signleQuoted;
+    final static private Pattern doubleQuoted;
+    static {
+        /* original regex: ^(.|\\[\\'])$ */
+        signleQuoted = Pattern.compile("^(.|\\\\[\\\\'])$");
+        /* original regex:  ^(.|\\[\\"$rnt])$ */
+        doubleQuoted = Pattern.compile("^(.|\\\\[\\\\\"$rnt])$");
+    }
 
     @NotNull
     public String getShortName() {
@@ -38,21 +49,19 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("strtr")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 3) {
-                        /* ensure multiple search-replace are not packed into strings */
                         final StringLiteralExpression search = ExpressionSemanticUtil.resolveAsStringLiteral(arguments[1]);
                         if (search != null) {
                             final String content = search.getContents();
-                            if (!content.isEmpty() && content.length() < 3) {
+                            if (!content.isEmpty() && content.length() <= 2) {
                                 final boolean isTarget;
                                 if (search.isSingleQuote()) {
-                                    /* original regex: ^(.|\\[\\'])$ */
-                                    isTarget = content.matches("^(.|\\\\[\\\\'])$");
+                                    isTarget = signleQuoted.matcher(content).matches();
                                 } else {
-                                    /* original regex: ^(.|\\[\\"$rnt])$*/
-                                    isTarget = content.matches("^(.|\\\\[\\\\\"$rnt])$");
+                                    isTarget = doubleQuoted.matcher(content).matches();
                                 }
                                 if (isTarget) {
-                                    final String replacement = String.format("str_replace(%s, %s, %s)",
+                                    final String replacement = String.format(
+                                            "str_replace(%s, %s, %s)",
                                             arguments[1].getText(),
                                             arguments[2].getText(),
                                             arguments[0].getText()

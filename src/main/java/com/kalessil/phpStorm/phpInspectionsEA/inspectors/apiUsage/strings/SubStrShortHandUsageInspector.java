@@ -130,18 +130,23 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final FunctionReference call = this.call.getElement();
-            if (null != call) {
-                final PsiElement[] params           = call.getParameters();
-                final String pattern                = 3 == params.length ? "pattern(null, null)" : "pattern(null, null, null, null)";
-                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
-                final PsiElement[] replaceParams    = replacement.getParameters();
-                replaceParams[0].replace(params[0]);
-                replaceParams[1].replace(params[1]);
-                if (3 != params.length) {
-                    replaceParams[3].replace(params[3]);
+            if (call != null && !project.isDisposed()) {
+                final PsiElement socket = call.getParameterList();
+                if (socket != null) {
+                    final PsiElement[] arguments        = call.getParameters();
+                    final String pattern                = arguments.length == 3 ? "pattern(null, null)" : "pattern(null, null, null, null)";
+                    final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, pattern);
+                    final PsiElement[] replaceArguments = replacement.getParameters();
+                    replaceArguments[0].replace(arguments[0]);
+                    replaceArguments[1].replace(arguments[1]);
+                    if (arguments.length != 3) {
+                        replaceArguments[3].replace(arguments[3]);
+                    }
+                    final PsiElement donor  = replacement.getParameterList();
+                    if (donor != null) {
+                        socket.replace(donor);
+                    }
                 }
-
-                call.getParameterList().replace(replacement.getParameterList());
             }
         }
     }

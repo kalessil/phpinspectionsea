@@ -5,7 +5,11 @@ substr($path, 0, <warning descr="'-2' can be used instead.">strlen($path) - 2</w
 mb_substr($path, 0, <warning descr="'-2' can be used instead.">mb_strlen($path) - 2</warning>);
 mb_substr($path, 0, <warning descr="'-2' can be used instead.">mb_strlen($path) - 2</warning>, 'encoding');
 
-/* false-positives: over-complication, e.g. -(strlen($pathPrefix) - 1) */
+/* correct length calculation */
+substr($path, 1, <warning descr="'-1' can be used instead.">strlen($path) - 2</warning>);
+
+/* false-positives: non-constant start, over-complication, e.g. -(strlen($pathPrefix) - 1) */
+substr($path, $variable, strlen($path) - 2);
 substr($path, 0, strlen($path) - strlen($pathPrefix));
 
 /* 3rd argument can be dropped completely */

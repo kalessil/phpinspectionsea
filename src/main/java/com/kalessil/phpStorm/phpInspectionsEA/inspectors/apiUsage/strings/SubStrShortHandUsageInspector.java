@@ -67,11 +67,11 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                             final PsiElement left  = binary.getLeftOperand();
                             final PsiElement right = binary.getRightOperand();
                             if (left != null && right != null && OpenapiTypesUtil.isFunctionReference(left)) {
-                                final FunctionReference leftCall  = (FunctionReference) left;
-                                final String leftCallName         = leftCall.getName();
-                                if (leftCallName != null && lengthFunctions.contains(leftCallName)) {
-                                    final PsiElement[] leftCallParams = leftCall.getParameters();
-                                    if (leftCallParams.length == 1 && OpenapiEquivalenceUtil.areEqual(leftCallParams[0], arguments[0])) {
+                                final FunctionReference leftCall = (FunctionReference) left;
+                                final String leftName            = leftCall.getName();
+                                if (leftName != null && lengthFunctions.contains(leftName)) {
+                                    final PsiElement[] leftArguments = leftCall.getParameters();
+                                    if (leftArguments.length == 1 && OpenapiEquivalenceUtil.areEqual(leftArguments[0], arguments[0])) {
                                         final PsiElement startOffset = arguments[1];
                                         if (OpenapiEquivalenceUtil.areEqual(right, startOffset)) {
                                             /* case: third parameter is not needed at all */
@@ -92,7 +92,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                                                             new SimplifyFix(String.valueOf(offset))
                                                     );
                                                 }
-                                            } catch (final NumberFormatException notNumericOffset) {
+                                            } catch (final NumberFormatException expected) {
                                                 // return;
                                             }
                                         }

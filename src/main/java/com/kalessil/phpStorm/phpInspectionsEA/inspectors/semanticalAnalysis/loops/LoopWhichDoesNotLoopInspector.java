@@ -26,31 +26,29 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpForeach(ForeachStatement foreach) {
+            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 this.inspectBody(foreach);
             }
-            public void visitPhpFor(For forStatement) {
+            public void visitPhpFor(@NotNull For forStatement) {
                 this.inspectBody(forStatement);
             }
-            public void visitPhpWhile(While whileStatement) {
+            public void visitPhpWhile(@NotNull While whileStatement) {
                 this.inspectBody(whileStatement);
             }
-            public void visitPhpDoWhile(DoWhile doWhileStatement) {
+            public void visitPhpDoWhile(@NotNull DoWhile doWhileStatement) {
                 this.inspectBody(doWhileStatement);
             }
 
-            private void inspectBody(PhpPsiElement loop) {
+            private void inspectBody(@NotNull PhpPsiElement loop) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (null == body) {
                     return;
                 }
 
                 final PsiElement lastExpression                  = ExpressionSemanticUtil.getLastStatement(body);
-                final boolean isLoopTerminatedWithLastExpression = (
-                    lastExpression instanceof PhpBreak ||
-                    lastExpression instanceof PhpReturn ||
-                    lastExpression instanceof PhpThrow
-                );
+                final boolean isLoopTerminatedWithLastExpression = lastExpression instanceof PhpBreak ||
+                                                                   lastExpression instanceof PhpReturn ||
+                                                                   lastExpression instanceof PhpThrow;
                 /* loop is empty or terminates on first iteration */
                 if (null != lastExpression && !isLoopTerminatedWithLastExpression) {
                     return;
@@ -58,7 +56,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
                 /* detect continue statements, which makes the loop looping */
                 final Collection<PhpContinue> continues = PsiTreeUtil.findChildrenOfType(body, PhpContinue.class);
-                for (PhpContinue expression : continues) {
+                for (final PhpContinue expression : continues) {
                     int nestingLevel  = 0;
                     PsiElement parent = expression.getParent();
                     while (null != parent && !(parent instanceof Function) && !(parent instanceof PsiFile)) {
@@ -83,7 +81,6 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                                 }
                             }
                         }
-
                         parent = parent.getParent();
                     }
                 }

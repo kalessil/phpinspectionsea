@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
@@ -59,14 +58,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                  *  - "[mb_]strlen($search)" is not needed
                  */
                 final BinaryExpression candidate = (BinaryExpression) arguments[2];
-                final PsiElement operation       = candidate.getOperation();
-                if (null == operation || null == operation.getNode()) {
-                    return;
-                }
-
-                /* should be "* - *" */
-                final IElementType operationType = operation.getNode().getElementType();
-                if (operationType != PhpTokenTypes.opMINUS) {
+                if (candidate.getOperationType() != PhpTokenTypes.opMINUS) {
                     return;
                 }
 
@@ -84,7 +76,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                             /* 3rd parameter not needed at all */
                             final String message = patternDropLength.replace("%l%", arguments[2].getText());
                             holder.registerProblem(arguments[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));
-                        } else {
+                        } else if (OpenapiTypesUtil.isNumber(arguments[1])){
                             /* 3rd parameter can be simplified */
                             final String replacement;
                             try {
@@ -96,8 +88,6 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                             final String message = patternSimplifyLength.replace("%r%", replacement);
                             holder.registerProblem(candidate, message, new SimplifyFix(replacement));
                         }
-
-                        // return;
                     }
                 }
             }

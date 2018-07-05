@@ -30,8 +30,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SubStrShortHandUsageInspector extends BasePhpInspection {
-    private static final String patternSimplifyLength = "'%r%' can be used instead.";
-    private static final String patternDropLength     = "'%l%' can be safely dropped.";
+    private static final String patternSimplifyLength = "'%s' can be used instead.";
+    private static final String patternDropLength     = "'%s' can be safely dropped.";
 
     @NotNull
     public String getShortName() {
@@ -57,14 +57,14 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                 /* Check if 3rd argument is "[mb_]strlen($search) - [mb_]strlen(...)"
                  *  - "[mb_]strlen($search)" is not needed
                  */
-                final BinaryExpression candidate = (BinaryExpression) arguments[2];
-                if (candidate.getOperationType() != PhpTokenTypes.opMINUS) {
+                final BinaryExpression binary = (BinaryExpression) arguments[2];
+                if (binary.getOperationType() != PhpTokenTypes.opMINUS) {
                     return;
                 }
 
                 /* should be "[mb_]strlen($search) - *" */
-                final PsiElement left  = candidate.getLeftOperand();
-                final PsiElement right = candidate.getRightOperand();
+                final PsiElement left  = binary.getLeftOperand();
+                final PsiElement right = binary.getRightOperand();
                 if (left != null && right != null && OpenapiTypesUtil.isFunctionReference(left)) {
                     final FunctionReference leftCall  = (FunctionReference) left;
                     final String leftCallName         = leftCall.getName();
@@ -74,25 +74,29 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                         (leftCallName.equals("strlen") || leftCallName.equals("mb_strlen")) &&
                         OpenapiEquivalenceUtil.areEqual(leftCallParams[0], arguments[0])
                     ) {
-                        if (OpenapiEquivalenceUtil.areEqual(right, arguments[1])) {
-                            /* 3rd parameter not needed at all */
+                        final PsiElement startOffset = arguments[1];
+                        if (OpenapiEquivalenceUtil.areEqual(right, startOffset)) {
+                            /* case: third parameter is not needed at all */
                             holder.registerProblem(
                                     arguments[2],
-                                    patternDropLength.replace("%l%", arguments[2].getText()),
+                                    String.format(patternDropLength, arguments[2].getText()),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                     new Drop3rdParameterLocalFix(reference)
                             );
-                        } else if (OpenapiTypesUtil.isNumber(arguments[1]) && OpenapiTypesUtil.isNumber(right)){
-                            /* 3rd parameter can be simplified */
-                            final String replacement;
+                        } else if (OpenapiTypesUtil.isNumber(startOffset) && OpenapiTypesUtil.isNumber(right)) {
+                            /* case: third parameter can be simplified */
                             try {
-                                replacement = "-" + Integer.parseInt(right.getText());
+                                int offset = Integer.parseInt(startOffset.getText()) - Integer.parseInt(right.getText());
+                                if (offset < 0) {
+                                    holder.registerProblem(
+                                            binary,
+                                            String.format(patternSimplifyLength, offset),
+                                            new SimplifyFix(String.valueOf(offset))
+                                    );
+                                }
                             } catch (NumberFormatException notNumericOffset) {
-                                return;
+                                // return;
                             }
-
-                            final String message = patternSimplifyLength.replace("%r%", replacement);
-                            holder.registerProblem(candidate, message, new SimplifyFix(replacement));
                         }
                     }
                 }

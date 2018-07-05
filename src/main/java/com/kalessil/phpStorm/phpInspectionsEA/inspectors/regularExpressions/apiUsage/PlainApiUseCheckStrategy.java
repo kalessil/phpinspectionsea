@@ -39,8 +39,8 @@ final public class PlainApiUseCheckStrategy {
 
     final static private Pattern regexSingleCharSet;
     static {
-        // 	^(\[[^\.]{1}\]|[^\.]{1})$
-        regexSingleCharSet = Pattern.compile("^(\\[[^\\.]{1}\\]|[^\\.]{1})$");
+        // 	^(\[[^\.]\]|[^\.])$
+        regexSingleCharSet = Pattern.compile("^(\\[[^\\.]\\]|[^\\.])$");
     }
 
     final static private Pattern trimPatterns;

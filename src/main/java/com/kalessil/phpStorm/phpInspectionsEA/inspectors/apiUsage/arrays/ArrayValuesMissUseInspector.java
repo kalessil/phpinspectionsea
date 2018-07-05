@@ -63,6 +63,7 @@ public class ArrayValuesMissUseInspector extends BasePhpInspection {
                                         case "array_column":
                                         case "array_combine":
                                         case "array_values":
+                                        case "implode":
                                             holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "str_replace":

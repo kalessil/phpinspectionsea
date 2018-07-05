@@ -19,6 +19,9 @@ function cases_holder() {
         array_values([]),
         array_values(array_values()),
 
+        implode('', []),
+        implode('', array_values()),
+
         count([]),
         count(array_values()),
 

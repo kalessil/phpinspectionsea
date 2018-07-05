@@ -12,8 +12,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
     private static final String message = "This loop does not loop.";
 
@@ -26,23 +24,38 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
-                this.inspectBody(foreach);
-            }
-            public void visitPhpFor(@NotNull For forStatement) {
-                this.inspectBody(forStatement);
-            }
-            public void visitPhpWhile(@NotNull While whileStatement) {
-                this.inspectBody(whileStatement);
-            }
-            public void visitPhpDoWhile(@NotNull DoWhile doWhileStatement) {
-                this.inspectBody(doWhileStatement);
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement loop) {
+                if (!this.isLooping(loop)) {
+                    holder.registerProblem(loop.getFirstChild(), message);
+                }
             }
 
-            private void inspectBody(@NotNull PhpPsiElement loop) {
+            @Override
+            public void visitPhpFor(@NotNull For loop) {
+                if (!this.isLooping(loop)) {
+                    holder.registerProblem(loop.getFirstChild(), message);
+                }
+            }
+
+            @Override
+            public void visitPhpWhile(@NotNull While loop) {
+                if (!this.isLooping(loop)) {
+                    holder.registerProblem(loop.getFirstChild(), message);
+                }
+            }
+
+            @Override
+            public void visitPhpDoWhile(@NotNull DoWhile loop) {
+                if (!this.isLooping(loop)) {
+                    holder.registerProblem(loop.getFirstChild(), message);
+                }
+            }
+
+            private boolean isLooping(@NotNull PhpPsiElement loop) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (null == body) {
-                    return;
+                    return true;
                 }
 
                 final PsiElement lastExpression                  = ExpressionSemanticUtil.getLastStatement(body);
@@ -51,12 +64,11 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                                                                    lastExpression instanceof PhpThrow;
                 /* loop is empty or terminates on first iteration */
                 if (null != lastExpression && !isLoopTerminatedWithLastExpression) {
-                    return;
+                    return true;
                 }
 
                 /* detect continue statements, which makes the loop looping */
-                final Collection<PhpContinue> continues = PsiTreeUtil.findChildrenOfType(body, PhpContinue.class);
-                for (final PhpContinue expression : continues) {
+                for (final PhpContinue expression : PsiTreeUtil.findChildrenOfType(body, PhpContinue.class)) {
                     int nestingLevel  = 0;
                     PsiElement parent = expression.getParent();
                     while (null != parent && !(parent instanceof Function) && !(parent instanceof PsiFile)) {
@@ -65,28 +77,27 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
                             if (parent == loop) {
                                 /* extract level of continuation from the statement */
-                                int continueLevel = 1;
-                                if (null != expression.getArgument()) {
+                                int continueLevel         = 1;
+                                final PsiElement argument = expression.getArgument();
+                                if (null != argument) {
                                     try {
-                                        continueLevel = Integer.parseInt(expression.getArgument().getText());
-                                    } catch (NumberFormatException notParsed) {
+                                        continueLevel = Integer.parseInt(argument.getText());
+                                    } catch (final NumberFormatException notParsed) {
                                         continueLevel = 1;
                                     }
                                 }
 
                                 /* matched continue for the current loop */
                                 if (continueLevel == nestingLevel) {
-                                    continues.clear();
-                                    return;
+                                    return true;
                                 }
                             }
                         }
                         parent = parent.getParent();
                     }
                 }
-                continues.clear();
 
-                holder.registerProblem(loop.getFirstChild(), message);
+                return false;
             }
         };
     }

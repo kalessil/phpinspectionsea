@@ -7,6 +7,7 @@ mb_substr($path, 0, -2, 'encoding');
 
 /* correct length calculation */
 substr($path, 1, -1);
+substr($path, 1);
 
 /* false-positives: non-constant start, over-complication, e.g. -(strlen($pathPrefix) - 1) */
 substr($path, $variable, strlen($path) - 2);

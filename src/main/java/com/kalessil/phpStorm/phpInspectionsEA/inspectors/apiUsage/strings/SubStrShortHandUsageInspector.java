@@ -82,14 +82,22 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                                                     new DropThirdParameterFix(reference)
                                             );
                                         } else if (OpenapiTypesUtil.isNumber(startOffset) && OpenapiTypesUtil.isNumber(right)) {
-                                            /* case: third parameter can be simplified */
                                             try {
                                                 int offset = Integer.parseInt(startOffset.getText()) - Integer.parseInt(right.getText());
                                                 if (offset < 0) {
+                                                    /* case: third parameter can be simplified */
                                                     holder.registerProblem(
                                                             binary,
                                                             String.format(patternSimplifyLength, offset),
                                                             new SimplifyFix(String.valueOf(offset))
+                                                    );
+                                                } else {
+                                                    /* case: third parameter is not needed at all */
+                                                    holder.registerProblem(
+                                                            arguments[2],
+                                                            String.format(patternDropLength, arguments[2].getText()),
+                                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                            new DropThirdParameterFix(reference)
                                                     );
                                                 }
                                             } catch (final NumberFormatException expected) {

@@ -63,8 +63,10 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                 }
 
                 /* should be "[mb_]strlen($search) - *" */
-                if (OpenapiTypesUtil.isFunctionReference(candidate.getLeftOperand()) && candidate.getRightOperand() != null) {
-                    final FunctionReference leftCall  = (FunctionReference) candidate.getLeftOperand();
+                final PsiElement left  = candidate.getLeftOperand();
+                final PsiElement right = candidate.getRightOperand();
+                if (left != null && right != null && OpenapiTypesUtil.isFunctionReference(left)) {
+                    final FunctionReference leftCall  = (FunctionReference) left;
                     final String leftCallName         = leftCall.getName();
                     final PsiElement[] leftCallParams = leftCall.getParameters();
                     if (
@@ -72,15 +74,19 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                         (leftCallName.equals("strlen") || leftCallName.equals("mb_strlen")) &&
                         OpenapiEquivalenceUtil.areEqual(leftCallParams[0], arguments[0])
                     ) {
-                        if (OpenapiEquivalenceUtil.areEqual(candidate.getRightOperand(), arguments[1])) {
+                        if (OpenapiEquivalenceUtil.areEqual(right, arguments[1])) {
                             /* 3rd parameter not needed at all */
-                            final String message = patternDropLength.replace("%l%", arguments[2].getText());
-                            holder.registerProblem(arguments[2], message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new Drop3rdParameterLocalFix(reference));
-                        } else if (OpenapiTypesUtil.isNumber(arguments[1])){
+                            holder.registerProblem(
+                                    arguments[2],
+                                    patternDropLength.replace("%l%", arguments[2].getText()),
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                    new Drop3rdParameterLocalFix(reference)
+                            );
+                        } else if (OpenapiTypesUtil.isNumber(arguments[1]) && OpenapiTypesUtil.isNumber(right)){
                             /* 3rd parameter can be simplified */
                             final String replacement;
                             try {
-                                replacement = "-" + Integer.parseInt(candidate.getRightOperand().getText());
+                                replacement = "-" + Integer.parseInt(right.getText());
                             } catch (NumberFormatException notNumericOffset) {
                                 return;
                             }

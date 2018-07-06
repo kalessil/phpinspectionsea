@@ -10,7 +10,8 @@
 
     preg_match('/\xFF-\x00/', '');
     preg_match('/[\uFFFF-\u0000]/', '');
-    preg_match('/[\p{L}-\p{L}]/', '');
+    preg_match('/[\p{L}-\p{L}]/u', '');
+    preg_match('/[^-+]/', '');
 
     preg_match('/.+a-Z.+/', '');
     preg_match('/.+A-z.+/', '');

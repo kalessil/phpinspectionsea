@@ -41,7 +41,8 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
                         !range.equals("a-z") && !range.equals("A-Z") &&
                         !range.equals("a-f") && !range.equals("A-F") &&
                         !range.equals("a-i") && !range.equals("A-I") &&
-                        !range.equals("0-9")
+                        !range.equals("0-9") &&
+                        !range.equals("а-я") && !range.equals("А-Я")
                     ) {
                         /* false-positives: valid numeric ranges */
                         if (range.matches("\\d-\\d")) {

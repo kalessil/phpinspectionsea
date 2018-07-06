@@ -23,7 +23,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,7 +73,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 if (functionName != null && functions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0) {
-                        final List<String> patterns = ExpressionSemanticUtil.resolveAsString(arguments[0]);
+                        final Set<String> patterns = ExpressionSemanticUtil.resolveAsString(arguments[0]);
                         for (final String pattern : patterns) {
                             if (pattern != null && !pattern.isEmpty()) {
                                 final Matcher regularMatcher           = regexWithModifiers.matcher(pattern);

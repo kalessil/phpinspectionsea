@@ -219,8 +219,8 @@ final public class ExpressionSemanticUtil {
 
 
     @NotNull
-    public static List<String> resolveAsString(@Nullable PsiElement expression) {
-        final List<String> result = new ArrayList<>();
+    public static Set<String> resolveAsString(@Nullable PsiElement expression) {
+        final Set<String> result = new HashSet<>();
         if (expression != null) {
             final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(expression);
             if (!variants.isEmpty()) {

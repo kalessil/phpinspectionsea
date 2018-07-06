@@ -200,8 +200,8 @@ final public class ExpressionSemanticUtil {
 
     @Nullable
     public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement expression) {
-        StringLiteralExpression result = null;
-        if (expression != null) {
+        StringLiteralExpression result = expression instanceof StringLiteralExpression ? (StringLiteralExpression) expression : null;
+        if (result == null && expression != null) {
             final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(expression);
             if (!variants.isEmpty()) {
                 final List<PsiElement> literals = variants.stream()

@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -201,44 +200,21 @@ final public class ExpressionSemanticUtil {
 
     @Nullable
     public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement expression) {
-        if (null == expression) {
-            return null;
-        }
-        expression                     = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
+        /* TODO: sprintf(format, ...) -> format */
         StringLiteralExpression result = null;
-
-        if (expression instanceof StringLiteralExpression) {
-            result = (StringLiteralExpression) expression;
-        } else if (expression instanceof FieldReference || expression instanceof ClassConstantReference) {
-            final Field fieldOrConstant = (Field) OpenapiResolveUtil.resolveReference((MemberReference) expression);
-            if (fieldOrConstant != null && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
-                result = (StringLiteralExpression) fieldOrConstant.getDefaultValue();
-            }
-        } else if (expression instanceof Variable) {
-            final String variable = ((Variable) expression).getName();
-            if (!variable.isEmpty()) {
-                final Function scope = ExpressionSemanticUtil.getScope(expression);
-                if (scope != null) {
-                    final Set<StringLiteralExpression> matched         = new HashSet<>();
-                    final Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(scope, AssignmentExpression.class);
-                    for (final AssignmentExpression assignment : assignments) {
-                        final PhpPsiElement container = assignment.getVariable();
-                        if (container instanceof Variable && variable.equals(container.getName())) {
-                            final PsiElement value = assignment.getValue();
-                            if (value instanceof StringLiteralExpression) {
-                                matched.add((StringLiteralExpression) value);
-                            }
-                        }
-                    }
-                    assignments.clear();
-                    if (matched.size() == 1) {
-                        result = matched.iterator().next();
-                    }
-                    matched.clear();
+        if (expression != null) {
+            final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(expression);
+            if (!variants.isEmpty()) {
+                final List<PsiElement> literals = variants.stream()
+                        .filter(v -> v instanceof StringLiteralExpression)
+                        .collect(Collectors.toList());
+                variants.clear();
+                if (literals.size() == 1) {
+                    result = (StringLiteralExpression) literals.get(0);
                 }
+                literals.clear();
             }
         }
-
         return result;
     }
 }

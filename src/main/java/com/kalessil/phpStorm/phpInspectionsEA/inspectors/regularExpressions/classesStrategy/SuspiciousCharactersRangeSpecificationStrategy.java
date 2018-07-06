@@ -25,8 +25,8 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
     static {
         /* original regex: (?:\[\^?((?:[^\\\[\]]|\\.)+)\]) */
         matchGroups = Pattern.compile("(?:\\[\\^?((?:[^\\\\\\[\\]]|\\\\.)+)\\])");
-        /* original regex: [^\\]-(?:[^\\]|\\[^xp]) */
-        matchRanges = Pattern.compile("[^\\\\]-(?:[^\\\\]|\\\\[^xp])");
+        /* original regex: [^\\]-(?:[^\\]|\\[^xpu]) */
+        matchRanges = Pattern.compile("[^\\\\]-(?:[^\\\\]|\\\\[^xpu])");
     }
 
     static public void apply(final String pattern, @NotNull final PsiElement target, @NotNull final ProblemsHolder holder) {

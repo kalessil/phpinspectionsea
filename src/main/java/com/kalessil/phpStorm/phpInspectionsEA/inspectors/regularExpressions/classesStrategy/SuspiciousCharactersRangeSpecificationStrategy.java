@@ -23,24 +23,28 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
     final static private Pattern matchGroups;
     final static private Pattern matchRanges;
     static {
-        /* original regex: (?:\[(^?(?:[^\\\[\]]|\\.)+)\]) */
-        matchGroups = Pattern.compile("(?:\\[(^?(?:[^\\\\\\[\\]]|\\\\.)+)\\])");
-        /* original regex: .\-. */
-        matchRanges = Pattern.compile(".-.");
+        /* original regex: (?:\[\^?((?:[^\\\[\]]|\\.)+)\]) */
+        matchGroups = Pattern.compile("(?:\\[\\^?((?:[^\\\\\\[\\]]|\\\\.)+)\\])");
+        /* original regex: [^\\]-[^\\] */
+        matchRanges = Pattern.compile("[^\\\\]-[^\\\\]");
     }
 
     static public void apply(final String pattern, @NotNull final PsiElement target, @NotNull final ProblemsHolder holder) {
         if (pattern != null && !pattern.isEmpty() && pattern.indexOf('[') != -1) {
             final Matcher groupsMatcher = matchGroups.matcher(pattern);
             while (groupsMatcher.find()) {
-                final String group          = groupsMatcher.group(1);
-                final Matcher rangesMatcher = matchRanges.matcher(group);
-                while (rangesMatcher.matches()) {
+                final String match          = groupsMatcher.group(0);
+                final Matcher rangesMatcher = matchRanges.matcher(groupsMatcher.group(1));
+                while (rangesMatcher.find()) {
                     final String range = rangesMatcher.group(0);
-                    if (!range.equals("a-z") && !range.equals("A-Z") && !range.equals("0-9")) {
+                    if (
+                        !range.equals("a-z") && !range.equals("A-Z") &&
+                        !range.equals("a-f") && !range.equals("A-F") &&
+                        !range.equals("0-9")
+                    ) {
                         holder.registerProblem(
                                 target,
-                                String.format(messagePattern, range, group),
+                                String.format(messagePattern, range, match),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     }

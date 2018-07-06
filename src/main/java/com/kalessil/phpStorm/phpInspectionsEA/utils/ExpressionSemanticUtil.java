@@ -206,7 +206,7 @@ final public class ExpressionSemanticUtil {
             final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(expression);
             if (!variants.isEmpty()) {
                 final List<PsiElement> literals = variants.stream()
-                        .filter(v -> v instanceof StringLiteralExpression)
+                        .filter(variant -> variant instanceof StringLiteralExpression)
                         .collect(Collectors.toList());
                 variants.clear();
                 if (literals.size() == 1) {

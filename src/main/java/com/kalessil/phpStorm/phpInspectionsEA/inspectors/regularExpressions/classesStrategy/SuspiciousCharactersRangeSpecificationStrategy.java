@@ -25,8 +25,8 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
     static {
         /* original regex: (?:\[\^?((?:[^\\\[\]]|\\.)+)\]) */
         matchGroups = Pattern.compile("(?:\\[\\^?((?:[^\\\\\\[\\]]|\\\\.)+)\\])");
-        /* original regex: [^\\]-[^\\] */
-        matchRanges = Pattern.compile("[^\\\\]-[^\\\\]");
+        /* original regex: [^\\]-(?:[^\\]|\\[^x]) */
+        matchRanges = Pattern.compile("[^\\\\]-(?:[^\\\\]|\\\\[^x])");
     }
 
     static public void apply(final String pattern, @NotNull final PsiElement target, @NotNull final ProblemsHolder holder) {
@@ -42,6 +42,18 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
                         !range.equals("a-f") && !range.equals("A-F") &&
                         !range.equals("0-9")
                     ) {
+                        /* false-positives: valid numeric ranges */
+                        if (range.matches("\\d-\\d")) {
+                            try {
+                                final String[] fragments = range.split("-");
+                                if (Integer.parseInt(fragments[0]) < Integer.parseInt(fragments[1])) {
+                                    return;
+                                }
+                            } catch (final NumberFormatException expected) {
+                                // return;
+                            }
+                        }
+
                         holder.registerProblem(
                                 target,
                                 String.format(messagePattern, range, match),

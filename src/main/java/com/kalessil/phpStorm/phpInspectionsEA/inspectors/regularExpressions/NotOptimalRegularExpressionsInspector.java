@@ -23,6 +23,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,19 +73,24 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
-                    final String pattern         = arguments.length > 0 ? ExpressionSemanticUtil.resolveAsString(arguments[0]) : null;
-                    if (pattern != null && !pattern.isEmpty()) {
-                        final Matcher regularMatcher           = regexWithModifiers.matcher(pattern);
-                        final Matcher matcherWithCurlyBrackets = regexWithModifiersCurvy.matcher(pattern);
-                        if (regularMatcher.find()) {
-                            final String phpRegexPattern   = regularMatcher.group(2);
-                            final String phpRegexModifiers = regularMatcher.group(3);
-                            this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
-                        } else if (matcherWithCurlyBrackets.find()) {
-                            final String phpRegexPattern   = matcherWithCurlyBrackets.group(1);
-                            final String phpRegexModifiers = matcherWithCurlyBrackets.group(2);
-                            this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                    if (arguments.length > 0) {
+                        final List<String> patterns = ExpressionSemanticUtil.resolveAsString(arguments[0]);
+                        for (final String pattern : patterns) {
+                            if (pattern != null && !pattern.isEmpty()) {
+                                final Matcher regularMatcher           = regexWithModifiers.matcher(pattern);
+                                final Matcher matcherWithCurlyBrackets = regexWithModifiersCurvy.matcher(pattern);
+                                if (regularMatcher.find()) {
+                                    final String phpRegexPattern   = regularMatcher.group(2);
+                                    final String phpRegexModifiers = regularMatcher.group(3);
+                                    this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                } else if (matcherWithCurlyBrackets.find()) {
+                                    final String phpRegexPattern   = matcherWithCurlyBrackets.group(1);
+                                    final String phpRegexModifiers = matcherWithCurlyBrackets.group(2);
+                                    this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                }
+                            }
                         }
+                        patterns.clear();
                     }
                 }
             }

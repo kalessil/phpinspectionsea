@@ -200,7 +200,6 @@ final public class ExpressionSemanticUtil {
 
     @Nullable
     public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement expression) {
-        /* TODO: sprintf(format, ...) -> format */
         StringLiteralExpression result = null;
         if (expression != null) {
             final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(expression);
@@ -219,39 +218,46 @@ final public class ExpressionSemanticUtil {
     }
 
 
-    @Nullable
-    public static String resolveAsString(@Nullable PsiElement expression) {
-        String result                         = null;
-        final StringLiteralExpression literal = resolveAsStringLiteral(expression);
-        if (literal != null) {
-            if (literal.getFirstPsiChild() == null) {
-                result = literal.getContents();
-            }
-        } else {
-            expression = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression);
-            if (expression instanceof BinaryExpression) {
-                final BinaryExpression binary = (BinaryExpression) expression;
-                if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
-                    final List<PsiElement> fragments = getConditions(binary, PhpTokenTypes.opCONCAT);
-                    final boolean tryExtracting      = fragments.size() >= 2 &&
-                            fragments.stream().allMatch(fragment ->
-                                    fragment instanceof StringLiteralExpression ||
-                                            fragment instanceof ClassConstantReference
-                            );
-                    if (tryExtracting) {
-                        StringBuilder buffer = new StringBuilder();
-                        for (final PsiElement fragment : fragments) {
-                            final StringLiteralExpression extracted = resolveAsStringLiteral(fragment);
-                            if (extracted == null || extracted.getFirstPsiChild() != null) {
-                                buffer = null;
-                                break;
-                            }
-                            buffer.append(extracted.getContents());
+    @NotNull
+    public static List<String> resolveAsString(@Nullable PsiElement expression) {
+        final List<String> result = new ArrayList<>();
+        if (expression != null) {
+            final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(expression);
+            if (!variants.isEmpty()) {
+                for (final PsiElement variant : variants) {
+                    if (variant instanceof StringLiteralExpression) {
+                        final StringLiteralExpression literal = (StringLiteralExpression) variant;
+                        if (literal.getFirstPsiChild() == null) {
+                            result.add(literal.getContents());
                         }
-                        result = buffer == null ? null : buffer.toString();
+                    } else if (expression instanceof BinaryExpression) {
+                        final BinaryExpression binary = (BinaryExpression) expression;
+                        if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
+                            final List<PsiElement> fragments = getConditions(binary, PhpTokenTypes.opCONCAT);
+                            final boolean tryExtracting      = fragments.size() >= 2 &&
+                                                               fragments.stream().allMatch(fragment ->
+                                                                        fragment instanceof StringLiteralExpression ||
+                                                                        fragment instanceof ClassConstantReference
+                                                               );
+                            if (tryExtracting) {
+                                StringBuilder buffer = new StringBuilder();
+                                for (final PsiElement fragment : fragments) {
+                                    final StringLiteralExpression extracted = resolveAsStringLiteral(fragment);
+                                    if (extracted == null || extracted.getFirstPsiChild() != null) {
+                                        buffer = null;
+                                        break;
+                                    }
+                                    buffer.append(extracted.getContents());
+                                }
+                                if (buffer != null) {
+                                    result.add(buffer.toString());
+                                }
+                            }
+                            fragments.clear();
+                        }
                     }
-                    fragments.clear();
                 }
+                variants.clear();
             }
         }
         return result;

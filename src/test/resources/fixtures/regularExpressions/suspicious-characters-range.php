@@ -10,14 +10,14 @@
 
     preg_match('/\xFF-\x00/', '');
     preg_match('/[\uFFFF-\u0000]/', '');
-    preg_match('/[\p{L}-p{L}]/', '');
+    preg_match('/[\p{L}-\p{L}]/', '');
 
     preg_match('/.+a-Z.+/', '');
     preg_match('/.+A-z.+/', '');
 
     preg_match('/[a-z]/', '');
     preg_match('/[A-Z]/', '');
-    preg_match('/[0-9]/', '');
-    preg_match('/[1-8]/', '');
+    preg_match('/[0-8]/', '');
+    preg_match('/[1-5]/', '');
     preg_match('/[A-Za-z]/', '');
     preg_match('/[a-zA-Z]/', '');

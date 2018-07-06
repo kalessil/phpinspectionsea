@@ -40,6 +40,7 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
                     if (
                         !range.equals("a-z") && !range.equals("A-Z") &&
                         !range.equals("a-f") && !range.equals("A-F") &&
+                        !range.equals("a-i") && !range.equals("A-I") &&
                         !range.equals("0-9")
                     ) {
                         /* false-positives: valid numeric ranges */

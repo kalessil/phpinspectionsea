@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.cla
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -19,31 +18,32 @@ import java.util.regex.Pattern;
  */
 
 public class SuspiciousCharactersRangeSpecificationStrategy {
-    private static final String messagePattern = "Did you mean [...A-Za-z...] instead of [...%s...]?";
+    private static final String messagePattern = "'%s' range in '%s' is looking rather suspicious, please check.";
 
-    final static private Pattern regexGreedyCharacterSet;
+    final static private Pattern matchGroups;
+    final static private Pattern matchRanges;
     static {
-        // Original regex: \[([^\[\]]+)\]
-        regexGreedyCharacterSet = Pattern.compile("\\[([^\\[\\]]+)\\]");
+        /* original regex: (?:\[(^?(?:[^\\\[\]]|\\.)+)\]) */
+        matchGroups = Pattern.compile("(?:\\[(^?(?:[^\\\\\\[\\]]|\\\\.)+)\\])");
+        /* original regex: .\-. */
+        matchRanges = Pattern.compile(".-.");
     }
 
     static public void apply(final String pattern, @NotNull final PsiElement target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtils.isEmpty(pattern) && pattern.indexOf('[') >= 0) {
-            final Matcher regexMatcher = regexGreedyCharacterSet.matcher(pattern);
-            while (regexMatcher.find()) {
-                final String set = regexMatcher.group(1);
-
-                final String message;
-                if (set.contains("A-z")) {
-                    message = String.format(messagePattern, "A-z");
-                } else if (set.contains("a-Z")) {
-                    message = String.format(messagePattern, "a-Z");
-                } else {
-                    message = null;
-                }
-
-                if (message != null) {
-                    holder.registerProblem(target, message, ProblemHighlightType.GENERIC_ERROR);
+        if (pattern != null && !pattern.isEmpty() && pattern.indexOf('[') != -1) {
+            final Matcher groupsMatcher = matchGroups.matcher(pattern);
+            while (groupsMatcher.find()) {
+                final String group          = groupsMatcher.group(1);
+                final Matcher rangesMatcher = matchRanges.matcher(group);
+                while (rangesMatcher.matches()) {
+                    final String range = rangesMatcher.group(0);
+                    if (!range.equals("a-z") && !range.equals("A-Z") && !range.equals("0-9")) {
+                        holder.registerProblem(
+                                target,
+                                String.format(messagePattern, range, group),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
+                    }
                 }
             }
         }

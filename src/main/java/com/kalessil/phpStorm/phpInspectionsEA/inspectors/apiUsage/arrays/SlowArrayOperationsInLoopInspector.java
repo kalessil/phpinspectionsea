@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -31,7 +32,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return "SlowArrayOperationsInLoopInspection";
     }
 
-    private static final HashSet<String> functionsSet = new HashSet<>();
+    private static final Set<String> functionsSet = new HashSet<>();
     static {
         functionsSet.add("array_merge");
         functionsSet.add("array_merge_recursive");

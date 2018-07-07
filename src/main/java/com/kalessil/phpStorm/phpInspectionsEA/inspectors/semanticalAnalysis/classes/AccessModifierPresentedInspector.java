@@ -127,7 +127,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PhpModifierList modifiers = this.modifiersReference.getElement();
-            if (modifiers != null) {
+            if (modifiers != null && !project.isDisposed()) {
                 final String modifierFinal    = modifiers.hasFinal() ? "final " : "";
                 final String modifierAbstract = modifiers.hasAbstract() ? "abstract " : "";
                 final String modifierStatic   = modifiers.hasStatic() ? " static" : "";

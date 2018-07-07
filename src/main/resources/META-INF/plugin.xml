@@ -77,7 +77,7 @@ New features release<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.CallableInLoopTerminationConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="SlowArrayOperationsInLoopInspection"           displayName="Slow array function used in loop"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.SlowArrayOperationsInLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="StrStrUsedAsStrPosInspection"                  displayName="'str(i)str(...)' could be replaced with 'str(i)pos(...)'"
@@ -97,7 +97,7 @@ New features release<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CascadeStringReplacementInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="InArrayMissUseInspection"                      displayName="'in_array(...)' misused"
-        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ArrayPushMissUseInspection"                    displayName="'array_push(...)' misused"
@@ -907,7 +907,7 @@ New features release<br/>
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MultipleReturnStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
          shortName="ClassReImplementsParentInterfaceInspection"     displayName="Class implements interfaces multiple times"
-         groupName="Architecture"                                   enabledByDefault="true" level="ERROR"
+         groupName="Architecture"                                   enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="LowerAccessLevelInspection"                      displayName="Declaration access can be weaker"

@@ -32,5 +32,5 @@ namespace AliasingCasesHolder {
     abstract class AbstractClass implements \Traversable {}
     class RegularClass extends AbstractClass
         implements
-            <error descr="'\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</error> {}
+            <warning descr="'\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</warning> {}
 }

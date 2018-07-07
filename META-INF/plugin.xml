@@ -86,7 +86,7 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.CallableInLoopTerminationConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SlowArrayOperationsInLoopInspection"           displayName="Slow array function used in loop"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.SlowArrayOperationsInLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrStrUsedAsStrPosInspection"                  displayName="'str(i)str(...)' could be replaced with 'str(i)pos(...)'"
@@ -106,7 +106,7 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CascadeStringReplacementInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="InArrayMissUseInspection"                      displayName="'in_array(...)' misused"
-        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArrayPushMissUseInspection"                    displayName="'array_push(...)' misused"

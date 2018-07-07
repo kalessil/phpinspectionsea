@@ -804,7 +804,7 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MultipleReturnStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="ClassReImplementsParentInterfaceInspection"     displayName="Class implements interfaces multiple times"
-         groupName="Architecture"                                   enabledByDefault="true" level="ERROR"
+         groupName="Architecture"                                   enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LowerAccessLevelInspection"                      displayName="Declaration access can be weaker"

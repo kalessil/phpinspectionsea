@@ -64,7 +64,6 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                                     holder.registerProblem(
                                             entry.getKey(),
                                             messageImplicitDuplication,
-                                            ProblemHighlightType.GENERIC_ERROR,
                                             new TheLocalFix()
                                     );
                                     break;

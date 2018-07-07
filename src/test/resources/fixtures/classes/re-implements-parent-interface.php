@@ -8,29 +8,28 @@ namespace BasicCasesHolder {
 
     class ClassOne extends AbstractOne
         implements
-            <error descr="'\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractOne'.">ParentInterface</error> {}
+            <warning descr="'\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractOne'.">ParentInterface</warning> {}
 
     class ClassTwo extends AbstractTwo
         implements
-            <error descr="'\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ParentInterface</error>,
-            <error descr="'\BasicCasesHolder\ChildInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ChildInterface</error> {}
+            <warning descr="'\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ParentInterface</warning>,
+            <warning descr="'\BasicCasesHolder\ChildInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ChildInterface</warning> {}
 
     class ClassImplementsSameInterfaceTwice
         implements
             ChildInterface,
-            <error descr="Class cannot implement previously implemented interface">ChildInterface</error> {}
+            <warning descr="Class cannot implement previously implemented interface">ChildInterface</warning> {}
 }
 
 namespace AliasingCasesHolder {
-    use \Traversable as ForeachSupport;
 
     class ClassImplementsSameInterfaceTwice
         implements
             \Traversable,
-            <error descr="Class cannot implement previously implemented interface">ForeachSupport</error> {}
+            <warning descr="Class cannot implement previously implemented interface">ForeachSupport</warning> {}
 
     abstract class AbstractClass implements \Traversable {}
     class RegularClass extends AbstractClass
         implements
-            <error descr="'\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</error> {}
+            <warning descr="'\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</warning> {}
 }

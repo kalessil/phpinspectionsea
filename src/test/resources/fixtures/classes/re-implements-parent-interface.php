@@ -18,7 +18,7 @@ namespace BasicCasesHolder {
     class ClassImplementsSameInterfaceTwice
         implements
             ChildInterface,
-            <warning descr="Class cannot implement previously implemented interface">ChildInterface</warning> {}
+            <error descr="Class cannot implement previously implemented interface">ChildInterface</error> {}
 }
 
 namespace AliasingCasesHolder {
@@ -26,10 +26,10 @@ namespace AliasingCasesHolder {
     class ClassImplementsSameInterfaceTwice
         implements
             \Traversable,
-            <warning descr="Class cannot implement previously implemented interface">ForeachSupport</warning> {}
+            <error descr="Class cannot implement previously implemented interface">ForeachSupport</error> {}
 
     abstract class AbstractClass implements \Traversable {}
     class RegularClass extends AbstractClass
         implements
-            <warning descr="'\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</warning> {}
+            <error descr="'\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</error> {}
 }

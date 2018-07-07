@@ -22,6 +22,7 @@ namespace BasicCasesHolder {
 }
 
 namespace AliasingCasesHolder {
+    use \Traversable as ForeachSupport;
 
     class ClassImplementsSameInterfaceTwice
         implements

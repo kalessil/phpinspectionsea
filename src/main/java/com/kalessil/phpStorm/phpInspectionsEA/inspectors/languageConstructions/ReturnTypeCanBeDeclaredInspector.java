@@ -241,14 +241,16 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             }
 
             private void checkUnrecognizedGenerator(@NotNull Method method, @NotNull Set<String> types) {
-                final PhpYield yield = PsiTreeUtil.findChildOfType(method, PhpYield.class);
-                if (yield != null && ExpressionSemanticUtil.getScope(yield) == method) {
-                    types.add("\\Generator");
+                if (!types.contains("\\Generator")) {
+                    final PhpYield yield = PsiTreeUtil.findChildOfType(method, PhpYield.class);
+                    if (yield != null && ExpressionSemanticUtil.getScope(yield) == method) {
+                        types.add("\\Generator");
+                    }
                 }
             }
 
             private void checkReturnStatements(@NotNull Method method, @NotNull Set<String> types) {
-                if (!method.isAbstract() && !types.isEmpty()) {
+                if (!types.isEmpty() && !method.isAbstract()) {
                     /* non-implicit null return: omitted last return statement */
                     if (!types.contains(Types.strNull) && !types.contains(Types.strVoid)) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
@@ -259,11 +261,14 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     }
                     /* buggy parameter type resolving: no type, but null as default value */
                     if (types.size() == 1 && types.contains(Types.strNull)) {
-                        final PhpReturn expression = PsiTreeUtil.findChildOfType(method, PhpReturn.class);
-                        if (expression != null ) {
-                            final PsiElement value = ExpressionSemanticUtil.getReturnValue(expression);
-                            if (value != null && !PhpLanguageUtil.isNull(value)) {
-                                types.remove(Types.strNull);
+                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                        if (body != null) {
+                            final PhpReturn expression = PsiTreeUtil.findChildOfType(body, PhpReturn.class);
+                            if (expression != null) {
+                                final PsiElement value = ExpressionSemanticUtil.getReturnValue(expression);
+                                if (value != null && !PhpLanguageUtil.isNull(value)) {
+                                    types.remove(Types.strNull);
+                                }
                             }
                         }
                     }

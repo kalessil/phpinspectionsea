@@ -1,6 +1,6 @@
 <?php
 
-public function cases_holder() {
+function cases_holder() {
     <warning descr="Variable $array is redundant.">$array</warning> = [];
     foreach ($array as $value) {}
 

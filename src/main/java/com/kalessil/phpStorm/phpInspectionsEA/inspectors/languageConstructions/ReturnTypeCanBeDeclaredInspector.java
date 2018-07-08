@@ -190,12 +190,13 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 final PhpClass clazz = method.getContainingClass();
                 if (clazz != null && !clazz.isFinal() && !method.isFinal() && !method.getAccess().isPrivate()) {
                     final String methodName = method.getName();
-                    final PhpIndex index    = PhpIndex.getInstance(method.getProject());
                     result =
-                        OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).stream()
-                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null) ||
                         InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
-                                .anyMatch(c -> c != clazz && c.findOwnMethodByName(methodName) != null);
+                                .anyMatch(c -> c != clazz && c.findOwnMethodByName(methodName) != null) ||
+                        OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), PhpIndex.getInstance(method.getProject())).stream()
+                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null) ||
+
+                    ;
                 }
                 return result;
             }

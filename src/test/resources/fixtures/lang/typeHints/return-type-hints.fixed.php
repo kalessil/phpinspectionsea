@@ -17,7 +17,7 @@ abstract class ClassCasesHolder {
     protected abstract function abstractMethodWithoutDocBlock();
 
     /* false-positives: magic methods */
-    public function __magicMethod()    { return ''; }
+    public function __toString()       { return ''; }
 
     /* false-positives: returning mixed and objects */
     /** @param $x mixed */

@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override
     final public void visitPhpElement(@NotNull PhpPsiElement element) {
-        if (element instanceof PhpEval) {
-            this.visitPhpEval((PhpEval) element);
-        } else if (element instanceof PhpDocTag) {
+        if (element instanceof PhpDocTag) {
             this.visitPhpDocTag((PhpDocTag) element);
         } else if (element instanceof Declare) {
             this.visitPhpDeclare((Declare) element);
+        } else if (element instanceof PhpEval) {
+            this.visitPhpEval((PhpEval) element);
         } else if (element instanceof PhpShellCommandExpression) {
             this.visitPhpShellCommand((PhpShellCommandExpression) element);
         } else {

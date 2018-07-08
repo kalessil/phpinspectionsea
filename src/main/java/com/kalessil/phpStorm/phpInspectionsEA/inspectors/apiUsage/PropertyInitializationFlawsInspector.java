@@ -138,12 +138,10 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         /* false-positive: property is involved into generating new value */
                         boolean isPropertyReused = false;
                         for (final FieldReference candidate : PsiTreeUtil.findChildrenOfType(value, FieldReference.class)) {
-                            if (!OpenapiEquivalenceUtil.areEqual(container, candidate)) {
-                                continue;
+                            if (OpenapiEquivalenceUtil.areEqual(container, candidate)) {
+                                isPropertyReused = true;
+                                break;
                             }
-
-                            isPropertyReused = true;
-                            break;
                         }
 
                         if (!isPropertyReused && REPORT_DEFAULTS_FLAWS) {

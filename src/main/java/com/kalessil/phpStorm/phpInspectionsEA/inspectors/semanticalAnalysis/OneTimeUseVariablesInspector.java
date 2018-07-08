@@ -151,7 +151,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 /* if function returning reference, do not inspect returns */
                 final Function callable   = ExpressionSemanticUtil.getScope(expression);
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
-                if (null != callable && null != nameNode) {
+                if (callable != null && nameNode != null) {
                     /* is defined like returning reference */
                     PsiElement referenceCandidate = nameNode.getPrevSibling();
                     if (referenceCandidate instanceof PsiWhiteSpace) {
@@ -196,12 +196,17 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
-                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
-                if (value != null && OpenapiTypesUtil.isAssignment(expression)) {
-                    final Variable variable = this.getVariable(value);
+                if (OpenapiTypesUtil.isAssignment(expression)) {
                     final PsiElement parent = expression.getParent();
-                    if (variable != null && OpenapiTypesUtil.isStatementImpl(parent)) {
-                        this.checkOneTimeUse((PhpPsiElement) parent, variable);
+                    if (parent != null && OpenapiTypesUtil.isStatementImpl(parent)) {
+                        final Function scope = ExpressionSemanticUtil.getScope(expression);
+                        if (scope != null) {
+                            final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
+                            final Variable variable = value == null ? null : this.getVariable(value);
+                            if (variable != null) {
+                                this.checkOneTimeUse((PhpPsiElement) parent, variable);
+                            }
+                        }
                     }
                 }
             }
@@ -321,7 +326,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             final PsiElement assignment = this.assignment.getElement();
             final Variable variable     = this.variable.getElement();
             final PsiElement value      = this.value.getElement();
-            if (null == assignment || null == variable || null == value || project.isDisposed()) {
+            if (assignment == null || variable == null || value == null || project.isDisposed()) {
                 return;
             }
 

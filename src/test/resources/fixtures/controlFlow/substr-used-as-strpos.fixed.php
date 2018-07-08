@@ -1,13 +1,13 @@
 <?php
 
-    $x = 0 === strpos($path, $pathPrefix);
-    $x = 0 !== strpos($path, $pathPrefix);
-    $x = 0 === strpos($path, $pathPrefix);
-    $x = 0 !== strpos($path, $pathPrefix);
+    $x = strpos($path, $pathPrefix) === 0;
+    $x = strpos($path, $pathPrefix) !== 0;
+    $x = strpos($path, $pathPrefix) === 0;
+    $x = strpos($path, $pathPrefix) !== 0;
 
-    $x = 0 === mb_strpos($path, $pathPrefix);
-    $x = 0 === mb_strpos($path, $pathPrefix, '');
+    $x = mb_strpos($path, $pathPrefix) === 0;
+    $x = mb_strpos($path, $pathPrefix, '') === 0;
 
-    $x = 0 === stripos($path, $pathPrefix);
-    $x = 0 === mb_stripos($path, $pathPrefix);
-    $x = 0 === mb_stripos($path, $pathPrefix);
+    $x = stripos($path, $pathPrefix) === 0;
+    $x = mb_stripos($path, $pathPrefix) === 0;
+    $x = mb_stripos($path, $pathPrefix) === 0;

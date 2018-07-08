@@ -46,22 +46,21 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
-                /* process non-test and reportable classes only */
-                final PhpClass clazz        = method.getContainingClass();
-                final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                final GroupStatement body   = ExpressionSemanticUtil.getGroupStatement(method);
-                if (null == methodName || null == body || null == clazz) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
+                /* process only real classes and methods */
+                if (method.isAbstract() || method.isDeprecated()) {
                     return;
                 }
-                /* process only real classes and methods */
-                if (method.isDeprecated() || clazz.isTrait() || clazz.isInterface() || method.isAbstract()) {
+                final PhpClass clazz = method.getContainingClass();
+                if (clazz == null || clazz.isTrait() || clazz.isInterface()) {
                     return;
                 }
 
                 /* don't take too heavy work */
-                final int countExpressions = ExpressionSemanticUtil.countExpressionsInGroup(body);
-                if (0 == countExpressions || countExpressions > MAX_METHOD_SIZE) {
+                final GroupStatement body  = ExpressionSemanticUtil.getGroupStatement(method);
+                final int countExpressions = body == null ? 0 : ExpressionSemanticUtil.countExpressionsInGroup(body);
+                if (countExpressions == 0 || countExpressions > MAX_METHOD_SIZE) {
                     return;
                 }
 
@@ -69,7 +68,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 final PhpClass parent           = OpenapiResolveUtil.resolveSuperClass(clazz);
                 final Method parentMethod       = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, method.getName());
                 final GroupStatement parentBody = null == parentMethod ? null : ExpressionSemanticUtil.getGroupStatement(parentMethod);
-                if (null == parentBody || countExpressions != ExpressionSemanticUtil.countExpressionsInGroup(parentBody)) {
+                if (parentBody == null || countExpressions != ExpressionSemanticUtil.countExpressionsInGroup(parentBody)) {
                     return;
                 }
 
@@ -98,20 +97,23 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
 
 
                 /* methods seems to be identical: resolve used classes to avoid ns/imports magic */
-                final Collection<String> collection = getUsedReferences(body);
-                if (!collection.containsAll(getUsedReferences(parentBody))) {
+                final Collection<String> collection = this.getUsedReferences(body);
+                if (!collection.containsAll(this.getUsedReferences(parentBody))) {
                     collection.clear();
                     return;
                 }
                 collection.clear();
 
-                final boolean canFix = !parentMethod.getAccess().isPrivate();
-                if (method.getAccess().equals(parentMethod.getAccess())) {
-                    final String message = messagePatternIdentical.replace("%s%", method.getName());
-                    holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new DropMethodFix() : null);
-                } else {
-                    final String message = messagePatternProxy.replace("%s%", method.getName());
-                    holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new ProxyCallFix() : null);
+                final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
+                if (methodName != null) {
+                    final boolean canFix = !parentMethod.getAccess().isPrivate();
+                    if (method.getAccess().equals(parentMethod.getAccess())) {
+                        final String message = messagePatternIdentical.replace("%s%", method.getName());
+                        holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new DropMethodFix() : null);
+                    } else {
+                        final String message = messagePatternProxy.replace("%s%", method.getName());
+                        holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new ProxyCallFix() : null);
+                    }
                 }
             }
 
@@ -120,7 +122,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                         body, ClassReference.class, ConstantReference.class, FunctionReference.class);
 
                 final Set<String> fqns = new HashSet<>(references.size());
-                for (PhpReference reference : references) {
+                for (final PhpReference reference : references) {
                     if (reference instanceof MethodReference) {
                         continue;
                     }

@@ -91,8 +91,10 @@ final public class OpenapiResolveUtil {
                                     if (rightType != null) {
                                         final Set<String> rightTypes = new HashSet<>();
                                         rightType.getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
-                                        hasFloat = hasFloat || rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
-                                        hasArray = hasArray || rightTypes.contains(Types.strArray);
+                                        hasFloat = hasFloat ||
+                                                   rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                                        hasArray = (hasArray && !OpenapiTypesUtil.isNumber(right)) ||
+                                                   rightTypes.contains(Types.strArray);
                                         rightTypes.clear();
                                     }
                                 }
@@ -154,7 +156,7 @@ final public class OpenapiResolveUtil {
     }
 
     @NotNull
-    static public Collection<PhpClass> resolveInterfacesByFQN(@NotNull String name, @NotNull PhpIndex index) {
+    static private Collection<PhpClass> resolveInterfacesByFQN(@NotNull String name, @NotNull PhpIndex index) {
         try {
             return index.getInterfacesByFQN(name);
         } catch (final Throwable error) {

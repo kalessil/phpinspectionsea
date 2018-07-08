@@ -111,8 +111,8 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                         final boolean isStrict   = arguments.length == 3 && PhpLanguageUtil.isTrue(arguments[2]);
                         final String  comparison = (checkExists ? "==" : "!=") + (isStrict ? "=" : "");
                         final String replacement = ComparisonStyle.isRegular()
-                                                   ? String.format("%s %s %s", lastItem.getText(), comparison, arguments[0].getText())
-                                                   : String.format("%s %s %s", arguments[0].getText(), comparison, lastItem.getText());
+                                                   ? String.format("%s %s %s", arguments[0].getText(), comparison, lastItem.getText())
+                                                   : String.format("%s %s %s", lastItem.getText(), comparison, arguments[0].getText());
                         final String message = String.format(patternComparison, replacement);
                         holder.registerProblem(target, message, new UseComparisonFix(replacement));
                     }

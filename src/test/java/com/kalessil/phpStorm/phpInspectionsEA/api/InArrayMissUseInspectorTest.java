@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayMissUseInspector;
 
-final public class InArrayMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
+public final class InArrayMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         final InArrayMissUseInspector inspector = new InArrayMissUseInspector();
         myFixture.enableInspections(inspector);

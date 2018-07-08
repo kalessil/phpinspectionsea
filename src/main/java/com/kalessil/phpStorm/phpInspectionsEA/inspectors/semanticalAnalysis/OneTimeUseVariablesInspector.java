@@ -178,15 +178,17 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
                 final Function scope = ExpressionSemanticUtil.getScope(expression);
                 if (scope != null) {
-                    final PsiElement value  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
-                    final Variable variable = value == null ? null : this.getVariable(value);
                     final PsiElement parent = expression.getParent();
-                    if (variable != null && OpenapiTypesUtil.isStatementImpl(parent)) {
-                        final PsiElement first = expression.getFirstChild();
-                        final boolean isTarget = OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
-                                                 OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
-                        if (isTarget) {
-                            this.checkOneTimeUse((PhpPsiElement) parent, variable);
+                    if (parent != null && OpenapiTypesUtil.isStatementImpl(parent)) {
+                        final PsiElement value  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
+                        final Variable variable = value == null ? null : this.getVariable(value);
+                        if (variable != null) {
+                            final PsiElement first = expression.getFirstChild();
+                            final boolean isTarget = OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
+                                                     OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
+                            if (isTarget) {
+                                this.checkOneTimeUse((PhpPsiElement) parent, variable);
+                            }
                         }
                     }
                 }

@@ -59,22 +59,17 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         final PsiElement base = reference.getFirstChild();
                         if (base != null && !(base instanceof FunctionReference)) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                            if (resolved instanceof Method) {
-                                final Method method = (Method) resolved;
-                                if (method.isStatic() && !method.isAbstract()) {
-                                    final PhpClass clazz = method.getContainingClass();
-                                    if (clazz != null && !clazz.isInterface() && !clazz.isAbstract()) {
-                                        if (base.getText().equals("$this")) {
-                                            /* $this->static() */
-                                            this.handleLateStaticBinding(base, operator, method);
-                                        } else {
-                                            /* <expression>->static() */
-                                            holder.registerProblem(
-                                                    reference,
-                                                    String.format(messageExpressionUsed, method.getName())
-                                            );
-                                        }
-                                    }
+                            final Method method       = resolved instanceof Method ? (Method) resolved : null;
+                            if (method != null && method.isStatic()) {
+                                if (base.getText().equals("$this")) {
+                                    /* $this->static() */
+                                    this.handleLateStaticBinding(base, operator, method);
+                                } else {
+                                    /* <expression>->static() */
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(messageExpressionUsed, methodName)
+                                    );
                                 }
                             }
                         }

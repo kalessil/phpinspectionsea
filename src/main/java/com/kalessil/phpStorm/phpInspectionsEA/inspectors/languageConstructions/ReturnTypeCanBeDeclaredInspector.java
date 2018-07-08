@@ -46,8 +46,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     // Inspection options.
     public boolean LOOKUP_PHPDOC_RETURN_DECLARATIONS = true;
 
-    private static final Set<String> returnTypes = new HashSet<>();
-    private static final Set<String> voidTypes   = new HashSet<>();
+    private static final Set<String> returnTypes  = new HashSet<>();
+    private static final Set<String> voidTypes    = new HashSet<>();
+    private static final Set<String> magicMethods = new HashSet<>();
     static {
         /* +class/interface reference for PHP7.0+; +void for PHP7.1+ */
         returnTypes.add("self");
@@ -60,6 +61,22 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
         voidTypes.add("null");
         voidTypes.add("void");
+
+        magicMethods.add("__construct");
+        magicMethods.add("__destruct");
+        magicMethods.add("__call");
+        magicMethods.add("__callStatic");
+        magicMethods.add("__get");
+        magicMethods.add("__set");
+        magicMethods.add("__isset");
+        magicMethods.add("__unset");
+        magicMethods.add("__sleep");
+        magicMethods.add("__wakeup");
+        magicMethods.add("__toString");
+        magicMethods.add("__invoke");
+        magicMethods.add("__set_state");
+        magicMethods.add("__clone");
+        magicMethods.add("__debugInfo");
     }
 
     @NotNull
@@ -76,15 +93,17 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && OpenapiElementsUtil.getReturnType(method) == null) {
-                    final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
-                    final boolean isMagicFunction   = method.getName().startsWith("__");
-                    if (!isMagicFunction && methodNameNode != null) {
-                        final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
-                        if (method.isAbstract()) {
-                            handleAbstractMethod(method, methodNameNode, supportNullableTypes);
-                        } else {
-                            handleMethod(method, methodNameNode, supportNullableTypes);
+                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && !magicMethods.contains(method.getName())) {
+                    final boolean isTarget = OpenapiElementsUtil.getReturnType(method) == null;
+                    if (isTarget) {
+                        final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
+                        if (methodNameNode != null) {
+                            final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
+                            if (method.isAbstract()) {
+                                handleAbstractMethod(method, methodNameNode, supportNullableTypes);
+                            } else {
+                                handleMethod(method, methodNameNode, supportNullableTypes);
+                            }
                         }
                     }
                 }

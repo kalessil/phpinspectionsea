@@ -176,15 +176,15 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
-                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
-                if (value != null) {
-                    final Variable variable = this.getVariable(value);
+                final Function scope = ExpressionSemanticUtil.getScope(expression);
+                if (scope != null) {
+                    final PsiElement value  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
+                    final Variable variable = value == null ? null : this.getVariable(value);
                     final PsiElement parent = expression.getParent();
                     if (variable != null && OpenapiTypesUtil.isStatementImpl(parent)) {
                         final PsiElement first = expression.getFirstChild();
-                        final boolean isTarget =
-                                OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
-                                OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
+                        final boolean isTarget = OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
+                                                 OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
                         if (isTarget) {
                             this.checkOneTimeUse((PhpPsiElement) parent, variable);
                         }
@@ -228,9 +228,10 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
-                final PsiElement source = expression.getArray();
-                if (source != null) {
-                    final Variable variable = this.getVariable(source);
+                final Function scope = ExpressionSemanticUtil.getScope(expression);
+                if (scope != null) {
+                    final PsiElement source = expression.getArray();
+                    final Variable variable = source == null ? null : this.getVariable(source);
                     if (variable != null) {
                         this.checkOneTimeUse(expression, variable);
                     }

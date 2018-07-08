@@ -27,14 +27,18 @@ public class EAApplicationConfiguration implements Configurable {
         COMPARISON_STYLE_REGULAR = comparisonStyle == ComparisonStyle.REGULAR;
         COMPARISON_STYLE_YODA = comparisonStyle == ComparisonStyle.YODA;
 
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected);
-            component.addCheckbox("Automatically collect plugin version info", SEND_VERSION_INFORMATION, (isSelected) -> SEND_VERSION_INFORMATION = isSelected);
+        return OptionsComponent.create(component -> {
+            component.addPanel("Anonymous data collect", panelComponent -> {
+                panelComponent.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected);
+                panelComponent.addCheckbox("Automatically collect plugin version info", SEND_VERSION_INFORMATION, (isSelected) -> SEND_VERSION_INFORMATION = isSelected);
+            });
 
             /* comparison style */
-            component.delegateRadioCreation(radioComponent -> {
-                radioComponent.addOption("Regular comparison style", COMPARISON_STYLE_REGULAR, aBoolean -> COMPARISON_STYLE_REGULAR = aBoolean);
-                radioComponent.addOption("Yoda comparison style", COMPARISON_STYLE_YODA, aBoolean -> COMPARISON_STYLE_YODA = aBoolean);
+            component.addPanel("Comparison code style", panelComponent -> {
+                panelComponent.delegateRadioCreation(radioComponent -> {
+                    radioComponent.addOption("Regular comparison style", COMPARISON_STYLE_REGULAR, aBoolean -> COMPARISON_STYLE_REGULAR = aBoolean);
+                    radioComponent.addOption("Yoda comparison style", COMPARISON_STYLE_YODA, aBoolean -> COMPARISON_STYLE_YODA = aBoolean);
+                });
             });
         });
     }

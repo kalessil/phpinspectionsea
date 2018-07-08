@@ -4,6 +4,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.options.ex.Settings;
 import com.intellij.ui.HyperlinkLabel;
+import com.intellij.ui.SeparatorFactory;
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +46,13 @@ public final class OptionsComponent {
     }
 
     private OptionsComponent() {
-        optionsPanel = new JPanel(new MigLayout());
+        optionsPanel = new JPanel(new MigLayout("fillx"));
+    }
+
+    private OptionsComponent(@NotNull final String label) {
+        optionsPanel = new JPanel(new MigLayout("fillx"));
+        //noinspection AbsoluteAlignmentInUserInterface
+        optionsPanel.add(SeparatorFactory.createSeparator(label, null), BorderLayout.NORTH);
     }
 
     public void addCheckbox(
@@ -117,6 +125,16 @@ public final class OptionsComponent {
         });
     }
 
+    public void addPanel(
+        @NotNull final String label,
+        @NotNull final Consumer<OptionsComponent> consumer
+    ) {
+        OptionsComponent optionsComponent = new OptionsComponent(label);
+        consumer.accept(optionsComponent);
+
+        optionsPanel.add(optionsComponent.optionsPanel, "wrap, growx");
+    }
+
     public void delegateRadioCreation(@NotNull final Consumer<RadioComponent> delegate) {
         final RadioComponent radioComponent = new RadioComponent();
         delegate.accept(radioComponent);
@@ -135,9 +153,6 @@ public final class OptionsComponent {
 
         @Nullable
         private RadioOption selectedOption;
-
-        @Nullable
-        private Runnable onChange;
 
         public void addOption(
             @NotNull final String label,
@@ -175,19 +190,11 @@ public final class OptionsComponent {
 
                     updateConsumer.accept(isSelected);
                     selectedOption = isSelected ? this : null;
-
-                    if (onChange != null) {
-                        onChange.run();
-                    }
                 });
 
                 optionsPanel.add(radioButton, "wrap");
                 buttonGroup.add(radioButton);
             }
-        }
-
-        public void onChange(@NotNull final Runnable runnable) {
-            onChange = runnable;
         }
     }
 }

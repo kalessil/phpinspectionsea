@@ -24,8 +24,8 @@ if (isset($array['0' . 1])) {
 function variablesScopeHolder(array $array)
 {
     try {
-        $x = null !== $array;
-        $y = null === $array;
+        $x = $array !== null;
+        $y = $array === null;
     } finally {
         $x = isset($array);
         $y = !isset($array);

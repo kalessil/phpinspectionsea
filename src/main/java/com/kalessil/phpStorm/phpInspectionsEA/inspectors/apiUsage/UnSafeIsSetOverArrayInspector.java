@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +32,9 @@ import java.util.*;
 
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = false;
+    public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS;
     public boolean SUGGEST_TO_USE_NULL_COMPARISON  = true;
     public boolean REPORT_CONCATENATION_IN_INDEXES = true;
-    public boolean PREFER_YODA_STYLE               = false;
-    public boolean PREFER_REGULAR_STYLE            = true;
 
     // static messages for triggered messages
     private static final String messageUseArrayKeyExists    = "'array_key_exists(...)' construction should be used for better data *structure* control.";
@@ -65,23 +64,23 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 }
 
                 /* gather context information */
-                PsiElement issetParent = issetExpression.getParent();
-                boolean issetInverted  = false;
+                PsiElement issetParent   = issetExpression.getParent();
+                boolean    issetInverted = false;
                 if (issetParent instanceof UnaryExpression) {
                     final PsiElement operator = ((UnaryExpression) issetParent).getOperation();
                     if (OpenapiTypesUtil.is(operator, PhpTokenTypes.opNOT)) {
                         issetInverted = true;
-                        issetParent   = issetParent.getParent();
+                        issetParent = issetParent.getParent();
                     }
                 }
                 boolean isResultStored = (issetParent instanceof AssignmentExpression || issetParent instanceof PhpReturn);
 
                 /* false-positives:  ternaries using isset-or-null semantics, there array_key_exist can introduce bugs */
                 final PsiElement conditionCandidate = issetInverted ? issetExpression.getParent() : issetExpression;
-                boolean isTernaryCondition = issetParent instanceof TernaryExpression && conditionCandidate == ((TernaryExpression) issetParent).getCondition();
+                boolean          isTernaryCondition = issetParent instanceof TernaryExpression && conditionCandidate == ((TernaryExpression) issetParent).getCondition();
                 if (isTernaryCondition) {
-                    final TernaryExpression ternary = (TernaryExpression) issetParent;
-                    final PsiElement nullCandidate  = issetInverted ? ternary.getTrueVariant() : ternary.getFalseVariant();
+                    final TernaryExpression ternary       = (TernaryExpression) issetParent;
+                    final PsiElement        nullCandidate = issetInverted ? ternary.getTrueVariant() : ternary.getFalseVariant();
                     if (PhpLanguageUtil.isNull(nullCandidate)) {
                         return;
                     }
@@ -90,7 +89,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
                 /* do analyze  */
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(arguments[0]);
-                if (null == argument) {
+                if (argument == null) {
                     return;
                 }
                 /* false positives: variables in template/global context - too unreliable */
@@ -102,8 +101,8 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                     if (argument instanceof FieldReference) {
                         /* if field is not resolved, it's probably dynamic and isset has a purpose */
                         final PsiReference referencedField = argument.getReference();
-                        final PsiElement resolvedField     = null == referencedField ? null : OpenapiResolveUtil.resolveReference(referencedField);
-                        if (null == resolvedField || !(ExpressionSemanticUtil.getBlockScope(resolvedField) instanceof PhpClass)) {
+                        final PsiElement   resolvedField   = referencedField == null ? null : OpenapiResolveUtil.resolveReference(referencedField);
+                        if (resolvedField == null || !(ExpressionSemanticUtil.getBlockScope(resolvedField) instanceof PhpClass)) {
                             return;
                         }
                     }
@@ -112,15 +111,15 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                         /* false-positives: finally, perhaps fallback to initialization in try */
                         if (PsiTreeUtil.getParentOfType(issetExpression, Finally.class) == null) {
                             final List<String> fragments = Arrays.asList(argument.getText(), issetInverted ? "===" : "!==", "null");
-                            if (PREFER_YODA_STYLE) {
+                            if (!ComparisonStyle.isRegular()) {
                                 Collections.reverse(fragments);
                             }
                             final String replacement = String.join(" ", fragments);
                             holder.registerProblem(
-                                    issetInverted ? issetExpression.getParent() : issetExpression,
-                                    String.format(patternUseNullComparison, replacement),
-                                    ProblemHighlightType.WEAK_WARNING,
-                                    new CompareToNullFix(replacement)
+                                issetInverted ? issetExpression.getParent() : issetExpression,
+                                String.format(patternUseNullComparison, replacement),
+                                ProblemHighlightType.WEAK_WARNING,
+                                new CompareToNullFix(replacement)
                             );
                         }
                     }
@@ -128,7 +127,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 }
 
                 /* TODO: has method/function reference as index */
-                if (REPORT_CONCATENATION_IN_INDEXES && !isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
+                if (REPORT_CONCATENATION_IN_INDEXES && !isResultStored && hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
                     holder.registerProblem(argument, messageConcatenationInIndex);
                     return;
                 }
@@ -144,21 +143,21 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 PsiElement expressionToInspect = expression;
                 while (expressionToInspect instanceof ArrayAccessExpression) {
                     final ArrayIndex index = ((ArrayAccessExpression) expressionToInspect).getIndex();
-                    if (null != index && index.getValue() instanceof BinaryExpression) {
+                    if (index != null && index.getValue() instanceof BinaryExpression) {
                         final PsiElement operation = ((BinaryExpression) index.getValue()).getOperation();
-                        if (null != operation && operation.getNode().getElementType() == PhpTokenTypes.opCONCAT) {
+                        if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.opCONCAT) {
                             return true;
                         }
                     }
 
-                    expressionToInspect =  expressionToInspect.getParent();
+                    expressionToInspect = expressionToInspect.getParent();
                 }
 
                 return false;
             }
 
             // TODO: partially duplicates semanticalAnalysis.OffsetOperationsInspector.isContainerSupportsArrayAccess()
-            private  boolean isArrayAccess(@NotNull ArrayAccessExpression expression) {
+            private boolean isArrayAccess(@NotNull ArrayAccessExpression expression) {
                 /* ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later */
                 final PsiElement container = expression.getValue();
                 if (!(container instanceof PhpTypedElement)) {
@@ -166,7 +165,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 }
 
                 final Set<String> containerTypes = new HashSet<>();
-                final PhpType resolved           = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
+                final PhpType     resolved       = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
                 if (resolved != null) {
                     resolved.filterUnknown().getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
                 }
@@ -207,11 +206,6 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
             component.addCheckbox("Suggest to use array_key_exists()", SUGGEST_TO_USE_ARRAY_KEY_EXISTS, (isSelected) -> SUGGEST_TO_USE_ARRAY_KEY_EXISTS = isSelected);
             component.addCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
             component.addCheckbox("Report concatenations in indexes", REPORT_CONCATENATION_IN_INDEXES, (isSelected) -> REPORT_CONCATENATION_IN_INDEXES = isSelected);
-
-            component.delegateRadioCreation((radioComponent) -> {
-                radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
-                radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
-            });
         });
     }
 

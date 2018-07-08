@@ -104,6 +104,9 @@ public final class OptionsComponent {
         @Nullable
         private RadioOption selectedOption;
 
+        @Nullable
+        private Runnable onChange;
+
         public void addOption(
             @NotNull final String label,
             final boolean defaultValue,
@@ -140,11 +143,19 @@ public final class OptionsComponent {
 
                     updateConsumer.accept(isSelected);
                     selectedOption = isSelected ? this : null;
+
+                    if (onChange != null) {
+                        onChange.run();
+                    }
                 });
 
                 optionsPanel.add(radioButton, "wrap");
                 buttonGroup.add(radioButton);
             }
+        }
+
+        public void onChange(@NotNull final Runnable runnable) {
+            onChange = runnable;
         }
     }
 }

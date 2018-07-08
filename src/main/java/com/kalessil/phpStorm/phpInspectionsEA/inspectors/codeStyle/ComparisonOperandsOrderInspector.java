@@ -10,9 +10,11 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,8 +34,8 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     private static final String messageUseRegular = "Regular conditions style should be used instead.";
 
     // Inspection options.
-    public boolean PREFER_YODA_STYLE    = false;
-    public boolean PREFER_REGULAR_STYLE = false;
+    public boolean PREFER_YODA_STYLE;
+    public boolean PREFER_REGULAR_STYLE;
 
     @NotNull
     public String getShortName() {
@@ -48,8 +50,9 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 /* verify general structure */
                 final IElementType operator = expression.getOperationType();
-                final PsiElement left       = expression.getLeftOperand();
-                final PsiElement right      = expression.getRightOperand();
+                final PsiElement   left     = expression.getLeftOperand();
+                final PsiElement   right    = expression.getRightOperand();
+
                 if (left != null && right != null && operator != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     final boolean isLeftConstant =
                         left instanceof StringLiteralExpression || left instanceof ConstantReference ||
@@ -57,11 +60,13 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                     final boolean isRightConstant =
                         right instanceof StringLiteralExpression || right instanceof ConstantReference ||
                         OpenapiTypesUtil.isNumber(right);
+
                     if (isLeftConstant != isRightConstant) {
-                        if (PREFER_YODA_STYLE && isRightConstant) {
+                        if (isRightConstant && !ComparisonStyle.isRegular()) {
                             problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
                         }
-                        if (PREFER_REGULAR_STYLE && isLeftConstant) {
+
+                        if (isLeftConstant && ComparisonStyle.isRegular()) {
                             problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
                         }
                     }
@@ -71,9 +76,15 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
+        final EASettings settings = EASettings.getInstance();
+
+        PREFER_REGULAR_STYLE = ComparisonStyle.isRegular();
+        PREFER_YODA_STYLE = !PREFER_REGULAR_STYLE;
+
         return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
             radioComponent.addOption("Prefer regular style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
             radioComponent.addOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
+            radioComponent.onChange(() -> settings.setComparisonStyle(PREFER_REGULAR_STYLE ? ComparisonStyle.REGULAR : ComparisonStyle.YODA));
         }));
     }
 
@@ -95,12 +106,15 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
+
             if (target instanceof BinaryExpression && !project.isDisposed()) {
                 final BinaryExpression expression = (BinaryExpression) target;
-                final PsiElement left             = expression.getLeftOperand();
-                final PsiElement right            = expression.getRightOperand();
+                final PsiElement       left       = expression.getLeftOperand();
+                final PsiElement       right      = expression.getRightOperand();
+
                 if (left != null && right != null) {
                     final PsiElement leftCopy = left.copy();
+
                     left.replace(right);
                     right.replace(leftCopy);
                 }

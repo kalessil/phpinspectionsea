@@ -119,7 +119,7 @@ public class EASettings implements PersistentStateComponent<Element> {
         sendVersionInformation = (value ? "true" : "false");
     }
 
-    public void setComparisonStyle(final ComparisonStyle comparisonStyleValue) {
+    void setComparisonStyle(final ComparisonStyle comparisonStyleValue) {
         comparisonStyle = comparisonStyleValue;
     }
 

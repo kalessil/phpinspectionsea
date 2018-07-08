@@ -10,7 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
+import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationConfiguration;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -32,10 +32,6 @@ import javax.swing.*;
 public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     private static final String messageUseYoda    = "Yoda conditions style should be used instead.";
     private static final String messageUseRegular = "Regular conditions style should be used instead.";
-
-    // Inspection options.
-    public boolean PREFER_YODA_STYLE;
-    public boolean PREFER_REGULAR_STYLE;
 
     @NotNull
     public String getShortName() {
@@ -76,16 +72,9 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        final EASettings settings = EASettings.getInstance();
-
-        PREFER_REGULAR_STYLE = ComparisonStyle.isRegular();
-        PREFER_YODA_STYLE = !PREFER_REGULAR_STYLE;
-
-        return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
-            radioComponent.addOption("Prefer regular style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
-            radioComponent.addOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
-            radioComponent.onChange(() -> settings.setComparisonStyle(PREFER_REGULAR_STYLE ? ComparisonStyle.REGULAR : ComparisonStyle.YODA));
-        }));
+        return OptionsComponent.create((component) -> {
+            component.addHyperlink("Setup Yoda or Regular style...", EAApplicationConfiguration.class);
+        });
     }
 
     private static final class TheLocalFix implements LocalQuickFix {

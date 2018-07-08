@@ -1,11 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.options;
 
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.options.ex.Settings;
+import com.intellij.ui.HyperlinkLabel;
 import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -83,6 +88,33 @@ public final class OptionsComponent {
                 super.fireContentsChanged();
             }
         }).getComponent(), "pushx, growx");
+    }
+
+    private void addHyperlink(
+        @NotNull final String label,
+        @NotNull final Consumer<HyperlinkEvent> consumer
+    ) {
+        final HyperlinkLabel createdHyperlink = new HyperlinkLabel(label);
+        createdHyperlink.addHyperlinkListener(consumer::accept);
+
+        optionsPanel.add(createdHyperlink);
+    }
+
+    public void addHyperlink(
+        @NotNull final String label,
+        @NotNull final Class configurableClass
+    ) {
+        addHyperlink(label, hyperlinkEvent -> {
+            DataManager.getInstance().getDataContextFromFocus().doWhenDone((com.intellij.util.Consumer<DataContext>) context -> {
+                if (context != null) {
+                    final Settings settings = Settings.KEY.getData(context);
+
+                    if (settings != null) {
+                        settings.select(settings.find(configurableClass));
+                    }
+                }
+            });
+        });
     }
 
     public void delegateRadioCreation(@NotNull final Consumer<RadioComponent> delegate) {

@@ -14,7 +14,6 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -59,22 +58,17 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         final PsiElement base = reference.getFirstChild();
                         if (base != null && !(base instanceof FunctionReference)) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                            if (resolved instanceof Method) {
-                                final Method method = (Method) resolved;
-                                if (method.isStatic() && !method.isAbstract()) {
-                                    final PhpClass clazz = method.getContainingClass();
-                                    if (clazz != null && !clazz.isInterface() && !clazz.isAbstract()) {
-                                        if (base.getText().equals("$this")) {
-                                            /* $this->static() */
-                                            this.handleLateStaticBinding(base, operator, method);
-                                        } else {
-                                            /* <expression>->static() */
-                                            holder.registerProblem(
-                                                    reference,
-                                                    String.format(messageExpressionUsed, method.getName())
-                                            );
-                                        }
-                                    }
+                            final Method method       = resolved instanceof Method ? (Method) resolved : null;
+                            if (method != null && method.isStatic()) {
+                                if (base.getText().equals("$this")) {
+                                    /* $this->static() */
+                                    this.handleLateStaticBinding(base, operator, method);
+                                } else {
+                                    /* <expression>->static() */
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(messageExpressionUsed, methodName)
+                                    );
                                 }
                             }
                         }

@@ -1,14 +1,16 @@
 <?php
 
-foreach ([] as $value) {}
+function cases_holder() {
+    foreach ([] as $value) {}
 
-foreach ([] as & $value) {}
+    foreach ([] as & $value) {}
 
-foreach ([] as $value) {}
+    foreach ([] as $value) {}
 
-/* @var $array string[] */
-$array = [];
-foreach ($array as $value) {}
+    /* @var $four string[] */
+    $four = [];
+    foreach ($four as $value) {}
 
-$array = require $file;
-foreach ($array as $value) {}
+    $five = require $file;
+    foreach ($five as $value) {}
+}

@@ -209,8 +209,10 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         final PhpDocComment phpDoc      = method.getDocComment();
                         final PhpDocReturnTag phpReturn = phpDoc == null ? null : phpDoc.getReturnTag();
                         final boolean hasSelfReference  = PsiTreeUtil.findChildrenOfType(phpReturn, PhpDocType.class).stream()
-                                .map(PsiElement::getText)
-                                .anyMatch(t -> t.equals("self") || t.equals("$this"));
+                                .anyMatch(t -> {
+                                    final String text = t.getText();
+                                    return text.equals("self") || text.equals("$this");
+                                });
                         if (hasSelfReference) {
                             result = "self";
                         }
@@ -219,6 +221,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     result = (result == null && type.equals("static")) ? type : result;
                     /* Strategy 2: scan imports */
                     if (result == null) {
+                        /* TODO: do not scan complete file */
                         for (final PhpUse useItem : PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class)) {
                             final PhpReference useReference = useItem.getTargetReference();
                             if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {

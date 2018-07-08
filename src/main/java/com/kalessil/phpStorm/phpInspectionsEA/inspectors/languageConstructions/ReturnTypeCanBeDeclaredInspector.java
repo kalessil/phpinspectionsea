@@ -132,8 +132,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 /* ignore DocBlock, resolve and normalize types instead (DocBlock is involved, but nevertheless) */
                 final Set<String> normalizedTypes = resolvedReturnType.filterUnknown().getTypes().stream().
                         map(Types::getType).collect(Collectors.toSet());
-                checkUnrecognizedGenerator(method, normalizedTypes);
-                checkReturnStatements(method, normalizedTypes);
+                this.checkUnrecognizedGenerator(method, normalizedTypes);
+                this.checkReturnStatements(method, normalizedTypes);
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */

@@ -74,8 +74,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         if (SUGGEST_TO_USE_COUNT_CHECK) {
                             final String comparsion = isInverted ? "!==" : "===";
                             final String replacement = ComparisonStyle.isRegular()
-                                                       ? String.format("0 %s count(%s)", comparsion, subject.getText())
-                                                       : String.format("count(%s) %s 0", subject.getText(), comparsion);
+                                                       ? String.format("count(%s) %s 0", subject.getText(), comparsion)
+                                                       : String.format("0 %s count(%s)", comparsion, subject.getText());
                             final PsiElement target = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new UseCountFix(replacement));
                         }
@@ -90,8 +90,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
                             final String comparsion = isInverted ? "!==" : "===";
                             final String replacement = ComparisonStyle.isRegular()
-                                                       ? String.format("null %s %s", comparsion, subject.getText())
-                                                       : String.format("%s %s null", subject.getText(), comparsion);
+                                                       ? String.format("%s %s null", subject.getText(), comparsion)
+                                                       : String.format("null %s %s", comparsion, subject.getText());
                             final PsiElement target = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new CompareToNullFix(replacement));
                         }

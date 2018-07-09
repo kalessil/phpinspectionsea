@@ -67,7 +67,7 @@ class Container {
     }
 
     public function method7(&$a) {
-        $a[<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$index</weak_warning> = '...'] = '...';
+        $a[<weak_warning descr="The variable seems to be not used.">$index</weak_warning> = '...'] = '...';
 
         $a[$lastIndex = count($a)] = '...';
         return $lastIndex;

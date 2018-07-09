@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
@@ -27,7 +28,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUt
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -220,14 +223,30 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     result = (result == null && type.equals("static")) ? type : result;
                     /* Strategy 2: scan imports */
                     if (result == null) {
-                        /* TODO: do not scan complete file */
-                        for (final PhpUse useItem : PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class)) {
-                            final PhpReference useReference = useItem.getTargetReference();
-                            if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
-                                final String useAlias = useItem.getAliasName();
-                                result                = useAlias == null ? useReference.getName() : useAlias;
-                                break;
+                        PsiElement groupCandidate = method.getContainingClass();
+                        groups:
+                        while (groupCandidate != null && !(groupCandidate instanceof PsiFile)) {
+                            if (groupCandidate instanceof GroupStatement) {
+                                final List<PhpUse> imports = new ArrayList<>();
+                                /* scan for imports in current group statement */
+                                for (final PsiElement child : groupCandidate.getChildren()) {
+                                    if (child instanceof PhpUseList) {
+                                        imports.addAll(PsiTreeUtil.findChildrenOfType(child, PhpUse.class));
+                                    }
+                                }
+                                /* iterate imports and search for targets */
+                                for (final PhpUse imported : imports) {
+                                    final PhpReference useReference = imported.getTargetReference();
+                                    if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
+                                        final String useAlias = imported.getAliasName();
+                                        result                = useAlias == null ? useReference.getName() : useAlias;
+                                        imports.clear();
+                                        break groups;
+                                    }
+                                }
+                                imports.clear();
                             }
+                            groupCandidate = groupCandidate.getParent();
                         }
                     }
                     /* Strategy 3: relative QN for classes in sub-namespace */

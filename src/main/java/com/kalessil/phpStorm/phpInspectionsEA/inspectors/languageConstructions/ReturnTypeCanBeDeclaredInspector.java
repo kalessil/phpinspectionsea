@@ -237,13 +237,13 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                                 /* iterate imports and search for targets */
                                 for (final PhpUse imported : imports) {
                                     final PhpReference useReference = imported.getTargetReference();
-                            if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
+                                    if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
                                         final String useAlias = imported.getAliasName();
-                                result                = useAlias == null ? useReference.getName() : useAlias;
+                                        result                = useAlias == null ? useReference.getName() : useAlias;
                                         imports.clear();
                                         break groups;
                                     }
-                            }
+                                }
                                 imports.clear();
                             }
                             groupCandidate = groupCandidate.getParent();

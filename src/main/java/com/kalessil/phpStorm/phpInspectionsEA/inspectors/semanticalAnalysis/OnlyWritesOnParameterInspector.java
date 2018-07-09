@@ -89,6 +89,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     final boolean isTargetContext =
                         parent instanceof ParenthesizedExpression ||
                         (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
+                        parent instanceof ArrayIndex ||
                         OpenapiTypesUtil.isAssignment(parent);
                     if (isTargetContext) {
                         final PsiElement scope = ExpressionSemanticUtil.getScope(assignmentExpression);

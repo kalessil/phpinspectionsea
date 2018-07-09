@@ -89,13 +89,13 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     final boolean isTargetContext =
                         parent instanceof ParenthesizedExpression ||
                         (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
+                        parent instanceof ArrayIndex ||
                         OpenapiTypesUtil.isAssignment(parent);
                     if (isTargetContext) {
                         final PsiElement scope = ExpressionSemanticUtil.getScope(assignmentExpression);
                         if (scope != null) {
                             final Function function   = (Function) scope;
-                            final boolean isParameter = Arrays.stream(function.getParameters()).anyMatch(parameter -> parameter.getName().equals(variableName));
-                            if (!isParameter) {
+                            if (Arrays.stream(function.getParameters()).noneMatch(parameter -> parameter.getName().equals(variableName))) {
                                 final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(function);
                                 final boolean isUseVariable = uses != null && uses.stream().anyMatch(candidate -> candidate.getName().equals(variableName));
                                 if (!isUseVariable) {

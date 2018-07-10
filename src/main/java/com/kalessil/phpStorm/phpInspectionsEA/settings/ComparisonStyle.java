@@ -1,6 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.settings;
 
-import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings;
 import org.jetbrains.annotations.NotNull;
 
 public enum ComparisonStyle {
@@ -18,10 +18,10 @@ public enum ComparisonStyle {
     }
 
     public static boolean isRegular() {
-        return EASettings.getInstance().getComparisonStyle() != YODA;
+        return EAUltimateSettings.getInstance().getComparisonStyle() != YODA;
     }
 
     public static void force(@NotNull ComparisonStyle style) {
-        EASettings.getInstance().setComparisonStyle(style);
+        EAUltimateSettings.getInstance().setComparisonStyle(style);
     }
 }

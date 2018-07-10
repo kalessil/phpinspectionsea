@@ -10,7 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationConfiguration;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationConfiguration;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -71,7 +71,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
-            component.addHyperlink("Setup Yoda or Regular style...", EAApplicationConfiguration.class)
+            component.addHyperlink("Setup Yoda or Regular style...", EAUltimateApplicationConfiguration.class)
         );
     }
 

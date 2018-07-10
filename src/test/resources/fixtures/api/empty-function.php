@@ -10,7 +10,7 @@
             <warning descr="You should probably use '$int === null' instead.">empty($int)</warning>,
             <warning descr="You should probably use '$float === null' instead.">empty($float)</warning>,
             <warning descr="You should probably use '$boolean === null' instead.">empty($boolean)</warning>,
-            <warning descr="You should probably use '$string === null' instead.">empty($boolean)</warning>,
+            <warning descr="You should probably use '$string === null' instead.">empty($string)</warning>,
         ];
     }
 

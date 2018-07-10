@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.settings;
 
 import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum ComparisonStyle {
@@ -9,25 +10,19 @@ public enum ComparisonStyle {
 
     private final String value;
 
-    @Nullable private static ComparisonStyle temporary = null;
-
-    ComparisonStyle(final String settingValue) {
-        value = settingValue;
+    ComparisonStyle(@NotNull String value) {
+        this.value = value;
     }
 
     public String getValue() {
-        return value;
+        return this.value;
     }
 
-    public static Boolean isRegular() {
-        if (temporary != null) {
-            return temporary == REGULAR;
-        }
-
+    public static boolean isRegular() {
         return EASettings.getInstance().getComparisonStyle() != YODA;
     }
 
-    public static void setTemporarily(@Nullable final ComparisonStyle comparisonStyle) {
-        temporary = comparisonStyle;
+    public static void force(@NotNull ComparisonStyle style) {
+        EASettings.getInstance().setComparisonStyle(style);
     }
 }

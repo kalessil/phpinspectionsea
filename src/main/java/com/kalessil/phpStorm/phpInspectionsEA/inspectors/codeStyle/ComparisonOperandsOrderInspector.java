@@ -46,8 +46,8 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 /* verify general structure */
                 final IElementType operator = expression.getOperationType();
-                final PsiElement   left     = expression.getLeftOperand();
-                final PsiElement   right    = expression.getRightOperand();
+                final PsiElement left       = expression.getLeftOperand();
+                final PsiElement right      = expression.getRightOperand();
 
                 if (left != null && right != null && operator != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     final boolean isLeftConstant =
@@ -58,11 +58,12 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                         OpenapiTypesUtil.isNumber(right);
 
                     if (isLeftConstant != isRightConstant) {
-                        if (isRightConstant && !ComparisonStyle.isRegular()) {
+                        final boolean isRegular = ComparisonStyle.isRegular();
+                        if (isRightConstant && !isRegular) {
                             problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
                         }
 
-                        if (isLeftConstant && ComparisonStyle.isRegular()) {
+                        if (isLeftConstant && isRegular) {
                             problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
                         }
                     }
@@ -95,15 +96,12 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-
             if (target instanceof BinaryExpression && !project.isDisposed()) {
                 final BinaryExpression expression = (BinaryExpression) target;
-                final PsiElement       left       = expression.getLeftOperand();
-                final PsiElement       right      = expression.getRightOperand();
-
+                final PsiElement left             = expression.getLeftOperand();
+                final PsiElement right            = expression.getRightOperand();
                 if (left != null && right != null) {
                     final PsiElement leftCopy = left.copy();
-
                     left.replace(right);
                     right.replace(leftCopy);
                 }

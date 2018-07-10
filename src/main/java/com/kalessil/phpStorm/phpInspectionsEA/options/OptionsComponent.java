@@ -112,26 +112,24 @@ public final class OptionsComponent {
         @NotNull final String label,
         @NotNull final Class configurableClass
     ) {
-        addHyperlink(label, hyperlinkEvent -> {
+        addHyperlink(label, hyperlinkEvent ->
             DataManager.getInstance().getDataContextFromFocus().doWhenDone((com.intellij.util.Consumer<DataContext>) context -> {
                 if (context != null) {
                     final Settings settings = Settings.KEY.getData(context);
-
                     if (settings != null) {
                         settings.select(settings.find(configurableClass));
                     }
                 }
-            });
-        });
+            })
+        );
     }
 
     public void addPanel(
         @NotNull final String label,
         @NotNull final Consumer<OptionsComponent> consumer
     ) {
-        OptionsComponent optionsComponent = new OptionsComponent(label);
+        final OptionsComponent optionsComponent = new OptionsComponent(label);
         consumer.accept(optionsComponent);
-
         optionsPanel.add(optionsComponent.optionsPanel, "wrap, growx");
     }
 

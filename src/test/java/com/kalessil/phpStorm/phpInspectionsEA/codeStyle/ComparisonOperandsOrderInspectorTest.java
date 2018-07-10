@@ -7,23 +7,23 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 public final class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsYodaPatterns() {
         ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
-        ComparisonStyle.setTemporarily(ComparisonStyle.YODA);
+        ComparisonStyle.force(ComparisonStyle.YODA);
 
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-yoda.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
-        ComparisonStyle.setTemporarily(null);
+        ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
 
     public void testIfFindsRegularPatterns() {
         ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
-        ComparisonStyle.setTemporarily(ComparisonStyle.REGULAR);
+        ComparisonStyle.force(ComparisonStyle.REGULAR);
 
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-regular.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
-        ComparisonStyle.setTemporarily(null);
+        ComparisonStyle.force(ComparisonStyle.YODA);
     }
 }

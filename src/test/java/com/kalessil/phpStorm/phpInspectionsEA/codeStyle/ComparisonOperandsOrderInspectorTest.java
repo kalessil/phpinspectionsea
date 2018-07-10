@@ -6,24 +6,18 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 
 public final class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsYodaPatterns() {
-        ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
         ComparisonStyle.force(ComparisonStyle.YODA);
 
+        myFixture.enableInspections(new ComparisonOperandsOrderInspector());
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-yoda.php");
-        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
 
     public void testIfFindsRegularPatterns() {
-        ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
-        ComparisonStyle.force(ComparisonStyle.REGULAR);
-
+        myFixture.enableInspections(new ComparisonOperandsOrderInspector());
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-regular.php");
-        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
-
-        ComparisonStyle.force(ComparisonStyle.YODA);
     }
 }

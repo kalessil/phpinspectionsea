@@ -4,12 +4,13 @@
     echo count([]) === 0;
     echo count([]) !== 0;
 
-    function typedParams(?int $int, ?float $float, ?bool $boolean) {
+    function typedParams(?int $int, ?float $float, ?bool $boolean, ?string $string) {
         return [
             /* pattern: can be compared to null */
             $int === null,
             $float === null,
-            $boolean === null
+            $boolean === null,
+            $string === null,
         ];
     }
 

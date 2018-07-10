@@ -32,7 +32,6 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
 
     private static final Set<String> functions      = new HashSet<>();
     private static final Set<String> outerFunctions = new HashSet<>();
-
     static {
         functions.add("substr");
         functions.add("mb_substr");
@@ -104,15 +103,15 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                             final boolean isMbFunction = functionName.equals("mb_substr");
                             final boolean hasEncoding  = isMbFunction && arguments.length == 4;
 
-                            final String call = String.format(
+                            final String call          = String.format(
                                     "%s(%s, %s%s)",
                                     (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"),
                                     arguments[0].getText(),
                                     secondOperand.getText(),
                                     hasEncoding ? (", " + arguments[3].getText()) : ""
                             );
-                            final boolean isRegular  = ComparisonStyle.isRegular();
-                            final String replacement = String.format(
+                            final boolean isRegular    = ComparisonStyle.isRegular();
+                            final String replacement   = String.format(
                                     "%s %s %s",
                                     isRegular ? call : index,
                                     operator.length() == 2 ? (operator + '=') : operator,

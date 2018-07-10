@@ -94,7 +94,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                             final String replacement = ComparisonStyle.isRegular()
                                                        ? String.format("%s %s null", subject.getText(), comparision)
                                                        : String.format("null %s %s", comparision, subject.getText());
-                            final PsiElement target = isInverted ? parent : emptyExpression;
+                            final PsiElement target  = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new CompareToNullFix(replacement));
                         }
 
@@ -109,6 +109,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 }
             }
 
+
             /** check if only array type possible */
             private boolean isArrayType(@NotNull Set<String> resolvedTypesSet) {
                 return resolvedTypesSet.size() == 1 && resolvedTypesSet.contains(Types.strArray);
@@ -120,10 +121,10 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     return false;
                 }
 
-                return resolvedTypesSet.contains(Types.strInteger) ||
-                       resolvedTypesSet.contains(Types.strFloat)   ||
-                       resolvedTypesSet.contains(Types.strBoolean) ||
-                       resolvedTypesSet.contains(Types.strResource);
+                return  resolvedTypesSet.contains(Types.strInteger) ||
+                        resolvedTypesSet.contains(Types.strFloat)   ||
+                        resolvedTypesSet.contains(Types.strBoolean) ||
+                        resolvedTypesSet.contains(Types.strResource);
             }
         };
     }

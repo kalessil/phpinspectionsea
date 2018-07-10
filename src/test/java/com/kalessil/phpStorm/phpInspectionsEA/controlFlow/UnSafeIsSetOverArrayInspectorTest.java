@@ -23,13 +23,11 @@ final public class UnSafeIsSetOverArrayInspectorTest extends PhpCodeInsightFixtu
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/controlFlow/isset-over-scalars-and-arrays.fixed.php");
     }
-
     public void testIfFindsClassPatterns() {
         myFixture.enableInspections(getInspector());
         myFixture.configureByFile("fixtures/controlFlow/isset-over-class.php");
         myFixture.testHighlighting(true, false, true);
     }
-
     public void testIfFindsPropertyPatterns() {
         myFixture.enableInspections(getInspector());
         myFixture.configureByFile("fixtures/controlFlow/isset-on-properties.php");

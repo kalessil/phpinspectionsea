@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.settings;
 
 import com.kalessil.phpStorm.phpInspectionsEA.EASettings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public enum ComparisonStyle {
     REGULAR("Regular"),

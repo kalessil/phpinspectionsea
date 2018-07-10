@@ -18,7 +18,6 @@ final public class IsNullFunctionUsageInspectorTest extends PhpCodeInsightFixtur
 
         ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
-
     public void testIfFindsAllPatternsAndWithInRegularStyle() {
         myFixture.enableInspections(new IsNullFunctionUsageInspector());
         myFixture.configureByFile("fixtures/api/is-null-function.regular.php");

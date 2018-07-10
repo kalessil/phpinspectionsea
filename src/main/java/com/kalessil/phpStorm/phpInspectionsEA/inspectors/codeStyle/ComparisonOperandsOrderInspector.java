@@ -48,7 +48,6 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                 final IElementType operator = expression.getOperationType();
                 final PsiElement left       = expression.getLeftOperand();
                 final PsiElement right      = expression.getRightOperand();
-
                 if (left != null && right != null && operator != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     final boolean isLeftConstant =
                         left instanceof StringLiteralExpression || left instanceof ConstantReference ||
@@ -56,13 +55,11 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                     final boolean isRightConstant =
                         right instanceof StringLiteralExpression || right instanceof ConstantReference ||
                         OpenapiTypesUtil.isNumber(right);
-
                     if (isLeftConstant != isRightConstant) {
                         final boolean isRegular = ComparisonStyle.isRegular();
                         if (isRightConstant && !isRegular) {
                             problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
                         }
-
                         if (isLeftConstant && isRegular) {
                             problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
                         }
@@ -73,9 +70,9 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addHyperlink("Setup Yoda or Regular style...", EAApplicationConfiguration.class);
-        });
+        return OptionsComponent.create((component) ->
+            component.addHyperlink("Setup Yoda or Regular style...", EAApplicationConfiguration.class)
+        );
     }
 
     private static final class TheLocalFix implements LocalQuickFix {

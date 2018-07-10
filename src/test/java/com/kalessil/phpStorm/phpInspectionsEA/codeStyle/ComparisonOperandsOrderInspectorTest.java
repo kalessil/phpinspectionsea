@@ -4,7 +4,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ComparisonOperandsOrderInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 
-public final class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsYodaPatterns() {
         ComparisonStyle.force(ComparisonStyle.YODA);
 
@@ -14,7 +14,6 @@ public final class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFi
 
         ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
-
     public void testIfFindsRegularPatterns() {
         myFixture.enableInspections(new ComparisonOperandsOrderInspector());
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-regular.php");

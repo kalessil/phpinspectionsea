@@ -12,7 +12,6 @@ import javax.swing.*;
 public class EAApplicationConfiguration implements Configurable {
     private boolean SEND_CRASH_REPORTS;
     private boolean SEND_VERSION_INFORMATION;
-
     private boolean COMPARISON_STYLE_REGULAR;
     private boolean COMPARISON_STYLE_YODA;
 
@@ -20,12 +19,12 @@ public class EAApplicationConfiguration implements Configurable {
     @Override
     public JComponent createComponent() {
         final EASettings settings = EASettings.getInstance();
-        SEND_CRASH_REPORTS = settings.getSendCrashReports();
-        SEND_VERSION_INFORMATION = settings.getSendVersionInformation();
+        SEND_CRASH_REPORTS        = settings.getSendCrashReports();
+        SEND_VERSION_INFORMATION  = settings.getSendVersionInformation();
 
         final ComparisonStyle comparisonStyle = settings.getComparisonStyle();
-        COMPARISON_STYLE_REGULAR = comparisonStyle == ComparisonStyle.REGULAR;
-        COMPARISON_STYLE_YODA = comparisonStyle == ComparisonStyle.YODA;
+        COMPARISON_STYLE_REGULAR              = comparisonStyle == ComparisonStyle.REGULAR;
+        COMPARISON_STYLE_YODA                 = comparisonStyle == ComparisonStyle.YODA;
 
         return OptionsComponent.create(component -> {
             component.addPanel("Anonymous data collect", panelComponent -> {
@@ -34,12 +33,12 @@ public class EAApplicationConfiguration implements Configurable {
             });
 
             /* comparison style */
-            component.addPanel("Comparison code style", panelComponent -> {
+            component.addPanel("Comparison code style", panelComponent ->
                 panelComponent.delegateRadioCreation(radioComponent -> {
-                    radioComponent.addOption("Regular comparison style", COMPARISON_STYLE_REGULAR, aBoolean -> COMPARISON_STYLE_REGULAR = aBoolean);
-                    radioComponent.addOption("Yoda comparison style", COMPARISON_STYLE_YODA, aBoolean -> COMPARISON_STYLE_YODA = aBoolean);
-                });
-            });
+                    radioComponent.addOption("Regular comparison style", COMPARISON_STYLE_REGULAR, (isSelected) -> COMPARISON_STYLE_REGULAR = isSelected);
+                    radioComponent.addOption("Yoda comparison style", COMPARISON_STYLE_YODA, (isSelected) -> COMPARISON_STYLE_YODA = isSelected);
+                }
+            ));
         });
     }
 
@@ -58,8 +57,6 @@ public class EAApplicationConfiguration implements Configurable {
         final EASettings settings = EASettings.getInstance();
         settings.setSendCrashReports(SEND_CRASH_REPORTS);
         settings.setSendVersionInformation(SEND_VERSION_INFORMATION);
-
-        /* comparison style */
         settings.setComparisonStyle(COMPARISON_STYLE_REGULAR ? ComparisonStyle.REGULAR : ComparisonStyle.YODA);
     }
 

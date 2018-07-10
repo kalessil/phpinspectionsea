@@ -74,7 +74,9 @@ public class EASettings implements PersistentStateComponent<Element> {
 
         /* comparison style */
         final String comparisonStyleValue = element.getAttributeValue("comparisonStyle");
-        this.comparisonStyle              = comparisonStyleValue.equals(ComparisonStyle.REGULAR.getValue()) ? ComparisonStyle.REGULAR : ComparisonStyle.YODA;
+        this.comparisonStyle              = comparisonStyleValue == null || comparisonStyleValue.equals(ComparisonStyle.REGULAR.getValue())
+                                                ? ComparisonStyle.REGULAR
+                                                : ComparisonStyle.YODA;
     }
 
     public void setVersion(@NotNull String version) {

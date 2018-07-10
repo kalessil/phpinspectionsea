@@ -56,9 +56,9 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         return;
                     }
 
-                    final PsiElement parent     = emptyExpression.getParent();
-                    final PsiElement operation  = parent instanceof UnaryExpression ? ((UnaryExpression) parent).getOperation() : null;
-                    final boolean    isInverted = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
+                    final PsiElement parent    = emptyExpression.getParent();
+                    final PsiElement operation = parent instanceof UnaryExpression ? ((UnaryExpression) parent).getOperation() : null;
+                    final boolean isInverted   = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
 
                     /* extract types */
                     final Set<String> resolvedTypes = new HashSet<>();
@@ -74,10 +74,10 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_COUNT_CHECK) {
-                            final String comparsion = isInverted ? "!==" : "===";
+                            final String comparision = isInverted ? "!==" : "===";
                             final String replacement = ComparisonStyle.isRegular()
-                                                       ? String.format("count(%s) %s 0", subject.getText(), comparsion)
-                                                       : String.format("0 %s count(%s)", comparsion, subject.getText());
+                                                       ? String.format("count(%s) %s 0", subject.getText(), comparision)
+                                                       : String.format("0 %s count(%s)", comparision, subject.getText());
                             final PsiElement target = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new UseCountFix(replacement));
                         }
@@ -90,10 +90,10 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
-                            final String comparsion = isInverted ? "!==" : "===";
+                            final String comparision = isInverted ? "!==" : "===";
                             final String replacement = ComparisonStyle.isRegular()
-                                                       ? String.format("%s %s null", subject.getText(), comparsion)
-                                                       : String.format("null %s %s", comparsion, subject.getText());
+                                                       ? String.format("%s %s null", subject.getText(), comparision)
+                                                       : String.format("null %s %s", comparision, subject.getText());
                             final PsiElement target = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new CompareToNullFix(replacement));
                         }
@@ -121,7 +121,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 }
 
                 return resolvedTypesSet.contains(Types.strInteger) ||
-                       resolvedTypesSet.contains(Types.strFloat) ||
+                       resolvedTypesSet.contains(Types.strFloat)   ||
                        resolvedTypesSet.contains(Types.strBoolean) ||
                        resolvedTypesSet.contains(Types.strResource);
             }

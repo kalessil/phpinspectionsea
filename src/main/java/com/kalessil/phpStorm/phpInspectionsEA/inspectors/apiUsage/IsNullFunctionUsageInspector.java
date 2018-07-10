@@ -42,7 +42,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (!"is_null".equals(functionName)) {
+                if (functionName == null || !functionName.equals("is_null")) {
                     return;
                 }
                 final PsiElement[] arguments = reference.getParameters();
@@ -53,24 +53,24 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 final PsiElement parent = reference.getParent();
 
                 /* check the context */
-                boolean    checksIsNull = true;
-                PsiElement target       = reference;
+                boolean checksIsNull = true;
+                PsiElement target    = reference;
                 if (parent instanceof UnaryExpression) {
                     if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT)) {
                         checksIsNull = false;
-                        target = parent;
+                        target       = parent;
                     }
                 } else if (parent instanceof BinaryExpression) {
                     /* extract isnulls' expression parts */
-                    final BinaryExpression expression    = (BinaryExpression) parent;
-                    final PsiElement       secondOperand = OpenapiElementsUtil.getSecondOperand(expression, reference);
+                    final BinaryExpression expression = (BinaryExpression) parent;
+                    final PsiElement secondOperand    = OpenapiElementsUtil.getSecondOperand(expression, reference);
                     if (PhpLanguageUtil.isBoolean(secondOperand)) {
                         final IElementType operation = expression.getOperationType();
                         if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
-                            target = parent;
+                            target       = parent;
                             checksIsNull = PhpLanguageUtil.isTrue(secondOperand);
                         } else if (operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                            target = parent;
+                            target       = parent;
                             checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
                         } else {
                             target = reference;
@@ -79,14 +79,15 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                 }
 
                 /* report the issue */
-                final String wrappedArgument = ComparisonStyle.isRegular() && arguments[0] instanceof AssignmentExpression
+                final boolean isRegular      = ComparisonStyle.isRegular();
+                final String wrappedArgument = isRegular && arguments[0] instanceof AssignmentExpression
                                                ? String.format("(%s)", arguments[0].getText())
                                                : arguments[0].getText();
-                final String checkIsNull = checksIsNull ? "===" : "!==";
-                final String replacement = ComparisonStyle.isRegular()
-                                           ? String.format("%s %s null", wrappedArgument, checkIsNull)
-                                           : String.format("null %s %s", checkIsNull, wrappedArgument);
-                final String message = String.format(messagePattern, replacement);
+                final String checkIsNull     = checksIsNull ? "===" : "!==";
+                final String replacement     = isRegular
+                                               ? String.format("%s %s null", wrappedArgument, checkIsNull)
+                                               : String.format("null %s %s", checkIsNull, wrappedArgument);
+                final String message         = String.format(messagePattern, replacement);
                 holder.registerProblem(target, message, new CompareToNullFix(replacement));
             }
         };

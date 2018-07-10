@@ -242,12 +242,24 @@ final public class ExpressionSemanticUtil {
                             if (tryExtracting) {
                                 StringBuilder buffer = new StringBuilder();
                                 for (final PsiElement fragment : fragments) {
-                                    final StringLiteralExpression extracted = resolveAsStringLiteral(fragment);
-                                    if (extracted == null || extracted.getFirstPsiChild() != null) {
+                                    StringLiteralExpression extracted = null;
+                                    if (OpenapiTypesUtil.isFunctionReference(expression)) {
+                                        final FunctionReference reference = (FunctionReference) expression;
+                                        final String functionName         = reference.getName();
+                                        if (functionName != null && functionName.equals("preg_quote")) {
+                                            final PsiElement[] arguments = reference.getParameters();
+                                            extracted = arguments.length > 0 ? resolveAsStringLiteral(arguments[0]) : null;
+                                        }
+                                    } else {
+                                        extracted = resolveAsStringLiteral(fragment);
+                                    }
+                                    /* decide if we should break the loop */
+                                    if (extracted != null && extracted.getFirstPsiChild() == null) {
+                                        buffer.append(extracted.getContents());
+                                    } else {
                                         buffer = null;
                                         break;
                                     }
-                                    buffer.append(extracted.getContents());
                                 }
                                 if (buffer != null) {
                                     result.add(buffer.toString());

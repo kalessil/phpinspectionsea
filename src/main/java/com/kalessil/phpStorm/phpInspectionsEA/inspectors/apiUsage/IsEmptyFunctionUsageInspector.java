@@ -78,7 +78,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                             final String replacement = ComparisonStyle.isRegular()
                                                        ? String.format("count(%s) %s 0", subject.getText(), comparision)
                                                        : String.format("0 %s count(%s)", comparision, subject.getText());
-                            final PsiElement target = isInverted ? parent : emptyExpression;
+                            final PsiElement target  = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new UseCountFix(replacement));
                         }
 
@@ -115,16 +115,17 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 return resolvedTypesSet.size() == 1 && resolvedTypesSet.contains(Types.strArray);
             }
 
-            /** check if nullable int, float, resource */
             private boolean isNullableCoreType(@NotNull Set<String> resolvedTypesSet) {
-                if (resolvedTypesSet.size() != 2 || !resolvedTypesSet.contains(Types.strNull)) {
-                    return false;
-                }
+                boolean result = false;
+                if (resolvedTypesSet.size() == 2 && resolvedTypesSet.contains(Types.strNull)) {
+                    result = resolvedTypesSet.contains(Types.strInteger) ||
+                             resolvedTypesSet.contains(Types.strFloat)   ||
+                             resolvedTypesSet.contains(Types.strString ) ||
+                             resolvedTypesSet.contains(Types.strBoolean) ||
+                             resolvedTypesSet.contains(Types.strResource);
 
-                return  resolvedTypesSet.contains(Types.strInteger) ||
-                        resolvedTypesSet.contains(Types.strFloat)   ||
-                        resolvedTypesSet.contains(Types.strBoolean) ||
-                        resolvedTypesSet.contains(Types.strResource);
+                }
+                return result;
             }
         };
     }

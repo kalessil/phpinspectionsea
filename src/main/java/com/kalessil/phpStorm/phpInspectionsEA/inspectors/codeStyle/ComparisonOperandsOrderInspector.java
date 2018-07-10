@@ -44,24 +44,25 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                /* verify general structure */
                 final IElementType operator = expression.getOperationType();
-                final PsiElement left       = expression.getLeftOperand();
-                final PsiElement right      = expression.getRightOperand();
-                if (left != null && right != null && operator != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
-                    final boolean isLeftConstant =
-                        left instanceof StringLiteralExpression || left instanceof ConstantReference ||
-                        OpenapiTypesUtil.isNumber(left);
-                    final boolean isRightConstant =
-                        right instanceof StringLiteralExpression || right instanceof ConstantReference ||
-                        OpenapiTypesUtil.isNumber(right);
-                    if (isLeftConstant != isRightConstant) {
-                        final boolean isRegular = ComparisonStyle.isRegular();
-                        if (isRightConstant && !isRegular) {
-                            problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
-                        }
-                        if (isLeftConstant && isRegular) {
-                            problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
+                if (operator != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                    final PsiElement left  = expression.getLeftOperand();
+                    final PsiElement right = expression.getRightOperand();
+                    if (left != null && right != null) {
+                        final boolean isLeftConstant  = left instanceof StringLiteralExpression ||
+                                                        left instanceof ConstantReference ||
+                                                        OpenapiTypesUtil.isNumber(left);
+                        final boolean isRightConstant = right instanceof StringLiteralExpression ||
+                                                        right instanceof ConstantReference ||
+                                                        OpenapiTypesUtil.isNumber(right);
+                        if (isLeftConstant != isRightConstant) {
+                            final boolean isRegular = ComparisonStyle.isRegular();
+                            if (isRightConstant && !isRegular) {
+                                problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
+                            }
+                            if (isLeftConstant && isRegular) {
+                                problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
+                            }
                         }
                     }
                 }

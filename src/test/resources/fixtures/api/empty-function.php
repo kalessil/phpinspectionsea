@@ -4,12 +4,13 @@
     echo <warning descr="You should probably use 'count([]) === 0' instead.">empty([])</warning>;
     echo <warning descr="You should probably use 'count([]) !== 0' instead.">!empty([])</warning>;
 
-    function typedParams(?int $int, ?float $float, ?bool $boolean) {
+    function typedParams(?int $int, ?float $float, ?bool $boolean, ?string $string) {
         return [
             /* pattern: can be compared to null */
             <warning descr="You should probably use '$int === null' instead.">empty($int)</warning>,
             <warning descr="You should probably use '$float === null' instead.">empty($float)</warning>,
-            <warning descr="You should probably use '$boolean === null' instead.">empty($boolean)</warning>
+            <warning descr="You should probably use '$boolean === null' instead.">empty($boolean)</warning>,
+            <warning descr="You should probably use '$string === null' instead.">empty($boolean)</warning>,
         ];
     }
 

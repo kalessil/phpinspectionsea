@@ -51,15 +51,15 @@ public class InArrayMissUseInspector extends BasePhpInspection {
 
                 /* pattern: array_key_exists equivalence */
                 if (OpenapiTypesUtil.isFunctionReference(arguments[1])) {
-                    final FunctionReference nestedCall         = (FunctionReference) arguments[1];
-                    final String            nestedFunctionName = nestedCall.getName();
+                    final FunctionReference nestedCall = (FunctionReference) arguments[1];
+                    final String nestedFunctionName    = nestedCall.getName();
                     if (nestedFunctionName != null && nestedFunctionName.equals("array_keys")) {
                         /* ensure the nested call is a complete expression */
                         final PsiElement[] nestedCallParams = nestedCall.getParameters();
                         if (nestedCallParams.length == 1) {
                             final String replacement = "array_key_exists(%k%, %a%)"
-                                .replace("%a%", nestedCallParams[0].getText())
-                                .replace("%k%", arguments[0].getText());
+                                    .replace("%a%", nestedCallParams[0].getText())
+                                    .replace("%k%", arguments[0].getText());
                             final String message = String.format(patternKeyExists, replacement);
                             holder.registerProblem(reference, message, new UseArrayKeyExistsFix(replacement));
                         }
@@ -67,8 +67,8 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                 }
                 /* pattern: comparison equivalence */
                 else if (arguments[1] instanceof ArrayCreationExpression) {
-                    int        itemsCount = 0;
-                    PsiElement lastItem   = null;
+                    int itemsCount      = 0;
+                    PsiElement lastItem = null;
                     for (final PsiElement oneItem : arguments[1].getChildren()) {
                         if (oneItem instanceof PhpPsiElement) {
                             ++itemsCount;
@@ -81,26 +81,26 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                         final PsiElement parent = reference.getParent();
 
                         /* find out what what intended to happen */
-                        boolean    checkExists = true;
-                        PsiElement target      = reference;
+                        boolean checkExists = true;
+                        PsiElement target   = reference;
                         if (parent instanceof UnaryExpression) {
                             final UnaryExpression unary = (UnaryExpression) parent;
                             if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
                                 checkExists = false;
-                                target = parent;
+                                target      = parent;
                             }
                         }
                         if (parent instanceof BinaryExpression) {
                             /* extract in_arrays' expression parts */
-                            final BinaryExpression expression    = (BinaryExpression) parent;
-                            final PsiElement       secondOperand = OpenapiElementsUtil.getSecondOperand(expression, reference);
+                            final BinaryExpression expression = (BinaryExpression) parent;
+                            final PsiElement secondOperand    = OpenapiElementsUtil.getSecondOperand(expression, reference);
                             if (PhpLanguageUtil.isBoolean(secondOperand)) {
                                 final IElementType operation = expression.getOperationType();
                                 if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
-                                    target = parent;
+                                    target      = parent;
                                     checkExists = PhpLanguageUtil.isTrue(secondOperand);
                                 } else if (PhpTokenTypes.opNOT_EQUAL == operation || PhpTokenTypes.opNOT_IDENTICAL == operation) {
-                                    target = parent;
+                                    target      = parent;
                                     checkExists = !PhpLanguageUtil.isTrue(secondOperand);
                                 } else {
                                     target = reference;

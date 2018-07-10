@@ -83,12 +83,12 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                 /* if the call wrapped with case manipulation, propose to use stripos */
                 boolean caseManipulated = false;
                 if (OpenapiTypesUtil.isFunctionReference(parentExpression)) {
-                    final FunctionReference parentCall      = (FunctionReference) parentExpression;
-                    final PsiElement[]      parentArguments = parentCall.getParameters();
-                    final String            parentName      = parentCall.getName();
+                    final FunctionReference parentCall = (FunctionReference) parentExpression;
+                    final PsiElement[] parentArguments = parentCall.getParameters();
+                    final String parentName            = parentCall.getName();
                     if (parentName != null && parentArguments.length == 1 && outerFunctions.contains(parentName)) {
-                        caseManipulated = true;
-                        highLevelCall = parentExpression;
+                        caseManipulated  = true;
+                        highLevelCall    = parentExpression;
                         parentExpression = parentExpression.getParent();
                     }
                 }
@@ -100,27 +100,28 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                         final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, highLevelCall);
                         final PsiElement operationNode = parent.getOperation();
                         if (secondOperand != null && operationNode != null) {
-                            final String  operator     = operationNode.getText();
+                            final String operator      = operationNode.getText();
                             final boolean isMbFunction = functionName.equals("mb_substr");
                             final boolean hasEncoding  = isMbFunction && arguments.length == 4;
 
                             final String call = String.format(
-                                "%s(%s, %s%s)",
-                                (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"),
-                                arguments[0].getText(),
-                                secondOperand.getText(),
-                                hasEncoding ? (", " + arguments[3].getText()) : ""
+                                    "%s(%s, %s%s)",
+                                    (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"),
+                                    arguments[0].getText(),
+                                    secondOperand.getText(),
+                                    hasEncoding ? (", " + arguments[3].getText()) : ""
                             );
+                            final boolean isRegular  = ComparisonStyle.isRegular();
                             final String replacement = String.format(
-                                "%s %s %s",
-                                ComparisonStyle.isRegular() ? call : index,
-                                operator.length() == 2 ? (operator + '=') : operator,
-                                ComparisonStyle.isRegular() ? index : call
+                                    "%s %s %s",
+                                    isRegular ? call : index,
+                                    operator.length() == 2 ? (operator + '=') : operator,
+                                    isRegular ? index : call
                             );
                             holder.registerProblem(
-                                parentExpression,
-                                String.format(messagePattern, replacement),
-                                new UseStringSearchFix(replacement)
+                                    parentExpression,
+                                    String.format(messagePattern, replacement),
+                                    new UseStringSearchFix(replacement)
                             );
                         }
                     }

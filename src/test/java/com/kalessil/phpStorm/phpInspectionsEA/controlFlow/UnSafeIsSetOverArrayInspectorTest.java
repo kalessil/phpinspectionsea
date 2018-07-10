@@ -4,13 +4,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector;
 import org.jetbrains.annotations.NotNull;
 
-public final class UnSafeIsSetOverArrayInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class UnSafeIsSetOverArrayInspectorTest extends PhpCodeInsightFixtureTestCase {
     @NotNull
     private static UnSafeIsSetOverArrayInspector getInspector() {
         final UnSafeIsSetOverArrayInspector inspector = new UnSafeIsSetOverArrayInspector();
-        inspector.SUGGEST_TO_USE_ARRAY_KEY_EXISTS = true;
-        inspector.SUGGEST_TO_USE_NULL_COMPARISON = true;
-        inspector.REPORT_CONCATENATION_IN_INDEXES = true;
+        inspector.SUGGEST_TO_USE_ARRAY_KEY_EXISTS     = true;
+        inspector.SUGGEST_TO_USE_NULL_COMPARISON      = true;
+        inspector.REPORT_CONCATENATION_IN_INDEXES     = true;
         return inspector;
     }
 

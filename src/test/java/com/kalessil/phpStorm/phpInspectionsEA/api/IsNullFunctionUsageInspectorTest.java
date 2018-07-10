@@ -4,12 +4,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 
-public final class IsNullFunctionUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class IsNullFunctionUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatternsAndWithInYodaStyle() {
-        final IsNullFunctionUsageInspector inspector = new IsNullFunctionUsageInspector();
         ComparisonStyle.force(ComparisonStyle.YODA);
 
-        myFixture.enableInspections(inspector);
+        myFixture.enableInspections(new IsNullFunctionUsageInspector());
         myFixture.configureByFile("fixtures/api/is-null-function.yoda.php");
         myFixture.testHighlighting(true, false, true);
 
@@ -21,8 +20,7 @@ public final class IsNullFunctionUsageInspectorTest extends PhpCodeInsightFixtur
     }
 
     public void testIfFindsAllPatternsAndWithInRegularStyle() {
-        final IsNullFunctionUsageInspector inspector = new IsNullFunctionUsageInspector();
-        myFixture.enableInspections(inspector);
+        myFixture.enableInspections(new IsNullFunctionUsageInspector());
         myFixture.configureByFile("fixtures/api/is-null-function.regular.php");
         myFixture.testHighlighting(true, false, true);
 

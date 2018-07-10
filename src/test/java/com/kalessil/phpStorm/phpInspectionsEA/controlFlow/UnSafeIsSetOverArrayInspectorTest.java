@@ -6,13 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 final public class UnSafeIsSetOverArrayInspectorTest extends PhpCodeInsightFixtureTestCase {
     @NotNull
-    private UnSafeIsSetOverArrayInspector getInspector() {
+    private static UnSafeIsSetOverArrayInspector getInspector() {
         final UnSafeIsSetOverArrayInspector inspector = new UnSafeIsSetOverArrayInspector();
         inspector.SUGGEST_TO_USE_ARRAY_KEY_EXISTS     = true;
         inspector.SUGGEST_TO_USE_NULL_COMPARISON      = true;
         inspector.REPORT_CONCATENATION_IN_INDEXES     = true;
-        inspector.PREFER_REGULAR_STYLE                = false;
-        inspector.PREFER_YODA_STYLE                   = true;
         return inspector;
     }
 

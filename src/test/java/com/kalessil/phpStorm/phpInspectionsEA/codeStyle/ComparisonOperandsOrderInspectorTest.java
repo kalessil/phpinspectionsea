@@ -2,22 +2,21 @@ package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ComparisonOperandsOrderInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 
 final public class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsYodaPatterns() {
-        ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
-        inspector.PREFER_YODA_STYLE                = true;
+        ComparisonStyle.force(ComparisonStyle.YODA);
 
+        myFixture.enableInspections(new ComparisonOperandsOrderInspector());
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-yoda.php");
-        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
+
+        ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
     public void testIfFindsRegularPatterns() {
-        ComparisonOperandsOrderInspector inspector = new ComparisonOperandsOrderInspector();
-        inspector.PREFER_REGULAR_STYLE             = true;
-
+        myFixture.enableInspections(new ComparisonOperandsOrderInspector());
         myFixture.configureByFile("fixtures/codeStyle/comparison-order-regular.php");
-        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
 }

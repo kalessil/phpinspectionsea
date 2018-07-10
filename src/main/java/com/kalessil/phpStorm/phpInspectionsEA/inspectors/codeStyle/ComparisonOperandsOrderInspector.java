@@ -10,9 +10,11 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.EAApplicationConfiguration;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,10 +32,6 @@ import javax.swing.*;
 public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     private static final String messageUseYoda    = "Yoda conditions style should be used instead.";
     private static final String messageUseRegular = "Regular conditions style should be used instead.";
-
-    // Inspection options.
-    public boolean PREFER_YODA_STYLE    = false;
-    public boolean PREFER_REGULAR_STYLE = false;
 
     @NotNull
     public String getShortName() {
@@ -58,10 +56,11 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                         right instanceof StringLiteralExpression || right instanceof ConstantReference ||
                         OpenapiTypesUtil.isNumber(right);
                     if (isLeftConstant != isRightConstant) {
-                        if (PREFER_YODA_STYLE && isRightConstant) {
+                        final boolean isRegular = ComparisonStyle.isRegular();
+                        if (isRightConstant && !isRegular) {
                             problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
                         }
-                        if (PREFER_REGULAR_STYLE && isLeftConstant) {
+                        if (isLeftConstant && isRegular) {
                             problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
                         }
                     }
@@ -71,10 +70,9 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
-            radioComponent.addOption("Prefer regular style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
-            radioComponent.addOption("Prefer yoda style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
-        }));
+        return OptionsComponent.create((component) ->
+            component.addHyperlink("Setup Yoda or Regular style...", EAApplicationConfiguration.class)
+        );
     }
 
     private static final class TheLocalFix implements LocalQuickFix {

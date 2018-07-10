@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,8 +33,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     public boolean REPORT_EMPTY_USAGE             = false;
     public boolean SUGGEST_TO_USE_COUNT_CHECK     = false;
     public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
-    public boolean PREFER_YODA_STYLE              = true;
-    public boolean PREFER_REGULAR_STYLE           = false;
 
     private static final String messageDoNotUse    = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
     private static final String patternAlternative = "You should probably use '%s' instead.";
@@ -75,10 +74,11 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_COUNT_CHECK) {
-                            final String replacement = (PREFER_YODA_STYLE ? "0 %o% count(%a%)" : "count(%a%) %o% 0")
-                                .replace("%a%", subject.getText())
-                                .replace("%o%", isInverted ? "!==": "===");
-                            final PsiElement target  = isInverted ? parent : emptyExpression;
+                            final String comparision = isInverted ? "!==" : "===";
+                            final String replacement = ComparisonStyle.isRegular()
+                                                       ? String.format("count(%s) %s 0", subject.getText(), comparision)
+                                                       : String.format("0 %s count(%s)", comparision, subject.getText());
+                            final PsiElement target = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new UseCountFix(replacement));
                         }
 
@@ -90,9 +90,10 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                         resolvedTypes.clear();
 
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
-                            final String replacement = (PREFER_YODA_STYLE ? "null %o% %a%" : "%a% %o% null")
-                                .replace("%a%", subject.getText())
-                                .replace("%o%", isInverted ? "!==" : "===");
+                            final String comparision = isInverted ? "!==" : "===";
+                            final String replacement = ComparisonStyle.isRegular()
+                                                       ? String.format("%s %s null", subject.getText(), comparision)
+                                                       : String.format("null %s %s", comparision, subject.getText());
                             final PsiElement target  = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new CompareToNullFix(replacement));
                         }
@@ -133,11 +134,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             component.addCheckbox("Report empty() usage", REPORT_EMPTY_USAGE, (isSelected) -> REPORT_EMPTY_USAGE = isSelected);
             component.addCheckbox("Suggest to use count()-comparison", SUGGEST_TO_USE_COUNT_CHECK, (isSelected) -> SUGGEST_TO_USE_COUNT_CHECK = isSelected);
             component.addCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
-
-            component.delegateRadioCreation((radioComponent) -> {
-                radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
-                radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
-            });
         });
     }
 

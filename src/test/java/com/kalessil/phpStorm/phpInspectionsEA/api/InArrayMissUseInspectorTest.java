@@ -5,10 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArray
 
 final public class InArrayMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        final InArrayMissUseInspector inspector = new InArrayMissUseInspector();
-        inspector.PREFER_YODA_STYLE             = true;
-        inspector.PREFER_REGULAR_STYLE          = false;
-        myFixture.enableInspections(inspector);
+        myFixture.enableInspections(new InArrayMissUseInspector());
         myFixture.configureByFile("fixtures/api/array/in-array-misuse.php");
         myFixture.testHighlighting(true, false, true);
 

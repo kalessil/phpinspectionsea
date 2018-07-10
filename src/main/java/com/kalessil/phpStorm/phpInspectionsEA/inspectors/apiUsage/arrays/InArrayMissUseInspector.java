@@ -9,13 +9,11 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -28,9 +26,6 @@ import javax.swing.*;
 
 public class InArrayMissUseInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean PREFER_YODA_STYLE    = true;
-    public boolean PREFER_REGULAR_STYLE = false;
-
     private static final String patternComparison = "'%s' should be used instead.";
     private static final String patternKeyExists  = "'%s' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.";
 
@@ -114,23 +109,16 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                         }
 
                         final boolean isStrict   = arguments.length == 3 && PhpLanguageUtil.isTrue(arguments[2]);
-                        final String replacement = (PREFER_YODA_STYLE ? "%l% %o% %r%" : "%r% %o% %l%")
-                                .replace("%r%", arguments[0].getText())
-                                .replace("%o%", (checkExists ? "==" : "!=") + (isStrict ? "=" : ""))
-                                .replace("%l%", lastItem.getText());
+                        final String  comparison = (checkExists ? "==" : "!=") + (isStrict ? "=" : "");
+                        final String replacement = ComparisonStyle.isRegular()
+                                                   ? String.format("%s %s %s", arguments[0].getText(), comparison, lastItem.getText())
+                                                   : String.format("%s %s %s", lastItem.getText(), comparison, arguments[0].getText());
                         final String message = String.format(patternComparison, replacement);
                         holder.registerProblem(target, message, new UseComparisonFix(replacement));
                     }
                 }
             }
         };
-    }
-
-    public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> component.delegateRadioCreation((radioComponent) -> {
-            radioComponent.addOption("Regular fix style", PREFER_REGULAR_STYLE, (isSelected) -> PREFER_REGULAR_STYLE = isSelected);
-            radioComponent.addOption("Yoda fix style", PREFER_YODA_STYLE, (isSelected) -> PREFER_YODA_STYLE = isSelected);
-        }));
     }
 
     private static final class UseArrayKeyExistsFix extends UseSuggestedReplacementFixer {

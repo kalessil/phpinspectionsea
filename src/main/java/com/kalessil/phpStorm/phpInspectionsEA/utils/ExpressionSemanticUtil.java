@@ -237,14 +237,15 @@ final public class ExpressionSemanticUtil {
                             final boolean tryExtracting      = fragments.size() >= 2 &&
                                                                fragments.stream().allMatch(fragment ->
                                                                         fragment instanceof StringLiteralExpression ||
-                                                                        fragment instanceof ClassConstantReference
+                                                                        fragment instanceof ClassConstantReference ||
+                                                                        fragment instanceof FunctionReference
                                                                );
                             if (tryExtracting) {
                                 StringBuilder buffer = new StringBuilder();
                                 for (final PsiElement fragment : fragments) {
                                     StringLiteralExpression extracted = null;
-                                    if (OpenapiTypesUtil.isFunctionReference(expression)) {
-                                        final FunctionReference reference = (FunctionReference) expression;
+                                    if (fragment instanceof FunctionReference) {
+                                        final FunctionReference reference = (FunctionReference) fragment;
                                         final String functionName         = reference.getName();
                                         if (functionName != null && functionName.equals("preg_quote")) {
                                             final PsiElement[] arguments = reference.getParameters();

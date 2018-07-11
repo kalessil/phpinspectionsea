@@ -32,3 +32,12 @@
         <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName(),
         $source->getUser()->getEmail()
     );
+
+    if (
+        $object->method()->one() &&
+        <warning descr="Same as in the previous call, consider introducing a local variable instead.">$object->method()</warning>->two()
+    ) {}
+    if (
+        $object->method()->one() ||
+        <warning descr="Same as in the previous call, consider introducing a local variable instead.">$object->method()</warning>->two()
+    ) {}

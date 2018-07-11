@@ -56,16 +56,22 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                             final List<MethodReference> references = new ArrayList<>();
                             conditions.forEach(condition -> {
                                 if (condition instanceof MethodReference) {
-                                    references.add((MethodReference) condition);
+                                    final MethodReference current = (MethodReference) condition;
+                                    final PsiElement base         = current.getFirstChild();
+                                    references.add((MethodReference) base);
                                 } else if (condition instanceof BinaryExpression) {
                                     final BinaryExpression binary = (BinaryExpression) condition;
                                     final PsiElement left         = binary.getLeftOperand();
                                     if (left instanceof MethodReference) {
-                                        references.add((MethodReference) left);
+                                        final MethodReference current = (MethodReference) left;
+                                        final PsiElement base         = current.getFirstChild();
+                                        references.add((MethodReference) base);
                                     }
                                     final PsiElement right        = binary.getRightOperand();
                                     if (right instanceof MethodReference) {
-                                        references.add((MethodReference) right);
+                                        final MethodReference current = (MethodReference) right;
+                                        final PsiElement base         = current.getFirstChild();
+                                        references.add((MethodReference) base);
                                     }
                                 }
                             });
@@ -167,7 +173,7 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                             if (first != second && !checked.contains(second)) {
                                 final boolean matches = OpenapiEquivalenceUtil.areEqual(first, second);
                                 if (matches) {
-                                    holder.registerProblem(first, messageSequential);
+                                    holder.registerProblem(second, messageSequential);
                                     break iterate;
                                 }
                             }

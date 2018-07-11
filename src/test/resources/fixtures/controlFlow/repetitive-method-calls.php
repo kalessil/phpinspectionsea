@@ -25,12 +25,12 @@
     }
 
     $details = [
-        'name'  => <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName(),
-        'email' => $source->getUser()->getEmail()
+        'name'  => $source->getUser()->getName(),
+        'email' => <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getEmail()
     ];
     $details = array(
-        <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName(),
-        $source->getUser()->getEmail()
+        $source->getUser()->getName(),
+        <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getEmail()
     );
 
     if (

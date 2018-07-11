@@ -45,6 +45,8 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
                 final IElementType operation = expression.getOperationType();
                 if (operation == PhpTokenTypes.opAND || operation == PhpTokenTypes.opOR) {
                     final PsiElement parent = expression.getParent();
@@ -67,9 +69,9 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                                     }
                                 }
                             });
+                            conditions.clear();
                             this.analyzeReferences(references);
                             references.clear();
-                            conditions.clear();
                         }
                     }
                 }

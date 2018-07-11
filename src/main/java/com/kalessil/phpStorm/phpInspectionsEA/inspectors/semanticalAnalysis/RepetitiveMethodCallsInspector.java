@@ -3,11 +3,14 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +44,38 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
+            public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                final IElementType operation = expression.getOperationType();
+                if (operation == PhpTokenTypes.opAND || operation == PhpTokenTypes.opOR) {
+                    final PsiElement parent = expression.getParent();
+                    if (!(parent instanceof BinaryExpression) || ((BinaryExpression) parent).getOperationType() != operation) {
+                        final List<PsiElement> conditions = ExpressionSemanticUtil.getConditions(expression, null);
+                        if (conditions != null && !conditions.isEmpty()) {
+                            final List<MethodReference> references = new ArrayList<>();
+                            conditions.forEach(condition -> {
+                                if (condition instanceof MethodReference) {
+                                    references.add((MethodReference) condition);
+                                } else if (condition instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) condition;
+                                    final PsiElement left         = binary.getLeftOperand();
+                                    if (left instanceof MethodReference) {
+                                        references.add((MethodReference) left);
+                                    }
+                                    final PsiElement right        = binary.getRightOperand();
+                                    if (right instanceof MethodReference) {
+                                        references.add((MethodReference) right);
+                                    }
+                                }
+                            });
+                            this.analyzeReferences(references);
+                            references.clear();
+                            conditions.clear();
+                        }
+                    }
+                }
+            }
+
+            @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
@@ -57,24 +92,7 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                         }
                     }
                 }
-                /* check repetitive calls */
-                if (references.size() > 1) {
-                    final List<MethodReference> checked = new ArrayList<>(references.size());
-                    iterate:
-                    for (final MethodReference first : references) {
-                        for (final MethodReference second : references) {
-                            if (first != second && !checked.contains(second)) {
-                                final boolean matches = OpenapiEquivalenceUtil.areEqual(first, second);
-                                if (matches) {
-                                    holder.registerProblem(first, messageSequential);
-                                    break iterate;
-                                }
-                            }
-                        }
-                        checked.add(first);
-                    }
-                    checked.clear();
-                }
+                this.analyzeReferences(references);
                 references.clear();
             }
 
@@ -136,6 +154,26 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                     ((ForeachStatement) loop).getVariables().forEach(variable -> variables.add(variable.getName()));
                 }
                 return variables;
+            }
+
+            private void analyzeReferences(@NotNull List<MethodReference> references) {
+                if (references.size() > 1) {
+                    final List<MethodReference> checked = new ArrayList<>(references.size());
+                    iterate:
+                    for (final MethodReference first : references) {
+                        for (final MethodReference second : references) {
+                            if (first != second && !checked.contains(second)) {
+                                final boolean matches = OpenapiEquivalenceUtil.areEqual(first, second);
+                                if (matches) {
+                                    holder.registerProblem(first, messageSequential);
+                                    break iterate;
+                                }
+                            }
+                        }
+                        checked.add(first);
+                    }
+                    checked.clear();
+                }
             }
         };
     }

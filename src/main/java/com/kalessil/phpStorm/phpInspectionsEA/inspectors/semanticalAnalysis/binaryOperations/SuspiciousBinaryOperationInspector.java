@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -33,7 +34,9 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                final Collection<BooleanSupplier> callbacks = new ArrayList<>(9);
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
+                final Collection<BooleanSupplier> callbacks = new ArrayList<>(11);
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
                 callbacks.add(() -> EqualsInAssignmentContextStrategy.apply(expression, holder));
                 callbacks.add(() -> GreaterOrEqualInHashElementStrategy.apply(expression, holder));

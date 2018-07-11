@@ -92,6 +92,10 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression        = descriptor.getPsiElement();
+            if (expression == null || project.isDisposed()) {
+                return;
+            }
+
             final StringLiteralExpression mode = ExpressionSemanticUtil.resolveAsStringLiteral(expression);
             if (null != mode) {
                 String modeFlags = mode.getContents();

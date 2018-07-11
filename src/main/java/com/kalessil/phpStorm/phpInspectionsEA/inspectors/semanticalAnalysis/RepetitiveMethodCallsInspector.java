@@ -56,22 +56,25 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                             final List<MethodReference> references = new ArrayList<>();
                             conditions.forEach(condition -> {
                                 if (condition instanceof MethodReference) {
-                                    final MethodReference current = (MethodReference) condition;
-                                    final PsiElement base         = current.getFirstChild();
-                                    references.add((MethodReference) base);
+                                    final PsiElement base = condition.getFirstChild();
+                                    if (base instanceof MethodReference) {
+                                        references.add((MethodReference) base);
+                                    }
                                 } else if (condition instanceof BinaryExpression) {
                                     final BinaryExpression binary = (BinaryExpression) condition;
                                     final PsiElement left         = binary.getLeftOperand();
                                     if (left instanceof MethodReference) {
-                                        final MethodReference current = (MethodReference) left;
-                                        final PsiElement base         = current.getFirstChild();
-                                        references.add((MethodReference) base);
+                                        final PsiElement base = left.getFirstChild();
+                                        if (base instanceof MethodReference) {
+                                            references.add((MethodReference) base);
+                                        }
                                     }
                                     final PsiElement right        = binary.getRightOperand();
                                     if (right instanceof MethodReference) {
-                                        final MethodReference current = (MethodReference) right;
-                                        final PsiElement base         = current.getFirstChild();
-                                        references.add((MethodReference) base);
+                                        final PsiElement base = right.getFirstChild();
+                                        if (base instanceof MethodReference) {
+                                            references.add((MethodReference) base);
+                                        }
                                     }
                                 }
                             });

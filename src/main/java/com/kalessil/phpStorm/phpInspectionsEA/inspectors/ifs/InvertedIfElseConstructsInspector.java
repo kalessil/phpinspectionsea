@@ -126,7 +126,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
             final PsiElement ifBody    = this.ifBody.getElement();
             final PsiElement elseBody  = this.elseBody.getElement();
             final PsiElement condition = this.condition.getElement();
-            if (ifBody != null && elseBody != null && condition != null) {
+            if (ifBody != null && elseBody != null && condition != null && !project.isDisposed()) {
                 final PsiElement donor = ExpressionSemanticUtil.getExpressionTroughParenthesis(condition);
                 if (donor != null) {
                     PsiElement socket = condition;

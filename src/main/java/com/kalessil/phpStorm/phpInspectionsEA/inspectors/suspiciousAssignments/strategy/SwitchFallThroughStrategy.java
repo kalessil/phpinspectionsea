@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -46,7 +45,7 @@ final public class SwitchFallThroughStrategy {
                         for (final PsiElement writtenVariable : written) {
                             if (OpenapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
-                                holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(variable, message);
 
                                 break;
                             }
@@ -74,7 +73,7 @@ final public class SwitchFallThroughStrategy {
                         for (final PsiElement writtenVariable : written) {
                             if (OpenapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
-                                holder.registerProblem(variable, message, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(variable, message);
 
                                 break;
                             }

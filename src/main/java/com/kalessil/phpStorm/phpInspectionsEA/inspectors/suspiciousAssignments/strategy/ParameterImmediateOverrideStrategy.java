@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -72,7 +71,7 @@ final public class ParameterImmediateOverrideStrategy {
 
                 /* okay, original value 100% lost */
                 if (1 == nameHits) {
-                    holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(expression, message);
                 }
             }
         }

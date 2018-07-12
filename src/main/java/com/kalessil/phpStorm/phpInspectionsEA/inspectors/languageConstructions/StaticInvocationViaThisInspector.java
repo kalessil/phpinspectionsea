@@ -86,7 +86,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 if (RESPECT_PHPUNIT_STANDARDS) {
                     final String fqn = method.getFQN();
                     if (fqn.startsWith("\\PHPUnit")) {
-                        final String normalized = fqn.indexOf('_') == -1 ? fqn : fqn.replaceAll("_", "\\");
+                        final String normalized = fqn.indexOf('_') == -1 ? fqn : fqn.replaceAll("_", "\\\\");
                         if (normalized.startsWith("\\PHPUnit\\Framework\\")) {
                             return;
                         }

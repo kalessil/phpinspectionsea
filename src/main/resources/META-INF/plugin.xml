@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>2.0.6</version>
+  <version>2.0.7</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -47,13 +47,14 @@ New features release<br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-">v3.0.5</a><br />
 - New settings (Other Settings -> Php Inspections (EA Ultimate))<br/>
 <br />
-- (+) Empty/isset results correctness: new patterns<br/>
-- Non-optimal regular expression: re-worked, added new patterns<br/>
 - One-time use variables: resolved false-positives (global context)<br/>
-- Repetitive method calls: new patterns<br/>
-- (+) Suspicious binary operations: new patterns<br/>
-- (+) 'array_flip(...)' can be used: implemented<br/>
 - 'array_keys(...)' misused: resolved a false-positive (array_slice)<br/>
+<br />
+- Empty/isset results correctness: new patterns<br/>
+- Non-optimal regular expression: re-worked, added new patterns<br/>
+- Repetitive method calls: new patterns<br/>
+- Suspicious binary operations: new patterns<br/>
+- 'array_flip(...)' can be used: implemented<br/>
 - 'array_merge(...)' misused: new cases<br/>
 - 'array_values(...)' misused: new patterns<br/>
 <br/>

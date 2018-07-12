@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -132,7 +131,7 @@ final public class SequentialAssignmentsStrategy {
                                     .anyMatch(candidate -> OpenapiEquivalenceUtil.areEqual(candidate, container));
                     if (!isUsed) {
                         final String message = String.format(patternConditional, container.getText());
-                        holder.registerProblem(container.getParent(), message, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(container.getParent(), message);
                     }
                 }
             }
@@ -165,7 +164,7 @@ final public class SequentialAssignmentsStrategy {
                 }
 
                 final String message = String.format(patternGeneral, container.getText());
-                holder.registerProblem(container, message, ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(container, message);
             }
         }
     }

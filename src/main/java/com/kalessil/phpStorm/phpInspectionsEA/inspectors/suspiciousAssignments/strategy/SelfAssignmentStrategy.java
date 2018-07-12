@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -68,7 +67,7 @@ final public class SelfAssignmentStrategy {
             OpenapiTypesUtil.is(valueOperation, mapping.get(assignOperator)) &&
             OpenapiEquivalenceUtil.areEqual(variable, valueLeftPart)
         ) {
-            holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
+            holder.registerProblem(expression, message);
         }
     }
 }

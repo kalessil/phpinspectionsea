@@ -80,7 +80,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 if (RESPECT_PHPUNIT_STANDARDS) {
                     final String fqn = method.getFQN();
                     if (fqn.startsWith("\\PHPUnit")) {
-                        final String normalized = fqn.indexOf('_') == -1 ? fqn : fqn.replaceAll("_", "\\");
+                        final String normalized = fqn.indexOf('_') == -1 ? fqn : fqn.replaceAll("_", "\\\\");
                         if (normalized.startsWith("\\PHPUnit\\Framework\\")) {
                             return;
                         }
@@ -120,15 +120,13 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            if (!project.isDisposed()) {
-                final PsiElement operator = this.operator.getElement();
-                final PsiElement variable = this.variable.getElement();
-                if (operator != null && variable != null) {
-                    final PsiElement operation = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::");
-                    if (operation != null) {
-                        operator.replace(operation);
-                        variable.replace(PhpPsiElementFactory.createClassReference(project, "self"));
-                    }
+            final PsiElement operator = this.operator.getElement();
+            final PsiElement variable = this.variable.getElement();
+            if (operator != null && variable != null && !project.isDisposed()) {
+                final PsiElement operation = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "::");
+                if (operation != null) {
+                    operator.replace(operation);
+                    variable.replace(PhpPsiElementFactory.createClassReference(project, "self"));
                 }
             }
         }

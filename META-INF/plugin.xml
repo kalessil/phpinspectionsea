@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>3.0.5</version>
+  <version>3.0.5.1</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -59,6 +59,7 @@ Enhancements and bug-fixes. Supporters via <a href="https://www.patreon.com/kale
 <br/>
 - Performance and deep code analysis improvements<br/>
 - New settings (Other Settings -> Php Inspections (EA Extended))<br/>
+- Hot-fix for a runtime exception<br/>
 <br/>
 - Array and string offset validity: bug-fix types calculation (array|mixed + number)<br/>
 - Loop which does not loop: resolved false-positives (generator, iterable and co)<br/>

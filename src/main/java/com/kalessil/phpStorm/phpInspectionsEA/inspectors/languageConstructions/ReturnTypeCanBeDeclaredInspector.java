@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
@@ -27,7 +28,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUt
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,8 +49,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
     // Inspection options.
     public boolean LOOKUP_PHPDOC_RETURN_DECLARATIONS = true;
 
-    private static final Set<String> returnTypes = new HashSet<>();
-    private static final Set<String> voidTypes   = new HashSet<>();
+    private static final Set<String> returnTypes  = new HashSet<>();
+    private static final Set<String> voidTypes    = new HashSet<>();
+    private static final Set<String> magicMethods = new HashSet<>();
     static {
         /* +class/interface reference for PHP7.0+; +void for PHP7.1+ */
         returnTypes.add("self");
@@ -60,6 +64,22 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
         voidTypes.add("null");
         voidTypes.add("void");
+
+        magicMethods.add("__construct");
+        magicMethods.add("__destruct");
+        magicMethods.add("__call");
+        magicMethods.add("__callStatic");
+        magicMethods.add("__get");
+        magicMethods.add("__set");
+        magicMethods.add("__isset");
+        magicMethods.add("__unset");
+        magicMethods.add("__sleep");
+        magicMethods.add("__wakeup");
+        magicMethods.add("__toString");
+        magicMethods.add("__invoke");
+        magicMethods.add("__set_state");
+        magicMethods.add("__clone");
+        magicMethods.add("__debugInfo");
     }
 
     @NotNull
@@ -76,15 +96,17 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && OpenapiElementsUtil.getReturnType(method) == null) {
-                    final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
-                    final boolean isMagicFunction   = method.getName().startsWith("__");
-                    if (!isMagicFunction && methodNameNode != null) {
-                        final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
-                        if (method.isAbstract()) {
-                            handleAbstractMethod(method, methodNameNode, supportNullableTypes);
-                        } else {
-                            handleMethod(method, methodNameNode, supportNullableTypes);
+                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && !magicMethods.contains(method.getName())) {
+                    final boolean isTarget = OpenapiElementsUtil.getReturnType(method) == null;
+                    if (isTarget) {
+                        final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
+                        if (methodNameNode != null) {
+                            final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
+                            if (method.isAbstract()) {
+                                handleAbstractMethod(method, methodNameNode, supportNullableTypes);
+                            } else {
+                                handleMethod(method, methodNameNode, supportNullableTypes);
+                            }
                         }
                     }
                 }
@@ -113,8 +135,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 /* ignore DocBlock, resolve and normalize types instead (DocBlock is involved, but nevertheless) */
                 final Set<String> normalizedTypes = resolvedReturnType.filterUnknown().getTypes().stream().
                         map(Types::getType).collect(Collectors.toSet());
-                checkUnrecognizedGenerator(method, normalizedTypes);
-                checkReturnStatements(method, normalizedTypes);
+                this.checkUnrecognizedGenerator(method, normalizedTypes);
+                this.checkReturnStatements(method, normalizedTypes);
 
                 final int typesCount = normalizedTypes.size();
                 /* case 1: offer using void */
@@ -171,12 +193,11 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 final PhpClass clazz = method.getContainingClass();
                 if (clazz != null && !clazz.isFinal() && !method.isFinal() && !method.getAccess().isPrivate()) {
                     final String methodName = method.getName();
-                    final PhpIndex index    = PhpIndex.getInstance(method.getProject());
                     result =
-                        OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).stream()
-                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null) ||
                         InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
-                                .anyMatch(c -> c != clazz && c.findOwnMethodByName(methodName) != null);
+                                .anyMatch(c -> c != clazz && c.findOwnMethodByName(methodName) != null) ||
+                        OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), PhpIndex.getInstance(method.getProject())).stream()
+                                .anyMatch(c -> c.findOwnMethodByName(methodName) != null);
                 }
                 return result;
             }
@@ -190,8 +211,10 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         final PhpDocComment phpDoc      = method.getDocComment();
                         final PhpDocReturnTag phpReturn = phpDoc == null ? null : phpDoc.getReturnTag();
                         final boolean hasSelfReference  = PsiTreeUtil.findChildrenOfType(phpReturn, PhpDocType.class).stream()
-                                .map(PsiElement::getText)
-                                .anyMatch(t -> t.equals("self") || t.equals("$this"));
+                                .anyMatch(t -> {
+                                    final String text = t.getText();
+                                    return text.equals("self") || text.equals("$this");
+                                });
                         if (hasSelfReference) {
                             result = "self";
                         }
@@ -200,13 +223,30 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     result = (result == null && type.equals("static")) ? type : result;
                     /* Strategy 2: scan imports */
                     if (result == null) {
-                        for (final PhpUse useItem : PsiTreeUtil.findChildrenOfType(method.getContainingFile(), PhpUse.class)) {
-                            final PhpReference useReference = useItem.getTargetReference();
-                            if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
-                                final String useAlias = useItem.getAliasName();
-                                result                = useAlias == null ? useReference.getName() : useAlias;
-                                break;
+                        PsiElement groupCandidate = method.getContainingClass();
+                        groups:
+                        while (groupCandidate != null && !(groupCandidate instanceof PsiFile)) {
+                            if (groupCandidate instanceof GroupStatement) {
+                                final List<PhpUse> imports = new ArrayList<>();
+                                /* scan for imports in current group statement */
+                                for (final PsiElement child : groupCandidate.getChildren()) {
+                                    if (child instanceof PhpUseList) {
+                                        imports.addAll(PsiTreeUtil.findChildrenOfType(child, PhpUse.class));
+                                    }
+                                }
+                                /* iterate imports and search for targets */
+                                for (final PhpUse imported : imports) {
+                                    final PhpReference useReference = imported.getTargetReference();
+                                    if (useReference instanceof ClassReference && type.equals(useReference.getFQN())) {
+                                        final String useAlias = imported.getAliasName();
+                                        result                = useAlias == null ? useReference.getName() : useAlias;
+                                        imports.clear();
+                                        break groups;
+                                    }
+                                }
+                                imports.clear();
                             }
+                            groupCandidate = groupCandidate.getParent();
                         }
                     }
                     /* Strategy 3: relative QN for classes in sub-namespace */
@@ -222,14 +262,16 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             }
 
             private void checkUnrecognizedGenerator(@NotNull Method method, @NotNull Set<String> types) {
-                final PhpYield yield = PsiTreeUtil.findChildOfType(method, PhpYield.class);
-                if (yield != null && ExpressionSemanticUtil.getScope(yield) == method) {
-                    types.add("\\Generator");
+                if (!types.contains("\\Generator")) {
+                    final PhpYield yield = PsiTreeUtil.findChildOfType(method, PhpYield.class);
+                    if (yield != null && ExpressionSemanticUtil.getScope(yield) == method) {
+                        types.add("\\Generator");
+                    }
                 }
             }
 
             private void checkReturnStatements(@NotNull Method method, @NotNull Set<String> types) {
-                if (!method.isAbstract() && !types.isEmpty()) {
+                if (!types.isEmpty() && !method.isAbstract()) {
                     /* non-implicit null return: omitted last return statement */
                     if (!types.contains(Types.strNull) && !types.contains(Types.strVoid)) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
@@ -240,11 +282,14 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     }
                     /* buggy parameter type resolving: no type, but null as default value */
                     if (types.size() == 1 && types.contains(Types.strNull)) {
-                        final PhpReturn expression = PsiTreeUtil.findChildOfType(method, PhpReturn.class);
-                        if (expression != null ) {
-                            final PsiElement value = ExpressionSemanticUtil.getReturnValue(expression);
-                            if (value != null && !PhpLanguageUtil.isNull(value)) {
-                                types.remove(Types.strNull);
+                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                        if (body != null) {
+                            final PhpReturn expression = PsiTreeUtil.findChildOfType(body, PhpReturn.class);
+                            if (expression != null) {
+                                final PsiElement value = ExpressionSemanticUtil.getReturnValue(expression);
+                                if (value != null && !PhpLanguageUtil.isNull(value)) {
+                                    types.remove(Types.strNull);
+                                }
                             }
                         }
                     }

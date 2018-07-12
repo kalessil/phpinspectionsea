@@ -2,25 +2,24 @@ package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 
 final public class IsNullFunctionUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatternsAndWithInYodaStyle() {
-        final IsNullFunctionUsageInspector inspector = new IsNullFunctionUsageInspector();
-        inspector.PREFER_YODA_STYLE                  = true;
-        inspector.PREFER_REGULAR_STYLE               = false;
-        myFixture.enableInspections(inspector);
+        ComparisonStyle.force(ComparisonStyle.YODA);
+
+        myFixture.enableInspections(new IsNullFunctionUsageInspector());
         myFixture.configureByFile("fixtures/api/is-null-function.yoda.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/api/is-null-function.yoda.fixed.php");
+
+        ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
     public void testIfFindsAllPatternsAndWithInRegularStyle() {
-        final IsNullFunctionUsageInspector inspector = new IsNullFunctionUsageInspector();
-        inspector.PREFER_YODA_STYLE                  = false;
-        inspector.PREFER_REGULAR_STYLE               = true;
-        myFixture.enableInspections(inspector);
+        myFixture.enableInspections(new IsNullFunctionUsageInspector());
         myFixture.configureByFile("fixtures/api/is-null-function.regular.php");
         myFixture.testHighlighting(true, false, true);
 

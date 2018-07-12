@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>3.0.4</version>
+  <version>3.0.5</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -55,18 +55,24 @@ the implementation.
     ]]></description>
 
   <change-notes><![CDATA[
-Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Enhancements and bug-fixes. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Fixed crash-reports for June<br/>
+- Performance and deep code analysis improvements<br/>
+- New settings (Other Settings -> Php Inspections (EA Extended))<br/>
 <br/>
-- Addition operator used on arrays: resolved false-positives (multiple cases)<br/>
-- Cascading 'str_replace(...)' calls: bug-fix Quick-Fix (mixed array syntax produced)<br/>
-- Exploiting unserialize: resolved a false-positive (classes specified)<br/>
-- Non-optimal if conditions: resolved a false-positive (mkdir race conditions)<br/>
-- Referencing objects: resolved a false-positive (boolean context)<br/>
-- Suspicious assignments: resolved a false-positive (line contant)<br/>
-- 'empty(...)' usage: resolved a false-positive (strings)<br/>
-- 'mkdir(...)' race condition: bug-fix Quick-Fix (complex directory expressions)<br/>
+- Array and string offset validity: bug-fix types calculation (array|mixed + number)<br/>
+- Loop which does not loop: resolved false-positives (generator, iterable and co)<br/>
+- Null reference: resolved false-positives (null-coalescing/isset context)<br/>
+- Useless return: added QF, resolved a false-positive (static variables)<br/>
+- 'isset(...)' constructs can be merged: QF bug-fix (lost parenthesises)<br/>
+- 'substr(...)' short-hand usage: bug-fixing rare offset calculation issue<br/>
+<br/>
+- Could be replaced with '(array) ...': dropped<br/>
+- Exceptions handling and annotating: dropped in favor bundled one<br/>
+- Parameter/variable is not used: new patterns<br/>
+- Return type hint can be used: new patterns<br/>
+- Unnecessary type casting: new patterns<br/>
+- 'substr(...)' could be replaced with 'strpos(...)': added QF settings<br/>
 <br/>
 <hr/>
   ]]></change-notes>
@@ -86,7 +92,7 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.CallableInLoopTerminationConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SlowArrayOperationsInLoopInspection"           displayName="Slow array function used in loop"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.SlowArrayOperationsInLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrStrUsedAsStrPosInspection"                  displayName="'str(i)str(...)' could be replaced with 'str(i)pos(...)'"
@@ -106,7 +112,7 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.CascadeStringReplacementInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="InArrayMissUseInspection"                      displayName="'in_array(...)' misused"
-        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ArrayPushMissUseInspection"                    displayName="'array_push(...)' misused"
@@ -804,7 +810,7 @@ Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patre
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MultipleReturnStatementsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="ClassReImplementsParentInterfaceInspection"     displayName="Class implements interfaces multiple times"
-         groupName="Architecture"                                   enabledByDefault="true" level="ERROR"
+         groupName="Architecture"                                   enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReImplementsParentInterfaceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="LowerAccessLevelInspection"                      displayName="Declaration access can be weaker"

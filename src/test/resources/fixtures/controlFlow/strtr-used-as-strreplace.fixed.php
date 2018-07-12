@@ -1,10 +1,16 @@
 <?php
 
-    /* Main case: characters replacement */
-    str_replace(' ', '_', 'string to fix');
-    str_replace(" ", "_", 'string to fix');
-    str_replace('\\', '_', 'string to fix');
+    str_replace(' ', '_', '...');
+    str_replace(" ", "_", '...');
 
-    /* False-positives */
-    strtr('string to fix', 'string', 'int');
-    strtr('string to fix', array('to' => 'to be', 'to be' => 'to'));
+    str_replace('\\', '_', '...');
+    str_replace("\\", '_', '...');
+
+    str_replace('\'', '_', '...');
+    str_replace("\n", '_', '...');
+
+    /* false-positives */
+    strtr('...', '...', 'int');
+    strtr('...', '\n', 'int');
+    strtr('...', "\'", 'int');
+    strtr('...', []);

@@ -1,10 +1,16 @@
 <?php
 
-    /* Main case: characters replacement */
-    <weak_warning descr="'str_replace(' ', '_', 'string to fix')' can be used instead (improves maintainability).">strtr('string to fix', ' ', '_')</weak_warning>;
-    <weak_warning descr="'str_replace(\" \", \"_\", 'string to fix')' can be used instead (improves maintainability).">strtr('string to fix', " ", "_")</weak_warning>;
-    <weak_warning descr="'str_replace('\\', '_', 'string to fix')' can be used instead (improves maintainability).">strtr('string to fix', '\\', '_')</weak_warning>;
+    <weak_warning descr="'str_replace(' ', '_', '...')' can be used instead (improves maintainability).">strtr('...', ' ', '_')</weak_warning>;
+    <weak_warning descr="'str_replace(\" \", \"_\", '...')' can be used instead (improves maintainability).">strtr('...', " ", "_")</weak_warning>;
 
-    /* False-positives */
-    strtr('string to fix', 'string', 'int');
-    strtr('string to fix', array('to' => 'to be', 'to be' => 'to'));
+    <weak_warning descr="'str_replace('\\', '_', '...')' can be used instead (improves maintainability).">strtr('...', '\\', '_')</weak_warning>;
+    <weak_warning descr="'str_replace(\"\\\\\", '_', '...')' can be used instead (improves maintainability).">strtr('...', "\\", '_')</weak_warning>;
+
+    <weak_warning descr="'str_replace('\'', '_', '...')' can be used instead (improves maintainability).">strtr('...', '\'', '_')</weak_warning>;
+    <weak_warning descr="'str_replace(\"\n\", '_', '...')' can be used instead (improves maintainability).">strtr('...', "\n", '_')</weak_warning>;
+
+    /* false-positives */
+    strtr('...', '...', 'int');
+    strtr('...', '\n', 'int');
+    strtr('...', "\'", 'int');
+    strtr('...', []);

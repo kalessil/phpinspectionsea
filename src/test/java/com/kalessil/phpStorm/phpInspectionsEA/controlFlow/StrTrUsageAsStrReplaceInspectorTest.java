@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrTrU
 final public class StrTrUsageAsStrReplaceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new StrTrUsageAsStrReplaceInspector());
-
         myFixture.configureByFile("fixtures/controlFlow/strtr-used-as-strreplace.php");
         myFixture.testHighlighting(true, false, true);
 

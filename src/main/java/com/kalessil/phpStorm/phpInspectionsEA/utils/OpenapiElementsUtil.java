@@ -25,7 +25,7 @@ final public class OpenapiElementsUtil {
     static {
         try {
             methodReturnType = Function.class.getDeclaredMethod("getReturnType");
-        } catch (NoSuchMethodException failure) {
+        } catch (final NoSuchMethodException failure) {
             throw new RuntimeException(failure);
         }
     }
@@ -34,7 +34,7 @@ final public class OpenapiElementsUtil {
     static {
         try {
             phpInstructionGetPredecessors = PhpInstruction.class.getDeclaredMethod("getPredecessors");
-        } catch (NoSuchMethodException failure) {
+        } catch (final NoSuchMethodException failure) {
             throw new RuntimeException(failure);
         }
     }
@@ -45,9 +45,9 @@ final public class OpenapiElementsUtil {
         try {
             /* PS 2017.3 has changed return type from PsiElement to PhpReturnType, so we use reflection here */
             result = (PsiElement) methodReturnType.invoke(function);
-        } catch (IllegalAccessException failure) {
+        } catch (final IllegalAccessException failure) {
             throw new RuntimeException(failure);
-        } catch (InvocationTargetException failure) {
+        } catch (final InvocationTargetException failure) {
             final Throwable cause = failure.getTargetException();
             throw (cause instanceof RuntimeException ? (RuntimeException)cause : new RuntimeException(cause));
         }
@@ -60,9 +60,9 @@ final public class OpenapiElementsUtil {
         try {
             /* PS 2017.3 has changed return type from Collection<> to List<>, so we use reflection here */
             result = (Collection<PhpInstruction>) phpInstructionGetPredecessors.invoke(instruction);
-        } catch (IllegalAccessException failure) {
+        } catch (final IllegalAccessException failure) {
             throw new RuntimeException(failure);
-        } catch (InvocationTargetException failure) {
+        } catch (final InvocationTargetException failure) {
             final Throwable cause = failure.getTargetException();
             throw (cause instanceof RuntimeException ? (RuntimeException)cause : new RuntimeException(cause));
         }

@@ -80,3 +80,11 @@
             $string[0],
         ];
     }
+
+    /** @param array[] $array */
+    function false_positives_array_type_correction(array $array) {
+        foreach ($array as $key => $value) {
+            $array[$key + 1]['...'] = null;
+            $array[1 + $key + 1]['...'] = null;
+        }
+    }

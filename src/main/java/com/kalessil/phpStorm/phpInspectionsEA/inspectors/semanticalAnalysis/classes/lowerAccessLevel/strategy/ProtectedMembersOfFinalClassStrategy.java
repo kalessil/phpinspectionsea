@@ -25,25 +25,21 @@ final public class ProtectedMembersOfFinalClassStrategy {
     public static void apply(@NotNull PhpClassMember subject, @NotNull ProblemsHolder holder) {
         final PhpClass clazz          = subject.getContainingClass();
         final boolean isTargetContext = clazz != null && clazz.isFinal() && subject.getModifier().isProtected();
-        if (isTargetContext && OpenapiResolveUtil.resolveSuperClass(clazz) == null &&!isOverride(subject, clazz)) {
-            final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(subject);
-            if (modifier != null) {
-                holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
+        if (isTargetContext) {
+            final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+            if (parent == null || !isOverride(subject, parent)) {
+                final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(subject);
+                if (modifier != null) {
+                    holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
+                }
             }
         }
     }
 
-    private static boolean isOverride(@NotNull PhpClassMember member, @NotNull PhpClass clazz) {
-        boolean result        = false;
-        final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
-        if (null != parent) {
-            final String memberName = member.getName();
-            final PhpClassMember parentMember
-                    = member instanceof Field
-                        ? parent.findFieldByName(memberName, ((Field) member).isConstant())
-                        : OpenapiResolveUtil.resolveMethod(parent, memberName);
-            result = parentMember != null;
-        }
-        return result;
+    private static boolean isOverride(@NotNull PhpClassMember member, @NotNull PhpClass parent) {
+        final PhpClassMember resolved = member instanceof Field
+                ? parent.findFieldByName(member.getName(), ((Field) member).isConstant())
+                : OpenapiResolveUtil.resolveMethod(parent, member.getName());
+        return resolved != null;
     }
 }

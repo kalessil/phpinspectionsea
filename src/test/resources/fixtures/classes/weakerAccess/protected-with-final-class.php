@@ -83,3 +83,9 @@ final class RespectAbstractClassSignatures extends AbstractClassTestingAllTypes 
     protected function abstractProtectedMethod() { }
     protected function protectedMethod() { }
 }
+
+/* applicable: protected members/references which are not presented in parent class */
+final class FinalClassWithNonOverriddenProtectedMembers extends stdClass {
+    <weak_warning descr="Since the class is final, the member can be declared private.">protected</weak_warning> $ownProtectedField;
+    <weak_warning descr="Since the class is final, the member can be declared private.">protected</weak_warning> function ownProtectedMethod() { }
+}

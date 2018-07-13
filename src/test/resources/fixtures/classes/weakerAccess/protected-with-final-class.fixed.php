@@ -83,3 +83,9 @@ final class RespectAbstractClassSignatures extends AbstractClassTestingAllTypes 
     protected function abstractProtectedMethod() { }
     protected function protectedMethod() { }
 }
+
+/* applicable: protected members/references which are not presented in parent class */
+final class FinalClassWithNonOverriddenProtectedMembers extends stdClass {
+    private $ownProtectedField;
+    private function ownProtectedMethod() { }
+}

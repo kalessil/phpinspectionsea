@@ -103,9 +103,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         if (methodNameNode != null) {
                             final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
                             if (method.isAbstract()) {
-                                handleAbstractMethod(method, methodNameNode, supportNullableTypes);
+                                this.handleAbstractMethod(method, methodNameNode, supportNullableTypes);
                             } else {
-                                handleMethod(method, methodNameNode, supportNullableTypes);
+                                this.handleMethod(method, methodNameNode, supportNullableTypes);
                             }
                         }
                     }
@@ -115,7 +115,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             private void handleAbstractMethod(@NotNull Method method, @NotNull PsiElement target, boolean supportNullableTypes) {
                 final PhpDocComment docBlock = method.getDocComment();
                 if (docBlock != null && docBlock.getReturnTag() != null) {
-                    handleMethod(method, target, supportNullableTypes);
+                    this.handleMethod(method, target, supportNullableTypes);
                 }
             }
 
@@ -153,9 +153,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 /* case 2: offer using type */
                 if (1 == typesCount) {
                     final String singleType    = normalizedTypes.iterator().next();
-                    final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : compactType(singleType, method);
+                    final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : this.compactType(singleType, method);
                     final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType) || suggestedType.equals("self");
-                    final boolean isLegitVoid  = supportNullableTypes && suggestedType.equals(Types.strVoid);
+                    final boolean isLegitVoid  = !isLegitBasic && supportNullableTypes && suggestedType.equals(Types.strVoid);
                     if (isLegitBasic || isLegitVoid) {
                         final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
                         final String message      = messagePattern
@@ -169,12 +169,11 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 if (supportNullableTypes && 2 == typesCount && normalizedTypes.contains(Types.strNull)) {
                     normalizedTypes.remove(Types.strNull);
 
-                    final String nullableType = normalizedTypes.iterator().next();
-                    final String suggestedType
-                        = voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
+                    final String nullableType  = normalizedTypes.iterator().next();
+                    final String suggestedType = voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
 
                     final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType) || suggestedType.equals("self");
-                    final boolean isLegitVoid     = suggestedType.equals(Types.strVoid);
+                    final boolean isLegitVoid     = !isLegitNullable && suggestedType.equals(Types.strVoid);
                     if (isLegitNullable || isLegitVoid) {
                         final String typeHint     = isLegitVoid ? suggestedType : '?' + suggestedType;
                         final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(typeHint);
@@ -210,13 +209,15 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     if (LOOKUP_PHPDOC_RETURN_DECLARATIONS) {
                         final PhpDocComment phpDoc      = method.getDocComment();
                         final PhpDocReturnTag phpReturn = phpDoc == null ? null : phpDoc.getReturnTag();
-                        final boolean hasSelfReference  = PsiTreeUtil.findChildrenOfType(phpReturn, PhpDocType.class).stream()
-                                .anyMatch(t -> {
-                                    final String text = t.getText();
-                                    return text.equals("self") || text.equals("$this");
-                                });
-                        if (hasSelfReference) {
-                            result = "self";
+                        if (phpReturn != null) {
+                            final boolean hasSelfReference =
+                                    PsiTreeUtil.findChildrenOfType(phpReturn, PhpDocType.class).stream().anyMatch(t -> {
+                                        final String text = t.getText();
+                                        return text.equals("self") || text.equals("$this");
+                                    });
+                            if (hasSelfReference) {
+                                result = "self";
+                            }
                         }
                     }
                     /* be sure to send back static for avoiding false-positives */

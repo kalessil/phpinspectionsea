@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpClassMember;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.fixers.MakePrivateFixer;
@@ -25,25 +24,11 @@ final public class ProtectedMembersOfFinalClassStrategy {
     public static void apply(@NotNull PhpClassMember subject, @NotNull ProblemsHolder holder) {
         final PhpClass clazz          = subject.getContainingClass();
         final boolean isTargetContext = clazz != null && clazz.isFinal() && subject.getModifier().isProtected();
-        if (isTargetContext && OpenapiResolveUtil.resolveSuperClass(clazz) == null &&!isOverride(subject, clazz)) {
+        if (isTargetContext && OpenapiResolveUtil.resolveSuperClass(clazz) == null) {
             final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(subject);
             if (modifier != null) {
                 holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
             }
         }
-    }
-
-    private static boolean isOverride(@NotNull PhpClassMember member, @NotNull PhpClass clazz) {
-        boolean result        = false;
-        final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
-        if (null != parent) {
-            final String memberName = member.getName();
-            final PhpClassMember parentMember
-                    = member instanceof Field
-                        ? parent.findFieldByName(memberName, ((Field) member).isConstant())
-                        : OpenapiResolveUtil.resolveMethod(parent, memberName);
-            result = parentMember != null;
-        }
-        return result;
     }
 }

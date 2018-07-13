@@ -9,6 +9,7 @@ class MethodsHolder {
 
     public function nonStaticContext() {
         <warning descr="'self::method(...)' should be used instead.">$this</warning>->method();
+        $this->method();
 
         static::method();
         self::method();

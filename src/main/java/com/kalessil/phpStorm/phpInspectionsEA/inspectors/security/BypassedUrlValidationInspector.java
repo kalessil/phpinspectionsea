@@ -12,7 +12,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /*
@@ -32,10 +35,18 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
     final static private Pattern regexProtocolCheck;
     final static private Pattern regexFileExtensionCheck;
     static {
-        /* original regex: ^(?:\\b)?[\[(?:]*(http|ftp|ssh|git)*/
         regexProtocolCheck      = Pattern.compile("^(?:\\\\b)?[\\[(?:]*(http|ftp|ssh|git)");
-        /* original regex: \.\([a-z?]+(?:\|[a-z?]+)*\)\??$ */
         regexFileExtensionCheck = Pattern.compile("\\.\\([a-z?]+(?:\\|[a-z?]+)*\\)\\??$");
+    }
+
+    final static private List<Pattern> matchers = new ArrayList<>();
+    static {
+        /* same regexes in NotOptimalRegularExpressionsInspector (in order to not couple inspections) */
+        matchers.add(Pattern.compile("^([^{<(\\[])(.*)(\\1)([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\{)(.*)(\\})([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(<)(.*)(>)([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\()(.*)(\\))([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\[)(.*)(\\])([a-zA-Z]+)?$"));
     }
 
     @NotNull
@@ -58,7 +69,21 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
                         if (arguments.length >= 2) {
                             final Set<String> patterns = ExpressionSemanticUtil.resolveAsString(arguments[0]);
                             for (final String pattern : patterns) {
-                                //
+                                if (pattern != null && !pattern.isEmpty()) {
+                                    for (final Pattern regex : matchers) {
+                                        final Matcher matcher = regex.matcher(pattern);
+                                        if (matcher.find()) {
+                                            final String candidate = matcher.group(2);
+                                            if (!candidate.startsWith("^") && regexProtocolCheck.matcher(candidate).find()) {
+                                                holder.registerProblem(reference, messageProtocol);
+                                            }
+                                            if (!candidate.endsWith("$") && regexFileExtensionCheck.matcher(candidate).find()) {
+                                                holder.registerProblem(reference, messageExtension);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                             patterns.clear();
                         }

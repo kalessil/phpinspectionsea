@@ -58,6 +58,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
 
     final static private List<Pattern> matchers = new ArrayList<>();
     static {
+        /* same regexes in BypassedUrlValidationInspector (in order to not couple inspections) */
         matchers.add(Pattern.compile("^([^{<(\\[])(.*)(\\1)([a-zA-Z]+)?$"));
         matchers.add(Pattern.compile("^(\\{)(.*)(\\})([a-zA-Z]+)?$"));
         matchers.add(Pattern.compile("^(<)(.*)(>)([a-zA-Z]+)?$"));

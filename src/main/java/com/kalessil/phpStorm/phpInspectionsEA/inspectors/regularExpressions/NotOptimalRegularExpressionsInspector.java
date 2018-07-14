@@ -62,7 +62,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
 
         /* original regex: \.\([a-z\?]+(?:\|[a-z\?]+)*\)\??$ */
         // fileExtensions = "\\.\\([a-z\\?]+(?:\\|[a-z\\?]+)*\\)\\??$";
-        /* original regex: ^(?:\\b)?[\[\(\?:]*http*/
+        /* original regex: ^(?:\\b)?[\[\(\?:]*(http|https|ftp|ssh|git)*/
         // protocoll = "^(?:\\\\b)?[\\[\\(\\?:]*(http|https|ftp|ssh|git)";
     }
 
@@ -81,16 +81,18 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         final Set<String> patterns = ExpressionSemanticUtil.resolveAsString(arguments[0]);
                         for (final String pattern : patterns) {
                             if (pattern != null && !pattern.isEmpty()) {
-                                final Matcher regularMatcher           = regexWithModifiers.matcher(pattern);
-                                final Matcher matcherWithCurlyBrackets = regexWithModifiersCurvy.matcher(pattern);
+                                final Matcher regularMatcher = regexWithModifiers.matcher(pattern);
                                 if (regularMatcher.find()) {
                                     final String phpRegexPattern   = regularMatcher.group(2);
                                     final String phpRegexModifiers = regularMatcher.group(3);
                                     this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
-                                } else if (matcherWithCurlyBrackets.find()) {
-                                    final String phpRegexPattern   = matcherWithCurlyBrackets.group(1);
-                                    final String phpRegexModifiers = matcherWithCurlyBrackets.group(2);
-                                    this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                } else {
+                                    final Matcher matcherWithCurlyBrackets = regexWithModifiersCurvy.matcher(pattern);
+                                    if (matcherWithCurlyBrackets.find()) {
+                                        final String phpRegexPattern   = matcherWithCurlyBrackets.group(1);
+                                        final String phpRegexModifiers = matcherWithCurlyBrackets.group(2);
+                                        this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                    }
                                 }
                             }
                         }

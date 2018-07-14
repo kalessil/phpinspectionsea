@@ -25,7 +25,9 @@ import java.util.regex.Pattern;
  */
 
 public class BypassedUrlValidationInspector extends LocalInspectionTool {
-    private static final String messageFilterVar  = "The call doesn't validate protocol. Vulnerable to Java Script injection and Arbitrary files loading.";
+    private static final String messageFilterVar = "The call doesn't validate protocol and vulnerable to Java Script injections and Arbitrary files loading.";
+    private static final String messageProtocol  = "Because of missing '^' at the beginning, it's possible to bypass the validation (e.g. 'URL?whatever=http://...').";
+    private static final String messageExtension = "Because of missing '$' at the end, it's possible to bypass the validation (e.g. 'file.jpg.php').";
 
     final static private Pattern regexProtocolCheck;
     final static private Pattern regexFileExtensionCheck;
@@ -35,7 +37,6 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
         /* original regex: \.\([a-z?]+(?:\|[a-z?]+)*\)\??$ */
         regexFileExtensionCheck = Pattern.compile("\\.\\([a-z?]+(?:\\|[a-z?]+)*\\)\\??$");
     }
-
 
     @NotNull
     public String getShortName() {

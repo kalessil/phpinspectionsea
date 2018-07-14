@@ -22,7 +22,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,11 +56,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         functions.add("preg_split");
     }
 
-    final static private Pattern regexWithModifiers;
-    final static private Pattern regexWithModifiersCurvy;
+    final static private List<Pattern> matchers = new ArrayList<>();
     static {
-        regexWithModifiers      = Pattern.compile("^([^{])(.*)(\\1)([a-zA-Z]+)?$");
-        regexWithModifiersCurvy = Pattern.compile("^(\\{)(.*)(\\})([a-zA-Z]+)?$");
+        matchers.add(Pattern.compile("^([^{])(.*)(\\1)([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\{)(.*)(\\})([a-zA-Z]+)?$"));
     }
 
     @Override
@@ -76,17 +77,13 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         final Set<String> patterns = ExpressionSemanticUtil.resolveAsString(arguments[0]);
                         for (final String pattern : patterns) {
                             if (pattern != null && !pattern.isEmpty()) {
-                                final Matcher regularMatcher = regexWithModifiers.matcher(pattern);
-                                if (regularMatcher.find()) {
-                                    final String phpRegexPattern   = regularMatcher.group(2);
-                                    final String phpRegexModifiers = regularMatcher.group(4);
-                                    this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
-                                } else {
-                                    final Matcher matcherWithCurlyBrackets = regexWithModifiersCurvy.matcher(pattern);
-                                    if (matcherWithCurlyBrackets.find()) {
-                                        final String phpRegexPattern   = matcherWithCurlyBrackets.group(2);
-                                        final String phpRegexModifiers = matcherWithCurlyBrackets.group(4);
+                                for (final Pattern regex : matchers) {
+                                    final Matcher matcher = regex.matcher(pattern);
+                                    if (matcher.find()) {
+                                        final String phpRegexPattern   = matcher.group(2);
+                                        final String phpRegexModifiers = matcher.group(4);
                                         this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                        break;
                                     }
                                 }
                             }

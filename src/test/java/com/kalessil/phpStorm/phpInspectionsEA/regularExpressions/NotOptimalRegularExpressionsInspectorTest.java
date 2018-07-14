@@ -68,4 +68,9 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("fixtures/regularExpressions/regex-discovery.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testDelimitersSupport() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("fixtures/regularExpressions/regex-delimiters.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

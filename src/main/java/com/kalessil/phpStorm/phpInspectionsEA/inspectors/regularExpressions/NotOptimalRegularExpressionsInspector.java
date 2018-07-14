@@ -58,8 +58,11 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
 
     final static private List<Pattern> matchers = new ArrayList<>();
     static {
-        matchers.add(Pattern.compile("^([^{])(.*)(\\1)([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^([^{<(\\[])(.*)(\\1)([a-zA-Z]+)?$"));
         matchers.add(Pattern.compile("^(\\{)(.*)(\\})([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(<)(.*)(>)([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\()(.*)(\\))([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\[)(.*)(\\])([a-zA-Z]+)?$"));
     }
 
     @Override

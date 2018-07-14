@@ -57,8 +57,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
     final static private Pattern regexWithModifiers;
     final static private Pattern regexWithModifiersCurvy;
     static {
-        regexWithModifiers      = Pattern.compile("^([^{])(.*)\\1([a-zA-Z]+)?$");
-        regexWithModifiersCurvy = Pattern.compile("^\\{(.*)\\}([a-zA-Z]+)?$");
+        regexWithModifiers      = Pattern.compile("^([^{])(.*)(\\1)([a-zA-Z]+)?$");
+        regexWithModifiersCurvy = Pattern.compile("^(\\{)(.*)(\\})([a-zA-Z]+)?$");
     }
 
     @Override
@@ -79,13 +79,13 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                                 final Matcher regularMatcher = regexWithModifiers.matcher(pattern);
                                 if (regularMatcher.find()) {
                                     final String phpRegexPattern   = regularMatcher.group(2);
-                                    final String phpRegexModifiers = regularMatcher.group(3);
+                                    final String phpRegexModifiers = regularMatcher.group(4);
                                     this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
                                 } else {
                                     final Matcher matcherWithCurlyBrackets = regexWithModifiersCurvy.matcher(pattern);
                                     if (matcherWithCurlyBrackets.find()) {
-                                        final String phpRegexPattern   = matcherWithCurlyBrackets.group(1);
-                                        final String phpRegexModifiers = matcherWithCurlyBrackets.group(2);
+                                        final String phpRegexPattern   = matcherWithCurlyBrackets.group(2);
+                                        final String phpRegexModifiers = matcherWithCurlyBrackets.group(4);
                                         this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
                                     }
                                 }

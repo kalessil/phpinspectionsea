@@ -28,14 +28,6 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
         return "BypassedPathTraversalProtectionInspection";
     }
 
-    /*
-       str_replace('../', '', ...) e.g. '....//'
-       str_replace('..' . DIRECTORY_SEPARATOR, '', ...);  e.g. '....\\'
-           -> preg_replace('/\.+[/\\]+/', '', ...)
-
-       str_replace('..', '', ...); ok
-     */
-
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
@@ -50,7 +42,7 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
                         if (!second.isEmpty() && second.stream().anyMatch(String::isEmpty)) {
                             final Set<String> first = ExpressionSemanticUtil.resolveAsString(arguments[0]);
                             if (!first.isEmpty()) {
-
+                                // ../ or ..\
                             }
                             first.clear();
                         }

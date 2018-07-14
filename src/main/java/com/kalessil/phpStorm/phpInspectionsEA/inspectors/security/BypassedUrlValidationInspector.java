@@ -34,13 +34,11 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
 
     final static private Pattern regexProtocolCheck;
     final static private Pattern regexFileExtensionCheck;
+    final static private List<Pattern> matchers = new ArrayList<>();
     static {
         regexProtocolCheck      = Pattern.compile("^(?:\\\\b)?[\\[(?:]*(http|ftp|ssh|git)");
         regexFileExtensionCheck = Pattern.compile("\\.\\([a-z?]+(?:\\|[a-z?]+)*\\)\\??$");
-    }
 
-    final static private List<Pattern> matchers = new ArrayList<>();
-    static {
         /* same regexes in NotOptimalRegularExpressionsInspector (in order to not couple inspections) */
         matchers.add(Pattern.compile("^([^{<(\\[])(.*)(\\1)([a-zA-Z]+)?$"));
         matchers.add(Pattern.compile("^(\\{)(.*)(\\})([a-zA-Z]+)?$"));

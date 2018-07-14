@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy.PropertyUsedInPrivateContextStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.strategy.ProtectedMembersOfFinalClassStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -33,17 +34,23 @@ public class LowerAccessLevelInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpField(@NotNull Field field) {
-                ProtectedMembersOfFinalClassStrategy.apply(field, problemsHolder);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    ProtectedMembersOfFinalClassStrategy.apply(field, problemsHolder);
+                }
             }
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                ProtectedMembersOfFinalClassStrategy.apply(method, problemsHolder);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    ProtectedMembersOfFinalClassStrategy.apply(method, problemsHolder);
+                }
             }
 
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
-                PropertyUsedInPrivateContextStrategy.apply(clazz, problemsHolder);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    PropertyUsedInPrivateContextStrategy.apply(clazz, problemsHolder);
+                }
             }
         };
     }

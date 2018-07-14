@@ -59,6 +59,11 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
     static {
         regexWithModifiers      = Pattern.compile("^([^{])(.*)\\1([a-zA-Z]+)?$");
         regexWithModifiersCurvy = Pattern.compile("^\\{(.*)\\}([a-zA-Z]+)?$");
+
+        /* original regex: \.\([a-z\?]+(?:\|[a-z\?]+)*\)\??$ */
+        // fileExtensions = "\\.\\([a-z\\?]+(?:\\|[a-z\\?]+)*\\)\\??$";
+        /* original regex: ^(?:\\b)?[\[\(\?:]*http*/
+        // protocoll = "^(?:\\\\b)?[\\[\\(\\?:]*(http|https|ftp|ssh|git)";
     }
 
     @Override

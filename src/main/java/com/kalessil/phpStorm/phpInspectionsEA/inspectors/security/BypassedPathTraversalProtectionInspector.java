@@ -22,7 +22,7 @@ import java.util.Set;
  */
 
 public class BypassedPathTraversalProtectionInspector extends LocalInspectionTool {
-    private static final String messageFilterVar = "The call doesn't prevent path traversal, as can be bypassed (e.g. '....//').";
+    private static final String messageFilterVar = "The call doesn't prevent path traversal, as can be bypassed with e.g. '....//' (apply QF to handle this).";
 
     @NotNull
     public String getShortName() {

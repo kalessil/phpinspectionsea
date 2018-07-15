@@ -238,6 +238,7 @@ final public class ExpressionSemanticUtil {
                                                                fragments.stream().allMatch(fragment ->
                                                                         fragment instanceof StringLiteralExpression ||
                                                                         fragment instanceof ClassConstantReference ||
+                                                                        fragment instanceof ConstantReference ||
                                                                         fragment instanceof FunctionReference
                                                                );
                             if (tryExtracting) {
@@ -250,6 +251,12 @@ final public class ExpressionSemanticUtil {
                                         if (functionName != null && functionName.equals("preg_quote")) {
                                             final PsiElement[] arguments = reference.getParameters();
                                             extracted = arguments.length > 0 ? resolveAsStringLiteral(arguments[0]) : null;
+                                        }
+                                    } else if (fragment instanceof ConstantReference) {
+                                        final PsiElement resolved = OpenapiResolveUtil.resolveReference((ConstantReference) fragment);
+                                        if (resolved instanceof PhpDefine) {
+                                            final PsiElement value = ((PhpDefine) resolved).getValue();
+                                            extracted              = value == null ? null : resolveAsStringLiteral(value);
                                         }
                                     } else {
                                         extracted = resolveAsStringLiteral(fragment);

@@ -17,3 +17,4 @@
     <error descr="Because of missing '$' at the end, it's possible to bypass the validation (e.g. 'file.jpg.php').">preg_match('#\.(?:jpg|png)?#', '...')</error>;
 
     preg_match('#\.jpg$#', '...');
+    preg_match('#.jpg#', '...');

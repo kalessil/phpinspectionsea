@@ -12,9 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -43,42 +41,39 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
                 if (functionName != null && functionName.equals("str_replace")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= 3) {
-                        final Set<String> second = ExpressionSemanticUtil.resolveAsString(arguments[1]);
+                        final Set<String> second = this.collectPossibleValues(arguments[1]);
                         if (!second.isEmpty() && second.contains("")) {
-                            /* collect variants */
-                            final PsiElement searchPatterns = arguments[0];
-                            final List<PsiElement> variants = new ArrayList<>();
-                            if (searchPatterns instanceof ArrayCreationExpression) {
-                                for (final PsiElement child : searchPatterns.getChildren()) {
-                                    if (!(child instanceof ArrayHashElement)) {
-                                        variants.add(child.getFirstChild());
-                                    }
-                                }
-                            } else {
-                                variants.add(searchPatterns);
+                            final boolean withQuickFix = !(arguments[0] instanceof ArrayCreationExpression);
+                            final Set<String> first    = this.collectPossibleValues(arguments[0]);
+                            if (!first.isEmpty() && (first.contains("../") || first.contains("..\\\\"))) {
+                                final String replacement = String.format(
+                                        "preg_replace('/\\.+[\\/\\\\]+/', '', %s)",
+                                        arguments[2].getText()
+                                );
+                                holder.registerProblem(
+                                        reference,
+                                        messageFilterVar,
+                                        withQuickFix ? new UsePregReplaceFix(replacement) : null
+                                );
                             }
-                            /* check variants */
-                            final boolean withQuickFix = !(searchPatterns instanceof ArrayCreationExpression);
-                            for (final PsiElement variant : variants) {
-                                final Set<String> first = ExpressionSemanticUtil.resolveAsString(variant);
-                                if (!first.isEmpty() && (first.contains("../") || first.contains("..\\"))) {
-                                    final String replacement = String.format(
-                                            "preg_replace('/\\.+[\\/\\\\]+/', '', %s)",
-                                            arguments[2].getText()
-                                    );
-                                    holder.registerProblem(
-                                            reference,
-                                            messageFilterVar,
-                                            withQuickFix ? new UsePregReplaceFix(replacement) : null
-                                    );
-                                }
-                                first.clear();
-                            }
-                            variants.clear();
+                            first.clear();
                         }
                         second.clear();
                     }
                 }
+            }
+
+            @NotNull
+            private Set<String> collectPossibleValues(@NotNull PsiElement argument) {
+                final Set<String> result = new HashSet<>();
+                if (argument instanceof ArrayCreationExpression) {
+                    Arrays.stream(argument.getChildren())
+                            .filter(child  -> !(child instanceof ArrayHashElement))
+                            .forEach(child -> result.addAll(ExpressionSemanticUtil.resolveAsString(child.getFirstChild())));
+                } else {
+                    result.addAll(ExpressionSemanticUtil.resolveAsString(argument));
+                }
+                return result;
             }
         };
     }

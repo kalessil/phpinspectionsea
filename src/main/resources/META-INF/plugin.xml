@@ -619,6 +619,10 @@ New features release<br/>
          shortName="BypassedUrlValidationInspection"               displayName="Bypassed URL validation"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.BypassedUrlValidationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="BypassedPathTraversalProtectionInspection"     displayName="Bypassed pass traversal protection"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.BypassedPathTraversalProtectionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

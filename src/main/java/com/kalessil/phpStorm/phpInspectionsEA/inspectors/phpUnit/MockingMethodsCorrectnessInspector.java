@@ -65,8 +65,8 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 1 && arguments[0] instanceof StringLiteralExpression) {
                             PhpPsiElement mock = reference.getFirstPsiChild();
-                            /* Handle following construct (->expect())->method('non-existing') */
-                            if (mock instanceof MethodReference && "expect".equals(mock.getName())) {
+                            /* Handle following construct (->expects())->method('non-existing') */
+                            if (mock instanceof MethodReference && "expects".equals(mock.getName())) {
                                 mock = mock.getFirstPsiChild();
                             }
                             if (mock != null && this.isTestContext(reference)) {

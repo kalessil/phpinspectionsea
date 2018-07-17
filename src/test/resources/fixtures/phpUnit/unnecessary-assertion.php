@@ -29,6 +29,11 @@ class AssertsHolder
         <weak_warning descr="This assertion can probably be skipped (argument implicitly declares return type).">$this->assertInternalType('...', $object)</weak_warning>;
     }
 
+    public function testExpectsAny() {
+        $mock = $this->getMockBuilder(\SimpleXMLElement::class)->getMock();
+        $mock->expects(<weak_warning descr="This assertion can probably be omitted ('->expects(...->any())' to be more specific).">$this->any()</weak_warning>)->method('asXML')->willReturn('...');
+    }
+
     abstract function returnsVoid(): void;
     abstract function returnsObject(): object;
 }

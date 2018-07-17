@@ -5,8 +5,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingMethodsC
 
 final public class MockingMethodsCorrectnessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsPatterns() {
-        myFixture.configureByFile("fixtures/phpUnit/mocking-methods.php");
         myFixture.enableInspections(new MockingMethodsCorrectnessInspector());
+        myFixture.configureByFile("fixtures/phpUnit/mocking-methods.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));

@@ -33,7 +33,8 @@ import java.util.Set;
  */
 
 public class UnnecessaryAssertionInspector extends BasePhpInspection {
-    private final static String message = "This assertion can probably be skipped (argument implicitly declares return type).";
+    private final static String messageReturnType = "This assertion can probably be skipped (argument implicitly declares return type).";
+    private final static String messageExpectsAny = "This assertion can probably be omitted ('->expects(...->any())' to be more specific).";
 
     final private static Map<String, Integer> targetPositions = new HashMap<>();
     final private static Map<String, String> targetType       = new HashMap<>();
@@ -60,14 +61,33 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                final String methodName = reference.getName();
+                if (methodName != null) {
+                    if (methodName.startsWith("assert")) {
+                        this.analyzeTypeHintCase(reference, methodName);
+                    } else {
+                        this.analyzeMockingAsserts(reference, methodName);
+                    }
+                }
+            }
+
+            private void analyzeMockingAsserts(@NotNull MethodReference reference, @NotNull String methodName) {
+                if (methodName.equals("expects")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1 && arguments[0] instanceof MethodReference) {
+                        final MethodReference innerReference = (MethodReference) arguments[0];
+                        final String innerMethodName         = innerReference.getName();
+                        if (innerMethodName != null && innerMethodName.equals("any")) {
+                            holder.registerProblem(innerReference, messageExpectsAny);
+                        }
+                    }
+                }
+            }
+
+            private void analyzeTypeHintCase(@NotNull MethodReference reference, @NotNull String methodName) {
                 final Project project      = holder.getProject();
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                if (!php.hasFeature(PhpLanguageFeature.RETURN_TYPES)) {
-                    return;
-                }
-
-                final String methodName = reference.getName();
-                if (methodName != null && methodName.startsWith("assert") && targetPositions.containsKey(methodName)) {
+                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && targetPositions.containsKey(methodName)) {
                     final int position           = targetPositions.get(methodName);
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= position + 1) {
@@ -79,13 +99,13 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                                 final PsiElement function    = OpenapiResolveUtil.resolveReference(call);
                                 if (function instanceof Function && OpenapiElementsUtil.getReturnType((Function) function) != null) {
                                     final PhpType resolved = OpenapiResolveUtil.resolveType(call, project);
-                                    if (resolved != null && !resolved.hasUnknown() && resolved.size() == 1) {
+                                    if (resolved != null && resolved.size() == 1 && !resolved.hasUnknown()) {
                                         final String expected = targetType.get(methodName);
                                         if (
                                             expected == null ||
                                             resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(expected))
                                         ) {
-                                            holder.registerProblem(reference, message);
+                                            holder.registerProblem(reference, messageReturnType);
                                         }
                                     }
                                 }

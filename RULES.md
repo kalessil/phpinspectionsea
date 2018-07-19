@@ -199,7 +199,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MissingIssetImplementationInspection            | Empty/isset results correctness                           | n/a | yes | n/a  | yes |
 | Probable bugs        | CallableMethodValidityInspection                | Callable methods validity                                 | n/a | yes | n/a  | no  |
 | Probable bugs        | PassingByReferenceCorrectnessInspection         | Passing arguments by reference correctness                | n/a | yes | n/a  | no  |
-| Probable bugs        | MockingFinalClassesInspection                   | Mocking correctness                                       | n/a | yes | n/a  | no  |
+| Probable bugs        | ClassMockingCorrectnessInspection               | Class mocking correctness                                 | n/a | yes | n/a  | no  |
 | Probable bugs        | ClassConstantUsageCorrectnessInspection         | ::class constant usage correctness                        | n/a | yes | n/a  | yes |
 | Probable bugs        | DeclareDirectiveCorrectnessInspection           | Declare directive correctness                             | n/a | yes | n/a  | no  |
 | Probable bugs        | InfinityLoopInspection                          | Infinity loop detection                                   | n/a | yes | n/a  | no  |

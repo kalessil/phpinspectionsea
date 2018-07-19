@@ -23,27 +23,33 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class MockingFinalClassesInspector extends BasePhpInspection {
-    private final static String message = "Causes reflection errors as the referenced class is final.";
+public class ClassMockingCorrectnessInspector extends BasePhpInspection {
+    private final static String messageFinal         = "Causes reflection errors as the referenced class is final.";
+    private final static String messageNeedsAbstract = "Needs an abstract class here.";
+    private final static String messageNeedsTrait    = "Needs a trait here.";
+    private final static String messageMockTrait     = "Perhaps it was intended to mock it with getMockForTrait method.";
+    private final static String messageMockAbstract  = "Perhaps it was intended to mock it with getMockForAbstractClass method.";
 
     private final static Map<String, String> methods = new HashMap<>();
     static {
         /* PhpUnit-related */
-        methods.put("\\PHPUnit_Framework_TestCase.getMockBuilder",        "getMockBuilder");
-        methods.put("\\PHPUnit_Framework_TestCase.getMock",               "getMock");
-        methods.put("\\PHPUnit_Framework_TestCase.getMockClass",          "getMockClass");
-        methods.put("\\PHPUnit_Framework_MockObject_Generator.getMock",   "getMock");
-        methods.put("\\PHPUnit_Framework_MockObject_MockBuilder.getMock", "getMock");
-        methods.put("\\PHPUnit\\Framework\\TestCase.getMockBuilder",      "getMockBuilder");
-        methods.put("\\PHPUnit\\Framework\\TestCase.getMockClass",        "getMockClass");
+        methods.put("\\PHPUnit_Framework_TestCase.getMockBuilder",            "getMockBuilder");
+        methods.put("\\PHPUnit_Framework_TestCase.getMock",                   "getMock");
+        methods.put("\\PHPUnit_Framework_TestCase.getMockClass",              "getMockClass");
+        methods.put("\\PHPUnit_Framework_MockObject_Generator.getMock",       "getMock");
+        methods.put("\\PHPUnit_Framework_MockObject_MockBuilder.getMock",     "getMock");
+        methods.put("\\PHPUnit\\Framework\\TestCase.getMockBuilder",          "getMockBuilder");
+        methods.put("\\PHPUnit\\Framework\\TestCase.getMockForTrait",         "getMockForTrait");
+        methods.put("\\PHPUnit\\Framework\\TestCase.getMockForAbstractClass", "getMockForAbstractClass");
+        methods.put("\\PHPUnit\\Framework\\TestCase.getMockClass",            "getMockClass");
         /* PhpSpec-related */
-        methods.put("\\Prophecy\\Prophet.prophesize",                     "prophesize");
-        methods.put("\\Prophecy\\Prophecy\\ObjectProphecy.willExtend",    "willExtend");
+        methods.put("\\Prophecy\\Prophet.prophesize",                         "prophesize");
+        methods.put("\\Prophecy\\Prophecy\\ObjectProphecy.willExtend",        "willExtend");
     }
 
     @NotNull
     public String getShortName() {
-        return "MockingFinalClassesInspection";
+        return "ClassMockingCorrectnessInspection";
     }
 
     @Override
@@ -60,7 +66,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                             if (typeCandidate instanceof ClassReference) {
                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) typeCandidate);
                                 if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
-                                    holder.registerProblem(typeCandidate, message);
+                                    holder.registerProblem(typeCandidate, messageFinal);
                                 }
                             }
                         }
@@ -76,8 +82,24 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                     if (resolved instanceof Method && methods.get(((Method) resolved).getFQN()) != null) {
                         final PhpClass referencedClass = this.getClass(arguments[0]);
-                        if (referencedClass != null && referencedClass.isFinal()) {
-                            holder.registerProblem(arguments[0], message);
+                        if (referencedClass != null) {
+                            if (methodName.equals("getMockBuilder")) {
+                                if (referencedClass.isAbstract()) {
+                                    holder.registerProblem(arguments[0], messageMockAbstract);
+                                } else if (referencedClass.isTrait()) {
+                                    holder.registerProblem(arguments[0], messageMockTrait);
+                                } else if (referencedClass.isFinal()) {
+                                    holder.registerProblem(arguments[0], messageFinal);
+                                }
+                            } else if (methodName.equals("getMockForTrait") && !referencedClass.isTrait()) {
+                                holder.registerProblem(arguments[0], messageNeedsTrait);
+                            } else if (methodName.equals("getMockForAbstractClass") && !referencedClass.isAbstract()) {
+                                holder.registerProblem(arguments[0], messageNeedsAbstract);
+                            } else {
+                                if (referencedClass.isFinal()) {
+                                    holder.registerProblem(arguments[0], messageFinal);
+                                }
+                            }
                         }
                     }
                 }
@@ -114,7 +136,6 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
                 /* TODO: handle __NAMESPACE__.'\Class' */
                 return result;
             }
-
         };
     }
 }

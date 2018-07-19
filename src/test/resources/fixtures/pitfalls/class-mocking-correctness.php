@@ -36,9 +36,9 @@ namespace {
     $phpUnitOld->getMockBuilder(stdClass::class);
 
     $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
-    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">'Clazz'</error>);
-    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">'\Clazz'</error>);
-    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">"\\Clazz"</error>);
+    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">'FinalClazz'</error>);
+    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">'\FinalClazz'</error>);
+    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">"\\FinalClazz"</error>);
     $phpUnitNew->getMockClass(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
     $phpUnitNew->getMockBuilder(stdClass::class);
 

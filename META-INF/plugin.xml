@@ -416,9 +416,9 @@ Enhancements and bug-fixes. Supporters via <a href="https://www.patreon.com/kale
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.PassingByReferenceCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="MockingFinalClassesInspection"                 displayName="Mocking correctness"
+        shortName="ClassMockingCorrectnessInspection"             displayName="Class mocking correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingFinalClassesInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.ClassMockingCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ClassConstantUsageCorrectnessInspection"       displayName="::class constant usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"

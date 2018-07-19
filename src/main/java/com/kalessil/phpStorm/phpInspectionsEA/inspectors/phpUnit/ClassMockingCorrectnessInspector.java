@@ -23,7 +23,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class MockingFinalClassesInspector extends BasePhpInspection {
+public class ClassMockingCorrectnessInspector extends BasePhpInspection {
     private final static String message = "Causes reflection errors as the referenced class is final.";
 
     private final static Map<String, String> methods = new HashMap<>();
@@ -43,7 +43,7 @@ public class MockingFinalClassesInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "MockingFinalClassesInspection";
+        return "ClassMockingCorrectnessInspection";
     }
 
     @Override

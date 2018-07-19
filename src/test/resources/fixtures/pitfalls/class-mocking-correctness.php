@@ -23,7 +23,7 @@ namespace {
 }
 
 namespace {
-    final class Clazz {}
+    final class FinalClazz {}
     abstract class AbstractClazz {}
     trait TraitClazz {}
 

@@ -51,7 +51,7 @@ Inspections Lists (PhpUnit)
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | --:  | --: |
 | PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes | yes | yes  | no  |
-| PhpUnit              | UnnecessaryAssertionInspection                  | PhpUnit: unnecessary assertion                      | no  | yes | no   | no  |
+| PhpUnit              | UnnecessaryAssertionInspection                  | PhpUnit: unnecessary assertion                      | yes | yes | yes  | no  |
 | PhpUnit              | MockingMethodsCorrectnessInspection             | PhpUnit: methods mocking issues                     | yes | yes | yes  | no  |
 
 Inspections Lists (Unused)

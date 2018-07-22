@@ -1,9 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -78,7 +82,11 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                         final MethodReference innerReference = (MethodReference) arguments[0];
                         final String innerMethodName         = innerReference.getName();
                         if (innerMethodName != null && innerMethodName.equals("any")) {
-                            holder.registerProblem(innerReference, messageExpectsAny);
+                            holder.registerProblem(
+                                    innerReference,
+                                    messageExpectsAny,
+                                    new RemoveExpectsAssertionFixer(reference, reference.getFirstChild())
+                            );
                         }
                     }
                 }
@@ -116,5 +124,39 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    private final static class RemoveExpectsAssertionFixer implements LocalQuickFix {
+        private static final String title = "Remove the expects-assertion";
+        private final SmartPsiElementPointer<PsiElement> assertion;
+        private final SmartPsiElementPointer<PsiElement> base;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        RemoveExpectsAssertionFixer(@NotNull PsiElement assertion, @NotNull PsiElement base) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(assertion.getProject());
+            this.assertion                    = factory.createSmartPsiElementPointer(assertion);
+            this.base                         = factory.createSmartPsiElementPointer(base);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement assertion = this.assertion.getElement();
+            final PsiElement base      = this.base.getElement();
+            if (assertion != null && base != null && !project.isDisposed()) {
+                assertion.replace(base);
+            }
+        }
     }
 }

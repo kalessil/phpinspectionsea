@@ -140,7 +140,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getFamilyName() {
-            return getName();
+            return title;
         }
 
         RemoveExpectsAssertionFixer(@NotNull PsiElement assertion, @NotNull PsiElement base) {

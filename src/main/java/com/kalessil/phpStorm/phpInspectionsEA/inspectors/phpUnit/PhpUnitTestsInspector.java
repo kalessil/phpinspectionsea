@@ -175,32 +175,36 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
-                if (methodName != null && methodName.startsWith("assert") && !methodName.equals("assert")) {
-                    final List<BooleanSupplier> callbacks = new ArrayList<>();
-                    callbacks.add(() -> AssertBoolInvertedStrategy.apply(methodName, reference, holder));
-                    callbacks.add(() -> AssertBoolOfComparisonStrategy.apply(methodName, reference, holder));
-                    if (SUGGEST_TO_USE_ASSERTSAME) {
-                        callbacks.add(() -> AssertSameStrategy.apply(methodName, reference, holder));
-                    }
-                    if (PROMOTE_PHPUNIT_API) {
-                        callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertCountStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertContainsStrategy.apply(methodName, reference, holder));
-                        /* AssertFileEqualsStrategy and AssertStringEqualsFileStrategy order is important */
-                        callbacks.add(() -> AssertFileEqualsStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> AssertStringEqualsFileStrategy.apply(methodName, reference, holder));
-                        callbacks.add(() -> ExpectsOnceStrategy.apply(methodName, reference, holder));
-                    }
-                    for (final BooleanSupplier callback : callbacks) {
-                        if (callback.getAsBoolean()) {
-                            break;
+                if (methodName != null) {
+                    final boolean isAssertion = (methodName.startsWith("assert") && !methodName.equals("assert"));
+                    if (isAssertion) {
+                        final List<BooleanSupplier> callbacks = new ArrayList<>();
+                        callbacks.add(() -> AssertBoolInvertedStrategy.apply(methodName, reference, holder));
+                        callbacks.add(() -> AssertBoolOfComparisonStrategy.apply(methodName, reference, holder));
+                        if (SUGGEST_TO_USE_ASSERTSAME) {
+                            callbacks.add(() -> AssertSameStrategy.apply(methodName, reference, holder));
                         }
+                        if (PROMOTE_PHPUNIT_API) {
+                            callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertCountStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertContainsStrategy.apply(methodName, reference, holder));
+                            /* AssertFileEqualsStrategy and AssertStringEqualsFileStrategy order is important */
+                            callbacks.add(() -> AssertFileEqualsStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertStringEqualsFileStrategy.apply(methodName, reference, holder));
+                        }
+                        for (final BooleanSupplier callback : callbacks) {
+                            if (callback.getAsBoolean()) {
+                                break;
+                            }
+                        }
+                        callbacks.clear();
+                    } else if (methodName.equals("expects")) {
+                        ExpectsOnceStrategy.apply(methodName, reference, holder);
                     }
-                    callbacks.clear();
                 }
             }
         };

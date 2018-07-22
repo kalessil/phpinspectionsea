@@ -21,8 +21,7 @@ import org.jetbrains.annotations.NotNull;
 final public class ExpectsOnceStrategy {
     private final static String message = "'->once()' would make more sense here.";
 
-    static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
-        boolean result = false;
+    static public void apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         if (methodName.equals("expects")) {
             final PsiElement[] arguments = reference.getParameters();
             if (arguments.length == 1 && arguments[0] instanceof MethodReference) {
@@ -31,15 +30,14 @@ final public class ExpectsOnceStrategy {
                 if (innerMethodName != null && innerMethodName.equals("exactly")) {
                     final PsiElement[] innerArguments = innerReference.getParameters();
                     if (innerArguments.length == 1 && OpenapiTypesUtil.isNumber(innerArguments[0])) {
-                        result = innerArguments[0].getText().equals("1");
-                        if (result) {
+                        final boolean isResult = innerArguments[0].getText().equals("1");
+                        if (isResult) {
                             holder.registerProblem(innerReference, message, new ExpectsOnceFixer());
                         }
                     }
                 }
             }
         }
-        return result;
     }
 
     private final static class ExpectsOnceFixer implements LocalQuickFix {

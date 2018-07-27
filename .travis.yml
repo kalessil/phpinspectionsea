@@ -10,7 +10,7 @@ addons:
 
 matrix:
   include:
-    - jdk: oraclejdk8
+    - jdk: oraclejdk9
       env: IDE_ID=IU-2018.2
     - jdk: oraclejdk8
       env: IDE_ID=IU-2018.1

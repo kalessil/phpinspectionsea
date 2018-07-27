@@ -11,13 +11,11 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -62,8 +60,11 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                             final Method method       = resolved instanceof Method ? (Method) resolved : null;
                             if (method != null && method.isStatic()) {
                                 if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
-                                    /* $this->static() */
-                                    this.handleLateStaticBinding(base, operator, method);
+                                    final Function scope = ExpressionSemanticUtil.getScope(reference);
+                                    if (scope instanceof Method && !((Method) scope).isStatic()) {
+                                        /* $this->static() */
+                                        this.handleLateStaticBinding(base, operator, method);
+                                    }
                                 } else {
                                     /* <expression>->static() */
                                     holder.registerProblem(

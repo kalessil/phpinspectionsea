@@ -13,8 +13,10 @@ function handle_error {
 }
 trap 'handle_error $LINENO' ERR
 
-ideUrl="IU-2017.3"
-if [ "$IDE_ID" == "IU-2018.1" ]; then
+ideUrl="IU-2018.2"
+if [ "$IDE_ID" == "IU-2018.2" ]; then
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.tar.gz"
+elif [ "$IDE_ID" == "IU-2018.1" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.4.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.3" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.3.tar.gz"
@@ -74,7 +76,10 @@ if [ -d ./plugins ]; then
 fi
 mkdir plugins
 
-if [ "$IDE_ID" == "IU-2018.1" ]; then
+if [ "$IDE_ID" == "IU-2018.2" ]; then
+    download "http://plugins.jetbrains.com/files/6610/48209/php-182.3684.42.zip" "php-182.3684.42-2018.2.zip"
+    unzip -qo $travisCache/php-182.3684.42.zip -d ./plugins
+elif [ "$IDE_ID" == "IU-2018.1" ]; then
     download "http://plugins.jetbrains.com/files/6610/44552/php-181.4203.565.zip" "php-181.4203.565-2018.1.zip"
     unzip -qo $travisCache/php-181.4203.565.zip -d ./plugins
 elif [ "$IDE_ID" == "IU-2017.3" ]; then

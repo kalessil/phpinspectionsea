@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
+import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -44,8 +44,8 @@ public class UseSuggestedReplacementFixer implements LocalQuickFix {
         final PsiElement expression = descriptor.getPsiElement();
         if (expression != null && !project.isDisposed()) {
             final PsiElement replacement = PhpPsiElementFactory
-                    .createPhpPsiFromText(project, AssignmentExpression.class, "$x = " + this.expression)
-                    .getValue();
+                    .createPhpPsiFromText(project, ParenthesizedExpression.class, '(' + this.expression + ')')
+                    .getArgument();
             if (replacement != null && !project.isDisposed()) {
                 expression.replace(replacement);
             }

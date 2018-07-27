@@ -1,11 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -97,8 +100,14 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
         );
     }
 
-    private static final class NormalizeReferenceFix extends UseSuggestedReplacementFixer {
+    private static final class NormalizeReferenceFix implements LocalQuickFix {
         private static final String title = "Apply configured class reference style";
+
+        private final String replacement;
+
+        private NormalizeReferenceFix(@NotNull final String replacementName) {
+            this.replacement = replacementName;
+        }
 
         @NotNull
         @Override
@@ -106,8 +115,28 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
             return title;
         }
 
-        NormalizeReferenceFix(@NotNull String expression) {
-            super(expression);
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null && !project.isDisposed()) {
+                if (replacement.endsWith("::class")) {
+                    final PsiElement replacement
+                            = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, this.replacement + ';');
+                    if (replacement != null) {
+                        target.replace(replacement);
+                    }
+                } else if (replacement.equals("__CLASS__")) {
+                    target.replace(PhpPsiElementFactory.createConstantReference(project, this.replacement));
+                } else {
+                    target.replace(PhpPsiElementFactory.createClassReference(project, this.replacement));
+                }
+            }
         }
     }
 }

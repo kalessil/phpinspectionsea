@@ -17,15 +17,15 @@ ideUrl="IU-2018.2"
 if [ "$IDE_ID" == "IU-2018.2" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.tar.gz"
 elif [ "$IDE_ID" == "IU-2018.1" ]; then
-    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.4.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.3" ]; then
-    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.3.tar.gz"
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.2" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
 elif [ "$IDE_ID" == "IU-2017.1" ]; then
-    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
-elif [ "$IDE_ID" == "IU-2016.3" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.6.tar.gz"
+elif [ "$IDE_ID" == "IU-2016.3" ]; then
+    ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.8.tar.gz"
 elif [ "$IDE_ID" == "IU-2016.2" ]; then
     ideUrl="http://download.jetbrains.com/idea/idea$IDE_ID.5.tar.gz"
 fi

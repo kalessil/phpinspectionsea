@@ -71,9 +71,9 @@
         <fileset dir="${idea.build}/plugins/CSS/lib">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${java.home}/../lib">
+        <!--fileset dir="${java.home}/../lib">
             <include name="**/*.jar" />
-        </fileset>
+        </fileset-->
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
         </fileset>

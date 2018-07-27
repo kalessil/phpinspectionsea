@@ -71,11 +71,12 @@
         <fileset dir="${idea.build}/plugins/CSS/lib">
             <include name="*.jar"/>
         </fileset>
-        <!--fileset dir="${java.home}/../lib">
-            <include name="**/*.jar" />
-        </fileset-->
         <fileset dir="${basedir}/lib">
             <include name="*.jar" />
+        </fileset>
+        <!-- JDK 8/9 compatibility -->
+        <fileset dir="${java.home}/../lib" erroronmissingdir="false">
+            <include name="**/*.jar" />
         </fileset>
     </path>
 

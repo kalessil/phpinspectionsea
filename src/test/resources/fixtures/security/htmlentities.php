@@ -10,5 +10,8 @@ function cases_holder() {
         htmlentities('', ENT_COMPAT),
         htmlentities('', ENT_QUOTES | ENT_HTML5),
         htmlentities('', ENT_COMPAT | ENT_HTML5),
+
+        call_user_func(<error descr="Single quotes are not handled, please make use of ENT_QUOTES or ENT_COMPAT flags.">'htmlentities'</error>, '...'),
+        array_map(<error descr="Single quotes are not handled, please make use of ENT_QUOTES or ENT_COMPAT flags.">'htmlentities'</error>, []),
     ];
 }

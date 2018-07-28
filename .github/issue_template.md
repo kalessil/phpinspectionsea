@@ -19,5 +19,5 @@ Information from Help -> About dialog might be helpful as well. Skip if you are 
 
 Notes
 ---
-- Bugs fixed with highest priority, so features might be postponed. But it shouldn't stop you, right?
+- Bugs fixed with the highest priority, so features might be postponed. But it shouldn't stop you, right?
 - The project support is powered by community funding via [Patreon](https://www.patreon.com/kalessil)

@@ -47,17 +47,15 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                                                       arguments[0] instanceof ArrayAccessExpression ||
                                                       arguments[0] instanceof FieldReference;
                             if (isTarget) {
-                                final String source            = arguments[0].getText();
-                                final String offset            = arguments[1].getText();
-                                final boolean isNegativeOffset = offset.startsWith("-");
-                                final String expression        = (isNegativeOffset ? "%c%[strlen(%c%) %i%]" : "%c%[%i%]")
-                                        .replace("%c%", source)
-                                        .replace("%c%", source)
-                                        .replace("%i%", isNegativeOffset ? offset.replaceFirst("-", "- ") : offset);
+                                final String source      = arguments[0].getText();
+                                final String offset      = arguments[1].getText();
+                                final String replacement = offset.startsWith("-")
+                                        ? String.format("%s[strlen(%s) %s]", source, source, offset.replaceFirst("-", "- "))
+                                        : String.format( "%s[%s]", source, offset);
                                 holder.registerProblem(
                                         reference,
-                                        String.format(messagePattern, expression),
-                                        new TheLocalFix(expression)
+                                        String.format(messagePattern, replacement),
+                                        new TheLocalFix(replacement)
                                 );
                             }
                         }

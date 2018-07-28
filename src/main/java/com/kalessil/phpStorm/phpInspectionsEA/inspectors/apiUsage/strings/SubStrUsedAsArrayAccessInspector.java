@@ -3,9 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
+import com.jetbrains.php.lang.psi.elements.FieldReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.Variable;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' might be used instead (invalid index accesses might show up).";
+    private static final String messagePattern = "'%s' might be used instead (invalid index accesses might show up).";
 
     @NotNull
     public String getShortName() {
@@ -33,35 +34,32 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpFunctionCall(FunctionReference reference) {
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 /* check if it's the target function */
                 final String functionName = reference.getName();
-                if (functionName == null || !functionName.equals("substr")) {
-                    return;
-                }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length < 3) {
-                    return;
-                }
-
-                /* false-positive: PHP 5.3 is not supporting `call()[index]` constructs */
-                if (arguments[0] instanceof FunctionReference) {
-                    final PhpLanguageLevel php
-                            = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                    if (php == PhpLanguageLevel.PHP530) {
-                        return;
+                if (functionName != null && functionName.equals("substr")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 3) {
+                        final PsiElement length = arguments[2];
+                        if (OpenapiTypesUtil.isNumber(length) && length.getText().equals("1")) {
+                            final boolean isTarget  = arguments[0] instanceof Variable ||
+                                                      arguments[0] instanceof ArrayAccessExpression ||
+                                                      arguments[0] instanceof FieldReference;
+                            if (isTarget) {
+                                final String source      = arguments[0].getText();
+                                final String offset      = arguments[1].getText();
+                                final String replacement = offset.startsWith("-")
+                                        ? String.format("%s[strlen(%s) %s]", source, source, offset.replaceFirst("-", "- "))
+                                        : String.format( "%s[%s]", source, offset);
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(messagePattern, replacement),
+                                        new TheLocalFix(replacement)
+                                );
+                            }
+                        }
                     }
-                }
-
-                if (OpenapiTypesUtil.isNumber(arguments[2]) && arguments[2].getText().equals("1")) {
-                    final boolean isNegativeOffset = arguments[1].getText().startsWith("-");
-                    final String expression        = (isNegativeOffset ? "%c%[strlen(%c%) %i%]" : "%c%[%i%]")
-                        .replace("%c%", arguments[0].getText())
-                        .replace("%c%", arguments[0].getText())
-                        .replace("%i%", arguments[1].getText());
-
-                    final String message = messagePattern.replace("%e%", expression);
-                    holder.registerProblem(reference, message, new TheLocalFix(expression));
                 }
             }
         };

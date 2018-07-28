@@ -12,3 +12,7 @@
     /* false-positives: offset differs from 1 */
     substr($string, $position, -1);
     substr($string, $position, 5);
+
+    /* false-positives: source types */
+    substr(call(), $position, 1);
+    substr((string)$source, $position, 1);

@@ -66,14 +66,14 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                                     if (constantName != null && constantName.equals("class")) {
                                         final String replacement = "__CLASS__";
                                         final String message     = String.format(messagePattern, parent.getText(), replacement);
-                                        problemsHolder.registerProblem(parent, message, new TheLocalFix(replacement));
+                                        problemsHolder.registerProblem(parent, message, new NormalizeReferenceFix(replacement));
                                         return;
                                     }
                                 }
 
                                 if (!(parent instanceof ExtendsList)) {
                                     final String message = String.format(messagePattern, targetReference, targetReplacement);
-                                    problemsHolder.registerProblem(reference, message, new TheLocalFix(targetReplacement));
+                                    problemsHolder.registerProblem(reference, message, new NormalizeReferenceFix(targetReplacement));
                                 }
                             });
 
@@ -86,7 +86,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                                 .forEach(reference -> {
                                     final String replacement = targetReplacement + "::class";
                                     final String message     = String.format(messagePattern, reference.getText(), replacement);
-                                    problemsHolder.registerProblem(reference, message, new TheLocalFix(replacement));
+                                    problemsHolder.registerProblem(reference, message, new NormalizeReferenceFix(replacement));
                                 });
                     }
                 }
@@ -100,12 +100,12 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
         );
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static final class NormalizeReferenceFix implements LocalQuickFix {
         private static final String title = "Apply configured class reference style";
 
         private final String replacement;
 
-        private TheLocalFix(@NotNull final String replacementName) {
+        private NormalizeReferenceFix(@NotNull final String replacementName) {
             this.replacement = replacementName;
         }
 
@@ -126,12 +126,13 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
             final PsiElement target = descriptor.getPsiElement();
             if (target != null && !project.isDisposed()) {
                 if (replacement.endsWith("::class")) {
-                    final String pattern = this.replacement + ';';
-                    final ClassConstantReference replacement
-                            = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, pattern);
+                    final PsiElement replacement
+                            = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, this.replacement + ';');
                     if (replacement != null) {
                         target.replace(replacement);
                     }
+                } else if (replacement.equals("__CLASS__")) {
+                    target.replace(PhpPsiElementFactory.createConstantReference(project, this.replacement));
                 } else {
                     target.replace(PhpPsiElementFactory.createClassReference(project, this.replacement));
                 }

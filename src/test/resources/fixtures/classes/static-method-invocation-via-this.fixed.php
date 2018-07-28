@@ -4,7 +4,8 @@ class MethodsHolder {
     public static function method() {}
 
     public static function staticContext() {
-        self::method();
+        // $this is not accessible in static context; Using $this when not in object context
+        // $this->method();
     }
 
     public function nonStaticContext() {

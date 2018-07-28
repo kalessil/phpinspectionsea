@@ -66,7 +66,7 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                                         if (isTarget) {
                                             final String callbackName = callback.getName();
                                             holder.registerProblem(
-                                                    closure,
+                                                    expression,
                                                     String.format(messagePattern, callbackName),
                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                     new UseCallbackFix(String.format("'%s'", callbackName))

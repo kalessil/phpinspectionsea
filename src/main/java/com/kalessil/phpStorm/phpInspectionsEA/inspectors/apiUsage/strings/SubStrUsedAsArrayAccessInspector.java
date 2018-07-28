@@ -43,18 +43,17 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                     if (arguments.length == 3) {
                         final PsiElement length = arguments[2];
                         if (OpenapiTypesUtil.isNumber(length) && length.getText().equals("1")) {
-                            final PsiElement source = arguments[0];
-                            final boolean isTarget  = source instanceof Variable ||
-                                                      source instanceof ArrayAccessExpression ||
-                                                      source instanceof FieldReference;
+                            final boolean isTarget  = arguments[0] instanceof Variable ||
+                                                      arguments[0] instanceof ArrayAccessExpression ||
+                                                      arguments[0] instanceof FieldReference;
                             if (isTarget) {
-                                final PsiElement offset        = arguments[1];
-                                final boolean isNegativeOffset = offset.getText().startsWith("-");
+                                final String source            = arguments[0].getText();
+                                final String offset            = arguments[1].getText();
+                                final boolean isNegativeOffset = offset.startsWith("-");
                                 final String expression        = (isNegativeOffset ? "%c%[strlen(%c%) %i%]" : "%c%[%i%]")
-                                        .replace("%c%", source.getText())
-                                        .replace("%c%", source.getText())
-                                        .replace("%i%", isNegativeOffset ? offset.getText().replaceFirst("-", "- "): offset.getText());
-
+                                        .replace("%c%", source)
+                                        .replace("%c%", source)
+                                        .replace("%i%", isNegativeOffset ? offset.replaceFirst("-", "- ") : offset);
                                 holder.registerProblem(
                                         reference,
                                         String.format(messagePattern, expression),

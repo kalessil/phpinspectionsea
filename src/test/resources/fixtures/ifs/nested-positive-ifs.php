@@ -55,3 +55,15 @@ function cases_holder_else_merge() {
         else {}
     }
 }
+
+function cases_holder_same_else_merge() {
+    if ($a) {
+        <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        else {}
+    } else {}
+
+    if ($a) {
+        if ($b) {}
+        else {}
+    } else { ; }
+}

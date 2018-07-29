@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,8 +75,27 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
             }
 
             private boolean worthMergingIfs(@NotNull If statement, @NotNull If parent) {
-                return !ExpressionSemanticUtil.hasAlternativeBranches(statement) &&
-                       !ExpressionSemanticUtil.hasAlternativeBranches(parent);
+                boolean result = false;
+                if (statement.getElseIfBranches().length == 0 && parent.getElseIfBranches().length == 0) {
+                    final Else statementElse = statement.getElseBranch();
+                    final Else parentElse    = parent.getElseBranch();
+                    /* if has no else branch, parent must be without it as well */
+                    if (statementElse == null) {
+                        result = parentElse == null;
+                    }
+                    /* if has else branch, parent must have it as well */
+                    else if (parentElse != null) {
+                        final GroupStatement statementElseBody = ExpressionSemanticUtil.getGroupStatement(statementElse);
+                        final GroupStatement parentElseBody    = ExpressionSemanticUtil.getGroupStatement(parentElse);
+                        if (statementElseBody != null && parentElseBody != null) {
+                            final int count = ExpressionSemanticUtil.countExpressionsInGroup(statementElseBody);
+                            if (ExpressionSemanticUtil.countExpressionsInGroup(parentElseBody) == count) {
+                                result = OpenapiEquivalenceUtil.areEqual(statementElseBody, parentElseBody);
+                            }
+                        }
+                    }
+                }
+                return result;
             }
 
             private boolean worthMergingConditions(@Nullable PsiElement condition, @Nullable PsiElement parentCondition) {

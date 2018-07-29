@@ -48,7 +48,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     final PsiElement parentConstruct = parent.getParent();
                     if (parentConstruct instanceof If) {
                         final If parentIf = (If) parentConstruct;
-                        if (this.worthMerging(expression.getCondition(), parentIf.getCondition())) {
+                        if (this.worthMergingConditions(expression.getCondition(), parentIf.getCondition())) {
                             final boolean isTarget =
                                 !ExpressionSemanticUtil.hasAlternativeBranches(expression) &&
                                 !ExpressionSemanticUtil.hasAlternativeBranches(parentIf) &&
@@ -74,13 +74,15 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean worthMerging(@Nullable PsiElement condition, @Nullable PsiElement parentCondition) {
-                return Stream.of(condition, parentCondition)
-                        .filter(expression    -> expression instanceof BinaryExpression)
-                        .noneMatch(expression -> {
-                            final IElementType operator = ((BinaryExpression) expression).getOperationType();
-                            return operator == PhpTokenTypes.opOR || operator == PhpTokenTypes.opLIT_OR;
-                        });
+            private boolean worthMergingConditions(@Nullable PsiElement condition, @Nullable PsiElement parentCondition) {
+                return Stream.of(condition, parentCondition).noneMatch(expression -> {
+                    boolean result = false;
+                    if (expression instanceof BinaryExpression) {
+                        final IElementType operator = ((BinaryExpression) expression).getOperationType();
+                        result = operator == PhpTokenTypes.opOR || operator == PhpTokenTypes.opLIT_OR;
+                    }
+                    return result;
+                });
             }
         };
     }

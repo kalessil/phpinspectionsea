@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -44,8 +45,7 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass phpClass) {
-                final PsiElement nameIdentifier = phpClass.getNameIdentifier();
-
+                final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(phpClass);
                 if (nameIdentifier == null) {
                     return;
                 }

@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 
 import java.util.Collection;
 
@@ -14,11 +15,11 @@ public class CanNotReturnTypeStrategy {
     private static final String strProblemDescription = "%m% cannot return a value.";
 
     static public void apply(final Method method, final ProblemsHolder holder) {
-        Collection<PhpReturn> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
+        final Collection<PhpReturn> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
 
-        if (returnStatements.size() > 0 && null != method.getNameIdentifier()) {
+        if (returnStatements.size() > 0 && NamedElementUtil.getNameIdentifier(method) != null) {
             final String strMessage = strProblemDescription.replace("%m%", method.getName());
-            for (PhpReturn returnExpression : returnStatements) {
+            for (final PhpReturn returnExpression : returnStatements) {
                 final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnExpression);
                 if (null != returnValue && method == ExpressionSemanticUtil.getScope(returnExpression)) {
                     holder.registerProblem(returnExpression, strMessage, ProblemHighlightType.ERROR);

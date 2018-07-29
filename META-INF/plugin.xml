@@ -57,23 +57,13 @@ the implementation.
   <change-notes><![CDATA[
 Enhancements and bug-fixes. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Performance and deep code analysis improvements<br/>
-- New settings (Other Settings -> Php Inspections (EA Extended))<br/>
-- Hot-fix for a runtime exception<br/>
+- PhpStorm v2018.2 related fixes<br/>
 <br/>
-- Array and string offset validity: bug-fix types calculation (array|mixed + number)<br/>
-- Loop which does not loop: resolved false-positives (generator, iterable and co)<br/>
-- Null reference: resolved false-positives (null-coalescing/isset context)<br/>
-- Useless return: added QF, resolved a false-positive (static variables)<br/>
-- 'isset(...)' constructs can be merged: QF bug-fix (lost parenthesises)<br/>
-- 'substr(...)' short-hand usage: bug-fixing rare offset calculation issue<br/>
-<br/>
-- Could be replaced with '(array) ...': dropped<br/>
-- Exceptions handling and annotating: dropped in favor bundled one<br/>
-- Parameter/variable is not used: new patterns<br/>
-- Return type hint can be used: new patterns<br/>
-- Unnecessary type casting: new patterns<br/>
-- 'substr(...)' could be replaced with 'strpos(...)': added QF settings<br/>
+- NestedPositiveIfStatementsInspector: new patterns<br/>
+- SubStrUsedAsArrayAccessInspector: resolved false-positives (multiple cases)<br/>
+- PhpUnitTestsInspector: new patterns<br/>
+- UnnecessaryAssertionInspector: new patterns<br/>
+- ClassMockingCorrectnessInspector: new patterns<br/>
 <br/>
 <hr/>
   ]]></change-notes>

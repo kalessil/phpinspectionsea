@@ -47,10 +47,7 @@ function cases_holder_else_merge() {
 }
 
 function cases_holder_same_else_merge() {
-    if ($a) {
-        if ($b) {}
-        else {}
-    } else {}
+    if ($a && $b) {} else {}
 
     if ($a) {
         if ($b) {}

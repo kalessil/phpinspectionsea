@@ -45,3 +45,12 @@ function cases_holder_else_merge() {
     else if ($b) {}
     else {}
 }
+
+function cases_holder_same_else_merge() {
+    if ($a && $b) {} else {}
+
+    if ($a) {
+        if ($b) {}
+        else {}
+    } else { ; }
+}

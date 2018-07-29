@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,14 +46,13 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
             public void visitPhpIf(@NotNull If expression) {
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof GroupStatement) {
-                    final PsiElement parentConstruct = parent.getParent();
+                    final GroupStatement parentBody  = (GroupStatement) parent;
+                    final PsiElement parentConstruct = parentBody.getParent();
                     if (parentConstruct instanceof If) {
                         final If parentIf = (If) parentConstruct;
-                        if (this.worthMerging(expression.getCondition(), parentIf.getCondition())) {
-                            final boolean isTarget =
-                                !ExpressionSemanticUtil.hasAlternativeBranches(expression) &&
-                                !ExpressionSemanticUtil.hasAlternativeBranches(parentIf) &&
-                                ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parent) == 1;
+                        if (this.worthMergingConditions(expression.getCondition(), parentIf.getCondition())) {
+                            final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup(parentBody) == 1 &&
+                                                     this.worthMergingIfs(expression, parentIf);
                             if (isTarget) {
                                 holder.registerProblem(
                                         expression.getFirstChild(),
@@ -62,7 +62,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                             }
                         }
                     } else if (parentConstruct instanceof Else) {
-                        final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parent) == 1;
+                        final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup(parentBody) == 1;
                         if (isTarget) {
                             holder.registerProblem(
                                     expression.getFirstChild(),
@@ -74,13 +74,39 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean worthMerging(@Nullable PsiElement condition, @Nullable PsiElement parentCondition) {
-                return Stream.of(condition, parentCondition)
-                        .filter(expression    -> expression instanceof BinaryExpression)
-                        .noneMatch(expression -> {
-                            final IElementType operator = ((BinaryExpression) expression).getOperationType();
-                            return operator == PhpTokenTypes.opOR || operator == PhpTokenTypes.opLIT_OR;
-                        });
+            private boolean worthMergingIfs(@NotNull If statement, @NotNull If parent) {
+                boolean result = false;
+                if (statement.getElseIfBranches().length == 0 && parent.getElseIfBranches().length == 0) {
+                    final Else statementElse = statement.getElseBranch();
+                    final Else parentElse    = parent.getElseBranch();
+                    /* if has no else branch, parent must be without it as well */
+                    if (statementElse == null) {
+                        result = parentElse == null;
+                    }
+                    /* if has else branch, parent must have it as well */
+                    else if (parentElse != null) {
+                        final GroupStatement statementElseBody = ExpressionSemanticUtil.getGroupStatement(statementElse);
+                        final GroupStatement parentElseBody    = ExpressionSemanticUtil.getGroupStatement(parentElse);
+                        if (statementElseBody != null && parentElseBody != null) {
+                            final int count = ExpressionSemanticUtil.countExpressionsInGroup(statementElseBody);
+                            if (ExpressionSemanticUtil.countExpressionsInGroup(parentElseBody) == count) {
+                                result = OpenapiEquivalenceUtil.areEqual(statementElseBody, parentElseBody);
+                            }
+                        }
+                    }
+                }
+                return result;
+            }
+
+            private boolean worthMergingConditions(@Nullable PsiElement condition, @Nullable PsiElement parentCondition) {
+                return Stream.of(condition, parentCondition).noneMatch(expression -> {
+                    boolean result = false;
+                    if (expression instanceof BinaryExpression) {
+                        final IElementType operator = ((BinaryExpression) expression).getOperationType();
+                        result = operator == PhpTokenTypes.opOR || operator == PhpTokenTypes.opLIT_OR;
+                    }
+                    return result;
+                });
             }
         };
     }

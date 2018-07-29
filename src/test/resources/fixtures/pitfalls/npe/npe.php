@@ -160,3 +160,19 @@ function skip_properties_in_isset_context(CasesHolder $parameter = null) {
         $parameter->property ?? '...',
     ];
 }
+
+abstract class WhileSelfAssignmentCase
+{
+    /** @var WhileSelfAssignmentCase|null */
+    private $parent;
+
+    abstract function parent(): ?WhileSelfAssignmentCase;
+
+    public function method(): array
+    {
+        $local = $this->parent;
+        while ($local !== null) {
+            $local = $local->parent();
+        }
+    }
+}

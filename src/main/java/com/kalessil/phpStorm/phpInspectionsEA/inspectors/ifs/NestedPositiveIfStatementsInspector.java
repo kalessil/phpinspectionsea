@@ -45,14 +45,13 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
             public void visitPhpIf(@NotNull If expression) {
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof GroupStatement) {
-                    final PsiElement parentConstruct = parent.getParent();
+                    final GroupStatement parentBody  = (GroupStatement) parent;
+                    final PsiElement parentConstruct = parentBody.getParent();
                     if (parentConstruct instanceof If) {
                         final If parentIf = (If) parentConstruct;
                         if (this.worthMergingConditions(expression.getCondition(), parentIf.getCondition())) {
-                            final boolean isTarget =
-                                !ExpressionSemanticUtil.hasAlternativeBranches(expression) &&
-                                !ExpressionSemanticUtil.hasAlternativeBranches(parentIf) &&
-                                ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parent) == 1;
+                            final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup(parentBody) == 1 &&
+                                                     this.worthMergingIfs(expression, parentIf);
                             if (isTarget) {
                                 holder.registerProblem(
                                         expression.getFirstChild(),
@@ -62,7 +61,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                             }
                         }
                     } else if (parentConstruct instanceof Else) {
-                        final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) parent) == 1;
+                        final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup(parentBody) == 1;
                         if (isTarget) {
                             holder.registerProblem(
                                     expression.getFirstChild(),
@@ -72,6 +71,11 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean worthMergingIfs(@NotNull If statement, @NotNull If parent) {
+                return !ExpressionSemanticUtil.hasAlternativeBranches(statement) &&
+                       !ExpressionSemanticUtil.hasAlternativeBranches(parent);
             }
 
             private boolean worthMergingConditions(@Nullable PsiElement condition, @Nullable PsiElement parentCondition) {

@@ -175,7 +175,8 @@ final public class NullableVariablesStrategy {
                 });
         /* analyze collected variable usages */
         for (final Variable variable : variables){
-            final PsiElement parent = variable.getParent();
+            final PsiElement parent      = variable.getParent();
+            final PsiElement grandParent = parent.getParent();
 
             /* for local variables we need to skip usages until assignment performed */
             if (skipToDeclarationNeeded && !skipPerformed) {
@@ -208,7 +209,7 @@ final public class NullableVariablesStrategy {
                 return;
             }
             /* test and business logic assertions */
-            else if (parent instanceof ParameterList && isAssertion(parent.getParent())) {
+            else if (parent instanceof ParameterList && isAssertion(grandParent)) {
                 return;
             }
 
@@ -240,9 +241,9 @@ final public class NullableVariablesStrategy {
                 if (subject instanceof Variable && ((Variable) subject).getName().equals(variableName)) {
 
                     /* false-positives: `$variable->property ?? ...`, isset($variable->property) */
-                    if (parent instanceof FieldReference) {
-                        PsiElement lastReference    = parent;
-                        PsiElement referenceContext = parent;
+                    if (reference instanceof FieldReference) {
+                        PsiElement lastReference    = reference;
+                        PsiElement referenceContext = reference;
                         while (referenceContext instanceof FieldReference) {
                             lastReference    = referenceContext;
                             referenceContext = referenceContext.getParent();
@@ -256,6 +257,10 @@ final public class NullableVariablesStrategy {
                         } else if (referenceContext instanceof PhpIsset) {
                             continue;
                         }
+                    }
+                    /* false-positive: `$variable = $variable->method(...)` */
+                    else if (reference instanceof MethodReference && grandParent == variableDeclaration) {
+                        continue;
                     }
 
                     holder.registerProblem(subject, message);
@@ -272,8 +277,8 @@ final public class NullableVariablesStrategy {
                 }
             }
             /* cases when null dispatched into to non-null parameter */
-            else if (parent instanceof ParameterList && parent.getParent() instanceof FunctionReference) {
-                final FunctionReference reference = (FunctionReference) parent.getParent();
+            else if (parent instanceof ParameterList && grandParent instanceof FunctionReference) {
+                final FunctionReference reference = (FunctionReference) grandParent;
                 final PsiElement resolved         = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved != null)  {
                     /* get the parameter definition */

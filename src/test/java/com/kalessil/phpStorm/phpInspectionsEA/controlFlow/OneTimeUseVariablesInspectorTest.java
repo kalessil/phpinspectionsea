@@ -31,4 +31,14 @@ final public class OneTimeUseVariablesInspectorTest extends PhpCodeInsightFixtur
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("fixtures/controlFlow/oneTimeUse/foreach.fixed.php");
     }
+
+    public void testEcho() {
+        myFixture.enableInspections(new OneTimeUseVariablesInspector());
+        myFixture.configureByFile("fixtures/controlFlow/oneTimeUse/echo.php");
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("fixtures/controlFlow/oneTimeUse/echo.fixed.php");
+    }
 }

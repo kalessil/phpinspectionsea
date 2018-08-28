@@ -226,12 +226,25 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
             }
 
+            @Override public void visitPhpEchoStatement(@NotNull PhpEchoStatement expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+
+                if (ExpressionSemanticUtil.getScope(expression) != null) {
+                    final PsiElement[] arguments = expression.getArguments();
+                    if (arguments.length == 1) {
+                        final Variable variable = this.getVariable(arguments[0]);
+                        if (variable != null) {
+                            this.checkOneTimeUse(expression, variable);
+                        }
+                    }
+                }
+            }
+
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
 
-                final Function scope = ExpressionSemanticUtil.getScope(expression);
-                if (scope != null) {
+                if (ExpressionSemanticUtil.getScope(expression) != null) {
                     final PsiElement source = expression.getArray();
                     final Variable variable = source == null ? null : this.getVariable(source);
                     if (variable != null) {

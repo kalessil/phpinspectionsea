@@ -53,7 +53,7 @@ final public class UnclearOperationsPriorityStrategy {
                     holder.registerProblem(parent, message, new WrapItAsItIsFix(replacement));
                     return true;
                 }
-            } else if (PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator)) {
+            } else if (PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator) && operator != PhpTokenTypes.opSPACESHIP) {
                 final PsiElement left = expression.getLeftOperand();
                 if (left instanceof UnaryExpression) {
                     final UnaryExpression candidate = (UnaryExpression) left;

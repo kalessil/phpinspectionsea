@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ShortOpenTagU
 final public class ShortOpenTagUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ShortOpenTagUsageInspector());
-        myFixture.configureByFile("fixtures/codeStyle/short-open-tags.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/short-open-tags.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

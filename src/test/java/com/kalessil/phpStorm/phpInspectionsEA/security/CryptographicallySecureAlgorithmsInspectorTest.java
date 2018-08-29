@@ -7,7 +7,7 @@ final public class CryptographicallySecureAlgorithmsInspectorTest extends PhpCod
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CryptographicallySecureAlgorithmsInspector());
 
-        myFixture.configureByFile("fixtures/security/weak-algorithms.php");
+        myFixture.configureByFile("testData/fixtures/security/weak-algorithms.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

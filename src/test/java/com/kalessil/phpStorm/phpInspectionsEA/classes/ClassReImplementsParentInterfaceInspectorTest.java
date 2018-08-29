@@ -6,12 +6,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 final public class ClassReImplementsParentInterfaceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ClassReImplementsParentInterfaceInspector());
-        myFixture.configureByFile("fixtures/classes/re-implements-parent-interface.php");
+        myFixture.configureByFile("testData/fixtures/classes/re-implements-parent-interface.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/classes/re-implements-parent-interface.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/classes/re-implements-parent-interface.fixed.php");
     }
 }
 

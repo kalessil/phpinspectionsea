@@ -6,8 +6,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.RsaOraclePaddi
 final public class RsaOraclePaddingAttacksInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new RsaOraclePaddingAttacksInspector());
-        myFixture.configureByFile("fixtures/security/openssl-rsa-oracle-padding-attack.php");
-        myFixture.configureByFile("fixtures/security/mcrypt-rsa-oracle-padding-attack.php");
+        myFixture.configureByFile("testData/fixtures/security/openssl-rsa-oracle-padding-attack.php");
+        myFixture.configureByFile("testData/fixtures/security/mcrypt-rsa-oracle-padding-attack.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

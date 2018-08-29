@@ -7,7 +7,7 @@ final public class NonSecureParseStrUsageInspectorTest extends PhpCodeInsightFix
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureParseStrUsageInspector());
 
-        myFixture.configureByFile("fixtures/security/parse-str.php");
+        myFixture.configureByFile("testData/fixtures/security/parse-str.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

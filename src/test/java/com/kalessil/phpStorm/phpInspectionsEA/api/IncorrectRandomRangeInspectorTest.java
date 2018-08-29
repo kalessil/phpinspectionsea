@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Inco
 final public class IncorrectRandomRangeInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new IncorrectRandomRangeInspector());
-        myFixture.configureByFile("fixtures/pitfalls/incorrect-random-range.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/incorrect-random-range.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

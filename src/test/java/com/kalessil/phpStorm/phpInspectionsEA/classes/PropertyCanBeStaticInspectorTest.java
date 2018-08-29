@@ -9,13 +9,13 @@ final public class PropertyCanBeStaticInspectorTest extends PhpCodeInsightFixtur
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP550);
         myFixture.enableInspections(new PropertyCanBeStaticInspector());
-        myFixture.configureByFile("fixtures/classes/property-can-be-static.php");
+        myFixture.configureByFile("testData/fixtures/classes/property-can-be-static.php");
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testFalsePositives() {
         myFixture.enableInspections(new PropertyCanBeStaticInspector());
-        myFixture.configureByFile("fixtures/classes/property-can-be-static-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/classes/property-can-be-static-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

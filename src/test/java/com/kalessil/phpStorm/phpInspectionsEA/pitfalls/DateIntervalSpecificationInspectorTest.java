@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateI
 public final class DateIntervalSpecificationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new DateIntervalSpecificationInspector());
-        myFixture.configureByFile("fixtures/pitfalls/date-interval-specification.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/date-interval-specification.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

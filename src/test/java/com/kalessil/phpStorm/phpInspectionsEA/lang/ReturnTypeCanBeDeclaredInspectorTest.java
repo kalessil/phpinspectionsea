@@ -10,17 +10,17 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
 
-        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.ns.php");
+        myFixture.configureByFile("testData/fixtures/lang/typeHints/return-type-hints.ns.php");
         myFixture.testHighlighting(true, false, true);
 
-        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.php");
+        myFixture.configureByFile("testData/fixtures/lang/typeHints/return-type-hints.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile(
-            "fixtures/lang/typeHints/return-type-hints.php",
-            "fixtures/lang/typeHints/return-type-hints.fixed.php",
+            "testData/fixtures/lang/typeHints/return-type-hints.php",
+            "testData/fixtures/lang/typeHints/return-type-hints.fixed.php",
             false
         );
     }
@@ -29,19 +29,19 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
         final ReturnTypeCanBeDeclaredInspector inspector = new ReturnTypeCanBeDeclaredInspector();
         inspector.LOOKUP_PHPDOC_RETURN_DECLARATIONS      = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.replacement-generation.php");
+        myFixture.configureByFile("testData/fixtures/lang/typeHints/return-type-hints.replacement-generation.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testReturnTypeInfluencedByInterfaces() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
-        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.inheritance-influence.php");
+        myFixture.configureByFile("testData/fixtures/lang/typeHints/return-type-hints.inheritance-influence.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testRefactoringTargetIdentification() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
-        myFixture.configureByFile("fixtures/lang/typeHints/return-type-hints.refactoring-target.php");
+        myFixture.configureByFile("testData/fixtures/lang/typeHints/return-type-hints.refactoring-target.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

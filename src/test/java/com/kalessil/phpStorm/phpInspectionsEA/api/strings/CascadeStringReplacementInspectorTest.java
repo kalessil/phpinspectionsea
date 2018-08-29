@@ -8,11 +8,11 @@ final public class CascadeStringReplacementInspectorTest extends PhpCodeInsightF
         final CascadeStringReplacementInspector inspector = new CascadeStringReplacementInspector();
         inspector.USE_SHORT_ARRAYS_SYNTAX                 = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/api/strings/cascade-str-replace.php");
+        myFixture.configureByFile("testData/fixtures/api/strings/cascade-str-replace.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/strings/cascade-str-replace.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/strings/cascade-str-replace.fixed.php");
     }
 }

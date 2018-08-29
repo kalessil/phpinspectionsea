@@ -9,7 +9,7 @@ final public class DateTimeSetTimeUsageInspectorTest extends PhpCodeInsightFixtu
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
         myFixture.enableInspections(new DateTimeSetTimeUsageInspector());
-        myFixture.configureByFile("fixtures/pitfalls/date-time-set-time-milliseconds.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/date-time-set-time-milliseconds.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.U
 final public class UsingInclusionOnceReturnValueInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UsingInclusionOnceReturnValueInspector());
-        myFixture.configureByFile("fixtures/pitfalls/using-inclusion-once-return.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/using-inclusion-once-return.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

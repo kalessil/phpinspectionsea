@@ -7,14 +7,14 @@ final public class AlterInForeachInspectorTest extends PhpCodeInsightFixtureTest
     public void testIfFindsAllPatterns() {
         final AlterInForeachInspector inspector = new AlterInForeachInspector();
         inspector.SUGGEST_USING_VALUE_BY_REF    = true;
-        myFixture.configureByFile("fixtures/foreach/alter-in-foreach.php");
+        myFixture.configureByFile("testData/fixtures/foreach/alter-in-foreach.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testFalsePositives() {
         myFixture.enableInspections(new AlterInForeachInspector());
-        myFixture.configureByFile("fixtures/foreach/alter-in-foreach-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/foreach/alter-in-foreach-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

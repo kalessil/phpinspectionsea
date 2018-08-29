@@ -6,12 +6,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.I
 final public class InstanceofCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new InstanceofCanBeUsedInspector());
-        myFixture.configureByFile("fixtures/lang/instanceof-can-be-used.php");
+        myFixture.configureByFile("testData/fixtures/lang/instanceof-can-be-used.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/lang/instanceof-can-be-used.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/lang/instanceof-can-be-used.fixed.php");
     }
 }
 

@@ -8,11 +8,11 @@ final public class TypesCastingCanBeUsedInspectorTest extends PhpCodeInsightFixt
         final TypesCastingCanBeUsedInspector inspector = new TypesCastingCanBeUsedInspector();
         inspector.REPORT_INLINES                       = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/api/type-casting-can-be-used.php");
+        myFixture.configureByFile("testData/fixtures/api/type-casting-can-be-used.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/type-casting-can-be-used.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/type-casting-can-be-used.fixed.php");
     }
 }

@@ -8,17 +8,17 @@ final public class OneTimeUseVariablesInspectorTest extends PhpCodeInsightFixtur
         final OneTimeUseVariablesInspector inspector = new OneTimeUseVariablesInspector();
         inspector.ALLOW_LONG_STATEMENTS              = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/controlFlow/one-time-use-variables.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/one-time-use-variables.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/controlFlow/one-time-use-variables.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/controlFlow/one-time-use-variables.fixed.php");
     }
 
     public void testFalsePositives() {
         myFixture.enableInspections(new OneTimeUseVariablesInspector());
-        myFixture.configureByFile("fixtures/controlFlow/one-time-use-variables-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/one-time-use-variables-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

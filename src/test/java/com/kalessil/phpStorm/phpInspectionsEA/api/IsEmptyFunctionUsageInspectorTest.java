@@ -9,12 +9,12 @@ final public class IsEmptyFunctionUsageInspectorTest extends PhpCodeInsightFixtu
         inspector.SUGGEST_TO_USE_COUNT_CHECK          = true;
         inspector.REPORT_EMPTY_USAGE                  = true;
         inspector.SUGGEST_TO_USE_NULL_COMPARISON      = true;
-        myFixture.configureByFile("fixtures/api/empty-function.php");
+        myFixture.configureByFile("testData/fixtures/api/empty-function.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/empty-function.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/empty-function.fixed.php");
     }
 }

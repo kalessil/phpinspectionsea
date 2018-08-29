@@ -53,27 +53,23 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                final PsiElement rawCondition = expression.getCondition();
-                final PsiElement condition    = ExpressionSemanticUtil.getExpressionTroughParenthesis(rawCondition);
-                if (rawCondition != null && condition != null) {
+                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                if (condition instanceof BinaryExpression) {
                     final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                     final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                    /* case: can be replaced with condition itself */
-                    if (trueVariant != null && falseVariant != null && condition instanceof BinaryExpression) {
-                        /* check branches; if both variants are identical, nested ternary inspection will spot it */
-                        if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
-                            final String replacement = this.generateReplacement((BinaryExpression) condition, trueVariant);
-                            if (replacement != null) {
-                                final String message = String.format(messagePattern, replacement);
-                                holder.registerProblem(expression, message, new SimplifyFix(replacement));
-                            }
+                    /* check branches; if both variants are identical, nested ternary inspection will spot it */
+                    if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
+                        final String replacement = this.generateBinaryReplacement((BinaryExpression) condition, trueVariant);
+                        if (replacement != null) {
+                            final String message = String.format(messagePattern, replacement);
+                            holder.registerProblem(expression, message, new SimplifyFix(replacement));
                         }
                     }
                 }
             }
 
             @Nullable
-            private String generateReplacement(@NotNull BinaryExpression binary, @NotNull PsiElement trueVariant) {
+            private String generateBinaryReplacement(@NotNull BinaryExpression binary, @NotNull PsiElement trueVariant) {
                 final IElementType operator = binary.getOperationType();
                 if (null == operator) {
                     return null;
@@ -90,14 +86,16 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                     if (isInverted) {
                         final PsiElement left  = binary.getLeftOperand();
                         final PsiElement right = binary.getRightOperand();
-                        if (null == left || null == right) {
-                            return null;
+                        if (left != null && right != null) {
+                            replacement = String.format(
+                                    "%s %s %s",
+                                    left.getText(),
+                                    oppositeOperators.get(operator),
+                                    right.getText()
+                            );
+                        } else {
+                            replacement = null;
                         }
-
-                        replacement = "%l% %o% %r%"
-                                .replace("%r%", right.getText())
-                                .replace("%o%", oppositeOperators.get(operator))
-                                .replace("%l%", left.getText());
                     } else {
                         replacement = binary.getText();
                     }

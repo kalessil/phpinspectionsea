@@ -12,3 +12,16 @@
 
     $x = $x > 0 ? true : null;
     $x = is_numeric($x) ? false : true;
+
+
+    $x = empty($x);
+    $x = !empty($x);
+    $x = empty($x);
+
+    $x = empty($x) ? true : null;
+
+    $x = isset($x);
+    $x = !isset($x);
+    $x = isset($x);
+
+    $x = isset($x) ? false : null;

@@ -5,12 +5,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.TernaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.Map;
  */
 
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' should be used instead.";
+    private static final String messagePattern = "'%s' would make more sense here (simplification).";
 
     private final static Map<IElementType, String> oppositeOperators = new HashMap<>();
     static {
@@ -55,6 +55,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof BinaryExpression) {
+                    /* case: binary condition */
                     final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                     final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
                     /* check branches; if both variants are identical, nested ternary inspection will spot it */
@@ -62,6 +63,29 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                         final String replacement = this.generateBinaryReplacement((BinaryExpression) condition, trueVariant);
                         if (replacement != null) {
                             final String message = String.format(messagePattern, replacement);
+                            holder.registerProblem(expression, message, new SimplifyFix(replacement));
+                        }
+                    }
+                } else {
+                    /* condition might be inverted, extract it */
+                    boolean isConditionInverted = false;
+                    PsiElement candidate        = condition;
+                    if (candidate instanceof UnaryExpression) {
+                        final UnaryExpression unary = (UnaryExpression) candidate;
+                        if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                            isConditionInverted = true;
+                            candidate           = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
+                        }
+                    }
+                    /* case: emptiness check */
+                    if (candidate instanceof PhpEmpty || candidate instanceof PhpIsset) {
+                        final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                        final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                        /* check branches; if both variants are identical, nested ternary inspection will spot it */
+                        if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
+                            final boolean isInverted = PhpLanguageUtil.isFalse(trueVariant) && !isConditionInverted;
+                            final String replacement = (isInverted ? "!" : "") + candidate.getText();
+                            final String message     = String.format(messagePattern, replacement);
                             holder.registerProblem(expression, message, new SimplifyFix(replacement));
                         }
                     }
@@ -76,8 +100,8 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                 }
 
                 final String replacement;
-                final boolean useParentheses = !oppositeOperators.containsKey(operator);
                 final boolean isInverted     = PhpLanguageUtil.isFalse(trueVariant);
+                final boolean useParentheses = !oppositeOperators.containsKey(operator);
                 if (useParentheses) {
                     final boolean isLogical  = PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator;
                     final String boolCasting = isLogical ? "" : "(bool)";

@@ -11,3 +11,10 @@
     $x = <weak_warning descr="'stripos($path, $pathPrefix) === 0' can be used instead (improves maintainability).">strtoupper(substr($path, 0, strlen($pathPrefix))) === $pathPrefix</weak_warning>;
     $x = <weak_warning descr="'mb_stripos($path, $pathPrefix) === 0' can be used instead (improves maintainability).">strtoupper(mb_substr($path, 0, strlen($pathPrefix))) === $pathPrefix</weak_warning>;
     $x = <weak_warning descr="'mb_stripos($path, $pathPrefix) === 0' can be used instead (improves maintainability).">strtolower(mb_substr($path, 0, strlen($pathPrefix))) === $pathPrefix</weak_warning>;
+
+
+    $x = <weak_warning descr="'strpos($path, '.') === 0' can be used instead (improves maintainability).">$path[0] == '.'</weak_warning>;
+    $x = <weak_warning descr="'strpos($path, ".") === 0' can be used instead (improves maintainability).">$path[0] === "."</weak_warning>;
+
+    $x = $path[0] === '..';
+    $x = $path[1] === '.';

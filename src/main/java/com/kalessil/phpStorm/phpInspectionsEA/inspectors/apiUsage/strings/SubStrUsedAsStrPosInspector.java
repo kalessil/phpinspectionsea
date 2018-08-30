@@ -3,9 +3,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.ParameterList;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -52,6 +52,38 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            @Override
+            public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
+                final PsiElement parent = expression.getParent();
+                if (parent instanceof BinaryExpression) {
+                    final BinaryExpression binary = (BinaryExpression) parent;
+                    final IElementType operator   = binary.getOperationType();
+                    if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opEQUAL) {
+                        final PsiElement literal      = OpenapiElementsUtil.getSecondOperand(binary, expression);
+                        final PsiElement container    = expression.getValue();
+                        if (container != null && literal instanceof StringLiteralExpression) {
+                            final StringLiteralExpression fragment = (StringLiteralExpression) literal;
+                            if (fragment.getContents().length() == 1) {
+                                final ArrayIndex index  = expression.getIndex();
+                                final PsiElement offset = index == null ? null : index.getValue();
+                                if (offset != null && offset.getText().equals("0")) {
+                                    final String replacement = String.format(
+                                            "strpos(%s, %s) === 0",
+                                            container.getText(),
+                                            literal.getText()
+                                    );
+                                    holder.registerProblem(
+                                            parent,
+                                            String.format(messagePattern, replacement),
+                                            new UseStringSearchFix(replacement)
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();

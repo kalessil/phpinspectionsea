@@ -122,7 +122,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     return true;
                 }
 
-                boolean isChecked = false;
+                /* implicit false test */
                 for (final BinaryExpression expression : PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class)) {
                     final PsiElement left       = expression.getLeftOperand();
                     final PsiElement right      = expression.getRightOperand();
@@ -132,19 +132,19 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                         if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
                             continue;
                         }
-                        if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
-                            continue;
-                        }
 
-                        final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
-                        if (OpenapiEquivalenceUtil.areEqual(operatorValue, subject)) {
-                            isChecked = true;
-                            break;
+                        if (PhpTokenTypes.opIDENTICAL == operator || PhpTokenTypes.opNOT_IDENTICAL == operator) {
+                            final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
+                            if (OpenapiEquivalenceUtil.areEqual(operatorValue, subject)) {
+                                return true;
+                            }
                         }
                     }
                 }
 
-                return isChecked;
+                /* inversion as false test */
+
+                return false;
             }
         };
     }

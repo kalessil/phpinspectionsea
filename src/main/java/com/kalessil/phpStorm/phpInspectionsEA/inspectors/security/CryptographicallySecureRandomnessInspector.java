@@ -123,10 +123,10 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 }
 
                 /* implicit false test */
-                for (final BinaryExpression expression : PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class)) {
-                    final PsiElement left       = expression.getLeftOperand();
-                    final PsiElement right      = expression.getRightOperand();
-                    final IElementType operator = expression.getOperationType();
+                for (final BinaryExpression binary : PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class)) {
+                    final PsiElement left       = binary.getLeftOperand();
+                    final PsiElement right      = binary.getRightOperand();
+                    final IElementType operator = binary.getOperationType();
                     if (operator != null && left != null && right != null) {
                         /* expression should be a comparison with a false */
                         if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
@@ -134,8 +134,8 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                         }
 
                         if (PhpTokenTypes.opIDENTICAL == operator || PhpTokenTypes.opNOT_IDENTICAL == operator) {
-                            final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
-                            if (OpenapiEquivalenceUtil.areEqual(operatorValue, subject)) {
+                            final PsiElement matchCandidate = PhpLanguageUtil.isFalse(left) ? right : left;
+                            if (OpenapiEquivalenceUtil.areEqual(matchCandidate, subject)) {
                                 return true;
                             }
                         }
@@ -143,6 +143,14 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 }
 
                 /* inversion as false test */
+                for (final UnaryExpression unary : PsiTreeUtil.findChildrenOfType(body, UnaryExpression.class)) {
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                        final PsiElement matchCandidate = unary.getValue();
+                        if (matchCandidate != null && OpenapiEquivalenceUtil.areEqual(matchCandidate, subject)) {
+                            return true;
+                        }
+                    }
+                }
 
                 return false;
             }

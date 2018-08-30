@@ -72,4 +72,15 @@ class Container {
         $a[$lastIndex = count($a)] = '...';
         return $lastIndex;
     }
+
+    function multi_assignment_case_holder($parameter)
+    {
+        $first = $second = [];
+
+        if ($parameter) {
+            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$first[]</weak_warning> = $parameter;
+        } else {
+            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$second[]</weak_warning> = $parameter;
+        }
+    }
 }

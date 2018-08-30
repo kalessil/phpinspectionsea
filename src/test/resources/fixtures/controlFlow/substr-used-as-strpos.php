@@ -14,7 +14,7 @@
 
 
     $x = <weak_warning descr="'strpos($path, '.') === 0' can be used instead (improves maintainability).">$path[0] == '.'</weak_warning>;
-    $x = <weak_warning descr="'strpos($path, ".") === 0' can be used instead (improves maintainability).">$path[0] === "."</weak_warning>;
+    $x = <weak_warning descr="'strpos($path, \".\") === 0' can be used instead (improves maintainability).">$path[0] === "."</weak_warning>;
 
     $x = $path[0] === '..';
     $x = $path[1] === '.';

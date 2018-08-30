@@ -43,4 +43,18 @@ class CryptoSecureRandomness
 
         return $x;
     }
+
+    public function indirectFalseCheck() {
+        $x = openssl_random_pseudo_bytes (32, $isSecure);
+        if (!$x || !$isSecure) {
+            return false;
+        }
+
+        $x = mcrypt_create_iv (32, <error descr="It's better to use MCRYPT_DEV_RANDOM here (may block until more entropy is available).">MCRYPT_DEV_URANDOM</error>);
+        if (!$x) {
+            return false;
+        }
+
+        return $x;
+    }
 }

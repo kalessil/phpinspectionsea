@@ -88,7 +88,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 boolean resultVerified = false;
                 if (parent instanceof AssignmentExpression) {
                     final PsiElement variable = ((AssignmentExpression) parent).getVariable();
-                    resultVerified            = null == variable || isCheckedForFalse(variable);
+                    resultVerified            = variable == null || isCheckedForFalse(variable);
                 }
                 if (!resultVerified) {
                     holder.registerProblem(reference, messageVerifyBytes, ProblemHighlightType.GENERIC_ERROR);
@@ -117,13 +117,13 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
             private boolean isCheckedForFalse(@NotNull PsiElement subject) {
                 /* ensure we are in a callable, and assume checked if it's plain script (no false-positives) */
                 final Function scope      = ExpressionSemanticUtil.getScope(subject);
-                final GroupStatement body = null == scope ? null : ExpressionSemanticUtil.getGroupStatement(scope);
-                if (null == body) {
+                final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                if (body == null) {
                     return true;
                 }
 
                 boolean isChecked = false;
-                for (BinaryExpression expression : PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class)) {
+                for (final BinaryExpression expression : PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class)) {
                     final PsiElement left       = expression.getLeftOperand();
                     final PsiElement right      = expression.getRightOperand();
                     final IElementType operator = expression.getOperationType();

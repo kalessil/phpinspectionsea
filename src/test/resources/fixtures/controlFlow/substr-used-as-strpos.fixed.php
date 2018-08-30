@@ -11,3 +11,10 @@
     $x = stripos($path, $pathPrefix) === 0;
     $x = mb_stripos($path, $pathPrefix) === 0;
     $x = mb_stripos($path, $pathPrefix) === 0;
+
+
+    $x = strpos($path, '.') === 0;
+    $x = strpos($path, ".") === 0;
+
+    $x = $path[0] === '..';
+    $x = $path[1] === '.';

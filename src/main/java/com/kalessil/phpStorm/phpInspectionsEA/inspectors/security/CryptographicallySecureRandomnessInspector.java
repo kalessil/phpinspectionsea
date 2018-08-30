@@ -88,7 +88,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 boolean resultVerified = false;
                 if (parent instanceof AssignmentExpression) {
                     final PsiElement variable = ((AssignmentExpression) parent).getVariable();
-                    resultVerified            = null == variable || isCheckedForFalse(variable);
+                    resultVerified            = variable == null || isCheckedForFalse(variable);
                 }
                 if (!resultVerified) {
                     holder.registerProblem(reference, messageVerifyBytes, ProblemHighlightType.GENERIC_ERROR);
@@ -117,34 +117,42 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
             private boolean isCheckedForFalse(@NotNull PsiElement subject) {
                 /* ensure we are in a callable, and assume checked if it's plain script (no false-positives) */
                 final Function scope      = ExpressionSemanticUtil.getScope(subject);
-                final GroupStatement body = null == scope ? null : ExpressionSemanticUtil.getGroupStatement(scope);
-                if (null == body) {
+                final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                if (body == null) {
                     return true;
                 }
 
-                boolean isChecked = false;
-                for (BinaryExpression expression : PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class)) {
-                    final PsiElement left       = expression.getLeftOperand();
-                    final PsiElement right      = expression.getRightOperand();
-                    final IElementType operator = expression.getOperationType();
+                /* implicit false test */
+                for (final BinaryExpression binary : PsiTreeUtil.findChildrenOfType(body, BinaryExpression.class)) {
+                    final PsiElement left       = binary.getLeftOperand();
+                    final PsiElement right      = binary.getRightOperand();
+                    final IElementType operator = binary.getOperationType();
                     if (operator != null && left != null && right != null) {
                         /* expression should be a comparison with a false */
                         if (!PhpLanguageUtil.isFalse(left) && !PhpLanguageUtil.isFalse(right)) {
                             continue;
                         }
-                        if (PhpTokenTypes.opIDENTICAL != operator && PhpTokenTypes.opNOT_IDENTICAL != operator) {
-                            continue;
-                        }
 
-                        final PsiElement operatorValue = PhpLanguageUtil.isFalse(left) ? right : left;
-                        if (OpenapiEquivalenceUtil.areEqual(operatorValue, subject)) {
-                            isChecked = true;
-                            break;
+                        if (PhpTokenTypes.opIDENTICAL == operator || PhpTokenTypes.opNOT_IDENTICAL == operator) {
+                            final PsiElement matchCandidate = PhpLanguageUtil.isFalse(left) ? right : left;
+                            if (OpenapiEquivalenceUtil.areEqual(matchCandidate, subject)) {
+                                return true;
+                            }
                         }
                     }
                 }
 
-                return isChecked;
+                /* inversion as false test */
+                for (final UnaryExpression unary : PsiTreeUtil.findChildrenOfType(body, UnaryExpression.class)) {
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                        final PsiElement matchCandidate = unary.getValue();
+                        if (matchCandidate != null && OpenapiEquivalenceUtil.areEqual(matchCandidate, subject)) {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
             }
         };
     }

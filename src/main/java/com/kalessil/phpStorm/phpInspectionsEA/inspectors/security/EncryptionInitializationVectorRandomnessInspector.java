@@ -53,14 +53,14 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
 
                     /* discover and inspect possible values */
                     final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[4]);
-                    if (values.size() > 0) {
+                    if (!values.isEmpty()) {
                         final List<String> reporting = new ArrayList<>();
 
                         /* check all possible values */
                         for (final PsiElement source : values) {
                             if (OpenapiTypesUtil.isFunctionReference(source)) {
                                 final String sourceName = ((FunctionReference) source).getName();
-                                if (null != sourceName && secureFunctions.contains(sourceName)) {
+                                if (sourceName != null && secureFunctions.contains(sourceName)) {
                                     continue;
                                 }
                             }
@@ -69,7 +69,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                         values.clear();
 
                         /* got something for reporting */
-                        if (reporting.size() > 0) {
+                        if (!reporting.isEmpty()) {
                             /* sort reporting list to produce testable results */
                             Collections.sort(reporting);
 

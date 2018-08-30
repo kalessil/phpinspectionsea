@@ -62,6 +62,7 @@ $z = $x && $b;
 if ((!$a) > $b) {}
 if ((!($a)) > $b) {}
 if ((!$a) > $b) {}
+if (!$a <=> $b) {}
 
 /* nullable/falsy values comparison cases */
 $nullable = null;

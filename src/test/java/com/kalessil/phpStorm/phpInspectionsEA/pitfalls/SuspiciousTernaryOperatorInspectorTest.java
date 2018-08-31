@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Susp
 final public class SuspiciousTernaryOperatorInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SuspiciousTernaryOperatorInspector());
-        myFixture.configureByFile("fixtures/pitfalls/suspicious-ternary-operator.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-ternary-operator.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

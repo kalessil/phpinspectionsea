@@ -7,7 +7,7 @@ final public class HostnameSubstitutionInspectorTest extends PhpCodeInsightFixtu
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new HostnameSubstitutionInspector());
 
-        myFixture.configureByFile("fixtures/security/hostname-substitution.php");
+        myFixture.configureByFile("testData/fixtures/security/hostname-substitution.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

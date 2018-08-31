@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureUniqi
 final public class NonSecureUniqidUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureUniqidUsageInspector());
-        myFixture.configureByFile("fixtures/security/uniqid.php");
+        myFixture.configureByFile("testData/fixtures/security/uniqid.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/security/uniqid.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/security/uniqid.fixed.php");
     }
 }

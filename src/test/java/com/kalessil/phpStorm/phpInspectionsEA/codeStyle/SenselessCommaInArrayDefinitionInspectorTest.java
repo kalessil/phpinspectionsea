@@ -6,12 +6,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SenselessComm
 public final class SenselessCommaInArrayDefinitionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SenselessCommaInArrayDefinitionInspector());
-        myFixture.configureByFile("fixtures/codeStyle/last-comma-in-array.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/last-comma-in-array.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/last-comma-in-array.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/last-comma-in-array.fixed.php");
     }
 }
 

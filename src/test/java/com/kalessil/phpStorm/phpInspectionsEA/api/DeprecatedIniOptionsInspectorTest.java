@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DeprecatedIni
 final public class DeprecatedIniOptionsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new DeprecatedIniOptionsInspector());
-        myFixture.configureByFile("fixtures/api/deprecated-ini-options.php");
+        myFixture.configureByFile("testData/fixtures/api/deprecated-ini-options.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

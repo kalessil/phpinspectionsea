@@ -9,7 +9,7 @@ final public class ForgottenDebugOutputInspectorTest extends PhpCodeInsightFixtu
         inspector.migratedIntoUserSpace               = false;
         inspector.registerCustomDebugMethod("my_debug_function");
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/forgotten-debug-statements.php");
         myFixture.testHighlighting(true, false, true);
     }
 
@@ -19,7 +19,7 @@ final public class ForgottenDebugOutputInspectorTest extends PhpCodeInsightFixtu
         inspector.registerCustomDebugMethod("\\DebugClass1::debug");
         inspector.registerCustomDebugMethod("\\DebugClass2::debug");
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements-collisions.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/forgotten-debug-statements-collisions.php");
         myFixture.testHighlighting(true, false, true);
     }
 
@@ -28,7 +28,7 @@ final public class ForgottenDebugOutputInspectorTest extends PhpCodeInsightFixtu
         inspector.migratedIntoUserSpace               = false;
         inspector.registerCustomDebugMethod(""); // to force userspace FQNs extension
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/pitfalls/forgotten-debug-statements-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/forgotten-debug-statements-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

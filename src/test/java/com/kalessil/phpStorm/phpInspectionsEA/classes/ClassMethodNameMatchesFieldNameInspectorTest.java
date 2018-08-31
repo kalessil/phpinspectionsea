@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 final public class ClassMethodNameMatchesFieldNameInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ClassMethodNameMatchesFieldNameInspector());
-        myFixture.configureByFile("fixtures/classes/class-field-method-named-identically.php");
+        myFixture.configureByFile("testData/fixtures/classes/class-field-method-named-identically.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -8,18 +8,18 @@ final public class StaticInvocationViaThisInspectorTest extends PhpCodeInsightFi
         final StaticInvocationViaThisInspector inspector = new StaticInvocationViaThisInspector();
         inspector.RESPECT_PHPUNIT_STANDARDS              = false;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/classes/static-method-invocation-via-this.php");
+        myFixture.configureByFile("testData/fixtures/classes/static-method-invocation-via-this.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/classes/static-method-invocation-via-this.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/classes/static-method-invocation-via-this.fixed.php");
     }
     public void testIfRespectsPhpUnit() {
         final StaticInvocationViaThisInspector inspector = new StaticInvocationViaThisInspector();
         inspector.RESPECT_PHPUNIT_STANDARDS              = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/classes/static-method-invocation-via-this-phpunit.php");
+        myFixture.configureByFile("testData/fixtures/classes/static-method-invocation-via-this-phpunit.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -7,7 +7,7 @@ final public class IncompleteThrowStatementsInspectorTest extends PhpCodeInsight
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new IncompleteThrowStatementsInspector());
 
-        myFixture.configureByFile("fixtures/controlFlow/incomplete-throw-statements.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/incomplete-throw-statements.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

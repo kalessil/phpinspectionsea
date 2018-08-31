@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Susp
 final public class SuspiciousSemicolonInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SuspiciousSemicolonInspector());
-        myFixture.configureByFile("fixtures/controlFlow/suspicious-semicolon.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/suspicious-semicolon.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

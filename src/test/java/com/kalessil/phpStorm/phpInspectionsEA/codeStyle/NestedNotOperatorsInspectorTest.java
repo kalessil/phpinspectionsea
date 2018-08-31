@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.NestedNotOper
 final public class NestedNotOperatorsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NestedNotOperatorsInspector());
-        myFixture.configureByFile("fixtures/codeStyle/nested-not-operators.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/nested-not-operators.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

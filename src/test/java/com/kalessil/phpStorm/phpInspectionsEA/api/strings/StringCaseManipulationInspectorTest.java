@@ -6,12 +6,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.String
 final public class StringCaseManipulationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new StringCaseManipulationInspector());
-        myFixture.configureByFile("fixtures/api/strings/unnecessary-case-manipulation.php");
+        myFixture.configureByFile("testData/fixtures/api/strings/unnecessary-case-manipulation.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/strings/unnecessary-case-manipulation.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/strings/unnecessary-case-manipulation.fixed.php");
     }
 }
 

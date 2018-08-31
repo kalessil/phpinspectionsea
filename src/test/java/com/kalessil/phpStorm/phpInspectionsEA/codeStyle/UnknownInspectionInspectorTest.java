@@ -7,7 +7,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.UnknownInspectio
 final public class UnknownInspectionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnknownInspectionInspector(), new PhpMissingParentCallCommonInspection());
-        myFixture.configureByFile("fixtures/codeStyle/unknown-inspection-suppression.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/unknown-inspection-suppression.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

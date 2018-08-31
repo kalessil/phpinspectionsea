@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loop
 final public class InfinityLoopInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new InfinityLoopInspector());
-        myFixture.configureByFile("fixtures/pitfalls/infinity-loops.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/infinity-loops.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

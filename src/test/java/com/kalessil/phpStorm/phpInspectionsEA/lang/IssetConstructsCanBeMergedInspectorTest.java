@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.I
 final public class IssetConstructsCanBeMergedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new IssetConstructsCanBeMergedInspector());
-        myFixture.configureByFile("fixtures/lang/isset-merge.php");
+        myFixture.configureByFile("testData/fixtures/lang/isset-merge.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/lang/isset-merge.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/lang/isset-merge.fixed.php");
     }
 }

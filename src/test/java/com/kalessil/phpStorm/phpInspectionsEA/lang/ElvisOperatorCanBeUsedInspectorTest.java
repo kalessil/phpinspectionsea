@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.E
 final public class ElvisOperatorCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ElvisOperatorCanBeUsedInspector());
-        myFixture.configureByFile("fixtures/lang/elvis-operator.php");
+        myFixture.configureByFile("testData/fixtures/lang/elvis-operator.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

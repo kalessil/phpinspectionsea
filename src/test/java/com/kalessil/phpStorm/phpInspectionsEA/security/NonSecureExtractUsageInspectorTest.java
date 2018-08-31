@@ -7,7 +7,7 @@ final public class NonSecureExtractUsageInspectorTest extends PhpCodeInsightFixt
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureExtractUsageInspector());
 
-        myFixture.configureByFile("fixtures/security/extract.php");
+        myFixture.configureByFile("testData/fixtures/security/extract.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

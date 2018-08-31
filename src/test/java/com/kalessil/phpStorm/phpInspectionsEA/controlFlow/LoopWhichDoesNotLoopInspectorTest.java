@@ -6,12 +6,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loop
 final public class LoopWhichDoesNotLoopInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new LoopWhichDoesNotLoopInspector());
-        myFixture.configureByFile("fixtures/controlFlow/loop-does-not-loop.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/loop-does-not-loop.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testFalsePositives() {
         myFixture.enableInspections(new LoopWhichDoesNotLoopInspector());
-        myFixture.configureByFile("fixtures/controlFlow/loop-does-not-loop-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/loop-does-not-loop-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

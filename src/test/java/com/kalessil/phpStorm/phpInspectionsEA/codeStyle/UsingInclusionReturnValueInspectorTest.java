@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UsingInclusio
 final public class UsingInclusionReturnValueInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UsingInclusionReturnValueInspector());
-        myFixture.configureByFile("fixtures/codeStyle/using-inclusion-result.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/using-inclusion-result.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

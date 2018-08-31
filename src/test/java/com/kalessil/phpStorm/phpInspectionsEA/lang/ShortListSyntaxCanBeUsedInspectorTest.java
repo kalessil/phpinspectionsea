@@ -9,7 +9,7 @@ final public class ShortListSyntaxCanBeUsedInspectorTest extends PhpCodeInsightF
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new ShortListSyntaxCanBeUsedInspector());
-        myFixture.configureByFile("fixtures/lang/short-list-syntax.php");
+        myFixture.configureByFile("testData/fixtures/lang/short-list-syntax.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

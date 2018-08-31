@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.NestedPositiveIfSta
 final public class NestedPositiveIfStatementsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testFindsAllPatterns() {
         myFixture.enableInspections(new NestedPositiveIfStatementsInspector());
-        myFixture.configureByFile("fixtures/ifs/nested-positive-ifs.php");
+        myFixture.configureByFile("testData/fixtures/ifs/nested-positive-ifs.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/ifs/nested-positive-ifs.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/ifs/nested-positive-ifs.fixed.php");
     }
 }

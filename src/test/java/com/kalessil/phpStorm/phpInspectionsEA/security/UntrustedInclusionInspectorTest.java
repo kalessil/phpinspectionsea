@@ -7,7 +7,7 @@ final public class UntrustedInclusionInspectorTest extends PhpCodeInsightFixture
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UntrustedInclusionInspector());
 
-        myFixture.configureByFile("fixtures/security/untrusted-inclusion.php");
+        myFixture.configureByFile("testData/fixtures/security/untrusted-inclusion.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

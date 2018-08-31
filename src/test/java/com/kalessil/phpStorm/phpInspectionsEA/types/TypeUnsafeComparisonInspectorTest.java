@@ -7,17 +7,17 @@ final public class TypeUnsafeComparisonInspectorTest extends PhpCodeInsightFixtu
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new TypeUnsafeComparisonInspector());
 
-        myFixture.configureByFile("fixtures/types/type-unsafe-comparison.php");
+        myFixture.configureByFile("testData/fixtures/types/type-unsafe-comparison.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/types/type-unsafe-comparison.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/types/type-unsafe-comparison.fixed.php");
     }
     public void testFalsePositives() {
         myFixture.enableInspections(new TypeUnsafeComparisonInspector());
 
-        myFixture.configureByFile("fixtures/types/type-unsafe-comparison-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/types/type-unsafe-comparison-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

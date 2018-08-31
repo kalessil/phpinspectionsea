@@ -10,13 +10,13 @@ final public class AccessModifierPresentedInspectorTest extends PhpCodeInsightFi
         final AccessModifierPresentedInspector inspector = new AccessModifierPresentedInspector();
         inspector.ANALYZE_INTERFACES                     = true;
         inspector.ANALYZE_CONSTANTS                      = true;
-        myFixture.configureByFile("fixtures/classes/access-modifiers.php");
+        myFixture.configureByFile("testData/fixtures/classes/access-modifiers.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/classes/access-modifiers.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/classes/access-modifiers.fixed.php");
     }
 
     public void testIfFindsAllPatterns_PHP710() {
@@ -24,12 +24,12 @@ final public class AccessModifierPresentedInspectorTest extends PhpCodeInsightFi
         final AccessModifierPresentedInspector inspector = new AccessModifierPresentedInspector();
         inspector.ANALYZE_INTERFACES                     = true;
         inspector.ANALYZE_CONSTANTS                      = true;
-        myFixture.configureByFile("fixtures/classes/access-modifiers.710.php");
+        myFixture.configureByFile("testData/fixtures/classes/access-modifiers.710.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/classes/access-modifiers.710.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/classes/access-modifiers.710.fixed.php");
     }
 }

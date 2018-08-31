@@ -8,7 +8,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.NotOptimalIfConditi
 final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFixtureTestCase {
     public void testFalsePositives() {
         myFixture.enableInspections(new NotOptimalIfConditionsInspection());
-        myFixture.configureByFile("fixtures/ifs/not-optimal-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/ifs/not-optimal-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 
@@ -16,7 +16,7 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.SUGGEST_OPTIMIZING_CONDITIONS    = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/if-optimal-conditions.php");
+        myFixture.configureByFile("testData/fixtures/ifs/if-optimal-conditions.php");
         myFixture.testHighlighting(true, false, true);
     }
 
@@ -24,7 +24,7 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_LITERAL_OPERATORS         = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/if-literal-operators.php");
+        myFixture.configureByFile("testData/fixtures/ifs/if-literal-operators.php");
         myFixture.testHighlighting(true, false, true);
     }
 
@@ -32,7 +32,7 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_DUPLICATE_CONDITIONS      = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/if-duplicate-conditions.php");
+        myFixture.configureByFile("testData/fixtures/ifs/if-duplicate-conditions.php");
         myFixture.testHighlighting(true, false, true);
     }
 
@@ -40,7 +40,7 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_INSTANCE_OF_FLAWS         = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/if-instanceof-flaws.php");
+        myFixture.configureByFile("testData/fixtures/ifs/if-instanceof-flaws.php");
         myFixture.testHighlighting(true, false, true);
     }
 
@@ -49,7 +49,7 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_INSTANCE_OF_FLAWS         = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/ifs/if-instanceof-flaws-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/ifs/if-instanceof-flaws-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

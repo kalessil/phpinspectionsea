@@ -8,17 +8,17 @@ final public class SenselessMethodDuplicationInspectorTest extends PhpCodeInsigh
         SenselessMethodDuplicationInspector inspector = new SenselessMethodDuplicationInspector();
         inspector.MAX_METHOD_SIZE                     = 20;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/deadCode/senseless-method-duplication.php");
+        myFixture.configureByFile("testData/fixtures/deadCode/senseless-method-duplication.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/deadCode/senseless-method-duplication.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/deadCode/senseless-method-duplication.fixed.php");
     }
 
     public void testFalsePositives() {
         myFixture.enableInspections(new SenselessMethodDuplicationInspector());
-        myFixture.configureByFile("fixtures/deadCode/senseless-method-duplication-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/deadCode/senseless-method-duplication-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -6,7 +6,7 @@ final public class ReferenceMismatchInspectorTest extends PhpCodeInsightFixtureT
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ReferenceMismatchInspector());
 
-        myFixture.configureByFile("fixtures/reference-mismatch-foreach.php");
+        myFixture.configureByFile("testData/fixtures/reference-mismatch-foreach.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

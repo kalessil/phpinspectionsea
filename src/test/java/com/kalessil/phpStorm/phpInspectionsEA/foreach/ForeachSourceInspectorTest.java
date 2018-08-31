@@ -9,14 +9,14 @@ final public class ForeachSourceInspectorTest extends PhpCodeInsightFixtureTestC
         inspector.REPORT_MIXED_TYPES           = true;
         inspector.REPORT_UNRECOGNIZED_TYPES    = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/foreach/foreach-source.php");
+        myFixture.configureByFile("testData/fixtures/foreach/foreach-source.php");
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testFalsePositives() {
         myFixture.enableInspections(new ForeachSourceInspector());
-        myFixture.configureByFile("fixtures/foreach/foreach-source-false-positives.setup.php");
-        myFixture.configureByFile("fixtures/foreach/foreach-source-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/foreach/foreach-source-false-positives.setup.php");
+        myFixture.configureByFile("testData/fixtures/foreach/foreach-source-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -9,7 +9,7 @@ final public class CascadingDirnameCallsInspectorTest extends PhpCodeInsightFixt
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new CascadingDirnameCallsInspector());
-        myFixture.configureByFile("fixtures/api/cascade-dirname.php");
+        myFixture.configureByFile("testData/fixtures/api/cascade-dirname.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

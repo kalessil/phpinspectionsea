@@ -1,0 +1,12 @@
+{
+  "name":        "",
+  "description": "",
+  "license":     "",
+
+  "require":     {
+    "psr/log": "1.0.*"
+  },
+  "require-dev": {
+    "roave/security-advisories" : <warning descr="Please use dev-master instead.">"dev-master#commit"</warning>
+  }
+}

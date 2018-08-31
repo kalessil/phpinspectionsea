@@ -7,3 +7,6 @@
 PhpInspectionsEA.iml
 out/
 .vagrant
+/build
+/.gradle
+/.idea

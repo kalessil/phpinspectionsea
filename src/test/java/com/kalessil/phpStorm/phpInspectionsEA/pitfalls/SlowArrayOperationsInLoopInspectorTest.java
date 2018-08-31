@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.SlowArr
 final public class SlowArrayOperationsInLoopInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SlowArrayOperationsInLoopInspector());
-        myFixture.configureByFile("fixtures/pitfalls/slow-array-operations.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/slow-array-operations.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

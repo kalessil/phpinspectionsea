@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Usel
 final public class UselessReturnInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UselessReturnInspector());
-        myFixture.configureByFile("fixtures/codeStyle/useless-returns.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/useless-returns.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/useless-returns.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/useless-returns.fixed.php");
     }
 }

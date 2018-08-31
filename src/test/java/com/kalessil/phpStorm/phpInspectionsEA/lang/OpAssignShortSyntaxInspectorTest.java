@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.O
 final public class OpAssignShortSyntaxInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new OpAssignShortSyntaxInspector());
-        myFixture.configureByFile("fixtures/lang/op-assign-short-syntax.php");
+        myFixture.configureByFile("testData/fixtures/lang/op-assign-short-syntax.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/lang/op-assign-short-syntax.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/lang/op-assign-short-syntax.fixed.php");
     }
 }

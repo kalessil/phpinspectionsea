@@ -7,7 +7,7 @@ final public class DeclareDirectiveCorrectnessInspectorTest extends PhpCodeInsig
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new DeclareDirectiveCorrectnessInspector());
 
-        myFixture.configureByFile("fixtures/lang/declare-directive.php");
+        myFixture.configureByFile("testData/fixtures/lang/declare-directive.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

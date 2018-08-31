@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.GetTypeMissUse
 final public class GetTypeMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new GetTypeMissUseInspector());
-        myFixture.configureByFile("fixtures/api/gettype.php");
+        myFixture.configureByFile("testData/fixtures/api/gettype.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/gettype.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/gettype.fixed.php");
     }
 }

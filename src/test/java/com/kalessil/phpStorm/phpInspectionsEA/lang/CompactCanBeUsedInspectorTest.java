@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.C
 final public class CompactCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CompactCanBeUsedInspector());
-        myFixture.configureByFile("fixtures/lang/compact.php");
+        myFixture.configureByFile("testData/fixtures/lang/compact.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/lang/compact.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/lang/compact.fixed.php");
     }
 }

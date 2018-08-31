@@ -7,7 +7,7 @@ final public class CallableMethodValidityInspectorTest extends PhpCodeInsightFix
     public void testIfFindsPatterns() {
         myFixture.enableInspections(new CallableMethodValidityInspector());
 
-        myFixture.configureByFile("fixtures/classes/callable-methods-validity.php");
+        myFixture.configureByFile("testData/fixtures/classes/callable-methods-validity.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

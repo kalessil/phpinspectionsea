@@ -9,11 +9,11 @@ final public class UnnecessaryParenthesesInspectorTest extends PhpCodeInsightFix
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new UnnecessaryParenthesesInspector());
-        myFixture.configureByFile("fixtures/codeStyle/unnecessary-parentheses.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/unnecessary-parentheses.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/unnecessary-parentheses.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/unnecessary-parentheses.fixed.php");
     }
 }

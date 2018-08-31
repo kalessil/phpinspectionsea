@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.ClassMockingCor
 final public class ClassMockingCorrectnessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ClassMockingCorrectnessInspector());
-        myFixture.configureByFile("fixtures/pitfalls/class-mocking-correctness.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/class-mocking-correctness.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

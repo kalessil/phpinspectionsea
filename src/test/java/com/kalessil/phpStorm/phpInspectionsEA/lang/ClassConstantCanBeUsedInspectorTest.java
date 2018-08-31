@@ -9,16 +9,16 @@ final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFix
         inspector.IMPORT_CLASSES_ON_QF                  = true;
         inspector.USE_RELATIVE_QF                       = true;
         inspector.LOOK_ROOT_NS_UP                       = true;
-        myFixture.configureByFile("fixtures/lang/classConstant/class-in-the-same-namespace.php");
-        myFixture.configureByFile("fixtures/lang/classConstant/class-name-constant-ns.php");
+        myFixture.configureByFile("testData/fixtures/lang/classConstant/class-in-the-same-namespace.php");
+        myFixture.configureByFile("testData/fixtures/lang/classConstant/class-name-constant-ns.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile(
-            "fixtures/lang/classConstant/class-name-constant-ns.php",
-            "fixtures/lang/classConstant/class-name-constant-ns.fixed.php",
+            "testData/fixtures/lang/classConstant/class-name-constant-ns.php",
+            "testData/fixtures/lang/classConstant/class-name-constant-ns.fixed.php",
             false
         );
     }
@@ -27,12 +27,12 @@ final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFix
         inspector.IMPORT_CLASSES_ON_QF                  = true;
         inspector.USE_RELATIVE_QF                       = true;
         inspector.LOOK_ROOT_NS_UP                       = true;
-        myFixture.configureByFile("fixtures/lang/classConstant/class-name-constant-collisions.php");
+        myFixture.configureByFile("testData/fixtures/lang/classConstant/class-name-constant-collisions.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/lang/classConstant/class-name-constant-collisions.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/lang/classConstant/class-name-constant-collisions.fixed.php");
     }
 }

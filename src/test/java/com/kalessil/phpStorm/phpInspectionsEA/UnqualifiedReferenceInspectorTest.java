@@ -11,12 +11,12 @@ final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtu
         inspector.REPORT_ALL_FUNCTIONS                = true;
         inspector.REPORT_CONSTANTS                    = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/unqualified-function-refs-ns.php");
+        myFixture.configureByFile("testData/fixtures/unqualified-function-refs-ns.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/unqualified-function-refs-ns.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/unqualified-function-refs-ns.fixed.php");
     }
     public void testFindsAllNonNsPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
@@ -24,7 +24,7 @@ final public class UnqualifiedReferenceInspectorTest extends PhpCodeInsightFixtu
         inspector.REPORT_ALL_FUNCTIONS                = false;
         inspector.REPORT_CONSTANTS                    = false;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/unqualified-function-refs-no-ns.php");
+        myFixture.configureByFile("testData/fixtures/unqualified-function-refs-no-ns.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

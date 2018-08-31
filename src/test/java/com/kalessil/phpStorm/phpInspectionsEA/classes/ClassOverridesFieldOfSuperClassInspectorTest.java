@@ -7,7 +7,7 @@ final public class ClassOverridesFieldOfSuperClassInspectorTest extends PhpCodeI
     public void testIfFindsAllPatterns() {
         ClassOverridesFieldOfSuperClassInspector inspector = new ClassOverridesFieldOfSuperClassInspector();
         inspector.REPORT_PRIVATE_REDEFINITION              = true;
-        myFixture.configureByFile("fixtures/classes/class-overrides-fields.php");
+        myFixture.configureByFile("testData/fixtures/classes/class-overrides-fields.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }

@@ -9,7 +9,7 @@ final public class PackedHashtableOptimizationInspectorTest extends PhpCodeInsig
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new PackedHashtableOptimizationInspector());
-        myFixture.configureByFile("fixtures/lang/packed-hashtable-optimization.php");
+        myFixture.configureByFile("testData/fixtures/lang/packed-hashtable-optimization.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

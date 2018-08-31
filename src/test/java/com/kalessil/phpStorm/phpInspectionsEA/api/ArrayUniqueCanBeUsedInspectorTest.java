@@ -9,11 +9,11 @@ final public class ArrayUniqueCanBeUsedInspectorTest extends PhpCodeInsightFixtu
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new ArrayUniqueCanBeUsedInspector());
-        myFixture.configureByFile("fixtures/api/array-unique.php");
+        myFixture.configureByFile("testData/fixtures/api/array-unique.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/array-unique.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/array-unique.fixed.php");
     }
 }

@@ -9,22 +9,22 @@ final public class IsNullFunctionUsageInspectorTest extends PhpCodeInsightFixtur
         ComparisonStyle.force(ComparisonStyle.YODA);
 
         myFixture.enableInspections(new IsNullFunctionUsageInspector());
-        myFixture.configureByFile("fixtures/api/is-null-function.yoda.php");
+        myFixture.configureByFile("testData/fixtures/api/is-null-function.yoda.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/is-null-function.yoda.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/is-null-function.yoda.fixed.php");
 
         ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
     public void testIfFindsAllPatternsAndWithInRegularStyle() {
         myFixture.enableInspections(new IsNullFunctionUsageInspector());
-        myFixture.configureByFile("fixtures/api/is-null-function.regular.php");
+        myFixture.configureByFile("testData/fixtures/api/is-null-function.regular.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/is-null-function.regular.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/is-null-function.regular.fixed.php");
     }
 }

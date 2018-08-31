@@ -1,7 +1,7 @@
 
-[![Version](http://phpstorm.espend.de/badge/7622/version)](https://plugins.jetbrains.com/plugin/7622)
+[![Version](https://img.shields.io/jetbrains/plugin/v/7622-php-inspections-ea-extended-.svg)](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-)
 [![Build Status](https://travis-ci.org/kalessil/phpinspectionsea.svg?branch=master)](https://travis-ci.org/kalessil/phpinspectionsea)
-[![Downloads](http://phpstorm.espend.de/badge/7622/downloads)](https://plugins.jetbrains.com/plugin/7622)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/7622-php-inspections-ea-extended-.svg)](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-)
 [![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
 [![Donate to this project using Paypal](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/VReznichenko)
 [![Donate to this project using Patreon](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/kalessil)

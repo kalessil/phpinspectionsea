@@ -9,7 +9,7 @@ final public class DynamicCallsToScopeIntrospectionInspectorTest extends PhpCode
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new DynamicCallsToScopeIntrospectionInspector());
-        myFixture.configureByFile("fixtures/api/deprecations/dynamic-calls-to-scope-introspection.php");
+        myFixture.configureByFile("testData/fixtures/api/deprecations/dynamic-calls-to-scope-introspection.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

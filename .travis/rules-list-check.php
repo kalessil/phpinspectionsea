@@ -2,7 +2,7 @@
 
     $basePath = __DIR__ . '/..';
 
-    $manifest = simplexml_load_string(file_get_contents($basePath . '/META-INF/plugin.xml'));
+    $manifest = simplexml_load_string(file_get_contents($basePath . '/src/main/resources/META-INF/plugin.xml'));
     $rules    = file($basePath . '/RULES.md');
     if (false === $manifest || false === $rules) {
         throw new \RuntimeException('Failed to load resources');

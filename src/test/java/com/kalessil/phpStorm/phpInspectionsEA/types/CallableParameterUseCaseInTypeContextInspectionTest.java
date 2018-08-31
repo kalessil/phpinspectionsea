@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Call
 final public class CallableParameterUseCaseInTypeContextInspectionTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CallableParameterUseCaseInTypeContextInspection());
-        myFixture.configureByFile("fixtures/types/parameter-types-checks.php");
+        myFixture.configureByFile("testData/fixtures/types/parameter-types-checks.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

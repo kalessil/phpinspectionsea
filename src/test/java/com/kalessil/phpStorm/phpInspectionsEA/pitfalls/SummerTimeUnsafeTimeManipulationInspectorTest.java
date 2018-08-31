@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Summ
 final public class SummerTimeUnsafeTimeManipulationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SummerTimeUnsafeTimeManipulationInspector());
-        myFixture.configureByFile("fixtures/pitfalls/summer-time.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/summer-time.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

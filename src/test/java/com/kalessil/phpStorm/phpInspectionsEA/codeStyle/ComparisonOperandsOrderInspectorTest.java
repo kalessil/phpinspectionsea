@@ -9,14 +9,14 @@ final public class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFi
         ComparisonStyle.force(ComparisonStyle.YODA);
 
         myFixture.enableInspections(new ComparisonOperandsOrderInspector());
-        myFixture.configureByFile("fixtures/codeStyle/comparison-order-yoda.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/comparison-order-yoda.php");
         myFixture.testHighlighting(true, false, true);
 
         ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
     public void testIfFindsRegularPatterns() {
         myFixture.enableInspections(new ComparisonOperandsOrderInspector());
-        myFixture.configureByFile("fixtures/codeStyle/comparison-order-regular.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/comparison-order-regular.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

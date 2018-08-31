@@ -7,7 +7,7 @@ final public class BadExceptionsProcessingInspectorTest extends PhpCodeInsightFi
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new BadExceptionsProcessingInspector());
 
-        myFixture.configureByFile("fixtures/codeStyle/bad-exceptions-handling.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/bad-exceptions-handling.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

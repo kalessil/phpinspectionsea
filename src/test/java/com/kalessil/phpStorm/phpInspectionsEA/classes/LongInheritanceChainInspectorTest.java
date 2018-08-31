@@ -6,13 +6,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 final public class LongInheritanceChainInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new LongInheritanceChainInspector());
-        myFixture.configureByFile("fixtures/classes/long-inheritance-chain.php");
+        myFixture.configureByFile("testData/fixtures/classes/long-inheritance-chain.php");
         myFixture.testHighlighting(true, false, true);
     }
 
     public void testFalsePositives() {
         myFixture.enableInspections(new LongInheritanceChainInspector());
-        myFixture.configureByFile("fixtures/classes/long-inheritance-chain-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/classes/long-inheritance-chain-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

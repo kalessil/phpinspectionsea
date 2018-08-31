@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryUs
 final public class UnnecessaryUseAliasInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnnecessaryUseAliasInspector());
-        myFixture.configureByFile("fixtures/codeStyle/use-aliases.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/use-aliases.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

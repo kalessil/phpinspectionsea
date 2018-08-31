@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.PdoApiUsag
 final public class PdoApiUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new PdoApiUsageInspector());
-        myFixture.configureByFile("fixtures/api/pdo.php");
+        myFixture.configureByFile("testData/fixtures/api/pdo.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/pdo.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/pdo.fixed.php");
     }
 }

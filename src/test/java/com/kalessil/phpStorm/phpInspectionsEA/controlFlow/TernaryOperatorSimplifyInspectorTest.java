@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.T
 final public class TernaryOperatorSimplifyInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new TernaryOperatorSimplifyInspector());
-        myFixture.configureByFile("fixtures/controlFlow/ternary-simplify.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/ternary-simplify.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/controlFlow/ternary-simplify.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/controlFlow/ternary-simplify.fixed.php");
     }
 }

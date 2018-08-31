@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.String
 final public class StringNormalizationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new StringNormalizationInspector());
-        myFixture.configureByFile("fixtures/controlFlow/string-normalization.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/string-normalization.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/controlFlow/string-normalization.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/controlFlow/string-normalization.fixed.php");
     }
 }

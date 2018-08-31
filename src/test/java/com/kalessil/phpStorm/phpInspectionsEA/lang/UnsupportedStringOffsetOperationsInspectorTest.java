@@ -9,7 +9,7 @@ final public class UnsupportedStringOffsetOperationsInspectorTest extends PhpCod
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new UnsupportedStringOffsetOperationsInspector());
-        myFixture.configureByFile("fixtures/lang/unsupported-string-offset.php");
+        myFixture.configureByFile("testData/fixtures/lang/unsupported-string-offset.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

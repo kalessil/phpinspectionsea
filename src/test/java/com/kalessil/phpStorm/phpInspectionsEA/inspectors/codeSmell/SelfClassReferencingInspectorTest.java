@@ -8,23 +8,23 @@ final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtu
         SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
         selfClassReferencingInspector.PREFER_CLASS_NAMES            = false;
         myFixture.enableInspections(selfClassReferencingInspector);
-        myFixture.configureByFile("fixtures/codeStyle/self-class-referencing.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/self-class-referencing.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/self-class-referencing.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/self-class-referencing.fixed.php");
     }
 
     public void testReverse() {
         SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
         selfClassReferencingInspector.PREFER_CLASS_NAMES            = true;
         myFixture.enableInspections(selfClassReferencingInspector);
-        myFixture.configureByFile("fixtures/codeStyle/self-class-referencing.reverse.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/self-class-referencing.reverse.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/self-class-referencing.reverse.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/self-class-referencing.reverse.fixed.php");
     }
 }

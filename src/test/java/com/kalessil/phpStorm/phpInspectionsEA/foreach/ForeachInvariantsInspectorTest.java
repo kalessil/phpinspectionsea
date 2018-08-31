@@ -6,12 +6,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachInvarian
 final public class ForeachInvariantsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ForeachInvariantsInspector());
-        myFixture.configureByFile("fixtures/foreach/foreach-invariants.php");
+        myFixture.configureByFile("testData/fixtures/foreach/foreach-invariants.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/foreach/foreach-invariants.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/foreach/foreach-invariants.fixed.php");
     }
 }
 

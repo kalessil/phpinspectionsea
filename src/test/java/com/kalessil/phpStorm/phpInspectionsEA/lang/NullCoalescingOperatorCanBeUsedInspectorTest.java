@@ -9,7 +9,7 @@ final public class NullCoalescingOperatorCanBeUsedInspectorTest extends PhpCodeI
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new NullCoalescingOperatorCanBeUsedInspector());
-        myFixture.configureByFile("fixtures/lang/null-coalescing-operator.php");
+        myFixture.configureByFile("testData/fixtures/lang/null-coalescing-operator.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

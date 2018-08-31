@@ -10,12 +10,12 @@ final public class UnnecessaryAssertionInspectorTest extends PhpCodeInsightFixtu
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
 
         myFixture.enableInspections(new UnnecessaryAssertionInspector());
-        myFixture.configureByFile("fixtures/phpUnit/unnecessary-assertion.php");
+        myFixture.configureByFile("testData/fixtures/phpUnit/unnecessary-assertion.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/phpUnit/unnecessary-assertion.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/phpUnit/unnecessary-assertion.fixed.php");
 
     }
 }

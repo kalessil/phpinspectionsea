@@ -9,7 +9,7 @@ final public class PropertyInitializationFlawsInspectorTest extends PhpCodeInsig
         inspector.REPORT_INIT_FLAWS                          = true;
         inspector.REPORT_DEFAULTS_FLAWS                      = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/codeStyle/property-null-initialization.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/property-null-initialization.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testPropertyOverridePatterns() {
@@ -17,7 +17,7 @@ final public class PropertyInitializationFlawsInspectorTest extends PhpCodeInsig
         inspector.REPORT_INIT_FLAWS                          = true;
         inspector.REPORT_DEFAULTS_FLAWS                      = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/codeStyle/property-initialization-override.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/property-initialization-override.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

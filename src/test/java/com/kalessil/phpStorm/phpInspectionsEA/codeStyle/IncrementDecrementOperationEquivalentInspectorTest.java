@@ -11,18 +11,18 @@ final public class IncrementDecrementOperationEquivalentInspectorTest extends Ph
 
         myFixture.enableInspections(fixer);
 
-        myFixture.configureByFile("fixtures/codeStyle/increment-decrement-can-be-used.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/increment-decrement-can-be-used.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/increment-decrement-can-be-used.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/increment-decrement-can-be-used.fixed.php");
     }
 
     public void testFalsePositives() {
         myFixture.enableInspections(new IncrementDecrementOperationEquivalentInspector());
 
-        myFixture.configureByFile("fixtures/codeStyle/increment-decrement-can-be-used-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/increment-decrement-can-be-used-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

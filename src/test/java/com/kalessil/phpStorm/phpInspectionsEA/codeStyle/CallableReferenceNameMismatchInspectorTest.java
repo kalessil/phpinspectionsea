@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.CallableRefer
 final public class CallableReferenceNameMismatchInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CallableReferenceNameMismatchInspector());
-        myFixture.configureByFile("fixtures/codeStyle/callable-name-case-mismatch.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/callable-name-case-mismatch.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/callable-name-case-mismatch.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/callable-name-case-mismatch.fixed.php");
     }
 }

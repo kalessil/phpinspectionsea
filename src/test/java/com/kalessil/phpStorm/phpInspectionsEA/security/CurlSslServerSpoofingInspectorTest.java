@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CurlSslServerS
 final public class CurlSslServerSpoofingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CurlSslServerSpoofingInspector());
-        myFixture.configureByFile("fixtures/security/curl-ssl-spoofing.php");
+        myFixture.configureByFile("testData/fixtures/security/curl-ssl-spoofing.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

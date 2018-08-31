@@ -7,11 +7,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateU
 final public class DateUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new DateUsageInspector());
-        myFixture.configureByFile("fixtures/api/date.php");
+        myFixture.configureByFile("testData/fixtures/api/date.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/date.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/date.fixed.php");
     }
 }

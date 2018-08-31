@@ -7,7 +7,7 @@ final public class DisconnectedForeachInstructionInspectorTest extends PhpCodeIn
     public void testIfFindsAllPatterns() {
         final DisconnectedForeachInstructionInspector inspector = new DisconnectedForeachInstructionInspector();
         inspector.SUGGEST_USING_CLONE                           = true;
-        myFixture.configureByFile("fixtures/foreach/disconnected-statements-foreach.php");
+        myFixture.configureByFile("testData/fixtures/foreach/disconnected-statements-foreach.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
@@ -15,7 +15,7 @@ final public class DisconnectedForeachInstructionInspectorTest extends PhpCodeIn
     public void testFalsePositives() {
         final DisconnectedForeachInstructionInspector inspector = new DisconnectedForeachInstructionInspector();
         inspector.SUGGEST_USING_CLONE                           = true;
-        myFixture.configureByFile("fixtures/foreach/disconnected-statements-foreach-false-positives.php");
+        myFixture.configureByFile("testData/fixtures/foreach/disconnected-statements-foreach-false-positives.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }

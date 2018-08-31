@@ -68,3 +68,13 @@
             $two . '...',
         ];
     }
+
+    /* false-positives: untyped properties in ternaries/elvis operators */
+    class UntypedPropertyConsumer extends UntypedPropertyHolder {
+        public function method() {
+            return (int)($this->property['index'] ?? 0);
+        }
+    }
+    class UntypedPropertyHolder {
+        protected $property = [];
+    }

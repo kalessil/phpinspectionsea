@@ -57,11 +57,12 @@ final public class OpenapiResolveUtil {
                     /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
                     final PsiElement left  = binary.getLeftOperand();
                     final PsiElement right = binary.getRightOperand();
+                    result                 = PhpType.EMPTY;
                     if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
                         final PhpType leftType = resolveType((PhpTypedElement) left, project);
-                        if (leftType != null) {
+                        if (leftType != null && !leftType.filterUnknown().isEmpty()) {
                             final PhpType rightType = resolveType((PhpTypedElement) right, project);
-                            if (rightType != null) {
+                            if (rightType != null && !rightType.filterUnknown().isEmpty()) {
                                 result = new PhpType().add(leftType.filterNull()).add(rightType);
                             }
                         }
@@ -113,11 +114,12 @@ final public class OpenapiResolveUtil {
                 if (ternary.isShort()) {
                     final PsiElement left  = ternary.getTrueVariant();
                     final PsiElement right = ternary.getFalseVariant();
+                    result                 = PhpType.EMPTY;
                     if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
                         final PhpType leftType = resolveType((PhpTypedElement) left, project);
-                        if (leftType != null) {
+                        if (leftType != null && !leftType.filterUnknown().isEmpty()) {
                             final PhpType rightType = resolveType((PhpTypedElement) right, project);
-                            if (rightType != null) {
+                            if (rightType != null && !rightType.filterUnknown().isEmpty()) {
                                 result = new PhpType().add(leftType.filterNull()).add(rightType);
                             }
                         }

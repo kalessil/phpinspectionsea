@@ -50,5 +50,5 @@ before_install:
 
 script:
   - php .travis/rules-list-check.php
-  - chmod 0775 ./gradlew
+  - chmod +x ./gradlew
   - ./gradlew check buildPlugin

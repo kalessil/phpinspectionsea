@@ -32,10 +32,10 @@ matrix:
       env: IDEA_VERSION="IU-2016.2.5" PHP_PLUGIN_VERSION="162.1628.23" PSI_VIEWER_PLUGIN_VERSION="3.28.93"
 
 before_cache:
-- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-- rm -fr $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
-- rm -fr $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -fr $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
+  - rm -fr $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
 
 cache:
   directories:
@@ -43,11 +43,11 @@ cache:
   - $HOME/.gradle/wrapper/
 
 before_install:
-- "export ORG_GRADLE_PROJECT_ideaVersion=${IDEA_VERSION}"
-- "export ORG_GRADLE_PROJECT_phpPluginVersion=${PHP_PLUGIN_VERSION}"
-- "export ORG_GRADLE_PROJECT_psiViewerPluginVersion=${PSI_VIEWER_PLUGIN_VERSION}"
-- java -version
-- chmod +x gradlew
+  - "export ORG_GRADLE_PROJECT_ideaVersion=${IDEA_VERSION}"
+  - "export ORG_GRADLE_PROJECT_phpPluginVersion=${PHP_PLUGIN_VERSION}"
+  - "export ORG_GRADLE_PROJECT_psiViewerPluginVersion=${PSI_VIEWER_PLUGIN_VERSION}"
+  - java -version
+  - chmod +x gradlew
 
 script:
   - php .travis/rules-list-check.php

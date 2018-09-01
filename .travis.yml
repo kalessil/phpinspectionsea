@@ -47,6 +47,7 @@ before_install:
 - "export ORG_GRADLE_PROJECT_phpPluginVersion=${PHP_PLUGIN_VERSION}"
 - "export ORG_GRADLE_PROJECT_psiViewerPluginVersion=${PSI_VIEWER_PLUGIN_VERSION}"
 - java -version
+- chmod +x gradlew
 
 script:
   - php .travis/rules-list-check.php

@@ -1,13 +1,22 @@
 <html>
 Enhancements and bug-fixes. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- PhpStorm v2018.2 related fixes<br/>
+- PhpStorm v2018.2 related fixes (minor)<br/>
+<br/>
+- SubStrUsedAsArrayAccessInspector: resolved false-positives (multiple cases)<br/>
+- NotOptimalIfConditionsInspection: resolved false-positives (multiple cases)<br/>
+- UnnecessaryCastingInspector: resolved false-positives (multiple cases)<br/>
+- CryptographicallySecureRandomnessInspector: resolved a false-positive (respect !$variable constructs)<br/>
+- SuspiciousBinaryOperationInspector: resolved a false-positive (spaceship operator)<br/>
+- NullPointerExceptionInspector: resolved a false-positive (a case with reassignment)<br/>
 <br/>
 - NestedPositiveIfStatementsInspector: new patterns<br/>
-- SubStrUsedAsArrayAccessInspector: resolved false-positives (multiple cases)<br/>
 - PhpUnitTestsInspector: new patterns<br/>
 - UnnecessaryAssertionInspector: new patterns<br/>
 - ClassMockingCorrectnessInspector: new patterns<br/>
+- OnlyWritesOnParameterInspector: new patterns<br/>
+- SubStrUsedAsStrPosInspector: new patterns<br/>
+- FileFunctionMissUseInspector: new patterns<br/>
 <br/>
 <hr/>
 </html>

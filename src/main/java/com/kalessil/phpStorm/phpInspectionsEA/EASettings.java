@@ -15,7 +15,6 @@ import java.util.UUID;
 public class EASettings implements PersistentStateComponent<Element> {
     private ComparisonStyle comparisonStyle;
     private String sendCrashReports;
-    private String sendVersionInformation;
 
     private String versionOldest;
     private String version;
@@ -42,9 +41,6 @@ public class EASettings implements PersistentStateComponent<Element> {
         if (this.sendCrashReports != null) {
             element.setAttribute("sendCrashReports", this.sendCrashReports);
         }
-        if (this.sendVersionInformation != null) {
-            element.setAttribute("sendVersionInformation", this.sendVersionInformation);
-        }
         if (this.comparisonStyle != null) {
             element.setAttribute("comparisonStyle", this.comparisonStyle.getValue());
         }
@@ -66,11 +62,9 @@ public class EASettings implements PersistentStateComponent<Element> {
         final String uuidValue = element.getAttributeValue("uuid");
         this.uuid              = (uuidValue == null ? UUID.randomUUID().toString() : uuidValue);
 
-        /* misc. statistics collection */
-        final String sendCrashReportsValue       = element.getAttributeValue("sendCrashReports");
-        this.sendCrashReports                    = sendCrashReportsValue == null ? "true" : sendCrashReportsValue;
-        final String sendVersionInformationValue = element.getAttributeValue("sendVersionInformation");
-        this.sendVersionInformation              = sendVersionInformationValue == null ? "true" : sendVersionInformationValue;
+        /* crashes collection */
+        final String sendCrashReportsValue = element.getAttributeValue("sendCrashReports");
+        this.sendCrashReports              = sendCrashReportsValue == null ? "true" : sendCrashReportsValue;
 
         /* comparison style */
         final String comparisonStyleValue = element.getAttributeValue("comparisonStyle");
@@ -101,13 +95,6 @@ public class EASettings implements PersistentStateComponent<Element> {
     }
     public void setSendCrashReports(boolean value) {
         this.sendCrashReports = (value ? "true" : "false");
-    }
-
-    public boolean getSendVersionInformation() {
-        return this.sendVersionInformation != null && this.sendVersionInformation.equals("true");
-    }
-    public void setSendVersionInformation(boolean value) {
-        this.sendVersionInformation = (value ? "true" : "false");
     }
 
     public void setComparisonStyle(final ComparisonStyle comparisonStyleValue) {

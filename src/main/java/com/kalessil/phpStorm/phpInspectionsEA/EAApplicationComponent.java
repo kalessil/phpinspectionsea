@@ -30,16 +30,9 @@ public class EAApplicationComponent implements ApplicationComponent {
 
         final EASettings settings = EASettings.getInstance();
 
-        /* collect version usage information */
-        final boolean sendVersionInformation = settings.getSendVersionInformation();
+        /* dump new plugin version */
         if (this.updated = !plugin.getVersion().equals(settings.getVersion())) {
             settings.setVersion(plugin.getVersion());
-            if (sendVersionInformation) {
-                AnalyticsUtil.registerPluginEvent(settings, "install", settings.getOldestVersion());
-            }
-        }
-        if (sendVersionInformation) {
-            AnalyticsUtil.registerPluginEvent(settings, "run", settings.getOldestVersion());
         }
 
         /* collect exceptions */

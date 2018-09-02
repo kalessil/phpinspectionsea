@@ -97,30 +97,4 @@ final public class AnalyticsUtil {
             }
         }).start();
     }
-
-    public static void registerPluginEvent(@NotNull EASettings source, @NotNull String action, @NotNull String eventValue) {
-        new Thread(() -> {
-            /* See https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event */
-            final StringBuilder payload = new StringBuilder();
-            payload
-                .append("v=1")                                              // Version.
-                .append("&tid=").append(COLLECTOR_ID)                       // Tracking ID / Property ID.
-                .append("&cid=").append(source.getUuid())                   // Anonymous Client ID.
-                .append("&t=event")                                         // Event hit type
-                .append("&ec=plugin")                                       // Event Category. Required.
-                .append("&ea=").append(action)                              // Event Action. Required.
-                .append("&el=").append(source.getVersion())                 // Event label - current version
-                .append("&ev=").append(eventValue.replaceAll("[^\\d]", "")) // Event value - oldest version as int
-            ;
-
-            try {
-                Request.Post(COLLECTOR_URL)
-                    .bodyByteArray(payload.toString().getBytes())
-                    .connectTimeout(3000)
-                .execute();
-            } catch (Exception failed) {
-                /* we do nothing here - this happens in background and not mission critical */
-            }
-        }).start();
-    }
 }

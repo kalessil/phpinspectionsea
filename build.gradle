@@ -21,7 +21,7 @@ def htmlFixer = { htmlFile -> file(htmlFile).text.replace('<html>', '').replace(
 
 intellij {
     version    ideaVersion
-    pluginName 'Php Inspections (EA Extended)'
+    pluginName 'Php Inspections (EA Ultimate)'
     plugins = [
             "com.jetbrains.php:${phpPluginVersion}",
             'CSS',

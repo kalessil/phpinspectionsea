@@ -11,7 +11,6 @@ import javax.swing.*;
 
 public class EAUltimateApplicationConfiguration implements Configurable {
     private boolean SEND_CRASH_REPORTS;
-    private boolean SEND_VERSION_INFORMATION;
     private boolean COMPARISON_STYLE_REGULAR;
     private boolean COMPARISON_STYLE_YODA;
 
@@ -20,17 +19,15 @@ public class EAUltimateApplicationConfiguration implements Configurable {
     public JComponent createComponent() {
         final EAUltimateSettings settings = EAUltimateSettings.getInstance();
         SEND_CRASH_REPORTS                = settings.getSendCrashReports();
-        SEND_VERSION_INFORMATION          = settings.getSendVersionInformation();
 
         final ComparisonStyle comparisonStyle = settings.getComparisonStyle();
         COMPARISON_STYLE_REGULAR              = comparisonStyle == ComparisonStyle.REGULAR;
         COMPARISON_STYLE_YODA                 = comparisonStyle == ComparisonStyle.YODA;
 
         return OptionsComponent.create(component -> {
-            component.addPanel("Anonymous data collect", panelComponent -> {
-                panelComponent.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected);
-                panelComponent.addCheckbox("Automatically collect plugin version info", SEND_VERSION_INFORMATION, (isSelected) -> SEND_VERSION_INFORMATION = isSelected);
-            });
+            component.addPanel("Anonymous data collect", panelComponent ->
+                panelComponent.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected)
+            );
 
             /* comparison style */
             component.addPanel("Comparison code style", panelComponent ->
@@ -48,7 +45,6 @@ public class EAUltimateApplicationConfiguration implements Configurable {
         final ComparisonStyle comparisonStyle = settings.getComparisonStyle();
 
         return SEND_CRASH_REPORTS != settings.getSendCrashReports() ||
-               SEND_VERSION_INFORMATION != settings.getSendVersionInformation() ||
                COMPARISON_STYLE_YODA != (comparisonStyle == ComparisonStyle.YODA);
     }
 
@@ -56,7 +52,6 @@ public class EAUltimateApplicationConfiguration implements Configurable {
     public void apply() {
         final EAUltimateSettings settings = EAUltimateSettings.getInstance();
         settings.setSendCrashReports(SEND_CRASH_REPORTS);
-        settings.setSendVersionInformation(SEND_VERSION_INFORMATION);
         settings.setComparisonStyle(COMPARISON_STYLE_REGULAR ? ComparisonStyle.REGULAR : ComparisonStyle.YODA);
     }
 

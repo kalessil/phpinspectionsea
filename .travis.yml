@@ -10,26 +10,45 @@ addons:
 
 matrix:
   include:
-    - jdk: oraclejdk9
-      env: IDE_ID=IU-2018.2
-    - jdk: oraclejdk9
-      env: IDE_ID=IU-2018.1
     - jdk: oraclejdk8
-      env: IDE_ID=IU-2017.3
-    - jdk: oraclejdk8
-      env: IDE_ID=IU-2017.2
-    - jdk: oraclejdk8
-      env: IDE_ID=IU-2017.1
-    - jdk: oraclejdk8
-      env: IDE_ID=IU-2016.3
-    - jdk: oraclejdk8
-      env: IDE_ID=IU-2016.2
+      env: IDEA_VERSION="IU-2018.2.2" PHP_PLUGIN_VERSION="182.4129.45" PSI_VIEWER_PLUGIN_VERSION="182.2757.2"
 
-script: ".travis/build.sh"
+    - jdk: oraclejdk8
+      env: IDEA_VERSION="IU-2018.1.5" PHP_PLUGIN_VERSION="181.5281.35" PSI_VIEWER_PLUGIN_VERSION="2018.1.2"
+
+    - jdk: oraclejdk8
+      env: IDEA_VERSION="IU-2017.3.5" PHP_PLUGIN_VERSION="173.4674.46" PSI_VIEWER_PLUGIN_VERSION="3.28.93"
+
+    - jdk: oraclejdk8
+      env: IDEA_VERSION="IU-2017.2.7" PHP_PLUGIN_VERSION="172.4155.41" PSI_VIEWER_PLUGIN_VERSION="3.28.93"
+
+    - jdk: oraclejdk8
+      env: IDEA_VERSION="IU-2017.1.6" PHP_PLUGIN_VERSION="171.4694.2"  PSI_VIEWER_PLUGIN_VERSION="3.28.93"
+
+    - jdk: oraclejdk8
+      env: IDEA_VERSION="IU-2016.3.6" PHP_PLUGIN_VERSION="163.10504.2" PSI_VIEWER_PLUGIN_VERSION="3.28.93"
+
+    - jdk: oraclejdk8
+      env: IDEA_VERSION="IU-2016.2.5" PHP_PLUGIN_VERSION="162.1628.23" PSI_VIEWER_PLUGIN_VERSION="3.28.93"
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -fr $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
+  - rm -fr $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
 
 cache:
   directories:
-    - .travis/.cache
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
 
-before_script:
- - chmod +x .travis/build.sh
+before_install:
+  - "export ORG_GRADLE_PROJECT_ideaVersion=${IDEA_VERSION}"
+  - "export ORG_GRADLE_PROJECT_phpPluginVersion=${PHP_PLUGIN_VERSION}"
+  - "export ORG_GRADLE_PROJECT_psiViewerPluginVersion=${PSI_VIEWER_PLUGIN_VERSION}"
+  - java -version
+  - chmod +x gradlew
+
+script:
+  - php .travis/rules-list-check.php
+  - ./gradlew check buildPlugin

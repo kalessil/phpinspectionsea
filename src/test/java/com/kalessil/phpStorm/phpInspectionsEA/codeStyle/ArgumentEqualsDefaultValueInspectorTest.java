@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ArgumentEqual
 public final class ArgumentEqualsDefaultValueInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ArgumentEqualsDefaultValueInspector());
-        myFixture.configureByFile("fixtures/codeStyle/argument-default-equals.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/argument-default-equals.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/argument-default-equals.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/argument-default-equals.fixed.php");
     }
 }

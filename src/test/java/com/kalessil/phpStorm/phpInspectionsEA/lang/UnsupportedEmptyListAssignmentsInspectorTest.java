@@ -9,7 +9,7 @@ final public class UnsupportedEmptyListAssignmentsInspectorTest extends PhpCodeI
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
         myFixture.enableInspections(new UnsupportedEmptyListAssignmentsInspector());
-        myFixture.configureByFile("fixtures/lang/unsupported-empty-list-assignments.php");
+        myFixture.configureByFile("testData/fixtures/lang/unsupported-empty-list-assignments.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -7,11 +7,11 @@ final public class ScandirUsageInspectorTest extends PhpCodeInsightFixtureTestCa
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ScandirUsageInspector());
 
-        myFixture.configureByFile("fixtures/api/scandir-function.php");
+        myFixture.configureByFile("testData/fixtures/api/scandir-function.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/scandir-function.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/scandir-function.fixed.php");
     }
 }

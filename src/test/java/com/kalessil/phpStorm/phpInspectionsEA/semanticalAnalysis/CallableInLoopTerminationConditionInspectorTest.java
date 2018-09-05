@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loop
 final public class CallableInLoopTerminationConditionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CallableInLoopTerminationConditionInspector());
-        myFixture.configureByFile("fixtures/semanticalAnalysis/callable-inloop-condition.php");
+        myFixture.configureByFile("testData/fixtures/semanticalAnalysis/callable-inloop-condition.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/semanticalAnalysis/callable-inloop-condition.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/semanticalAnalysis/callable-inloop-condition.fixed.php");
     }
 }

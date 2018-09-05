@@ -8,11 +8,11 @@ final public class ThrowRawExceptionInspectorTest extends PhpCodeInsightFixtureT
         final ThrowRawExceptionInspector inspector = new ThrowRawExceptionInspector();
         inspector.REPORT_MISSING_ARGUMENTS         = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/codeStyle/throw-raw-exception.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/throw-raw-exception.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/codeStyle/throw-raw-exception.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/throw-raw-exception.fixed.php");
     }
 }

@@ -6,12 +6,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.B
 public final class BacktickOperatorUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new BacktickOperatorUsageInspector());
-        myFixture.configureByFile("fixtures/lang/backtick-operator.php");
+        myFixture.configureByFile("testData/fixtures/lang/backtick-operator.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/lang/backtick-operator.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/lang/backtick-operator.fixed.php");
     }
 }
 

@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnusedGotoLab
 final public class UnusedGotoLabelInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnusedGotoLabelInspector());
-        myFixture.configureByFile("fixtures/deadCode/unused-goto.php");
+        myFixture.configureByFile("testData/fixtures/deadCode/unused-goto.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/deadCode/unused-goto.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/deadCode/unused-goto.fixed.php");
     }
 }

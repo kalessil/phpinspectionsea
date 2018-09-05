@@ -5,11 +5,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.raceConditions.MkdirRac
 final public class MkdirRaceConditionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new MkdirRaceConditionInspector());
-        myFixture.configureByFile("fixtures/pitfalls/raceCondition/mkdir-race-conditions.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/raceCondition/mkdir-race-conditions.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/pitfalls/raceCondition/mkdir-race-conditions.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/pitfalls/raceCondition/mkdir-race-conditions.fixed.php");
     }
 }

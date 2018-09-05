@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.S
 final public class SwitchContinuationInLoopInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SwitchContinuationInLoopInspector());
-        myFixture.configureByFile("fixtures/lang/continue-in-switch.php");
+        myFixture.configureByFile("testData/fixtures/lang/continue-in-switch.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

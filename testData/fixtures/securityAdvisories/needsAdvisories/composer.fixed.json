@@ -1,0 +1,10 @@
+{
+  "name":        "kalessil/whatever",
+  "description": "",
+  "license":     "",
+  "require": {
+    "roave/security-advisories": "dev-master"
+    ,
+    "kalessil-team/something-else": "*"
+  }
+}

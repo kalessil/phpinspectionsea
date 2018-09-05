@@ -7,7 +7,7 @@ final public class EmptyClassInspectorTest extends PhpCodeInsightFixtureTestCase
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new EmptyClassInspector());
 
-        myFixture.configureByFile("fixtures/classes/empty-class.php");
+        myFixture.configureByFile("testData/fixtures/classes/empty-class.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

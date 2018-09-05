@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnsetConstruct
 final public class UnsetConstructsCanBeMergedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnsetConstructsCanBeMergedInspector());
-        myFixture.configureByFile("fixtures/controlFlow/unset-sequential.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/unset-sequential.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/controlFlow/unset-sequential.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/controlFlow/unset-sequential.fixed.php");
     }
 }

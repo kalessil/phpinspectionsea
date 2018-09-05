@@ -7,11 +7,11 @@ final public class StrlenInEmptyStringCheckContextInspectionTest extends PhpCode
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new StrlenInEmptyStringCheckContextInspection());
 
-        myFixture.configureByFile("fixtures/magicMethods/empty-string-comparison.php");
+        myFixture.configureByFile("testData/fixtures/magicMethods/empty-string-comparison.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/magicMethods/empty-string-comparison.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/magicMethods/empty-string-comparison.fixed.php");
     }
 }

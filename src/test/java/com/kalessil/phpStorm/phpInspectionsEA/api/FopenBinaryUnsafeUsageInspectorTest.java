@@ -7,12 +7,12 @@ final public class FopenBinaryUnsafeUsageInspectorTest extends PhpCodeInsightFix
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new FopenBinaryUnsafeUsageInspector());
 
-        myFixture.configureByFile("fixtures/api/fopen-binary-unsafe.php");
+        myFixture.configureByFile("testData/fixtures/api/fopen-binary-unsafe.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/fopen-binary-unsafe.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/fopen-binary-unsafe.fixed.php");
     }
 }
 

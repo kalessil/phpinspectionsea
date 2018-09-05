@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ConstantCanBeU
 final public class ConstantCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ConstantCanBeUsedInspector());
-        myFixture.configureByFile("fixtures/api/constants-usage.php");
+        myFixture.configureByFile("testData/fixtures/api/constants-usage.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/constants-usage.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/constants-usage.fixed.php");
     }
 }

@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PrintfScanfArg
 final public class PrintfScanfArgumentsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new PrintfScanfArgumentsInspector());
-        myFixture.configureByFile("fixtures/api/printf-scanf.php");
+        myFixture.configureByFile("testData/fixtures/api/printf-scanf.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

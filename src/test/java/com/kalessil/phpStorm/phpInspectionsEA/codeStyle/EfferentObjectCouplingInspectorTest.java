@@ -8,7 +8,7 @@ final public class EfferentObjectCouplingInspectorTest extends PhpCodeInsightFix
         final EfferentObjectCouplingInspector inspector = new EfferentObjectCouplingInspector();
         inspector.optionCouplingLimit                   = 2;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/codeStyle/efferent-object-coupling.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/efferent-object-coupling.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

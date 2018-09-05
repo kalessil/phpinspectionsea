@@ -7,7 +7,7 @@ final public class MultipleReturnStatementsInspectorTest extends PhpCodeInsightF
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new MultipleReturnStatementsInspector());
 
-        myFixture.configureByFile("fixtures/controlFlow/multiple-returns.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/multiple-returns.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

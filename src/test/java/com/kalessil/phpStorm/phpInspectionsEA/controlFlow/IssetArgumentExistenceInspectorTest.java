@@ -9,7 +9,7 @@ final public class IssetArgumentExistenceInspectorTest extends PhpCodeInsightFix
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new IssetArgumentExistenceInspector());
-        myFixture.configureByFile("fixtures/controlFlow/isset-operations-variable-existence.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/isset-operations-variable-existence.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

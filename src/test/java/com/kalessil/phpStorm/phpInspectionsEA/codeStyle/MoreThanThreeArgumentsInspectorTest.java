@@ -10,7 +10,7 @@ final public class MoreThanThreeArgumentsInspectorTest extends PhpCodeInsightFix
 
         myFixture.enableInspections(inspector);
 
-        myFixture.configureByFile("fixtures/codeStyle/too-many-arguments.php");
+        myFixture.configureByFile("testData/fixtures/codeStyle/too-many-arguments.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

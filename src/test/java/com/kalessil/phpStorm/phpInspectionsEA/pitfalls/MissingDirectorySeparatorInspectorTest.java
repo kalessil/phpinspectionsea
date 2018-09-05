@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Miss
 final public class MissingDirectorySeparatorInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new MissingDirectorySeparatorInspector());
-        myFixture.configureByFile("fixtures/pitfalls/missing-directory-separator.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/missing-directory-separator.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

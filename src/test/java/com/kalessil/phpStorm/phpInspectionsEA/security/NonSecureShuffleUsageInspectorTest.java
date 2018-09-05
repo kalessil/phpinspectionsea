@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureShuff
 final public class NonSecureShuffleUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureShuffleUsageInspector());
-        myFixture.configureByFile("fixtures/security/shuffle.php");
+        myFixture.configureByFile("testData/fixtures/security/shuffle.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

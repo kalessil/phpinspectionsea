@@ -11,7 +11,7 @@ final public class UnnecessaryEmptinessCheckInspectorTest extends PhpCodeInsight
         inspector.REPORT_NON_CONTRIBUTIONG                 = true;
 
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/controlFlow/unnecessary-emptiness-checks.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/unnecessary-emptiness-checks.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

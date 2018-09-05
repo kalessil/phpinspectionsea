@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayMe
 final public class ArrayMergeMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ArrayMergeMissUseInspector());
-        myFixture.configureByFile("fixtures/api/array/array-merge-misused.php");
+        myFixture.configureByFile("testData/fixtures/api/array/array-merge-misused.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/array/array-merge-misused.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/array/array-merge-misused.fixed.php");
     }
 }

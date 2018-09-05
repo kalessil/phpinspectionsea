@@ -8,10 +8,10 @@ final public class FilePutContentsRaceConditionInspectorTest extends PhpCodeInsi
         final FilePutContentsRaceConditionInspector inspector = new FilePutContentsRaceConditionInspector();
         inspector.REDUCED_SCOPE                               = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("fixtures/pitfalls/raceCondition/file_put_contents-race-conditions.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/raceCondition/file_put_contents-race-conditions.php");
         myFixture.testHighlighting(true, false, true);
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/pitfalls/raceCondition/file_put_contents-race-conditions.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/pitfalls/raceCondition/file_put_contents-race-conditions.fixed.php");
     }
 }

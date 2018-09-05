@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 final public class ClassExistenceCheckInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsPatterns() {
         myFixture.enableInspections(new ClassExistenceCheckInspector());
-        myFixture.configureByFile("fixtures/classes/class-existence-relation.php");
+        myFixture.configureByFile("testData/fixtures/classes/class-existence-relation.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.BypassedPathTr
 final public class BypassedPathTraversalProtectionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new BypassedPathTraversalProtectionInspector());
-        myFixture.configureByFile("fixtures/security/bypassed-path-traverse-protection.php");
+        myFixture.configureByFile("testData/fixtures/security/bypassed-path-traverse-protection.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/security/bypassed-path-traverse-protection.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/security/bypassed-path-traverse-protection.fixed.php");
     }
 }

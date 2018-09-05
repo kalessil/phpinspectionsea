@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.KeysFra
 final public class KeysFragmentationWithArrayFunctionsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new KeysFragmentationWithArrayFunctionsInspector());
-        myFixture.configureByFile("fixtures/pitfalls/array-functions-keys-fragmentation.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/array-functions-keys-fragmentation.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

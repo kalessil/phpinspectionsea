@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.U
 final public class UnsupportedSerializeTypesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnsupportedSerializeTypesInspector());
-        myFixture.configureByFile("fixtures/pitfalls/unsupported-serialize-types.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/unsupported-serialize-types.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

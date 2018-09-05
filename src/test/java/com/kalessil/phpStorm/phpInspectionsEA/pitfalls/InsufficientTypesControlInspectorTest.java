@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Insu
 final public class InsufficientTypesControlInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new InsufficientTypesControlInspector());
-        myFixture.configureByFile("fixtures/pitfalls/insufficient-types-control.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/insufficient-types-control.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

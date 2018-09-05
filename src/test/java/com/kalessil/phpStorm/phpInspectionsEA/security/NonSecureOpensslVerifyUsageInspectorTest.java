@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureOpens
 final public class NonSecureOpensslVerifyUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureOpensslVerifyUsageInspector());
-        myFixture.configureByFile("fixtures/security/openssl_verify.php");
+        myFixture.configureByFile("testData/fixtures/security/openssl_verify.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

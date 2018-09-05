@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.SecureCookiesT
 final public class SecureCookiesTransferInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SecureCookiesTransferInspector());
-        myFixture.configureByFile("fixtures/security/secure-cookies-transfer.php");
+        myFixture.configureByFile("testData/fixtures/security/secure-cookies-transfer.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/security/secure-cookies-transfer.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/security/secure-cookies-transfer.fixed.php");
     }
 }

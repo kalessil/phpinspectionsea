@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureArray
 final public class NonSecureArrayRandUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureArrayRandUsageInspector());
-        myFixture.configureByFile("fixtures/security/array_rand.php");
+        myFixture.configureByFile("testData/fixtures/security/array_rand.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

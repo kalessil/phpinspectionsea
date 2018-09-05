@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayCo
 final public class ArrayColumnCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ArrayColumnCanBeUsedInspector());
-        myFixture.configureByFile("fixtures/api/array/array-column.php");
+        myFixture.configureByFile("testData/fixtures/api/array/array-column.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/array/array-column.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/array/array-column.fixed.php");
     }
 }

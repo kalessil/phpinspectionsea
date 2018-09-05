@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureHtmls
 final public class NonSecureHtmlspecialcharsUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureHtmlspecialcharsUsageInspector());
-        myFixture.configureByFile("fixtures/security/htmlspecialchars.php");
+        myFixture.configureByFile("testData/fixtures/security/htmlspecialchars.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/security/htmlspecialchars.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/security/htmlspecialchars.fixed.php");
     }
 }

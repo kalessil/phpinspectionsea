@@ -9,15 +9,15 @@ final public class TransitiveDependenciesUsageInspectorTest extends PhpCodeInsig
 
         myFixture.enableInspections(inspection);
         myFixture.configureByFiles(
-                "fixtures/transitiveDependencies/application/vendor/first/Clazz.php",
-                "fixtures/transitiveDependencies/application/vendor/first/composer.json",
-                "fixtures/transitiveDependencies/application/vendor/second/Clazz.php",
-                "fixtures/transitiveDependencies/application/vendor/second/composer.json",
-                "fixtures/transitiveDependencies/application/vendor/ignored/Clazz.php",
-                "fixtures/transitiveDependencies/application/vendor/ignored/composer.json",
-                "fixtures/transitiveDependencies/application/Application.php",
-                "fixtures/transitiveDependencies/application/composer.json",
-                "fixtures/transitiveDependencies/Bootstrap.php"
+                "testData/fixtures/transitiveDependencies/application/vendor/first/Clazz.php",
+                "testData/fixtures/transitiveDependencies/application/vendor/first/composer.json",
+                "testData/fixtures/transitiveDependencies/application/vendor/second/Clazz.php",
+                "testData/fixtures/transitiveDependencies/application/vendor/second/composer.json",
+                "testData/fixtures/transitiveDependencies/application/vendor/ignored/Clazz.php",
+                "testData/fixtures/transitiveDependencies/application/vendor/ignored/composer.json",
+                "testData/fixtures/transitiveDependencies/application/Application.php",
+                "testData/fixtures/transitiveDependencies/application/composer.json",
+                "testData/fixtures/transitiveDependencies/Bootstrap.php"
         );
         myFixture.testHighlighting(true, false, true);
     }

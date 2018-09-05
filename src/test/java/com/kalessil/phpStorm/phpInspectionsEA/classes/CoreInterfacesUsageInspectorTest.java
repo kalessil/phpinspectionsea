@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 final public class CoreInterfacesUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CoreInterfacesUsageInspector());
-        myFixture.configureByFile("fixtures/classes/core-interfaces-usage.php");
+        myFixture.configureByFile("testData/fixtures/classes/core-interfaces-usage.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

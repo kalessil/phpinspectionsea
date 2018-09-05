@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.Substr
 final public class SubstringCompareInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new SubstringCompareInspector());
-        myFixture.configureByFile("fixtures/api/strings/substring-compare.php");
+        myFixture.configureByFile("testData/fixtures/api/strings/substring-compare.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/api/strings/substring-compare.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/strings/substring-compare.fixed.php");
     }
 }

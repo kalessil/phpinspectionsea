@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.U
 final public class UnnecessaryContinueInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnnecessaryContinueInspector());
-        myFixture.configureByFile("fixtures/controlFlow/unnecessary-continue.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/unnecessary-continue.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/controlFlow/unnecessary-continue.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/controlFlow/unnecessary-continue.fixed.php");
     }
 }

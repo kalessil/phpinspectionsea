@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HardcodedCrede
 final public class HardcodedCredentialsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new HardcodedCredentialsInspector());
-        myFixture.configureByFile("fixtures/security/hardcodedp-credentials.php");
+        myFixture.configureByFile("testData/fixtures/security/hardcodedp-credentials.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

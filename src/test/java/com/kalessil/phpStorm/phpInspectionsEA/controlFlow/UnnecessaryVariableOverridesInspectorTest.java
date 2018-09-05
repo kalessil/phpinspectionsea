@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryVa
 final public class UnnecessaryVariableOverridesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new UnnecessaryVariableOverridesInspector());
-        myFixture.configureByFile("fixtures/controlFlow/unnecessary-variable-overrides.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/unnecessary-variable-overrides.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("fixtures/controlFlow/unnecessary-variable-overrides.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/controlFlow/unnecessary-variable-overrides.fixed.php");
     }
 }

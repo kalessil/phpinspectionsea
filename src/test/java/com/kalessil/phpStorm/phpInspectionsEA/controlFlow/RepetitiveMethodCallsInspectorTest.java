@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Repe
 final public class RepetitiveMethodCallsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new RepetitiveMethodCallsInspector());
-        myFixture.configureByFile("fixtures/controlFlow/repetitive-method-calls.php");
+        myFixture.configureByFile("testData/fixtures/controlFlow/repetitive-method-calls.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

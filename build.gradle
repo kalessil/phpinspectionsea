@@ -4,7 +4,7 @@ buildscript {
     repositories {
         mavenCentral()
 
-        maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
+        maven { url 'https://jetbrains.bintray.com/intellij-third-party-dependencies' }
         maven { url 'https://jitpack.io' }
         maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
     }
@@ -45,6 +45,10 @@ sourceSets {
             srcDir 'testData'
         }
     }
+}
+
+dependencies {
+    compile files("lib/TurboActivate.jar")
 }
 
 wrapper {

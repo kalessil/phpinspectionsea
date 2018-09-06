@@ -22,6 +22,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.List;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -66,6 +68,24 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                                         this.handleLateStaticBinding(base, operator, method);
                                     }
                                 } else {
+                                    /* false-positives: parameters and use-variables */
+                                    if (base instanceof Variable) {
+                                        final Function scope = ExpressionSemanticUtil.getScope(reference);
+                                        if (scope != null) {
+                                            final String name = ((Variable) base).getName();
+                                            if (Arrays.stream(scope.getParameters()).anyMatch(parameter -> name.equals(parameter.getName()))) {
+                                                return;
+                                            }
+                                            final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(scope);
+                                            if (variables != null) {
+                                                if (variables.stream().anyMatch(used -> name.equals(used.getName()))) {
+                                                    return;
+                                                }
+                                                variables.clear();
+                                            }
+                                        }
+                                    }
+
                                     /* <expression>->static() */
                                     holder.registerProblem(
                                             reference,

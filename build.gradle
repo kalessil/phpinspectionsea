@@ -5,14 +5,13 @@ buildscript {
         mavenCentral()
 
         maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
-
         maven { url 'https://jitpack.io' }
         maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
     }
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.3.7"
+    id "org.jetbrains.intellij"   version "0.3.7"
     id 'com.palantir.git-version' version "0.11.0"
 }
 
@@ -21,7 +20,7 @@ group 'com.kalessil.phpStorm.phpInspectionsEA'
 def htmlFixer = { htmlFile -> file(htmlFile).text.replace('<html>', '').replace('</html>', '') }
 
 intellij {
-    version ideaVersion
+    version    ideaVersion
     pluginName 'Php Inspections (EA Extended)'
     plugins = [
             "com.jetbrains.php:${phpPluginVersion}",
@@ -34,14 +33,9 @@ intellij {
 }
 
 patchPluginXml {
-    if (customSinceBuild) {
-        sinceBuild customSinceBuild
-    }
-    if (customUntilBuild) {
-        untilBuild customUntilBuild
-    }
-
-    changeNotes = htmlFixer('src/main/resources/META-INF/change-notes.html')
+    sinceBuild        = "162.1889"
+    untilBuild        = ""
+    changeNotes       = htmlFixer('src/main/resources/META-INF/change-notes.html')
     pluginDescription = htmlFixer('src/main/resources/META-INF/description.html')
 }
 
@@ -52,7 +46,6 @@ sourceSets {
         }
     }
 }
-
 
 wrapper {
     gradleVersion '4.8'

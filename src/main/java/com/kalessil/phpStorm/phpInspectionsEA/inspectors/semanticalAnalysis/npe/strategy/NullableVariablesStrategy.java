@@ -209,7 +209,7 @@ final public class NullableVariablesStrategy {
                 return;
             }
             /* test and business logic assertions */
-            else if (parent instanceof ParameterList && isAssertion(grandParent)) {
+            else if (parent instanceof ParameterList && (isAssertion(grandParent) || isNull(grandParent))) {
                 return;
             }
 
@@ -333,6 +333,15 @@ final public class NullableVariablesStrategy {
                     }
                 }
             }
+        }
+        return result;
+    }
+
+    private static boolean isNull(@NotNull PsiElement reference) {
+        boolean result = false;
+        if (OpenapiTypesUtil.isFunctionReference(reference)) {
+            final String functionName = ((FunctionReference) reference).getName();
+            result                    = functionName != null && functionName.equals("is_null");
         }
         return result;
     }

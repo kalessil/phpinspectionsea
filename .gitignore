@@ -1,12 +1,6 @@
-.idea/workspace.xml
-.idea/dictionaries/
-.idea/inspectionProfiles/
-.idea/kotlinc.xml
-.idea/libraries/
-.idea/misc.xml
-PhpInspectionsEA.iml
-out/
-.vagrant
-/build
-/.gradle
 /.idea
+/PhpInspectionsEA.iml
+/out
+/.vagrant
+/.gradle
+/build

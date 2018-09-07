@@ -588,6 +588,14 @@ New features release<br/>
          shortName="HardcodedCredentialsInspection"                displayName="Hardcoded credentials"
          groupName="Security"                                      enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HardcodedCredentialsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="BypassedUrlValidationInspection"               displayName="Bypassed URL validation"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.BypassedUrlValidationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="BypassedPathTraversalProtectionInspection"     displayName="Bypassed pass traverse protection"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.BypassedPathTraversalProtectionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

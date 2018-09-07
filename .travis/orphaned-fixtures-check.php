@@ -14,7 +14,6 @@
         }
     }
     $referencedFiles = array_unique(array_merge(...$referencedFiles));
-    var_export($referencedFiles);
 
     $basePath     .= '/';
     $orphanedFiles = [];

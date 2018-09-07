@@ -18,7 +18,6 @@ Environment details
 ---
 Information from Help -> About dialog (contains IDE and it's version details).
 
-
 Notes
 ---
 - Bugs fixed with the highest priority, so features might be postponed. But it shouldn't stop you, right?

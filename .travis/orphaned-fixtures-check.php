@@ -25,4 +25,8 @@
             }
         }
     }
-    var_export($orphanedFiles);
+
+    if (count($orphanedFiles) > 0) {
+        echo 'Following fixtures are not used: ' . PHP_EOL . implode(',' . PHP_EOL, $orphanedFiles) . PHP_EOL;
+        exit(-1);
+    }

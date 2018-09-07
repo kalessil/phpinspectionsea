@@ -11,7 +11,7 @@ class CasesHolder
 
             /* valid cases */
             __DIR__ . DIRECTORY_SEPARATOR,
-            __DIR__ . 'missing-directory-separator.php/',
+            __DIR__ . '/',
             __DIR__ . '\\',
             __DIR__ . ' ...',
         ];
@@ -25,7 +25,7 @@ class CasesHolder
 
             /* valid cases */
             dirname(__DIR__) . DIRECTORY_SEPARATOR,
-            dirname(__DIR__) . 'missing-directory-separator.php/',
+            dirname(__DIR__) . '/',
             dirname(__DIR__) . '\\',
             dirname(__DIR__) . ' ...',
         ];

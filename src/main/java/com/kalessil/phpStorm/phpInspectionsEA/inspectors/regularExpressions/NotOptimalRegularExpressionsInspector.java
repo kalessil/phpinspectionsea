@@ -138,8 +138,6 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + [^\s] => \S
                  */
                 ShortClassDefinitionStrategy.apply(modifiers, regex, target, holder);
-                /* Suspicious characters specification:  [...A-z...]/[...a-Z...] */
-                SuspiciousCharactersRangeSpecificationStrategy.apply(regex, target, holder);
 
                 /* Optimizations:
                  * (...) => (?:...) (if there is no back-reference)
@@ -165,13 +163,13 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                     SingleCharactersAlternationStrategy.apply(regex, target, holder);
                 }
 
-                /*
-                 * Probably bugs:
-                 *  - nested tags check without /s
-                 *  - unicode characters without /u
-                 */
-                MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);
-                MissingUnicodeModifierStrategy.apply(modifiers, regex, target, holder);
+                /* probably bugs: nested tags check without /s, unicode characters without /u */
+                boolean missingModifiers = MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);
+                missingModifiers         = MissingUnicodeModifierStrategy.apply(modifiers, regex, target, holder) || missingModifiers;
+                if (!missingModifiers) {
+                    /* suspicious characters specification:  [...A-z...]/[...a-Z...] */
+                    SuspiciousCharactersRangeSpecificationStrategy.apply(regex, target, holder);
+                }
 
                 /* source checks */
                 UnnecessaryCaseManipulationCheckStrategy.apply(functionName, reference, modifiers, holder);

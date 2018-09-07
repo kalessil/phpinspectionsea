@@ -9,7 +9,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.analytics;
  * file that was distributed with this source code.
  */
 
-import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings;
 import org.apache.http.client.fluent.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

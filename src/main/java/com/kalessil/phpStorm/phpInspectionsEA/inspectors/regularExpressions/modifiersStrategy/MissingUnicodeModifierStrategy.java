@@ -31,21 +31,23 @@ final public class MissingUnicodeModifierStrategy {
         unicodeCodepointsPattern = Pattern.compile(".*\\\\[pPX].*");
     }
 
-    static public void apply(
+    static public boolean apply(
             @Nullable String modifiers,
             @Nullable String pattern,
             @NotNull PsiElement target,
             @NotNull  ProblemsHolder holder
     ) {
+        boolean result = false;
         if ((modifiers == null || modifiers.indexOf('u') == -1) && !StringUtils.isEmpty(pattern)) {
-            if (unicodeCharactersPattern.matcher(pattern).matches()) {
+            if (result = unicodeCharactersPattern.matcher(pattern).matches()) {
                 holder.registerProblem(target, messageCharacters, ProblemHighlightType.GENERIC_ERROR);
             } else {
                 final String normalized = StringUtils.replace(pattern, "\\\\", "");
-                if (unicodeCodepointsPattern.matcher(normalized).matches()) {
+                if (result = unicodeCodepointsPattern.matcher(normalized).matches()) {
                     holder.registerProblem(target, messageCodepoints, ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         }
+        return result;
     }
 }

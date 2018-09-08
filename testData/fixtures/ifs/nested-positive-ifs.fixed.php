@@ -59,4 +59,6 @@ function cases_holder_operations_priority() {
     if (($a = 0) && $b) {}
 
     if (($a ?: 0) && $b) {}
+
+    if (($a ?? 0) && $b) {}
 }

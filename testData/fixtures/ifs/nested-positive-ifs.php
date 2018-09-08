@@ -76,4 +76,8 @@ function cases_holder_operations_priority() {
     if ($a ?: 0) {
         <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
     }
+
+    if ($a ?? 0) {
+        <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
+    }
 }

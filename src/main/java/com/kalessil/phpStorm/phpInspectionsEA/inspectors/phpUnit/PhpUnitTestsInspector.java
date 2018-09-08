@@ -10,10 +10,12 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -76,7 +78,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                     if (tagName.equals("@dataProvider")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
-                        if (candidate instanceof PhpDocRef) {
+                        if (candidate instanceof PhpDocRef && this.isAnnotation(tag)) {
                             final List<PsiReference> references = Arrays.asList(candidate.getReferences());
                             if (!references.isEmpty()) {
                                 Collections.reverse(references);
@@ -109,7 +111,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         }
                     } else if (tagName.equals("@depends")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
-                        if (candidate instanceof PhpDocRef) {
+                        if (candidate instanceof PhpDocRef && this.isAnnotation(tag)) {
                             final List<PsiReference> references = Arrays.asList(candidate.getReferences());
                             if (!references.isEmpty()) {
                                 Collections.reverse(references);
@@ -131,7 +133,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         }
                     } else if (tagName.equals("@covers")) {
                         final PsiElement candidate = tag.getFirstPsiChild();
-                        if (candidate instanceof PhpDocRef) {
+                        if (candidate instanceof PhpDocRef && this.isAnnotation(tag)) {
                             final PhpDocRef referenceNeeded     = (PhpDocRef) candidate;
                             final List<PsiReference> references = Arrays.asList(referenceNeeded.getReferences());
                             Collections.reverse(references);
@@ -160,7 +162,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                             }
                         }
                     } else if (tagName.equals("@test")) {
-                        if (isMethodNamedAsTest) {
+                        if (isMethodNamedAsTest && this.isAnnotation(tag)) {
                             holder.registerProblem(
                                     tag.getFirstChild(),
                                     messageTest,
@@ -170,6 +172,13 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean isAnnotation(@NotNull PhpDocTag tag) {
+                PsiElement previous      = tag.getPrevSibling();
+                previous                 = previous instanceof PsiWhiteSpace ? previous.getPrevSibling() : previous;
+                final IElementType start = previous == null ? null : previous.getNode().getElementType();
+                return start == PhpTokenTypes.DOC_COMMENT_START || start == PhpTokenTypes.DOC_LEADING_ASTERISK;
             }
 
             @Override

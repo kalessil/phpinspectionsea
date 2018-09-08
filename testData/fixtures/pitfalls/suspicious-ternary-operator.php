@@ -33,3 +33,4 @@
     echo $a === $b ? 0 : 1;
     echo $a !== $b ? 0 : 1;
     echo $a instanceof stdClass ? 0 : 1;
+    echo $a <=> $b ? 0 : 1;

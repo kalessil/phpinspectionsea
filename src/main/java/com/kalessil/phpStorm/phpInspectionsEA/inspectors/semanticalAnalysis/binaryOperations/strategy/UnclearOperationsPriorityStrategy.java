@@ -4,10 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.If;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,10 +28,15 @@ final public class UnclearOperationsPriorityStrategy {
             /* binary expressions, already wrapped into parentheses can be skipped */
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
-                if (parentOperator != operator && (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR)) {
-                    final String replacement = '(' + expression.getText() + ')';
-                    holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
-                    return true;
+                if (parentOperator != operator) {
+                    final boolean isTarget = parentOperator == PhpTokenTypes.opAND ||
+                                             parentOperator == PhpTokenTypes.opOR  ||
+                                             parentOperator == PhpTokenTypes.opCOALESCE;
+                    if (isTarget) {
+                        final String replacement = '(' + expression.getText() + ')';
+                        holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
+                        return true;
+                    }
                 }
             }
             /* assignment dramatically changing precedence */

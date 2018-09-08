@@ -26,6 +26,7 @@ namespace {
     final class FinalClazz {}
     abstract class AbstractClazz {}
     trait TraitClazz {}
+    interface InterfaceClazz {}
 
     $phpUnitOld = new \PHPUnit_Framework_TestCase();
     $phpUnitNew = new \PHPUnit\Framework\TestCase();
@@ -47,6 +48,7 @@ namespace {
 
     $phpUnitOld->getMockBuilder(<error descr="Perhaps it was intended to mock it with getMockForAbstractClass method.">AbstractClazz::class</error>);
     $phpUnitOld->getMockBuilder(<error descr="Perhaps it was intended to mock it with getMockForTrait method.">TraitClazz::class</error>);
+    $phpUnitOld->getMockBuilder(InterfaceClazz::class);
 
     class ClazzSpec extends \PhpSpec\ObjectBehavior
     {

@@ -31,7 +31,6 @@ import java.util.Set;
  */
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    // Inspection options.
     private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
 
     private static final Set<String> functions      = new HashSet<>();

@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class InArrayMissUseInspector extends BasePhpInspection {
-    // Inspection options.
     private static final String patternComparison = "'%s' should be used instead.";
     private static final String patternKeyExists  = "'%s' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.";
 

@@ -56,7 +56,8 @@ wrapper {
 }
 
 jar {
-    /* I didn't manage to make id "com.github.johnrengelman.shadow" version "2.0.4" working, hence we are oing this */
+    baseName = "PhpInspectionsUltimate"
+    /* I didn't manage to make id "com.github.johnrengelman.shadow" version "2.0.4" working, hence we are doing this */
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }

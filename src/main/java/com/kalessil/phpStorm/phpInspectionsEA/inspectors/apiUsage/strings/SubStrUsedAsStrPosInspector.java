@@ -1,17 +1,21 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -59,24 +63,33 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                     final BinaryExpression binary = (BinaryExpression) parent;
                     final IElementType operator   = binary.getOperationType();
                     if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opEQUAL) {
-                        final PsiElement literal      = OpenapiElementsUtil.getSecondOperand(binary, expression);
-                        final PsiElement container    = expression.getValue();
-                        if (container != null && literal instanceof StringLiteralExpression) {
+                        final PsiElement literal   = OpenapiElementsUtil.getSecondOperand(binary, expression);
+                        final PsiElement container = expression.getValue();
+                        if (container instanceof PhpTypedElement && literal instanceof StringLiteralExpression) {
                             final StringLiteralExpression fragment = (StringLiteralExpression) literal;
                             if (fragment.getContents().length() == 1) {
                                 final ArrayIndex index  = expression.getIndex();
                                 final PsiElement offset = index == null ? null : index.getValue();
                                 if (offset != null && offset.getText().equals("0")) {
-                                    final String replacement = String.format(
-                                            "strpos(%s, %s) === 0",
-                                            container.getText(),
-                                            literal.getText()
-                                    );
-                                    holder.registerProblem(
-                                            parent,
-                                            String.format(messagePattern, replacement),
-                                            new UseStringSearchFix(replacement)
-                                    );
+                                    final Project project  = expression.getProject();
+                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
+                                    if (resolved != null) {
+                                        /* false-positives: container should be a string */
+                                        final boolean isString = resolved.filterUnknown().getTypes().stream()
+                                                .anyMatch(type -> Types.getType(type).equals(Types.strString));
+                                        if (isString) {
+                                            final String replacement = String.format(
+                                                    "strpos(%s, %s) === 0",
+                                                    container.getText(),
+                                                    literal.getText()
+                                            );
+                                            holder.registerProblem(
+                                                    parent,
+                                                    String.format(messagePattern, replacement),
+                                                    new UseStringSearchFix(replacement)
+                                            );
+                                        }
+                                    }
                                 }
                             }
                         }

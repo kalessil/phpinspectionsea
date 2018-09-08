@@ -1,5 +1,6 @@
 <?php
     $x = gettype($x) === 'unknown type';
+    $x = gettype($x) === 'resource (closed)';
 
     /* incorrect type checked */
     $x = gettype($x) === <error descr="'oops' is not a value returned by 'gettype(...)'.">'oops'</error>;

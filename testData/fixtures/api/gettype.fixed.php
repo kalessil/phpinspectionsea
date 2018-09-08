@@ -1,5 +1,6 @@
 <?php
     $x = gettype($x) === 'unknown type';
+    $x = gettype($x) === 'resource (closed)';
 
     /* incorrect type checked */
     $x = gettype($x) === 'oops';

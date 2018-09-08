@@ -156,8 +156,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     break;
                                 case "is_numeric":
                                     isTypeAnnounced =
-                                        paramTypes.contains(Types.strNumber) || paramTypes.contains(Types.strString) ||
-                                        paramTypes.contains(Types.strFloat) || paramTypes.contains(Types.strInteger);
+                                        paramTypes.contains(Types.strNumber) ||
+                                        paramTypes.contains(Types.strFloat)  || paramTypes.contains(Types.strInteger);
                                     break;
                                 case "is_callable":
                                     isTypeAnnounced =

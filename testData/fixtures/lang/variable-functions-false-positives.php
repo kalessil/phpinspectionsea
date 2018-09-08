@@ -21,3 +21,6 @@
 
     /* false-positive: call_user_func doesn't support arguments by reference */
     call_user_func_array($callable, [ &$argument ]);
+
+    /* false-positive: call_user_func_array to call_user_func migrated code is broken */
+    call_user_func_array([$this, 'test'], []);

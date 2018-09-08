@@ -33,8 +33,8 @@ import java.util.List;
  */
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
-    private static final String patternInlineArgs = "'%e%' should be used instead (enables further analysis).";
-    private static final String patternReplace    = "'%e%' should be used instead.";
+    private static final String patternInlineArgs = "'%s' should be used instead (enables further analysis).";
+    private static final String patternReplace    = "'%s' should be used instead.";
 
     @NotNull
     public String getShortName() {
@@ -75,10 +75,20 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             }
                         }
 
-                        final String replacement = String.format("call_user_func(%s, %s)", arguments[0].getText(), String.join(", ", parametersUsed));
-                        final String message     = patternInlineArgs.replace("%e%", replacement);
-                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new InlineFix(replacement));
-                        parametersUsed.clear();
+                        if (!parametersUsed.isEmpty()) {
+                            final String replacement = String.format(
+                                    "call_user_func(%s, %s)",
+                                    arguments[0].getText(),
+                                    String.join(", ", parametersUsed)
+                            );
+                            holder.registerProblem(
+                                    reference,
+                                    String.format(patternInlineArgs, replacement),
+                                    ProblemHighlightType.WEAK_WARNING,
+                                    new InlineFix(replacement)
+                            );
+                            parametersUsed.clear();
+                        }
                     }
                     return;
                 }
@@ -190,8 +200,12 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                         .replace("%f%", firstAsString);
                     parametersToSuggest.clear();
 
-                    final String message = patternReplace.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new ReplaceFix(replacement));
+                    holder.registerProblem(
+                            reference,
+                            String.format(patternReplace, replacement),
+                            ProblemHighlightType.WEAK_WARNING,
+                            new ReplaceFix(replacement)
+                    );
                 }
             }
         };

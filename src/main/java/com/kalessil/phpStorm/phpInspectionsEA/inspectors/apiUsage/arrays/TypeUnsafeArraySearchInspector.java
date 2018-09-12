@@ -90,7 +90,8 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
 
                         /* general case: we need the third argument */
                         final String replacement = String.format(
-                                "%s(%s, %s, true)",
+                                "%s%s(%s, %s, true)",
+                                reference.getImmediateNamespaceName(),
                                 functionName,
                                 arguments[0].getText(),
                                 arguments[1].getText()

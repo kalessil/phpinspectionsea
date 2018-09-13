@@ -10,6 +10,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -58,17 +59,21 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpReturn(@NotNull PhpReturn returnStatement) {
-                final FunctionReference functionCall = this.getFunctionReference(returnStatement);
-                if (functionCall != null) {
-                    this.analyze(functionCall, returnStatement);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final FunctionReference functionCall = this.getFunctionReference(returnStatement);
+                    if (functionCall != null) {
+                        this.analyze(functionCall, returnStatement);
+                    }
                 }
             }
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
-                final FunctionReference functionCall = this.getFunctionReference(assignmentExpression);
-                if (functionCall != null) {
-                    this.analyze(functionCall, assignmentExpression);
+                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                    final FunctionReference functionCall = this.getFunctionReference(assignmentExpression);
+                    if (functionCall != null) {
+                        this.analyze(functionCall, assignmentExpression);
+                    }
                 }
             }
 

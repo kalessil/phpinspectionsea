@@ -44,6 +44,7 @@ public class SuspiciousTernaryOperatorInspector extends BasePhpInspection {
         safeOperations.add(PhpTokenTypes.opLESS);
         safeOperations.add(PhpTokenTypes.opLESS_OR_EQUAL);
         safeOperations.add(PhpTokenTypes.kwINSTANCEOF);
+        safeOperations.add(PhpTokenTypes.opSPACESHIP);
     }
 
     @NotNull

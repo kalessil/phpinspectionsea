@@ -32,5 +32,13 @@ namespace {
 
         /** @covers MyIterator::<!private> */
         public function testOffsetUnset6() {}
+
+        /** whatever @covers whatever */
+        public function case_covers_mentioned_one_liner() {}
+
+        /**
+         * whatever @covers whatever
+         */
+        public function case_covers_mentioned_multi_liner() {}
     }
 }

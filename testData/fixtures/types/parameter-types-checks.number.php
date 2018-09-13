@@ -33,4 +33,10 @@ class CasesHolder {
             <warning descr="Makes no sense, because this type is not defined in annotations.">is_numeric($third)</warning>,
         ];
     }
+
+    public function false_positives(string $string) {
+        return [
+            is_numeric($string),
+        ];
+    }
 }

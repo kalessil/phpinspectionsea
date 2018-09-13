@@ -187,7 +187,17 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     final PsiElement body       = target.getStatement();
                     final PsiElement parentBody = parent.getStatement();
                     if (body != null && parentBody != null) {
-                        final String code        = String.format("(%s && %s)", parentCondition.getText(), condition.getText());
+                        boolean wrapParent       = parentCondition instanceof AssignmentExpression ||
+                                                   parentCondition instanceof TernaryExpression;
+                        if (!wrapParent && parentCondition instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) parentCondition;
+                            wrapParent                    = binary.getOperationType() != PhpTokenTypes.opAND;
+                        }
+                        final String code        = String.format(
+                                wrapParent ? "((%s) && %s)" : "(%s && %s)",
+                                parentCondition.getText(),
+                                condition.getText()
+                        );
                         final PsiElement implant = PhpPsiElementFactory
                                 .createPhpPsiFromText(project, ParenthesizedExpression.class, code)
                                 .getArgument();

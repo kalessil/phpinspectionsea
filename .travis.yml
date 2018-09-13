@@ -51,4 +51,5 @@ before_install:
 
 script:
   - php .travis/rules-list-check.php
+  - php .travis/orphaned-fixtures-check.php
   - ./gradlew check buildPlugin

@@ -15,7 +15,7 @@ plugins {
     id 'com.palantir.git-version' version "0.11.0"
 }
 
-group 'com.kalessil.phpStorm.phpInspectionsEA'
+group 'com.kalessil.phpStorm.phpInspectionsUltimate'
 
 def htmlFixer = { htmlFile -> file(htmlFile).text.replace('<html>', '').replace('</html>', '') }
 
@@ -53,6 +53,14 @@ dependencies {
 
 wrapper {
     gradleVersion '4.8'
+}
+
+jar {
+    baseName = "PhpInspectionsUltimate"
+    /* I didn't manage to make id "com.github.johnrengelman.shadow" version "2.0.4" working, hence we are doing this */
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 test.testLogging.exceptionFormat = TestExceptionFormat.FULL

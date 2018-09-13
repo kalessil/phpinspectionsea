@@ -64,6 +64,12 @@ if (<error descr="Operations priority might differ from what you expect: please 
 if ((!$a) > $b) {}
 if (!$a <=> $b) {}
 
+/* operations priority issues: ternaries and null coalescing */
+if ($a ?: $b && $c) {}
+if ($a ?: $b || $c) {}
+if ($a ?? <error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}
+if ($a ?? <error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b || $c</error>) {}
+
 /* nullable/falsy values comparison cases */
 $nullable = null;
 $falsy    = false;

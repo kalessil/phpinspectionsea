@@ -94,7 +94,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                 final String typeString = typeLiteral.getContents();
                 if (!mapping.containsKey(typeString)) {
                     /* edge case: compared string is wrong xD - bug */
-                    if (!typeString.equals("unknown type")) {
+                    if (!typeString.equals("unknown type") && !typeString.equals("resource (closed)")) {
                         final String message = messageInvalidType.replace("%t%", typeString);
                         holder.registerProblem(type, message, ProblemHighlightType.GENERIC_ERROR);
                     }

@@ -16,6 +16,14 @@ class MethodsHolder {
     }
 }
 
-function cases_holder(MethodsHolder $one) {
+function cases_holder() {
+    $one = new MethodsHolder();
     $one->method();
+}
+
+function parameters_and_used_variables_case_holder() {
+    $use = new MethodsHolder();
+    return function (MethodsHolder $parameter) use ($use) {
+        return [$parameter->method(),  $use->method()];
+    };
 }

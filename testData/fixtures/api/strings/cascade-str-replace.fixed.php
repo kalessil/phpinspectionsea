@@ -55,3 +55,19 @@
 
         $thirteen = str_replace([$one, $two, $three], [$one, $two, $three], '___');
     }
+
+    function strireplace_cases() {
+        $one = str_ireplace(['...', '...'], '...', '');
+
+        $two = str_ireplace(['...', '...'], '...', '');
+
+        /* false-positives: mixed calls */
+        $three = str_ireplace('...', '...', str_replace('...', '...', ''));
+        $four = str_replace('...', '...', str_ireplace('...', '...', ''));
+
+        $five = str_ireplace('...', '...', '');
+        $five = str_replace('...', '...', $five);
+
+        $six = str_ireplace('...', '...', '');
+        $six = str_replace('...', '...', $six);
+    }

@@ -37,9 +37,15 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     // Inspection options.
     public boolean USE_SHORT_ARRAYS_SYNTAX = false;
 
-    private static final String messageNesting      = "This str_replace(...) call can be merged with its parent.";
-    private static final String messageCascading    = "This str_replace(...) call can be merged with the previous.";
+    private static final String messageNesting      = "This call can be merged with its parent.";
+    private static final String messageCascading    = "This call can be merged with the previous.";
     private static final String messageReplacements = "Can be replaced with the string from the array.";
+
+    private static final Set<String> functions = new HashSet<>();
+    static {
+        functions.add("str_replace");
+        functions.add("str_ireplace");
+    }
 
     @NotNull
     public String getShortName() {
@@ -72,23 +78,23 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     /* case: cascading replacements */
                     final AssignmentExpression previous  = this.getPreviousAssignment(expression);
                     final FunctionReference previousCall = previous == null ? null : this.getFunctionReference(previous);
-                    if (previousCall != null) {
+                    final String functionName            = functionCall.getName();
+                    if (previousCall != null && functionName != null && functionName.equals(previousCall.getName())) {
                         final PsiElement transitionVariable = previous.getVariable();
                         if (transitionVariable instanceof Variable && arguments[2] instanceof Variable) {
                             final Variable callSubject         = (Variable) arguments[2];
                             final Variable previousVariable    = (Variable) transitionVariable;
-                            final PsiElement callResultStorage = expression instanceof AssignmentExpression
-                                                                    ? ((AssignmentExpression) expression).getVariable()
-                                                                    : callSubject;
-                            if (
-                                callResultStorage != null && callSubject.getName().equals(previousVariable.getName()) &&
-                                OpenapiEquivalenceUtil.areEqual(transitionVariable, callResultStorage)
-                            ) {
-                                holder.registerProblem(
-                                    functionCall,
-                                    messageCascading,
-                                    new MergeStringReplaceCallsFix(functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
-                                );
+                            if (callSubject.getName().equals(previousVariable.getName())) {
+                                final PsiElement callResultStorage = expression instanceof AssignmentExpression
+                                                                        ? ((AssignmentExpression) expression).getVariable()
+                                                                        : callSubject;
+                                if (callResultStorage != null && OpenapiEquivalenceUtil.areEqual(transitionVariable, callResultStorage)) {
+                                    holder.registerProblem(
+                                            functionCall,
+                                            messageCascading,
+                                            new MergeStringReplaceCallsFix(functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
+                                    );
+                                }
                             }
                         }
                     }
@@ -132,13 +138,13 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 replacements.clear();
             }
 
-            private void checkNestedCalls(@NotNull PsiElement callCandidate, @NotNull FunctionReference parentCall) {
-                if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
-                    final FunctionReference call = (FunctionReference) callCandidate;
+            private void checkNestedCalls(@NotNull PsiElement candidate, @NotNull FunctionReference parentCall) {
+                if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                    final FunctionReference call = (FunctionReference) candidate;
                     final String functionName    = call.getName();
-                    if (functionName != null && functionName.equals("str_replace")) {
+                    if (functionName != null && functionName.equals(parentCall.getName())) {
                         holder.registerProblem(
-                            callCandidate,
+                                candidate,
                             messageNesting,
                             new MergeStringReplaceCallsFix(parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
                         );
@@ -149,10 +155,10 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             @Nullable
             private FunctionReference getFunctionReference(@NotNull AssignmentExpression assignment) {
                 FunctionReference result = null;
-                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
+                final PsiElement value   = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
                 if (OpenapiTypesUtil.isFunctionReference(value)) {
                     final String functionName = ((FunctionReference) value).getName();
-                    if (functionName != null && functionName.equals("str_replace")) {
+                    if (functionName != null && functions.contains(functionName)) {
                         result = (FunctionReference) value;
                     }
                 }
@@ -162,11 +168,10 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             @Nullable
             private FunctionReference getFunctionReference(@NotNull PhpReturn phpReturn) {
                 FunctionReference result = null;
-                final PsiElement value
-                    = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(phpReturn));
+                final PsiElement value   = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(phpReturn));
                 if (OpenapiTypesUtil.isFunctionReference(value)) {
                     final String functionName = ((FunctionReference) value).getName();
-                    if (functionName != null && functionName.equals("str_replace")) {
+                    if (functionName != null && functions.contains(functionName)) {
                         result = (FunctionReference) value;
                     }
                 }
@@ -221,7 +226,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     }
 
     private static final class MergeStringReplaceCallsFix implements LocalQuickFix {
-        private static final String title = "Merge str_replace(...) calls";
+        private static final String title = "Merge excessive calls";
 
         final private SmartPsiElementPointer<FunctionReference> patch;
         final private SmartPsiElementPointer<FunctionReference> eliminate;

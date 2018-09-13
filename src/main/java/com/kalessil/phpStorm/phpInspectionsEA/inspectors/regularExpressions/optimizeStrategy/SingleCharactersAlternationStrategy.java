@@ -22,18 +22,22 @@ final public class SingleCharactersAlternationStrategy {
         if (!pattern.isEmpty() && pattern.indexOf('|') >= 0) {
             final Matcher regexMatcher = regexAlternations.matcher(pattern);
             if (regexMatcher.find()) {
+                boolean adviceOptimization  = true;
                 final List<String> branches = new ArrayList<>();
                 for (final String branch : regexMatcher.group(1).split("\\|")) {
-                    branches.add(
-                            branch.length() == 1 && (branch.equals("]") || branch.equals("^"))
-                                    ? '\\' + branch
-                                    : branch
+                    final int charactersCount = branch.length();
+                    if (charactersCount == 1 && (branch.equals("^") || branch.equals("$"))) {
+                        adviceOptimization = false;
+                        break;
+                    }
+                    branches.add(charactersCount == 1 && (branch.equals("]")) ? '\\' + branch : branch);
+                }
+                if (adviceOptimization) {
+                    holder.registerProblem(
+                            target,
+                            String.format(messagePattern, regexMatcher.group(0), String.format("([%s])", String.join("", branches)))
                     );
                 }
-                holder.registerProblem(
-                    target,
-                    String.format(messagePattern, regexMatcher.group(0), String.format("([%s])", String.join("", branches)))
-                );
                 branches.clear();
             }
         }

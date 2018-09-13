@@ -266,19 +266,25 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                             /* inject new import after the marker, if relative QN are not possible */
                             if (importMarker != null && !useRelativeQN) {
-                                final PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
-
-                                if (insertBefore) {
-                                    importMarker.getParent().addBefore(use, importMarker);
-                                    final PsiElement space = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n\n");
-                                    if (space != null) {
-                                        use.getParent().addAfter(space, use);
-                                    }
-                                } else {
-                                    importMarker.getParent().addAfter(use, importMarker);
+                                /* bug-fix: strict types declaration must be the very first statement  */
+                                if (importMarker instanceof Declare) {
+                                    insertBefore = true;
+                                    importMarker = ((Declare) importMarker).getNextPsiSibling();
                                 }
 
-                                classForReplacement = use.getFirstPsiChild().getName();
+                                if (importMarker != null) {
+                                    final PhpUseList use = PhpPsiElementFactory.createUseStatement(project, classForReplacement, null);
+                                    if (insertBefore) {
+                                        importMarker.getParent().addBefore(use, importMarker);
+                                        final PsiElement space = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, "\n\n");
+                                        if (space != null) {
+                                            use.getParent().addAfter(space, use);
+                                        }
+                                    } else {
+                                        importMarker.getParent().addAfter(use, importMarker);
+                                    }
+                                    classForReplacement = use.getFirstPsiChild().getName();
+                                }
                             }
                         }
                     }

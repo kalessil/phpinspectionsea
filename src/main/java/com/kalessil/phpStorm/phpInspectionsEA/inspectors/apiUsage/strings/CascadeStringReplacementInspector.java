@@ -77,9 +77,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         if (transitionVariable instanceof Variable && arguments[2] instanceof Variable) {
                             final Variable callSubject         = (Variable) arguments[2];
                             final Variable previousVariable    = (Variable) transitionVariable;
-                            final PsiElement callResultStorage =
-                                    expression instanceof AssignmentExpression ?
-                                            ((AssignmentExpression) expression).getVariable() : callSubject;
+                            final PsiElement callResultStorage = expression instanceof AssignmentExpression
+                                                                    ? ((AssignmentExpression) expression).getVariable()
+                                                                    : callSubject;
                             if (
                                 callResultStorage != null && callSubject.getName().equals(previousVariable.getName()) &&
                                 OpenapiEquivalenceUtil.areEqual(transitionVariable, callResultStorage)
@@ -252,7 +252,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final FunctionReference patch     = this.patch.getElement();
             final FunctionReference eliminate = this.eliminate.getElement();
-            if (patch != null && eliminate != null) {
+            if (patch != null && eliminate != null && !project.isDisposed()) {
                 synchronized (eliminate.getContainingFile()) {
                     this.mergeReplaces(patch, eliminate, this.useShortSyntax);
                     this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0], this.useShortSyntax);
@@ -262,7 +262,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         }
 
         private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from, boolean useShortSyntax) {
-            final Project project  = to.getProject();
+            final Project project = to.getProject();
             if (to instanceof ArrayCreationExpression) {
                 final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
                 final PsiElement firstValue = ((ArrayCreationExpression) to).getFirstPsiChild();
@@ -283,7 +283,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             } else {
                 if (from instanceof ArrayCreationExpression) {
                     final PsiElement comma       = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    final String pattern         = (useShortSyntax ? "[%1%]" : "array(%1%)").replace("%1%", to.getText());
+                    final String pattern         = String.format(useShortSyntax ? "[%s]" : "array(%s)", to.getText());
                     final PsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
                     final PsiElement firstValue  = ((ArrayCreationExpression) replacement).getFirstPsiChild();
                     final PsiElement marker      = firstValue == null ? null : firstValue.getPrevSibling();
@@ -297,9 +297,11 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         to.replace(replacement);
                     }
                 } else {
-                    final String pattern = (useShortSyntax ? "[%1%, %2%]" : "array(%1%, %2%)")
-                            .replace("%2%", to.getText())
-                            .replace("%1%", from.getText());
+                    final String pattern = String.format(
+                            useShortSyntax ? "[%s, %s]" : "array(%s, %s)",
+                            from.getText(),
+                            to.getText()
+                    );
                     to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
                 }
             }
@@ -357,7 +359,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         PhpPsiElementFactory.createPhpPsiFromText(
                             call.getProject(),
                             ArrayCreationExpression.class,
-                            (useShortSyntax ? "[%a%]" : "array(%a%)").replace("%a%", String.join(", ", replaces))
+                            String.format(useShortSyntax ? "[%s]" : "array(%s)", String.join(", ", replaces))
                         )
                     );
                 }

@@ -35,4 +35,22 @@ final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFix
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/lang/classConstant/class-name-constant-collisions.fixed.php");
     }
+    public void testConfigurationCase() {
+        final ClassConstantCanBeUsedInspector inspector = new ClassConstantCanBeUsedInspector();
+        inspector.IMPORT_CLASSES_ON_QF                  = true;
+        inspector.USE_RELATIVE_QF                       = false;
+        inspector.LOOK_ROOT_NS_UP                       = false;
+        myFixture.configureByFile("testData/fixtures/lang/classConstant/configuration-class-definition.php");
+        myFixture.configureByFile("testData/fixtures/lang/classConstant/configuration-class-reference.php");
+        myFixture.enableInspections(inspector);
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile(
+                "testData/fixtures/lang/classConstant/configuration-class-reference.php",
+                "testData/fixtures/lang/classConstant/configuration-class-reference.fixed.php",
+                false
+        );
+    }
 }

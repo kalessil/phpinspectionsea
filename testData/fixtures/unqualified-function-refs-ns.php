@@ -38,5 +38,8 @@ namespace Unqualified\References {
 
 namespace WithFunctionImports {
     use function define;
-    define('', '');
+    use function trim;
+
+    define('...', '...');
+    trim('...');
 }

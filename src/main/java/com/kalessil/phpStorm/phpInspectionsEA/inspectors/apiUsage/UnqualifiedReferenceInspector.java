@@ -206,8 +206,8 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                     if (fqn.length() != 1 + referenceName.length() || !fqn.equals('\\' + referenceName)) {
                         return;
                     }
-                    /* false-positive: opcode-ed functions are imported already */
-                    if (isFunction && advancedOpcode.contains(referenceName)) {
+                    if (isFunction) {
+                        /* false-positive: functions are imported already */
                         for (final PhpUse use : PsiTreeUtil.findChildrenOfType(ns, PhpUse.class)) {
                             final PsiElement candidate = use.getFirstPsiChild();
                             if (candidate instanceof FunctionReference) {

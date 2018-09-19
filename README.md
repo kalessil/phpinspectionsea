@@ -42,7 +42,7 @@ Sponsorship
 ---
 
 A big thank you to our platinum sponsor IntelliShop AG (Karlsruhe, Germany):
-<a href="https://www.intellishop-software.com/?utm_source=github&utm_campaign=php_inspections&utm_content=logolink"><img src="https://github.com/kalessil/phpinspectionsea/blob/master/docs/images/isag_logo_1000px.png?raw=true" alt="IntelliShop AG" height="100"/></a>
+<a href="https://www.intellishop-software.com/?utm_source=github&utm_campaign=php_inspections&utm_content=logolink"><img src="https://github.com/kalessil/phpinspectionsea/blob/master/docs/images/isag_logo_1000px.png?raw=true" alt="IntelliShop AG" height="20"/></a>
 
 Acknowledgments
 ---

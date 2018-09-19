@@ -212,7 +212,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                         final PsiElement candidate = use.getFirstPsiChild();
                         String importedSymbol = null;
                         if (candidate instanceof FunctionReference) {
-                            importedSymbol = ((MethodReference) candidate).getName();
+                            importedSymbol = ((FunctionReference) candidate).getName();
                         } else if (candidate instanceof ConstantReference) {
                             importedSymbol = ((ConstantReference) candidate).getName();
                         }

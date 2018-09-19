@@ -41,7 +41,7 @@ Once you have accommodated with the analyzer and want move to further, check [Ph
 Sponsorship
 ---
 
-A big thank you to our platinum sponsor IntelliShop AG (Karlsruhe, Germany):
+A big thank you to our platinum sponsor [IntelliShop AG](https://www.intellishop-software.com/?utm_source=github&utm_campaign=php_inspections&utm_content=logolink) (Karlsruhe, Germany):
 
 <a href="https://www.intellishop-software.com/?utm_source=github&utm_campaign=php_inspections&utm_content=logolink"><img src="https://github.com/kalessil/phpinspectionsea/blob/master/docs/images/isag_logo_1000px.png?raw=true" alt="IntelliShop AG" height="40"/></a>
 

@@ -86,8 +86,13 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 else if (context instanceof BinaryExpression) {
                     boolean isSecondExistenceCheckExists = false;
 
-                    /* deal with nested conditions */
+                    /* false-positive: `... or die` construct */
                     BinaryExpression binary = (BinaryExpression) context;
+                    if (binary.getRightOperand() instanceof PhpExit) {
+                        return;
+                    }
+
+                    /* deal with nested conditions */
                     final PsiElement parent = binary.getParent();
                     if (binary.getRightOperand() == target && parent instanceof BinaryExpression) {
                         binary = (BinaryExpression) parent;

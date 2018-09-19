@@ -8,14 +8,32 @@ In general the issue is due to name collision. Nevertheless in the context of in
 
 Reported cases and possible alternatives:
 
-* Parent's property is private, children have any visibility (suggested declaring as protected);
-    * rename the property
-    * change the property visibility to protected (try to avoid this as the field becomes accessible to all children and prefer the private visibility over the protected visibility)
-    * add and use setters/getters to keep it private but accessible/mutable
 * Children declare the same visibility as their parent's property (suggested using initialization in a constructor)
     * rename the property
     * move property initialization into the constructor
     * use @property annotation to re-define type-hints
+
+* Parent's property is private, children have any visibility (suggested declaring as protected);
+    * rename the property
+    * change the property visibility to protected (try to avoid this as the field becomes accessible to all children and prefer the private visibility over the protected visibility)
+    * add and use setters/getters to keep it private but accessible/mutable
+
+### Common cases
+
+```php
+class WhichRedeclaresProperties extends BaseClass {
+    /** @var NewTypeHint */
+    protected $sameProperty;
+}
+```
+can be refactored to similar code (but with clearer code navigation, analysis and debugging capabilities)
+```php
+/**
+ * @property NewTypeHint $sameProperty
+ */
+class WhichRedeclaresProperties extends BaseClass {
+}
+```
 
 ## Long inheritance chain
 

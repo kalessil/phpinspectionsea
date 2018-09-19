@@ -11,6 +11,9 @@ function cases_holder() {
     /* false-positive: result saved */
     $result = mkdir('...');
 
+    /* false-positive: `... or die` construct */
+    mkdir('...') or die('...');
+
     /* case: incomplete conditions */
     if (<error descr="Some check are missing: 'mkdir('...', 0644) || is_dir(...)'.">(mkdir('...', 0644))</error>) {}
     if (<error descr="Some check are missing: '!mkdir('...', 0644) && !is_dir(...)'.">(!mkdir('...', 0644))</error>) {}

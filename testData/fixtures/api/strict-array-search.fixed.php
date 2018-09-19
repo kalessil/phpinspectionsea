@@ -3,6 +3,8 @@
     /* pattern: resolved types from expressions and not matching */
     array_search('1', [], true);
     in_array('1', [], true);
+    \array_search('1', [], true);
+    \in_array('1', [], true);
 
     /* pattern: resolved types not precise */
     /* @var int $needle */

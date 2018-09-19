@@ -17,6 +17,9 @@ function cases_holder() {
     /* false-positive: result saved */
     $result = mkdir('...');
 
+    /* false-positive: `... or die` construct */
+    mkdir('...') or die('...');
+
     /* case: incomplete conditions */
     if (!mkdir('...', 0644) && !is_dir('...')) {}
     if (!mkdir('...', 0644) && !is_dir('...')) {}

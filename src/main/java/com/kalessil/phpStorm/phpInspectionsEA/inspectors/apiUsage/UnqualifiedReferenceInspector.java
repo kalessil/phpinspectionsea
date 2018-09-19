@@ -198,29 +198,34 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
 
                 /* resolve the constant/function, report if it's from the root NS */
-                final PsiElement function = OpenapiResolveUtil.resolveReference(reference);
-                final boolean isFunction  = function instanceof Function;
-                if (isFunction || function instanceof Constant) {
+                final PsiElement subject = OpenapiResolveUtil.resolveReference(reference);
+                final boolean isFunction = subject instanceof Function;
+                if (isFunction || subject instanceof Constant) {
                     /* false-positives: non-root NS function/constant referenced */
-                    final String fqn = ((PhpNamedElement) function).getFQN();
+                    final String fqn = ((PhpNamedElement) subject).getFQN();
                     if (fqn.length() != 1 + referenceName.length() || !fqn.equals('\\' + referenceName)) {
                         return;
                     }
-                    /* false-positive: opcode-ed functions are imported already */
-                    if (isFunction && advancedOpcode.contains(referenceName)) {
-                        for (final PhpUse use : PsiTreeUtil.findChildrenOfType(ns, PhpUse.class)) {
-                            final PsiElement candidate = use.getFirstPsiChild();
-                            if (candidate instanceof FunctionReference) {
-                                final String importedFunction = ((FunctionReference) candidate).getName();
-                                if (importedFunction != null && referenceName.equals(importedFunction)) {
-                                    return;
-                                }
-                            }
+
+                    /* false-positive: function/constant are imported already */
+                    for (final PhpUse use : PsiTreeUtil.findChildrenOfType(ns, PhpUse.class)) {
+                        final PsiElement candidate = use.getFirstPsiChild();
+                        String importedSymbol = null;
+                        if (candidate instanceof FunctionReference) {
+                            importedSymbol = ((FunctionReference) candidate).getName();
+                        } else if (candidate instanceof ConstantReference) {
+                            importedSymbol = ((ConstantReference) candidate).getName();
+                        }
+                        if (referenceName.equals(importedSymbol)) {
+                            return;
                         }
                     }
 
-                    final String message = String.format(messagePattern, referenceName + (isFunction ? "(...)" : ""));
-                    holder.registerProblem(reference, message, new TheLocalFix());
+                    holder.registerProblem(
+                            reference,
+                            String.format(messagePattern, referenceName + (isFunction ? "(...)" : "")),
+                            new TheLocalFix()
+                    );
                 }
             }
         };

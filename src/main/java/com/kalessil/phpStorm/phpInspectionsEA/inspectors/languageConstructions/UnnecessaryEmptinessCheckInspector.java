@@ -71,38 +71,30 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIsset(@NotNull PhpIsset isset) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-
-                if (SUGGEST_SIMPLIFICATIONS) {
+                if (SUGGEST_SIMPLIFICATIONS && EAUltimateApplicationComponent.areFeaturesEnabled()) {
                     final PsiElement[] arguments = isset.getVariables();
                     if (arguments.length == 1) {
+                        PsiElement alternative  = null;
                         final PsiElement parent = isset.getParent();
                         if (parent instanceof TernaryExpression) {
                             final TernaryExpression ternary = (TernaryExpression) parent;
                             if (ternary.isShort() && ternary.getCondition() == isset) {
-                                final PsiElement alternative = ternary.getFalseVariant();
-                                if (alternative != null) {
-                                    final String replacement = String.format("%s ?? %s", arguments[0].getText(), alternative.getText());
-                                    holder.registerProblem(
-                                            parent,
-                                            String.format(messageUseCoalescing, replacement),
-                                            ProblemHighlightType.WEAK_WARNING
-                                    );
-                                }
+                                alternative = ternary.getFalseVariant();
                             }
                         } else if (parent instanceof BinaryExpression) {
                             final BinaryExpression binary = (BinaryExpression) parent;
                             if (binary.getLeftOperand() == isset && binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
-                                final PsiElement alternative = binary.getRightOperand();
-                                if (alternative != null) {
-                                    final String replacement = String.format("%s ?? %s", arguments[0].getText(), alternative.getText());
-                                    holder.registerProblem(
-                                            parent,
-                                            String.format(messageUseCoalescing, replacement),
-                                            ProblemHighlightType.WEAK_WARNING
-                                    );
-                                }
+                                alternative = binary.getRightOperand();
                             }
+                        }
+                        /* since alternative is known, we did hiy yhe pattern */
+                        if (alternative != null) {
+                            final String replacement = String.format("%s ?? %s", arguments[0].getText(), alternative.getText());
+                            holder.registerProblem(
+                                    parent,
+                                    String.format(messageUseCoalescing, replacement),
+                                    ProblemHighlightType.WEAK_WARNING
+                            );
                         }
                     }
                 }

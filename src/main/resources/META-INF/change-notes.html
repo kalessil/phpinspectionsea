@@ -1,23 +1,19 @@
 <html>
-New features and bug-fixes. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Hot-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- PhpStorm 2018.2 related fixes (minor)<br/>
-- Reduced amount of data sent to Google Analytics (plugin versions info)<br/>
-<br/>
-- Cryptographically secure randomness: resolved a false-positive (respect !$variable constructs)<br/>
-- Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
-- Null reference: resolved false-positives (multiple cases)<br/>
-- Suspicious binary operations: resolved a false-positive (spaceship operator)<br/>
-- Unnecessary type casting: resolved false-positives (multiple cases)<br/>
-- 'substr(...)' used as index-based access: resolved false-positives (multiple cases)<br/>
-<br/>
-- Class mocking correctness: new patterns<br/>
-- Nested positive ifs: new patterns<br/>
-- Parameter/variable is not used: new patterns<br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
-- PhpUnit: unnecessary assertion: new patterns<br/>
-- 'file(...)' misused: new patterns<br/>
-- 'substr(...)' could be replaced with 'strpos(...)': new patterns<br/>
+- Callable parameter usage violates definition: resolved a false-positive (is_numeric)<br/>
+- Class mocking correctness: resolved a false-positive (mocking interface)<br/>
+- Nested positive ifs: QF bug-fix<br/>
+- PhpUnit: bugs and best practices: resolved false-positives (multiple cases)<br/>
+- Static methods invocation via '->': resolved false-positives (parameters and used variables)<br/>
+- Suspicious ternary operator: resolved a false-positive (spaceship operator)<br/>
+- Unqualified function/constant reference: bug-fix (non-opcoded functions were reported)<br/>
+- Variable functions usage: resolved a false-positive (a case with invocation arguments)<br/>
+- ::class can be used: QF bug-fix (add imports after strict types declaration)<br/>
+- 'gettype(...)' could be replaced with 'is_*(...)': resolved a false-positive (`resource (closed)` type)<br/>
+- 'in_array(...)', 'array_search(...)' type unsafe usage: QF bug-fix (NS specification gets lost)<br/>
+- 'mkdir(...)' race condition: resolved a false-positive (`... or die()` constructs)<br/>
+- 'substr(...)' could be replaced with 'strpos(...)': resolved a false-positive (array element accesses)<br/>
 <br/>
 <hr/>
 </html>

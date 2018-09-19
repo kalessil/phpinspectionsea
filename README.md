@@ -42,14 +42,15 @@ Sponsorship
 ---
 
 A big thank you to our platinum sponsor IntelliShop AG (Karlsruhe, Germany):
-<a href="https://www.intellishop-software.com/?utm_source=github&utm_campaign=php_inspections&utm_content=logolink"><img src="https://github.com/kalessil/phpinspectionsea/blob/master/docs/images/isag_logo_1000px.png?raw=true" alt="IntelliShop AG" height="20"/></a>
+
+<a href="https://www.intellishop-software.com/?utm_source=github&utm_campaign=php_inspections&utm_content=logolink"><img src="https://github.com/kalessil/phpinspectionsea/blob/master/docs/images/isag_logo_1000px.png?raw=true" alt="IntelliShop AG" height="40"/></a>
 
 Acknowledgments
 ---
 
 <a href="https://shopware.com/"><img src="https://de.shopware.com/media/unknown/e1/b0/93/shopware_logo_blue.svg" alt="Shopware" height="20"></a> Shopware is the biggest supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
 
-<a href="https://pixelandtonic.com/"><img src="https://pixelandtonic.com/assets/images/pixelandtonic.svg" alt="Pixel & Tonic" height="30"></a> Pixel & Tonic are supporting us since 2017.
+<a href="https://pixelandtonic.com/"><img src="https://pixelandtonic.com/assets/images/pixelandtonic.svg" alt="Pixel & Tonic" height="20"></a> Pixel & Tonic are supporting us since 2017.
 
 <a href="https://www.cellsynt.com"><img src="https://d22z914jmqt4fj.cloudfront.net/images/logo.gif" alt="Cellsynt" height="20"></a> Cellsynt is a supporter of our 2017 <a href="https://www.indiegogo.com/projects/php-inspections-ea-extended-a-code-analyzer-security#/">crowdfunding campaign</a>.
 

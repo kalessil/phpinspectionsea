@@ -14,8 +14,7 @@ class CasesHolder {
         ];
     }
 
-    private function processAll()
-    {
+    private function processAll() {
         return [
             isset($x)
                 && !<warning descr="Doesn't match to previous null value handling (perhaps always false when reached).">isset($x)</warning>
@@ -65,6 +64,13 @@ class CasesHolder {
         return [
             isset(<warning descr="'isset(...) && ...' here can be replaced with '!empty(...)'.">$x</warning>, $y) && $x,
             !isset(<warning descr="'!isset(...) || !...' here can be replaced with 'empty(...)'.">$x</warning>, $y) || !$x,
+        ];
+    }
+
+    private function issetInNullCoallescingContext($parameter) {
+        return [
+            <weak_warning descr="'$parameter ?? '...'' can be used instead (reduces cognitive load).">isset($parameter) ?? '...'</weak_warning>,
+            <weak_warning descr="'$parameter ?? '...'' can be used instead (reduces cognitive load).">isset($parameter) ?: '...'</weak_warning>,
         ];
     }
 }

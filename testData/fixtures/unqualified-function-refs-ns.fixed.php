@@ -39,7 +39,11 @@ namespace Unqualified\References {
 namespace WithFunctionImports {
     use function define;
     use function trim;
+    use function var_dump;
+    use const PHP_INT_MAX;
 
     define('...', '...');
     trim('...');
+
+    var_dump(__DIR__, PHP_INT_MAX);
 }

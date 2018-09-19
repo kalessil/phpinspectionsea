@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
@@ -89,12 +91,15 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         }
                         /* since alternative is known, we did hiy yhe pattern */
                         if (alternative != null) {
-                            final String replacement = String.format("%s ?? %s", arguments[0].getText(), alternative.getText());
-                            holder.registerProblem(
-                                    parent,
-                                    String.format(messageUseCoalescing, replacement),
-                                    ProblemHighlightType.WEAK_WARNING
-                            );
+                            final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                            if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                                final String replacement = String.format("%s ?? %s", arguments[0].getText(), alternative.getText());
+                                holder.registerProblem(
+                                        parent,
+                                        String.format(messageUseCoalescing, replacement),
+                                        ProblemHighlightType.WEAK_WARNING
+                                );
+                            }
                         }
                     }
                 }

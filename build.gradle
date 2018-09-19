@@ -51,4 +51,8 @@ wrapper {
     gradleVersion '4.8'
 }
 
+jar {
+    baseName = "PhpInspectionsEA"
+}
+
 test.testLogging.exceptionFormat = TestExceptionFormat.FULL

@@ -79,6 +79,9 @@ class CasesHolder {
         if (<weak_warning descr="'!$parameter' can be used instead (reduces cognitive load).">empty($parameter)</weak_warning>) {}
 
         return [
+            empty($parameter[0]) ? '+' : '-',
+            !empty($parameter[0]) ? '+' : '-',
+
             <weak_warning descr="'!$parameter' can be used instead (reduces cognitive load).">empty($parameter)</weak_warning> ? '+' : '-',
             <weak_warning descr="'$parameter' can be used instead (reduces cognitive load).">!empty($parameter)</weak_warning> ? '+' : '-',
         ];

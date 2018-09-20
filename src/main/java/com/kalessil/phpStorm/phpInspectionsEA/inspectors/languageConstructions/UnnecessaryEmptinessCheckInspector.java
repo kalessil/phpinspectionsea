@@ -76,16 +76,19 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
             public void visitPhpEmpty(@NotNull PhpEmpty empty) {
                 if (SUGGEST_SIMPLIFICATIONS && EAUltimateApplicationComponent.areFeaturesEnabled()) {
                     final PsiElement[] arguments = empty.getVariables();
-                    if (arguments.length == 1 && ExpressionSemanticUtil.isUsedAsLogicalOperand(empty)) {
-                        final boolean isInverted = this.isInverted(empty);
-                        final PsiElement target  = isInverted ? empty.getParent() : empty;
-                        if (!(target.getParent() instanceof BinaryExpression)) {
-                            final String replacement = (isInverted ? "" : "!") + arguments[0].getText();
-                            holder.registerProblem(
-                                    target,
-                                    String.format(messageUseArgument, replacement),
-                                    ProblemHighlightType.WEAK_WARNING
-                            );
+                    if (arguments.length == 1 && !(arguments[0] instanceof ArrayAccessExpression)) {
+                        final boolean isTargetContext = ExpressionSemanticUtil.isUsedAsLogicalOperand(empty);
+                        if (isTargetContext) {
+                            final boolean isInverted = this.isInverted(empty);
+                            final PsiElement target  = isInverted ? empty.getParent() : empty;
+                            if (!(target.getParent() instanceof BinaryExpression)) {
+                                final String replacement = (isInverted ? "" : "!") + arguments[0].getText();
+                                holder.registerProblem(
+                                        target,
+                                        String.format(messageUseArgument, replacement),
+                                        ProblemHighlightType.WEAK_WARNING
+                                );
+                            }
                         }
                     }
                 }

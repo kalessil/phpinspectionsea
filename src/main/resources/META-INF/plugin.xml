@@ -10,29 +10,9 @@
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
   <idea-version since-build="162.1889" />
 
-  <description><![CDATA[
-  Replaced by description.html
-  ]]></description>
+  <description><![CDATA[Replaced by description.html]]></description>
 
-  <change-notes><![CDATA[
-New features release<br/>
-<br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-">v3.0.5</a><br />
-- New settings (Other Settings -> Php Inspections (EA Ultimate))<br/>
-<br />
-- One-time use variables: resolved false-positives (global context)<br/>
-- 'array_keys(...)' misused: resolved a false-positive (array_slice)<br/>
-<br />
-- Empty/isset results correctness: new patterns<br/>
-- Non-optimal regular expression: re-worked, added new patterns<br/>
-- Repetitive method calls: new patterns<br/>
-- Suspicious binary operations: new patterns<br/>
-- 'array_flip(...)' can be used: implemented<br/>
-- 'array_merge(...)' misused: new cases<br/>
-- 'array_values(...)' misused: new patterns<br/>
-<br/>
-<hr/>
-  ]]></change-notes>
+  <change-notes><![CDATA[Replaced by change-notes.html]]></change-notes>
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- indexers -->
@@ -490,6 +470,10 @@ New features release<br/>
         shortName="InsufficientTypesControlInspection"            displayName="Insufficient types control"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.InsufficientTypesControlInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnusedFunctionResultInspection"                displayName="Unused function result"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UnusedFunctionResultInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

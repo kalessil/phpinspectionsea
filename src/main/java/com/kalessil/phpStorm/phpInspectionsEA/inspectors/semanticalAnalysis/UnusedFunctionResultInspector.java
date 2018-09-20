@@ -33,7 +33,7 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final boolean isTargetContext = OpenapiTypesUtil.isPhpExpressionImpl(reference.getParent());
+                    final boolean isTargetContext = OpenapiTypesUtil.isStatementImpl(reference.getParent());
                     if (isTargetContext) {
                         final PhpType resolved = OpenapiResolveUtil.resolveType(reference, reference.getProject());
                         if (resolved != null) {

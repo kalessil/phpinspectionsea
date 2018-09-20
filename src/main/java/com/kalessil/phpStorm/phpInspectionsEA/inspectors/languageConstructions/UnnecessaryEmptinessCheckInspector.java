@@ -81,7 +81,12 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         if (isTargetContext) {
                             final boolean isInverted = this.isInverted(empty);
                             final PsiElement target  = isInverted ? empty.getParent() : empty;
-                            if (!(target.getParent() instanceof BinaryExpression)) {
+                            final PsiElement context = target.getParent();
+                            if (
+                                    context instanceof If    || context instanceof ElseIf  ||
+                                    context instanceof While || context instanceof DoWhile ||
+                                    context instanceof TernaryExpression
+                            ) {
                                 final String replacement = (isInverted ? "" : "!") + arguments[0].getText();
                                 holder.registerProblem(
                                         target,

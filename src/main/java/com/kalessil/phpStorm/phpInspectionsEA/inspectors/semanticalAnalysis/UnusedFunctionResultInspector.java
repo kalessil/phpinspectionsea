@@ -33,6 +33,7 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
 
         ignoredFunctions.add("print_r");
         ignoredFunctions.add("exec");
+        ignoredFunctions.add("system");
         ignoredFunctions.add("session_id");
         ignoredFunctions.add("session_name");
         ignoredFunctions.add("call_user_func_array");
@@ -41,7 +42,9 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
         ignoredFunctions.add("ini_set");
         ignoredFunctions.add("set_include_path");
         ignoredFunctions.add("set_error_handler");
+        ignoredFunctions.add("set_exception_handler");
         ignoredFunctions.add("setlocale");
+        ignoredFunctions.add("mb_internal_encoding");
     }
 
     @NotNull

@@ -33,6 +33,8 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
         ignoredFunctions.add("array_splice");
         ignoredFunctions.add("print_r");
         ignoredFunctions.add("session_id");
+        ignoredFunctions.add("call_user_func_array");
+        ignoredFunctions.add("call_user_func");
     }
 
     @NotNull

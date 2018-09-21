@@ -15,7 +15,6 @@ Inspections Lists (Type compatibility)
 | Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                                 | yes | yes | yes  | yes |
 | Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search(...)' type unsafe usage | yes | yes | yes  | yes |
 | Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                         | n/a | yes | n/a  | yes |
-| Type compatibility   | ArrayTypeOfParameterByDefaultValueInspection    | Parameter could be declared as array                   | yes | yes | yes  | no  |
 
 Inspections Lists (Control flow)
 ---

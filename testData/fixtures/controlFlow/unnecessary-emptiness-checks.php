@@ -73,17 +73,4 @@ class CasesHolder {
             <weak_warning descr="'$parameter ?? '...'' can be used instead (reduces cognitive load).">isset($parameter) ?: '...'</weak_warning>,
         ];
     }
-
-    private function emptyInDirectArgumentUsageContext($parameter) {
-        if (<weak_warning descr="'$parameter' can be used instead (reduces cognitive load).">!empty($parameter)</weak_warning>) {}
-        if (<weak_warning descr="'!$parameter' can be used instead (reduces cognitive load).">empty($parameter)</weak_warning>) {}
-
-        return [
-            empty($parameter[0]) ? '+' : '-',
-            !empty($parameter[0]) ? '+' : '-',
-
-            <weak_warning descr="'!$parameter' can be used instead (reduces cognitive load).">empty($parameter)</weak_warning> ? '+' : '-',
-            <weak_warning descr="'$parameter' can be used instead (reduces cognitive load).">!empty($parameter)</weak_warning> ? '+' : '-',
-        ];
-    }
 }

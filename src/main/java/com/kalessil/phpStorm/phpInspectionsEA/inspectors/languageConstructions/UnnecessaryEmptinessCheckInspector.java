@@ -43,7 +43,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageNotIsset           = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
     private static final String messageIsset              = "!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
     private static final String messageUseCoalescing      = "'%s' can be used instead (reduces cognitive load).";
-    private static final String messageUseArgument        = "'%s' can be used instead (reduces cognitive load).";
 
     // Inspection options.
     public boolean SUGGEST_SIMPLIFICATIONS  = true;
@@ -72,32 +71,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            @Override
-            public void visitPhpEmpty(@NotNull PhpEmpty empty) {
-                if (SUGGEST_SIMPLIFICATIONS && EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final PsiElement[] arguments = empty.getVariables();
-                    if (arguments.length == 1 && !(arguments[0] instanceof ArrayAccessExpression)) {
-                        final boolean isTargetContext = ExpressionSemanticUtil.isUsedAsLogicalOperand(empty);
-                        if (isTargetContext) {
-                            final boolean isInverted = this.isInverted(empty);
-                            final PsiElement target  = isInverted ? empty.getParent() : empty;
-                            final PsiElement context = target.getParent();
-                            if (
-                                    context instanceof If    || context instanceof ElseIf  ||
-                                    context instanceof While || context instanceof DoWhile ||
-                                    context instanceof TernaryExpression
-                            ) {
-                                final String replacement = (isInverted ? "" : "!") + arguments[0].getText();
-                                holder.registerProblem(
-                                        target,
-                                        String.format(messageUseArgument, replacement),
-                                        ProblemHighlightType.WEAK_WARNING
-                                );
-                            }
-                        }
-                    }
-                }
-            }
+            /* [!]empty($argument) -> [!]$argument: do not report as it add much warnings is typical projects */
 
             @Override
             public void visitPhpIsset(@NotNull PhpIsset isset) {

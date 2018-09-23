@@ -13,18 +13,23 @@ trait A
 
 class Test_A
 {
-    public function <warning descr="Method has 2 return points, try to introduce just one to uncover complexity behind.">TwoReturnsMethod</warning>() {
+    public function <warning descr="Method has 3 return points, try to introduce just one to uncover complexity behind.">ThreeReturnsMethod</warning>() {
         if ($this instanceof TestA) {
+            return false;
+        } elseif ($this instanceof \stdClass) {
             return false;
         }
         return true;
     }
 
-    public function <error descr="Method has 4 return points, try to introduce just one to uncover complexity behind.">FourReturnsMethod</error>($a, $b, $c) {
+    public function <error descr="Method has 5 return points, try to introduce just one to uncover complexity behind.">FiveReturnsMethod</error>($a, $b, $c) {
         if ($this instanceof $a) {
             return false;
         }
         if ($this instanceof $b) {
+            return false;
+        }
+        if ($this instanceof $c) {
             return false;
         }
         if ($this instanceof $c) {
@@ -53,8 +58,10 @@ class Test_B
                 return 0;
             }
 
-            public function <warning descr="Method has 2 return points, try to introduce just one to uncover complexity behind.">isValid</warning>() {
+            public function <warning descr="Method has 3 return points, try to introduce just one to uncover complexity behind.">isValid</warning>() {
                 if ($this instanceof Test_Valid) {
+                    return true;
+                } elseif ($this instanceof \stdClass) {
                     return true;
                 }
                 return false;

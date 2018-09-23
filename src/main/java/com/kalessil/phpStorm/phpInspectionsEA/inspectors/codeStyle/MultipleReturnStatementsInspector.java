@@ -11,9 +11,12 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -27,6 +30,10 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MultipleReturnStatementsInspector extends BasePhpInspection {
+    // Inspection options.
+    public int COMPLAIN_THRESHOLD = 3;
+    public int SCREAM_THRESHOLD   = 5;
+
     private static final String messagePattern = "Method has %s return points, try to introduce just one to uncover complexity behind.";
 
     @NotNull
@@ -41,7 +48,7 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 final PhpClass clazz            = method.getContainingClass();
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
-                if (nameIdentifier != null && clazz != null && !clazz.isTrait()) {
+                if (nameIdentifier != null && clazz != null && !clazz.isInterface()) {
                     final PhpExitPointInstruction exitPoint = method.getControlFlow().getExitPoint();
 
                     int returnsCount = 0;
@@ -51,15 +58,28 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
                         }
                     }
 
-                    if (returnsCount > 1) {
-                        final ProblemHighlightType level
-                            = returnsCount > 3 ? ProblemHighlightType.GENERIC_ERROR : ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
-                        final String message = String.format(messagePattern, returnsCount);
-                        holder.registerProblem(nameIdentifier, message, level);
+                    if (returnsCount >= SCREAM_THRESHOLD) {
+                        holder.registerProblem(
+                                nameIdentifier,
+                                String.format(messagePattern, returnsCount),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
+                    } else if (returnsCount >= COMPLAIN_THRESHOLD) {
+                        holder.registerProblem(
+                                nameIdentifier,
+                                String.format(messagePattern, returnsCount),
+                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                        );
                     }
                 }
             }
         };
     }
 
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addSpinner("Complain threshold:", COMPLAIN_THRESHOLD, (input) -> COMPLAIN_THRESHOLD = input);
+            component.addSpinner("Scream threshold:", SCREAM_THRESHOLD, (input) -> SCREAM_THRESHOLD = input);
+        });
+    }
 }

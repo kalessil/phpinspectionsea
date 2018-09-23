@@ -1,9 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vcs.AbstractVcs;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vcs.annotate.AnnotationProvider;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -115,26 +112,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     }
 
     protected boolean isModifiedContent(@NotNull PsiElement target) {
-        final ProjectLevelVcsManager manager = ProjectLevelVcsManager.getInstance(target.getProject());
-        if (manager != null ) {
-            final VirtualFile file             = target.getContainingFile().getVirtualFile();
-            final AbstractVcs vcs              = manager.getVcsFor(file);
-            final AnnotationProvider annotator = vcs == null ? null : vcs.getAnnotationProvider();
-            if (annotator != null) {
-                final int line = StringUtil.offsetToLineNumber(
-                        target.getContainingFile().getText(),
-                        target.getNode().getStartOffset()
-                );
-                try {
-                    if (annotator.annotate(file).getLineRevisionNumber(line) == null) {
-                        return true;
-                    }
-                } catch (final Throwable error) {
-                    // no-op
-                }
-            }
-        }
-        return false;
+        final VirtualFile file = target.getContainingFile().getVirtualFile();
+        return ChangeListManager.getInstance(target.getProject()).getAffectedFiles().contains(file);
     }
 
     /* Snipplets: how to identify expression line numbers (start & end)

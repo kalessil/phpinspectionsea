@@ -108,4 +108,14 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         }
         return result && !(reference.getParent() instanceof PhpUse);
     }
+
+    /* Snipplets: how to identify expression line numbers (start & end)
+            file = reference.getContainingFile();
+            node = reference.getNode();
+
+            StringUtil.offsetToLineNumber(file.getText(), node.getStartOffset());
+            FileDocumentManager.getInstance().getCachedDocument(file.getVirtualFile()).getLineNumber(node.getStartOffset());
+
+        Needs further research: identify changed lines
+     */
 }

@@ -116,6 +116,11 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
             StringUtil.offsetToLineNumber(file.getText(), node.getStartOffset());
             FileDocumentManager.getInstance().getCachedDocument(file.getVirtualFile()).getLineNumber(node.getStartOffset());
 
-        Needs further research: identify changed lines
+        Needs further research: identify changed lines:
+            ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(project);
+            AbstractVcs vcs                   = vcsManager.getVcsFor(file);
+            FileAnnotation fileAnnotation     = vcs.getCachingAnnotationProvider().annotate(file);
+            Date lineDate                     = fileAnnotation.getLineDate(i);
+                => should be a start point to evaluate further
      */
 }

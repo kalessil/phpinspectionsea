@@ -1,5 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vcs.AbstractVcs;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vcs.annotate.AnnotationProvider;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -109,17 +114,33 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         return result && !(reference.getParent() instanceof PhpUse);
     }
 
-    /* Snipplets: how to identify expression line numbers (start & end)
-            file = reference.getContainingFile();
-            node = reference.getNode();
+    protected boolean isModifiedContent(@NotNull PsiElement target) {
+        final ProjectLevelVcsManager manager = ProjectLevelVcsManager.getInstance(target.getProject());
+        if (manager != null ) {
+            final VirtualFile file             = target.getContainingFile().getVirtualFile();
+            final AbstractVcs vcs              = manager.getVcsFor(file);
+            final AnnotationProvider annotator = vcs == null ? null : vcs.getAnnotationProvider();
+            if (annotator != null) {
+                final int line = StringUtil.offsetToLineNumber(
+                        target.getContainingFile().getText(),
+                        target.getNode().getStartOffset()
+                );
+                try {
+                    if (annotator.annotate(file).getLineRevisionNumber(line) == null) {
+                        return true;
+                    }
+                } catch (final Throwable error) {
+                    // no-op
+                }
+            }
+        }
+        return false;
+    }
 
-            StringUtil.offsetToLineNumber(file.getText(), node.getStartOffset());
+    /* Snipplets: how to identify expression line numbers (start & end)
             FileDocumentManager.getInstance().getCachedDocument(file.getVirtualFile()).getLineNumber(node.getStartOffset());
 
         Needs further research: identify changed lines:
-            ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(project);
-            AbstractVcs vcs                   = vcsManager.getVcsFor(file);
-            FileAnnotation fileAnnotation     = vcs.getCachingAnnotationProvider().annotate(file);
             Date lineDate                     = fileAnnotation.getLineDate(i);
                 => should be a start point to evaluate further
      */

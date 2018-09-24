@@ -1,7 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
-import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -111,16 +109,16 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         return result && !(reference.getParent() instanceof PhpUse);
     }
 
-    protected boolean isModifiedContent(@NotNull PsiElement target) {
-        final VirtualFile file = target.getContainingFile().getVirtualFile();
-        return ChangeListManager.getInstance(target.getProject()).getAffectedFiles().contains(file);
+    protected void isModifiedContent(@NotNull PsiElement target) {
+        // final VirtualFile file = target.getContainingFile().getVirtualFile();
+        // return ChangeListManager.getInstance(target.getProject()).getAffectedFiles().contains(file);
+
+        /*
+         * DocumentChangeListener: application component
+         *   constructor:   EditorFactory.getInstance().getEventMulticaster().addDocumentListener
+         *                  check change-list events multi-casting
+         *   projectOpened: clear list,  ApplicationManager.getApplication().invokeLater(() -> handle change list)
+         *   projectClosed: clear list
+         */
     }
-
-    /* Snipplets: how to identify expression line numbers (start & end)
-            FileDocumentManager.getInstance().getCachedDocument(file.getVirtualFile()).getLineNumber(node.getStartOffset());
-
-        Needs further research: identify changed lines:
-            Date lineDate                     = fileAnnotation.getLineDate(i);
-                => should be a start point to evaluate further
-     */
 }

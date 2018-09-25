@@ -123,11 +123,9 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     protected boolean isModifiedContent(@NotNull PsiElement target) {
         final VirtualFile file = target.getContainingFile().getVirtualFile();
         if (file != null) {
-            return ApplicationManager.getApplication()
-                    .getComponent(EAUltimateChangesTrackerComponent.class)
-                    .isChanged(file);
+            return target.getProject().getComponent(EAUltimateChangesTrackerComponent.class).isChanged(file);
         }
         return false;
-        // return ChangeListManager.getInstance(target.getProject()).getAffectedFiles().contains(file);
+        // return .contains(file);
     }
 }

@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,13 +18,13 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
 
     private final FileDocumentManager manager;
 
-    protected EAUltimateChangesTrackerComponent(Project project) {
+    protected EAUltimateChangesTrackerComponent(@NotNull Project project) {
         super(project);
         manager = FileDocumentManager.getInstance();
 
         EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener() {
             @Override
-            public void beforeDocumentChange(DocumentEvent event) {
+            public void beforeDocumentChange(@NotNull DocumentEvent event) {
                 final VirtualFile file = manager.getFile(event.getDocument());
                 if (file != null) {
                     files.add(file);
@@ -31,7 +32,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
             }
 
             @Override
-            public void documentChanged(DocumentEvent event) {
+            public void documentChanged(@NotNull DocumentEvent event) {
             }
         });
     }
@@ -39,6 +40,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
     @Override
     public void projectOpened() {
         files.clear();
+        files.addAll(ChangeListManager.getInstance(myProject).getAffectedFiles());
     }
 
     @Override

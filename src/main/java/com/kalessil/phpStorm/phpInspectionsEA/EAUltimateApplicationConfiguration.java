@@ -11,6 +11,7 @@ import javax.swing.*;
 
 public class EAUltimateApplicationConfiguration implements Configurable {
     private boolean SEND_CRASH_REPORTS;
+    private boolean CHECK_ONLY_CHANGED_FILES;
     private boolean COMPARISON_STYLE_REGULAR;
     private boolean COMPARISON_STYLE_YODA;
 
@@ -19,6 +20,7 @@ public class EAUltimateApplicationConfiguration implements Configurable {
     public JComponent createComponent() {
         final EAUltimateSettings settings = EAUltimateSettings.getInstance();
         SEND_CRASH_REPORTS                = settings.getSendCrashReports();
+        CHECK_ONLY_CHANGED_FILES          = settings.getCheckOnlyChangedFiles();
 
         final ComparisonStyle comparisonStyle = settings.getComparisonStyle();
         COMPARISON_STYLE_REGULAR              = comparisonStyle == ComparisonStyle.REGULAR;
@@ -27,6 +29,10 @@ public class EAUltimateApplicationConfiguration implements Configurable {
         return OptionsComponent.create(component -> {
             component.addPanel("Anonymous data collect", panelComponent ->
                 panelComponent.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected)
+            );
+
+            component.addPanel("Distraction level", panelComponent ->
+                panelComponent.addCheckbox("Analyze only modified files", CHECK_ONLY_CHANGED_FILES, (isSelected) -> CHECK_ONLY_CHANGED_FILES = isSelected)
             );
 
             /* comparison style */
@@ -44,14 +50,16 @@ public class EAUltimateApplicationConfiguration implements Configurable {
         final EAUltimateSettings settings     = EAUltimateSettings.getInstance();
         final ComparisonStyle comparisonStyle = settings.getComparisonStyle();
 
-        return SEND_CRASH_REPORTS != settings.getSendCrashReports() ||
-               COMPARISON_STYLE_YODA != (comparisonStyle == ComparisonStyle.YODA);
+        return SEND_CRASH_REPORTS       != settings.getSendCrashReports() ||
+               CHECK_ONLY_CHANGED_FILES != settings.getCheckOnlyChangedFiles() ||
+               COMPARISON_STYLE_YODA    != (comparisonStyle == ComparisonStyle.YODA);
     }
 
     @Override
     public void apply() {
         final EAUltimateSettings settings = EAUltimateSettings.getInstance();
         settings.setSendCrashReports(SEND_CRASH_REPORTS);
+        settings.setCheckOnlyChangedFiles(CHECK_ONLY_CHANGED_FILES);
         settings.setComparisonStyle(COMPARISON_STYLE_REGULAR ? ComparisonStyle.REGULAR : ComparisonStyle.YODA);
     }
 

@@ -28,9 +28,10 @@ import java.util.Collection;
  */
 
 public class EfferentObjectCouplingInspector extends BasePhpInspection {
-    private static final String messagePattern = "Efferent coupling is %d.";
-
+    // Inspection options.
     public int optionCouplingLimit = 20;
+
+    private static final String messagePattern = "Efferent coupling is %d.";
 
     @NotNull
     public String getShortName() {
@@ -78,7 +79,7 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
-            component.addSpinner("Coupling limit:", optionCouplingLimit, (inputtedValue) -> optionCouplingLimit = inputtedValue)
+            component.addSpinner("Coupling limit:", optionCouplingLimit, (input) -> optionCouplingLimit = input)
         );
     }
 }

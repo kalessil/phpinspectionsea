@@ -115,4 +115,17 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         }
         return result && !(reference.getParent() instanceof PhpUse);
     }
+
+    protected void isModifiedContent(@NotNull PsiElement target) {
+        // final VirtualFile file = target.getContainingFile().getVirtualFile();
+        // return ChangeListManager.getInstance(target.getProject()).getAffectedFiles().contains(file);
+
+        /*
+         * DocumentChangeListener: application component
+         *   constructor:   EditorFactory.getInstance().getEventMulticaster().addDocumentListener
+         *                  check change-list events multi-casting
+         *   projectOpened: clear list,  ApplicationManager.getApplication().invokeLater(() -> handle change list)
+         *   projectClosed: clear list
+         */
+    }
 }

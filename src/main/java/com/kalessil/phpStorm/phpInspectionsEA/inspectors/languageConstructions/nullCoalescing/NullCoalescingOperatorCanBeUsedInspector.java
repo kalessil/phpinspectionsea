@@ -48,6 +48,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PhpLanguageLevel phpVersion
                         = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {

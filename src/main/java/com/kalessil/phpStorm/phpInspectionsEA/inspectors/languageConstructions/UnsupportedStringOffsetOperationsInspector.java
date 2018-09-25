@@ -42,6 +42,8 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final Project project      = holder.getProject();
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {

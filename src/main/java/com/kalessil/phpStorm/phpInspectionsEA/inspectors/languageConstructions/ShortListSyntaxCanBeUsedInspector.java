@@ -39,6 +39,8 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
+                if (this.isContainingFileSkipped(multiassignmentExpression)) { return; }
+
                 /* ensure php version is at least PHP 7.1 */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.compareTo(PhpLanguageLevel.PHP710) < 0) {
@@ -57,6 +59,8 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             }
 
             public void visitPhpForeach(ForeachStatement foreach) {
+                if (this.isContainingFileSkipped(foreach)) { return; }
+
                 /* ensure php version is at least PHP 7.1 */
                 final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (phpVersion.compareTo(PhpLanguageLevel.PHP710) < 0) {

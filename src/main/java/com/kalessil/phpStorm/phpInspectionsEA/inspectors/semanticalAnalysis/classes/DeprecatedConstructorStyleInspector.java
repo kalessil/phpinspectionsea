@@ -29,6 +29,8 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethod(Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 final PhpClass clazz      = method.getContainingClass();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                 if (null == clazz || null == nameNode || clazz.isTrait() || clazz.isInterface()) {

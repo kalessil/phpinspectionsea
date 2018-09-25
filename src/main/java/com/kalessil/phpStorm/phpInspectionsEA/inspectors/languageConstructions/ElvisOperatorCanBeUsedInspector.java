@@ -37,6 +37,8 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpTernaryExpression(TernaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 /* construction requirements */
                 final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                 if (null == trueVariant) {

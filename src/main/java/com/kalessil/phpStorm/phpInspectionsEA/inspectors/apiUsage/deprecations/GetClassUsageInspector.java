@@ -44,6 +44,8 @@ public class GetClassUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final Project project      = holder.getProject();
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {

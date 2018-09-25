@@ -95,6 +95,8 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && !magicMethods.contains(method.getName())) {
                     final boolean isTarget = OpenapiElementsUtil.getReturnType(method) == null;

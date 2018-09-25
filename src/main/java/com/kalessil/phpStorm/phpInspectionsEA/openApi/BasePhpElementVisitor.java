@@ -128,18 +128,6 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
                     .isChanged(file);
         }
         return false;
-
-
-
-        //
         // return ChangeListManager.getInstance(target.getProject()).getAffectedFiles().contains(file);
-
-        /*
-         * DocumentChangeListener: application component
-         *   constructor:   EditorFactory.getInstance().getEventMulticaster().addDocumentListener
-         *                  check change-list events multi-casting
-         *   projectOpened: clear list,  ApplicationManager.getApplication().invokeLater(() -> handle change list)
-         *   projectClosed: clear list
-         */
     }
 }

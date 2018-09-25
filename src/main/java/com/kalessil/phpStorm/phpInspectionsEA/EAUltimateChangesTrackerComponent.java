@@ -38,13 +38,11 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
 
     @Override
     public void projectOpened() {
-        super.projectOpened();
         files.clear();
     }
 
     @Override
     public void projectClosed() {
-        super.projectClosed();
         files.clear();
     }
 

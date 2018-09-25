@@ -15,8 +15,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent {
     private final Set<VirtualFile> files;
-    private final FileDocumentManager manager;
-    private final Project project;
+    private FileDocumentManager manager;
+    private Project project;
 
     protected EAUltimateChangesTrackerComponent(@NotNull Project project) {
         super(project);
@@ -42,13 +42,21 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
 
     @Override
     public void projectOpened() {
+        super.projectOpened();
+
         files.clear();
-        files.addAll(ChangeListManager.getInstance(project).getAffectedFiles());
+        if (!project.isDisposed()) {
+            files.addAll(ChangeListManager.getInstance(project).getAffectedFiles());
+        }
     }
 
     @Override
     public void projectClosed() {
+        super.projectClosed();
+
         files.clear();
+//        this.project = null;
+//        this.manager = null;
     }
 
     public boolean isChanged(@NotNull VirtualFile file) {

@@ -38,10 +38,14 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
     public static IdeaPluginDescriptor getPluginDescriptor() {
         return plugin;
     }
-    
+
+    private static EAUltimateApplicationComponent instance;
+
     @NotNull
     public static EAUltimateApplicationComponent getInstance() {
-        return ApplicationManager.getApplication().getComponent(EAUltimateApplicationComponent.class);
+        return instance == null
+                ? instance = ApplicationManager.getApplication().getComponent(EAUltimateApplicationComponent.class)
+                : instance;
     }
 
     private void initLicensing() {

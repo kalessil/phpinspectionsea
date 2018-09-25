@@ -22,8 +22,13 @@ public class EAUltimateSettings implements PersistentStateComponent<Element> {
     private String version;
     private String uuid;
 
+    private static EAUltimateSettings instance;
+
+    @NotNull
     public static EAUltimateSettings getInstance() {
-        return ServiceManager.getService(EAUltimateSettings.class);
+        return instance == null
+                ? instance = ServiceManager.getService(EAUltimateSettings.class)
+                : instance;
     }
 
     @Nullable

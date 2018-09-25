@@ -27,32 +27,29 @@ public class EAUltimateApplicationConfiguration implements Configurable {
         COMPARISON_STYLE_YODA                 = comparisonStyle == ComparisonStyle.YODA;
 
         return OptionsComponent.create(component -> {
-            component.addPanel("Anonymous data collect", panelComponent ->
-                panelComponent.addCheckbox("Automatically collect crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected)
+            component.addPanel("Privacy", panel ->
+                panel.addCheckbox("Automatically send crash-reports", SEND_CRASH_REPORTS, (isSelected) -> SEND_CRASH_REPORTS = isSelected)
             );
 
-            component.addPanel("Distraction level", panelComponent ->
-                panelComponent.addCheckbox("Analyze only modified files", CHECK_ONLY_CHANGED_FILES, (isSelected) -> CHECK_ONLY_CHANGED_FILES = isSelected)
+            component.addPanel("Distraction level", panel ->
+                panel.addCheckbox("Analyze only modified files", CHECK_ONLY_CHANGED_FILES, (isSelected) -> CHECK_ONLY_CHANGED_FILES = isSelected)
             );
 
             /* comparison style */
-            component.addPanel("Comparison code style", panelComponent ->
-                panelComponent.delegateRadioCreation(radioComponent -> {
-                    radioComponent.addOption("Regular comparison style", COMPARISON_STYLE_REGULAR, (isSelected) -> COMPARISON_STYLE_REGULAR = isSelected);
-                    radioComponent.addOption("Yoda comparison style", COMPARISON_STYLE_YODA, (isSelected) -> COMPARISON_STYLE_YODA = isSelected);
-                }
-            ));
+            component.addPanel("Comparison code style", panel ->
+                panel.delegateRadioCreation(radio -> {
+                    radio.addOption("Regular comparison style", COMPARISON_STYLE_REGULAR, (isSelected) -> COMPARISON_STYLE_REGULAR = isSelected);
+                    radio.addOption("Yoda comparison style", COMPARISON_STYLE_YODA, (isSelected) -> COMPARISON_STYLE_YODA = isSelected);
+                }));
         });
     }
 
     @Override
     public boolean isModified() {
-        final EAUltimateSettings settings     = EAUltimateSettings.getInstance();
-        final ComparisonStyle comparisonStyle = settings.getComparisonStyle();
-
+        final EAUltimateSettings settings = EAUltimateSettings.getInstance();
         return SEND_CRASH_REPORTS       != settings.getSendCrashReports() ||
                CHECK_ONLY_CHANGED_FILES != settings.getCheckOnlyChangedFiles() ||
-               COMPARISON_STYLE_YODA    != (comparisonStyle == ComparisonStyle.YODA);
+               COMPARISON_STYLE_YODA    != (settings.getComparisonStyle() == ComparisonStyle.YODA);
     }
 
     @Override

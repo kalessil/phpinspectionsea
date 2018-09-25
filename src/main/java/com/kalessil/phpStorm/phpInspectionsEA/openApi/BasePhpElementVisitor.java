@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -7,6 +8,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateChangesTrackerComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,5 +116,14 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
             result = function.getFQN().equals('\\' + function.getName());
         }
         return result && !(reference.getParent() instanceof PhpUse);
+    }
+
+    protected boolean isModifiedContent(@NotNull PsiElement target) {
+        final VirtualFile file = target.getContainingFile().getVirtualFile();
+        if (file != null) {
+            return target.getProject().getComponent(EAUltimateChangesTrackerComponent.class).isChanged(file);
+        }
+        return false;
+        // return .contains(file);
     }
 }

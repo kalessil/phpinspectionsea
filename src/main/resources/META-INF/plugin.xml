@@ -922,6 +922,12 @@
           <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent</implementation-class>
       </component>
   </application-components>
+is
+  <application-components>
+    <component>
+      <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateChangesTrackerComponent</implementation-class>
+    </component>
+  </application-components>
 
   <project-components>
       <component>

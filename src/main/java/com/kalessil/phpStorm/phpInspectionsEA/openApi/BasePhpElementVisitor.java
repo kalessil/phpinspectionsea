@@ -120,7 +120,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     protected boolean isContainingFileSkipped(@NotNull PsiElement target) {
         if (EAUltimateSettings.getInstance().getCheckOnlyChangedFiles()) {
-            return target.getProject()
+            return !target.getProject()
                     .getComponent(EAUltimateChangesTrackerComponent.class)
                     .isChanged(target.getContainingFile().getVirtualFile());
         }

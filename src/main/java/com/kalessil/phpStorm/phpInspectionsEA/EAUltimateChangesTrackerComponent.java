@@ -14,13 +14,16 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent {
-    private static final Set<VirtualFile> files = new CopyOnWriteArraySet<>();
-
+    private final Set<VirtualFile> files;
     private final FileDocumentManager manager;
+    private final Project project;
 
     protected EAUltimateChangesTrackerComponent(@NotNull Project project) {
         super(project);
-        manager = FileDocumentManager.getInstance();
+
+        this.manager = FileDocumentManager.getInstance();
+        this.project = project;
+        this.files   = new CopyOnWriteArraySet<>();
 
         EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener() {
             @Override
@@ -40,7 +43,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
     @Override
     public void projectOpened() {
         files.clear();
-        files.addAll(ChangeListManager.getInstance(myProject).getAffectedFiles());
+        files.addAll(ChangeListManager.getInstance(project).getAffectedFiles());
     }
 
     @Override

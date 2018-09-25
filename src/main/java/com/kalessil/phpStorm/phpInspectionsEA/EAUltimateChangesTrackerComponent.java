@@ -15,6 +15,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent {
     private final Set<VirtualFile> files;
+    private final DocumentListener listener;
+
     private FileDocumentManager manager;
     private Project project;
 
@@ -25,7 +27,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
         this.project = project;
         this.files   = new CopyOnWriteArraySet<>();
 
-        EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener() {
+        EditorFactory.getInstance().getEventMulticaster().addDocumentListener(this.listener = new DocumentListener() {
             @Override
             public void beforeDocumentChange(@NotNull DocumentEvent event) {
                 final VirtualFile file = manager.getFile(event.getDocument());
@@ -45,9 +47,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
         super.projectOpened();
 
         files.clear();
-        if (!project.isDisposed()) {
-            files.addAll(ChangeListManager.getInstance(project).getAffectedFiles());
-        }
+        files.addAll(ChangeListManager.getInstance(project).getAffectedFiles());
     }
 
     @Override
@@ -55,8 +55,10 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
         super.projectClosed();
 
         files.clear();
-//        this.project = null;
-//        this.manager = null;
+        EditorFactory.getInstance().getEventMulticaster().removeDocumentListener(this.listener);
+
+        this.project = null;
+        this.manager = null;
     }
 
     public boolean isChanged(@NotNull VirtualFile file) {

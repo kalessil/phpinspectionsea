@@ -73,7 +73,7 @@ public class EAUltimateSettings implements PersistentStateComponent<Element> {
 
         /* crashes collection */
         final String checkOnlyChangedFilesValue = element.getAttributeValue("checkOnlyChangedFiles");
-        this.checkOnlyChangedFiles              = checkOnlyChangedFilesValue == null ? "true" : checkOnlyChangedFilesValue;
+        this.checkOnlyChangedFiles              = checkOnlyChangedFilesValue == null ? "false" : checkOnlyChangedFilesValue;
 
         /* comparison style */
         final String comparisonStyleValue = element.getAttributeValue("comparisonStyle");

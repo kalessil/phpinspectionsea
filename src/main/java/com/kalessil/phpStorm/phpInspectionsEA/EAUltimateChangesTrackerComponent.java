@@ -30,6 +30,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
         EditorFactory.getInstance().getEventMulticaster().addDocumentListener(this.listener = new DocumentListener() {
             @Override
             public void beforeDocumentChange(@NotNull DocumentEvent event) {
+                /* we need to know files has been changed before inspections are getting invoked */
                 final VirtualFile file = manager.getFile(event.getDocument());
                 if (file != null) {
                     files.add(file);
@@ -46,6 +47,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
     public void projectOpened() {
         super.projectOpened();
 
+        /* pre-load all know changes */
         files.clear();
         files.addAll(ChangeListManager.getInstance(project).getAffectedFiles());
     }
@@ -57,6 +59,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
         files.clear();
         EditorFactory.getInstance().getEventMulticaster().removeDocumentListener(this.listener);
 
+        /* this solves objects leaking issues in older PhpStorm versions */
         this.project = null;
         this.manager = null;
     }

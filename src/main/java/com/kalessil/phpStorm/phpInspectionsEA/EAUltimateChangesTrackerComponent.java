@@ -46,9 +46,12 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
 
         this.changeListManager.addChangeListListener(this.changeListListener = new ChangeListAdapter() {
             public void changeListUpdateDone() {
+                /* catch up on reverts */
                 files.stream()
                         .filter(file -> changeListManager.getStatus(file) == FileStatus.NOT_CHANGED)
                         .forEach(files::remove);
+                /* catch up on branch change */
+                files.addAll(changeListManager.getAffectedFiles());
             }
         });
     }

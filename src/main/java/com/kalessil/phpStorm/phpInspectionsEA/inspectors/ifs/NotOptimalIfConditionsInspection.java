@@ -188,9 +188,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 // release references in the raw list
                 instanceOfExpressions.clear();
 
-                final PhpLanguageLevel phpVersion
-                        = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                final boolean isDateTimeInterfaceAvaialble = phpVersion.compareTo(PhpLanguageLevel.PHP550) >= 0;
+                final PhpLanguageLevel php                 = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                final boolean isDateTimeInterfaceAvaialble = php.compareTo(PhpLanguageLevel.PHP550) >= 0;
 
                 // process entries, perform subject container clean up on each iteration
                 final Map<PhpClass, Set<PhpClass>> resolvedInheritanceChains = new HashMap<>();

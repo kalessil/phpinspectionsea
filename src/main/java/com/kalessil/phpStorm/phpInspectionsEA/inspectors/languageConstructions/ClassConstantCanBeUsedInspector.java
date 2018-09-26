@@ -81,9 +81,9 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
                 /* ensure selected language level supports the ::class feature*/
-                final Project project             = holder.getProject();
-                final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                if (!phpVersion.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
+                final Project project      = holder.getProject();
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
+                if (!php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
                     return;
                 }
 

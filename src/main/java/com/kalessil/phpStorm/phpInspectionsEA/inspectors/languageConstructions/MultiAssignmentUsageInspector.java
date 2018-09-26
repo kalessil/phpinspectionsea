@@ -35,9 +35,8 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
                 /* ensure php version is at least PHP 5.5 */
-                final PhpLanguageLevel phpVersion
-                        = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (!phpVersion.hasFeature(PhpLanguageFeature.FOREACH_LIST)) {
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (!php.hasFeature(PhpLanguageFeature.FOREACH_LIST)) {
                     return;
                 }
 

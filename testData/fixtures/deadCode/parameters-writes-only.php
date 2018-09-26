@@ -73,6 +73,13 @@ class Container {
         return $lastIndex;
     }
 
+    public function method8() {
+        return [
+            <weak_warning descr="The variable seems to be not used.">$key</weak_warning> = '...' => '...',
+            '...' => <weak_warning descr="The variable seems to be not used.">$value</weak_warning> = '...',
+        ];
+    }
+
     function multi_assignment_case_holder($parameter)
     {
         $first = $second = [];

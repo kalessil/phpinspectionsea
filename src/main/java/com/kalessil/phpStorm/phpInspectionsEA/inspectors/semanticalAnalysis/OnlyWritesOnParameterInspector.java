@@ -11,6 +11,7 @@ import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
@@ -85,13 +86,15 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         return;
                     }
                     /* filter target contexts: we are supporting only certain of them */
-                    final PsiElement parent = assignmentExpression.getParent();
+                    final PsiElement parent       = assignmentExpression.getParent();
                     final boolean isTargetContext =
                         parent instanceof ParenthesizedExpression ||
-                        parent instanceof ArrayIndex ||
                         (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
-                        OpenapiTypesUtil.isStatementImpl(parent) ||
-                        OpenapiTypesUtil.isAssignment(parent);
+                        OpenapiTypesUtil.isStatementImpl(parent)  ||
+                        OpenapiTypesUtil.isAssignment(parent)     ||
+                        OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_INDEX) ||
+                        OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_KEY)   ||
+                        OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_VALUE);
                     if (isTargetContext) {
                         final PsiElement scope = ExpressionSemanticUtil.getScope(assignmentExpression);
                         if (scope != null) {

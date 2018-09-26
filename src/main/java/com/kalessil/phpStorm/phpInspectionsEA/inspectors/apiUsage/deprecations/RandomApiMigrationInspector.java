@@ -53,8 +53,8 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     }
 
     @NotNull
-    private Map<String, String> getMapping(PhpLanguageLevel phpVersion) {
-        if (SUGGEST_USING_RANDOM_INT && phpVersion.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
+    private Map<String, String> getMapping(@NotNull PhpLanguageLevel php) {
+        if (SUGGEST_USING_RANDOM_INT && php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
             return mappingEdge;
         }
 

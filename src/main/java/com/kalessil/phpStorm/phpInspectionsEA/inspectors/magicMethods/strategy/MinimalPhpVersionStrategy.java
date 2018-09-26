@@ -14,8 +14,8 @@ public class MinimalPhpVersionStrategy {
     static public void apply(final Method method, final ProblemsHolder holder, final PhpLanguageLevel neededVersion) {
         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
         if (nameNode != null) {
-            final PhpLanguageLevel phpVersion = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-            if (phpVersion.compareTo(neededVersion) < 0) { // at least required version
+            final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+            if (php.compareTo(neededVersion) < 0) { // at least required version
                 final String message = strProblemDescription
                         .replace("%m%", method.getName())
                         .replace("%v%", neededVersion.getVersionString());

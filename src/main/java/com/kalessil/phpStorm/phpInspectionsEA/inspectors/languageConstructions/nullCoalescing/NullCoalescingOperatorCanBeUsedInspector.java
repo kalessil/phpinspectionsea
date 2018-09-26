@@ -50,9 +50,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 if (this.isContainingFileSkipped(expression)) { return; }
 
-                final PhpLanguageLevel phpVersion
-                        = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (phpVersion.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     for (final Function<TernaryExpression, String> strategy : strategies) {
                         final String replacement = strategy.apply(expression);
                         if (replacement != null) {

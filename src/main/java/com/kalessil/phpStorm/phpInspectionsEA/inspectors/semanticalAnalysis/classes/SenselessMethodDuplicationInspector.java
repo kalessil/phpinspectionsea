@@ -48,6 +48,8 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 /* process only real classes and methods */
                 if (method.isAbstract() || method.isDeprecated()) {
                     return;

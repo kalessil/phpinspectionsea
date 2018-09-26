@@ -48,6 +48,8 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpField(@NotNull Field field) {
+                if (this.isContainingFileSkipped(field)) { return; }
+
                 if (REPORT_DEFAULTS_FLAWS && !field.isConstant()) {
                     final PhpClass clazz       = field.getContainingClass();
                     final PhpClass parentClazz = clazz == null ? null : OpenapiResolveUtil.resolveSuperClass(clazz);
@@ -71,6 +73,8 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 /* configuration-based toggle */
                 if (!REPORT_INIT_FLAWS) {
                     return;

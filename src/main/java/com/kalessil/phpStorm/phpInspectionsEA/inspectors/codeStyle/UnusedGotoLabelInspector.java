@@ -42,6 +42,8 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpGotoLabel(@NotNull PhpGotoLabel label) {
+                if (this.isContainingFileSkipped(label)) { return; }
+
                 final Function function   = ExpressionSemanticUtil.getScope(label);
                 final GroupStatement body = null == function ? null : ExpressionSemanticUtil.getGroupStatement(function);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {

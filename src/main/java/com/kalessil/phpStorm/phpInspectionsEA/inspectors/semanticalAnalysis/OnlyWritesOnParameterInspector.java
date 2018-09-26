@@ -55,6 +55,8 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
+                if (this.isContainingFileSkipped(function)) { return; }
+
                 Arrays.stream(function.getParameters())
                         .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
                         .filter(parameter  -> {
@@ -78,6 +80,8 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
+                if (this.isContainingFileSkipped(assignmentExpression)) { return; }
+
                 final PsiElement variable = assignmentExpression.getVariable();
                 if (variable instanceof Variable) {
                     /* false-positives: predefined and global variables */

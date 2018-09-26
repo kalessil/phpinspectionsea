@@ -51,6 +51,8 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
+                if (this.isContainingFileSkipped(clazz)) { return; }
+
                 if (clazz.isInterface() || clazz.isTrait()) {
                     return;
                 }

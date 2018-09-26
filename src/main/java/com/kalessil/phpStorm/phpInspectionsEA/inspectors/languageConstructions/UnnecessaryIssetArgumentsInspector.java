@@ -48,6 +48,7 @@ public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
             @Override
             public void visitPhpIsset(@NotNull PhpIsset issetExpression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(issetExpression))        { return; }
 
                 final PsiElement[] arguments = issetExpression.getVariables();
                 if (arguments.length > 1) {

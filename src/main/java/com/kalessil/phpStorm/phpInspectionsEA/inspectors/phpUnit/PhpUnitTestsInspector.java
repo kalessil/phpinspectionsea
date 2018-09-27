@@ -65,6 +65,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 final PhpClass clazz       = method.getContainingClass();
                 final PsiElement nameNode  = NamedElementUtil.getNameIdentifier(method);
                 final PhpDocComment phpDoc = method.getDocComment();

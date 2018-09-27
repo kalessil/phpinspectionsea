@@ -63,6 +63,8 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String methodName = reference.getName();
                 if (methodName != null) {
                     if (methodName.startsWith("assert")) {

@@ -58,7 +58,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(method))               { return; }
+                if (this.isContainingFileSkipped(method))                 { return; }
 
                 this.inspectUsages(method.getParameters(), method);
             }

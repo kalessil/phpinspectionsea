@@ -6,12 +6,13 @@ class AssertsHolder
     {
         $this->assertNull($this->returnsVoid());
         $this->assertEmpty($this->returnsVoid());
-        $this->assertInstanceOf(stdClass::class, $this->returnsVoid());
+        $this->assertInstanceOf(\stdClass::class, $this->returnsStdClass());
+        $this->assertInstanceOf(\stdClass::class, $this->returnsObject());
         $this->assertInternalType('...', $this->returnsVoid());
 
         $this->assertNull($this->returnsObject());
         $this->assertEmpty($this->returnsObject());
-        $this->assertInstanceOf(stdClass::class, $this->returnsObject());
+        $this->assertInstanceOf(\stdClass::class, $this->returnsObject());
         $this->assertInternalType('...', $this->returnsObject());
     }
 
@@ -19,13 +20,13 @@ class AssertsHolder
         $void = $this->returnsVoid();
         $this->assertNull($void);
         $this->assertEmpty($void);
-        $this->assertInstanceOf(stdClass::class, $void);
+        $this->assertInstanceOf(\stdClass::class, $void);
         $this->assertInternalType('...', $void);
 
         $object = $this->returnsObject();
         $this->assertNull($object);
         $this->assertEmpty($object);
-        $this->assertInstanceOf(stdClass::class, $object);
+        $this->assertInstanceOf(\stdClass::class, $object);
         $this->assertInternalType('...', $object);
     }
 
@@ -36,4 +37,5 @@ class AssertsHolder
 
     abstract function returnsVoid(): void;
     abstract function returnsObject(): object;
+    abstract function returnsStdClass(): \stdClass;
 }

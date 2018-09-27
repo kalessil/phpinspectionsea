@@ -225,13 +225,6 @@
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IssetConstructsCanBeMergedInspector"/>
 
-
-  <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-       shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"
-       groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ArrayFunctionsInvariantsInspector"/-->
-
-
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ForgottenDebugOutputInspection"                displayName="Forgotten debug statements"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"

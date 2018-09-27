@@ -143,7 +143,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                             break;
                                         }
                                         /* false-positive: magic constants ARE changing signature  */
-                                        if (methodDefault != null && methodDefault instanceof ConstantReference) {
+                                        if (methodDefault instanceof ConstantReference) {
                                             final String constant = ((ConstantReference) methodDefault).getName();
                                             if (constants.contains(constant)) {
                                                 isChangingSignature = true;

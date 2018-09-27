@@ -292,11 +292,11 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 }
             } else {
                 if (from instanceof ArrayCreationExpression) {
-                    final PsiElement comma       = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    final String pattern         = String.format(useShortSyntax ? "[%s]" : "array(%s)", to.getText());
-                    final PsiElement replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
-                    final PsiElement firstValue  = ((ArrayCreationExpression) replacement).getFirstPsiChild();
-                    final PsiElement marker      = firstValue == null ? null : firstValue.getPrevSibling();
+                    final PsiElement comma                    = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+                    final String pattern                      = String.format(useShortSyntax ? "[%s]" : "array(%s)", to.getText());
+                    final ArrayCreationExpression replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
+                    final PsiElement firstValue               = replacement.getFirstPsiChild();
+                    final PsiElement marker                   = firstValue == null ? null : firstValue.getPrevSibling();
                     if (comma != null && marker != null) {
                         final PsiElement[] values = from.getChildren();
                         ArrayUtils.reverse(values);

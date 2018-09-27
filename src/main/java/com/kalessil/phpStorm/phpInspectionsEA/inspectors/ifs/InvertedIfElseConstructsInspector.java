@@ -72,9 +72,9 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                                 final PsiElement left  = binary.getLeftOperand();
                                 final PsiElement right = binary.getRightOperand();
                                 final PsiElement extractedCondition;
-                                if (left != null && PhpLanguageUtil.isFalse(left)) {
+                                if (PhpLanguageUtil.isFalse(left)) {
                                     extractedCondition = right;
-                                } else if (right != null && PhpLanguageUtil.isFalse(right)) {
+                                } else if (PhpLanguageUtil.isFalse(right)) {
                                     extractedCondition = left;
                                 } else  {
                                     extractedCondition = null;

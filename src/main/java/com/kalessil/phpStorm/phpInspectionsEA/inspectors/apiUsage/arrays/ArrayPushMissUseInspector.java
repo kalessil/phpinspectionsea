@@ -70,7 +70,7 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
                         final ArrayIndex index = expression.getIndex();
                         if (index != null) {
                             final PsiElement candidate = index.getValue();
-                            if (candidate != null && OpenapiTypesUtil.isFunctionReference(candidate)) {
+                            if (OpenapiTypesUtil.isFunctionReference(candidate)) {
                                 final FunctionReference reference = (FunctionReference) candidate;
                                 final String functionName         = reference.getName();
                                 if (functionName != null && functionName.equals("count")) {

@@ -96,7 +96,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                     /* false-positive: type is not resolved correctly, default null is taken */
                     if (parameterTypes.size() == 1 && parameterTypes.contains(Types.strNull)) {
                         final PsiElement defaultValue = parameter.getDefaultValue();
-                        if (defaultValue != null && PhpLanguageUtil.isNull(defaultValue)) {
+                        if (PhpLanguageUtil.isNull(defaultValue)) {
                             continue;
                         }
                     }

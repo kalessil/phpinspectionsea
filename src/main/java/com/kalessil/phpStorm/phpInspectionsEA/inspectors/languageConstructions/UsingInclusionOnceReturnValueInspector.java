@@ -10,7 +10,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ControlStatement;
 import com.jetbrains.php.lang.psi.elements.Include;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -68,11 +67,10 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
             if (target instanceof Include) {
-                final boolean isInclude = OpenapiTypesUtil.is(target.getFirstChild(), PhpTokenTypes.kwINCLUDE_ONCE);
-                final String pattern    = isInclude ? "include ''" : "require ''";
-                final PhpPsiElement replacement
-                        = PhpPsiElementFactory.createPhpPsiFromText(project, Include.class, pattern);
-                ((Include) replacement).getArgument().replace(((Include) target).getArgument());
+                final boolean isInclude   = OpenapiTypesUtil.is(target.getFirstChild(), PhpTokenTypes.kwINCLUDE_ONCE);
+                final String pattern      = isInclude ? "include ''" : "require ''";
+                final Include replacement = PhpPsiElementFactory.createPhpPsiFromText(project, Include.class, pattern);
+                replacement.getArgument().replace(((Include) target).getArgument());
                 target.replace(replacement);
             }
         }

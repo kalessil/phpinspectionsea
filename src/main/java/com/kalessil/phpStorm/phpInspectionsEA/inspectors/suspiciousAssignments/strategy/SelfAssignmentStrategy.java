@@ -50,7 +50,7 @@ final public class SelfAssignmentStrategy {
         /* verify if the expression is complete and has needed structure */
         final PsiElement variable = expression.getVariable();
         final PsiElement value    = expression.getValue();
-        if (null == value || null == variable || !(value instanceof BinaryExpression)) {
+        if (variable == null || !(value instanceof BinaryExpression)) {
             return;
         }
         final BinaryExpression valueExpression = (BinaryExpression) value;

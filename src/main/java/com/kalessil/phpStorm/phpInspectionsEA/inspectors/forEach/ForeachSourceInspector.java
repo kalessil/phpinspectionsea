@@ -54,6 +54,8 @@ public class ForeachSourceInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
+                if (this.isContainingFileSkipped(foreach)) { return; }
+
                 final PsiElement source = ExpressionSemanticUtil.getExpressionTroughParenthesis(foreach.getArray());
                 if (source instanceof PhpTypedElement && !isEnsuredByPyParentIf(foreach, source)) {
                     this.analyseContainer(source);

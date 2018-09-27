@@ -45,6 +45,8 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final IElementType operator = expression.getOperationType();
                 if (operator != null && (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opNOT_EQUAL)) {
                     this.triggerProblem(expression, operator);

@@ -48,6 +48,8 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpEmpty(@NotNull PhpEmpty emptyExpression) {
+                if (this.isContainingFileSkipped(emptyExpression)) { return; }
+
                 final PhpExpression[] values = emptyExpression.getVariables();
                 if (values.length == 1) {
                     final PsiElement subject = ExpressionSemanticUtil.getExpressionTroughParenthesis(values[0]);

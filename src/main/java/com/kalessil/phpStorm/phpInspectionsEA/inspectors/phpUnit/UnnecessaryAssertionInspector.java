@@ -11,9 +11,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -105,15 +103,33 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                             if (candidate instanceof FunctionReference) {
                                 final FunctionReference call = (FunctionReference) candidate;
                                 final PsiElement function    = OpenapiResolveUtil.resolveReference(call);
-                                if (function instanceof Function && OpenapiElementsUtil.getReturnType((Function) function) != null) {
-                                    final PhpType resolved = OpenapiResolveUtil.resolveType(call, project);
-                                    if (resolved != null && resolved.size() == 1 && !resolved.hasUnknown()) {
-                                        final String expected = targetType.get(methodName);
-                                        if (
-                                            expected == null ||
-                                            resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(expected))
-                                        ) {
-                                            holder.registerProblem(reference, messageReturnType);
+                                if (function instanceof Function) {
+                                    final PsiElement returnType = OpenapiElementsUtil.getReturnType((Function) function);
+                                    if (returnType != null) {
+                                        final PhpType resolved = OpenapiResolveUtil.resolveType(call, project);
+                                        if (resolved != null && resolved.size() == 1 && !resolved.hasUnknown()) {
+                                            /* find out what is expected */
+                                            String expectedType = targetType.get(methodName);
+                                            if (methodName.equals("assertInstanceOf")) {
+                                                if (arguments[0] instanceof ClassConstantReference) {
+                                                    final ClassConstantReference expectation = (ClassConstantReference) arguments[0];
+                                                    final PsiElement base                    = expectation.getClassReference();
+                                                    if (base instanceof ClassReference) {
+                                                        final PsiElement clazz = OpenapiResolveUtil.resolveReference((ClassReference) base);
+                                                        if (clazz instanceof PhpClass) {
+                                                            expectedType = ((PhpClass) clazz).getFQN();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            /* match arguments types */
+                                            final String expected = expectedType;
+                                            if (expected == null) {
+                                                holder.registerProblem(reference, messageReturnType);
+                                            } else if (resolved.getTypes().stream().anyMatch(t -> Types.getType(t).equals(expected))) {
+                                                holder.registerProblem(reference, messageReturnType);
+                                            }
+
                                         }
                                     }
                                 }

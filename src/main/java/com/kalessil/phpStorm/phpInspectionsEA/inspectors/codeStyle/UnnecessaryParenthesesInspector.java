@@ -38,7 +38,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
             @Override
             public void visitPhpParenthesizedExpression(@NotNull ParenthesizedExpression expression) {
                 if (holder.getFile().getName().endsWith(".blade.php")) {
-                    /* syntax injection there is not done properly for elseif, causing false-positives */
+                    /* syntax injection there causing false-positives */
                     return;
                 }
 

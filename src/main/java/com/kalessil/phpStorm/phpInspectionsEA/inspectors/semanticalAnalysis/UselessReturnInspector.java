@@ -45,6 +45,8 @@ public class UselessReturnInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpReturn(@NotNull PhpReturn expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(expression);
                 if (returnValue instanceof AssignmentExpression) {
                     final AssignmentExpression assignment = (AssignmentExpression) returnValue;
@@ -68,11 +70,15 @@ public class UselessReturnInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 this.inspectForSenselessReturn(method);
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
+                if (this.isContainingFileSkipped(function)) { return; }
+
                 this.inspectForSenselessReturn(function);
             }
 

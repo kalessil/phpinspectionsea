@@ -38,6 +38,8 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 final PhpClass clazz = method.getContainingClass();
                 if (clazz != null && !clazz.isInterface()) {
                     final Field field = OpenapiResolveUtil.resolveField(clazz, method.getName());

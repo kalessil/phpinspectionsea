@@ -55,11 +55,15 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             /* re-dispatch to inspector */
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 this.inspectCallable(method);
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
+                if (this.isContainingFileSkipped(function)) { return; }
+
                 this.inspectCallable(function);
             }
 

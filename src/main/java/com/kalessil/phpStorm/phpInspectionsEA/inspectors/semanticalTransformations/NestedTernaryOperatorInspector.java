@@ -32,6 +32,8 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof TernaryExpression) {
                     holder.registerProblem(condition, messageNested);

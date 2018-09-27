@@ -99,6 +99,8 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull final FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && targetFunctions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();

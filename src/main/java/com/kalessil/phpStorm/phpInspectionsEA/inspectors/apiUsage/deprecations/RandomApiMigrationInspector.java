@@ -67,6 +67,8 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null) {
                     final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();

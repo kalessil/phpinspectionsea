@@ -129,8 +129,8 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof MethodReference) {
-                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(string) null");
-                ((UnaryExpression) replacement).getValue().replace(expression.getFirstChild().copy());
+                final UnaryExpression replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(string) null");
+                replacement.getValue().replace(expression.getFirstChild().copy());
 
                 expression.replace(replacement);
             }

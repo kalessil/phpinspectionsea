@@ -100,15 +100,12 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_KEY)   ||
                         OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_VALUE);
                     if (isTargetContext) {
-                        final PsiElement scope = ExpressionSemanticUtil.getScope(assignmentExpression);
-                        if (scope != null) {
-                            final Function function = (Function) scope;
-                            if (Arrays.stream(function.getParameters()).noneMatch(parameter -> parameter.getName().equals(variableName))) {
-                                final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(function);
-                                final boolean isUseVariable = uses != null && uses.stream().anyMatch(candidate -> candidate.getName().equals(variableName));
-                                if (!isUseVariable) {
-                                    this.analyzeAndReturnUsagesCount(variableName, function);
-                                }
+                        final Function scope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                        if (scope != null && Arrays.stream(scope.getParameters()).noneMatch(p -> p.getName().equals(variableName))) {
+                            final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(scope);
+                            final boolean isUseVariable = uses != null && uses.stream().anyMatch(u -> u.getName().equals(variableName));
+                            if (!isUseVariable) {
+                                this.analyzeAndReturnUsagesCount(variableName, scope);
                             }
                         }
                     }

@@ -179,7 +179,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 final Function scope = ExpressionSemanticUtil.getScope(expression);
                 if (scope != null) {
                     final PsiElement parent = expression.getParent();
-                    if (parent != null && OpenapiTypesUtil.isStatementImpl(parent)) {
+                    if (OpenapiTypesUtil.isStatementImpl(parent)) {
                         final PsiElement value  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
                         final Variable variable = value == null ? null : this.getVariable(value);
                         if (variable != null) {
@@ -200,7 +200,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
                 if (OpenapiTypesUtil.isAssignment(expression)) {
                     final PsiElement parent = expression.getParent();
-                    if (parent != null && OpenapiTypesUtil.isStatementImpl(parent)) {
+                    if (OpenapiTypesUtil.isStatementImpl(parent)) {
                         final Function scope = ExpressionSemanticUtil.getScope(expression);
                         if (scope != null) {
                             final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());

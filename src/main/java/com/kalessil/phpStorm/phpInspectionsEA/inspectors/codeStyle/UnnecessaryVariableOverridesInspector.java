@@ -48,7 +48,7 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
                     if (variable instanceof Variable) {
                         /* find the override source, incl. via nested calls */
                         PsiElement value = assignment.getValue();
-                        while (value != null && OpenapiTypesUtil.isFunctionReference(value)) {
+                        while (OpenapiTypesUtil.isFunctionReference(value)) {
                             final FunctionReference call = (FunctionReference) value;
                             final PsiElement[] arguments = call.getParameters();
                             if (arguments.length != 1) {

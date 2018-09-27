@@ -111,7 +111,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 }
             }
 
-
             /** check if only array type possible */
             private boolean isArrayType(@NotNull Set<String> resolvedTypesSet) {
                 return resolvedTypesSet.size() == 1 && resolvedTypesSet.contains(Types.strArray);

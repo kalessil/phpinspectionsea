@@ -29,12 +29,12 @@ final public class HardcodedConstantValuesStrategy {
         ) {
             final PsiElement left  = expression.getLeftOperand();
             final PsiElement right = expression.getRightOperand();
-            if (left != null && (PhpLanguageUtil.isBoolean(left) || PhpLanguageUtil.isNull(left))) {
+            if (PhpLanguageUtil.isBoolean(left) || PhpLanguageUtil.isNull(left)) {
                 holder.registerProblem(left, message);
                 result = true;
             }
             /* no else-if, as it breaks proper processing */
-            /* else */ if (right != null && (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right))) {
+            /* else */ if (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right)) {
                 holder.registerProblem(right, message);
                 result = true;
             }

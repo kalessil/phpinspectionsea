@@ -153,7 +153,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             final BinaryExpression binary = (BinaryExpression) outerContext;
                             if (call == binary.getLeftOperand()) {
                                 final PsiElement threshold = binary.getRightOperand();
-                                if (threshold != null && OpenapiTypesUtil.isNumber(threshold)) {
+                                if (OpenapiTypesUtil.isNumber(threshold)) {
                                     final String number   = threshold.getText();
                                     final IElementType op = binary.getOperationType();
                                     if (op == PhpTokenTypes.opLESS && number.equals("2")) {

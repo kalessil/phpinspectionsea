@@ -66,7 +66,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                         if (binary.getOperationType() == PhpTokenTypes.opMINUS) {
                             final PsiElement left  = binary.getLeftOperand();
                             final PsiElement right = binary.getRightOperand();
-                            if (left != null && right != null && OpenapiTypesUtil.isFunctionReference(left)) {
+                            if (right != null && OpenapiTypesUtil.isFunctionReference(left)) {
                                 final FunctionReference leftCall = (FunctionReference) left;
                                 final String leftName            = leftCall.getName();
                                 if (leftName != null && lengthFunctions.contains(leftName)) {

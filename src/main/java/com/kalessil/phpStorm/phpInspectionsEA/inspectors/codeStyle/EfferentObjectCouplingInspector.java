@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -14,8 +13,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -31,7 +30,7 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
     // Inspection options.
     public int optionCouplingLimit = 20;
 
-    private static final String messagePattern = "Efferent coupling is %d.";
+    private static final String messagePattern = "High efferent coupling (%d).";
 
     @NotNull
     public String getShortName() {
@@ -39,41 +38,21 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
     }
 
     @NotNull
-    public PsiElementVisitor buildVisitor(
-        @NotNull final ProblemsHolder holder,
-        final boolean isOnTheFly
-    ) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpClass(@NotNull PhpClass phpClass) {
-                if (this.isContainingFileSkipped(phpClass)) { return; }
+            public void visitPhpClass(@NotNull PhpClass clazz) {
+                if (this.isContainingFileSkipped(clazz)) { return; }
 
-                final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(phpClass);
-                if (nameIdentifier == null) {
-                    return;
-                }
-
-                final Collection<ClassReference> classReferences = PsiTreeUtil.findChildrenOfType(phpClass, ClassReference.class);
-                final Collection<String>         fqnReferences   = new ArrayList<>();
-
-                fqnReferences.add(phpClass.getFQN());
-
-                for (final ClassReference reference : classReferences) {
-                    final String classReferenceFQN = reference.getFQN();
-
-                    if (!fqnReferences.contains(classReferenceFQN)) {
-                        fqnReferences.add(classReferenceFQN);
+                final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(clazz);
+                if (nameIdentifier != null) {
+                    final Set<String> references = PsiTreeUtil.findChildrenOfType(clazz, ClassReference.class).stream()
+                            .map(ClassReference::getFQN)
+                            .collect(Collectors.toSet());
+                    final int count = references.size();
+                    if (count >= optionCouplingLimit) {
+                        holder.registerProblem(nameIdentifier, String.format(messagePattern, count));
                     }
-                }
-
-                final int fqnReferencesSize = fqnReferences.size() - 1;
-
-                if (fqnReferencesSize >= optionCouplingLimit) {
-                    holder.registerProblem(
-                        nameIdentifier,
-                        String.format(messagePattern, fqnReferencesSize),
-                        ProblemHighlightType.WEAK_WARNING
-                    );
                 }
             }
         };

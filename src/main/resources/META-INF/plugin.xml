@@ -882,7 +882,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.LowerAccessLevelInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="EfferentObjectCouplingInspection"                displayName="Efferent coupling between objects"
-        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.EfferentObjectCouplingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="TransitiveDependenciesUsageInspection"           displayName="Transitive dependencies usage"

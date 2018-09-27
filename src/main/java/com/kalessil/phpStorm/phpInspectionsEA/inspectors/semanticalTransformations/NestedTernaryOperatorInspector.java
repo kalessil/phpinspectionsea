@@ -40,14 +40,14 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
                 if (trueVariant instanceof TernaryExpression) {
                     holder.registerProblem(trueVariant, messageNested);
                 }
-                final PsiElement falseVariant          = expression.getFalseVariant();
-                final PsiElement extractedFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(falseVariant);
-                if (extractedFalseVariant instanceof TernaryExpression) {
-                    final boolean allow =
-                            expression.isShort() && falseVariant instanceof TernaryExpression &&
-                            ((TernaryExpression) falseVariant).isShort();
+                final PsiElement falseVariant        = expression.getFalseVariant();
+                final PsiElement unboxedFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(falseVariant);
+                if (unboxedFalseVariant instanceof TernaryExpression) {
+                    final boolean allow = falseVariant instanceof TernaryExpression &&
+                                          expression.isShort() &&
+                                          ((TernaryExpression) falseVariant).isShort();
                     if (!allow) {
-                        holder.registerProblem(extractedFalseVariant, messageNested);
+                        holder.registerProblem(unboxedFalseVariant, messageNested);
                     }
                 }
             }

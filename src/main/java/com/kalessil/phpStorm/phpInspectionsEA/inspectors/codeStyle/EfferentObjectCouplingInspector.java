@@ -46,6 +46,8 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass phpClass) {
+                if (this.isContainingFileSkipped(phpClass)) { return; }
+
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(phpClass);
                 if (nameIdentifier == null) {
                     return;

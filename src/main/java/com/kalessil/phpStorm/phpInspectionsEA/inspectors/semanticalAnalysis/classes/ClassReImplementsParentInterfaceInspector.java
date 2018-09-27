@@ -43,6 +43,8 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
+                if (this.isContainingFileSkipped(clazz)) { return; }
+
                 final List<ClassReference> implemented = clazz.getImplementsList().getReferenceElements();
                 if (!implemented.isEmpty()) {
                     /* resolve own interfaces an maintain relation to original element */

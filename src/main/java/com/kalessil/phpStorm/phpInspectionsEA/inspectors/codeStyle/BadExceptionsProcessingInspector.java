@@ -38,6 +38,8 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTry(@NotNull Try tryStatement) {
+                if (this.isContainingFileSkipped(tryStatement)) { return; }
+
                 final GroupStatement body  = ExpressionSemanticUtil.getGroupStatement(tryStatement);
                 final int expressionsCount = body == null ? 0 : ExpressionSemanticUtil.countExpressionsInGroup(body);
                 if (expressionsCount > 3) {
@@ -48,6 +50,8 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpCatch(@NotNull Catch catchStatement) {
+                if (this.isContainingFileSkipped(catchStatement)) { return; }
+
                 final Variable variable   = catchStatement.getException();
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(catchStatement);
                 if (variable != null && body != null) {

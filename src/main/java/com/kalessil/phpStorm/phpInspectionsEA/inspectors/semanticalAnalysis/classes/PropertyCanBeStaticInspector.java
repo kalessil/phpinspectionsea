@@ -36,6 +36,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
+                if (this.isContainingFileSkipped(clazz))           { return; }
                 if (holder.getFile() != clazz.getContainingFile()) { return; }
 
                 final PhpLanguageLevel php    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();

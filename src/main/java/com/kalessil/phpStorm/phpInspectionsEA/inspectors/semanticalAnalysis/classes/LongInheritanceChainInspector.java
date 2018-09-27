@@ -50,6 +50,8 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
+                if (this.isContainingFileSkipped(clazz)) { return; }
+
                 final PsiElement psiClassName = NamedElementUtil.getNameIdentifier(clazz);
                 final String className        = clazz.getName();
                 /* skip un-reportable, exception and test classes */

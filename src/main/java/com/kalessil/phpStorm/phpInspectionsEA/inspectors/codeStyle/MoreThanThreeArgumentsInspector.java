@@ -48,11 +48,15 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
 
         @Override
         public void visitPhpFunction(@NotNull Function function) {
+            if (this.isContainingFileSkipped(function)) { return; }
+
             visitor.visitPhpFunction(function);
         }
 
         @Override
         public void visitPhpClass(@NotNull PhpClass clazz) {
+            if (this.isContainingFileSkipped(clazz)) { return; }
+
             if (!this.isTestContext(clazz)) {
                 visitor.visitPhpClass(clazz);
             }
@@ -60,6 +64,8 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
 
         @Override
         public void visitPhpMethod(@NotNull Method method) {
+            if (this.isContainingFileSkipped(method)) { return; }
+
             if (!this.isTestContext(method)) {
                 visitor.visitPhpMethod(method);
             }

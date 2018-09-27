@@ -39,6 +39,7 @@ public class CompositionAndInheritanceInspector extends BasePhpInspection {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(clazz))                  { return; }
 
                 final boolean hasNeededModifiers = clazz.isFinal() || clazz.isAbstract();
                 if (!hasNeededModifiers && !clazz.isInterface() && !clazz.isTrait() && !clazz.isAnonymous()) {

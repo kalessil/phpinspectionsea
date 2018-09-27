@@ -34,23 +34,26 @@ public class LowerAccessLevelInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpField(@NotNull Field field) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    ProtectedMembersOfFinalClassStrategy.apply(field, problemsHolder);
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(field))                  { return; }
+
+                ProtectedMembersOfFinalClassStrategy.apply(field, problemsHolder);
             }
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    ProtectedMembersOfFinalClassStrategy.apply(method, problemsHolder);
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(method))                 { return; }
+
+                ProtectedMembersOfFinalClassStrategy.apply(method, problemsHolder);
             }
 
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    PropertyUsedInPrivateContextStrategy.apply(clazz, problemsHolder);
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(clazz))                  { return; }
+
+                PropertyUsedInPrivateContextStrategy.apply(clazz, problemsHolder);
             }
         };
     }

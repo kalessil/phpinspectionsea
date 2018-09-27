@@ -50,6 +50,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpClassReference(@NotNull ClassReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
 
                 if (!this.isTestContext(reference)) {
                     final Project project    = holder.getProject();

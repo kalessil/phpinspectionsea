@@ -57,16 +57,18 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    this.inspectUsages(method.getParameters(), method);
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(method))               { return; }
+
+                this.inspectUsages(method.getParameters(), method);
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    this.inspectUsages(function.getParameters(), function);
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(function))               { return; }
+
+                this.inspectUsages(function.getParameters(), function);
             }
 
             private void inspectUsages(@NotNull Parameter[] parameters, @NotNull PhpScopeHolder scopeHolder) {

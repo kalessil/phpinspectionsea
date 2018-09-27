@@ -122,6 +122,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                             }
 
                             /* we expect that aliases usage has been fixed already */
+                            boolean isClassCheck = false;
                             final boolean isTypeAnnounced;
                             switch (functionName) {
                                 case "is_array":
@@ -163,14 +164,15 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         parameterTypes.contains(Types.strString)   || parameterTypes.contains("\\Closure");
                                     break;
                                 case "is_object":
-                                case "is_subclass_of":
                                     isTypeAnnounced =
                                         parameterTypes.contains(Types.strObject) ||
                                         parameterTypes.stream().anyMatch(t ->
                                             (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
                                         );
                                     break;
+                                case "is_subclass_of":
                                 case "is_a":
+                                    isClassCheck    = true;
                                     isTypeAnnounced =
                                         parameterTypes.contains(Types.strObject) || parameterTypes.contains(Types.strString) ||
                                         parameterTypes.stream().anyMatch(t ->
@@ -179,7 +181,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     break;
                                 case "is_iterable":
                                     isTypeAnnounced =
-                                        parameterTypes.contains(Types.strArray) ||parameterTypes.contains(Types.strObject) ||
+                                        parameterTypes.contains(Types.strArray) || parameterTypes.contains(Types.strObject) ||
                                         parameterTypes.stream().anyMatch(t ->
                                             (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
                                         );
@@ -199,7 +201,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 }
                                 holder.registerProblem(functionCall, isReversedCheck ? messageNoSense : messageViolationInCheck);
                             } else {
-                                if (hasTypeDeclared && parameterTypes.size() == 1) {
+                                if (hasTypeDeclared && parameterTypes.size() == 1 && !isClassCheck) {
                                     holder.registerProblem(functionCall, messageTypeHint);
                                 }
                             }

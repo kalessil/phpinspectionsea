@@ -48,26 +48,29 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final PsiElement argument = expression.getLeftOperand();
-                    if (argument != null && PhpTokenTypes.opCOALESCE == expression.getOperationType()) {
-                        this.analyzeArgumentsExistence(new PhpExpression[]{(PhpExpression) argument});
-                    }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
+
+                final PsiElement argument = expression.getLeftOperand();
+                if (argument != null && PhpTokenTypes.opCOALESCE == expression.getOperationType()) {
+                    this.analyzeArgumentsExistence(new PhpExpression[]{(PhpExpression) argument});
                 }
             }
 
             @Override
             public void visitPhpEmpty(@NotNull PhpEmpty expression) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    this.analyzeArgumentsExistence(expression.getVariables());
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
+
+                this.analyzeArgumentsExistence(expression.getVariables());
             }
 
             @Override
             public void visitPhpIsset(@NotNull PhpIsset expression) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    this.analyzeArgumentsExistence(expression.getVariables());
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
+
+                this.analyzeArgumentsExistence(expression.getVariables());
             }
 
             private void analyzeArgumentsExistence(@NotNull PhpExpression[] arguments) {

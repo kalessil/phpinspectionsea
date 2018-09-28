@@ -52,6 +52,8 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final IElementType operator = expression.getOperationType();
                 if (operator != null && (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR)) {
                     /* false-positives: part of another condition */

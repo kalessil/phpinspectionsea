@@ -41,6 +41,8 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIf(@NotNull If expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 /* context expectations: not if-else-if-* constructs */
                 if (expression.getParent() instanceof Else) {
                     return;

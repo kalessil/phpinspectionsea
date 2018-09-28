@@ -75,7 +75,10 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpIsset(@NotNull PhpIsset isset) {
-                if (SUGGEST_SIMPLIFICATIONS && EAUltimateApplicationComponent.areFeaturesEnabled()) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(isset))                  { return; }
+
+                if (SUGGEST_SIMPLIFICATIONS) {
                     final PsiElement[] arguments = isset.getVariables();
                     if (arguments.length == 1) {
                         PsiElement alternative  = null;
@@ -110,6 +113,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final IElementType operator = expression.getOperationType();
                 if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {

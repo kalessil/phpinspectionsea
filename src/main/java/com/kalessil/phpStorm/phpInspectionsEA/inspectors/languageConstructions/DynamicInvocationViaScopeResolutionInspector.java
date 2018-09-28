@@ -33,6 +33,8 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMethodReference(MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
                 if (!OpenapiTypesUtil.is(operator, PhpTokenTypes.SCOPE_RESOLUTION)) {
                     return;

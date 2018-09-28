@@ -38,6 +38,8 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpInclude(@NotNull Include include) {
+                if (this.isContainingFileSkipped(include)) { return; }
+
                 final PsiElement parent = include.getParent();
                 if (parent instanceof ControlStatement || !OpenapiTypesUtil.isStatementImpl(parent)) {
                     if (include.getArgument() != null && include.getFirstChild().getText().endsWith("_once")) {

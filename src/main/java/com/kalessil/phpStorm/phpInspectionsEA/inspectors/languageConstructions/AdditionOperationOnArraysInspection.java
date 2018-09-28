@@ -40,6 +40,8 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement operation = expression.getOperation();
                 if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS)) {
                     final boolean isNestedBinary = expression.getParent() instanceof BinaryExpression;
@@ -63,6 +65,8 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
 
             @Override
             public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement operation = expression.getOperation();
                 if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS_ASGN)) {
                     /* do not report '... += []' */

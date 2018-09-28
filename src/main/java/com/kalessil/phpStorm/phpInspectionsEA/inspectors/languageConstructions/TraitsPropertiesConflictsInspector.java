@@ -31,6 +31,8 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
+                if (this.isContainingFileSkipped(clazz)) { return; }
+
                 /* ensure there are traits being used at all */
                 final PhpClass[] traits = clazz.getTraits();
                 if (traits.length == 0) {

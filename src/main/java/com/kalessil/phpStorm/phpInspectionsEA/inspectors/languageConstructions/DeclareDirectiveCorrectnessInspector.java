@@ -41,6 +41,8 @@ public class DeclareDirectiveCorrectnessInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpDeclare(@NotNull Declare declare) {
+                if (this.isContainingFileSkipped(declare)) { return; }
+
                 final PsiElement declaration = declare.getFirstPsiChild();
                 final String declarationText = declaration == null ? null : declaration.getText();
                 if (declarationText != null && declarationText.indexOf('=') != -1) {

@@ -54,6 +54,8 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignment) {
+                if (this.isContainingFileSkipped(assignment)) { return; }
+
                 final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
                 /* try reaching operator in binary expression, expected as value */
                 if (value instanceof BinaryExpression) {

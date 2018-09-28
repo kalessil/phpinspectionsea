@@ -30,6 +30,8 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final List<String> variables = new ArrayList<>();
                 for (final PsiElement pairCandidate : expression.getChildren()) {
                     /* match array structure */

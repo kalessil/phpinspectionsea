@@ -37,6 +37,7 @@ public class UnnecessaryContinueInspector extends BasePhpInspection {
             @Override
             public void visitPhpContinue(@NotNull PhpContinue continueStatement) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(continueStatement))      { return; }
 
                 if (continueStatement.getArgument() == null) {
                     final PsiElement continuedStatement = this.getContinuedStatement(continueStatement);

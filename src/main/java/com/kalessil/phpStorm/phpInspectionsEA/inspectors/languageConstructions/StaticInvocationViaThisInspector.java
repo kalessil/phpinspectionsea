@@ -52,6 +52,8 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String methodName = reference.getName();
                 if (methodName != null && !methodName.startsWith("static") /* workaround for WI-33569 */) {
                     final PsiElement base = reference.getFirstChild();

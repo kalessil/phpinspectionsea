@@ -39,6 +39,8 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIf(@NotNull If statement) {
+                if (this.isContainingFileSkipped(statement)) { return; }
+
                 final PsiElement cond = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
                 if (cond instanceof BinaryExpression && statement.getElseIfBranches().length == 0) {
                     final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(statement);

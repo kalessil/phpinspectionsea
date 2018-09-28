@@ -36,6 +36,7 @@ public class MissingElseKeywordInspector extends BasePhpInspection {
             @Override
             public void visitPhpIf(@NotNull If expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 /* get through previous space to if-statement */
                 PsiElement previous = expression.getPrevSibling();

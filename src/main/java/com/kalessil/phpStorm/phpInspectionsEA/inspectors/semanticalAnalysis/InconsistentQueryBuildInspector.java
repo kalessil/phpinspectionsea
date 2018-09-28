@@ -40,6 +40,8 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String function = reference.getName();
                 if (function != null && function.equals("ksort")) {
                     final PsiElement[] arguments = reference.getParameters();

@@ -53,6 +53,8 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpUnaryExpression(@NotNull UnaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement argument   = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
                 final PsiElement operation  = expression.getOperation();
                 final IElementType operator = operation == null ? null : operation.getNode().getElementType();

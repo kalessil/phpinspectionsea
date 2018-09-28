@@ -34,6 +34,8 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpReturn(PhpReturn returnStatement) {
+                if (this.isContainingFileSkipped(returnStatement)) { return; }
+
                 PsiElement parent = returnStatement.getParent();
                 while (null != parent) {
                     if (parent instanceof Function || parent instanceof PsiFile) {

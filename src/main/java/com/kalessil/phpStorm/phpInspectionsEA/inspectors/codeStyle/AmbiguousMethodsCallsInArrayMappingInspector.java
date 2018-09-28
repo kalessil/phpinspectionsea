@@ -36,6 +36,8 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFor(@NotNull For loop) {
+                if (this.isContainingFileSkipped(loop)) { return; }
+
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (body != null) {
                     this.analyzeBody(body);
@@ -44,6 +46,8 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
 
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement loop) {
+                if (this.isContainingFileSkipped(loop)) { return; }
+
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (body != null) {
                     this.analyzeBody(body);

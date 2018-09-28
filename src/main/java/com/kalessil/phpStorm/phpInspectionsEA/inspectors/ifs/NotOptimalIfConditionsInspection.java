@@ -75,6 +75,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpIf(If ifStatement) {
+                if (this.isContainingFileSkipped(ifStatement)) { return; }
+
                 final List<PsiElement> objAllConditions = new ArrayList<>();
                 final IElementType[] arrOperationHolder = { null };
 

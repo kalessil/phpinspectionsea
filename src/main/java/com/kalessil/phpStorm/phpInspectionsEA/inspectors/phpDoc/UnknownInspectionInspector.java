@@ -62,6 +62,8 @@ public class UnknownInspectionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpDocTag(@NotNull PhpDocTag tag) {
+                if (this.isContainingFileSkipped(tag)) { return; }
+
                 if (!tag.getName().equals("@noinspection")) {
                     return;
                 }

@@ -57,13 +57,23 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                     final PsiElement originDefault = originField == null ? null : originField.getDefaultValue();
 
                     if (PhpLanguageUtil.isNull(fieldDefault)) {
-                        holder.registerProblem(fieldDefault, messageDefaultNull, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropFieldDefaultValueFix());
+                        holder.registerProblem(
+                                fieldDefault,
+                                messageDefaultNull,
+                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                new DropFieldDefaultValueFix()
+                        );
                     } else if (fieldDefault instanceof PhpPsiElement && originDefault instanceof PhpPsiElement) {
-                        final boolean isDefaultDuplicate =
-                            !originField.getModifier().getAccess().isPrivate() &&
-                            OpenapiEquivalenceUtil.areEqual(fieldDefault, originDefault);
+                        final boolean isDefaultDuplicate = !originField.getModifier().getAccess().isPrivate() &&
+                                                           OpenapiEquivalenceUtil.areEqual(fieldDefault, originDefault);
                         if (isDefaultDuplicate) {
-                            holder.registerProblem(fieldDefault, messageSenselessWrite, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            /* false-positives: classes reference are the same, but resolved to different classes */
+
+                            holder.registerProblem(
+                                    fieldDefault,
+                                    messageSenselessWrite,
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                            );
                         }
                     }
                 }

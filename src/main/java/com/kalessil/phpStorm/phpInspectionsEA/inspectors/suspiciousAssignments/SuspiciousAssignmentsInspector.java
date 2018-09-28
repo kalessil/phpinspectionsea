@@ -30,16 +30,22 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpSwitch(@NotNull PhpSwitch switchStatement) {
+                if (this.isContainingFileSkipped(switchStatement)) { return; }
+
                 SwitchFallThroughStrategy.apply(switchStatement, holder);
             }
 
             @Override
             public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 SelfAssignmentStrategy.apply(expression, holder);
             }
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 if (!this.isTestContext(method)) {
                     ParameterImmediateOverrideStrategy.apply(method, holder);
                 }
@@ -47,6 +53,8 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
+                if (this.isContainingFileSkipped(function)) { return; }
+
                 if (!this.isTestContext(function)) {
                     ParameterImmediateOverrideStrategy.apply(function, holder);
                 }
@@ -54,6 +62,8 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignment) {
+                if (this.isContainingFileSkipped(assignment)) { return; }
+
                 /* because this hook fired e.g. for `.=` assignments */
                 if (OpenapiTypesUtil.isAssignment(assignment)) {
                     SuspiciousOperatorFormattingStrategy.apply(assignment, holder);

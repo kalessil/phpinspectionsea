@@ -1,17 +1,5 @@
 Following files are missing distraction toggles: 
-ClassMockingCorrectnessInspector.java
-SuspiciousAssignmentsInspector.java
-FilePutContentsRaceConditionInspector.java
-MkdirRaceConditionInspector.java
-ImplicitMagicMethodCallInspector.java
-MagicMethodsValidityInspector.java
-BypassedUrlValidationInspector.java
-NonSecureOpensslVerifyUsageInspector.java
-NonSecureShuffleUsageInspector.java
-CryptographicallySecureRandomnessInspector.java
-CurlSslServerSpoofingInspector.java
-RsaOraclePaddingAttacksInspector.java
-PotentialMalwareInspector.java
+
 HostnameSubstitutionInspector.java
 NonSecureHtmlspecialcharsUsageInspector.java
 CommandExecutionAsSuperUserInspector.java

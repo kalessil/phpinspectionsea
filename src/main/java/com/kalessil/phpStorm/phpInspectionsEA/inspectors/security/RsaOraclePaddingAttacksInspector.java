@@ -34,6 +34,8 @@ public class RsaOraclePaddingAttacksInspector extends LocalInspectionTool {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final List<BooleanSupplier> callbacks = new ArrayList<>(2);
                 callbacks.add(() -> OpensslRsaOraclePaddingStrategy.apply(holder, reference));
                 callbacks.add(() -> McryptRsaOraclePaddingStrategy.apply(holder, reference));
@@ -43,7 +45,6 @@ public class RsaOraclePaddingAttacksInspector extends LocalInspectionTool {
                         break;
                     }
                 }
-
                 callbacks.clear();
             }
         };

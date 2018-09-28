@@ -67,6 +67,8 @@ public class ImplicitMagicMethodCallInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String methodName = reference.getName();
                 if (methodName != null && methods.contains(methodName)) {
                     /* Pattern 1: direct calls ob objects */

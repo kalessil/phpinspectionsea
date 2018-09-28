@@ -83,6 +83,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             /* parameters by reference */
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (!php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
@@ -92,6 +94,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
+                if (this.isContainingFileSkipped(function)) { return; }
+
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -124,6 +128,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             /* = & variable/property patterns */
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
+                if (this.isContainingFileSkipped(assignmentExpression)) { return; }
+
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -160,6 +166,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             /* assign reference from function */
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
@@ -172,6 +180,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (!php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
@@ -182,6 +192,8 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
             /* aggressive foreach optimization when value is reference */
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
+                if (this.isContainingFileSkipped(foreach)) { return; }
+
                 /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer

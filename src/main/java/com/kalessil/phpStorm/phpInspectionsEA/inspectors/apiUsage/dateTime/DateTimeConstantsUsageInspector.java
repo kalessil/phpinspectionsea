@@ -47,6 +47,8 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClassConstantReference(@NotNull ClassConstantReference constantReference) {
+                if (this.isContainingFileSkipped(constantReference)) { return; }
+
                 final String constantName = constantReference.getName();
                 if (constantName != null && constantName.equals("ISO8601")) {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(constantReference);
@@ -61,6 +63,8 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String constantName = reference.getName();
                 if (constantName != null && constantName.equals("DATE_ISO8601")) {
                     holder.registerProblem(reference, messageConstant, new TheLocalFix());

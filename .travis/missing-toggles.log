@@ -17,13 +17,3 @@ KeysFragmentationWithArrayFunctionsInspector.java
 UnSafeIsSetOverArrayInspector.java
 PrintfScanfArgumentsInspector.java
 ExplodeMissUseInspector.java
-DateIntervalSpecificationInspector.java
-StrtotimeUsageInspector.java
-DateTimeConstantsUsageInspector.java
-DateTimeSetTimeUsageInspector.java
-ScandirUsageInspector.java
-OffsetOperationsInspector.java
-SuspiciousSemicolonInspector.java
-IllusionOfChoiceInspector.java
-PassingByReferenceCorrectnessInspector.java
-ReferenceMismatchInspector.java

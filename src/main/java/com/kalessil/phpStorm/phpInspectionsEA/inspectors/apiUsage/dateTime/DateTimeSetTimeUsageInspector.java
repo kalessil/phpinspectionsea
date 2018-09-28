@@ -37,6 +37,8 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) < 0) {
                     final String methodName = reference.getName();
@@ -54,6 +56,8 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) < 0) {
                     final String functionName = reference.getName();

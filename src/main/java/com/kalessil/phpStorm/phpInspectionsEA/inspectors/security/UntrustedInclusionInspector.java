@@ -33,9 +33,10 @@ public class UntrustedInclusionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpInclude(@NotNull Include include) {
-                final PsiElement argument = include.getArgument();
-                final PsiElement file     = ExpressionSemanticUtil.resolveAsStringLiteral(argument);
-                if (null != file) {
+                if (this.isContainingFileSkipped(include)) { return; }
+
+                final PsiElement file = ExpressionSemanticUtil.resolveAsStringLiteral(include.getArgument());
+                if (file != null) {
                     holder.registerProblem(include, message, ProblemHighlightType.GENERIC_ERROR);
                 }
             }

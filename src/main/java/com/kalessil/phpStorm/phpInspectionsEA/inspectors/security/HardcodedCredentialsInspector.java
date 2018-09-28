@@ -94,39 +94,42 @@ public class HardcodedCredentialsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final String name = reference.getName();
-                    if (name != null && targetNames.contains(name.toLowerCase())) {
-                        this.analyzeCall(reference);
-                    }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
+
+                final String name = reference.getName();
+                if (name != null && targetNames.contains(name.toLowerCase())) {
+                    this.analyzeCall(reference);
                 }
             }
 
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final String name = reference.getName();
-                    if (name != null && targetNames.contains(name.toLowerCase())) {
-                        this.analyzeCall(reference);
-                    }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
+
+                final String name = reference.getName();
+                if (name != null && targetNames.contains(name.toLowerCase())) {
+                    this.analyzeCall(reference);
                 }
             }
 
             @Override
             public void visitPhpNewExpression(@NotNull NewExpression expression) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final ClassReference reference = expression.getClassReference();
-                    if (reference != null) {
-                        final PsiElement[] arguments = expression.getParameters();
-                        if (arguments.length > 0) {
-                            PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                            if (resolved instanceof Method) {
-                                final String fqn = ((Method) resolved).getFQN().toLowerCase();
-                                if (targetFunctions.containsKey(fqn)) {
-                                    final int index = targetFunctions.get(fqn);
-                                    if (arguments.length >= index + 1 && !this.isTestContext(expression)) {
-                                        this.analyzeTarget(arguments[index]);
-                                    }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))              { return; }
+
+                final ClassReference reference = expression.getClassReference();
+                if (reference != null) {
+                    final PsiElement[] arguments = expression.getParameters();
+                    if (arguments.length > 0) {
+                        PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                        if (resolved instanceof Method) {
+                            final String fqn = ((Method) resolved).getFQN().toLowerCase();
+                            if (targetFunctions.containsKey(fqn)) {
+                                final int index = targetFunctions.get(fqn);
+                                if (arguments.length >= index + 1 && !this.isTestContext(expression)) {
+                                    this.analyzeTarget(arguments[index]);
                                 }
                             }
                         }

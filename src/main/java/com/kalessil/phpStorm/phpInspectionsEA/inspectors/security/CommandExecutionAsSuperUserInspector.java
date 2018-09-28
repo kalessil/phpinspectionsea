@@ -33,27 +33,29 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression literal) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final String content = literal.getContents();
-                    if (content.length() >= 3) {
-                        final boolean isTarget = content.startsWith("su ") || content.startsWith("sudo ");
-                        if (isTarget) {
-                            holder.registerProblem(literal, message, ProblemHighlightType.GENERIC_ERROR);
-                        }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(literal))                { return; }
+
+                final String content = literal.getContents();
+                if (content.length() >= 3) {
+                    final boolean isTarget = content.startsWith("su ") || content.startsWith("sudo ");
+                    if (isTarget) {
+                        holder.registerProblem(literal, message, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }
 
             @Override
             public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final String content = expression.getText();
-                    if (content.length() >= 5) {
-                        final String command   = content.substring(1, content.length() - 1);
-                        final boolean isTarget = command.startsWith("su ") || command.startsWith("sudo ");
-                        if (isTarget) {
-                            holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
-                        }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
+
+                final String content = expression.getText();
+                if (content.length() >= 5) {
+                    final String command   = content.substring(1, content.length() - 1);
+                    final boolean isTarget = command.startsWith("su ") || command.startsWith("sudo ");
+                    if (isTarget) {
+                        holder.registerProblem(expression, message, ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

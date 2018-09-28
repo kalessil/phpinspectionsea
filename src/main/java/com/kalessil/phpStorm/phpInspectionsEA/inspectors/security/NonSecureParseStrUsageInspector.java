@@ -32,6 +32,8 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && (functionName.equals("parse_str") || functionName.equals("mb_parse_str"))) {
                     final PsiElement[] arguments = reference.getParameters();

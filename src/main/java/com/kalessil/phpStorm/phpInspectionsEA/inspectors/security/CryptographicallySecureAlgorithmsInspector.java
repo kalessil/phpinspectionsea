@@ -68,6 +68,8 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String constantName = reference.getName();
                 if (constantName != null && constants.containsKey(constantName) && !this.isTestContext(reference)) {
                     holder.registerProblem(reference, constants.get(constantName), ProblemHighlightType.GENERIC_ERROR);

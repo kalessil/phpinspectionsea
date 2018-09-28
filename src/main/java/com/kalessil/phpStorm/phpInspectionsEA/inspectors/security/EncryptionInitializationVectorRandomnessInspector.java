@@ -43,6 +43,8 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 /* variable functions are not supported, as we are checking 2 different extensions functions */
                 if (functionName != null && (functionName.equals("openssl_encrypt") || functionName.equals("mcrypt_encrypt"))) {

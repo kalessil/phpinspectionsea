@@ -45,6 +45,8 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement variable = expression.getValue();
                 if (variable instanceof Variable && ((Variable) variable).getName().equals("_SERVER")) {
                     final ArrayIndex index = expression.getIndex();
@@ -89,10 +91,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                 }
             }
 
-            private void inspectAssignmentContext(
-                @NotNull ArrayAccessExpression expression,
-                @NotNull AssignmentExpression context
-            ) {
+            private void inspectAssignmentContext(@NotNull ArrayAccessExpression expression, @NotNull AssignmentExpression context) {
                 final PsiElement storage = context.getVariable();
                 if (storage instanceof FieldReference) {
                     /* fields processing is too complex, just report it when naming matches */

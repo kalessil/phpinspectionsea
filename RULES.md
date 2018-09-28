@@ -179,7 +179,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes | yes | no   | yes |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a | yes | n/a  | yes |
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a | yes | n/a  | no  |
-| Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes | yes | no   | no  |
+| Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes | yes | yes  | no  |
 | Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote(...) usage                              | n/a | yes | n/a  | yes |
 | Probable bugs        | SuspiciousAssignmentsInspection                 | Suspicious assignments                                    | n/a | yes | n/a  | no  |
 | Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes | yes | yes  | no  |

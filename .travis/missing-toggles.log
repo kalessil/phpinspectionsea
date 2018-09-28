@@ -1,15 +1,5 @@
 Following files are missing distraction toggles: 
 
-StringsFirstCharactersCompareInspector.java
-StrTrUsageAsStrReplaceInspector.java
-GetTypeMissUseInspector.java
-ThrowRawExceptionInspector.java
-ForgottenDebugOutputInspector.java
-CompactArgumentsInspector.java
-SimpleXmlLoadFileUsageInspector.java
-FileFunctionMissUseInspector.java
-FilePutContentsMissUseInspector.java
-RealpathInSteamContextInspector.java
 PdoApiUsageInspector.java
 UnsetConstructsCanBeMergedInspector.java
 UnqualifiedReferenceInspector.java

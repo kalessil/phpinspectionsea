@@ -42,6 +42,8 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpThrow(@NotNull PhpThrow throwStatement) {
+                if (this.isContainingFileSkipped(throwStatement)) { return; }
+
                 final PsiElement argument = throwStatement.getArgument();
                 if (argument instanceof NewExpression) {
                     final NewExpression newExpression   = (NewExpression) argument;

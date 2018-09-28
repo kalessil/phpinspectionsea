@@ -36,6 +36,8 @@ public class FilePutContentsMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("file_put_contents")) {
                     final PsiElement[] arguments = reference.getParameters();

@@ -36,6 +36,8 @@ public class SimpleXmlLoadFileUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("simplexml_load_file")) {
                     final PsiElement[] arguments = reference.getParameters();

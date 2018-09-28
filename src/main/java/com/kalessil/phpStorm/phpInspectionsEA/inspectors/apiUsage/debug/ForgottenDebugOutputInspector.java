@@ -188,6 +188,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String methodName = reference.getName();
                 if (customMethods.isEmpty() || methodName == null || !customMethodsNames.contains(methodName)) {
                     return;
@@ -208,6 +210,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && customFunctions.contains(functionName)) {
                     final Integer paramsNeeded = functionsRequirements.get(functionName);

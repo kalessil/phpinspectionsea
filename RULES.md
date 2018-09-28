@@ -115,7 +115,6 @@ Inspections Lists (Code style)
 | Code Style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | n/a | yes | n/a  | no  |
 | Code Style           | UnnecessaryCastingInspection                    | Unnecessary type casting                            | yes | yes | yes  | no  |
 | Code Style           | SelfClassReferencingInspection                  | Self class referencing                              | yes | yes | yes  | no  |
-| Code Style           | ImplicitMagicMethodCallInspection               | Implicit magic method calls                         | yes | yes | yes  | no  |
 | Code Style           | UnnecessaryClosureInspection                    | Unnecessary closures                                | yes | yes | yes  | no  |
 
 Inspections Lists (Language level migration)

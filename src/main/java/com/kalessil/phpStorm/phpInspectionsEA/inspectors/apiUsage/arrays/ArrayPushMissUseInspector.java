@@ -41,6 +41,8 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("array_push")) {
                     final PsiElement[] arguments = reference.getParameters();
@@ -63,6 +65,8 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement parent = expression.getParent();
                 if (OpenapiTypesUtil.isAssignment(parent)) {
                     final PsiElement value = ((AssignmentExpression) parent).getValue();

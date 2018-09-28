@@ -8,12 +8,3 @@ ArrayColumnCanBeUsedInspector.java
 ArraySearchUsedAsInArrayInspector.java
 ArrayMergeMissUseInspector.java
 SlowArrayOperationsInLoopInspector.java
-ArrayKeysMissUseInspector.java
-ArrayValuesMissUseInspector.java
-ArrayUniqueCanBeUsedInspector.java
-ArrayPushMissUseInspector.java
-ArrayFlipCanBeUsedInspector.java
-KeysFragmentationWithArrayFunctionsInspector.java
-UnSafeIsSetOverArrayInspector.java
-PrintfScanfArgumentsInspector.java
-ExplodeMissUseInspector.java

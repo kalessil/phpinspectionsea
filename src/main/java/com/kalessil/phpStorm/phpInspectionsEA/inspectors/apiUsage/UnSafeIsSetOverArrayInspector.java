@@ -52,6 +52,8 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIsset(@NotNull PhpIsset issetExpression) {
+                if (this.isContainingFileSkipped(issetExpression)) { return; }
+
                 /*
                  * if no parameters, we don't check;
                  * if multiple parameters, perhaps if-inspection fulfilled and isset's were merged

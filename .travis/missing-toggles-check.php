@@ -19,21 +19,20 @@
                 $lastPosition += strlen($searchFragment);
             }
 
-            if ($distractionToggles > 0) {
-                /* ensure each visitor uses toggles */
-                $visitors       = 0;
-                $lastPosition   = 0;
-                $searchFragment = 'public void visit';
-                while (($lastPosition = strpos($content, $searchFragment, $lastPosition)) !== false) {
-                    ++$visitors;
-                    $lastPosition += strlen($searchFragment);
-                }
+            $visitors       = 0;
+            $lastPosition   = 0;
+            $searchFragment = 'public void visit';
+            while (($lastPosition = strpos($content, $searchFragment, $lastPosition)) !== false) {
+                ++$visitors;
+                $lastPosition += strlen($searchFragment);
+            }
 
-                if ($visitors != $distractionToggles) {
+            if ($visitors > 0) {
+                if ($distractionToggles > 0 && $visitors != $distractionToggles) {
                     $partialDistractionTogglesFiles[] = $file->getFilename();
+                } else {
+                    $missingDistractionTogglesFiles[] = $file->getFilename();
                 }
-            } else {
-                $missingDistractionTogglesFiles[] = $file->getFilename();
             }
 
             /* TODO: inconsistent ultimate toggles */

@@ -53,7 +53,7 @@ public class ForgottenArrayInitializationInspector extends BasePhpInspection {
                         if (nestingLevel >= 2) {
                             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
                             final PsiElement base     = expression.getValue();
-                            if (base != null && body != null) {
+                            if (body != null && base instanceof Variable) {
                                 for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(body, base.getClass())) {
                                     /* match itself */
                                     if (candidate == base) {

@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformatio
 final public class StrlenInEmptyStringCheckContextInspectionTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new StrlenInEmptyStringCheckContextInspection());
-
         myFixture.configureByFile("testData/fixtures/magicMethods/empty-string-comparison.php");
         myFixture.testHighlighting(true, false, true);
 

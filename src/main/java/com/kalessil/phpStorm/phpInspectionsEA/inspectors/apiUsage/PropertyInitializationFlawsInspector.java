@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -67,16 +69,37 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         final boolean isDefaultDuplicate = !originField.getModifier().getAccess().isPrivate() &&
                                                            OpenapiEquivalenceUtil.areEqual(fieldDefault, originDefault);
                         if (isDefaultDuplicate) {
-                            /* false-positives: classes reference are the same, but resolved to different classes */
+                            boolean report = true;
 
-                            holder.registerProblem(
-                                    fieldDefault,
-                                    messageSenselessWrite,
-                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                            );
+                            /* false-positives: classes reference are the same, but resolved to different classes */
+                            final Set<String> originalClasses = this.findReferencedClasses(originDefault);
+                            if (!originalClasses.isEmpty()) {
+                                final Set<String> fieldClasses = this.findReferencedClasses(fieldDefault);
+                                report                         = !originalClasses.addAll(fieldClasses);
+                                fieldClasses.clear();
+                                originalClasses.clear();
+                            }
+
+                            if (report) {
+                                holder.registerProblem(
+                                        fieldDefault,
+                                        messageSenselessWrite,
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                );
+                            }
                         }
                     }
                 }
+            }
+
+            @NotNull
+            private Set<String> findReferencedClasses(@NotNull PsiElement where) {
+                return PsiTreeUtil.findChildrenOfType(where, ClassReference.class).stream()
+                        .map(r -> {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(r);
+                            return resolved instanceof PhpClass ? ((PhpClass) resolved).getFQN() : null;
+                        })
+                        .collect(Collectors.toSet());
             }
 
             @Override

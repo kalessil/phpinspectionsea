@@ -8,5 +8,9 @@ final public class InconsistentQueryBuildInspectorTest extends PhpCodeInsightFix
         myFixture.enableInspections(new InconsistentQueryBuildInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/inconsistent-http_build_query.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/pitfalls/inconsistent-http_build_query.fixed.php");
     }
 }

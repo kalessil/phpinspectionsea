@@ -27,8 +27,8 @@
                 $lastPosition += strlen($searchFragment);
             }
 
-            if ($visitors > 0) {
-                if ($distractionToggles > 0 && $visitors != $distractionToggles) {
+            if ($visitors > 0 && $visitors != $distractionToggles) {
+                if ($distractionToggles > 0) {
                     $partialDistractionTogglesFiles[] = $file->getFilename();
                 } else {
                     $missingDistractionTogglesFiles[] = $file->getFilename();

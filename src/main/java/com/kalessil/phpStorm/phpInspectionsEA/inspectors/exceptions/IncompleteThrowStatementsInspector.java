@@ -45,6 +45,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
             @Override
             public void visitPhpThrow(@NotNull PhpThrow expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final PsiElement argument = expression.getArgument();
                 if (!(argument instanceof NewExpression) && OpenapiTypesUtil.isFunctionReference(argument)) {
@@ -62,6 +63,7 @@ public class IncompleteThrowStatementsInspector extends BasePhpInspection {
             @Override
             public void visitPhpNewExpression(@NotNull NewExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final ClassReference argument = expression.getClassReference();
                 if (argument != null) {

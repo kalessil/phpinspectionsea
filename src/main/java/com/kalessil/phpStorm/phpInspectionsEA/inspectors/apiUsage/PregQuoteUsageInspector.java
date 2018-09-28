@@ -32,6 +32,8 @@ public class PregQuoteUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("preg_quote")) {
                     final PsiElement[] arguments = reference.getParameters();

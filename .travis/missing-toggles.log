@@ -1,20 +1,5 @@
 Following files are missing distraction toggles: 
 
-UnsupportedSerializeTypesInspector.java
-MultiAssignmentUsageInspector.java
-BacktickOperatorUsageInspector.java
-IncompleteThrowStatementsInspector.java
-PregQuoteUsageInspector.java
-CascadeStringReplacementInspector.java
-CaseInsensitiveStringFunctionsMissUseInspector.java
-StringNormalizationInspector.java
-SubStrUsedAsArrayAccessInspector.java
-StringCaseManipulationInspector.java
-SubStrShortHandUsageInspector.java
-SubstringCompareInspector.java
-SubStrUsedAsStrPosInspector.java
-FixedTimeStartWithInspector.java
-StrStrUsedAsStrPosInspector.java
 StringsFirstCharactersCompareInspector.java
 StrTrUsageAsStrReplaceInspector.java
 GetTypeMissUseInspector.java

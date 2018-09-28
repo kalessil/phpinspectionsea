@@ -57,6 +57,8 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof BinaryExpression) {
                     final BinaryExpression binary = (BinaryExpression) parent;
@@ -98,6 +100,8 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName == null || !functions.contains(functionName)) {
                     return;

@@ -53,6 +53,8 @@ public class StringCaseManipulationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functions.containsKey(functionName)) {final PsiElement[] arguments = reference.getParameters();
                 if (arguments.length == 2 ) {

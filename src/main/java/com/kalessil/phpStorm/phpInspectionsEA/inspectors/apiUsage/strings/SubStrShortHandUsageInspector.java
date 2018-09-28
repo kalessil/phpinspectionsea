@@ -57,6 +57,8 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && substringFunctions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();

@@ -34,6 +34,8 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
+                if (this.isContainingFileSkipped(multiassignmentExpression)) { return; }
+
                 /* ensure php version is at least PHP 5.5 */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (!php.hasFeature(PhpLanguageFeature.FOREACH_LIST)) {
@@ -86,6 +88,8 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
             }
 
             public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+                if (this.isContainingFileSkipped(assignmentExpression)) { return; }
+
                 /* ensure we are writing into a variable */
                 if (!(assignmentExpression.getVariable() instanceof Variable)){
                     return;

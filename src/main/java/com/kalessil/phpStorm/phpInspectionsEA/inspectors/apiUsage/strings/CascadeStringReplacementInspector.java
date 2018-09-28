@@ -59,21 +59,23 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpReturn(@NotNull PhpReturn returnStatement) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final FunctionReference functionCall = this.getFunctionReference(returnStatement);
-                    if (functionCall != null) {
-                        this.analyze(functionCall, returnStatement);
-                    }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(returnStatement))        { return; }
+
+                final FunctionReference functionCall = this.getFunctionReference(returnStatement);
+                if (functionCall != null) {
+                    this.analyze(functionCall, returnStatement);
                 }
             }
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final FunctionReference functionCall = this.getFunctionReference(assignmentExpression);
-                    if (functionCall != null) {
-                        this.analyze(functionCall, assignmentExpression);
-                    }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(assignmentExpression))   { return; }
+
+                final FunctionReference functionCall = this.getFunctionReference(assignmentExpression);
+                if (functionCall != null) {
+                    this.analyze(functionCall, assignmentExpression);
                 }
             }
 

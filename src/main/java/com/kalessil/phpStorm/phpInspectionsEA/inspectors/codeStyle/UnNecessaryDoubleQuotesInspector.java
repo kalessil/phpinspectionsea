@@ -39,6 +39,8 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 /* skip processing single-quoted and strings with injections */
                 if (expression.isSingleQuote() || expression.isHeredoc() || expression.getFirstPsiChild() != null) {
                     return;

@@ -73,6 +73,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null && functions.contains(functionName)) {

@@ -48,6 +48,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFor(@NotNull For forExpression) {
+                if (this.isContainingFileSkipped(forExpression)) { return; }
+
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forExpression);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
                     final PsiElement indexVariable = this.getCounterVariable(forExpression);
@@ -82,6 +84,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignmentExpression) {
+                if (this.isContainingFileSkipped(assignmentExpression)) { return; }
+
                 PsiElement value = assignmentExpression.getValue();
                 if (OpenapiTypesUtil.isPhpExpressionImpl(value)) {
                     value = value.getFirstChild();

@@ -48,6 +48,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
+                if (this.isContainingFileSkipped(foreach)) { return; }
+
                 /* lookup for reference preceding value */
                 final Variable objForeachValue = foreach.getValue();
                 if (null != objForeachValue) {
@@ -162,6 +164,8 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
+                if (this.isContainingFileSkipped(assignmentExpression)) { return; }
+
                 if (!SUGGEST_USING_VALUE_BY_REF /*|| ... PHP7 ...*/) {
                     return;
                 }

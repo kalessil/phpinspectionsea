@@ -42,6 +42,8 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 /* check if it's the target function */
                 final String functionName = reference.getName();
                 if (functionName == null || (!functionName.equals("strlen") && !functionName.equals("mb_strlen"))) {

@@ -57,6 +57,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
+                if (this.isContainingFileSkipped(foreach)) { return; }
+
                 final List<Variable> variables   = foreach.getVariables();
                 final GroupStatement foreachBody = ExpressionSemanticUtil.getGroupStatement(foreach);
                 /* ensure foreach structure is ready for inspection */

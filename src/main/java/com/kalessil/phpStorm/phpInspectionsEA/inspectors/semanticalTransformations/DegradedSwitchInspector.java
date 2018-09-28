@@ -32,6 +32,8 @@ public class DegradedSwitchInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpSwitch(@NotNull PhpSwitch expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 if (expression.getDefaultCase() != null) {
                     final PhpCase[] cases = expression.getCases();
                     if (cases.length == 0) {

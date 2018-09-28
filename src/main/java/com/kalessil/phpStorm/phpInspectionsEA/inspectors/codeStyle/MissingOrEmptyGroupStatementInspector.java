@@ -43,30 +43,44 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpIf(@NotNull If ifStatement) {
+                if (this.isContainingFileSkipped(ifStatement)) { return; }
+
                 this.checkBrackets(ifStatement);
             }
             @Override
             public void visitPhpElseIf(@NotNull ElseIf elseIfStatement) {
+                if (this.isContainingFileSkipped(elseIfStatement)) { return; }
+
                 this.checkBrackets(elseIfStatement);
             }
             @Override
             public void visitPhpElse(@NotNull Else elseStatement) {
+                if (this.isContainingFileSkipped(elseStatement)) { return; }
+
                 this.checkBrackets(elseStatement);
             }
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement foreachStatement) {
+                if (this.isContainingFileSkipped(foreachStatement)) { return; }
+
                 this.checkBrackets(foreachStatement);
             }
             @Override
             public void visitPhpFor(@NotNull For forStatement) {
+                if (this.isContainingFileSkipped(forStatement)) { return; }
+
                 this.checkBrackets(forStatement);
             }
             @Override
             public void visitPhpWhile(@NotNull While whileStatement) {
+                if (this.isContainingFileSkipped(whileStatement)) { return; }
+
                 this.checkBrackets(whileStatement);
             }
             @Override
             public void visitPhpDoWhile(@NotNull DoWhile doWhileStatement) {
+                if (this.isContainingFileSkipped(doWhileStatement)) { return; }
+
                 this.checkBrackets(doWhileStatement);
             }
 

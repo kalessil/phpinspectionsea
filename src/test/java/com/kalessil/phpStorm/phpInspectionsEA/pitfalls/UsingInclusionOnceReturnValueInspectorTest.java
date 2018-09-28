@@ -8,5 +8,9 @@ final public class UsingInclusionOnceReturnValueInspectorTest extends PhpCodeIns
         myFixture.enableInspections(new UsingInclusionOnceReturnValueInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/using-inclusion-once-return.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/pitfalls/using-inclusion-once-return.fixed.php");
     }
 }

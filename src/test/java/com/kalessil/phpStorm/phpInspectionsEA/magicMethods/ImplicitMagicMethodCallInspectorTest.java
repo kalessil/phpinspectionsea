@@ -10,5 +10,9 @@ final public class ImplicitMagicMethodCallInspectorTest extends PhpCodeInsightFi
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/magicMethods/magic-methods-implicit-call.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/magicMethods/magic-methods-implicit-call.fixed.php");
     }
 }

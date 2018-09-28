@@ -43,8 +43,8 @@ public class ForgottenArrayInitializationInspector extends BasePhpInspection {
                         int nestingLevel  = 0;
                         PsiElement parent = expression.getParent();
                         while (parent != null && parent != scope) {
-                            if (OpenapiTypesUtil.isLoop(parent)) {
-                                ++nestingLevel;
+                            if (OpenapiTypesUtil.isLoop(parent) && ++nestingLevel >= 2) {
+                                break;
                             }
                             parent = parent.getParent();
                         }

@@ -57,6 +57,8 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 if (targetOperations.contains(expression.getOperationType())) {
                     final PsiElement left  = expression.getLeftOperand();
                     final PsiElement right = expression.getRightOperand();
@@ -74,6 +76,8 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
 
             @Override
             public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 if (targetAssignments.contains(expression.getOperationType())) {
                     final PsiElement value = expression.getValue();
                     if (value != null && this.isTargetMagicNumber(value) && !this.isTestContext(expression)) {

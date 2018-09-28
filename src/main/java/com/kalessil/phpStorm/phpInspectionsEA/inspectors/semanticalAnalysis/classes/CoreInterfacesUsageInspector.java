@@ -49,6 +49,7 @@ public class CoreInterfacesUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(clazz))                  { return; }
 
                 final List<ClassReference> implementedInterfaces = clazz.getImplementsList().getReferenceElements();
                 if (!implementedInterfaces.isEmpty()) {

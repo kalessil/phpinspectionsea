@@ -57,25 +57,26 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final boolean isTargetContext = OpenapiTypesUtil.isStatementImpl(reference.getParent());
-                    if (isTargetContext && !ignoredFunctions.contains(reference.getName())) {
-                        final PhpType resolved = OpenapiResolveUtil.resolveType(reference, reference.getProject());
-                        if (resolved != null) {
-                            final Set<String> types = resolved.filterUnknown().getTypes().stream()
-                                    .map(Types::getType)
-                                    .collect(Collectors.toSet());
-                            types.remove(Types.strBoolean); /* APIs returning false on failures */
-                            types.remove(Types.strInteger); /* APIs returning c-alike result codes */
-                            types.remove(Types.strVoid);
-                            if (!types.isEmpty()) {
-                                final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
-                                if (target != null) {
-                                    holder.registerProblem(target, message);
-                                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
+
+                final boolean isTargetContext = OpenapiTypesUtil.isStatementImpl(reference.getParent());
+                if (isTargetContext && !ignoredFunctions.contains(reference.getName())) {
+                    final PhpType resolved = OpenapiResolveUtil.resolveType(reference, reference.getProject());
+                    if (resolved != null) {
+                        final Set<String> types = resolved.filterUnknown().getTypes().stream()
+                                .map(Types::getType)
+                                .collect(Collectors.toSet());
+                        types.remove(Types.strBoolean); /* APIs returning false on failures */
+                        types.remove(Types.strInteger); /* APIs returning c-alike result codes */
+                        types.remove(Types.strVoid);
+                        if (!types.isEmpty()) {
+                            final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
+                            if (target != null) {
+                                holder.registerProblem(target, message);
                             }
-                            types.clear();
                         }
+                        types.clear();
                     }
                 }
             }

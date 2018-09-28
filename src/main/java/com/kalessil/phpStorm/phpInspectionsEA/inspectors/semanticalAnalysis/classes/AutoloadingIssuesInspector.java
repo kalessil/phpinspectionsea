@@ -47,6 +47,8 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFile(@NotNull PhpFile file) {
+                if (this.isContainingFileSkipped(file)) { return; }
+
                 final String fileName = file.getName();
                 if (fileName.endsWith(".php") && !ignoredFiles.contains(fileName) && !laravelMigration.matcher(fileName).matches()) {
                     /* find out how many named classes has been defined in the file */

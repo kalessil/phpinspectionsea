@@ -34,6 +34,7 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(method))                 { return; }
 
                 if (!method.isAbstract() && !this.isTestContext(method)) {
                     NullableVariablesStrategy.applyToParameters(method, holder);
@@ -46,6 +47,7 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunction(@NotNull Function function) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(function))               { return; }
 
                 NullableVariablesStrategy.applyToParameters(function, holder);
                 NullableVariablesStrategy.applyToLocalVariables(function, holder);

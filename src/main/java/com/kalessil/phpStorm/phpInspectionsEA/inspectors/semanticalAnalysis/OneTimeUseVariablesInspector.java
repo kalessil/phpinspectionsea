@@ -147,6 +147,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             @Override
             public void visitPhpReturn(@NotNull PhpReturn expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 /* if function returning reference, do not inspect returns */
                 final Function callable   = ExpressionSemanticUtil.getScope(expression);
@@ -175,6 +176,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final Function scope = ExpressionSemanticUtil.getScope(expression);
                 if (scope != null) {
@@ -197,6 +199,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 if (OpenapiTypesUtil.isAssignment(expression)) {
                     final PsiElement parent = expression.getParent();
@@ -216,6 +219,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             @Override
             public void visitPhpThrow(@NotNull PhpThrow expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                 if (argument instanceof PhpPsiElement) {
@@ -228,6 +232,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override public void visitPhpEchoStatement(@NotNull PhpEchoStatement expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 if (ExpressionSemanticUtil.getScope(expression) != null) {
                     final PsiElement[] arguments = expression.getArguments();
@@ -243,6 +248,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 if (ExpressionSemanticUtil.getScope(expression) != null) {
                     final PsiElement source = expression.getArray();

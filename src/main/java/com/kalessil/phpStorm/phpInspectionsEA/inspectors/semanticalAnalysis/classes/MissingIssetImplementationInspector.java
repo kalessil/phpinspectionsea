@@ -50,21 +50,24 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpEmpty(@NotNull PhpEmpty expression) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    this.analyzeDispatchedExpressions(expression.getVariables());
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
+
+                this.analyzeDispatchedExpressions(expression.getVariables());
             }
 
             @Override
             public void visitPhpIsset(@NotNull PhpIsset expression) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    this.analyzeDispatchedExpressions(expression.getVariables());
-                }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
+
+                this.analyzeDispatchedExpressions(expression.getVariables());
             }
 
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 if (expression.getOperationType() == PhpTokenTypes.opCOALESCE) {
                     final PsiElement left = expression.getLeftOperand();

@@ -51,6 +51,8 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
+                if (this.isContainingFileSkipped(clazz)) { return; }
+
                 /* community request: interfaces have only public methods, what is default access levels */
                 if (!ANALYZE_INTERFACES && clazz.isInterface()) {
                     return;

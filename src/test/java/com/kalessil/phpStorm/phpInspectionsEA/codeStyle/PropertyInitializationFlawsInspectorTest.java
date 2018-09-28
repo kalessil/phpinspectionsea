@@ -20,4 +20,12 @@ final public class PropertyInitializationFlawsInspectorTest extends PhpCodeInsig
         myFixture.configureByFile("testData/fixtures/codeStyle/property-initialization-override.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testClassReferenceResolvingPatterns() {
+        final PropertyInitializationFlawsInspector inspector = new PropertyInitializationFlawsInspector();
+        inspector.REPORT_INIT_FLAWS                          = true;
+        inspector.REPORT_DEFAULTS_FLAWS                      = true;
+        myFixture.enableInspections(inspector);
+        myFixture.configureByFile("testData/fixtures/codeStyle/property-initialization-class-references.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

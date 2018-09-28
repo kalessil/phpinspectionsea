@@ -44,6 +44,8 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final IElementType operator = expression.getOperationType();
                 if (operator != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                     final PsiElement left  = expression.getLeftOperand();

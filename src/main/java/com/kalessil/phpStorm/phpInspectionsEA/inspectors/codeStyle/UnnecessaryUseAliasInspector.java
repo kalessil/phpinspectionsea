@@ -35,6 +35,8 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpUse(@NotNull PhpUse expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 if (!expression.isTraitImport()) {
                     final String alias = expression.getAliasName();
                     if (alias != null && !alias.isEmpty() && expression.getFQN().endsWith('\\' + alias)) {

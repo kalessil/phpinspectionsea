@@ -32,6 +32,8 @@ public class UsingInclusionReturnValueInspector  extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpInclude(@NotNull Include include) {
+                if (this.isContainingFileSkipped(include)) { return; }
+
                 if (!OpenapiTypesUtil.isStatementImpl(include.getParent())) {
                     holder.registerProblem(include, message);
                 }

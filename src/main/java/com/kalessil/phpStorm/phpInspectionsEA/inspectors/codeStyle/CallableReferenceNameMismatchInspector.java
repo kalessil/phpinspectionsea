@@ -41,6 +41,8 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String methodName = reference.getName();
                 if (methodName != null && !methodName.isEmpty()) {
                     this.inspectCaseIdentity(reference, methodName, false);
@@ -48,6 +50,8 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
             }
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && !functionName.isEmpty() && !cache.containsKey(functionName)) {
                     this.inspectCaseIdentity(reference, functionName, true);

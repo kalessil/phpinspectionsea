@@ -46,6 +46,8 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 final PhpClass clazz = method.getContainingClass();
                 if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait() && !method.isAbstract()) {
                     final String targetReference   = PREFER_CLASS_NAMES ? "self" : clazz.getName();

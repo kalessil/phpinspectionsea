@@ -40,6 +40,8 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpStatement(@NotNull Statement statement) {
+                if (this.isContainingFileSkipped(statement)) { return; }
+
                 if (holder.getFile().getName().endsWith(".blade.php")) {
                     /* syntax injection there causing false-positives */
                     return;

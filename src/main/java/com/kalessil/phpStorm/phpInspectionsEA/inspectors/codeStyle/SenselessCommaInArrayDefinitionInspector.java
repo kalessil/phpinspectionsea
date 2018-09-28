@@ -37,6 +37,8 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement last      = expression.getLastChild().getPrevSibling();
                 final PsiElement candidate = last instanceof PsiWhiteSpace ? last.getPrevSibling() : last;
                 if (OpenapiTypesUtil.is(candidate, PhpTokenTypes.opCOMMA)) {

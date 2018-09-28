@@ -39,11 +39,19 @@ public class ParameterDefaultValueIsNotNullInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                visitPhpFunction(method);
+                if (this.isContainingFileSkipped(method)) { return; }
+
+                this.analyzeFunction(method);
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
+                if (this.isContainingFileSkipped(function)) { return; }
+
+                this.analyzeFunction(function);
+            }
+
+            private void analyzeFunction(@NotNull Function function) {
                 final Parameter[] params = function.getParameters();
                 if (params.length > 0) {
                     /* collect violations */

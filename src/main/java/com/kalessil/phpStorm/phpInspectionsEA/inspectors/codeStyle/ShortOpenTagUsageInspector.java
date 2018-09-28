@@ -28,8 +28,11 @@ public class ShortOpenTagUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitWhiteSpace(PsiWhiteSpace space) {
-                if (space.getPrevSibling() instanceof LeafPsiElement) {
-                    final LeafPsiElement tag = (LeafPsiElement) space.getPrevSibling();
+                if (this.isContainingFileSkipped(space)) { return; }
+
+                final PsiElement previous = space.getPrevSibling();
+                if (previous instanceof LeafPsiElement) {
+                    final LeafPsiElement tag = (LeafPsiElement) previous;
                     if (PhpTokenTypes.PHP_OPENING_TAG == tag.getElementType() && tag.getText().equals("<?")) {
                         holder.registerProblem(tag, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                     }

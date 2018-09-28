@@ -56,6 +56,8 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 if (method.isStatic() || method.isAbstract() || method.isFinal()) {
                     final PhpModifierList modifiersNode  = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
                     final List<LeafPsiElement> modifiers = PsiTreeUtil.findChildrenOfType(modifiersNode, LeafPsiElement.class).stream()

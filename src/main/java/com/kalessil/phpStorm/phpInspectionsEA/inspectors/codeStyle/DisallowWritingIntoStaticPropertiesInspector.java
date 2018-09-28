@@ -42,6 +42,8 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
+                if (this.isContainingFileSkipped(assignmentExpression)) { return; }
+
                 final PsiElement candidate = assignmentExpression.getVariable();
                 if (candidate instanceof FieldReference) {
                     final FieldReference fieldReference = (FieldReference) candidate;

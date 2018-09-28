@@ -41,6 +41,7 @@ public class UnnecessaryVariableOverridesInspector extends BasePhpInspection {
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignment) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(assignment))             { return; }
 
                 final PsiElement parent = assignment.getParent();
                 if (OpenapiTypesUtil.isStatementImpl(parent)) {

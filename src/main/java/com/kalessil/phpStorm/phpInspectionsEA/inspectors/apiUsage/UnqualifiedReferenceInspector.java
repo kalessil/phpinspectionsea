@@ -127,6 +127,8 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
@@ -144,6 +146,8 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 if (REPORT_CONSTANTS) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
                     final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();

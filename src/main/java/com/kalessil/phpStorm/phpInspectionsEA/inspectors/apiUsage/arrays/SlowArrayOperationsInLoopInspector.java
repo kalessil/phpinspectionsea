@@ -46,6 +46,8 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functionsSet.contains(functionName)) {
                     PsiElement parent = reference.getParent();

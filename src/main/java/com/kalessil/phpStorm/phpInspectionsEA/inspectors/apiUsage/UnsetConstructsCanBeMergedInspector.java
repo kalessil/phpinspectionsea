@@ -43,6 +43,8 @@ public class UnsetConstructsCanBeMergedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpUnset(@NotNull PhpUnset unsetStatement) {
+                if (this.isContainingFileSkipped(unsetStatement)) { return; }
+
                 PsiElement previous = unsetStatement.getPrevPsiSibling();
                 while (previous instanceof PhpDocComment) {
                     previous = ((PhpDocComment) previous).getPrevPsiSibling();

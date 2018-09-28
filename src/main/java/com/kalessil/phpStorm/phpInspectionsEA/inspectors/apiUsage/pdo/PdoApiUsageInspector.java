@@ -30,6 +30,8 @@ public class PdoApiUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 QueryUsageStrategy.apply(reference, holder);
                 ExecUsageStrategy.apply(reference, holder);
             }

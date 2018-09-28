@@ -116,6 +116,7 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression literal) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(literal))                { return; }
 
                 if (
                     REPORT_INLINES &&
@@ -147,6 +148,7 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 if (OpenapiTypesUtil.is(expression.getOperation(), PhpTokenTypes.opMUL)) {
                     final PsiElement left     = expression.getLeftOperand();

@@ -185,6 +185,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String methodName = reference.getName();
                 if (methodName != null) {
                     final boolean isAssertion = (methodName.startsWith("assert") && !methodName.equals("assert"));

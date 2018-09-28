@@ -104,6 +104,8 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpNewExpression(@NotNull NewExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof AssignmentExpression) {
                     final AssignmentExpression assignment = (AssignmentExpression) parent;

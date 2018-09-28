@@ -46,7 +46,7 @@
                 $lastPosition += strlen($searchFragment);
             }
 
-            if ($visitors > 0 && $visitors != $ultimateToggles) {
+            if ($ultimateToggles > 0 && $visitors != $ultimateToggles) {
                 $missingUltimateTogglesFiles[] = $file->getFilename();
             }
         }

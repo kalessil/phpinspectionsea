@@ -55,6 +55,7 @@ public class ClassExistenceCheckInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
 
                 final Project project          = holder.getProject();
                 final PhpLanguageLevel php     = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();

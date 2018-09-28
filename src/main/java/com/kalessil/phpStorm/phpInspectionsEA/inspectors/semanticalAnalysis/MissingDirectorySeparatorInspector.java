@@ -46,21 +46,23 @@ public class MissingDirectorySeparatorInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final String constantName = reference.getName();
-                    if (constantName != null && constantName.equals("__DIR__")) {
-                        this.analyze(reference);
-                    }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
+
+                final String constantName = reference.getName();
+                if (constantName != null && constantName.equals("__DIR__")) {
+                    this.analyze(reference);
                 }
             }
 
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (EAUltimateApplicationComponent.areFeaturesEnabled()) {
-                    final String functionName = reference.getName();
-                    if (functionName != null && targetFunctions.contains(functionName)) {
-                        this.analyze(reference);
-                    }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
+
+                final String functionName = reference.getName();
+                if (functionName != null && targetFunctions.contains(functionName)) {
+                    this.analyze(reference);
                 }
             }
 

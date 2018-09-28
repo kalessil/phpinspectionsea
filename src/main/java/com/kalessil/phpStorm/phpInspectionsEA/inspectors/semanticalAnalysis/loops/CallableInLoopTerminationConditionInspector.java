@@ -42,6 +42,8 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFor(final For forStatement) {
+                if (this.isContainingFileSkipped(forStatement)) { return; }
+
                 final PhpPsiElement[] conditions = forStatement.getConditionalExpressions();
                 if (conditions.length == 1 && conditions[0] instanceof BinaryExpression) {
                     final BinaryExpression condition = (BinaryExpression) conditions[0];

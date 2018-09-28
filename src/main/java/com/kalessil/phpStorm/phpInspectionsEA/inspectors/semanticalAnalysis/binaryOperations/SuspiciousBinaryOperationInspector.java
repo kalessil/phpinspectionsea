@@ -35,6 +35,7 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final Collection<BooleanSupplier> callbacks = new ArrayList<>(11);
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));

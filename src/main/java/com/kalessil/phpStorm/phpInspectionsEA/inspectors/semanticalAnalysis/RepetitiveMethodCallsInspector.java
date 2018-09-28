@@ -46,6 +46,7 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final IElementType operation = expression.getOperationType();
                 if (operation == PhpTokenTypes.opAND || operation == PhpTokenTypes.opOR) {
@@ -89,6 +90,7 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 /* extract base method references */
                 final List<MethodReference> references = new ArrayList<>();
@@ -110,6 +112,7 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
 
                 final PsiElement currentBase = reference.getFirstChild();
                 if (currentBase instanceof MethodReference) {

@@ -37,6 +37,7 @@ public class SuspiciousArrayElementInspector extends BasePhpInspection {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 for (final ArrayHashElement element : expression.getHashElements()) {
                     final PsiElement key = element.getKey();

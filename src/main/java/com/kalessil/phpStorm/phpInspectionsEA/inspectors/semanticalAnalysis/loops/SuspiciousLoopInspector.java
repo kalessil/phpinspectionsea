@@ -62,12 +62,16 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement statement) {
+                if (this.isContainingFileSkipped(statement)) { return; }
+
                 this.inspectVariables(statement);
                 this.inspectParentConditions(statement);
             }
 
             @Override
             public void visitPhpFor(@NotNull For statement) {
+                if (this.isContainingFileSkipped(statement)) { return; }
+
                 this.inspectConditions(statement);
                 this.inspectVariables(statement);
                 this.inspectBoundariesCorrectness(statement);

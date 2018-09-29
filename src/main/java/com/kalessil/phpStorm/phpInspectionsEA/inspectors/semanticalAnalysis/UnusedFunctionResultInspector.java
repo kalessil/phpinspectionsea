@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -17,6 +18,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class UnusedFunctionResultInspector extends BasePhpInspection {
     private static final String message = "Function result is not used.";
@@ -56,10 +66,22 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
+
+                this.analyze(reference);
+            }
+
+            @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
+                this.analyze(reference);
+            }
+
+            private void analyze(@NotNull FunctionReference reference) {
                 final boolean isTargetContext = OpenapiTypesUtil.isStatementImpl(reference.getParent());
                 if (isTargetContext && !ignoredFunctions.contains(reference.getName())) {
                     final PhpType resolved = OpenapiResolveUtil.resolveType(reference, reference.getProject());

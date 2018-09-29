@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class StreamSelectUsageInspector extends BasePhpInspection {
-    private static final String message = "Might cause high CPU usage connectivity issues (documentation advices using 200000 here, 200 ms).";
+    private static final String message = "Might cause high CPU usage and connectivity issues (documentation advices using 200000 here, 200 ms).";
 
     @NotNull
     public String getShortName() {

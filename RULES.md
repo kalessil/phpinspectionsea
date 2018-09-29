@@ -216,6 +216,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MissingDirectorySeparatorInspection             | Missing directory separators                              | n/a | yes | n/a  | no  |
 | Probable bugs        | InsufficientTypesControlInspection              | Insufficient types control                                | n/a | yes | n/a  | no  |
 | Probable bugs        | UnusedFunctionResultInspection                  | Unused function result                                    | n/a | yes | n/a  | no  |
+| Probable bugs        | MissingArrayInitializationInspection            | Missing array initialization                              | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

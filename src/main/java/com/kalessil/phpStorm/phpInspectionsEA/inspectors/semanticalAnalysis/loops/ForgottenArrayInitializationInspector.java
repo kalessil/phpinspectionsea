@@ -21,6 +21,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ForgottenArrayInitializationInspector extends BasePhpInspection {
     private static final String message = "The array initialization is missing, please place it at a proper place.";
 
@@ -51,24 +54,36 @@ public class ForgottenArrayInitializationInspector extends BasePhpInspection {
 
                         /* target 2+ nesting levels */
                         if (nestingLevel >= 2) {
-                            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
-                            final PsiElement base     = expression.getValue();
-                            if (body != null && base instanceof Variable) {
-                                for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(body, base.getClass())) {
-                                    /* match itself */
-                                    if (candidate == base) {
-                                        break;
+                            PsiElement container  = expression.getValue();
+                            while (container instanceof ArrayAccessExpression) {
+                                container = ((ArrayAccessExpression) container).getValue();
+                            }
+                            if (container instanceof Variable) {
+                                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                                if (body != null) {
+                                    final String variableName = ((Variable) container).getName();
+                                    /* false-positives: parameters */
+                                    if (Arrays.stream(scope.getParameters()).anyMatch(p -> p.getName().equals(variableName))) {
+                                        return;
                                     }
-                                    /* a value has been written */
-                                    final PsiElement context = candidate.getParent();
-                                    if (context instanceof AssignmentExpression) {
-                                        final AssignmentExpression assignment = (AssignmentExpression) context;
-                                        if (assignment.getValue() != base && OpenapiEquivalenceUtil.areEqual(candidate, base)) {
-                                            return;
+                                    /* false-positives: use-variables */
+                                    final List<Variable> uses = ExpressionSemanticUtil.getUseListVariables(scope);
+                                    if (uses != null && uses.stream().anyMatch(p -> p.getName().equals(variableName))) {
+                                        return;
+                                    }
+
+                                    for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(body, container.getClass())) {
+                                        /* a value has been written */
+                                        final PsiElement context = candidate.getParent();
+                                        if (context instanceof AssignmentExpression) {
+                                            final PsiElement value = ((AssignmentExpression) context).getValue();
+                                            if (value != container && OpenapiEquivalenceUtil.areEqual(candidate, container)) {
+                                                return;
+                                            }
                                         }
                                     }
+                                    problemsHolder.registerProblem(expression, message);
                                 }
-                                problemsHolder.registerProblem(expression, message);
                             }
                         }
                     }

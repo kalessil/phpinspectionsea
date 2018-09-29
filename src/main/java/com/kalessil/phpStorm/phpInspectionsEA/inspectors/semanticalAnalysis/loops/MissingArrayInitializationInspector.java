@@ -83,7 +83,10 @@ public class MissingArrayInitializationInspector extends BasePhpInspection {
                                         }
                                         /* container initialized by a foreach loop */
                                         if (context instanceof ForeachStatement) {
-                                            return;
+                                            final boolean areSame = OpenapiEquivalenceUtil.areEqual(candidate, container);
+                                            if (areSame) {
+                                                return;
+                                            }
                                         }
                                     }
                                     problemsHolder.registerProblem(expression, message);

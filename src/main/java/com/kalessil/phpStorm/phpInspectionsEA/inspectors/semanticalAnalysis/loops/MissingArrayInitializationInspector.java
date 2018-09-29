@@ -38,6 +38,8 @@ public class MissingArrayInitializationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final ArrayIndex index = expression.getIndex();
                 if (index != null && index.getValue() == null) {
                     final Function scope = ExpressionSemanticUtil.getScope(expression);

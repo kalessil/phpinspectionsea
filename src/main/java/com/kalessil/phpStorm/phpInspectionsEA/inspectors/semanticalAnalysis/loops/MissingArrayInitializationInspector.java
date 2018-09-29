@@ -24,12 +24,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-public class ForgottenArrayInitializationInspector extends BasePhpInspection {
+public class MissingArrayInitializationInspector extends BasePhpInspection {
     private static final String message = "The array initialization is missing, please place it at a proper place.";
 
     @NotNull
     public String getShortName() {
-        return "ForgottenArrayInitializationInspection";
+        return "MissingArrayInitializationInspection";
     }
 
     @Override

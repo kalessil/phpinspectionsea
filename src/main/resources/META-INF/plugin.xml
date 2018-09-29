@@ -378,9 +378,9 @@
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousTernaryOperatorInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ForgottenArrayInitializationInspection"        displayName="Forgotten array initialization"
+        shortName="MissingArrayInitializationInspection"          displayName="Missing array initialization"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.ForgottenArrayInitializationInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.MissingArrayInitializationInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

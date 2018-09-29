@@ -32,19 +32,20 @@ public class StreamSelectUsageInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("stream_select")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 5) {
-                        final boolean isTarget = OpenapiTypesUtil.isNumber(arguments[3]) &&
-                                                 arguments[3].getText().equals("0");
+                        final PsiElement seconds = arguments[3];
+                        final boolean isTarget   = OpenapiTypesUtil.isNumber(seconds) && seconds.getText().equals("0");
                         if (isTarget) {
-                            final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(arguments[4]);
+                            final PsiElement microseconds  = arguments[4];
+                            final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(microseconds);
                             if (variants.size() == 1) {
-                                final PsiElement number = variants.iterator().next();
-                                if (OpenapiTypesUtil.isNumber(number)) {
+                                final PsiElement threshold = variants.iterator().next();
+                                if (OpenapiTypesUtil.isNumber(threshold)) {
                                     try {
-                                        if (Long.valueOf(number.getText()) < 200000) {
-                                            holder.registerProblem(arguments[3], message);
+                                        if (Long.valueOf(threshold.getText()) < 200000) {
+                                            holder.registerProblem(microseconds, message);
                                         }
                                     } catch (final NumberFormatException failure) {
-                                        return;
+                                        // do nothing
                                     }
                                 }
                             }

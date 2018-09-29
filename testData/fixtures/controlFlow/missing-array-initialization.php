@@ -15,8 +15,12 @@ function patterns() {
     return function ($parameter) use ($array) {
         foreach ([] as $source) {
             foreach ($source as $value) {
+                /* false-positive: container is parameter of a use-variable */
                 $array[] = $value;
                 $parameter[] = $value;
+
+                /* false-positive: container is introduced by foreach-loop */
+                $source[] = [];
             }
         }
     };

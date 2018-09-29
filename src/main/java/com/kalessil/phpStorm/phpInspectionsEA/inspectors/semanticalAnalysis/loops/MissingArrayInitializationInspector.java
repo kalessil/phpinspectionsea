@@ -75,11 +75,18 @@ public class MissingArrayInitializationInspector extends BasePhpInspection {
                                     }
 
                                     for (final PsiElement candidate : PsiTreeUtil.findChildrenOfType(body, container.getClass())) {
-                                        /* a value has been written */
                                         final PsiElement context = candidate.getParent();
+                                        /* a value has been written */
                                         if (context instanceof AssignmentExpression) {
                                             final PsiElement value = ((AssignmentExpression) context).getValue();
                                             if (value != container && OpenapiEquivalenceUtil.areEqual(candidate, container)) {
+                                                return;
+                                            }
+                                        }
+                                        /* container initialized by a foreach loop */
+                                        if (context instanceof ForeachStatement) {
+                                            final boolean areSame = OpenapiEquivalenceUtil.areEqual(candidate, container);
+                                            if (areSame) {
                                                 return;
                                             }
                                         }

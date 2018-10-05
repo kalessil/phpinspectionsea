@@ -15,6 +15,7 @@
 
 
     $x = <weak_warning descr="'empty($x)' would make more sense here (simplification).">empty($x) ? true : false</weak_warning>;
+    $x = <weak_warning descr="'!empty($x)' would make more sense here (simplification).">!empty($x) ? true : false</weak_warning>;
     $x = <weak_warning descr="'!empty($x)' would make more sense here (simplification).">empty($x) ? false : true</weak_warning>;
     $x = <weak_warning descr="'empty($x)' would make more sense here (simplification).">!empty($x) ? false : true</weak_warning>;
 

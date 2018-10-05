@@ -16,6 +16,7 @@
 
     $x = empty($x);
     $x = !empty($x);
+    $x = !empty($x);
     $x = empty($x);
 
     $x = empty($x) ? true : null;

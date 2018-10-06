@@ -68,7 +68,9 @@ public class UselessReturnInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                this.inspectForSenselessReturn(method);
+                if (!method.isAbstract()) {
+                    this.inspectForSenselessReturn(method);
+                }
             }
 
             @Override

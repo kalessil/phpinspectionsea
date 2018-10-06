@@ -52,7 +52,9 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.isContainingFileSkipped(method)) { return; }
 
-                this.analyzeFunction(method);
+                if (!method.isAbstract()) {
+                    this.analyzeFunction(method);
+                }
             }
 
             @Override
@@ -62,7 +64,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 this.analyzeFunction(function);
             }
 
-            public void analyzeFunction(@NotNull Function function) {
+            private void analyzeFunction(@NotNull Function function) {
                 Arrays.stream(function.getParameters())
                         .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
                         .filter(parameter  -> {

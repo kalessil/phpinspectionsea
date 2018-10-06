@@ -87,10 +87,15 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                         final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
                         /* check branches; if both variants are identical, nested ternary inspection will spot it */
                         if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
-                            final boolean isInverted = PhpLanguageUtil.isFalse(trueVariant) && !isConditionInverted;
-                            final String replacement = (isInverted ? "!" : "") + candidate.getText();
-                            final String message     = String.format(messagePattern, replacement);
-                            holder.registerProblem(expression, message, new SimplifyFix(replacement));
+                            final boolean areBranchesInverted = PhpLanguageUtil.isFalse(trueVariant);
+                            final boolean invert              = (isConditionInverted && !areBranchesInverted) ||
+                                                                (areBranchesInverted && !isConditionInverted);
+                            final String replacement          = (invert ? "!" : "") + candidate.getText();
+                            holder.registerProblem(
+                                    expression,
+                                    String.format(messagePattern, replacement),
+                                    new SimplifyFix(replacement)
+                            );
                         }
                     }
                 }

@@ -65,6 +65,9 @@ public class UselessReturnInspector extends BasePhpInspection {
                             }
                         }
                     }
+                } else if (returnValue instanceof Variable) {
+                    // and it's a parameter, which was not overridden
+                    // https://github.com/kalessil/phpinspectionsea/issues/510
                 }
             }
 

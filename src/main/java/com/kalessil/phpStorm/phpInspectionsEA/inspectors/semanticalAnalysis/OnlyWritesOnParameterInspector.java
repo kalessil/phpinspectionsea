@@ -49,7 +49,9 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-               this.visitPhpFunction(method);
+                if (!method.isAbstract()) {
+                    this.visitPhpFunction(method);
+                }
             }
 
             @Override

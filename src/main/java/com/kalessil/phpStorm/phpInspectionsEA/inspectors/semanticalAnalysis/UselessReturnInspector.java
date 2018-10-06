@@ -72,7 +72,9 @@ public class UselessReturnInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.isContainingFileSkipped(method)) { return; }
 
-                this.inspectForSenselessReturn(method);
+                if (!method.isAbstract()) {
+                    this.inspectForSenselessReturn(method);
+                }
             }
 
             @Override

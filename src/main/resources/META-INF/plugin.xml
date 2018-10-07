@@ -26,7 +26,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.AmbiguousMethodsCallsInArrayMappingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="StrlenInEmptyStringCheckContextInspection"     displayName="'(mb_)strlen(...)' misused"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CallableInLoopTerminationConditionInspection"  displayName="Callable calls in loops termination condition"

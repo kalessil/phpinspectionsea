@@ -74,7 +74,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="VariableFunctionsUsageInspection"              displayName="Variable functions usage"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.VariableFunctionsUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SubStrShortHandUsageInspection"                displayName="'substr(...)' short-hand usage"

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -84,7 +83,6 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             holder.registerProblem(
                                     reference,
                                     String.format(patternInlineArgs, replacement),
-                                    ProblemHighlightType.WEAK_WARNING,
                                     new InlineFix(replacement)
                             );
                             parametersUsed.clear();
@@ -203,7 +201,6 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     holder.registerProblem(
                             reference,
                             String.format(patternReplace, replacement),
-                            ProblemHighlightType.WEAK_WARNING,
                             new ReplaceFix(replacement)
                     );
                 }

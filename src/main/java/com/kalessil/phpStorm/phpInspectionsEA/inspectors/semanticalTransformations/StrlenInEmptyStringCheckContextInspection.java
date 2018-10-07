@@ -63,19 +63,22 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                         final String strNumber = secondOperand.getText();
 
                         /* check cases when comparing with 1 */
-                        final IElementType operationType = binary.getOperationType();
-                        if (operationType == PhpTokenTypes.opLESS || operationType == PhpTokenTypes.opGREATER_OR_EQUAL) {
-                            /* comparison with 1 supported currently in NON-yoda style TODO: yoda style support */
+                        final IElementType operator = binary.getOperationType();
+                        if (operator == PhpTokenTypes.opGREATER) {
+                            isMatchedPattern = left == reference && strNumber.equals("0");
+                            warningTarget    = binary;
+                            isEmptyString    = false;
+                        } else if (operator == PhpTokenTypes.opLESS || operator == PhpTokenTypes.opGREATER_OR_EQUAL) {
                             isMatchedPattern = left == reference && strNumber.equals("1");
                             warningTarget    = binary;
-                            isEmptyString    = operationType == PhpTokenTypes.opLESS;
+                            isEmptyString    = operator == PhpTokenTypes.opLESS;
                         }
 
-                        /* check cases when comparing with 0 */
-                        if (!isMatchedPattern && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operationType)) {
+                        /* check cases when checking equality to 0 */
+                        if (!isMatchedPattern && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                             isMatchedPattern = strNumber.equals("0");
                             warningTarget    = binary;
-                            isEmptyString    = operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opEQUAL;
+                            isEmptyString    = operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opEQUAL;
                         }
                     }
                 }

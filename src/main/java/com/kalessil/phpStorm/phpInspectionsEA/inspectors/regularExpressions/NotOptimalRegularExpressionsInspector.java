@@ -69,32 +69,30 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                     if (params.length > 0) {
                         final boolean checkCall                     = !(params[0] instanceof ArrayCreationExpression);
                         final Set<StringLiteralExpression> patterns = this.extractPatterns(params[0]);
-                        if (!patterns.isEmpty()) {
-                            for (final StringLiteralExpression pattern : patterns) {
-                                if (pattern.getContainingFile() == params[0].getContainingFile()) {
-                                    final String regex = pattern.getContents();
-                                    if (!regex.isEmpty() && pattern.getFirstPsiChild() == null) {
-                                        final Matcher matcher = regexWithModifiers.matcher(regex);
-                                        if (matcher.find()) {
-                                            final String phpRegexPattern   = matcher.group(2);
-                                            final String phpRegexModifiers = matcher.group(3);
-                                            this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                                            if (checkCall) {
-                                                this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                                            }
-                                            continue;
+                        for (final StringLiteralExpression pattern : patterns) {
+                            if (pattern.getContainingFile() == params[0].getContainingFile()) {
+                                final String regex = pattern.getContents();
+                                if (!regex.isEmpty() && pattern.getFirstPsiChild() == null) {
+                                    final Matcher matcher = regexWithModifiers.matcher(regex);
+                                    if (matcher.find()) {
+                                        final String phpRegexPattern   = matcher.group(2);
+                                        final String phpRegexModifiers = matcher.group(3);
+                                        this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                        if (checkCall) {
+                                            this.checkCall(functionName, reference, phpRegexPattern, phpRegexModifiers);
                                         }
+                                        continue;
+                                    }
 
-                                        final Matcher alternativeMatcher = regexWithModifiersCurvy.matcher(regex);
-                                        if (alternativeMatcher.find()) {
-                                            final String phpRegexPattern   = alternativeMatcher.group(1);
-                                            final String phpRegexModifiers = alternativeMatcher.group(2);
-                                            this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                                            if (checkCall) {
-                                                this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                                            }
-                                            // continue;
+                                    final Matcher alternativeMatcher = regexWithModifiersCurvy.matcher(regex);
+                                    if (alternativeMatcher.find()) {
+                                        final String phpRegexPattern   = alternativeMatcher.group(1);
+                                        final String phpRegexModifiers = alternativeMatcher.group(2);
+                                        this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                        if (checkCall) {
+                                            this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
                                         }
+                                        // continue;
                                     }
                                 }
                             }
@@ -109,7 +107,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 if (candidate instanceof ArrayCreationExpression) {
                     for (final PsiElement child : candidate.getChildren()) {
                         /* extract element */
-                        final PsiElement element;
+                        final StringLiteralExpression element;
                         if (child instanceof ArrayHashElement) {
                             element = ExpressionSemanticUtil.resolveAsStringLiteral(((ArrayHashElement) child).getValue());
                         } else if (child instanceof PhpPsiElement) {
@@ -118,9 +116,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                             element = null;
                         }
                         /* resolve element */
-                        final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(element);
-                        if (literal != null) {
-                            result.add(literal);
+                        if (element != null) {
+                            result.add(element);
                         }
                     }
                 } else {
@@ -187,7 +184,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 MissingUnicodeModifierStrategy.apply(modifiers, regex, target, holder);
             }
 
-            private void checkCall(String functionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
+            private void checkCall(String functionName, FunctionReference reference, String regex, String modifiers) {
                 /* Plain API simplification (done):
                  * + /^text/ => 0 === strpos(...) (match)
                  * + /text/ => false !== strpos(...) (match) / str_replace (replace)

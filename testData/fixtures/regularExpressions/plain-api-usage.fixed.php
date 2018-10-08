@@ -8,7 +8,7 @@
     preg_replace('/^whatever/',  $replacement, $string);
     preg_replace('/whatever.+/', $replacement, $string);
     preg_replace(['/whatever/'], $replacement, $string);
-    preg_replace('/whatever/i', $replacement, $string);
+    preg_replace(['/whatever/i'], $replacement, $string);
 
     /* case: strpos */
     false !== strpos($string, "\+");

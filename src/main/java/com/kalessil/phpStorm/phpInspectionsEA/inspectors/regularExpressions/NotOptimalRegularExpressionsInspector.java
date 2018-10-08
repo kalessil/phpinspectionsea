@@ -16,7 +16,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opti
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -65,37 +64,35 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
             @Deprecated
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || !functions.contains(functionName)) {
-                    return;
-                }
+                if (functionName != null && functions.contains(functionName)) {
+                    final PsiElement[] params = reference.getParameters();
+                    if (params.length > 0) {
+                        final Set<StringLiteralExpression> patterns = this.extractPatterns(params[0]);
+                        if (!patterns.isEmpty()) {
+                            for (final StringLiteralExpression pattern : patterns) {
+                                if (pattern.getContainingFile() == params[0].getContainingFile()) {
+                                    final String regex = pattern.getContents();
+                                    if (!regex.isEmpty() && pattern.getFirstPsiChild() == null) {
+                                        final Matcher matcher = regexWithModifiers.matcher(regex);
+                                        if (matcher.find()) {
+                                            final String phpRegexPattern   = matcher.group(2);
+                                            final String phpRegexModifiers = matcher.group(3);
+                                            this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            continue;
+                                        }
 
-                /* resolve first parameter */
-                final PsiElement[] params       = reference.getParameters();
-                StringLiteralExpression pattern = null;
-                if (params.length > 0) {
-                    pattern = ExpressionSemanticUtil.resolveAsStringLiteral(params[0]);
-                }
-                /* not available / PhpStorm limitations */
-                if (null == pattern || pattern.getContainingFile() != params[0].getContainingFile()) {
-                    return;
-                }
-
-                final String regex = pattern.getContents();
-                if (!StringUtils.isEmpty(regex) && pattern.getFirstPsiChild() == null) {
-                    Matcher regexMatcher = regexWithModifiers.matcher(regex);
-                    if (regexMatcher.find()) {
-                        final String phpRegexPattern   = regexMatcher.group(2);
-                        final String phpRegexModifiers = regexMatcher.group(3);
-                        this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                        return;
-                    }
-
-                    regexMatcher = regexWithModifiersCurvy.matcher(regex);
-                    if (regexMatcher.find()) {
-                        final String phpRegexPattern   = regexMatcher.group(1);
-                        final String phpRegexModifiers = regexMatcher.group(2);
-                        this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                        // return;
+                                        final Matcher alternativeMatcher = regexWithModifiersCurvy.matcher(regex);
+                                        if (alternativeMatcher.find()) {
+                                            final String phpRegexPattern   = alternativeMatcher.group(1);
+                                            final String phpRegexModifiers = alternativeMatcher.group(2);
+                                            this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            // continue
+                                        }
+                                    }
+                                }
+                            }
+                            patterns.clear();
+                        }
                     }
                 }
             }

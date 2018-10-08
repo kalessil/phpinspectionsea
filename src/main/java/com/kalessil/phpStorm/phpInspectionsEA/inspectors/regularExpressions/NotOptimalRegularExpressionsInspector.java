@@ -3,8 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.PlainApiUseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.classesStrategy.ShortClassDefinitionStrategy;
@@ -99,6 +98,34 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         // return;
                     }
                 }
+            }
+
+            private Set<StringLiteralExpression> extractPatterns(@NotNull PsiElement candidate) {
+                final Set<StringLiteralExpression> result = new HashSet<>();
+                if (candidate instanceof ArrayCreationExpression) {
+                    for (final PsiElement child : candidate.getChildren()) {
+                        /* extract element */
+                        final PsiElement element;
+                        if (child instanceof ArrayHashElement) {
+                            element = ExpressionSemanticUtil.resolveAsStringLiteral(((ArrayHashElement) child).getValue());
+                        } else if (child instanceof PhpPsiElement) {
+                            element = ExpressionSemanticUtil.resolveAsStringLiteral(child);
+                        } else {
+                            element = null;
+                        }
+                        /* resolve element */
+                        final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(element);
+                        if (literal != null) {
+                            result.add(literal);
+                        }
+                    }
+                } else {
+                    final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(candidate);
+                    if (literal != null) {
+                        result.add(literal);
+                    }
+                }
+                return result;
             }
 
             private void checkCall (String functionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {

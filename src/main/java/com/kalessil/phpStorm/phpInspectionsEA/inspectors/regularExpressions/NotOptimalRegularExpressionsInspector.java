@@ -67,6 +67,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 if (functionName != null && functions.contains(functionName)) {
                     final PsiElement[] params = reference.getParameters();
                     if (params.length > 0) {
+                        final boolean checkCall                     = params[0] instanceof ArrayCreationExpression;
                         final Set<StringLiteralExpression> patterns = this.extractPatterns(params[0]);
                         if (!patterns.isEmpty()) {
                             for (final StringLiteralExpression pattern : patterns) {
@@ -77,7 +78,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                                         if (matcher.find()) {
                                             final String phpRegexPattern   = matcher.group(2);
                                             final String phpRegexModifiers = matcher.group(3);
-                                            this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            if (checkCall) {
+                                                this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            }
                                             continue;
                                         }
 
@@ -85,8 +89,11 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                                         if (alternativeMatcher.find()) {
                                             final String phpRegexPattern   = alternativeMatcher.group(1);
                                             final String phpRegexModifiers = alternativeMatcher.group(2);
-                                            this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                                            // continue
+                                            this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            if (checkCall) {
+                                                this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            }
+                                            // continue;
                                         }
                                     }
                                 }
@@ -125,7 +132,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 return result;
             }
 
-            private void checkCall (String functionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
+            private void checkRegex(String functionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
                 /* Modifiers validity (done):
                  * + /no-az-chars/i => /no-az-chars/
                  * + /no-dot-char/s => /no-dot-char/
@@ -140,17 +147,6 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);
-
-                /* Plain API simplification (done):
-                 * + /^text/ => 0 === strpos(...) (match)
-                 * + /text/ => false !== strpos(...) (match) / str_replace (replace)
-                 * + /^text/i => 0 === stripos(...) (match)
-                 * + /text/i => false !== stripos(...) (match) / str_ireplace (replace)
-                 * + preg_quote => warning if second argument is not presented
-                 * + preg_match_all without match argument preg_match
-                 */
-                FunctionCallCheckStrategy.apply(functionName, reference, holder);
-                PlainApiUseCheckStrategy.apply(functionName, reference, modifiers, regex, holder);
 
                 /* Classes shortening (done):
                  * + [0-9] => \d
@@ -192,6 +188,19 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
 
                 /* source checks */
                 UnnecessaryCaseManipulationCheckStrategy.apply(functionName, reference, modifiers, holder);
+            }
+
+            private void checkCall(String functionName, FunctionReference reference, StringLiteralExpression target, String regex, String modifiers) {
+                /* Plain API simplification (done):
+                 * + /^text/ => 0 === strpos(...) (match)
+                 * + /text/ => false !== strpos(...) (match) / str_replace (replace)
+                 * + /^text/i => 0 === stripos(...) (match)
+                 * + /text/i => false !== stripos(...) (match) / str_ireplace (replace)
+                 * + preg_quote => warning if second argument is not presented
+                 * + preg_match_all without match argument preg_match
+                 */
+                FunctionCallCheckStrategy.apply(functionName, reference, holder);
+                PlainApiUseCheckStrategy.apply(functionName, reference, modifiers, regex, holder);
             }
         };
     }

@@ -90,7 +90,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                                         final String phpRegexModifiers = matcher.group(4);
                                         this.checkRegex(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
                                         if (checkCall) {
-                                            this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                            this.checkCall(functionName, reference, phpRegexPattern, phpRegexModifiers);
                                         }
                                         break;
                                     }
@@ -185,7 +185,6 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
             private void checkCall (
                     @NotNull String functionName,
                     @NotNull FunctionReference reference,
-                    @NotNull PsiElement target,
                     String regex,
                     String modifiers
             ) {

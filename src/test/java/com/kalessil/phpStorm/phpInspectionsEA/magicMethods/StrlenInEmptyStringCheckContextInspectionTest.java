@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 
 final public class StrlenInEmptyStringCheckContextInspectionTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        ComparisonStyle.force(ComparisonStyle.REGULAR);
+        ComparisonStyle.force(ComparisonStyle.YODA);
 
         myFixture.enableInspections(new StrlenInEmptyStringCheckContextInspection());
         myFixture.configureByFile("testData/fixtures/magicMethods/empty-string-comparison.php");
@@ -15,5 +15,7 @@ final public class StrlenInEmptyStringCheckContextInspectionTest extends PhpCode
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/magicMethods/empty-string-comparison.fixed.php");
+
+        ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
 }

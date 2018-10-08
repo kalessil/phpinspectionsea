@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.FunctionCallCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.apiUsage.PlainApiUseCheckStrategy;
@@ -79,7 +79,8 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 if (functionName != null && functions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0) {
-                        final Set<String> patterns = ExpressionSemanticUtil.resolveAsString(arguments[0]);
+                        final boolean checkCall    = !(arguments[0] instanceof ArrayCreationExpression);
+                        final Set<String> patterns = this.extractPatterns(arguments[0]);
                         for (final String pattern : patterns) {
                             if (pattern != null && !pattern.isEmpty()) {
                                 for (final Pattern regex : matchers) {
@@ -87,7 +88,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                                     if (matcher.find()) {
                                         final String phpRegexPattern   = matcher.group(2);
                                         final String phpRegexModifiers = matcher.group(4);
-                                        this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                        this.checkRegex(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                        if (checkCall) {
+                                            this.checkCall(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
+                                        }
                                         break;
                                     }
                                 }
@@ -98,7 +102,23 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 }
             }
 
-            private void checkCall (
+            private Set<String> extractPatterns(@NotNull PsiElement candidate) {
+                final Set<String> result = new HashSet<>();
+                if (candidate instanceof ArrayCreationExpression) {
+                    for (final PsiElement child : candidate.getChildren()) {
+                        if (child instanceof ArrayHashElement) {
+                            result.addAll(ExpressionSemanticUtil.resolveAsString(((ArrayHashElement) child).getValue()));
+                        } else if (child instanceof PhpPsiElement) {
+                            result.addAll(ExpressionSemanticUtil.resolveAsString(child));
+                        }
+                    }
+                } else {
+                    result.addAll(ExpressionSemanticUtil.resolveAsString(candidate));
+                }
+                return result;
+            }
+
+            private void checkRegex (
                     @NotNull String functionName,
                     @NotNull FunctionReference reference,
                     @NotNull PsiElement target,
@@ -118,17 +138,6 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);
-
-                /* Plain API simplification (done):
-                 * + /^text/ => 0 === strpos(...) (match)
-                 * + /text/ => false !== strpos(...) (match) / str_replace (replace)
-                 * + /^text/i => 0 === stripos(...) (match)
-                 * + /text/i => false !== stripos(...) (match) / str_ireplace (replace)
-                 * + preg_quote => warning if second argument is not presented
-                 * + preg_match_all without match argument preg_match
-                 */
-                FunctionCallCheckStrategy.apply(functionName, reference, holder);
-                PlainApiUseCheckStrategy.apply(functionName, reference, modifiers, regex, holder);
 
                 /* Classes shortening (done):
                  * + [0-9] => \d
@@ -171,6 +180,25 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                     /* suspicious characters specification:  [...A-z...]/[...a-Z...] */
                     SuspiciousCharactersRangeSpecificationStrategy.apply(regex, target, holder);
                 }
+            }
+
+            private void checkCall (
+                    @NotNull String functionName,
+                    @NotNull FunctionReference reference,
+                    @NotNull PsiElement target,
+                    String regex,
+                    String modifiers
+            ) {
+                /* Plain API simplification (done):
+                 * + /^text/ => 0 === strpos(...) (match)
+                 * + /text/ => false !== strpos(...) (match) / str_replace (replace)
+                 * + /^text/i => 0 === stripos(...) (match)
+                 * + /text/i => false !== stripos(...) (match) / str_ireplace (replace)
+                 * + preg_quote => warning if second argument is not presented
+                 * + preg_match_all without match argument preg_match
+                 */
+                FunctionCallCheckStrategy.apply(functionName, reference, holder);
+                PlainApiUseCheckStrategy.apply(functionName, reference, modifiers, regex, holder);
 
                 /* source checks */
                 UnnecessaryCaseManipulationCheckStrategy.apply(functionName, reference, modifiers, holder);

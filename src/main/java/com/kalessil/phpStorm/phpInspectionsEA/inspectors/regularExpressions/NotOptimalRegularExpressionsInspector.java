@@ -90,7 +90,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                                         final String phpRegexModifiers = alternativeMatcher.group(2);
                                         this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
                                         if (checkCall) {
-                                            this.checkCall(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            this.checkCall(functionName, reference, phpRegexPattern, phpRegexModifiers);
                                         }
                                         // continue;
                                     }

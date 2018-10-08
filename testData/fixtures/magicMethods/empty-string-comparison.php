@@ -47,6 +47,7 @@ function checkUseCases($strToTest) {
 
     if (<weak_warning descr="''' === $strToTest' can be used instead.">strlen($strToTest) < 1</weak_warning>)   {}
     if (<weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest) >= 1</weak_warning>)  {}
+    if (<weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest) > 0</weak_warning>)   {}
 
     /* not yet supported */
     if (1 >  strlen($strToTest))   {}

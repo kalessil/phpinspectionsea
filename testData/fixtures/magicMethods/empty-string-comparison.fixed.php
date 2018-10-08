@@ -47,6 +47,7 @@ function checkUseCases($strToTest) {
 
     if ('' === $strToTest)   {}
     if ('' !== $strToTest)  {}
+    if ('' !== $strToTest)   {}
 
     /* not yet supported */
     if (1 >  strlen($strToTest))   {}

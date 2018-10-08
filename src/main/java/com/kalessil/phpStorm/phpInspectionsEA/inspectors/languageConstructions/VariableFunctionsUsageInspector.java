@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -63,17 +62,24 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     if (arguments[1] instanceof ArrayCreationExpression) {
                         final List<String> parametersUsed = new ArrayList<>();
                         for (final PsiElement argument : arguments[1].getChildren()) {
-                            if (argument instanceof PhpPsiElement) {
-                                final PhpPsiElement itemValue = ((PhpPsiElement) argument).getFirstPsiChild();
-                                final String itemValueString  = itemValue == null ? null : parameterAsString(itemValue);
-                                if (itemValueString != null) {
-                                    /* false-positives: call_user_func does not support arguments by reference */
-                                    if (itemValueString.startsWith("&")) {
-                                        parametersUsed.clear();
-                                        return;
-                                    }
-                                    parametersUsed.add(itemValueString);
+                            /* get the array item */
+                            final PsiElement extracted;
+                            if (argument instanceof ArrayHashElement) {
+                                extracted = ((ArrayHashElement) argument).getValue();
+                            } else if (argument instanceof PhpPsiElement) {
+                                extracted = ((PhpPsiElement) argument).getFirstPsiChild();
+                            } else {
+                                extracted = null;
+                            }
+                            /* store the extracted item */
+                            final String itemValueString = extracted == null ? null : parameterAsString(extracted);
+                            if (itemValueString != null) {
+                                /* false-positives: call_user_func does not support arguments by reference */
+                                if (itemValueString.startsWith("&")) {
+                                    parametersUsed.clear();
+                                    return;
                                 }
+                                parametersUsed.add(itemValueString);
                             }
                         }
 
@@ -86,7 +92,6 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             holder.registerProblem(
                                     reference,
                                     String.format(patternInlineArgs, replacement),
-                                    ProblemHighlightType.WEAK_WARNING,
                                     new InlineFix(replacement)
                             );
                             parametersUsed.clear();
@@ -205,7 +210,6 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     holder.registerProblem(
                             reference,
                             String.format(patternReplace, replacement),
-                            ProblemHighlightType.WEAK_WARNING,
                             new ReplaceFix(replacement)
                     );
                 }

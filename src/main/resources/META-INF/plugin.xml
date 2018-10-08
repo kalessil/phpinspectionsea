@@ -28,7 +28,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.AmbiguousMethodsCallsInArrayMappingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="StrlenInEmptyStringCheckContextInspection"     displayName="'(mb_)strlen(...)' misused"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="CallableInLoopTerminationConditionInspection"  displayName="Callable calls in loops termination condition"
@@ -76,7 +76,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="VariableFunctionsUsageInspection"              displayName="Variable functions usage"
-        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.VariableFunctionsUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="SubStrShortHandUsageInspection"                displayName="'substr(...)' short-hand usage"

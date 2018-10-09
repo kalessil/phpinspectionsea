@@ -45,6 +45,15 @@ A big thank you to our platinum sponsor [IntelliShop AG](https://www.intellishop
 
 <a href="https://www.intellishop-software.com/"><img src="https://github.com/kalessil/phpinspectionsea/blob/master/docs/images/isag_logo_1000px.png?raw=true" alt="IntelliShop AG" height="40"/></a>
 
+Crowdfunding
+---
+
+It's also possible to support the project on [Patreon](https://www.patreon.com/kalessil) or by buying a 
+[Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-) license.
+
+This funding is used for maintaining the project and adding new features into Code Style, PhpUnit and similar inspections 
+groups of Php Inspections (EA Extended).
+
 Acknowledgments
 ---
 

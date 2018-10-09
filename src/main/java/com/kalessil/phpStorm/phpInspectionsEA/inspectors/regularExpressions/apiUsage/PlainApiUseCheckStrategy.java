@@ -76,14 +76,14 @@ final public class PlainApiUseCheckStrategy {
                 if (parametersCount == 2 && functionName.equals("preg_match")) {
                     if (startWith && endsWith && !ignoreCase) {
                         final String replacement = "\"%p%\" === %s%"
-                            .replace("%p%", regexMatcher.group(2))
+                            .replace("%p%", unescape(regexMatcher.group(2)))
                             .replace("%s%", params[1].getText());
                         message = messagePattern.replace("%e%", replacement);
                         fixer   = new UseStringComparisonFix(replacement);
                     } else if (startWith && !endsWith) {
                         // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
                         final String replacement = "0 === %f%(%s%, \"%p%\")"
-                            .replace("%p%", regexMatcher.group(2))
+                            .replace("%p%", unescape(regexMatcher.group(2)))
                             .replace("%s%", params[1].getText())
                             .replace("%f%", ignoreCase ? "stripos" : "strpos");
                         message = messagePattern.replace("%e%", replacement);
@@ -91,7 +91,7 @@ final public class PlainApiUseCheckStrategy {
                     } else if (!startWith && !endsWith) {
                         // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
                         final String replacement = "false !== %f%(%s%, \"%p%\")"
-                            .replace("%p%", regexMatcher.group(2))
+                            .replace("%p%", unescape(regexMatcher.group(2)))
                             .replace("%s%", params[1].getText())
                             .replace("%f%", ignoreCase ? "stripos" : "strpos");
                         message = messagePattern.replace("%e%", replacement);
@@ -102,7 +102,7 @@ final public class PlainApiUseCheckStrategy {
                     final String replacement = "%f%(\"%p%\", %r%, %s%)"
                         .replace("%s%", params[2].getText())
                         .replace("%r%", params[1].getText())
-                        .replace("%p%", regexMatcher.group(2))
+                        .replace("%p%", unescape(regexMatcher.group(2)))
                         .replace("%f%", ignoreCase ? "str_ireplace" : "str_replace");
                     message = messagePattern.replace("%e%", replacement);
                     fixer   = new UseStringReplaceFix(replacement);
@@ -139,7 +139,7 @@ final public class PlainApiUseCheckStrategy {
                 characterToTrim        = characterToTrim == null ? trimMatcher.group(3) : characterToTrim;
                 final String replacement = "%f%(%s%, '%p%')"
                     .replace(", '%p%'", characterToTrim.equals("\\s") ? "" : ", '%p%'")
-                    .replace("%p%", characterToTrim)
+                    .replace("%p%", unescape(characterToTrim))
                     .replace("%s%", params[2].getText())
                     .replace("%f%", function);
                 holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseTrimFix(replacement));
@@ -154,10 +154,14 @@ final public class PlainApiUseCheckStrategy {
                 final String replacement = "explode(\"%p%\", %s%%l%)"
                     .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
                     .replace("%s%", params[1].getText())
-                    .replace("%p%", patternAdapted);
+                    .replace("%p%", unescape(patternAdapted));
                 holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseExplodeFix(replacement));
             }
         }
+    }
+
+    private static String unescape(@NotNull String string) {
+        return string.replaceAll("\\\\([.+*?\\-])", "$1");
     }
 
     private static final class UseStringReplaceFix extends UseSuggestedReplacementFixer {

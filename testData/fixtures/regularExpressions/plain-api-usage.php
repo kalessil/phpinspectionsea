@@ -11,10 +11,10 @@
     preg_replace(['/whatever/i'], $replacement, $string);
 
     /* case: strpos */
-    <warning descr="'false !== strpos($string, \"\+\")' can be used instead.">preg_match('/\+/', $string)</warning>;
+    <warning descr="'false !== strpos($string, \"+\")' can be used instead.">preg_match('/\+/', $string)</warning>;
     <warning descr="'false !== strpos($string, \"whatever\")' can be used instead.">preg_match('/whatever/', $string)</warning>;
     <warning descr="'false !== stripos($string, \"whatever\")' can be used instead.">preg_match('/whatever/i', $string)</warning>;
-    <warning descr="'0 === strpos($string, \"\+\")' can be used instead.">preg_match('/^\+/', $string)</warning>;
+    <warning descr="'0 === strpos($string, \"+\")' can be used instead.">preg_match('/^\+/', $string)</warning>;
     <warning descr="'0 === strpos($string, \"whatever\")' can be used instead.">preg_match('/^whatever/', $string)</warning>;
     <warning descr="'0 === stripos($string, \"whatever\")' can be used instead.">preg_match('/^whatever/i', $string)</warning>;
     /* false-positives */

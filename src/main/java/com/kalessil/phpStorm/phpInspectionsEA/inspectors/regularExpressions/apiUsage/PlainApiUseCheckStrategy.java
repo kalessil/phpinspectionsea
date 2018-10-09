@@ -161,7 +161,7 @@ final public class PlainApiUseCheckStrategy {
     }
 
     private static String unescape(@NotNull String string) {
-        return string.replaceAll("\\\\([.+*?\\-\\\\])", "$1");
+        return string.replaceAll("\\\\([.+*?\\-])", "$1");
     }
 
     private static final class UseStringReplaceFix extends UseSuggestedReplacementFixer {

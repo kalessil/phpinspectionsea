@@ -80,9 +80,13 @@ final public class ConstantConditionsCountCheckStrategy {
                                     // always true
                                 }
                             } else if (operator == PhpTokenTypes.opGREATER) {
-                                // if number less than minimum -> always true
+                                if (result = (number < range.getMinimum())) {
+                                    // always true
+                                }
                             } else if (operator == PhpTokenTypes.opGREATER_OR_EQUAL) {
-                                // if number less or equal to minimum -> always true
+                                if (result = (number <= range.getMinimum())) {
+                                    // always true
+                                }
                             }
                         }
                     }

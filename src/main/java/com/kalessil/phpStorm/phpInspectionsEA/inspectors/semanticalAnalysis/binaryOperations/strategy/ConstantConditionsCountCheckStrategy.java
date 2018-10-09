@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 final public class ConstantConditionsCountCheckStrategy {
-    private static final String message = "This operator is probably misplaced.";
+    private static final String messageAlwaysTrue  = "'%s' seems to be always true.";
+    private static final String messageAlwaysFalse = "'%s' seems to be always false.";
 
     private static final Set<IElementType> targetOperations      = new HashSet<>();
     private static final Map<String, ValueRange> targetFunctions = new HashMap<>();
@@ -65,27 +66,27 @@ final public class ConstantConditionsCountCheckStrategy {
                             final ValueRange range = targetFunctions.get(functionName);
                             if (operator == PhpTokenTypes.opLESS) {
                                 if (result = (number <= range.getMinimum())) {
-                                    // always false
+                                    holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                                 }
                             } else if (operator == PhpTokenTypes.opLESS_OR_EQUAL) {
                                 if (result = (number < range.getMinimum())) {
-                                    // always false
+                                    holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                                 }
                             } else if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
                                 if (result = (!range.isValidValue(number))) {
-                                    // always false
+                                    holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                                 }
                             } else if (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
                                 if (result = (!range.isValidValue(number))) {
-                                    // always true
+                                    holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
                                 }
                             } else if (operator == PhpTokenTypes.opGREATER) {
                                 if (result = (number < range.getMinimum())) {
-                                    // always true
+                                    holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
                                 }
                             } else if (operator == PhpTokenTypes.opGREATER_OR_EQUAL) {
                                 if (result = (number <= range.getMinimum())) {
-                                    // always true
+                                    holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
                                 }
                             }
                         }

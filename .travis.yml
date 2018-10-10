@@ -38,6 +38,7 @@ before_cache:
   - rm -fr $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
 
 cache:
+  apt: true
   directories:
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/

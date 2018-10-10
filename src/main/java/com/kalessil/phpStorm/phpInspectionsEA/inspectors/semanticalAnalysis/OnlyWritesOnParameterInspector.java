@@ -10,6 +10,7 @@ import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -280,7 +281,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 }
 
 
-                if (intCountReadAccesses == 0 && intCountWriteAccesses > 0) {
+                if (intCountReadAccesses == 0 && intCountWriteAccesses > 0 && !this.isAnySuppressed(targetExpressions)) {
                     for (final PsiElement targetExpression : targetExpressions) {
                         holder.registerProblem(targetExpression, messageOnlyWrites, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                     }
@@ -288,6 +289,25 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 targetExpressions.clear();
 
                 return usages.length;
+            }
+
+            private boolean isAnySuppressed(@NotNull List<PsiElement> expressions) {
+                for (final PsiElement one : expressions) {
+                    final PsiElement parent = one.getParent();
+                    if (parent instanceof AssignmentExpression) {
+                        final PsiElement grandParent = parent.getParent();
+                        if (OpenapiTypesUtil.isStatementImpl(grandParent)) {
+                            final PsiElement previous = ((PhpPsiElement) grandParent).getPrevPsiSibling();
+                            if (previous instanceof PhpDocComment) {
+                                final String candidate = previous.getText();
+                                if (candidate.contains("@noinspection") && candidate.contains("OnlyWritesOnParameterInspection")) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
             }
         };
     }

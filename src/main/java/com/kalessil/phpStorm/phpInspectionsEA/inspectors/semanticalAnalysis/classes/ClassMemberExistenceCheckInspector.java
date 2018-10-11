@@ -21,7 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-final public class ClassMemberExistenceInspector extends BasePhpInspection {
+final public class ClassMemberExistenceCheckInspector extends BasePhpInspection {
+    private static final String message = "This call seems to always return true, please check the workflow.";
 
     final private static Set<String> targetFunctions = new HashSet<>();
     static {
@@ -31,7 +32,7 @@ final public class ClassMemberExistenceInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "ClassExistenceCheckInspection";
+        return "ClassMemberExistenceCheckInspection";
     }
 
     @Override
@@ -59,6 +60,9 @@ final public class ClassMemberExistenceInspector extends BasePhpInspection {
                                     member = OpenapiResolveUtil.resolveField(clazz, memberName);
                                 }
                                 /* analyze */
+                                if (member != null && ExpressionSemanticUtil.getBlockScope(member) instanceof PhpClass) {
+                                    holder.registerProblem(reference, message);
+                                }
                             }
                         }
                     }

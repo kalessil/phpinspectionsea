@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>3.0.6.1</version>
+  <version>3.0.7</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -12,7 +12,7 @@
 
   <description><![CDATA[
   Replaced by description.html
-    ]]></description>
+  ]]></description>
 
   <change-notes><![CDATA[
   Placeholder. Run prepare-release.sh to list all commits, then add notes to src/main/resources/change-notes.html,

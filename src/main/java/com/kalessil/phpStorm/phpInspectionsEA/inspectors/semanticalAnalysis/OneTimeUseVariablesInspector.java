@@ -110,9 +110,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         final Function function = ExpressionSemanticUtil.getScope(construct);
                         if (function != null) {
                             /* check if variable as a function/use(...) parameter by reference */
-                            final boolean isReference =
-                                    this.isArgumentReference(argument, function) ||
-                                    this.isBoundReference(argument, function);
+                            final boolean isReference = this.isArgumentReference(argument, function) ||
+                                                        this.isBoundReference(argument, function);
                             if (isReference) {
                                 return;
                             }
@@ -230,7 +229,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
             }
 
-            @Override public void visitPhpEchoStatement(@NotNull PhpEchoStatement expression) {
+            @Override
+            public void visitPhpEchoStatement(@NotNull PhpEchoStatement expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(expression))             { return; }
 

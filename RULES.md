@@ -218,6 +218,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | UnusedFunctionResultInspection                  | Unused function result                                    | n/a | yes | n/a  | no  |
 | Probable bugs        | MissingArrayInitializationInspection            | Missing array initialization                              | n/a | yes | n/a  | no  |
 | Probable bugs        | StreamSelectUsageInspection                     | 'stream_select(...)' usage correctness                    | n/a | yes | n/a  | no  |
+| Probable bugs        | ClassMemberExistenceCheckInspection             | Class member existence check correctness                  | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

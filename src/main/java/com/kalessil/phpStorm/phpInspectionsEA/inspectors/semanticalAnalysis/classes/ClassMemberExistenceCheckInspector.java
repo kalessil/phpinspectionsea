@@ -21,8 +21,18 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class ClassMemberExistenceCheckInspector extends BasePhpInspection {
-    private static final String message = "This call seems to always return true, please check the workflow.";
+    private static final String messageTrue  = "This call seems to always return true, please check the workflow.";
+    private static final String messageFalse = "This call seems to always return false, perhaps a wrong function being used.";
 
     final private static Set<String> targetFunctions = new HashSet<>();
     static {
@@ -56,12 +66,18 @@ final public class ClassMemberExistenceCheckInspector extends BasePhpInspection 
                                 PhpClassMember member = null;
                                 if (functionName.equals("method_exists")) {
                                     member = OpenapiResolveUtil.resolveMethod(clazz, memberName);
+                                    if (member == null && OpenapiResolveUtil.resolveField(clazz, memberName) != null) {
+                                        holder.registerProblem(reference, messageFalse);
+                                    }
                                 } else if (functionName.equals("property_exists")) {
                                     member = OpenapiResolveUtil.resolveField(clazz, memberName);
+                                    if (member == null && OpenapiResolveUtil.resolveMethod(clazz, memberName) != null) {
+                                        holder.registerProblem(reference, messageFalse);
+                                    }
                                 }
                                 /* analyze */
                                 if (member != null && ExpressionSemanticUtil.getBlockScope(member) instanceof PhpClass) {
-                                    holder.registerProblem(reference, message);
+                                    holder.registerProblem(reference, messageTrue);
                                 }
                             }
                         }

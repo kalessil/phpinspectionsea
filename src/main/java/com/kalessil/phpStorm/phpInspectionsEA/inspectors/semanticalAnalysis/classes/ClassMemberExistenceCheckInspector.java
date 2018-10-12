@@ -50,7 +50,7 @@ final public class ClassMemberExistenceCheckInspector extends BasePhpInspection 
                     if (arguments.length >= 2) {
                         final String memberName = this.extractMemberName(arguments[1]);
                         if (!memberName.isEmpty()) {
-                            final PhpClass clazz = this.extractClass(arguments[1]);
+                            final PhpClass clazz = this.extractClass(arguments[0]);
                             if (clazz != null) {
                                 /* resolve the member */
                                 PhpClassMember member = null;

@@ -3,19 +3,19 @@ New features release<br/>
 <br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/50950">v3.0.7</a><br/>
 <br/>
-- SuspiciousBinaryOperationInspector: new patterns<br/>
-- TernaryOperatorSimplifyInspector: QF bug-fix<br/>
-- CallableParameterUseCaseInTypeContextInspection: resolved a false positive (is_subclass_of)<br/>
-- OnlyWritesOnParameterInspector: new patterns<br/>
-- UnnecessaryEmptinessCheckInspector: new patterns<br/>
-- CascadeStringReplacementInspector: new patterns<br/>
-- NotOptimalRegularExpressionsInspector: resolved a false-positives (single characters alternation)<br/>
-- PotentialMalwareInspector: new patterns<br/>
+- Basic malware patterns: new patterns<br/>
+- Callable parameter usage violates definition: resolved a false positive (is_subclass_of)<br/>
+- Cascading 'str_replace(...)' calls: new patterns<br/>
+- Non-optimal regular expression: resolved a false-positives (single characters alternation)<br/>
+- Parameter/variable is not used: new patterns<br/>
+- Suspicious binary operations: new patterns<br/>
+- Ternary operator could be simplified: QF bug-fix<br/>
+- Unnecessary emptiness check: new patterns<br/>
 <br/>
-- ClassMemberExistenceCheckInspector: implemented<br/>
-- StreamSelectUsageInspector: implemented<br/>
-- UnusedFunctionResultInspector: implemented<br/>
-- Distraction level settings: implemented (File | Settings | Other Settings | Php Inspections (EA Ultimate))<br/>
+- Class member existence check correctness: implemented<br/>
+- Distraction level settings added (File | Settings | Other Settings | Php Inspections (EA Ultimate))<br/>
+- Unused function result: implemented<br/>
+- 'stream_select(...)' usage correctness: implemented<br/>
 <br/>
 <hr/>
 </html>

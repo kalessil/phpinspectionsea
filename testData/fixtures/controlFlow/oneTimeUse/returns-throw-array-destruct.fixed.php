@@ -22,7 +22,13 @@ function array_assembly()
     return ['widget_filters' => $filters];
 }
 
-function assignment() {
+function assignment()
+{
     $result = '...';
     return trim($result);
+}
+
+function method_call_case()
+{
+    return (new \stdClass())->method();
 }

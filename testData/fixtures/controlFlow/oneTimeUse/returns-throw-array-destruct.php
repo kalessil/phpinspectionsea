@@ -28,8 +28,15 @@ function array_assembly()
     return ['widget_filters' => $filters];
 }
 
-function assignment() {
+function assignment()
+{
     <warning descr="Variable $temporary is redundant.">$temporary</warning> = '...';
     $result = $temporary;
     return trim($result);
+}
+
+function method_call_case()
+{
+    <warning descr="Variable $temporary is redundant.">$temporary</warning> = new \stdClass();
+    return $temporary->method();
 }

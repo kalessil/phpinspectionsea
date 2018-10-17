@@ -18,6 +18,15 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class NestedNotOperatorsInspector extends BasePhpInspection {
     private static final String messageUseBoolCasting = "Can be replaced with (bool)%e%.";
     private static final String messageUseSingleNot   = "Can be replaced with !%e%.";
@@ -103,7 +112,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             final PsiElement value      = this.value.getElement();
-            if (null != value && expression instanceof UnaryExpression) {
+            if (value != null && expression instanceof UnaryExpression) {
                 ((UnaryExpression) expression).getValue().replace(value);
             }
         }
@@ -135,10 +144,15 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement value = this.value.getElement();
-            if (null != value) {
-                UnaryExpression replacement = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "(bool) null");
-                replacement.getValue().replace(value);
-                descriptor.getPsiElement().replace(replacement);
+            if (value != null) {
+                final UnaryExpression replacement = PhpPsiElementFactory.createFromText(
+                        project,
+                        UnaryExpression.class,
+                        "(bool) " + value.getText()
+                );
+                if (replacement != null) {
+                    descriptor.getPsiElement().replace(replacement);
+                }
             }
         }
     }

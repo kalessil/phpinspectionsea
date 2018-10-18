@@ -458,7 +458,7 @@
         groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingMethodsCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PhpUnitDeprecationsInspection"                 displayName="PhpUnit deprecations"
+        shortName="PhpUnitDeprecationsInspection"                 displayName="PhpUnit: API deprecations"
         groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitDeprecationsInspector"/>
 

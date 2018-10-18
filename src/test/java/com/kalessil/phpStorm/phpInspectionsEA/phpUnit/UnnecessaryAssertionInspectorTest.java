@@ -8,7 +8,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.UnnecessaryAsse
 final public class UnnecessaryAssertionInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsCoversAnnotationPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-
         myFixture.enableInspections(new UnnecessaryAssertionInspector());
         myFixture.configureByFile("testData/fixtures/phpUnit/unnecessary-assertion.php");
         myFixture.testHighlighting(true, false, true);

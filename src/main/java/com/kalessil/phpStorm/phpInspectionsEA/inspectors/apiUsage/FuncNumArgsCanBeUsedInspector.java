@@ -44,7 +44,12 @@ public class FuncNumArgsCanBeUsedInspector extends BasePhpInspection {
                         final FunctionReference innerReference = (FunctionReference) arguments[0];
                         final String innerName                 = innerReference.getName();
                         if (innerName != null && innerName.equals("func_get_args")) {
-                            holder.registerProblem(reference, message, new UseAlternativeFix("func_num_args()"));
+                            final String namespace = innerReference.getImmediateNamespaceName();
+                            holder.registerProblem(
+                                    reference,
+                                    message,
+                                    new UseAlternativeFix(namespace + "func_num_args()")
+                            );
                         }
                     }
                 }

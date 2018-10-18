@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 public class FuncNumArgsCanBeUsedInspector extends BasePhpInspection {
     private static final String message = "'func_num_args()' can be used instead.";
 
-
     @NotNull
     public String getShortName() {
         return "FuncNumArgsCanBeUsedInspection";

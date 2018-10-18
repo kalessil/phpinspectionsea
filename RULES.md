@@ -48,6 +48,7 @@ Inspections Lists (Control flow)
 | Control Flow         | UnnecessaryEmptinessCheckInspection             | Unnecessary emptiness check                                                       | n/a | yes | n/a  | no  |
 | Control Flow         | IllusionOfChoiceInspection                      | Illusion of choice                                                                | yes | yes | yes  | no  |
 | Control Flow         | IssetConstructsCanBeMergedInspection            | 'isset(...)' constructs can be merged                                             | yes | yes | yes  | no  |
+| Control Flow         | FuncNumArgsCanBeUsedInspection                  | 'func_num_args(...)' can be used                                                  | yes | yes | yes  | no  |
 
 Inspections Lists (PhpUnit)
 ---

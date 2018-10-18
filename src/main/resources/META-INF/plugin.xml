@@ -268,7 +268,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IssetConstructsCanBeMergedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="FuncNumArgsCanBeUsedInspection"                 displayName="'func_num_args(...)' can be used"
-        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FuncNumArgsCanBeUsedInspector"/>
 
 

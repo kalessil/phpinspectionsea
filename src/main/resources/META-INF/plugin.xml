@@ -266,6 +266,10 @@
         shortName="IssetConstructsCanBeMergedInspection"           displayName="'isset(...)' constructs can be merged"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.IssetConstructsCanBeMergedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="FuncNumArgsCanBeUsedInspection"                 displayName="'func_num_args(...)' can be used"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FuncNumArgsCanBeUsedInspector"/>
 
 
   <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

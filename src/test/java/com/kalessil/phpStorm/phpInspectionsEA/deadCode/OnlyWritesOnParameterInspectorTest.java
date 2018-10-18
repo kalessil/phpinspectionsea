@@ -7,6 +7,7 @@ final public class OnlyWritesOnParameterInspectorTest extends PhpCodeInsightFixt
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new OnlyWritesOnParameterInspector());
         myFixture.configureByFile("testData/fixtures/deadCode/parameters-writes-only.php");
+        myFixture.configureByFile("testData/fixtures/deadCode/parameters-writes-only.suppression.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

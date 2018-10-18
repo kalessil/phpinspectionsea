@@ -15,6 +15,5 @@ final public class UnnecessaryAssertionInspectorTest extends PhpCodeInsightFixtu
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/phpUnit/unnecessary-assertion.fixed.php");
-
     }
 }

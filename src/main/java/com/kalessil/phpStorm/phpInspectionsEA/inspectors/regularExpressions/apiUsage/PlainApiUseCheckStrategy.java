@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -176,10 +177,21 @@ final public class PlainApiUseCheckStrategy {
                 result = OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT);
             }
         } else if (parent instanceof BinaryExpression) {
+            // inverted: < 1, == 0, === 0, != 1, !== 1
+            // not inverted: > 0, == 1, === 1, != 0, !== 0
             final BinaryExpression binary = (BinaryExpression) parent;
             final IElementType operator   = binary.getOperationType();
-            // inverted: < 1, == 0, === 0, != 1, !== 1
-            // Not inverted: > 0, == 1, === 1, != 0, !== 0
+            if (operator == PhpTokenTypes.opLESS || OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                if (OpenapiTypesUtil.isNumber(second)) {
+                    final String number = second.getText();
+                    result              = operator == PhpTokenTypes.opLESS && number.equals("1") ||
+                                          operator == PhpTokenTypes.opEQUAL && number.equals("0") ||
+                                          operator == PhpTokenTypes.opIDENTICAL && number.equals("0") ||
+                                          operator == PhpTokenTypes.opNOT_EQUAL && number.equals("1") ||
+                                          operator == PhpTokenTypes.opNOT_IDENTICAL && number.equals("1");
+                }
+            }
         }
         return result;
     }

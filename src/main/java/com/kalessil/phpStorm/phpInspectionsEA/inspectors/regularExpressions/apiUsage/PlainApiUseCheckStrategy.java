@@ -93,10 +93,12 @@ final public class PlainApiUseCheckStrategy {
                         message = messagePattern.replace("%e%", replacement);
                         fixer   = new UseStringComparisonFix(replacement);
                     } else if (startWith && !endsWith) {
-                        final String replacement = "0 === %f%(%s%, \"%p%\")"
-                            .replace("%p%", unescape(regexMatcher.group(2)))
-                            .replace("%s%", params[1].getText())
-                            .replace("%f%", ignoreCase ? "stripos" : "strpos");
+                        final String replacement = String.format(
+                                "0 === %s(%s, \"%s\")",
+                                ignoreCase ? "stripos" : "strpos",
+                                params[1].getText(),
+                                unescape(regexMatcher.group(2))
+                        );
                         message = messagePattern.replace("%e%", replacement);
                         fixer   = new UseStringPositionFix(replacement);
                     } else if (!startWith && !endsWith) {

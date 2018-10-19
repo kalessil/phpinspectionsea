@@ -85,13 +85,14 @@ final public class PlainApiUseCheckStrategy {
                     final boolean isInverted = isPregMatchInverted(reference);
 
                     if (startWith && endsWith && !ignoreCase) {
-                        final String replacement = "\"%p%\" === %s%"
-                            .replace("%p%", unescape(regexMatcher.group(2)))
-                            .replace("%s%", params[1].getText());
+                        final String replacement = String.format(
+                                "\"%s\" === %s",
+                                unescape(regexMatcher.group(2)),
+                                params[1].getText()
+                        );
                         message = messagePattern.replace("%e%", replacement);
                         fixer   = new UseStringComparisonFix(replacement);
                     } else if (startWith && !endsWith) {
-                        // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
                         final String replacement = "0 === %f%(%s%, \"%p%\")"
                             .replace("%p%", unescape(regexMatcher.group(2)))
                             .replace("%s%", params[1].getText())
@@ -99,7 +100,6 @@ final public class PlainApiUseCheckStrategy {
                         message = messagePattern.replace("%e%", replacement);
                         fixer   = new UseStringPositionFix(replacement);
                     } else if (!startWith && !endsWith) {
-                        // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
                         final String replacement = "false !== %f%(%s%, \"%p%\")"
                             .replace("%p%", unescape(regexMatcher.group(2)))
                             .replace("%s%", params[1].getText())

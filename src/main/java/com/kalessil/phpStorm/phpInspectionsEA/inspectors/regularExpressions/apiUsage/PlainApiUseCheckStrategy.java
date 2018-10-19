@@ -86,15 +86,17 @@ final public class PlainApiUseCheckStrategy {
 
                     if (startWith && endsWith && !ignoreCase) {
                         final String replacement = String.format(
-                                "\"%s\" === %s",
+                                "\"%s\" %s %s",
                                 unescape(regexMatcher.group(2)),
+                                isInverted ? "!==" : "===",
                                 params[1].getText()
                         );
                         message = messagePattern.replace("%e%", replacement);
                         fixer   = new UseStringComparisonFix(replacement);
                     } else if (startWith && !endsWith) {
                         final String replacement = String.format(
-                                "0 === %s(%s, \"%s\")",
+                                "0 %s %s(%s, \"%s\")",
+                                isInverted ? "!==" : "===",
                                 ignoreCase ? "stripos" : "strpos",
                                 params[1].getText(),
                                 unescape(regexMatcher.group(2))
@@ -103,7 +105,8 @@ final public class PlainApiUseCheckStrategy {
                         fixer   = new UseStringPositionFix(replacement);
                     } else if (!startWith && !endsWith) {
                         final String replacement = String.format(
-                                "false !== %s(%s, \"%s\")",
+                                "false %s %s(%s, \"%s\")",
+                                isInverted ? "===" : "!==",
                                 ignoreCase ? "stripos" : "strpos",
                                 params[1].getText(),
                                 unescape(regexMatcher.group(2))

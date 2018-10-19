@@ -3,9 +3,15 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.api
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,6 +80,8 @@ final public class PlainApiUseCheckStrategy {
                 LocalQuickFix fixer = null;
 
                 if (parametersCount == 2 && functionName.equals("preg_match")) {
+                    final boolean isInverted = isPregMatchInverted(reference);
+
                     if (startWith && endsWith && !ignoreCase) {
                         final String replacement = "\"%p%\" === %s%"
                             .replace("%p%", unescape(regexMatcher.group(2)))
@@ -158,6 +166,22 @@ final public class PlainApiUseCheckStrategy {
                 holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseExplodeFix(replacement));
             }
         }
+    }
+
+    private static boolean isPregMatchInverted(@NotNull FunctionReference reference) {
+        boolean result          = false;
+        final PsiElement parent = reference.getParent();
+        if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+            if (parent instanceof UnaryExpression) {
+                result = OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT);
+            }
+        } else if (parent instanceof BinaryExpression) {
+            final BinaryExpression binary = (BinaryExpression) parent;
+            final IElementType operator   = binary.getOperationType();
+            // inverted: < 1, == 0, === 0, != 1, !== 1
+            // Not inverted: > 0, == 1, === 1, != 0, !== 0
+        }
+        return result;
     }
 
     private static String unescape(@NotNull String string) {

@@ -79,6 +79,7 @@ final public class PlainApiUseCheckStrategy {
                 /* analyse if pattern is the one strategy targeting */
                 String message      = null;
                 LocalQuickFix fixer = null;
+                PsiElement target   = reference;
 
                 if (parametersCount == 2 && functionName.equals("preg_match")) {
                     final boolean isInverted = isPregMatchInverted(reference);
@@ -118,7 +119,7 @@ final public class PlainApiUseCheckStrategy {
                 }
 
                 if (message != null) {
-                    holder.registerProblem(reference, message, fixer);
+                    holder.registerProblem(target, message, fixer);
                     return;
                 }
             }

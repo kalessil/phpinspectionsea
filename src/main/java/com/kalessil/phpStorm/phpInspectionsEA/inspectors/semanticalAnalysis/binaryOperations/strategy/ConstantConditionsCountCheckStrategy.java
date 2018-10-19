@@ -40,10 +40,12 @@ final public class ConstantConditionsCountCheckStrategy {
         targetOperations.add(PhpTokenTypes.opLESS);
         targetOperations.add(PhpTokenTypes.opLESS_OR_EQUAL);
 
-        targetFunctions.put("count",        ValueRange.of(0, Long.MAX_VALUE));
-        targetFunctions.put("strlen",       ValueRange.of(0, Long.MAX_VALUE));
-        targetFunctions.put("mb_strlen",    ValueRange.of(0, Long.MAX_VALUE));
-        targetFunctions.put("iconv_strlen", ValueRange.of(0, Long.MAX_VALUE));
+        targetFunctions.put("count",          ValueRange.of(0, Long.MAX_VALUE));
+        targetFunctions.put("strlen",         ValueRange.of(0, Long.MAX_VALUE));
+        targetFunctions.put("mb_strlen",      ValueRange.of(0, Long.MAX_VALUE));
+        targetFunctions.put("iconv_strlen",   ValueRange.of(0, Long.MAX_VALUE));
+        targetFunctions.put("preg_match",     ValueRange.of(0, 1L));
+        targetFunctions.put("preg_match_all", ValueRange.of(0, Long.MAX_VALUE));
     }
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {

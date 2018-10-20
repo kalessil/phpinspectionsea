@@ -79,7 +79,6 @@ final public class PlainApiUseCheckStrategy {
                 /* analyse if pattern is the one strategy targeting */
                 String message      = null;
                 LocalQuickFix fixer = null;
-                PsiElement target   = reference;
 
                 if (parametersCount == 2 && functionName.equals("preg_match")) {
                     final boolean isInverted = isPregMatchInverted(reference);
@@ -126,7 +125,7 @@ final public class PlainApiUseCheckStrategy {
                 }
 
                 if (message != null) {
-                    holder.registerProblem(target, message, fixer);
+                    holder.registerProblem(getPregMatchContext(reference), message, fixer);
                     return;
                 }
             }
@@ -199,6 +198,28 @@ final public class PlainApiUseCheckStrategy {
                                           operator == PhpTokenTypes.opNOT_EQUAL && number.equals("1") ||
                                           operator == PhpTokenTypes.opNOT_IDENTICAL && number.equals("1");
                 }
+            }
+        }
+        return result;
+    }
+
+    private static PsiElement getPregMatchContext(@NotNull FunctionReference reference) {
+        PsiElement result       =  reference;
+        final PsiElement parent = reference.getParent();
+        if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+            if (parent instanceof UnaryExpression) {
+                final UnaryExpression unary = (UnaryExpression) parent;
+                if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                    result = parent;
+                }
+            }
+        } else if (parent instanceof BinaryExpression) {
+            final BinaryExpression binary = (BinaryExpression) parent;
+            final IElementType operator   = binary.getOperationType();
+            if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                result = parent;
+            } else if (PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator)) {
+                result = parent;
             }
         }
         return result;

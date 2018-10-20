@@ -48,4 +48,13 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/regularExpressions/plain-api-usage.fixed.php");
     }
+    public void testPregMatchPatterns() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/preg-match.php");
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/regularExpressions/preg-match.fixed.php");
+    }
 }

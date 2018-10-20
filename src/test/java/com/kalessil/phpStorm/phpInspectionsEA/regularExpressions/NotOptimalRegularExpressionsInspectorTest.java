@@ -73,4 +73,13 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("testData/fixtures/regularExpressions/regex-delimiters.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testPregMatchPatterns() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/preg-match.php");
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/regularExpressions/preg-match.fixed.php");
+    }
 }

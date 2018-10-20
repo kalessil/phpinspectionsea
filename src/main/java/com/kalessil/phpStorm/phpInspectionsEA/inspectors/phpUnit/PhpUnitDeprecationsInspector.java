@@ -33,6 +33,8 @@ public class PhpUnitDeprecationsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String methodName = reference.getName();
                 if (methodName != null && (methodName.equals("assertEquals") || methodName.equals("assertNotEquals"))) {
                     final PsiElement[] arguments = reference.getParameters();

@@ -125,10 +125,7 @@ final public class PlainApiUseCheckStrategy {
                 }
 
                 if (message != null) {
-                    final PsiElement target = getPregMatchContext(reference);
-                    if (target != null) {
-                        holder.registerProblem(target, message, fixer);
-                    }
+                    holder.registerProblem(getPregMatchContext(reference), message, fixer);
                     return;
                 }
             }
@@ -206,12 +203,10 @@ final public class PlainApiUseCheckStrategy {
         return result;
     }
 
-    @Nullable
     private static PsiElement getPregMatchContext(@NotNull FunctionReference reference) {
-        PsiElement result       =  null;
+        PsiElement result       = reference;
         final PsiElement parent = reference.getParent();
         if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-            result = reference;
             if (parent instanceof UnaryExpression) {
                 final UnaryExpression unary = (UnaryExpression) parent;
                 if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {

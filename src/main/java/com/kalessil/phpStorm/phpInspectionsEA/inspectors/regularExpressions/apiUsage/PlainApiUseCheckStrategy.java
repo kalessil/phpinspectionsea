@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  */
 
 final public class PlainApiUseCheckStrategy {
-    private static final String messagePattern = "'%e%' can be used instead.";
+    private static final String messagePattern = "'%s' can be used instead.";
 
     final static private Pattern regexTextSearch;
     static {
@@ -90,7 +90,7 @@ final public class PlainApiUseCheckStrategy {
                                 isInverted ? "!==" : "===",
                                 params[1].getText()
                         );
-                        message = messagePattern.replace("%e%", replacement);
+                        message = String.format(messagePattern, replacement);
                         fixer   = new UseStringComparisonFix(replacement);
                     } else if (startWith && !endsWith) {
                         final String replacement = String.format(
@@ -100,7 +100,7 @@ final public class PlainApiUseCheckStrategy {
                                 params[1].getText(),
                                 unescape(regexMatcher.group(2))
                         );
-                        message = messagePattern.replace("%e%", replacement);
+                        message = String.format(messagePattern, replacement);
                         fixer   = new UseStringPositionFix(replacement);
                     } else if (!startWith && !endsWith) {
                         final String replacement = String.format(
@@ -110,7 +110,7 @@ final public class PlainApiUseCheckStrategy {
                                 params[1].getText(),
                                 unescape(regexMatcher.group(2))
                         );
-                        message = messagePattern.replace("%e%", replacement);
+                        message = String.format(messagePattern, replacement);
                         fixer   = new UseStringPositionFix(replacement);
                     }
                 } else if (parametersCount == 3 && functionName.equals("preg_replace") && !startWith && !endsWith) {
@@ -120,7 +120,7 @@ final public class PlainApiUseCheckStrategy {
                         .replace("%r%", params[1].getText())
                         .replace("%p%", unescape(regexMatcher.group(2)))
                         .replace("%f%", ignoreCase ? "str_ireplace" : "str_replace");
-                    message = messagePattern.replace("%e%", replacement);
+                    message = String.format(messagePattern, replacement);
                     fixer   = new UseStringReplaceFix(replacement);
                 }
 
@@ -158,7 +158,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%p%", unescape(characterToTrim))
                     .replace("%s%", params[2].getText())
                     .replace("%f%", function);
-                holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseTrimFix(replacement));
+                holder.registerProblem(reference, String.format(messagePattern, replacement), new UseTrimFix(replacement));
                 return;
             }
 
@@ -171,7 +171,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
                     .replace("%s%", params[1].getText())
                     .replace("%p%", unescape(patternAdapted));
-                holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseExplodeFix(replacement));
+                holder.registerProblem(reference, String.format(messagePattern, replacement), new UseExplodeFix(replacement));
             }
         }
     }

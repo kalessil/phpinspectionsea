@@ -214,12 +214,15 @@ final public class PlainApiUseCheckStrategy {
                 }
             }
         } else if (parent instanceof BinaryExpression) {
-            final BinaryExpression binary = (BinaryExpression) parent;
-            final IElementType operator   = binary.getOperationType();
-            if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
-                result = parent;
-            } else if (PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator)) {
-                result = parent;
+            final BinaryExpression binary  = (BinaryExpression) parent;
+            final IElementType operator    = binary.getOperationType();
+            final boolean isTargetOperator = OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator) ||
+                                             PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator);
+            if (isTargetOperator) {
+                final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                if (OpenapiTypesUtil.isNumber(second)) {
+                    result = parent;
+                }
             }
         }
         return result;

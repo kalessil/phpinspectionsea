@@ -606,6 +606,10 @@
         shortName="MockingMethodsCorrectnessInspection"           displayName="PhpUnit: methods mocking issues"
         groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingMethodsCorrectnessInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="PhpUnitDeprecationsInspection"                 displayName="PhpUnit: API deprecations"
+        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitDeprecationsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -3,9 +3,16 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.api
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +30,7 @@ import java.util.regex.Pattern;
  */
 
 final public class PlainApiUseCheckStrategy {
-    private static final String messagePattern = "'%e%' can be used instead.";
+    private static final String messagePattern = "'%s' can be used instead.";
 
     final static private Pattern regexTextSearch;
     static {
@@ -74,27 +81,36 @@ final public class PlainApiUseCheckStrategy {
                 LocalQuickFix fixer = null;
 
                 if (parametersCount == 2 && functionName.equals("preg_match")) {
+                    final boolean isInverted = isPregMatchInverted(reference);
+
                     if (startWith && endsWith && !ignoreCase) {
-                        final String replacement = "\"%p%\" === %s%"
-                            .replace("%p%", unescape(regexMatcher.group(2)))
-                            .replace("%s%", params[1].getText());
-                        message = messagePattern.replace("%e%", replacement);
+                        final String replacement = String.format(
+                                "\"%s\" %s %s",
+                                unescape(regexMatcher.group(2)),
+                                isInverted ? "!==" : "===",
+                                params[1].getText()
+                        );
+                        message = String.format(messagePattern, replacement);
                         fixer   = new UseStringComparisonFix(replacement);
                     } else if (startWith && !endsWith) {
-                        // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
-                        final String replacement = "0 === %f%(%s%, \"%p%\")"
-                            .replace("%p%", unescape(regexMatcher.group(2)))
-                            .replace("%s%", params[1].getText())
-                            .replace("%f%", ignoreCase ? "stripos" : "strpos");
-                        message = messagePattern.replace("%e%", replacement);
+                        final String replacement = String.format(
+                                "0 %s %s(%s, \"%s\")",
+                                isInverted ? "!==" : "===",
+                                ignoreCase ? "stripos" : "strpos",
+                                params[1].getText(),
+                                unescape(regexMatcher.group(2))
+                        );
+                        message = String.format(messagePattern, replacement);
                         fixer   = new UseStringPositionFix(replacement);
                     } else if (!startWith && !endsWith) {
-                        // mixed strpos ( string $haystack , mixed $needle [, int $offset = 0 ] )
-                        final String replacement = "false !== %f%(%s%, \"%p%\")"
-                            .replace("%p%", unescape(regexMatcher.group(2)))
-                            .replace("%s%", params[1].getText())
-                            .replace("%f%", ignoreCase ? "stripos" : "strpos");
-                        message = messagePattern.replace("%e%", replacement);
+                        final String replacement = String.format(
+                                "false %s %s(%s, \"%s\")",
+                                isInverted ? "===" : "!==",
+                                ignoreCase ? "stripos" : "strpos",
+                                params[1].getText(),
+                                unescape(regexMatcher.group(2))
+                        );
+                        message = String.format(messagePattern, replacement);
                         fixer   = new UseStringPositionFix(replacement);
                     }
                 } else if (parametersCount == 3 && functionName.equals("preg_replace") && !startWith && !endsWith) {
@@ -104,12 +120,12 @@ final public class PlainApiUseCheckStrategy {
                         .replace("%r%", params[1].getText())
                         .replace("%p%", unescape(regexMatcher.group(2)))
                         .replace("%f%", ignoreCase ? "str_ireplace" : "str_replace");
-                    message = messagePattern.replace("%e%", replacement);
+                    message = String.format(messagePattern, replacement);
                     fixer   = new UseStringReplaceFix(replacement);
                 }
 
                 if (message != null) {
-                    holder.registerProblem(reference, message, fixer);
+                    holder.registerProblem(getPregMatchContext(reference), message, fixer);
                     return;
                 }
             }
@@ -142,7 +158,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%p%", unescape(characterToTrim))
                     .replace("%s%", params[2].getText())
                     .replace("%f%", function);
-                holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseTrimFix(replacement));
+                holder.registerProblem(reference, String.format(messagePattern, replacement), new UseTrimFix(replacement));
                 return;
             }
 
@@ -155,9 +171,61 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
                     .replace("%s%", params[1].getText())
                     .replace("%p%", unescape(patternAdapted));
-                holder.registerProblem(reference, messagePattern.replace("%e%", replacement), new UseExplodeFix(replacement));
+                holder.registerProblem(reference, String.format(messagePattern, replacement), new UseExplodeFix(replacement));
             }
         }
+    }
+
+    private static boolean isPregMatchInverted(@NotNull FunctionReference reference) {
+        boolean result          = false;
+        final PsiElement parent = reference.getParent();
+        if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+            if (parent instanceof UnaryExpression) {
+                result = OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT);
+            }
+        } else if (parent instanceof BinaryExpression) {
+            // inverted: < 1, == 0, === 0, != 1, !== 1
+            // not inverted: > 0, == 1, === 1, != 0, !== 0
+            final BinaryExpression binary = (BinaryExpression) parent;
+            final IElementType operator   = binary.getOperationType();
+            if (operator == PhpTokenTypes.opLESS || OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                if (OpenapiTypesUtil.isNumber(second)) {
+                    final String number = second.getText();
+                    result              = operator == PhpTokenTypes.opLESS && number.equals("1") ||
+                                          operator == PhpTokenTypes.opEQUAL && number.equals("0") ||
+                                          operator == PhpTokenTypes.opIDENTICAL && number.equals("0") ||
+                                          operator == PhpTokenTypes.opNOT_EQUAL && number.equals("1") ||
+                                          operator == PhpTokenTypes.opNOT_IDENTICAL && number.equals("1");
+                }
+            }
+        }
+        return result;
+    }
+
+    private static PsiElement getPregMatchContext(@NotNull FunctionReference reference) {
+        PsiElement result       = reference;
+        final PsiElement parent = reference.getParent();
+        if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+            if (parent instanceof UnaryExpression) {
+                final UnaryExpression unary = (UnaryExpression) parent;
+                if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                    result = parent;
+                }
+            }
+        } else if (parent instanceof BinaryExpression) {
+            final BinaryExpression binary  = (BinaryExpression) parent;
+            final IElementType operator    = binary.getOperationType();
+            final boolean isTargetOperator = OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator) ||
+                                             PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator);
+            if (isTargetOperator) {
+                final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                if (OpenapiTypesUtil.isNumber(second)) {
+                    result = parent;
+                }
+            }
+        }
+        return result;
     }
 
     private static String unescape(@NotNull String string) {

@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -46,7 +47,7 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
                 if (argument instanceof NewExpression) {
                     final NewExpression newExpression   = (NewExpression) argument;
                     final ClassReference classReference = newExpression.getClassReference();
-                    final String classFqn               = null == classReference ? null : classReference.getFQN();
+                    final String classFqn               = classReference == null ? null : classReference.getFQN();
                     if (classFqn != null) {
                         if (classFqn.equals("\\Exception")) {
                             holder.registerProblem(classReference, messageRawException, new TheLocalFix());
@@ -93,7 +94,9 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression instanceof ClassReference && !project.isDisposed()) {
-                ((ClassReference) expression).handleElementRename("RuntimeException");
+                final String namespace    = ((ClassReference) expression).getImmediateNamespaceName();
+                final String newReference = (namespace.isEmpty() ? "\\" : namespace) + "RuntimeException";
+                expression.replace(PhpPsiElementFactory.createClassReference(project, newReference));
             }
         }
     }

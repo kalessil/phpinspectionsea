@@ -17,3 +17,11 @@ function ignored() {}
 
 /** @return bool|int|void|float */
 function reported() {}
+
+class Clazz extends \stdClass
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+}

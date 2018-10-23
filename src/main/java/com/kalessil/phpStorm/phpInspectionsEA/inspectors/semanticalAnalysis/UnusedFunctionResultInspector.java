@@ -70,7 +70,10 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
-                this.analyze(reference);
+                final String methodName = reference.getName();
+                if (methodName != null && !methodName.equals("__construct")) {
+                    this.analyze(reference);
+                }
             }
 
             @Override

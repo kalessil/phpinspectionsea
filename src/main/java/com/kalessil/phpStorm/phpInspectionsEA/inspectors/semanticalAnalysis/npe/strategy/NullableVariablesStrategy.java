@@ -317,8 +317,11 @@ final public class NullableVariablesStrategy {
         if (reference instanceof MethodReference) {
             final String methodName = ((MethodReference) reference).getName();
             if (methodName != null) {
-                if (methodName.equals("assertNotNull") || methodName.equals("notNull")) {
-                    /* PHPUnit or beberlei/assert assertion */
+                if (methodName.equals("assertNotNull") || methodName.equals("assertInstanceOf") ||
+                    methodName.equals("notNull") || methodName.equals("isInstanceOf") ||
+                    methodName.equals("isInstanceOfAny")
+                ) {
+                    /* PHPUnit, beberlei/assert and webmozart/assert assertions */
                     result = true;
                 } else if (methodName.equals("that")) {
                     /* another beberlei/assert assertion: `Assert::that($g)->notNull()` */

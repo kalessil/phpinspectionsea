@@ -120,7 +120,11 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                                         }
                                     }
                                 }
-                                break;
+                            } else {
+                                final String alias = use.getAliasName();
+                                if (alias != null && alias.equalsIgnoreCase(referenceText)) {
+                                    result.add(alias);
+                                }
                             }
                         }
                     }

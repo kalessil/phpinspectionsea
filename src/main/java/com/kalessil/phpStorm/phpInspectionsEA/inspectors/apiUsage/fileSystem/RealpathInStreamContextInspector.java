@@ -23,8 +23,8 @@ import java.util.Collection;
  */
 
 public class RealpathInStreamContextInspector extends BasePhpInspection {
-    private static final String messageUseDirname = "'realpath()' works differently in a stream context (e.g., for phar://...). Consider using 'dirname()' instead.";
-    private static final String patternUseDirname = "'%e%' should be used instead (due to how realpath handles streams).";
+    private static final String messageUseDirname = "'realpath(...)' works differently in a stream context (e.g., for phar://...). Consider using 'dirname(...)' instead.";
+    private static final String patternUseDirname = "'%s' should be used instead (due to how realpath handles streams).";
 
     @NotNull
     public String getShortName() {
@@ -61,7 +61,7 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                     } else {
                         holder.registerProblem(
                                 reference,
-                                patternUseDirname.replace("%e%", replacement),
+                                String.format(patternUseDirname, replacement),
                                 new SecureRealpathFix(replacement)
                         );
                     }
@@ -79,7 +79,7 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                             } else {
                                 holder.registerProblem(
                                         reference,
-                                        patternUseDirname.replace("%e%", replacement),
+                                        String.format(patternUseDirname, replacement),
                                         new SecureRealpathFix(replacement)
                                 );
                             }

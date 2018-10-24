@@ -23,13 +23,13 @@ import java.util.Collection;
  * file that was distributed with this source code.
  */
 
-public class RealpathInSteamContextInspector extends BasePhpInspection {
+public class RealpathInStreamContextInspector extends BasePhpInspection {
     private static final String messageUseDirname = "'realpath()' works differently in a stream context (e.g., for phar://...). Consider using 'dirname()' instead.";
     private static final String patternUseDirname = "'%e%' should be used instead (due to how realpath handles streams).";
 
     @NotNull
     public String getShortName() {
-        return "RealpathInSteamContextInspection";
+        return "RealpathInStreamContextInspection";
     }
 
     @Override

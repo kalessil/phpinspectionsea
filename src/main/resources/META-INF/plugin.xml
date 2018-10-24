@@ -254,9 +254,9 @@
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PrintfScanfArgumentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="RealpathInSteamContextInspection"              displayName="Phar-incompatible 'realpath(...)' usage"
+        shortName="RealpathInStreamContextInspection"             displayName="Phar-incompatible 'realpath(...)' usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.RealpathInSteamContextInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.RealpathInStreamContextInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="OffsetOperationsInspection"                    displayName="Array and string offset validity"
         groupName="Probable bugs"                                 enabledByDefault="false" level="ERROR"

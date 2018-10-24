@@ -34,11 +34,14 @@ public class DegradedSwitchInspector extends BasePhpInspection {
             @Override
             public void visitPhpSwitch(@NotNull PhpSwitch expression) {
 
-                final PhpCase[] cases = expression.getCases();
+                final PhpCase[] cases     = expression.getCases();
+                final PhpCase defaultCase = expression.getDefaultCase();
                 if (cases.length == 0) {
-                    holder.registerProblem(expression.getFirstChild(), messageOnlyDefault);
+                    if (defaultCase != null) {
+                        holder.registerProblem(expression.getFirstChild(), messageOnlyDefault);
+                    }
                 } else if (cases.length == 1) {
-                    if (expression.getDefaultCase() == null) {
+                    if (defaultCase == null) {
                         holder.registerProblem(expression.getFirstChild(), messageIf);
                     } else {
                         holder.registerProblem(expression.getFirstChild(), messageIfElse);

@@ -18,7 +18,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class DegradedSwitchInspector extends BasePhpInspection {
-    private static final String messageDegraded    = "Switch construct behaves as if-else, consider refactoring.";
+    private static final String messageIf          = "Switch construct behaves as if, consider refactoring.";
+    private static final String messageIfElse      = "Switch construct behaves as if-else, consider refactoring.";
     private static final String messageOnlyDefault = "Switch construct has default case only, consider leaving only the default case's body.";
 
     @NotNull
@@ -32,12 +33,15 @@ public class DegradedSwitchInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpSwitch(@NotNull PhpSwitch expression) {
-                if (expression.getDefaultCase() != null) {
-                    final PhpCase[] cases = expression.getCases();
-                    if (cases.length == 0) {
-                        holder.registerProblem(expression.getFirstChild(), messageOnlyDefault);
-                    } else if (cases.length == 1) {
-                        holder.registerProblem(expression.getFirstChild(), messageDegraded);
+
+                final PhpCase[] cases = expression.getCases();
+                if (cases.length == 0) {
+                    holder.registerProblem(expression.getFirstChild(), messageOnlyDefault);
+                } else if (cases.length == 1) {
+                    if (expression.getDefaultCase() == null) {
+                        holder.registerProblem(expression.getFirstChild(), messageIf);
+                    } else {
+                        holder.registerProblem(expression.getFirstChild(), messageIfElse);
                     }
                 }
             }

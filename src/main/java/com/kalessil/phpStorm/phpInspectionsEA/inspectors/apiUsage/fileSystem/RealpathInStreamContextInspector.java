@@ -57,29 +57,35 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                     if (null == replacement) {
                         holder.registerProblem(reference, messageUseDirname);
                     } else {
-                        final String message = patternUseDirname.replace("%e%", replacement);
-                        holder.registerProblem(reference, message, new SecureRealpathFix(replacement));
+                        holder.registerProblem(
+                                reference,
+                                patternUseDirname.replace("%e%", replacement),
+                                new SecureRealpathFix(replacement)
+                        );
                     }
                     return;
                 }
 
                 /* case 2: realpath applied to a relative path '..' */
-                final Collection<StringLiteralExpression> strings
+                final Collection<StringLiteralExpression> literals
                         = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
-                if (!strings.isEmpty()) {
-                    for (final StringLiteralExpression oneString : strings) {
-                        if (oneString.getContents().contains("..")) {
+                if (!literals.isEmpty()) {
+                    for (final StringLiteralExpression literal : literals) {
+                        if (literal.getContents().contains("..")) {
                             final String replacement = generateReplacement(arguments[0]);
-                            if (null == replacement) {
+                            if (replacement == null) {
                                 holder.registerProblem(reference, messageUseDirname);
                             } else {
-                                final String message = patternUseDirname.replace("%e%", replacement);
-                                holder.registerProblem(reference, message, new SecureRealpathFix(replacement));
+                                holder.registerProblem(
+                                        reference,
+                                        patternUseDirname.replace("%e%", replacement),
+                                        new SecureRealpathFix(replacement)
+                                );
                             }
                             break;
                         }
                     }
-                    strings.clear();
+                    literals.clear();
                 }
             }
         };

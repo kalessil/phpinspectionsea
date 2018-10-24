@@ -38,14 +38,16 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || !functionName.equals("realpath")) {
-                    return;
+                // new pattern ` =! ...`
+                if (functionName != null && functionName.equals("realpath")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1 && !this.isTestContext(reference)) {
+                        this.analyze(reference, arguments[0]);
+                    }
                 }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length != 1 || this.isTestContext(reference)) {
-                    return;
-                }
+            }
 
+            private void analyze(@NotNull FunctionReference reference, @NotNull PsiElement subject) {
                 /* case 1: include/require context */
                 /* get parent expression through () */
                 PsiElement parent = reference.getParent();
@@ -53,8 +55,8 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                     parent = parent.getParent();
                 }
                 if (parent instanceof Include) {
-                    final String replacement = generateReplacement(arguments[0]);
-                    if (null == replacement) {
+                    final String replacement = generateReplacement(subject);
+                    if (replacement == null) {
                         holder.registerProblem(reference, messageUseDirname);
                     } else {
                         holder.registerProblem(
@@ -67,12 +69,11 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                 }
 
                 /* case 2: realpath applied to a relative path '..' */
-                final Collection<StringLiteralExpression> literals
-                        = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
+                final Collection<StringLiteralExpression> literals = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
                 if (!literals.isEmpty()) {
                     for (final StringLiteralExpression literal : literals) {
                         if (literal.getContents().contains("..")) {
-                            final String replacement = generateReplacement(arguments[0]);
+                            final String replacement = generateReplacement(subject);
                             if (replacement == null) {
                                 holder.registerProblem(reference, messageUseDirname);
                             } else {

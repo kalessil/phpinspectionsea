@@ -5,7 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Unus
 
 public class UnusedFunctionResultInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new UnusedFunctionResultInspector());
+        final UnusedFunctionResultInspector inspector = new UnusedFunctionResultInspector();
+        inspector.REPORT_ONLY_SCALARS                 = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/semanticalAnalysis/unused-function-result.php");
         myFixture.testHighlighting(true, false, true);
     }

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -56,10 +55,10 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                 if (parent instanceof Include) {
                     final String replacement = generateReplacement(arguments[0]);
                     if (null == replacement) {
-                        holder.registerProblem(reference, messageUseDirname, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(reference, messageUseDirname);
                     } else {
                         final String message = patternUseDirname.replace("%e%", replacement);
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new SecureRealpathFix(replacement));
+                        holder.registerProblem(reference, message, new SecureRealpathFix(replacement));
                     }
                     return;
                 }
@@ -67,15 +66,15 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                 /* case 2: realpath applied to a relative path '..' */
                 final Collection<StringLiteralExpression> strings
                         = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
-                if (strings.size() > 0) {
+                if (!strings.isEmpty()) {
                     for (final StringLiteralExpression oneString : strings) {
                         if (oneString.getContents().contains("..")) {
                             final String replacement = generateReplacement(arguments[0]);
                             if (null == replacement) {
-                                holder.registerProblem(reference, messageUseDirname, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(reference, messageUseDirname);
                             } else {
                                 final String message = patternUseDirname.replace("%e%", replacement);
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new SecureRealpathFix(replacement));
+                                holder.registerProblem(reference, message, new SecureRealpathFix(replacement));
                             }
                             break;
                         }

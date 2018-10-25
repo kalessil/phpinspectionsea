@@ -11,8 +11,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -48,82 +46,65 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
 
             private void analyze(@NotNull FunctionReference reference, @NotNull PsiElement subject) {
                 /* case 1: include/require context */
-                /* get parent expression through () */
                 PsiElement parent = reference.getParent();
                 while (parent instanceof ParenthesizedExpression) {
                     parent = parent.getParent();
                 }
                 if (parent instanceof Include) {
-                    final String replacement = generateReplacement(subject);
-                    if (replacement == null) {
-                        holder.registerProblem(reference, messageUseDirname);
-                    } else {
-                        holder.registerProblem(
-                                reference,
-                                String.format(patternUseDirname, replacement),
-                                new SecureRealpathFix(replacement)
-                        );
-                    }
+                    final String replacement = this.generateReplacement(subject);
+                    holder.registerProblem(
+                            reference,
+                            replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement),
+                            replacement == null ? null : new SecureRealpathFix(replacement)
+                    );
                     return;
                 }
 
                 /* case 2: realpath applied to a relative path '..' */
-                final Collection<StringLiteralExpression> literals = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
-                if (!literals.isEmpty()) {
-                    for (final StringLiteralExpression literal : literals) {
-                        if (literal.getContents().contains("..")) {
-                            final String replacement = generateReplacement(subject);
-                            if (replacement == null) {
-                                holder.registerProblem(reference, messageUseDirname);
-                            } else {
-                                holder.registerProblem(
-                                        reference,
-                                        String.format(patternUseDirname, replacement),
-                                        new SecureRealpathFix(replacement)
-                                );
+                for (final StringLiteralExpression literal : PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class)) {
+                    if (literal.getContents().contains("..")) {
+                        final String replacement = this.generateReplacement(subject);
+                        holder.registerProblem(
+                                reference,
+                                replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement),
+                                replacement == null ? null : new SecureRealpathFix(replacement)
+                        );
+                        break;
+                    }
+                }
+            }
+
+            @Nullable
+            private String generateReplacement(@NotNull PsiElement subject) {
+                String result = null;
+
+                if (subject instanceof ConcatenationExpression) {
+                    final ConcatenationExpression concat = (ConcatenationExpression) subject;
+                    final PsiElement left                = concat.getLeftOperand();
+                    final PsiElement right               = concat.getRightOperand();
+                    if (left != null && !(left instanceof ConcatenationExpression) && right instanceof StringLiteralExpression) {
+                        final StringLiteralExpression literal = (StringLiteralExpression) right;
+                        final String contents                 = literal.getContents();
+                        final String quote                    = literal.isSingleQuote() ? "'" : "\"";
+                        if (contents.startsWith("/..")) {
+                            final StringBuilder newLeft = new StringBuilder(left.getText());
+                            String newRight             = contents;
+                            while (newRight.startsWith("/..")) {
+                                newRight = newRight.replaceFirst("/\\.\\.", "");
+                                newLeft.insert(0, "dirname(").append(')');
                             }
-                            break;
+                            result = newLeft + " . " + quote + newRight + quote;
                         }
                     }
-                    literals.clear();
                 }
+
+                if (subject instanceof StringLiteralExpression) {
+                    result = subject.getText();
+                }
+
+                return result;
             }
         };
-    }
-
-    @Nullable
-    private static String generateReplacement(@NotNull PsiElement subject) {
-        String replacement = null;
-
-        if (subject instanceof ConcatenationExpression) {
-            final ConcatenationExpression concat = (ConcatenationExpression) subject;
-            final PsiElement left                = concat.getLeftOperand();
-            if (
-                null != left && !(left instanceof ConcatenationExpression) &&
-                concat.getRightOperand() instanceof StringLiteralExpression
-            ) {
-                final StringLiteralExpression right = (StringLiteralExpression) concat.getRightOperand();
-                final String rightContent           = right.getContents();
-                if (rightContent.startsWith("/..")) {
-                    final String quote = right.isSingleQuote() ? "'" : "\"";
-
-                    final StringBuilder newLeft = new StringBuilder(left.getText());
-                    String newRight             = rightContent;
-                    while (newRight.startsWith("/..")) {
-                        newRight = newRight.replaceFirst("/\\.\\.", "");
-                        newLeft.insert(0, "dirname(").append(')');
-                    }
-
-                    replacement = newLeft + " . " + quote + newRight + quote;
-                }
-            }
-        }
-
-        if (subject instanceof StringLiteralExpression) {
-            replacement = subject.getText();
-        }
-
-        return replacement;
     }
 
     private static final class SecureRealpathFix extends UseSuggestedReplacementFixer {

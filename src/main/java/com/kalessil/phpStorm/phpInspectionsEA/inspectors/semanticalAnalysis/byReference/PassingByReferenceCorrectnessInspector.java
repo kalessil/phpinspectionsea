@@ -76,7 +76,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                     boolean doAnalyze = false;
                     for (final PsiElement argument : arguments) {
                         boolean isRefCompatible = argument instanceof Variable ||
-                                                  (argument instanceof NewExpression && php.compareTo(PhpLanguageLevel.PHP560) <= 0);
+                                                  (argument instanceof NewExpression && php.compareTo(PhpLanguageLevel.PHP700) >= 0);
                         if (!isRefCompatible) {
                             doAnalyze = true;
                             break;

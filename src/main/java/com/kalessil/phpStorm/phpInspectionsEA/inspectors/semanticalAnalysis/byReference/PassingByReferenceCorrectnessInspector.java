@@ -29,7 +29,7 @@ import java.util.Set;
  */
 
 public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
-    private static final String message = "Emits a notice (only variable references should be returned by reference).";
+    private static final String message = "Emits a notice (only variable references should be dispatched by reference).";
 
     private static final Set<String> skippedFunctions = new HashSet<>();
     static {

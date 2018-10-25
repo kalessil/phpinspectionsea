@@ -1,11 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.RealpathInSteamContextInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.RealpathInStreamContextInspector;
 
-final public class RealpathInSteamContextInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class RealpathInStreamContextInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new RealpathInSteamContextInspector());
+        myFixture.enableInspections(new RealpathInStreamContextInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/realpath-in-stream-context.php");
         myFixture.testHighlighting(true, false, true);
 

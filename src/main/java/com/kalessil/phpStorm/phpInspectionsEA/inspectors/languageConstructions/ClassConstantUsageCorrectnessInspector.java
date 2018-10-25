@@ -58,7 +58,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                             /* the resolved class will accumulate case issue in its FQN */
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);
                             if (!variants.isEmpty()) {
-                                if (!variants.get(0).equals(referencedQn)) {
+                                if (variants.stream().noneMatch(referencedQn::equals)) {
                                     holder.registerProblem(reference, message);
                                 }
                                 variants.clear();
@@ -122,7 +122,11 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                                         }
                                     }
                                 }
-                                break;
+                            } else {
+                                final String alias = use.getAliasName();
+                                if (alias != null && alias.equalsIgnoreCase(referenceText)) {
+                                    result.add(alias);
+                                }
                             }
                         }
                     }

@@ -38,7 +38,6 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                // new pattern ` =! ...`
                 if (functionName != null && functionName.equals("realpath")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1 && !this.isTestContext(reference)) {
@@ -99,22 +98,18 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
         if (subject instanceof ConcatenationExpression) {
             final ConcatenationExpression concat = (ConcatenationExpression) subject;
             final PsiElement left                = concat.getLeftOperand();
-            if (
-                null != left && !(left instanceof ConcatenationExpression) &&
-                concat.getRightOperand() instanceof StringLiteralExpression
-            ) {
-                final StringLiteralExpression right = (StringLiteralExpression) concat.getRightOperand();
-                final String rightContent           = right.getContents();
-                if (rightContent.startsWith("/..")) {
-                    final String quote = right.isSingleQuote() ? "'" : "\"";
-
+            final PsiElement right               = concat.getRightOperand();
+            if (left != null && !(left instanceof ConcatenationExpression) && right instanceof StringLiteralExpression) {
+                final StringLiteralExpression literal = (StringLiteralExpression) right;
+                final String contents                 = literal.getContents();
+                final String quote                    = literal.isSingleQuote() ? "'" : "\"";
+                if (contents.startsWith("/..")) {
                     final StringBuilder newLeft = new StringBuilder(left.getText());
-                    String newRight             = rightContent;
+                    String newRight             = contents;
                     while (newRight.startsWith("/..")) {
                         newRight = newRight.replaceFirst("/\\.\\.", "");
                         newLeft.insert(0, "dirname(").append(')');
                     }
-
                     replacement = newLeft + " . " + quote + newRight + quote;
                 }
             }

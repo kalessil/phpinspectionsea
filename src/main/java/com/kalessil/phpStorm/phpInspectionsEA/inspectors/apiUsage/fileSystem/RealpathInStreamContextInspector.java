@@ -38,7 +38,6 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                // new pattern ` =! ...`
                 if (functionName != null && functionName.equals("realpath")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1 && !this.isTestContext(reference)) {

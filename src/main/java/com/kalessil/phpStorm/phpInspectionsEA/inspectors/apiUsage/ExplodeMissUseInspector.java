@@ -35,8 +35,9 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
 
     private static final Map<String, Integer> argumentMapping = new HashMap<>();
     static {
-        argumentMapping.put("count", 0);   // -> "substr_count(%s%, %f%) + 1"
-        argumentMapping.put("implode", 1); // -> "str_replace(%f%, ?, %s%)"
+        argumentMapping.put("count", 0);    // -> "substr_count(%s%, %f%) + 1"
+        argumentMapping.put("implode", 1);  // -> "str_replace(%f%, ?, %s%)"
+        argumentMapping.put("in_array", 1); // -> "strpos(%s%, %f%)"
         // "current" -> "strstr(%s%, %f%, true)": if fragment missing, strstr changes behaviour
     }
 
@@ -84,6 +85,13 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                                         "substr_count(%s, %s) + 1",
                                                         innerArguments[1].getText(),
                                                         innerArguments[0].getText()
+                                                );
+                                                break;
+                                            case "in_array":
+                                                replacement = String.format(
+                                                        "strpos(%s ,%s)",
+                                                        innerArguments[1].getText(),
+                                                        outerArguments[0].getText()
                                                 );
                                                 break;
                                             default:

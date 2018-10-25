@@ -29,7 +29,7 @@ import java.util.Set;
  */
 
 public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
-    private static final String message = "Emits a notice (only variable references should be dispatched by reference).";
+    private static final String message = "Emits a notice (only variable references should be returned/passed by reference).";
 
     private static final Set<String> skippedFunctions = new HashSet<>();
     static {
@@ -76,7 +76,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                     boolean doAnalyze = false;
                     for (final PsiElement argument : arguments) {
                         boolean isRefCompatible = argument instanceof Variable ||
-                                                  (argument instanceof NewExpression && php.compareTo(PhpLanguageLevel.PHP700) >= 0);
+                                                  (argument instanceof NewExpression && php.compareTo(PhpLanguageLevel.PHP560) <= 0);
                         if (!isRefCompatible) {
                             doAnalyze = true;
                             break;
@@ -97,6 +97,8 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                                             holder.registerProblem(argument, message);
                                         }
                                     }
+                                } else if (argument instanceof NewExpression) {
+                                    holder.registerProblem(argument, message);
                                 }
                             }
                         }

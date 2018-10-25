@@ -11,8 +11,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -48,44 +46,31 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
 
             private void analyze(@NotNull FunctionReference reference, @NotNull PsiElement subject) {
                 /* case 1: include/require context */
-                /* get parent expression through () */
                 PsiElement parent = reference.getParent();
                 while (parent instanceof ParenthesizedExpression) {
                     parent = parent.getParent();
                 }
                 if (parent instanceof Include) {
                     final String replacement = generateReplacement(subject);
-                    if (replacement == null) {
-                        holder.registerProblem(reference, messageUseDirname);
-                    } else {
-                        holder.registerProblem(
-                                reference,
-                                String.format(patternUseDirname, replacement),
-                                new SecureRealpathFix(replacement)
-                        );
-                    }
+                    holder.registerProblem(
+                            reference,
+                            replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement),
+                            replacement == null ? null : new SecureRealpathFix(replacement)
+                    );
                     return;
                 }
 
                 /* case 2: realpath applied to a relative path '..' */
-                final Collection<StringLiteralExpression> literals = PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class);
-                if (!literals.isEmpty()) {
-                    for (final StringLiteralExpression literal : literals) {
-                        if (literal.getContents().contains("..")) {
-                            final String replacement = generateReplacement(subject);
-                            if (replacement == null) {
-                                holder.registerProblem(reference, messageUseDirname);
-                            } else {
-                                holder.registerProblem(
-                                        reference,
-                                        String.format(patternUseDirname, replacement),
-                                        new SecureRealpathFix(replacement)
-                                );
-                            }
-                            break;
-                        }
+                for (final StringLiteralExpression literal : PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class)) {
+                    if (literal.getContents().contains("..")) {
+                        final String replacement = generateReplacement(subject);
+                        holder.registerProblem(
+                                reference,
+                                replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement),
+                                replacement == null ? null : new SecureRealpathFix(replacement)
+                        );
+                        break;
                     }
-                    literals.clear();
                 }
             }
         };

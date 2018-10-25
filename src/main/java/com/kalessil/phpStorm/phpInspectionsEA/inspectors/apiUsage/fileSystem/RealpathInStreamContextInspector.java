@@ -51,7 +51,7 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                     parent = parent.getParent();
                 }
                 if (parent instanceof Include) {
-                    final String replacement = generateReplacement(subject);
+                    final String replacement = this.generateReplacement(subject);
                     holder.registerProblem(
                             reference,
                             replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement),
@@ -63,7 +63,7 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                 /* case 2: realpath applied to a relative path '..' */
                 for (final StringLiteralExpression literal : PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class)) {
                     if (literal.getContents().contains("..")) {
-                        final String replacement = generateReplacement(subject);
+                        final String replacement = this.generateReplacement(subject);
                         holder.registerProblem(
                                 reference,
                                 replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement),
@@ -73,38 +73,38 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                     }
                 }
             }
-        };
-    }
 
-    @Nullable
-    private static String generateReplacement(@NotNull PsiElement subject) {
-        String replacement = null;
+            @Nullable
+            private String generateReplacement(@NotNull PsiElement subject) {
+                String result = null;
 
-        if (subject instanceof ConcatenationExpression) {
-            final ConcatenationExpression concat = (ConcatenationExpression) subject;
-            final PsiElement left                = concat.getLeftOperand();
-            final PsiElement right               = concat.getRightOperand();
-            if (left != null && !(left instanceof ConcatenationExpression) && right instanceof StringLiteralExpression) {
-                final StringLiteralExpression literal = (StringLiteralExpression) right;
-                final String contents                 = literal.getContents();
-                final String quote                    = literal.isSingleQuote() ? "'" : "\"";
-                if (contents.startsWith("/..")) {
-                    final StringBuilder newLeft = new StringBuilder(left.getText());
-                    String newRight             = contents;
-                    while (newRight.startsWith("/..")) {
-                        newRight = newRight.replaceFirst("/\\.\\.", "");
-                        newLeft.insert(0, "dirname(").append(')');
+                if (subject instanceof ConcatenationExpression) {
+                    final ConcatenationExpression concat = (ConcatenationExpression) subject;
+                    final PsiElement left                = concat.getLeftOperand();
+                    final PsiElement right               = concat.getRightOperand();
+                    if (left != null && !(left instanceof ConcatenationExpression) && right instanceof StringLiteralExpression) {
+                        final StringLiteralExpression literal = (StringLiteralExpression) right;
+                        final String contents                 = literal.getContents();
+                        final String quote                    = literal.isSingleQuote() ? "'" : "\"";
+                        if (contents.startsWith("/..")) {
+                            final StringBuilder newLeft = new StringBuilder(left.getText());
+                            String newRight             = contents;
+                            while (newRight.startsWith("/..")) {
+                                newRight = newRight.replaceFirst("/\\.\\.", "");
+                                newLeft.insert(0, "dirname(").append(')');
+                            }
+                            result = newLeft + " . " + quote + newRight + quote;
+                        }
                     }
-                    replacement = newLeft + " . " + quote + newRight + quote;
                 }
+
+                if (subject instanceof StringLiteralExpression) {
+                    result = subject.getText();
+                }
+
+                return result;
             }
-        }
-
-        if (subject instanceof StringLiteralExpression) {
-            replacement = subject.getText();
-        }
-
-        return replacement;
+        };
     }
 
     private static final class SecureRealpathFix extends UseSuggestedReplacementFixer {

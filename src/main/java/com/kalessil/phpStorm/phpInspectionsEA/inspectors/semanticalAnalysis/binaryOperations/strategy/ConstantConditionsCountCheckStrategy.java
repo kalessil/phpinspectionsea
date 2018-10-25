@@ -46,6 +46,7 @@ final public class ConstantConditionsCountCheckStrategy {
         targetFunctions.put("iconv_strlen",   ValueRange.of(0, Long.MAX_VALUE));
         targetFunctions.put("preg_match",     ValueRange.of(0, 1L));
         targetFunctions.put("preg_match_all", ValueRange.of(0, Long.MAX_VALUE));
+        // NOTE: we probably should consider analyzing rand, mt_rand, random_int as well
     }
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {

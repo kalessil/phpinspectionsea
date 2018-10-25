@@ -9,12 +9,14 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,6 +31,9 @@ import java.util.stream.Collectors;
  */
 
 public class UnusedFunctionResultInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean REPORT_ONLY_SCALARS = false;
+
     private static final String message = "Function result is not used.";
 
     private static final Set<String> ignoredFunctions = new HashSet<>();
@@ -70,7 +75,10 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
-                this.analyze(reference);
+                final String methodName = reference.getName();
+                if (methodName != null && !methodName.equals("__construct")) {
+                    this.analyze(reference);
+                }
             }
 
             @Override
@@ -93,8 +101,9 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                         types.remove(Types.strInteger); /* APIs returning c-alike result codes */
                         types.remove(Types.strVoid);
                         if (!types.isEmpty()) {
+                            final boolean skip      = REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty();
                             final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
-                            if (target != null) {
+                            if (target != null && !skip) {
                                 holder.registerProblem(target, message);
                             }
                         }
@@ -103,5 +112,11 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create(
+            (component) -> component.addCheckbox("Report only unused scalar results", REPORT_ONLY_SCALARS, (isSelected) -> REPORT_ONLY_SCALARS = isSelected)
+        );
     }
 }

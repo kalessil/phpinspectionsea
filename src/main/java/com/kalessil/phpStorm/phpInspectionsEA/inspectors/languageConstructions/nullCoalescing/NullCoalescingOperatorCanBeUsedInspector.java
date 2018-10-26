@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromArrayKeyExistsStrategy;
@@ -28,13 +29,13 @@ import java.util.function.Function;
  */
 
 public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%e%' construction should be used instead.";
+    private static final String messagePattern = "'%s' construction should be used instead.";
 
-    private static final List<Function<TernaryExpression, String>> strategies = new ArrayList<>();
+    private static final List<Function<TernaryExpression, String>> ternaryStrategies = new ArrayList<>();
     static {
-        strategies.add(GenerateAlternativeFromIssetStrategy::generate);
-        strategies.add(GenerateAlternativeFromNullComparisonStrategy::generate);
-        strategies.add(GenerateAlternativeFromArrayKeyExistsStrategy::generate);
+        ternaryStrategies.add(GenerateAlternativeFromIssetStrategy::generate);
+        ternaryStrategies.add(GenerateAlternativeFromNullComparisonStrategy::generate);
+        ternaryStrategies.add(GenerateAlternativeFromArrayKeyExistsStrategy::generate);
     }
 
     @NotNull
@@ -50,15 +51,25 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
-                    for (final Function<TernaryExpression, String> strategy : strategies) {
+                    for (final Function<TernaryExpression, String> strategy : ternaryStrategies) {
                         final String replacement = strategy.apply(expression);
                         if (replacement != null) {
-                            final String message = messagePattern.replace("%e%", replacement);
-                            holder.registerProblem(expression, message, new UseTheOperatorFix(replacement));
-
+                            holder.registerProblem(
+                                    expression,
+                                    String.format(messagePattern, replacement),
+                                    new UseTheOperatorFix(replacement)
+                            );
                             break;
                         }
                     }
+                }
+            }
+
+            @Override
+            public void visitPhpIf(@NotNull If expression) {
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                    // TODO: analyze the structure
                 }
             }
         };

@@ -75,8 +75,12 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     if (condition instanceof PhpIsset) {
                         final PhpIsset isset = (PhpIsset) condition;
                         if (isset.getVariables().length == 1 && expression.getElseIfBranches().length == 0) {
-                            // TODO: analyze the structure
-                            // https://github.com/wikimedia/mediawiki/commit/43244db9a2966a33942665b3ba3c624b3b2c1361
+                            if (expression.getElseBranch() == null) {
+                                // preceding is assignment, body is assignment (same container, value is isset argument)
+                            } else {
+                                // if body is returning isset argument else body returning whatever
+                                // if body is assigning isset argument else body assigning whatever (same container)
+                            }
                         }
                     }
                 }

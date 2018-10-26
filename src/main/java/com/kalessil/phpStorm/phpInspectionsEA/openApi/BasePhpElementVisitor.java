@@ -119,6 +119,11 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     }
 
     protected boolean isContainingFileSkipped(@NotNull PsiElement target) {
+        /* skip blade-files */
+        if (target.getContainingFile().getName().endsWith(".blade.php")) {
+            return true;
+        }
+        /* skip unchanged files if the plugin configured so */
         if (EAUltimateSettings.getInstance().getCheckOnlyChangedFiles()) {
             return !target.getProject()
                     .getComponent(EAUltimateChangesTrackerComponent.class)

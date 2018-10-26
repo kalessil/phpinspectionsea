@@ -42,11 +42,6 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
             public void visitPhpStatement(@NotNull Statement statement) {
                 if (this.isContainingFileSkipped(statement)) { return; }
 
-                if (holder.getFile().getName().endsWith(".blade.php")) {
-                    /* syntax injection there causing false-positives */
-                    return;
-                }
-
                 if (statement.getChildren().length == 0) {
                     final PsiElement parent = statement.getParent();
                     if (

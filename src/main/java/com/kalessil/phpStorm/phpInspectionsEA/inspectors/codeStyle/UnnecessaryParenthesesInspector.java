@@ -39,11 +39,6 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
             public void visitPhpParenthesizedExpression(@NotNull ParenthesizedExpression expression) {
                 if (this.isContainingFileSkipped(expression)) { return; }
 
-                if (holder.getFile().getName().endsWith(".blade.php")) {
-                    /* syntax injection there causing false-positives */
-                    return;
-                }
-
                 /* expression.getArgument() returns the first child, but it can be more */
                 final PsiElement[] children = expression.getChildren();
                 final PsiElement argument   = children.length > 0 ? children[children.length - 1] : null;

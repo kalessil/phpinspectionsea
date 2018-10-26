@@ -1,11 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.If;
+import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromArrayKeyExistsStrategy;
@@ -69,7 +71,14 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             public void visitPhpIf(@NotNull If expression) {
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
-                    // TODO: analyze the structure
+                    final PsiElement condition = expression.getCondition();
+                    if (condition instanceof PhpIsset) {
+                        final PhpIsset isset = (PhpIsset) condition;
+                        if (isset.getVariables().length == 1 && expression.getElseIfBranches().length == 0) {
+                            // TODO: analyze the structure
+                            // https://github.com/wikimedia/mediawiki/commit/43244db9a2966a33942665b3ba3c624b3b2c1361
+                        }
+                    }
                 }
             }
         };

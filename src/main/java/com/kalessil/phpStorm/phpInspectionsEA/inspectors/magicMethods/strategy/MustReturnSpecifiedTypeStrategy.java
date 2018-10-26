@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -29,15 +30,20 @@ final public class MustReturnSpecifiedTypeStrategy {
     private static final String messagePattern = "%s must return %s.";
 
     static public void apply(@NotNull PhpType allowedTypes, @NotNull Method method, @NotNull ProblemsHolder holder) {
-        final String message                = String.format(messagePattern, method.getName(), allowedTypes.toString());
         final Collection<PhpReturn> returns = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
         if (returns.isEmpty()) {
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
             if (nameNode != null) {
-                holder.registerProblem(nameNode, message, ProblemHighlightType.ERROR);
+                final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
+                holder.registerProblem(
+                        nameNode,
+                        String.format(messagePattern, method.getName(), withoutStatic.toString()),
+                        ProblemHighlightType.ERROR
+                );
             }
         } else {
-            final Project project = holder.getProject();
+            final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
+            final Project project       = holder.getProject();
             for (final PhpReturn expression : returns) {
                 PsiElement returnValue = ExpressionSemanticUtil.getReturnValue(expression);
                 returnValue            = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
@@ -56,7 +62,11 @@ final public class MustReturnSpecifiedTypeStrategy {
                         }
                     }
                 }
-                holder.registerProblem(expression, message, ProblemHighlightType.ERROR);
+                holder.registerProblem(
+                        expression,
+                        String.format(messagePattern, method.getName(), withoutStatic.toString()),
+                        ProblemHighlightType.ERROR
+                );
             }
             returns.clear();
         }

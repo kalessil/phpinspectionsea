@@ -18,6 +18,12 @@ class ClassWithInvalidReturnSetState {
     }
 }
 
+class ClassWithReturnStaticSetState {
+    public static function __set_state($array) {
+        return new static();
+    }
+}
+
 class ClassWithNoParametersSetState {
     public static function <error descr="__set_state accepts exactly 1 arguments.">__set_state</error> () {
         return new ClassWithNoParametersSetState();

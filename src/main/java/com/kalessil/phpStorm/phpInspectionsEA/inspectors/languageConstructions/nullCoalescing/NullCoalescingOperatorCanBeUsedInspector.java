@@ -6,10 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.If;
-import com.jetbrains.php.lang.psi.elements.PhpIsset;
-import com.jetbrains.php.lang.psi.elements.TernaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromArrayKeyExistsStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromIssetStrategy;
@@ -17,6 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.n
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -75,15 +74,33 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     final PsiElement condition = expression.getCondition();
                     if (condition instanceof PhpIsset) {
-                        final PhpIsset isset = (PhpIsset) condition;
-                        if (isset.getVariables().length == 1 && expression.getElseIfBranches().length == 0) {
+                        final PhpIsset isset         = (PhpIsset) condition;
+                        final PsiElement[] arguments = isset.getVariables();
+                        if (arguments.length == 1 && expression.getElseIfBranches().length == 0) {
                             final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(expression);
                             if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
-                                if (expression.getElseBranch() == null) {
-                                    // preceding is assignment, body is assignment (same container, value is isset argument)
+                                final Else alternative = expression.getElseBranch();
+                                if (alternative == null) {
+                                    PsiElement previous = expression.getPrevPsiSibling();
+                                    PsiElement own      = ExpressionSemanticUtil.getLastStatement(ifBody);
+                                    if (previous != null && own != null) {
+                                        previous = previous.getFirstChild();
+                                        own      = own.getFirstChild();
+                                        if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
+                                            final AssignmentExpression negative = (AssignmentExpression) previous;
+                                            final AssignmentExpression positive = (AssignmentExpression) own;
+                                            // same container, value is isset argument
+                                        }
+                                    }
                                 } else {
-                                    // if body is returning isset argument else body returning whatever
-                                    // if body is assigning isset argument else body assigning whatever (same container)
+                                    final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(alternative);
+                                    if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
+                                        PsiElement ownFromIf   = ExpressionSemanticUtil.getLastStatement(ifBody);
+                                        PsiElement ownFromElse = ExpressionSemanticUtil.getLastStatement(elseBody);
+
+                                        // if body is returning isset argument else body returning whatever
+                                        // if body is assigning isset argument else body assigning whatever (same container)
+                                    }
                                 }
                             }
                         }

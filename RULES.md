@@ -123,7 +123,7 @@ Inspections Lists (Language level migration)
 | Group                    | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :----------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Language level migration | ElvisOperatorCanBeUsedInspection                | Elvis operator can be used                          | yes | yes | no   | no  |
-| Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes | yes | no   | no  |
+| Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes | yes | yes  | no  |
 | Language level migration | TypesCastingCanBeUsedInspection                 | Type casting can be used                            | yes | yes | yes  | no  |
 | Language level migration | DirectoryConstantCanBeUsedInspection            | __DIR__ constant can be used                        | yes | yes | yes  | no  |
 | Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |

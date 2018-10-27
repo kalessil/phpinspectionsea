@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
@@ -15,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.n
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -75,11 +77,14 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     if (condition instanceof PhpIsset) {
                         final PhpIsset isset = (PhpIsset) condition;
                         if (isset.getVariables().length == 1 && expression.getElseIfBranches().length == 0) {
-                            if (expression.getElseBranch() == null) {
-                                // preceding is assignment, body is assignment (same container, value is isset argument)
-                            } else {
-                                // if body is returning isset argument else body returning whatever
-                                // if body is assigning isset argument else body assigning whatever (same container)
+                            final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(expression);
+                            if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
+                                if (expression.getElseBranch() == null) {
+                                    // preceding is assignment, body is assignment (same container, value is isset argument)
+                                } else {
+                                    // if body is returning isset argument else body returning whatever
+                                    // if body is assigning isset argument else body assigning whatever (same container)
+                                }
                             }
                         }
                     }

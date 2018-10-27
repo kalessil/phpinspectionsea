@@ -82,7 +82,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
                                 if (expression.getElseBranch() == null) {
                                     this.analyzeIfWithPrecedingStatement(expression, arguments[0], ifBody);
-                                    //this.analyzeIfWithFollowingStatement(expression, arguments[0], ifBody);
+                                    this.analyzeIfWithFollowingStatement(expression, arguments[0], ifBody);
                                 } else {
                                     this.analyzeIfElseStatement(expression, arguments[0], ifBody);
                                 }
@@ -103,17 +103,25 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     previous = previous.getFirstChild();
                     own      = own.getFirstChild();
                     if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
-                        final String replacement = this.generateReplacement(
-                                argument,
-                                (AssignmentExpression) own,
-                                (AssignmentExpression) previous
-                        );
+                        final String replacement = this.generateReplacement(argument, (AssignmentExpression) own, (AssignmentExpression) previous);
                         if (replacement != null) {
-                            holder.registerProblem(
-                                    expression.getFirstChild(),
-                                    String.format(messagePattern, replacement)
-                            );
+                            holder.registerProblem(expression.getFirstChild(), String.format(messagePattern, replacement));
                         }
+                    }
+                }
+            }
+
+            private void analyzeIfWithFollowingStatement(
+                    @NotNull If expression,
+                    @NotNull PsiElement argument,
+                    @NotNull GroupStatement ifBody
+            ) {
+                final PsiElement next = expression.getNextPsiSibling();
+                final PsiElement own  = ExpressionSemanticUtil.getLastStatement(ifBody);
+                if (next instanceof PhpReturn && own instanceof PhpReturn) {
+                    final String replacement = this.generateReplacement(argument, (PhpReturn) own, (PhpReturn) next);
+                    if (replacement != null) {
+                        holder.registerProblem(expression.getFirstChild(), String.format(messagePattern, replacement));
                     }
                 }
             }
@@ -131,11 +139,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         PsiElement ownFromElse = ExpressionSemanticUtil.getLastStatement(elseBody);
                         if (ownFromIf != null && ownFromElse != null) {
                             if (ownFromIf instanceof PhpReturn && ownFromElse instanceof PhpReturn) {
-                                final String replacement = this.generateReplacement(
-                                        argument,
-                                        (PhpReturn) ownFromIf,
-                                        (PhpReturn) ownFromElse
-                                );
+                                final String replacement = this.generateReplacement(argument, (PhpReturn) ownFromIf, (PhpReturn) ownFromElse);
                                 if (replacement != null) {
                                     holder.registerProblem(
                                             expression.getFirstChild(),
@@ -146,11 +150,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 ownFromIf   = ownFromIf.getFirstChild();
                                 ownFromElse = ownFromElse.getFirstChild();
                                 if (OpenapiTypesUtil.isAssignment(ownFromIf) && OpenapiTypesUtil.isAssignment(ownFromElse)) {
-                                    final String replacement = this.generateReplacement(
-                                            argument,
-                                            (AssignmentExpression) ownFromIf,
-                                            (AssignmentExpression) ownFromElse
-                                    );
+                                    final String replacement = this.generateReplacement(argument, (AssignmentExpression) ownFromIf, (AssignmentExpression) ownFromElse);
                                     if (replacement != null) {
                                         holder.registerProblem(
                                                 expression.getFirstChild(),

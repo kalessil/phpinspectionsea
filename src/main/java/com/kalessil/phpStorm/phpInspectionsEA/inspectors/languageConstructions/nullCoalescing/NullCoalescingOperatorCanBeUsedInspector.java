@@ -32,7 +32,7 @@ import java.util.function.Function;
  */
 
 public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' construction should be used instead.";
+    private static final String messagePattern = "'%s' can be used instead (reduces cognitive load).";
 
     private static final List<Function<TernaryExpression, String>> ternaryStrategies = new ArrayList<>();
     static {
@@ -79,32 +79,65 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         if (arguments.length == 1 && expression.getElseIfBranches().length == 0) {
                             final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(expression);
                             if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
-                                final Else alternative = expression.getElseBranch();
-                                if (alternative == null) {
-                                    PsiElement previous = expression.getPrevPsiSibling();
-                                    PsiElement own      = ExpressionSemanticUtil.getLastStatement(ifBody);
-                                    if (previous != null && own != null) {
-                                        previous = previous.getFirstChild();
-                                        own      = own.getFirstChild();
-                                        if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
-                                            final AssignmentExpression negative = (AssignmentExpression) previous;
-                                            final AssignmentExpression positive = (AssignmentExpression) own;
-                                            // same container, value is isset argument
-                                        }
-                                    }
+                                if (expression.getElseBranch() == null) {
+                                    this.analyzeIfWithPrecedingStatement(expression, arguments[0], ifBody);
                                 } else {
-                                    final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(alternative);
-                                    if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
-                                        PsiElement ownFromIf   = ExpressionSemanticUtil.getLastStatement(ifBody);
-                                        PsiElement ownFromElse = ExpressionSemanticUtil.getLastStatement(elseBody);
-
-                                        // if body is returning isset argument else body returning whatever
-                                        // if body is assigning isset argument else body assigning whatever (same container)
-                                    }
+                                    this.analyzeIfElseStatement(expression, arguments[0], ifBody);
                                 }
                             }
                         }
                     }
+                }
+            }
+
+            private void analyzeIfWithPrecedingStatement(
+                    @NotNull If expression,
+                    @NotNull PsiElement argument,
+                    @NotNull GroupStatement ifBody
+            ) {
+                PsiElement previous = expression.getPrevPsiSibling();
+                PsiElement own      = ExpressionSemanticUtil.getLastStatement(ifBody);
+                if (previous != null && own != null) {
+                    previous = previous.getFirstChild();
+                    own      = own.getFirstChild();
+                    if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
+                        final AssignmentExpression negative = (AssignmentExpression) previous;
+                        final PsiElement negativeContainer  = negative.getVariable();
+                        final PsiElement negativeValue      = negative.getValue();
+                        if (negativeContainer != null && negativeValue != null) {
+                            final AssignmentExpression positive = (AssignmentExpression) own;
+                            final PsiElement positiveContainer  = positive.getVariable();
+                            final PsiElement positiveValue      = positive.getValue();
+                            if (positiveContainer != null && positiveValue != null) {
+                                final boolean check = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer);
+                                if (check && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
+                                    final String replacement = String.format(
+                                            "'%s = %s ?? %s' ",
+                                            positiveContainer.getText(),
+                                            positiveValue.getText(),
+                                            negativeValue.getText()
+                                    );
+                                    holder.registerProblem(expression.getFirstChild(), String.format(messagePattern, replacement));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            private void analyzeIfElseStatement(
+                    @NotNull If expression,
+                    @NotNull PsiElement argument,
+                    @NotNull GroupStatement ifBody
+            ) {
+                final Else alternative        = expression.getElseBranch();
+                final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(alternative);
+                if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
+                    PsiElement ownFromIf   = ExpressionSemanticUtil.getLastStatement(ifBody);
+                    PsiElement ownFromElse = ExpressionSemanticUtil.getLastStatement(elseBody);
+
+                    // if body is returning isset argument else body returning whatever
+                    // if body is assigning isset argument else body assigning whatever (same container)
                 }
             }
         };

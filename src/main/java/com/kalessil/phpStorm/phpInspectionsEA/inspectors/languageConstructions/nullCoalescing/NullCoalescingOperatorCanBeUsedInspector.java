@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
@@ -191,7 +192,10 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 if (negativeValue != null) {
                     final PsiElement positiveValue = ExpressionSemanticUtil.getReturnValue(positive);
                     if (positiveValue != null && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
+                        /* false-positives: assignments */
+                        if (!OpenapiTypesUtil.isAssignment(positiveValue) && !OpenapiTypesUtil.isAssignment(negativeValue)) {
                             result = String.format("return %s ?? %s", positiveValue.getText(), negativeValue.getText());
+                        }
                     }
                 }
                 return result;
@@ -212,12 +216,17 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     if (positiveContainer != null && positiveValue != null) {
                         final boolean check = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer);
                         if (check && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
-                            result = String.format(
-                                    "%s = %s ?? %s",
-                                    positiveContainer.getText(),
-                                    positiveValue.getText(),
-                                    negativeValue.getText()
-                            );
+                            /* false-positives: array push */
+                            final boolean isPush = PsiTreeUtil.findChildrenOfType(positiveContainer, ArrayIndex.class).stream()
+                                    .anyMatch(index -> index.getValue() == null);
+                            if (!isPush) {
+                                result = String.format(
+                                        "%s = %s ?? %s",
+                                        positiveContainer.getText(),
+                                        positiveValue.getText(),
+                                        negativeValue.getText()
+                                );
+                            }
                         }
                     }
                 }

@@ -112,7 +112,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 final boolean check = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer);
                                 if (check && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
                                     final String replacement = String.format(
-                                            "'%s = %s ?? %s' ",
+                                            "%s = %s ?? %s",
                                             positiveContainer.getText(),
                                             positiveValue.getText(),
                                             negativeValue.getText()

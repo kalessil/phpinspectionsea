@@ -22,5 +22,9 @@ final public class NullCoalescingOperatorCanBeUsedInspectorTest extends PhpCodeI
         myFixture.enableInspections(new NullCoalescingOperatorCanBeUsedInspector());
         myFixture.configureByFile("testData/fixtures/lang/null-coalescing-operator.ifs.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/lang/null-coalescing-operator.ifs.fixed.php");
     }
 }

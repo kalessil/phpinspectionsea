@@ -1,11 +1,17 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromArrayKeyExistsStrategy;
@@ -61,7 +67,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             holder.registerProblem(
                                     expression,
                                     String.format(messagePattern, replacement),
-                                    new UseTheOperatorFix(replacement)
+                                    new ReplaceSingleConstructFix(replacement)
                             );
                             break;
                         }
@@ -105,7 +111,11 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
                         final String replacement = this.generateReplacement(argument, (AssignmentExpression) own, (AssignmentExpression) previous);
                         if (replacement != null) {
-                            holder.registerProblem(expression.getFirstChild(), String.format(messagePattern, replacement));
+                            holder.registerProblem(
+                                    expression.getFirstChild(),
+                                    String.format(messagePattern, replacement),
+                                    new ReplaceMultipleConstructsFix(previous.getParent(), expression, replacement)
+                            );
                         }
                     }
                 }
@@ -121,7 +131,11 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 if (next instanceof PhpReturn && own instanceof PhpReturn) {
                     final String replacement = this.generateReplacement(argument, (PhpReturn) own, (PhpReturn) next);
                     if (replacement != null) {
-                        holder.registerProblem(expression.getFirstChild(), String.format(messagePattern, replacement));
+                        holder.registerProblem(
+                                expression.getFirstChild(),
+                                String.format(messagePattern, replacement),
+                                new ReplaceMultipleConstructsFix(expression, next, replacement)
+                        );
                     }
                 }
             }
@@ -143,7 +157,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 if (replacement != null) {
                                     holder.registerProblem(
                                             expression.getFirstChild(),
-                                            String.format(messagePattern, replacement)
+                                            String.format(messagePattern, replacement),
+                                            new ReplaceMultipleConstructsFix(expression, expression, replacement)
                                     );
                                 }
                             } else {
@@ -154,7 +169,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                     if (replacement != null) {
                                         holder.registerProblem(
                                                 expression.getFirstChild(),
-                                                String.format(messagePattern, replacement)
+                                                String.format(messagePattern, replacement),
+                                                new ReplaceMultipleConstructsFix(expression, expression, replacement)
                                         );
                                     }
                                 }
@@ -210,7 +226,54 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         };
     }
 
-    private static final class UseTheOperatorFix extends UseSuggestedReplacementFixer {
+    private static final class ReplaceMultipleConstructsFix implements LocalQuickFix {
+        private static final String title = "Use null coalescing operator instead";
+
+        private final SmartPsiElementPointer<PsiElement> from;
+        private final SmartPsiElementPointer<PsiElement> to;
+        private final String replacement;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        ReplaceMultipleConstructsFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+
+            this.from        = factory.createSmartPsiElementPointer(from);
+            this.to          = factory.createSmartPsiElementPointer(to);
+            this.replacement = replacement;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression != null && !project.isDisposed()) {
+                final PsiElement from = this.from.getElement();
+                final PsiElement to   = this.to.getElement();
+                if (from != null && to != null) {
+                    final PsiElement implant = PhpPsiElementFactory.createStatement(project, this.replacement + ";");
+                    if (from == to) {
+                        from.replace(implant);
+                    } else {
+                        from.getParent().addBefore(implant, from);
+                        from.getParent().deleteChildRange(from, to);
+                    }
+                }
+            }
+        }
+    }
+
+    private static final class ReplaceSingleConstructFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use null coalescing operator instead";
 
         @NotNull
@@ -219,7 +282,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             return title;
         }
 
-        UseTheOperatorFix(@NotNull String expression) {
+        ReplaceSingleConstructFix(@NotNull String expression) {
             super(expression);
         }
     }

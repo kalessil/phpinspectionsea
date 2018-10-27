@@ -7,16 +7,28 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class TakesExactAmountOfArgumentsStrategy {
-    private static final String messagePattern = "%m% accepts exactly %n% arguments.";
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+final public class TakesExactAmountOfArgumentsStrategy {
+    private static final String messagePattern = "%s accepts exactly %s arguments.";
 
     static public void apply(int argumentsCount, @NotNull Method method, @NotNull ProblemsHolder holder) {
-        final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-        if (null != nameNode && argumentsCount != method.getParameters().length) {
-            final String message = messagePattern
-                    .replace("%m%", method.getName())
-                    .replace("%n%", String.valueOf(argumentsCount));
-            holder.registerProblem(nameNode, message, ProblemHighlightType.ERROR);
+        if (method.getParameters().length != argumentsCount) {
+            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+            if (nameNode != null) {
+                holder.registerProblem(
+                        nameNode,
+                        String.format(messagePattern, method.getName(), argumentsCount),
+                        ProblemHighlightType.ERROR
+                );
+            }
         }
     }
 }

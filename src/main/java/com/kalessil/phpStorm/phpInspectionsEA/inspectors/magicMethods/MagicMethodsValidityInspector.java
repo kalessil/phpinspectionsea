@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy.*
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -79,28 +80,28 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     case "__get":
                     case "__isset":
                     case "__unset":
+                        TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                         CanNotBeStaticStrategy.apply(method, holder);
                         MustBePublicStrategy.apply(method, holder);
-                        TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                         CanNotTakeArgumentsByReferenceStrategy.apply(method, holder);
                         HasAlsoMethodStrategy.apply(method, "__set", holder);
                         break;
                     case "__set":
                     case "__call":
+                        TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
                         CanNotBeStaticStrategy.apply(method, holder);
                         MustBePublicStrategy.apply(method, holder);
                         CanNotTakeArgumentsByReferenceStrategy.apply(method, holder);
-                        TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
                         if (methodName.equals("__set")) {
                             HasAlsoMethodStrategy.apply(method, "__isset", holder);
                             HasAlsoMethodStrategy.apply(method, "__get", holder);
                         }
                         break;
                     case "__callStatic":
+                        TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
                         MustBeStaticStrategy.apply(method, holder);
                         MustBePublicStrategy.apply(method, holder);
                         CanNotTakeArgumentsByReferenceStrategy.apply(method, holder);
-                        TakesExactAmountOfArgumentsStrategy.apply(2, method, holder);
                         break;
                     case "__toString":
                         CanNotBeStaticStrategy.apply(method, holder);
@@ -116,10 +117,11 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                         MinimalPhpVersionStrategy.apply(method, holder, PhpLanguageLevel.PHP560);
                         break;
                     case "__set_state":
+                        TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                         MustBeStaticStrategy.apply(method, holder);
                         MustBePublicStrategy.apply(method, holder);
-                        TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
-                        MustReturnSpecifiedTypeStrategy.apply((new PhpType()).add(clazz.getFQN()), method, holder);
+                        final PhpType returnTypes = (new PhpType()).add(clazz.getFQN()).add(Types.strStatic);
+                        MustReturnSpecifiedTypeStrategy.apply(returnTypes, method, holder);
                         break;
                     case "__invoke":
                         CanNotBeStaticStrategy.apply(method, holder);
@@ -138,8 +140,8 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                         MustReturnSpecifiedTypeStrategy.apply(arrayType, method, holder);
                         break;
                     case "__autoload":
-                        holder.registerProblem(nameNode, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                         TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
+                        holder.registerProblem(nameNode, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                         break;
                     default:
                         if (methodName.startsWith("__") && !knownNonMagic.contains(methodName)) {

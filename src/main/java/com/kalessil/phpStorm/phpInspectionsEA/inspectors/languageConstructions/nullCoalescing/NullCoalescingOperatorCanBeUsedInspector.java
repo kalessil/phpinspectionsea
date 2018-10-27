@@ -79,6 +79,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
             @Override
             public void visitPhpIf(@NotNull If expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     final PsiElement condition = expression.getCondition();

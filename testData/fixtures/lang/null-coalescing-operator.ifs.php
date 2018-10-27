@@ -22,14 +22,39 @@ function cases_holder() {
         $container = 'default';
     }
 
+    /* false-positives: value or container mismatches */
+    if (isset($value)) {
+        $container = trim($value);
+    } else {
+        $container = 'default';
+    }
+    if (isset($value)) {
+        $value = $value;
+    } else {
+        $container = 'default';
+    }
+
     <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         return $value;
     } else {
         return 'default';
     }
 
+    /* false-positives: value mismatches */
+    if (isset($value)) {
+        return trim($value);
+    } else {
+        return 'default';
+    }
+
     <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         return $value;
+    }
+    return 'default';
+
+    /* false-positives: value mismatches */
+    if (isset($value)) {
+        return trim($value);
     }
     return 'default';
 }

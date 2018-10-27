@@ -131,7 +131,17 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         PsiElement ownFromElse = ExpressionSemanticUtil.getLastStatement(elseBody);
                         if (ownFromIf != null && ownFromElse != null) {
                             if (ownFromIf instanceof PhpReturn && ownFromElse instanceof PhpReturn) {
-                                // if body is returning isset argument else body returning whatever
+                                final String replacement = this.generateReplacement(
+                                        argument,
+                                        (PhpReturn) ownFromIf,
+                                        (PhpReturn) ownFromElse
+                                );
+                                if (replacement != null) {
+                                    holder.registerProblem(
+                                            expression.getFirstChild(),
+                                            String.format(messagePattern, replacement)
+                                    );
+                                }
                             } else {
                                 ownFromIf   = ownFromIf.getFirstChild();
                                 ownFromElse = ownFromElse.getFirstChild();
@@ -152,6 +162,23 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         }
                     }
                 }
+            }
+
+            @Nullable
+            private String generateReplacement(
+                    @NotNull PsiElement argument,
+                    @NotNull PhpReturn positive,
+                    @NotNull PhpReturn negative
+            ) {
+                String result                  = null;
+                final PsiElement negativeValue = ExpressionSemanticUtil.getReturnValue(negative);
+                if (negativeValue != null) {
+                    final PsiElement positiveValue = ExpressionSemanticUtil.getReturnValue(positive);
+                    if (positiveValue != null && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
+                            result = String.format("return %s ?? %s", positiveValue.getText(), negativeValue.getText());
+                    }
+                }
+                return result;
             }
 
             @Nullable

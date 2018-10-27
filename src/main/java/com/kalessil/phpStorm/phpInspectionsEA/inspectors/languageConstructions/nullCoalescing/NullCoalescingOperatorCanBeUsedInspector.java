@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
                                 if (expression.getElseBranch() == null) {
                                     this.analyzeIfWithPrecedingStatement(expression, arguments[0], ifBody);
+                                    //this.analyzeIfWithFollowingStatement(expression, arguments[0], ifBody);
                                 } else {
                                     this.analyzeIfElseStatement(expression, arguments[0], ifBody);
                                 }
@@ -101,25 +103,16 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     previous = previous.getFirstChild();
                     own      = own.getFirstChild();
                     if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
-                        final AssignmentExpression negative = (AssignmentExpression) previous;
-                        final PsiElement negativeContainer  = negative.getVariable();
-                        final PsiElement negativeValue      = negative.getValue();
-                        if (negativeContainer != null && negativeValue != null) {
-                            final AssignmentExpression positive = (AssignmentExpression) own;
-                            final PsiElement positiveContainer  = positive.getVariable();
-                            final PsiElement positiveValue      = positive.getValue();
-                            if (positiveContainer != null && positiveValue != null) {
-                                final boolean check = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer);
-                                if (check && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
-                                    final String replacement = String.format(
-                                            "%s = %s ?? %s",
-                                            positiveContainer.getText(),
-                                            positiveValue.getText(),
-                                            negativeValue.getText()
-                                    );
-                                    holder.registerProblem(expression.getFirstChild(), String.format(messagePattern, replacement));
-                                }
-                            }
+                        final String replacement = this.generateReplacement(
+                                argument,
+                                (AssignmentExpression) own,
+                                (AssignmentExpression) previous
+                        );
+                        if (replacement != null) {
+                            holder.registerProblem(
+                                    expression.getFirstChild(),
+                                    String.format(messagePattern, replacement)
+                            );
                         }
                     }
                 }
@@ -130,15 +123,62 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     @NotNull PsiElement argument,
                     @NotNull GroupStatement ifBody
             ) {
-                final Else alternative        = expression.getElseBranch();
-                final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(alternative);
-                if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
-                    PsiElement ownFromIf   = ExpressionSemanticUtil.getLastStatement(ifBody);
-                    PsiElement ownFromElse = ExpressionSemanticUtil.getLastStatement(elseBody);
-
-                    // if body is returning isset argument else body returning whatever
-                    // if body is assigning isset argument else body assigning whatever (same container)
+                final Else alternative = expression.getElseBranch();
+                if (alternative != null) {
+                    final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(alternative);
+                    if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
+                        PsiElement ownFromIf   = ExpressionSemanticUtil.getLastStatement(ifBody);
+                        PsiElement ownFromElse = ExpressionSemanticUtil.getLastStatement(elseBody);
+                        if (ownFromIf != null && ownFromElse != null) {
+                            if (ownFromIf instanceof PhpReturn && ownFromElse instanceof PhpReturn) {
+                                // if body is returning isset argument else body returning whatever
+                            } else {
+                                ownFromIf   = ownFromIf.getFirstChild();
+                                ownFromElse = ownFromElse.getFirstChild();
+                                if (OpenapiTypesUtil.isAssignment(ownFromIf) && OpenapiTypesUtil.isAssignment(ownFromElse)) {
+                                    final String replacement = this.generateReplacement(
+                                            argument,
+                                            (AssignmentExpression) ownFromIf,
+                                            (AssignmentExpression) ownFromElse
+                                    );
+                                    if (replacement != null) {
+                                        holder.registerProblem(
+                                                expression.getFirstChild(),
+                                                String.format(messagePattern, replacement)
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
+            }
+
+            @Nullable
+            private String generateReplacement(
+                    @NotNull PsiElement argument,
+                    @NotNull AssignmentExpression positive,
+                    @NotNull AssignmentExpression negative
+            ) {
+                String result                      = null;
+                final PsiElement negativeContainer = negative.getVariable();
+                final PsiElement negativeValue     = negative.getValue();
+                if (negativeContainer != null && negativeValue != null) {
+                    final PsiElement positiveContainer = positive.getVariable();
+                    final PsiElement positiveValue     = positive.getValue();
+                    if (positiveContainer != null && positiveValue != null) {
+                        final boolean check = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer);
+                        if (check && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
+                            result = String.format(
+                                    "%s = %s ?? %s",
+                                    positiveContainer.getText(),
+                                    positiveValue.getText(),
+                                    negativeValue.getText()
+                            );
+                        }
+                    }
+                }
+                return result;
             }
         };
     }

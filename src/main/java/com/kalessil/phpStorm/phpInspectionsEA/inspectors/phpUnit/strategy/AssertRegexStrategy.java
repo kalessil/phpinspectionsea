@@ -39,10 +39,12 @@ public class AssertRegexStrategy {
                     if (candidateName != null && candidateName.equals("preg_match")) {
                         final PsiElement[] innerArguments = candidate.getParameters();
                         if (innerArguments.length == 2) {
-                            final boolean isDirect = arguments[0].getText().equals(numberCompareTargets.get(methodName));
+                            final String suggestedAssertion = arguments[0].getText().equals(numberCompareTargets.get(methodName))
+                                    ? "assertRegExp"
+                                    : "assertNotRegExp";
                             holder.registerProblem(
                                     reference,
-                                    (isDirect ? "assertRegExp" : "assertNotRegExp") + " should be used instead"
+                                    suggestedAssertion + " should be used instead"
                             );
                             result = true;
                         }
@@ -64,13 +66,14 @@ public class AssertRegexStrategy {
                             if (candidateName != null && candidateName.equals("preg_match")) {
                                 final PsiElement[] innerArguments = candidate.getParameters();
                                 if (innerArguments.length == 2) {
-                                    final boolean isDirect = methodName.equals("assertTrue");
+                                    final String suggestedAssertion = methodName.equals("assertTrue")
+                                            ? "assertRegExp"
+                                            : "assertNotRegExp";
                                     holder.registerProblem(
                                             reference,
-                                            (isDirect ? "assertRegExp" : "assertNotRegExp") + " should be used instead"
+                                            suggestedAssertion + " should be used instead"
                                     );
                                     result = true;
-
                                 }
                             }
                         }

@@ -27,9 +27,3 @@ function explode_misuse_implode($arg) {
     echo implode('', $c);
     return $c;
 }
-
-function explode_misuse_in_array($arg) {
-    return [
-        strpos($arg, 'what'),
-    ];
-}

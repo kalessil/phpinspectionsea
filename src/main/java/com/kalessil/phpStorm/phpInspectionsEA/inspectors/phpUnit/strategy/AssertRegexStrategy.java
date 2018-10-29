@@ -30,16 +30,16 @@ public class AssertRegexStrategy {
     static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result = false;
         if (numberCompareTargets.containsKey(methodName)) {
-            final PsiElement[] arguments = reference.getParameters();
-            if (arguments.length >= 2 && OpenapiTypesUtil.isNumber(arguments[0])) {
-                final boolean isTarget = OpenapiTypesUtil.isFunctionReference(arguments[1]);
+            final PsiElement[] assertionArguments = reference.getParameters();
+            if (assertionArguments.length >= 2 && OpenapiTypesUtil.isNumber(assertionArguments[0])) {
+                final boolean isTarget = OpenapiTypesUtil.isFunctionReference(assertionArguments[1]);
                 if (isTarget) {
-                    final FunctionReference candidate = (FunctionReference) arguments[1];
+                    final FunctionReference candidate = (FunctionReference) assertionArguments[1];
                     final String candidateName        = candidate.getName();
                     if (candidateName != null && candidateName.equals("preg_match")) {
-                        final PsiElement[] innerArguments = candidate.getParameters();
-                        if (innerArguments.length == 2) {
-                            final String suggestedAssertion = arguments[0].getText().equals(numberCompareTargets.get(methodName))
+                        final PsiElement[] functionArguments = candidate.getParameters();
+                        if (functionArguments.length == 2) {
+                            final String suggestedAssertion = assertionArguments[0].getText().equals(numberCompareTargets.get(methodName))
                                     ? "assertRegExp"
                                     : "assertNotRegExp";
                             holder.registerProblem(
@@ -52,9 +52,9 @@ public class AssertRegexStrategy {
                 }
             }
         } else if (binaryTargets.contains(methodName)) {
-            final PsiElement[] arguments = reference.getParameters();
-            if (arguments.length > 0 && arguments[0] instanceof BinaryExpression) {
-                final BinaryExpression binary = (BinaryExpression) arguments[0];
+            final PsiElement[] assertionArguments = reference.getParameters();
+            if (assertionArguments.length > 0 && assertionArguments[0] instanceof BinaryExpression) {
+                final BinaryExpression binary = (BinaryExpression) assertionArguments[0];
                 if (binary.getOperationType() == PhpTokenTypes.opGREATER) {
                     final PsiElement left  = binary.getLeftOperand();
                     final PsiElement right = binary.getRightOperand();
@@ -64,8 +64,8 @@ public class AssertRegexStrategy {
                             final FunctionReference candidate = (FunctionReference) left;
                             final String candidateName        = candidate.getName();
                             if (candidateName != null && candidateName.equals("preg_match")) {
-                                final PsiElement[] innerArguments = candidate.getParameters();
-                                if (innerArguments.length == 2) {
+                                final PsiElement[] functionArguments = candidate.getParameters();
+                                if (functionArguments.length == 2) {
                                     final String suggestedAssertion = methodName.equals("assertTrue")
                                             ? "assertRegExp"
                                             : "assertNotRegExp";

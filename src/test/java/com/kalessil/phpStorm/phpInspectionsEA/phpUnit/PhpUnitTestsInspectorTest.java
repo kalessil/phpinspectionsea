@@ -126,6 +126,16 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/phpUnit/assert-contains.fixed.php");
     }
+    public void testIfFindsAssertRegExpPatterns() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("testData/fixtures/phpUnit/assert-regexp.php");
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/phpUnit/assert-regexp.fixed.php");
+
+    }
     public void testIfFindsExpectsOncePattern() {
         myFixture.enableInspections(new PhpUnitTestsInspector());
         myFixture.configureByFile("testData/fixtures/phpUnit/expects-once.php");

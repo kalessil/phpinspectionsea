@@ -49,7 +49,7 @@ public class AssertRegexStrategy {
                             suggestedArguments[0]             = functionArguments[0].getText();
                             suggestedArguments[1]             = functionArguments[1].getText();
                             if (assertionArguments.length > 2) {
-                                suggestedArguments[2] = assertionArguments[1].getText();
+                                suggestedArguments[2] = assertionArguments[2].getText();
                             }
                             holder.registerProblem(
                                     reference,

@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class AssertRegexStrategy {
+    private final static String messagePattern = "'%s(...)' would fit more here.";
+
     private final static Map<String, String> numberCompareTargets = new HashMap<>();
     private final static Set<String> binaryTargets = new HashSet<>();
     static {
@@ -39,12 +42,19 @@ public class AssertRegexStrategy {
                     if (candidateName != null && candidateName.equals("preg_match")) {
                         final PsiElement[] functionArguments = candidate.getParameters();
                         if (functionArguments.length == 2) {
-                            final String suggestedAssertion = assertionArguments[0].getText().equals(numberCompareTargets.get(methodName))
+                            final String suggestedAssertion   = assertionArguments[0].getText().equals(numberCompareTargets.get(methodName))
                                     ? "assertRegExp"
                                     : "assertNotRegExp";
+                            final String[] suggestedArguments = new String[assertionArguments.length];
+                            suggestedArguments[0]             = functionArguments[0].getText();
+                            suggestedArguments[1]             = functionArguments[1].getText();
+                            if (assertionArguments.length > 2) {
+                                suggestedArguments[2] = assertionArguments[1].getText();
+                            }
                             holder.registerProblem(
                                     reference,
-                                    suggestedAssertion + " should be used instead"
+                                    String.format(messagePattern, suggestedAssertion),
+                                    new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                             );
                             result = true;
                         }
@@ -66,12 +76,19 @@ public class AssertRegexStrategy {
                             if (candidateName != null && candidateName.equals("preg_match")) {
                                 final PsiElement[] functionArguments = candidate.getParameters();
                                 if (functionArguments.length == 2) {
-                                    final String suggestedAssertion = methodName.equals("assertTrue")
+                                    final String suggestedAssertion   = methodName.equals("assertTrue")
                                             ? "assertRegExp"
                                             : "assertNotRegExp";
+                                    final String[] suggestedArguments = new String[assertionArguments.length + 1];
+                                    suggestedArguments[0]             = functionArguments[0].getText();
+                                    suggestedArguments[1]             = functionArguments[1].getText();
+                                    if (assertionArguments.length > 1) {
+                                        suggestedArguments[2] = assertionArguments[1].getText();
+                                    }
                                     holder.registerProblem(
                                             reference,
-                                            suggestedAssertion + " should be used instead"
+                                            String.format(messagePattern, suggestedAssertion),
+                                            new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                                     );
                                     result = true;
                                 }

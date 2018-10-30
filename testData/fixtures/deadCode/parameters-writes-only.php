@@ -90,4 +90,15 @@ class Container {
             <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$second[]</weak_warning> = $parameter;
         }
     }
+
+    function foreach_case_holder()
+    {
+        foreach (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = [] as $item) {}
+    }
+
+    function if_case_holder()
+    {
+        if (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = []) {}
+        elseif (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = []) {}
+    }
 }

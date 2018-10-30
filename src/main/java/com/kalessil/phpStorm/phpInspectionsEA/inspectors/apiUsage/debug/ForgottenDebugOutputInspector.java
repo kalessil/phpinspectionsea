@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -44,7 +43,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     public ForgottenDebugOutputInspector() {
     }
 
-    public void readSettings(@NotNull Element node) throws InvalidDataException {
+    public void readSettings(@NotNull Element node) {
         XmlSerializer.deserializeInto(this, node);
         recompileConfiguration();
     }

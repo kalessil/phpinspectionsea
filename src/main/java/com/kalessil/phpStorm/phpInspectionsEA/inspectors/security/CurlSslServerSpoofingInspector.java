@@ -105,12 +105,20 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     for (final PsiElement possibleValue : discovered) {
                         if (possibleValue instanceof StringLiteralExpression) {
                             boolean disabled = !((StringLiteralExpression) possibleValue).getContents().equals("2");
-                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            if (disabled) {
+                                ++countDisables;
+                            } else {
+                                ++countEnables;
+                            }
                         } else if (possibleValue instanceof ConstantReference) {
                             ++countDisables;
                         } else if (possibleValue.getTextLength() == 1) {
                             boolean disabled = !possibleValue.getText().equals("2");
-                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            if (disabled) {
+                                ++countDisables;
+                            } else {
+                                ++countEnables;
+                            }
                         }
                     }
                     discovered.clear();
@@ -132,13 +140,25 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     for (final PsiElement possibleValue : discovered) {
                         if (possibleValue instanceof StringLiteralExpression) {
                             boolean disabled = !((StringLiteralExpression) possibleValue).getContents().equals("1");
-                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            if (disabled) {
+                                ++countDisables;
+                            } else {
+                                ++countEnables;
+                            }
                         } else if (possibleValue instanceof ConstantReference) {
                             boolean disabled = !PhpLanguageUtil.isTrue(possibleValue);
-                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            if (disabled) {
+                                ++countDisables;
+                            } else {
+                                ++countEnables;
+                            }
                         } else if (possibleValue.getTextLength() == 1) {
                             boolean disabled = !possibleValue.getText().equals("1");
-                            int dummy        = disabled ? ++countDisables : ++countEnables;
+                            if (disabled) {
+                                ++countDisables;
+                            } else {
+                                ++countEnables;
+                            }
                         }
                         /* other expressions are not supported currently */
                     }

@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CompactCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' can be used instead instead (improves maintainability).";
@@ -54,7 +53,7 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
                 }
 
                 if (variables.size() > 1) {
-                    final String replacement = String.format("compact(%s)", variables.stream().collect(Collectors.joining(", ")));
+                    final String replacement = String.format("compact(%s)", String.join(", ", variables));
                     final String message     = String.format(messagePattern, replacement);
                     holder.registerProblem(expression.getFirstChild(), message, new UseCompactFix(replacement));
                     variables.clear();

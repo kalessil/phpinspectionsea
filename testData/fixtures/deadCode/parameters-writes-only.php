@@ -101,4 +101,9 @@ class Container {
         if (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = []) {}
         elseif (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = []) {}
     }
+
+    function argument_case_holder()
+    {
+        return trim(<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = []);
+    }
 }

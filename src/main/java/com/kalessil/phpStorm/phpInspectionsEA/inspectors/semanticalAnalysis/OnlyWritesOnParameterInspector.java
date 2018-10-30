@@ -110,6 +110,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         parent instanceof ForeachStatement ||
                         parent instanceof If ||
                         parent instanceof ElseIf ||
+                        parent instanceof ParameterList ||
                         (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
                         OpenapiTypesUtil.isStatementImpl(parent)  ||
                         OpenapiTypesUtil.isAssignment(parent)     ||

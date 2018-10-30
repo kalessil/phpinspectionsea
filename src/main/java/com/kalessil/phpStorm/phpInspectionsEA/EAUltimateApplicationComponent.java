@@ -74,7 +74,7 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
                     EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {
                         switch (action) {
                             case "#try":      (new StartTrialAction()).perform(service, plugin);      break;
-                            case "#buy":      (new PurchaseLicenseAction()).perform(plugin);          break;
+                            case "#buy":      (new PurchaseLicenseAction()).perform();                break;
                             case "#activate": (new ActivateLicenseAction()).perform(service, plugin); break;
                         }
                     })

@@ -1,5 +1,5 @@
 # Developer docs
-Helps on setting up the project and running tests.
+Helps with setting up the project and running tests.
 
 ## Setting up the project
 
@@ -16,7 +16,7 @@ Helps on setting up the project and running tests.
 - Fork https://github.com/kalessil/phpinspectionsea on Github
 - In IDE: VCS -> Checkout from Version Control -> Git
   - Provide url, e.g. https://github.com/<your_github_account>/phpinspectionsea.git
-  - IDE will suggest to open a folder after checking source code out
+  - IDE will suggest opening a folder after checking source code out
 
 ### Known issues
 
@@ -31,16 +31,16 @@ Classes responsibility are not separated: inspections are also generating replac
     ![Project Settings](images/project-settings.png)
 
     If `No SDK` is initially selected, use button `New...` to add one. System installed SDK can be selected
-    by choosing option `SDK` or `IntelliJ Platform Plugin SDK`, the latest is the more straightforward. If
+    by choosing option `SDK` or `IntelliJ Platform Plugin SDK`, the latter is the more straightforward. If
     you choose `SDK` you may be asked to configure the internal SDK to use, locate you JDK installed in your
     system then.
 
     If no output directory is selected in `Project Compiler Output` you can configure it to point to `out` in
-    the root of the project, it will be ignore by git also.
+    the root of the project, it will be ignored by git.
 
   - Project Settings -> libraries (Screenshot; Idea lib, PS jar, PS PHP/CSS plugin folders)
 
-    If there is no library, create one named the way you want, name is important only to reference it later on.
+    If there is no library, create one with the name you want; the name is important only to reference it later on.
 
     ![Project libs](images/libraries.png)
 
@@ -57,18 +57,18 @@ Classes responsibility are not separated: inspections are also generating replac
 
     ![Module Settings](images/module-settings.png)
 
-    In first step of the install the file `PhpInspectionsEA.iml.dist` was renamed. This created the module
-    settings needed in here. Be sure to have similar setup. If needed, just select folders and mark them as
+    In the first step of the install the file `PhpInspectionsEA.iml.dist` was renamed. This created the module
+    settings needed here. Be sure to use a similar setup. If needed, select folders and mark them as
     one of the categories displayed in *Mark as* section: `Sources`, `Test`, etc..
 
     ![Module Dependencies](images/module-settings-deps.png)
 
-    As the module dependencies, select the library created in previous steps, and change the scope to `Provided`.
+    For the module dependencies, select the library created in previous steps, and change the scope to `Provided`.
 
   - Platform Settings -> SDKs
     ![Platform SDKs](images/sdks.png)
 
-    For the Platform SDK, just select the SDK created in earlier steps, when configuring `Project` section.
+    For the Platform SDK, select the SDK created in earlier steps, when configuring `Project` section.
 
 ## Configuring and running test
 
@@ -80,7 +80,7 @@ You can use the provided `log4j.properties` in project root as default/seed conf
 
 ## Configuring GitHub Task Integration
 
-You can easily configure IntelliJ to fetch task from GitHub:
+You can configure IntelliJ to fetch task from GitHub:
 
 1. Settings | Tasks | Servers
 2. Add server with relevant data:
@@ -98,5 +98,5 @@ For the time being use the provided file in `docs/dictionaries/kalessil.xml` to 
 `.idea/dictionaries/{username}.xml`, next time you restart the IDE, the words will be available under:
 File | Settings | Spelling | Accepted Words.
 
-Regarding IntelliJ suggestion of installing php plugins to use with the `.php` files, IGNORE it. Most of the files used
-in fixture are not valid PHP files and though IDE inspections will complain.
+Regarding the IntelliJ suggestion of installing php plugins to use with the `.php` files, IGNORE it. Most of the files used
+in fixture are not valid PHP files and the IDE inspections will complain.

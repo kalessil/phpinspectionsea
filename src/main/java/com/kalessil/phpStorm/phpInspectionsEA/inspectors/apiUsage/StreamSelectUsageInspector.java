@@ -43,7 +43,7 @@ public class StreamSelectUsageInspector extends BasePhpInspection {
                                 final PsiElement threshold = variants.iterator().next();
                                 if (OpenapiTypesUtil.isNumber(threshold)) {
                                     try {
-                                        if (Long.valueOf(threshold.getText()) < 200000) {
+                                        if (Long.parseLong(threshold.getText()) < 200000) {
                                             holder.registerProblem(microseconds, message);
                                         }
                                     } catch (final NumberFormatException failure) {

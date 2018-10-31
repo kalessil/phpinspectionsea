@@ -1,5 +1,7 @@
 <?php
 
+function cases_holder(string $string, int $position, int $offset)
+{
     $string[$position];
     $string[strlen($string) - 1];
     $string[strlen($string) - $offset];
@@ -13,6 +15,10 @@
     substr($string, $position, -1);
     substr($string, $position, 5);
 
-    /* false-positives: source types */
+    /* false-positives: source expression */
     substr(call(), $position, 1);
-    substr((string)$source, $position, 1);
+    substr((string)$string, $position, 1);
+
+    /* false-positives: source type */
+    substr($position, $position, 1);
+}

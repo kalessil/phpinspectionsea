@@ -3,14 +3,14 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.FieldReference;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -43,20 +43,28 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                     if (arguments.length == 3) {
                         final PsiElement length = arguments[2];
                         if (OpenapiTypesUtil.isNumber(length) && length.getText().equals("1")) {
-                            final boolean isTarget  = arguments[0] instanceof Variable ||
-                                                      arguments[0] instanceof ArrayAccessExpression ||
-                                                      arguments[0] instanceof FieldReference;
-                            if (isTarget) {
-                                final String source      = arguments[0].getText();
-                                final String offset      = arguments[1].getText();
-                                final String replacement = offset.startsWith("-")
-                                        ? String.format("%s[strlen(%s) %s]", source, source, offset.replaceFirst("-", "- "))
-                                        : String.format( "%s[%s]", source, offset);
-                                holder.registerProblem(
-                                        reference,
-                                        String.format(messagePattern, replacement),
-                                        new TheLocalFix(replacement)
-                                );
+                            final boolean isValidSource = arguments[0] instanceof Variable ||
+                                                          arguments[0] instanceof ArrayAccessExpression ||
+                                                          arguments[0] instanceof FieldReference;
+                            if (isValidSource) {
+                                final PhpTypedElement container = (PhpTypedElement) arguments[0];
+                                final PhpType resolvedType      = OpenapiResolveUtil.resolveType(container, reference.getProject());
+                                if (resolvedType != null) {
+                                    final boolean isValidType = resolvedType.filterUnknown().getTypes().stream()
+                                            .anyMatch(t -> Types.getType(t).equals(Types.strString));
+                                    if (isValidType) {
+                                        final String source      = arguments[0].getText();
+                                        final String offset      = arguments[1].getText();
+                                        final String replacement = offset.startsWith("-")
+                                                ? String.format("%s[strlen(%s) %s]", source, source, offset.replaceFirst("-", "- "))
+                                                : String.format( "%s[%s]", source, offset);
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(messagePattern, replacement),
+                                                new TheLocalFix(replacement)
+                                        );
+                                    }
+                                }
                             }
                         }
                     }

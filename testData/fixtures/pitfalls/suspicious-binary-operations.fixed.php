@@ -92,6 +92,11 @@ if ($x && $x & $x) {}
 if ($x || $x & $x) {}
 if ($x && $x | $x) {}
 if ($x || $x | $x) {}
+/* same, but with other tree structure */
+if ($x & $x && $x) {}
+if ($x & $x || $x) {}
+if ($x | $x && $x) {}
+if ($x | $x || $x) {}
 
 /* false-positives: parentheses, mixed operators, integer types */
 if ($x && ($x & $x)) {}

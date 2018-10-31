@@ -92,6 +92,11 @@ if ($x && $x <error descr="It was probably was intended to use && here (if not, 
 if ($x || $x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x) {}
 if ($x && $x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x) {}
 if ($x || $x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x) {}
+/* same, but with other tree structure */
+if ($x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x && $x) {}
+if ($x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x || $x) {}
+if ($x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x && $x) {}
+if ($x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x || $x) {}
 
 /* false-positives: parentheses, mixed operators, integer types */
 if ($x && ($x & $x)) {}

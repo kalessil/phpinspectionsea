@@ -181,7 +181,12 @@ final public class ExpressionSemanticUtil {
     }
 
     public static boolean isUsedAsLogicalOperand(@NotNull PsiElement expression) {
-        final PsiElement parent = expression.getParent();
+        PsiElement subject = expression;
+        PsiElement parent  = expression.getParent();
+        while (parent instanceof ParenthesizedExpression) {
+            subject = parent;
+            parent  = parent.getParent();
+        }
         if (parent instanceof If || parent instanceof ElseIf || parent instanceof While || parent instanceof DoWhile) {
             return true;
         } else if (parent instanceof UnaryExpression) {
@@ -192,7 +197,7 @@ final public class ExpressionSemanticUtil {
                    PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation);
         } else if (parent instanceof TernaryExpression) {
             final TernaryExpression ternary = (TernaryExpression) parent;
-            return !ternary.isShort() && expression == ternary.getCondition();
+            return !ternary.isShort() && subject == ternary.getCondition();
         } else {
             return false;
         }

@@ -125,6 +125,13 @@ class CasesHolder {
         return ($first ?? new CaseHolder())->nonExistingField;
     }
 
+    public function npeSafeTernaryCase(?CasesHolder $first, ?CasesHolder $second) {
+        return [
+            $first ? $first->nonExistingField : '...',
+            ($second) ? $second->nonExistingField : '...',
+        ];
+    }
+
     public function npeSafeIsNullFunctionCase(?CasesHolder $first) {
         if (!is_null($first)) {
             return $first->nonExistingField;

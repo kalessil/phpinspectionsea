@@ -27,20 +27,22 @@ final public class MistypedLogicalOperatorsStrategy {
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result              = false;
         final IElementType operator = expression.getOperationType();
-        if (operator != null && (operator == PhpTokenTypes.opBIT_AND || operator == PhpTokenTypes.opBIT_OR)) {
+        if (operator == PhpTokenTypes.opBIT_AND || operator == PhpTokenTypes.opBIT_OR) {
             final PsiElement parent = expression.getParent();
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
                 if (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR) {
-                    final PsiElement target = expression.getOperation();
                     final PsiElement left   = expression.getLeftOperand();
                     final PsiElement right  = expression.getRightOperand();
-                    if (target != null && left != null && right != null && (!isIntegerType(left) || !isIntegerType(right))) {
-                        result = true;
-                        holder.registerProblem(
-                                target,
-                                operator == PhpTokenTypes.opBIT_AND ? messagePatternAnd : messagePatternOr
-                        );
+                    if ( left != null && right != null && (!isIntegerType(left) || !isIntegerType(right))) {
+                        final PsiElement target = expression.getOperation();
+                        if (target != null) {
+                            result = true;
+                            holder.registerProblem(
+                                    target,
+                                    operator == PhpTokenTypes.opBIT_AND ? messagePatternAnd : messagePatternOr
+                            );
+                        }
                     }
                 }
             }

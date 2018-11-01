@@ -76,6 +76,8 @@ final public class ConstantConditionsCountCheckStrategy {
                         } else if (operator == PhpTokenTypes.opLESS_OR_EQUAL) {
                             if (result = (number < range.getMinimum())) {
                                 holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
+                            } else if (result = (number >= range.getMaximum())) {
+                                holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
                             }
                         } else if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
                             if (result = (!range.isValidValue(number))) {

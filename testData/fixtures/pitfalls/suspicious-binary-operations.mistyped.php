@@ -14,7 +14,10 @@ function cases_holder(string $string, int $int)
     if ($int <error descr="It was probably was intended to use || here (one of arguments is not an integer).">|</error> $string && $string) {}
     if ($int <error descr="It was probably was intended to use || here (one of arguments is not an integer).">|</error> $string || $string) {}
 
-    /* false-positives: parentheses, mixed operators, integer types */
+    /* false-positives: valid cases */
+    if ($int & ~$int) {}
+    if ($int & $int & $int) {}
+    if ($int | $int | $int) {}
     if ($string && $int & $int) {}
     if ($string || $int | $int) {}
 }

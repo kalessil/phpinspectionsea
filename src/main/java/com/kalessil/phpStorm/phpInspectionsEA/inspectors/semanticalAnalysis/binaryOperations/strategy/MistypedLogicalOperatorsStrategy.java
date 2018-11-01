@@ -45,11 +45,12 @@ final public class MistypedLogicalOperatorsStrategy {
     }
 
     private static boolean isIntegerType(@NotNull PsiElement operand) {
-        boolean result = false;
-        if (operand instanceof PhpTypedElement && !(operand instanceof BinaryExpression)) {
-            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
-            if (resolved != null && !resolved.hasUnknown()) {
-                result = resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strInteger));
+        boolean result = true;
+        if (operand instanceof PhpTypedElement) {
+            final PhpType type     = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
+            final PhpType filtered = type == null ? null : type.filterUnknown();
+            if (filtered != null && !filtered.isEmpty()) {
+                result = filtered.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strInteger));
             }
         }
         return result;

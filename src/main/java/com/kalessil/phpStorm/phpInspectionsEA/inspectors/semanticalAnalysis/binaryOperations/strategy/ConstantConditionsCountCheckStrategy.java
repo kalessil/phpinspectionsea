@@ -70,6 +70,8 @@ final public class ConstantConditionsCountCheckStrategy {
                         if (operator == PhpTokenTypes.opLESS) {
                             if (result = (number <= range.getMinimum())) {
                                 holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
+                            } else if (result = (number > range.getMaximum())) {
+                                holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
                             }
                         } else if (operator == PhpTokenTypes.opLESS_OR_EQUAL) {
                             if (result = (number < range.getMinimum())) {
@@ -86,10 +88,14 @@ final public class ConstantConditionsCountCheckStrategy {
                         } else if (operator == PhpTokenTypes.opGREATER) {
                             if (result = (number < range.getMinimum())) {
                                 holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
+                            } else if (result = (number >= range.getMaximum())) {
+                                holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                             }
                         } else if (operator == PhpTokenTypes.opGREATER_OR_EQUAL) {
                             if (result = (number <= range.getMinimum())) {
                                 holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
+                            } else if (result = (number > range.getMaximum())) {
+                                holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                             }
                         }
                     }
@@ -106,33 +112,38 @@ final public class ConstantConditionsCountCheckStrategy {
             final String functionName         = reference.getName();
             if (functionName != null) {
                 if (reference instanceof MethodReference) {
-                    if (functionName.equals("count")) {
-                        final PsiElement base = reference.getFirstChild();
-                        if (base instanceof PhpTypedElement) {
-                            final Project project = candidate.getProject();
-                            final PhpType type    = OpenapiResolveUtil.resolveType((PhpTypedElement) base, project);
-                            if (type != null) {
-                                final PhpIndex index = PhpIndex.getInstance(project);
-                                result = type.filterUnknown().getTypes().stream().anyMatch(t -> {
-                                    final String normalized = Types.getType(t);
-                                    if (normalized.startsWith("\\")) {
-                                        final Collection<PhpClass> resolved = OpenapiResolveUtil.resolveClassesByFQN(normalized, index);
-                                        if (!resolved.isEmpty()) {
-                                            for (final PhpClass parent : InterfacesExtractUtil.getCrawlInheritanceTree(resolved.iterator().next(), false)) {
-                                                if (parent.getFQN().equals("\\Countable")) {
-                                                    return true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    return false;
-                                });
-                            }
-                        }
-                    }
+                    result = functionName.equals("count") && isImplementingCountable((MethodReference) reference);
                 } else {
                     result = targetFunctions.containsKey(functionName);
                 }
+            }
+        }
+        return result;
+    }
+
+    private static boolean isImplementingCountable(@NotNull MethodReference reference) {
+        boolean result        = true;
+        final PsiElement base = reference.getFirstChild();
+        if (base instanceof PhpTypedElement) {
+            final Project project = reference.getProject();
+            final PhpType type    = OpenapiResolveUtil.resolveType((PhpTypedElement) base, project);
+            if (type != null) {
+                final PhpIndex index = PhpIndex.getInstance(project);
+                result = type.filterUnknown().getTypes().stream().anyMatch(t -> {
+                    final String normalized = Types.getType(t);
+                    if (normalized.startsWith("\\")) {
+                        final Collection<PhpClass> resolved = OpenapiResolveUtil.resolveClassesByFQN(normalized, index);
+                        if (!resolved.isEmpty()) {
+                            final PhpClass first = resolved.iterator().next();
+                            for (final PhpClass parent : InterfacesExtractUtil.getCrawlInheritanceTree(first, false)) {
+                                if (parent.getFQN().equals("\\Countable")) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                });
             }
         }
         return result;

@@ -19,4 +19,10 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.mistyped.php");
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testIfFindsCountChecks() {
+        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.count.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

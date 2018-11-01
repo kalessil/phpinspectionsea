@@ -41,6 +41,7 @@ final public class ConstantConditionsCountCheckStrategy {
         targetOperations.add(PhpTokenTypes.opLESS_OR_EQUAL);
 
         targetFunctions.put("count",          ValueRange.of(0, Long.MAX_VALUE));
+        targetFunctions.put("filesize",       ValueRange.of(0, Long.MAX_VALUE));
         targetFunctions.put("strlen",         ValueRange.of(0, Long.MAX_VALUE));
         targetFunctions.put("mb_strlen",      ValueRange.of(0, Long.MAX_VALUE));
         targetFunctions.put("iconv_strlen",   ValueRange.of(0, Long.MAX_VALUE));

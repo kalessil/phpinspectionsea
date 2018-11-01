@@ -2,53 +2,53 @@
 
 function cases_holder(\SplObjectStorage $storage, array $array) {
     return [
-        preg_match('/.../', '...') == -1,  // always false
+        <error descr="'preg_match('/.../', '...') == -1' seems to be always false.">preg_match('/.../', '...') == -1</error>,
         preg_match('/.../', '...') == 0,
         preg_match('/.../', '...') == 1,
-        preg_match('/.../', '...') == 2,   // always false
+        <error descr="'preg_match('/.../', '...') == 2' seems to be always false.">preg_match('/.../', '...') == 2</error>,
 
-        preg_match('/.../', '...') != -1,  // always true
+        <error descr="'preg_match('/.../', '...') != -1' seems to be always true.">preg_match('/.../', '...') != -1</error>,
         preg_match('/.../', '...') != 0,
         preg_match('/.../', '...') != 1,
-        preg_match('/.../', '...') != 2,   // always true
+        <error descr="'preg_match('/.../', '...') != 2' seems to be always true.">preg_match('/.../', '...') != 2</error>,
 
-        preg_match('/.../', '...') === -1,  // always false
+        <error descr="'preg_match('/.../', '...') === -1' seems to be always false.">preg_match('/.../', '...') === -1</error>,
         preg_match('/.../', '...') === 0,
         preg_match('/.../', '...') === 1,
-        preg_match('/.../', '...') === 2,   // always false
+        <error descr="'preg_match('/.../', '...') === 2' seems to be always false.">preg_match('/.../', '...') === 2</error>,
 
-        preg_match('/.../', '...') !== -1,  // always true
+        <error descr="'preg_match('/.../', '...') !== -1' seems to be always true.">preg_match('/.../', '...') !== -1</error>,
         preg_match('/.../', '...') !== 0,
         preg_match('/.../', '...') !== 1,
-        preg_match('/.../', '...') !== 2,   // always true
+        <error descr="'preg_match('/.../', '...') !== 2' seems to be always true.">preg_match('/.../', '...') !== 2</error>,
 
-        preg_match('/.../', '...') > -1, // always true
+        <error descr="'preg_match('/.../', '...') > -1' seems to be always true.">preg_match('/.../', '...') > -1</error>,
         preg_match('/.../', '...') > 0,
-        preg_match('/.../', '...') > 1,  // always false
-        preg_match('/.../', '...') > 2,  // always false
+        <error descr="'preg_match('/.../', '...') > 1' seems to be always false.">preg_match('/.../', '...') > 1</error>,
+        <error descr="'preg_match('/.../', '...') > 2' seems to be always false.">preg_match('/.../', '...') > 2</error>,
 
-        preg_match('/.../', '...') >= -1, // always true
-        preg_match('/.../', '...') >= 0,  // always true
+        <error descr="'preg_match('/.../', '...') >= -1' seems to be always true.">preg_match('/.../', '...') >= -1</error>,
+        <error descr="'preg_match('/.../', '...') >= 0' seems to be always true.">preg_match('/.../', '...') >= 0</error>,
         preg_match('/.../', '...') >= 1,
-        preg_match('/.../', '...') >= 2,  // always false
+        <error descr="'preg_match('/.../', '...') >= 2' seems to be always false.">preg_match('/.../', '...') >= 2</error>,
 
-        preg_match('/.../', '...') < -1, // always false
-        preg_match('/.../', '...') < 0,  // always false
+        <error descr="'preg_match('/.../', '...') < -1' seems to be always false.">preg_match('/.../', '...') < -1</error>,
+        <error descr="'preg_match('/.../', '...') < 0' seems to be always false.">preg_match('/.../', '...') < 0</error>,
         preg_match('/.../', '...') < 1,
-        preg_match('/.../', '...') < 2,  // always true
+        <error descr="'preg_match('/.../', '...') < 2' seems to be always true.">preg_match('/.../', '...') < 2</error>,
 
-        preg_match('/.../', '...') <= -1, // always false
+        <error descr="'preg_match('/.../', '...') <= -1' seems to be always false.">preg_match('/.../', '...') <= -1</error>,
         preg_match('/.../', '...') <= 0,
-        preg_match('/.../', '...') <= 1,  // always true
-        preg_match('/.../', '...') <= 2,  // always true
+        <error descr="'preg_match('/.../', '...') <= 1' seems to be always true.">preg_match('/.../', '...') <= 1</error>,
+        <error descr="'preg_match('/.../', '...') <= 2' seems to be always true.">preg_match('/.../', '...') <= 2</error>,
 
         $storage->count() == 0,
         $storage->count() != 0,
         $storage->count() === 0,
         $storage->count() !== 0,
         $storage->count() > 0,
-        $storage->count() >= 0, // always true
-        $storage->count() < 0,  // always false
+        <error descr="'$storage->count() >= 0' seems to be always true.">$storage->count() >= 0</error>,
+        <error descr="'$storage->count() < 0' seems to be always false.">$storage->count() < 0</error>,
         $storage->count() <= 0,
     ];
 }

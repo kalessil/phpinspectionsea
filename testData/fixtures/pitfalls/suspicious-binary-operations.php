@@ -86,22 +86,3 @@ if ('x' !== $x || <error descr="'$x !== 'x' || $x !== 'y'' seems to be always tr
 if ($x == 5 && $x === 6) {}
 if ($x != 'x' || $x !== 'y') {}
 if ($x == 5 && $x == $y) {}
-
-/* typos in logical operands */
-if ($x && $x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x) {}
-if ($x || $x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x) {}
-if ($x && $x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x) {}
-if ($x || $x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x) {}
-/* same, but with other tree structure */
-if ($x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x && $x) {}
-if ($x <error descr="It was probably was intended to use && here (if not, wrap into parentheses).">&</error> $x || $x) {}
-if ($x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x && $x) {}
-if ($x <error descr="It was probably was intended to use || here (if not, wrap into parentheses).">|</error> $x || $x) {}
-
-/* false-positives: parentheses, mixed operators, integer types */
-if ($x && ($x & $x)) {}
-if ($x || ($x & $x)) {}
-if ($x || ($x | $x)) {}
-if ($x && ($x | $x)) {}
-if ($x && 10 & 5) {}
-if ($x || 10 | 5) {}

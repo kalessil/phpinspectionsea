@@ -21,29 +21,23 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class MistypedLogicalOperatorsStrategy {
-    private static final String messagePatternAnd = "It was probably was intended to use && here (if not, wrap into parentheses).";
-    private static final String messagePatternOr  = "It was probably was intended to use || here (if not, wrap into parentheses).";
+    private static final String messagePattern = "It was probably was intended to use %s here (one of arguments is not an integer).";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result              = false;
         final IElementType operator = expression.getOperationType();
         if (operator == PhpTokenTypes.opBIT_AND || operator == PhpTokenTypes.opBIT_OR) {
-            final PsiElement parent = expression.getParent();
-            if (parent instanceof BinaryExpression) {
-                final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
-                if (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR) {
-                    final PsiElement left   = expression.getLeftOperand();
-                    final PsiElement right  = expression.getRightOperand();
-                    if ( left != null && right != null && (!isIntegerType(left) || !isIntegerType(right))) {
-                        final PsiElement target = expression.getOperation();
-                        if (target != null) {
-                            result = true;
-                            holder.registerProblem(
-                                    target,
-                                    operator == PhpTokenTypes.opBIT_AND ? messagePatternAnd : messagePatternOr
-                            );
-                        }
-                    }
+            final PsiElement left   = expression.getLeftOperand();
+            final PsiElement right  = expression.getRightOperand();
+            if (left != null && right != null) {
+                final boolean isTarget            = !isIntegerType(left) || !isIntegerType(right);
+                final PsiElement targetExpression = expression.getOperation();
+                if (isTarget && targetExpression != null) {
+                    result = true;
+                    holder.registerProblem(
+                            targetExpression,
+                            String.format(messagePattern, operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
+                    );
                 }
             }
         }
@@ -55,7 +49,7 @@ final public class MistypedLogicalOperatorsStrategy {
         if (operand instanceof PhpTypedElement && !(operand instanceof BinaryExpression)) {
             final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
             if (resolved != null && !resolved.hasUnknown()) {
-                result = resolved.getTypes().stream().allMatch(type -> Types.getType(type).equals(Types.strInteger));
+                result = resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strInteger));
             }
         }
         return result;

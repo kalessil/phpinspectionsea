@@ -50,6 +50,14 @@ final public class OpenapiResolveUtil {
                         result = new PhpType().add(PhpType.STRING).add(PhpType.ARRAY);
                     }
                 }
+            } else if (expression instanceof UnaryExpression) {
+                final UnaryExpression unary = (UnaryExpression) expression;
+                if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opBIT_NOT)) {
+                    final PsiElement argument = unary.getValue();
+                    if (argument instanceof PhpTypedElement) {
+                        result = resolveType((PhpTypedElement) argument, project);
+                    }
+                }
             } else if (expression instanceof BinaryExpression) {
                 final BinaryExpression binary = (BinaryExpression) expression;
                 final IElementType operator   = binary.getOperationType();

@@ -29,7 +29,7 @@ function cases_holder(\SplObjectStorage $storage, array $array) {
 
         preg_match('/.../', '...') >= -1, // always true
         preg_match('/.../', '...') >= 0,  // always true
-        preg_match('/.../', '...') >= 1,  // not error, but no point
+        preg_match('/.../', '...') >= 1,
         preg_match('/.../', '...') >= 2,  // always false
 
         preg_match('/.../', '...') < -1, // always false
@@ -38,7 +38,7 @@ function cases_holder(\SplObjectStorage $storage, array $array) {
         preg_match('/.../', '...') < 2,  // always true
 
         preg_match('/.../', '...') <= -1, // always false
-        preg_match('/.../', '...') <= 0,  // not error, but no point
+        preg_match('/.../', '...') <= 0,
         preg_match('/.../', '...') <= 1,  // always true
         preg_match('/.../', '...') <= 2,  // always true
 
@@ -49,6 +49,6 @@ function cases_holder(\SplObjectStorage $storage, array $array) {
         $storage->count() > 0,
         $storage->count() >= 0, // always true
         $storage->count() < 0,  // always false
-        $storage->count() <= 0, // not error, but no point
+        $storage->count() <= 0,
     ];
 }

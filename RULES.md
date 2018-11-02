@@ -285,3 +285,4 @@ Inspections Lists (Performance)
 | Performance          | ArrayColumnCanBeUsedInspection                  | 'array_column(...)' can be used                                                                   | yes | yes | yes  | no  |
 | Performance          | ArrayFlipCanBeUsedInspection                    | 'array_flip(...)' can be used                                                                     | yes | yes | yes  | no  |
 | Performance          | ArrayMergeMissUseInspection                     | 'array_merge(...)' misused                                                                        | yes | yes | yes  | no  |
+| Performance          | IteratorToArrayMissUseInspection                | 'iterator_to_array(...)' misused                                                                  | yes | no  | no   | no  |

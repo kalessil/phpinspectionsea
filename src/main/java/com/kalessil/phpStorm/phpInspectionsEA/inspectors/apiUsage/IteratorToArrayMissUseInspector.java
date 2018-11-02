@@ -39,7 +39,6 @@ public class IteratorToArrayMissUseInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
-                // iterator_to_array(...)[0]            -> ...
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("iterator_to_array")) {
                     final PsiElement[] arguments = reference.getParameters();
@@ -53,7 +52,7 @@ public class IteratorToArrayMissUseInspector extends BasePhpInspection {
                                 if (isTarget) {
                                     final String replacement = String.format("%s->current()", arguments[0].getText());
                                     holder.registerProblem(
-                                            reference,
+                                            parent,
                                             String.format(messagePattern, replacement),
                                             new UseCurrentmethodFix(replacement)
                                     );

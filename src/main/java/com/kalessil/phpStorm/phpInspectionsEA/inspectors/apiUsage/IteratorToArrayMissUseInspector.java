@@ -54,7 +54,7 @@ public class IteratorToArrayMissUseInspector extends BasePhpInspection {
                                     holder.registerProblem(
                                             parent,
                                             String.format(messagePattern, replacement),
-                                            new UseCurrentmethodFix(replacement)
+                                            new UseCurrentMethodFix(replacement)
                                     );
                                 }
                             }
@@ -65,7 +65,7 @@ public class IteratorToArrayMissUseInspector extends BasePhpInspection {
         };
     }
 
-    private static final class UseCurrentmethodFix extends UseSuggestedReplacementFixer {
+    private static final class UseCurrentMethodFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use '...->current()' instead";
 
         @NotNull
@@ -74,7 +74,7 @@ public class IteratorToArrayMissUseInspector extends BasePhpInspection {
             return title;
         }
 
-        UseCurrentmethodFix(@NotNull String expression) {
+        UseCurrentMethodFix(@NotNull String expression) {
             super(expression);
         }
     }

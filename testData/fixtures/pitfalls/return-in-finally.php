@@ -24,7 +24,7 @@ function finally_cases_holder($argument, $exception)
 function yield_cases_holder($argument): Generator
 {
     yield $argument;
-    <error descr="It was probably intended to use yield here (currently the returned values is getting ignored).">return $argument;</error>
+    <error descr="It was probably intended to use 'yield' or 'yield from' here.">return $argument;</error>
 
     /* false-positives */
     return;

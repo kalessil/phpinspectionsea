@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SuspiciousReturnInspector extends BasePhpInspection {
     private static final String messageFinally = "Voids all returned values and thrown exceptions from the try-block (returned values and exceptions are lost).";
-    private static final String messageYield   = "It was probably intended to use yield here (currently the returned values is getting ignored).";
+    private static final String messageYield   = "It was probably intended to use 'yield' or 'yield from' here.";
 
     @NotNull
     public String getShortName() {
@@ -64,7 +65,10 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
                 if (ExpressionSemanticUtil.getReturnValue(statement) != null) {
                     final PhpType type = scope.getType();
                     if (type.filterUnknown().getTypes().stream().anyMatch(t -> t.equals("\\Generator"))) {
-                        holder.registerProblem(statement, messageYield);
+                        final boolean hasYields = PsiTreeUtil.findChildOfType(scope, PhpYield.class) != null;
+                        if (hasYields) {
+                            holder.registerProblem(statement, messageYield);
+                        }
                     }
                 }
             }

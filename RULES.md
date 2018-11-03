@@ -222,7 +222,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MissingArrayInitializationInspection            | Missing array initialization                              | n/a | yes | n/a  | no  |
 | Probable bugs        | StreamSelectUsageInspection                     | 'stream_select(...)' usage correctness                    | n/a | yes | n/a  | no  |
 | Probable bugs        | ClassMemberExistenceCheckInspection             | Class member existence check correctness                  | n/a | yes | n/a  | no  |
-| Probable bugs        | IteratorToArrayKeysCollisionInspection          | 'iterator_to_array(...)' keys merging correctness         | no  | no  | no   | no  |
+| Probable bugs        | IteratorToArrayKeysCollisionInspection          | 'iterator_to_array(...)' keys merging correctness         | yes | yes | yes  | no  |
 
 Inspections Lists (Security)
 ---
@@ -287,4 +287,4 @@ Inspections Lists (Performance)
 | Performance          | ArrayColumnCanBeUsedInspection                  | 'array_column(...)' can be used                                                                   | yes | yes | yes  | no  |
 | Performance          | ArrayFlipCanBeUsedInspection                    | 'array_flip(...)' can be used                                                                     | yes | yes | yes  | no  |
 | Performance          | ArrayMergeMissUseInspection                     | 'array_merge(...)' misused                                                                        | yes | yes | yes  | no  |
-| Performance          | IteratorToArrayMissUseInspection                | 'iterator_to_array(...)' misused                                                                  | yes | no  | no   | no  |
+| Performance          | IteratorToArrayMissUseInspection                | 'iterator_to_array(...)' misused                                                                  | yes | yes | yes  | no  |

@@ -142,9 +142,10 @@ Inspections Lists (Language level migration)
 | Language level migration | ReturnTypeCanBeDeclaredInspection               | Return type hint can be used                        | yes | yes | yes  | no  |
 | Language level migration | GetClassUsageInspection                         | 'get_class(...)' usage correctness                  | n/a | yes | n/a  | no  |
 | Language level migration | UnsupportedStringOffsetOperationsInspection     | Unsupported string offset operations                | n/a | yes | n/a  | no  |
-| Language level migration | InstanceofCanBeUsedInspection                   | Instanceof can be used                              | yes | yes | yes  | no  |
+| Language level migration | InstanceofCanBeUsedInspection                   | 'instanceof' can be used                            | yes | yes | yes  | no  |
 | Language level migration | DynamicCallsToScopeIntrospectionInspection      | Deprecated dynamic calls to scope introspection     | n/a | yes | n/a  | no  |
 | Language level migration | UnsupportedEmptyListAssignmentsInspection       | Unsupported empty list assignments                  | n/a | yes | n/a  | no  |
+| Language level migration | YieldFromCanBeUsedInspection                    | 'yield from' can be used                            | yes | no  | no   | no  |
 
 Inspections Lists (Architecture)
 ---

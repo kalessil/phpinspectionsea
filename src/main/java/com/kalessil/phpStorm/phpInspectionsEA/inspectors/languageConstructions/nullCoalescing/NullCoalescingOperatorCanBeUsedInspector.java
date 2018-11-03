@@ -240,7 +240,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
     }
 
     private static final class ReplaceMultipleConstructsFix implements LocalQuickFix {
-        private static final String title = "Use null coalescing operator instead";
+        private static final String title = "Replace with null coalescing operator";
 
         private final SmartPsiElementPointer<PsiElement> from;
         private final SmartPsiElementPointer<PsiElement> to;

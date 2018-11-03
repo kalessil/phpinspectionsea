@@ -37,22 +37,27 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(statement)) { return; }
 
                 PsiElement parent = statement.getParent();
-                while (parent != null && !(parent instanceof Finally)) {
-                    if (parent instanceof Function || parent instanceof PsiFile) {
+                while (parent != null && !(parent instanceof PsiFile)) {
+                    if (parent instanceof Finally) {
+                        this.analyzeReturnFromFinally(statement, (Try) parent.getParent());
+                        return;
+                    }
+                    if (parent instanceof Function) {
+                        this.analyzeReturnFromGenerator(statement, (Function) parent);
                         return;
                     }
                     parent = parent.getParent();
                 }
+            }
 
-                if (parent != null) {
-                    final PsiElement grandParent = parent.getParent();
-                    if (grandParent instanceof Try) {
-                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(grandParent);
-                        if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class) != null) {
-                            holder.registerProblem(statement, message);
-                        }
-                    }
+            private void analyzeReturnFromFinally(@NotNull PhpReturn statement, @NotNull Try scope) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class) != null) {
+                    holder.registerProblem(statement, message);
                 }
+            }
+
+            private void analyzeReturnFromGenerator(@NotNull PhpReturn statement, @NotNull Function scope) {
             }
         };
     }

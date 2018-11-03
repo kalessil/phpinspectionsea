@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.ArrayIndex;
+import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
@@ -43,20 +44,32 @@ public class IteratorToArrayMissUseInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("iterator_to_array")) {
                     final PsiElement[] arguments = reference.getParameters();
                     final PsiElement parent      = reference.getParent();
-                    if (arguments.length > 0 && parent instanceof ArrayAccessExpression) {
+                    if (arguments.length > 0) {
+                        if (parent instanceof ArrayAccessExpression) {
                         final ArrayIndex indexWrapper = ((ArrayAccessExpression) parent).getIndex();
-                        if (indexWrapper != null) {
-                            final PsiElement index = indexWrapper.getValue();
-                            if (index != null) {
-                                final boolean isTarget = OpenapiTypesUtil.isNumber(index) && index.getText().equals("0");
-                                if (isTarget) {
-                                    final String replacement = String.format("%s->current()", arguments[0].getText());
-                                    holder.registerProblem(
-                                            parent,
-                                            String.format(messagePattern, replacement),
-                                            new UseCurrentMethodFix(replacement)
-                                    );
+                            if (indexWrapper != null) {
+                                final PsiElement index = indexWrapper.getValue();
+                                if (index != null) {
+                                    final boolean isTarget = OpenapiTypesUtil.isNumber(index) && index.getText().equals("0");
+                                    if (isTarget) {
+                                        final String replacement = String.format("%s->current()", arguments[0].getText());
+                                        holder.registerProblem(
+                                                parent,
+                                                String.format(messagePattern, replacement),
+                                                new UseCurrentMethodFix(replacement)
+                                        );
+                                    }
                                 }
+                            }
+                        } else if (parent instanceof ForeachStatement) {
+                            final boolean isTarget = ((ForeachStatement) parent).getArray() == reference;
+                            if (isTarget) {
+                                final String replacement = arguments[0].getText();
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(messagePattern, replacement),
+                                        new UseArgumentMethodFix(replacement)
+                                );
                             }
                         }
                     }
@@ -75,6 +88,20 @@ public class IteratorToArrayMissUseInspector extends BasePhpInspection {
         }
 
         UseCurrentMethodFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static final class UseArgumentMethodFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use own argument instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        UseArgumentMethodFix(@NotNull String expression) {
             super(expression);
         }
     }

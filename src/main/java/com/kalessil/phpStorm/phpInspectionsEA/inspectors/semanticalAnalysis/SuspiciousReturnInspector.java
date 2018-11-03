@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -33,32 +32,26 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpReturn(PhpReturn returnStatement) {
-                PsiElement parent = returnStatement.getParent();
-                while (null != parent) {
+            @Override
+            public void visitPhpReturn(@NotNull PhpReturn statement) {
+                PsiElement parent = statement.getParent();
+                while (parent != null && !(parent instanceof Finally)) {
                     if (parent instanceof Function || parent instanceof PsiFile) {
                         return;
                     }
-                    if (parent instanceof Finally) {
-                        break;
-                    }
-
                     parent = parent.getParent();
                 }
 
-                if (null != parent && parent.getParent() instanceof Try) {
-                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(parent.getParent());
-                    if (null != body) {
-                        final PsiElement firstReturn = PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class);
-                        if (null != firstReturn) {
-                            holder.registerProblem(returnStatement, message, ProblemHighlightType.GENERIC_ERROR);
+                if (parent != null) {
+                    final PsiElement grandParent = parent.getParent();
+                    if (grandParent instanceof Try) {
+                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(grandParent);
+                        if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class) != null) {
+                            holder.registerProblem(statement, message);
                         }
                     }
                 }
             }
-
-            // TODO: $x = 0 == '';
-            // TODO: if-return-return, when returned values are the same
         };
     }
 }

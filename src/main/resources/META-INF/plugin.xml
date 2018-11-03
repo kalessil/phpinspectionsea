@@ -847,7 +847,7 @@
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnsupportedStringOffsetOperationsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="InstanceofCanBeUsedInspection"                 displayName="Instanceof can be used"
+        shortName="InstanceofCanBeUsedInspection"                 displayName="'instanceof' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.InstanceofCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
@@ -858,6 +858,10 @@
         shortName="UnsupportedEmptyListAssignmentsInspection"     displayName="Unsupported empty list assignments"
         groupName="Language level migration"                      enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnsupportedEmptyListAssignmentsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="YieldFromCanBeUsedInspection"                  displayName="'yield from' can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.YieldFromCanBeUsedInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

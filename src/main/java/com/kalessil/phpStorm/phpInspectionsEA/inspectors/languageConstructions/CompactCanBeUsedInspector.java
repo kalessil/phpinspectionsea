@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompactCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' can be used instead instead (improves maintainability).";
+    private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
 
     @NotNull
     public String getShortName() {

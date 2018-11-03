@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class YieldFromCanBeUsedInspector extends BasePhpInspection {
-    private static final String message = "'yield from ...' can be used instead instead (generator delegation).";
+    private static final String message = "'yield from ...' can be used instead (generator delegation).";
 
     @NotNull
     public String getShortName() {

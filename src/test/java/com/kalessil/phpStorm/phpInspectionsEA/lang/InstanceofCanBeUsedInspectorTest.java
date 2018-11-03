@@ -14,4 +14,3 @@ final public class InstanceofCanBeUsedInspectorTest extends PhpCodeInsightFixtur
         myFixture.checkResultByFile("testData/fixtures/lang/instanceof-can-be-used.fixed.php");
     }
 }
-

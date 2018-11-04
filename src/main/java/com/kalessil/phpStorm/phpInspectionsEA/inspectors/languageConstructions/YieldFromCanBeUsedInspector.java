@@ -6,6 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
@@ -42,6 +44,8 @@ public class YieldFromCanBeUsedInspector extends BasePhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement statement) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(statement))              { return; }
+                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                if (php.compareTo(PhpLanguageLevel.PHP700) < 0)           { return; }
 
                 final PsiElement source = statement.getArray();
                 if (source != null) {

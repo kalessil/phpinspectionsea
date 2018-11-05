@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.lang.psi.elements.Variable;
 import org.jetbrains.annotations.NotNull;
 
 /*

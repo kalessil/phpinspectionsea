@@ -20,13 +20,7 @@ final public class OpenapiEquivalenceUtil {
         boolean result = false;
         try {
             if (first.getClass() == second.getClass()) {
-                if (first instanceof Variable && second instanceof Variable) {
-                    /* parser bug: "{$variable}" includes '{}' into variable node */
-                    result = ((Variable) first).getName().equals(((Variable) second).getName());
-                } else {
-                    result = PsiEquivalenceUtil.areElementsEquivalent(first, second) ||
-                             first.getText().equals(second.getText());
-                }
+                result = PsiEquivalenceUtil.areElementsEquivalent(first, second) || first.getText().equals(second.getText());
             }
         } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {

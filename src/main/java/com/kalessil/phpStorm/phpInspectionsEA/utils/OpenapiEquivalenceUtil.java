@@ -21,8 +21,14 @@ final public class OpenapiEquivalenceUtil {
         try {
             if (first.getClass() == second.getClass()) {
                 if (first instanceof Variable && second instanceof Variable) {
-                    /* parser bug: "{$variable}" includes '{}' into variable node */
-                    result = ((Variable) first).getName().equals(((Variable) second).getName());
+                    /* parser specific: "{$variable}" includes '{}' into variable node and co */
+                    final String firstName  = ((Variable) first).getName();
+                    final String secondName = ((Variable) second).getName();
+                    if (!firstName.isEmpty() && !secondName.isEmpty()) {
+                        result = firstName.equals(secondName);
+                    } else {
+                        result = PsiEquivalenceUtil.areElementsEquivalent(first, second);
+                    }
                 } else {
                     result = PsiEquivalenceUtil.areElementsEquivalent(first, second) ||
                              first.getText().equals(second.getText());

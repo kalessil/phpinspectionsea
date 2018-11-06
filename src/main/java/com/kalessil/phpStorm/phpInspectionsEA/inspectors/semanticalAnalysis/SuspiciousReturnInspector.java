@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
@@ -25,6 +26,11 @@ import org.jetbrains.annotations.NotNull;
 public class SuspiciousReturnInspector extends BasePhpInspection {
     private static final String messageFinally = "Voids all returned values and thrown exceptions from the try-block (returned values and exceptions are lost).";
     private static final String messageYield   = "It was probably intended to use 'yield' or 'yield from' here.";
+
+    final private static Condition<PsiElement> PARENT_FUNCTION = new Condition<PsiElement>() {
+        public boolean value(PsiElement element) { return element instanceof Function; }
+        public String toString()                 { return "Condition.PARENT_FUNCTION"; }
+    };
 
     @NotNull
     public String getShortName() {
@@ -65,7 +71,8 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
                 if (ExpressionSemanticUtil.getReturnValue(statement) != null) {
                     final PhpType type = scope.getType();
                     if (type.filterUnknown().getTypes().stream().anyMatch(t -> t.equals("\\Generator"))) {
-                        final boolean hasYields = PsiTreeUtil.findChildOfType(scope, PhpYield.class) != null;
+                        final boolean hasYields = PsiTreeUtil.findChildrenOfType(scope, PhpYield.class).stream()
+                                .anyMatch(yield -> PsiTreeUtil.findFirstParent(yield, PARENT_FUNCTION) == scope);
                         if (hasYields) {
                             holder.registerProblem(statement, messageYield);
                         }

@@ -29,3 +29,11 @@ function yield_cases_holder($argument): Generator
     /* false-positives */
     return;
 }
+
+function yeld_scoping($argument): Generator
+{
+    $f = function () use ($argument) {
+        yield $argument;
+    };
+    return $f();
+}

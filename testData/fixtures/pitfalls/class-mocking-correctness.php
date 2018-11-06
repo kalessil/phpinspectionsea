@@ -54,4 +54,10 @@ namespace {
     {
         function it_does_something(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz</error> $clazz) {}
     }
+
+    class NeedsConstructorMocking   { public function __construct($parameter){} }
+    class NeedsNoConstructorMocking { public function __construct($parameter = null){} }
+
+    $phpUnitNew->getMockBuilder(<error descr="Needs constructor to be disabled or supplied with arguments.">NeedsConstructorMocking::class</error>)->getMock();
+    $phpUnitNew->getMockBuilder(NeedsNoConstructorMocking::class)->getMock();
 }

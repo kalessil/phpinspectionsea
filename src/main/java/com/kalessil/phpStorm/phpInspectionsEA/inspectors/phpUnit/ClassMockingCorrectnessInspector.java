@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,11 +25,12 @@ import java.util.Map;
  */
 
 public class ClassMockingCorrectnessInspector extends BasePhpInspection {
-    private final static String messageFinal         = "Causes reflection errors as the referenced class is final.";
-    private final static String messageNeedsAbstract = "Needs an abstract class here.";
-    private final static String messageNeedsTrait    = "Needs a trait here.";
-    private final static String messageMockTrait     = "Perhaps it was intended to mock it with getMockForTrait method.";
-    private final static String messageMockAbstract  = "Perhaps it was intended to mock it with getMockForAbstractClass method.";
+    private final static String messageFinal           = "Causes reflection errors as the referenced class is final.";
+    private final static String messageNeedsAbstract   = "Needs an abstract class here.";
+    private final static String messageNeedsTrait      = "Needs a trait here.";
+    private final static String messageMockTrait       = "Perhaps it was intended to mock it with getMockForTrait method.";
+    private final static String messageMockAbstract    = "Perhaps it was intended to mock it with getMockForAbstractClass method.";
+    private final static String messageMockConstructor = "Needs constructor to be disabled or supplied with arguments.";
 
     private final static Map<String, String> methods = new HashMap<>();
     static {
@@ -88,12 +90,28 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                         final PhpClass referencedClass = this.getClass(arguments[0]);
                         if (referencedClass != null) {
                             if (methodName.equals("getMockBuilder")) {
+                                /* classes might need different mocking methods usage */
                                 if (referencedClass.isAbstract() && !referencedClass.isInterface()) {
                                     holder.registerProblem(arguments[0], messageMockAbstract);
                                 } else if (referencedClass.isTrait()) {
                                     holder.registerProblem(arguments[0], messageMockTrait);
                                 } else if (referencedClass.isFinal()) {
                                     holder.registerProblem(arguments[0], messageFinal);
+                                }
+                                /* constructor might require arguments */
+                                final PsiElement parent = reference.getParent();
+                                if (parent instanceof MethodReference) {
+                                    final String parentName = ((MethodReference) parent).getName();
+                                    if (parentName != null && parentName.equals("getMock")) {
+                                        final Method constructor  = referencedClass.getConstructor();
+                                        if (constructor != null) {
+                                            final boolean needsArguments = Arrays.stream(constructor.getParameters())
+                                                    .anyMatch(parameter -> parameter.getDefaultValue() == null);
+                                            if (needsArguments) {
+                                                holder.registerProblem(arguments[0], messageMockConstructor);
+                                            }
+                                        }
+                                    }
                                 }
                             } else if (methodName.equals("getMockForTrait") && !referencedClass.isTrait()) {
                                 holder.registerProblem(arguments[0], messageNeedsTrait);

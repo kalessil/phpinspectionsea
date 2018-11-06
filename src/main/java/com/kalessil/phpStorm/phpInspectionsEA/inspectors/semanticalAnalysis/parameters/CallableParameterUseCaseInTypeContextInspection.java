@@ -38,7 +38,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
     private static final String messageNoSense               = "Makes no sense, because it's always true according to annotations.";
     private static final String messageTypeHint              = "Makes no sense, because of parameter type declaration.";
     private static final String messageViolationInCheck      = "Makes no sense, because this type is not defined in annotations.";
-    private static final String patternViolationInAssignment = "New value type (%s%) is not in annotated types.";
+    private static final String patternViolationInAssignment = "New value type (%s) is not in annotated types.";
 
     private static final Set<String> classReferences = new HashSet<>();
     static {
@@ -287,7 +287,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                                                 .map(Types::getType)
                                                                 .filter(t -> t.startsWith("\\"))
                                                                 .collect(Collectors.toSet());
-                                                        if (filteredTypes.size() == 1) {
+                                                        final int filteredTypesCount = filteredTypes.size();
+                                                        /* clear resolved class or interface + class */
+                                                        if (filteredTypesCount == 1 || filteredTypesCount == 2) {
                                                             type = filteredTypes.iterator().next();
                                                         }
                                                         filteredTypes.clear();
@@ -298,8 +300,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                                         final boolean isViolation = !this.isTypeCompatibleWith(type, parameterTypes, index);
                                         if (isViolation) {
-                                            final String message = patternViolationInAssignment.replace("%s%", type);
-                                            holder.registerProblem(value, message);
+                                            holder.registerProblem(value, String.format(patternViolationInAssignment, type));
                                             break;
                                         }
                                     }

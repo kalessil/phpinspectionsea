@@ -88,7 +88,10 @@
         public function returnStatic();
     }
     abstract class IndirectClassReferenceTest implements IndirectClassReference {
-        public function method(IndirectClassReference $parameter) {
+        /** @return static */
+        public abstract function ownStatic();
+
+        public function interface_types(IndirectClassReference $parameter) {
             $parameter = $parameter ?? $this->returnSelf();
             $parameter = $this->returnSelf();
 
@@ -96,6 +99,18 @@
             $parameter = $this->returnStatic();
 
             $parameter = <warning descr="New value type (null) is not in annotated types.">null</warning>;
+        }
+
+        public function class_types(IndirectClassReference $parameter) {
+            if ($parameter instanceof IndirectClassReferenceTest) {
+                $parameter = $parameter->ownStatic();
+            }
+        }
+    }
+
+    function class_types(IndirectClassReference $parameter) {
+        if ($parameter instanceof IndirectClassReferenceTest) {
+            $parameter = $parameter->ownStatic();
         }
     }
 

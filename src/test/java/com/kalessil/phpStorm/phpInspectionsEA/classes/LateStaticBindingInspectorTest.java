@@ -8,5 +8,9 @@ final public class LateStaticBindingInspectorTest extends PhpCodeInsightFixtureT
         myFixture.enableInspections(new LateStaticBindingInspector());
         myFixture.configureByFile("testData/fixtures/classes/late-static-binding.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/classes/late-static-binding.fixed.php");
     }
 }

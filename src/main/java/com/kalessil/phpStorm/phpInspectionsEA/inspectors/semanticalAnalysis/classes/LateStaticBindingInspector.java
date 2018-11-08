@@ -1,8 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -47,7 +51,7 @@ public class LateStaticBindingInspector extends BasePhpInspection {
                             if (scope instanceof Method) {
                                 final PhpClass clazz = ((Method) scope).getContainingClass();
                                 if (clazz != null && !clazz.isFinal()) {
-                                    holder.registerProblem(base, messagePrivateMethod);
+                                    holder.registerProblem(base, messagePrivateMethod, new UseSelfFix());
                                 }
                             }
                         }
@@ -55,5 +59,29 @@ public class LateStaticBindingInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    private static final class UseSelfFix implements LocalQuickFix {
+        private static final String title = "Use 'self' instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null && !project.isDisposed()) {
+                target.replace(PhpPsiElementFactory.createClassReference(project, "self"));
+            }
+        }
     }
 }

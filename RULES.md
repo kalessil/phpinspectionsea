@@ -223,7 +223,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | StreamSelectUsageInspection                     | 'stream_select(...)' usage correctness                    | n/a | yes | n/a  | no  |
 | Probable bugs        | ClassMemberExistenceCheckInspection             | Class member existence check correctness                  | n/a | yes | n/a  | no  |
 | Probable bugs        | IteratorToArrayKeysCollisionInspection          | 'iterator_to_array(...)' keys merging correctness         | yes | yes | yes  | no  |
-| Probable bugs        | LateStaticBindingInspection                     | Late static binding usage correctness                     | no  | yes | no   | no  |
+| Probable bugs        | LateStaticBindingInspection                     | Late static binding usage correctness                     | yes | yes | yes  | no  |
 
 Inspections Lists (Security)
 ---

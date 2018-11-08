@@ -8,6 +8,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.Y
 final public class YieldFromCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
+        final YieldFromCanBeUsedInspector inspector = new YieldFromCanBeUsedInspector();
+        inspector.ONLY_KEY_VALUE_YIELDS             = false;
         myFixture.enableInspections(new YieldFromCanBeUsedInspector());
         myFixture.configureByFile("testData/fixtures/lang/yield-from-can-be-used.php");
         myFixture.testHighlighting(true, false, true);

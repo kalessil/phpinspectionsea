@@ -14,9 +14,12 @@ import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.PhpYield;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,6 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class YieldFromCanBeUsedInspector extends BasePhpInspection {
     private static final String message = "'yield from ...' can be used instead (generator delegation).";
+
+    // Inspection options.
+    public boolean ONLY_KEY_VALUE_YIELDS = false;
 
     @NotNull
     public String getShortName() {
@@ -59,7 +65,7 @@ public class YieldFromCanBeUsedInspector extends BasePhpInspection {
                                     final PsiElement yieldKey = yieldChildren.length == 2 ? yieldChildren[0] : null;
                                     final PsiElement key      = statement.getKey();
                                     final boolean isTarget =
-                                            (yieldKey == key && key == null) ||
+                                            (yieldKey == key && key == null && !ONLY_KEY_VALUE_YIELDS) ||
                                             (yieldKey != null && key != null && OpenapiEquivalenceUtil.areEqual(yieldKey, key));
                                     if (isTarget) {
                                         final String replacement = String.format("yield from %s", source.getText());
@@ -76,6 +82,12 @@ public class YieldFromCanBeUsedInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Only for yielded key-value pairs", ONLY_KEY_VALUE_YIELDS, (value) -> ONLY_KEY_VALUE_YIELDS = value)
+        );
     }
 
     private static final class UseYieldFromFix implements LocalQuickFix {

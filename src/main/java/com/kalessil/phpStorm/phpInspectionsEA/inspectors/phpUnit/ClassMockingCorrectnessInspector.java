@@ -26,6 +26,7 @@ import java.util.Map;
 
 public class ClassMockingCorrectnessInspector extends BasePhpInspection {
     private final static String messageFinal           = "Causes reflection errors as the referenced class is final.";
+    private final static String messageTrait           = "Causes reflection errors as the referenced class is a trait.";
     private final static String messageNeedsAbstract   = "Needs an abstract class here.";
     private final static String messageNeedsTrait      = "Needs a trait here.";
     private final static String messageMockTrait       = "Perhaps it was intended to mock it with getMockForTrait method.";
@@ -44,6 +45,7 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
         methods.put("\\PHPUnit\\Framework\\TestCase.getMockForTrait",         "getMockForTrait");
         methods.put("\\PHPUnit\\Framework\\TestCase.getMockForAbstractClass", "getMockForAbstractClass");
         methods.put("\\PHPUnit\\Framework\\TestCase.getMockClass",            "getMockClass");
+        methods.put("\\PHPUnit\\Framework\\TestCase.createMock",              "createMock");
         /* PhpSpec-related */
         methods.put("\\Prophecy\\Prophet.prophesize",                         "prophesize");
         methods.put("\\Prophecy\\Prophecy\\ObjectProphecy.willExtend",        "willExtend");
@@ -89,7 +91,13 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                     if (resolved instanceof Method && methods.get(((Method) resolved).getFQN()) != null) {
                         final PhpClass referencedClass = this.getClass(arguments[0]);
                         if (referencedClass != null) {
-                            if (methodName.equals("getMockBuilder")) {
+                            if (methodName.equals("createMock")) {
+                                if (referencedClass.isTrait()) {
+                                    holder.registerProblem(arguments[0], messageTrait);
+                                } else if (referencedClass.isFinal()) {
+                                    holder.registerProblem(arguments[0], messageFinal);
+                                }
+                            } if (methodName.equals("getMockBuilder")) {
                                 /* classes might need different mocking methods usage */
                                 if (referencedClass.isAbstract() && !referencedClass.isInterface()) {
                                     holder.registerProblem(arguments[0], messageMockAbstract);

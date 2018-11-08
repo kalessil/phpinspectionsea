@@ -318,6 +318,19 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
                 return result;
             }
+
+            private boolean isTypeAnnotated(@NotNull PhpPsiElement current, @NotNull String variableName) {
+                boolean result = false;
+                final PsiElement phpdocCandidate = current.getPrevPsiSibling();
+                if (phpdocCandidate instanceof PhpDocComment) {
+                    final PhpDocTag[] hints = ((PhpDocComment) phpdocCandidate).getTagElementsByName("@var");
+                    if (hints.length == 1) {
+                        final PhpDocVariable specifiedVariable = PsiTreeUtil.findChildOfType(hints[0], PhpDocVariable.class);
+                        result = specifiedVariable != null && specifiedVariable.getName().equals(variableName);
+                    }
+                }
+                return result;
+            }
         };
     }
 

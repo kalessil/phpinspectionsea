@@ -76,8 +76,8 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         }
 
                         if (construct instanceof ForeachStatement) {
-                            /* do not suggest inlining require and ternaries */
-                            if (value instanceof Include || value instanceof TernaryExpression) {
+                            /* do not suggest inlining require, ternaries and type-specified variables */
+                            if (value instanceof Include || value instanceof TernaryExpression || this.isTypeAnnotated(previous, variableName)) {
                                 return;
                             }
                             /* inlining is not possible when foreach value is a reference before PHP 5.5 */
@@ -90,17 +90,6 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                                 if (OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND)) {
                                     final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                                     if (php.compareTo(PhpLanguageLevel.PHP550) < 0) {
-                                        return;
-                                    }
-                                }
-                            }
-                            /* intentionally introduced variables due to type re-specification */
-                            final PsiElement phpdocCandidate = previous.getPrevPsiSibling();
-                            if (phpdocCandidate instanceof PhpDocComment) {
-                                final PhpDocTag[] hints = ((PhpDocComment) phpdocCandidate).getTagElementsByName("@var");
-                                if (hints.length == 1) {
-                                    final PhpDocVariable specifiedVariable = PsiTreeUtil.findChildOfType(hints[0], PhpDocVariable.class);
-                                    if (specifiedVariable != null && specifiedVariable.getName().equals(variableName)) {
                                         return;
                                     }
                                 }
@@ -126,6 +115,17 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             int countReads  = 0;
                             for (final PhpAccessVariableInstruction oneCase: usages) {
                                 final boolean isWrite = oneCase.getAccess().isWrite();
+                                if (isWrite) {
+                                    /* false-positives: type specification */
+                                    final PsiElement context = oneCase.getAnchor().getParent();
+                                    if (OpenapiTypesUtil.isAssignment(context)) {
+                                        final boolean typeAnnotated = this.isTypeAnnotated((PhpPsiElement) context.getParent(), variableName);
+                                        if (typeAnnotated) {
+                                            return;
+                                        }
+                                    }
+                                }
+
                                 countWrites += isWrite ? 1 : 0;
                                 countReads  += isWrite ? 0 : 1;
                                 if (countWrites > 1 || countReads > 1) {
@@ -315,6 +315,19 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         result                     = OpenapiTypesUtil.is(candidate, PhpTokenTypes.opBIT_AND);
                     }
                     used.clear();
+                }
+                return result;
+            }
+
+            private boolean isTypeAnnotated(@NotNull PhpPsiElement current, @NotNull String variableName) {
+                boolean result = false;
+                final PsiElement phpdocCandidate = current.getPrevPsiSibling();
+                if (phpdocCandidate instanceof PhpDocComment) {
+                    final PhpDocTag[] hints = ((PhpDocComment) phpdocCandidate).getTagElementsByName("@var");
+                    if (hints.length == 1) {
+                        final PhpDocVariable specifiedVariable = PsiTreeUtil.findChildOfType(hints[0], PhpDocVariable.class);
+                        result = specifiedVariable != null && specifiedVariable.getName().equals(variableName);
+                    }
                 }
                 return result;
             }

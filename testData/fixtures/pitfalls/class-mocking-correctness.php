@@ -11,6 +11,7 @@ namespace PHPUnit\Framework {
         public function getMockForTrait()         {}
         public function getMockForAbstractClass() {}
         public function getMockClass()            {}
+        public function createMock()              {}
     }
 }
 namespace {
@@ -42,6 +43,10 @@ namespace {
     $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">"\\FinalClazz"</error>);
     $phpUnitNew->getMockClass(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
     $phpUnitNew->getMockBuilder(stdClass::class);
+
+    $phpUnitNew->createMock(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
+    $phpUnitNew->createMock(<error descr="Causes reflection errors as the referenced class is a trait.">TraitClazz::class</error>);
+    $phpUnitNew->createMock(stdClass::class);
 
     $phpUnitNew->getMockForAbstractClass(<error descr="Needs an abstract class here.">FinalClazz::class</error>);
     $phpUnitNew->getMockForTrait(<error descr="Needs a trait here.">FinalClazz::class</error>);

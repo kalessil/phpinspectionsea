@@ -1,18 +1,22 @@
 <html>
-New features release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Class property initialization flaws: resolved a false-positive (class references collision)<br/>
-- Parameter/variable is not used: respect suppressions<br/>
-- PhpUnit: unnecessary assertion: resolved false-positives (assertInstanceOf)<br/>
-- Unnecessary semicolon: resolved a false positive (blade files)<br/>
-- Variable functions usage: QF bug-fix<br/>
+- Class mocking correctness: new patterns<br/>
+- Null coalescing operator can be used: new patterns<br/>
+- Passing arguments by reference correctness: new patterns<br/>
+- PhpUnit: API deprecations: implemented<br/>
+- PhpUnit: bugs and best practices: new patterns<br/>
+- Switch-case could be simplified: new patterns<br/>
+- 'yield from' can be used: implemented<br/>
 <br/>
-- Implicit magic method calls: dropped<br/>
-- Missing array initialization: implemented<br/>
-- Multiple return statements usage: new patterns<br/>
-- Non-optimal regular expression: new patterns<br/>
-- Parameter could be declared as array: dropped<br/>
-- '(mb_)strlen(...)' misused: new patterns<br/>
+- Callable parameter usage violates definition: resolved a false-positive (static)<br/>
+- General '\Exception' is thrown: QF bug-fix<br/>
+- Null reference: resolved false-positives (multiple cases)<br/>
+- One-time use variables: resolved false-positives (multiple cases)<br/>
+- Magic methods validity: resolved a false-positive (__set_state and static)<br/>
+- Nested not operators usage: fixed a crash report<br/>
+- 'substr(...)' used as index-based access: resolved a false-positive (non-string types)<br/>
+- ::class constant usage correctness: resolved false-positives (multiple cases)<br/>
 <br/>
 <hr/>
 </html>

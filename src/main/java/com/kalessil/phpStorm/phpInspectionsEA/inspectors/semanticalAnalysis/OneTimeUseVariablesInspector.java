@@ -6,11 +6,14 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocVariable;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -110,6 +113,16 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             int countReads  = 0;
                             for (PhpAccessVariableInstruction oneCase: usages) {
                                 final boolean isWrite = oneCase.getAccess().isWrite();
+                                if (isWrite) {
+                                    /* false-positives: type specification */
+                                    final PsiElement context = oneCase.getAnchor().getParent();
+                                    if (OpenapiTypesUtil.isAssignment(context)) {
+                                        final boolean typeAnnotated = this.isTypeAnnotated((PhpPsiElement) context.getParent(), variableName);
+                                        if (typeAnnotated) {
+                                            return;
+                                        }
+                                    }
+                                }
 
                                 countWrites += isWrite ? 1 : 0;
                                 countReads  += isWrite ? 0 : 1;
@@ -201,6 +214,19 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
 
                 return null;
+            }
+
+            private boolean isTypeAnnotated(@NotNull PhpPsiElement current, @NotNull String variableName) {
+                boolean result = false;
+                final PsiElement phpdocCandidate = current.getPrevPsiSibling();
+                if (phpdocCandidate instanceof PhpDocComment) {
+                    final PhpDocTag[] hints = ((PhpDocComment) phpdocCandidate).getTagElementsByName("@var");
+                    if (hints.length == 1) {
+                        final PhpDocVariable specifiedVariable = PsiTreeUtil.findChildOfType(hints[0], PhpDocVariable.class);
+                        result = specifiedVariable != null && specifiedVariable.getName().equals(variableName);
+                    }
+                }
+                return result;
             }
         };
     }

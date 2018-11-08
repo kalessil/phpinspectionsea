@@ -494,6 +494,10 @@
         shortName="IteratorToArrayKeysCollisionInspection"        displayName="'iterator_to_array(...)' keys merging correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IteratorToArrayKeysCollisionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="LateStaticBindingInspection"                   displayName="Late static binding usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.LateStaticBindingInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

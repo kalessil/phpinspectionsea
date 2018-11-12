@@ -74,6 +74,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
                     parent instanceof PhpCase ||
                     parent instanceof PhpEchoStatement ||
                     parent instanceof PhpPrintExpression ||
+                    parent instanceof ArrayAccessExpression ||
                     (parent instanceof ParameterList && argument instanceof TernaryExpression) ||
                     (parent instanceof ArrayAccessExpression && argument instanceof UnaryExpression)
                 ;

@@ -51,3 +51,6 @@
     function yield_constructs($object) {
         return (yield $object->method()) !== false;
     }
+
+    $x = ($x ?? [])[0];
+    $x = ($x ?: [])[0];

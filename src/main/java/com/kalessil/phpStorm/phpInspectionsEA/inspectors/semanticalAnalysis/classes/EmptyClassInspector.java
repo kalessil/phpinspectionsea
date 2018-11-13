@@ -38,7 +38,7 @@ public class EmptyClassInspector extends BasePhpInspection {
 
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
                 if (nameNode != null) {
-                    final boolean isEmpty = (clazz.getOwnFields().length + clazz.getOwnMethods().length == 0);
+                    final boolean isEmpty = clazz.getOwnFields().length == 0 && clazz.getOwnMethods().length == 0;
                     if (isEmpty && !this.canBeEmpty(clazz)) {
                         holder.registerProblem(nameNode, message);
                     }
@@ -47,23 +47,15 @@ public class EmptyClassInspector extends BasePhpInspection {
 
             private boolean canBeEmpty(@NotNull PhpClass clazz) {
                 boolean result = false;
-                if (clazz.isInterface() || clazz.isDeprecated() || clazz.getTraits().length > 0) {
+                if (clazz.isInterface() || clazz.getTraits().length > 0 || clazz.isDeprecated()) {
                     result = true;
                 } else {
                     final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                     if (parent != null) {
-                        if (parent.isAbstract()) {
-                            /* inheriting abstract classes - we can be forced to have it empty */
-                            result = true;
-                        } else {
-                            /* an exception */
-                            for (final PhpClass candidate : InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)) {
-                                if (candidate.getFQN().equals("\\Exception")) {
-                                    result = true;
-                                    break;
-                                }
-                            }
-                        }
+                        /* inheriting abstract classes - we can be forced to have it empty */
+                        result = parent.isAbstract() ||
+                                 InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
+                                         .anyMatch(c -> c.getFQN().equals("\\Exception"));
                     }
                 }
                 return result;

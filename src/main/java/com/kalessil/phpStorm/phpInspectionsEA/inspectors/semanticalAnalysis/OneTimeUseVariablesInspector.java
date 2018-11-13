@@ -56,7 +56,12 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
 
             private void checkOneTimeUse(@NotNull PhpPsiElement construct, @NotNull Variable argument) {
-                final PhpPsiElement previous = construct.getPrevPsiSibling();
+                /* false-negatives: php-doc should not stop the analysis */
+                PhpPsiElement previous = construct.getPrevPsiSibling();
+                while (previous instanceof PhpDocComment) {
+                    previous = previous.getPrevPsiSibling();
+                }
+
                 if (previous != null && OpenapiTypesUtil.isAssignment(previous.getFirstChild())) {
                     final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
 

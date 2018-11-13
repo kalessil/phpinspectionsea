@@ -284,6 +284,11 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         arguments = ((PhpEmpty) expression).getVariables();
                     } else if (expression instanceof PhpIsset) {
                         arguments = ((PhpIsset) expression).getVariables();
+                    } else if (OpenapiTypesUtil.isFunctionReference(expression)) {
+                        final FunctionReference reference = (FunctionReference) expression;
+                        arguments = Arrays.stream(reference.getParameters())
+                                .filter(a -> a instanceof Variable)
+                                .toArray(PsiElement[]::new);
                     } else {
                         arguments = new PsiElement[]{expression};
                     }

@@ -34,9 +34,9 @@ import java.util.stream.Stream;
  */
 
 public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
-    private static final String messageControvertialIsset = "Doesn't match to previous isset-alike handling (perhaps always false when reached).";
-    private static final String messageControvertialFalsy = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
-    private static final String messageControvertialNull  = "Doesn't match to previous null value handling (perhaps always false when reached).";
+    private static final String messageControversialIsset = "Doesn't match to previous isset-alike handling (perhaps always false when reached).";
+    private static final String messageControversialFalsy = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
+    private static final String messageControversialNull  = "Doesn't match to previous null value handling (perhaps always false when reached).";
     private static final String messageNonContributing    = "Seems to be always true when reached.";
     private static final String messageNotEmpty           = "'isset(...) && ...' here can be replaced with '!empty(...)'.";
     private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
@@ -143,15 +143,15 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_NULL) == STATE_CONFLICTING_IS_NULL) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(this.target(target, argument), messageControvertialNull);
+                                            holder.registerProblem(this.target(target, argument), messageControversialNull);
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(this.target(target, argument), messageControvertialFalsy);
+                                            holder.registerProblem(this.target(target, argument), messageControversialFalsy);
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_SET) == STATE_CONFLICTING_IS_SET) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(this.target(target, argument), messageControvertialIsset);
+                                            holder.registerProblem(this.target(target, argument), messageControversialIsset);
                                         }
                                     }
                                     accumulatedState = newState;
@@ -191,12 +191,12 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                             }
                                             if (targetOperator != null) {
                                                 for (final PsiElement target : contexts) {
-                                                    if (
-                                                        target instanceof BinaryExpression &&
-                                                        ((BinaryExpression) target).getOperationType() == targetOperator
-                                                    ) {
-                                                        holder.registerProblem(this.target(empty.get(), argument), targetMessage);
-                                                        break;
+                                                    if (target instanceof BinaryExpression) {
+                                                        final IElementType operation = ((BinaryExpression) target).getOperationType();
+                                                        if (operation == targetOperator) {
+                                                            holder.registerProblem(this.target(empty.get(), argument), targetMessage);
+                                                            break;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -314,7 +314,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         .filter(Objects::nonNull).map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
                         .forEach(expression -> {
                             if (expression instanceof BinaryExpression) {
-                                result.addAll(extract((BinaryExpression) expression, operator));
+                                result.addAll(this.extract((BinaryExpression) expression, operator));
                             } else if (expression instanceof UnaryExpression) {
                                 final UnaryExpression unary = (UnaryExpression) expression;
                                 if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {

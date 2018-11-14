@@ -133,7 +133,10 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         final int contextsCount = contexts.size();
                         if (contextsCount > 1) {
                             final boolean isTarget = contexts.stream().anyMatch(
-                                e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
+                                    e -> e instanceof PhpIsset ||
+                                    e instanceof PhpEmpty ||
+                                    e instanceof Variable ||
+                                    e instanceof BinaryExpression
                             );
                             if (isTarget) {
                                 final Set<PsiElement> reported = new HashSet<>();

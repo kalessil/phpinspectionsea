@@ -42,12 +42,12 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageEmpty                 = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
     private static final String messageNotIsset              = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
     private static final String messageIsset                 = "'!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
-    private static final String messageNotEmptyArrayImplicit = "'is_array(...) && !empty(...)' here can be replaced with '... !== []'.";
-    private static final String messageEmptyArrayImplicit    = "'is_array(...) && empty(...)' here can be replaced with '... === []'.";
-    private static final String messageNotEmptyArrayIndirect = "'is_array(...) && ...' here can be replaced with '... !== []'.";
-    private static final String messageEmptyArrayIndirect    = "'is_array(...) && !...' here can be replaced with '... === []'.";
-    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here can be replaced with '... !== []'.";
-    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here can be replaced with '... === []'.";
+    private static final String messageNotEmptyArrayImplicit = "'is_array(...) && !empty(...)' here probably can be replaced with '... !== []'.";
+    private static final String messageEmptyArrayImplicit    = "'is_array(...) && empty(...)' here probably can be replaced with '... === []'.";
+    private static final String messageNotEmptyArrayIndirect = "'is_array(...) && ...' here probably can be replaced with '... !== []'.";
+    private static final String messageEmptyArrayIndirect    = "'is_array(...) && !...' here probably can be replaced with '... === []'.";
+    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here probably can be replaced with '... !== []'.";
+    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here probably can be replaced with '... === []'.";
     private static final String messageUseCoalescing         = "'%s' can be used instead (reduces cognitive load).";
 
     // Inspection options.

@@ -234,7 +234,28 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     } else {
                         for (final PsiElement expression : contexts) {
                             if (expression instanceof BinaryExpression) {
-                                // count() ==[=] 0, count() !=[=] 0, count() > 0
+                                /* is_array(...) && count() ([!]==[=]|>) 0 */
+                                final BinaryExpression binary = (BinaryExpression) expression;
+                                final PsiElement right        = binary.getRightOperand();
+                                final PsiElement left         = binary.getLeftOperand();
+                                if (OpenapiTypesUtil.isFunctionReference(left) && OpenapiTypesUtil.isNumber(right)) {
+                                    final boolean isZero = right.getText().equals("0");
+                                    if (isZero) {
+                                        final FunctionReference call = (FunctionReference) left;
+                                        final String functionName    = call.getName();
+                                        if (functionName != null && functionName.equals("count")) {
+                                            final IElementType operator = binary.getOperationType();
+                                            if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
+                                                holder.registerProblem(binary, messageEmptyArrayCount);
+                                            } else if (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
+                                                holder.registerProblem(binary, messageNotEmptyArrayCount);
+                                            } else if (operator == PhpTokenTypes.opGREATER) {
+                                                holder.registerProblem(binary, messageNotEmptyArrayCount);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
                             } else if (OpenapiTypesUtil.isFunctionReference(expression)) {
                                 /* is_array(...) && [!]count() */
                                 final FunctionReference call = (FunctionReference) expression;

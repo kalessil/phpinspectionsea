@@ -85,6 +85,12 @@ class CasesHolder {
             is_array($parameter) && <warning descr="'is_array(...) && count(...)' here can be replaced with '... !== []'.">count($parameter)</warning>,
             is_array($parameter) && !<warning descr="'is_array(...) && !count(...)' here can be replaced with '... === []'.">count($parameter)</warning>,
 
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here can be replaced with '... !== []'.">count($parameter) > 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here can be replaced with '... !== []'.">count($parameter) != 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here can be replaced with '... !== []'.">count($parameter) !== 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here can be replaced with '... === []'.">count($parameter) == 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here can be replaced with '... === []'.">count($parameter) === 0</warning>,
+
             is_array($parameter) && empty($more),
             is_array($parameter) && !empty($more),
         ];

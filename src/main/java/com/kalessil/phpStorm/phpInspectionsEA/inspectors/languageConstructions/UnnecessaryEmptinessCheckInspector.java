@@ -161,30 +161,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
                                         this.analyzeForUsingEmpty(argument, contexts, operator);
                                     } else {
-                                        final Optional<PsiElement> empty
-                                                = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
-                                        if (empty.isPresent()) {
-                                            IElementType targetOperator = null;
-                                            String targetMessage        = null;
-                                            if (operator == PhpTokenTypes.opAND && !this.isInverted(empty.get())) {
-                                                targetOperator = PhpTokenTypes.opIDENTICAL;
-                                                targetMessage  = messageNotIsset;
-                                            } else if (operator == PhpTokenTypes.opOR && this.isInverted(empty.get())) {
-                                                targetOperator = PhpTokenTypes.opNOT_IDENTICAL;
-                                                targetMessage  = messageIsset;
-                                            }
-                                            if (targetOperator != null) {
-                                                for (final PsiElement target : contexts) {
-                                                    if (target instanceof BinaryExpression) {
-                                                        final IElementType operation = ((BinaryExpression) target).getOperationType();
-                                                        if (operation == targetOperator) {
-                                                            holder.registerProblem(this.target(empty.get(), argument), targetMessage);
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        this.analyzeForUsingIsset(argument, contexts, operator);
                                     }
                                 }
                             }
@@ -192,6 +169,36 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         contexts.clear();
                     });
                     grouping.clear();
+                }
+            }
+
+            private void analyzeForUsingIsset(
+                    @NotNull PsiElement argument,
+                    @NotNull List<PsiElement> contexts,
+                    @NotNull IElementType operator
+            ) {
+                final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
+                if (empty.isPresent()) {
+                    IElementType targetOperator = null;
+                    String targetMessage        = null;
+                    if (operator == PhpTokenTypes.opAND && !this.isInverted(empty.get())) {
+                        targetOperator = PhpTokenTypes.opIDENTICAL;
+                        targetMessage  = messageNotIsset;
+                    } else if (operator == PhpTokenTypes.opOR && this.isInverted(empty.get())) {
+                        targetOperator = PhpTokenTypes.opNOT_IDENTICAL;
+                        targetMessage  = messageIsset;
+                    }
+                    if (targetOperator != null) {
+                        for (final PsiElement target : contexts) {
+                            if (target instanceof BinaryExpression) {
+                                final IElementType operation = ((BinaryExpression) target).getOperationType();
+                                if (operation == targetOperator) {
+                                    holder.registerProblem(this.target(empty.get(), argument), targetMessage);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 

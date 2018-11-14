@@ -138,7 +138,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     e -> e instanceof PhpIsset ||
                                     e instanceof PhpEmpty ||
                                     e instanceof Variable ||
-                                    e instanceof BinaryExpression
+                                    e instanceof BinaryExpression ||
+                                    e instanceof FunctionReference
                             );
                             if (isTarget) {
                                 final Set<PsiElement> reported = new HashSet<>();
@@ -232,8 +233,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         }
                     } else {
                         for (final PsiElement expression : contexts) {
-                            boolean isInverted   = false;
-                            PsiElement countCall = null;
                             if (expression instanceof BinaryExpression) {
                                 // count() ==[=] 0, count() !=[=] 0, count() > 0
                             } else if (OpenapiTypesUtil.isFunctionReference(expression)) {

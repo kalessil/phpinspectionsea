@@ -239,18 +239,24 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 final PsiElement right        = binary.getRightOperand();
                                 final PsiElement left         = binary.getLeftOperand();
                                 if (OpenapiTypesUtil.isFunctionReference(left) && OpenapiTypesUtil.isNumber(right)) {
-                                    final boolean isZero = right.getText().equals("0");
+                                    final boolean isZero = right != null && right.getText().equals("0");
                                     if (isZero) {
                                         final FunctionReference call = (FunctionReference) left;
                                         final String functionName    = call.getName();
                                         if (functionName != null && functionName.equals("count")) {
                                             final IElementType operator = binary.getOperationType();
                                             if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
-                                                holder.registerProblem(binary, messageEmptyArrayCount);
+                                                if (reported.add(binary)) {
+                                                    holder.registerProblem(binary, messageEmptyArrayCount);
+                                                }
                                             } else if (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
-                                                holder.registerProblem(binary, messageNotEmptyArrayCount);
+                                                if (reported.add(binary)) {
+                                                    holder.registerProblem(binary, messageNotEmptyArrayCount);
+                                                }
                                             } else if (operator == PhpTokenTypes.opGREATER) {
-                                                holder.registerProblem(binary, messageNotEmptyArrayCount);
+                                                if (reported.add(binary)) {
+                                                    holder.registerProblem(binary, messageNotEmptyArrayCount);
+                                                }
                                             }
                                             break;
                                         }
@@ -397,13 +403,24 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     /* prepare expression to contexts mapping */
                     if (expression instanceof BinaryExpression) {
                         final BinaryExpression binary = (BinaryExpression) expression;
-                        if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binary.getOperationType())) {
+                        final IElementType operator   = binary.getOperationType();
+                        if (
+                            OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator) ||
+                            operator == PhpTokenTypes.opGREATER
+                        ) {
                             final PsiElement left  = binary.getLeftOperand();
                             final PsiElement right = binary.getRightOperand();
-                            if (right != null && PhpLanguageUtil.isNull(left)) {
-                                arguments = new PsiElement[]{right};
-                            } else if (left != null && PhpLanguageUtil.isNull(right)) {
-                                arguments = new PsiElement[]{left};
+                            if (right != null && left != null) {
+                                if (PhpLanguageUtil.isNull(left)) {
+                                    arguments = new PsiElement[]{right};
+                                } else if (PhpLanguageUtil.isNull(right)) {
+                                    arguments = new PsiElement[]{left};
+                                } else if (OpenapiTypesUtil.isNumber(right) && OpenapiTypesUtil.isFunctionReference(left)) {
+                                    final FunctionReference reference = (FunctionReference) left;
+                                    arguments = Arrays.stream(reference.getParameters())
+                                            .filter(a -> a instanceof Variable)
+                                            .toArray(PsiElement[]::new);
+                                }
                             }
                         }
                     } else if (expression instanceof PhpEmpty) {

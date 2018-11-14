@@ -5,7 +5,7 @@ class CasesHolder {
         return [
             <warning descr="'empty(...) && ... === null' here can be replaced with '!isset(...)'.">empty($x)</warning> && $x === null,
             empty($x) && $x !== null,
-            !<warning descr="!empty(...) || ... !== null' here can be replaced with 'isset(...)'.">empty($x)</warning> || $x !== null,
+            !<warning descr="'!empty(...) || ... !== null' here can be replaced with 'isset(...)'.">empty($x)</warning> || $x !== null,
             !empty($x) || $x === null,
             <warning descr="'isset(...) && ...' here can be replaced with '!empty(...)'.">isset($x)</warning> && $x,
             isset($x) && !$x,
@@ -71,6 +71,18 @@ class CasesHolder {
         return [
             <weak_warning descr="'$parameter ?? '...'' can be used instead (reduces cognitive load).">isset($parameter) ?? '...'</weak_warning>,
             <weak_warning descr="'$parameter ?? '...'' can be used instead (reduces cognitive load).">isset($parameter) ?: '...'</weak_warning>,
+        ];
+    }
+
+    private function emptyArrayChecks($parameter, $more) {
+        return [
+            is_array($parameter) && empty($parameter),
+            is_array($parameter) && !empty($parameter),
+
+            is_array($parameter) && empty($more),
+            is_array($parameter) && !empty($more),
+            is_array($parameter) || empty($parameter),
+            is_array($parameter) || !empty($parameter),
         ];
     }
 }

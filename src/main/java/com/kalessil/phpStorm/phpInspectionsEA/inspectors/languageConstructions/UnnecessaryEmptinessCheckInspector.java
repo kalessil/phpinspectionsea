@@ -41,7 +41,9 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageNotEmpty           = "'isset(...) && ...' here can be replaced with '!empty(...)'.";
     private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
     private static final String messageNotIsset           = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
-    private static final String messageIsset              = "!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
+    private static final String messageIsset              = "'!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
+    private static final String messageNotEmptyArray      = "'is_array(...) && !empty(...)' here can be replaced with '... !== []'.";
+    private static final String messageEmptyArray         = "'is_array(...) && empty(...)' here can be replaced with '... === []'.";
     private static final String messageUseCoalescing      = "'%s' can be used instead (reduces cognitive load).";
 
     // Inspection options.
@@ -163,12 +165,37 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     } else {
                                         this.analyzeForUsingIsset(argument, contexts, operator);
                                     }
+
+                                    if (operator == PhpTokenTypes.opAND) {
+                                        this.analyzeForUsingEmptyArrayComparison(argument, contexts);
+                                    }
                                 }
                             }
                         }
                         contexts.clear();
                     });
                     grouping.clear();
+                }
+            }
+
+            private void analyzeForUsingEmptyArrayComparison(
+                    @NotNull PsiElement argument,
+                    @NotNull List<PsiElement> contexts
+            ) {
+                final Optional<PsiElement> reference = contexts.stream()
+                        .filter(e -> e instanceof FunctionReference)
+                        .filter(e -> "in_array".equals(((FunctionReference) e).getName()))
+                        .findFirst();
+                if (reference.isPresent()) {
+                    final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
+                    if (empty.isPresent()) {
+                        if (this.isInverted(empty.get())) {
+                            holder.registerProblem(this.target(empty.get(), argument), messageNotEmptyArray);
+                        } else {
+                            holder.registerProblem(this.target(empty.get(), argument), messageEmptyArray);
+                        }
+                    }
+                    // TODO: count(), !count(), count() ==[=] 0, count() !=[=] 0, count() > 0
                 }
             }
 

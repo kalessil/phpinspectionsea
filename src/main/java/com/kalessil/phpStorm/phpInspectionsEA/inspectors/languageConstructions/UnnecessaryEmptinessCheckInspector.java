@@ -159,23 +159,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 
                                 if (SUGGEST_SIMPLIFICATIONS) {
                                     if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
-                                        final Optional<PsiElement> isset
-                                                = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
-                                        if (isset.isPresent()) {
-                                            final Optional<PsiElement> candidate = contexts.stream()
-                                                    .filter(e -> e.getClass() == argument.getClass()).findFirst();
-                                            if (candidate.isPresent()) {
-                                                if (operator == PhpTokenTypes.opAND) {
-                                                    if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
-                                                        holder.registerProblem(this.target(isset.get(), argument), messageNotEmpty);
-                                                    }
-                                                } else {
-                                                    if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
-                                                        holder.registerProblem(this.target(isset.get(), argument), messageEmpty);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        this.analyzeForUsingEmpty(argument, contexts, operator);
                                     } else {
                                         final Optional<PsiElement> empty
                                                 = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
@@ -208,6 +192,29 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         contexts.clear();
                     });
                     grouping.clear();
+                }
+            }
+
+            private void analyzeForUsingEmpty(
+                    @NotNull PsiElement argument,
+                    @NotNull List<PsiElement> contexts,
+                    @NotNull IElementType operator
+            ) {
+                final Optional<PsiElement> isset = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
+                if (isset.isPresent()) {
+                    final Optional<PsiElement> candidate = contexts.stream()
+                            .filter(e -> e.getClass() == argument.getClass()).findFirst();
+                    if (candidate.isPresent()) {
+                        if (operator == PhpTokenTypes.opAND) {
+                            if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
+                                holder.registerProblem(this.target(isset.get(), argument), messageNotEmpty);
+                            }
+                        } else {
+                            if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
+                                holder.registerProblem(this.target(isset.get(), argument), messageEmpty);
+                            }
+                        }
+                    }
                 }
             }
 

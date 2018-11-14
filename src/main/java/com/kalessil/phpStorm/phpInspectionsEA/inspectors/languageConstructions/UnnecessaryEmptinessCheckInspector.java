@@ -204,6 +204,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         .filter(e -> "is_array".equals(((FunctionReference) e).getName()))
                         .findFirst();
                 if (reference.isPresent()) {
+                    // TODO: implicit subject usage do the same
                     final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
                     if (empty.isPresent()) {
                         final PsiElement node = this.target(empty.get(), argument);

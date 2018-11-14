@@ -134,6 +134,20 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 e -> e instanceof PhpIsset || e instanceof PhpEmpty || e instanceof BinaryExpression
                             );
                             if (isTarget) {
+                                final Set<PsiElement> reported = new HashSet<>();
+                                /* firstly suggest simplifications */
+                                if (SUGGEST_SIMPLIFICATIONS) {
+                                    if (operator == PhpTokenTypes.opAND) {
+                                        this.analyzeForUsingEmptyArrayComparison(argument, contexts, reported);
+                                    }
+
+                                    if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
+                                        this.analyzeForUsingEmpty(argument, contexts, operator, reported);
+                                    } else {
+                                        this.analyzeForUsingIsset(argument, contexts, operator, reported);
+                                    }
+                                }
+                                /* secondly report issues */
                                 int accumulatedState = this.calculateState(contexts.get(0));
                                 for (int index = 1; index < contextsCount; ++index) {
                                     final PsiElement target = contexts.get(index);
@@ -141,35 +155,37 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                     final int newState      = accumulatedState | stateChange;
                                     if (accumulatedState == newState) {
                                         if (REPORT_NON_CONTRIBUTIONG) {
-                                            holder.registerProblem(this.target(target, argument), messageNonContributing);
+                                            final PsiElement node = this.target(target, argument);
+                                            if (reported.add(node)) {
+                                                holder.registerProblem(node, messageNonContributing);
+                                            }
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_NULL) == STATE_CONFLICTING_IS_NULL) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(this.target(target, argument), messageControversialNull);
+                                            final PsiElement node = this.target(target, argument);
+                                            if (reported.add(node)) {
+                                                holder.registerProblem(node, messageControversialNull);
+                                            }
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(this.target(target, argument), messageControversialFalsy);
+                                            final PsiElement node = this.target(target, argument);
+                                            if (reported.add(node)) {
+                                                holder.registerProblem(node, messageControversialFalsy);
+                                            }
                                         }
                                     } else if ((newState & STATE_CONFLICTING_IS_SET) == STATE_CONFLICTING_IS_SET) {
                                         if (REPORT_CONTROVERTIAL) {
-                                            holder.registerProblem(this.target(target, argument), messageControversialIsset);
+                                            final PsiElement node = this.target(target, argument);
+                                            if (reported.add(node)) {
+                                                holder.registerProblem(node, messageControversialIsset);
+                                            }
                                         }
                                     }
                                     accumulatedState = newState;
                                 }
 
-                                if (SUGGEST_SIMPLIFICATIONS) {
-                                    if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
-                                        this.analyzeForUsingEmpty(argument, contexts, operator);
-                                    } else {
-                                        this.analyzeForUsingIsset(argument, contexts, operator);
-                                    }
-
-                                    if (operator == PhpTokenTypes.opAND) {
-                                        this.analyzeForUsingEmptyArrayComparison(argument, contexts);
-                                    }
-                                }
+                                reported.clear();
                             }
                         }
                         contexts.clear();
@@ -180,19 +196,23 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
 
             private void analyzeForUsingEmptyArrayComparison(
                     @NotNull PsiElement argument,
-                    @NotNull List<PsiElement> contexts
+                    @NotNull List<PsiElement> contexts,
+                    @NotNull Set<PsiElement> reported
             ) {
                 final Optional<PsiElement> reference = contexts.stream()
                         .filter(e -> e instanceof FunctionReference)
-                        .filter(e -> "in_array".equals(((FunctionReference) e).getName()))
+                        .filter(e -> "is_array".equals(((FunctionReference) e).getName()))
                         .findFirst();
                 if (reference.isPresent()) {
                     final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
                     if (empty.isPresent()) {
-                        if (this.isInverted(empty.get())) {
-                            holder.registerProblem(this.target(empty.get(), argument), messageNotEmptyArray);
-                        } else {
-                            holder.registerProblem(this.target(empty.get(), argument), messageEmptyArray);
+                        final PsiElement node = this.target(empty.get(), argument);
+                        if (reported.add(node)) {
+                            if (this.isInverted(empty.get())) {
+                                holder.registerProblem(node, messageNotEmptyArray);
+                            } else {
+                                holder.registerProblem(node, messageEmptyArray);
+                            }
                         }
                     }
                     // TODO: count(), !count(), count() ==[=] 0, count() !=[=] 0, count() > 0
@@ -202,7 +222,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
             private void analyzeForUsingIsset(
                     @NotNull PsiElement argument,
                     @NotNull List<PsiElement> contexts,
-                    @NotNull IElementType operator
+                    @NotNull IElementType operator,
+                    @NotNull Set<PsiElement> reported
             ) {
                 final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
                 if (empty.isPresent()) {
@@ -220,7 +241,10 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                             if (target instanceof BinaryExpression) {
                                 final IElementType operation = ((BinaryExpression) target).getOperationType();
                                 if (operation == targetOperator) {
-                                    holder.registerProblem(this.target(empty.get(), argument), targetMessage);
+                                    final PsiElement node = this.target(empty.get(), argument);
+                                    if (reported.add(node)) {
+                                        holder.registerProblem(node, targetMessage);
+                                    }
                                     break;
                                 }
                             }
@@ -232,7 +256,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
             private void analyzeForUsingEmpty(
                     @NotNull PsiElement argument,
                     @NotNull List<PsiElement> contexts,
-                    @NotNull IElementType operator
+                    @NotNull IElementType operator,
+                    @NotNull Set<PsiElement> reported
             ) {
                 final Optional<PsiElement> isset = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
                 if (isset.isPresent()) {
@@ -241,11 +266,17 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     if (candidate.isPresent()) {
                         if (operator == PhpTokenTypes.opAND) {
                             if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
-                                holder.registerProblem(this.target(isset.get(), argument), messageNotEmpty);
+                                final PsiElement node = this.target(isset.get(), argument);
+                                if (reported.add(node)) {
+                                    holder.registerProblem(node, messageNotEmpty);
+                                }
                             }
                         } else {
                             if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
-                                holder.registerProblem(this.target(isset.get(), argument), messageEmpty);
+                                final PsiElement node = this.target(isset.get(), argument);
+                                if (reported.add(node)) {
+                                    holder.registerProblem(node, messageEmpty);
+                                }
                             }
                         }
                     }

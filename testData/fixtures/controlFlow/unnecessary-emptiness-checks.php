@@ -76,13 +76,11 @@ class CasesHolder {
 
     private function emptyArrayChecks($parameter, $more) {
         return [
-            is_array($parameter) && empty($parameter),
-            is_array($parameter) && !empty($parameter),
+            is_array($parameter) && <warning descr="'is_array(...) && empty(...)' here can be replaced with '... === []'.">empty($parameter)</warning>,
+            is_array($parameter) && !<warning descr="'is_array(...) && !empty(...)' here can be replaced with '... !== []'.">empty($parameter)</warning>,
 
             is_array($parameter) && empty($more),
             is_array($parameter) && !empty($more),
-            is_array($parameter) || empty($parameter),
-            is_array($parameter) || !empty($parameter),
         ];
     }
 }

@@ -46,6 +46,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageEmptyArrayImplicit    = "'is_array(...) && empty(...)' here can be replaced with '... === []'.";
     private static final String messageNotEmptyArrayIndirect = "'is_array(...) && ...' here can be replaced with '... !== []'.";
     private static final String messageEmptyArrayIndirect    = "'is_array(...) && !...' here can be replaced with '... === []'.";
+    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here can be replaced with '... !== []'.";
+    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here can be replaced with '... === []'.";
     private static final String messageUseCoalescing         = "'%s' can be used instead (reduces cognitive load).";
 
     // Inspection options.
@@ -228,8 +230,26 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 holder.registerProblem(node, message);
                             }
                         }
+                    } else {
+                        for (final PsiElement expression : contexts) {
+                            boolean isInverted   = false;
+                            PsiElement countCall = null;
+                            if (expression instanceof BinaryExpression) {
+                                // count() ==[=] 0, count() !=[=] 0, count() > 0
+                            } else if (OpenapiTypesUtil.isFunctionReference(expression)) {
+                                /* is_array(...) && [!]count() */
+                                final FunctionReference call = (FunctionReference) expression;
+                                final String functionName    = call.getName();
+                                if (functionName != null && functionName.equals("count")) {
+                                    if (reported.add(call)) {
+                                        final String message = this.isInverted(call) ? messageEmptyArrayCount : messageNotEmptyArrayCount;
+                                        holder.registerProblem(call, message);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
                     }
-                    // TODO: count(), !count(), count() ==[=] 0, count() !=[=] 0, count() > 0
                 }
             }
 

@@ -34,17 +34,19 @@ import java.util.stream.Stream;
  */
 
 public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
-    private static final String messageControversialIsset = "Doesn't match to previous isset-alike handling (perhaps always false when reached).";
-    private static final String messageControversialFalsy = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
-    private static final String messageControversialNull  = "Doesn't match to previous null value handling (perhaps always false when reached).";
-    private static final String messageNonContributing    = "Seems to be always true when reached.";
-    private static final String messageNotEmpty           = "'isset(...) && ...' here can be replaced with '!empty(...)'.";
-    private static final String messageEmpty              = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
-    private static final String messageNotIsset           = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
-    private static final String messageIsset              = "'!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
-    private static final String messageNotEmptyArray      = "'is_array(...) && !empty(...)' here can be replaced with '... !== []'.";
-    private static final String messageEmptyArray         = "'is_array(...) && empty(...)' here can be replaced with '... === []'.";
-    private static final String messageUseCoalescing      = "'%s' can be used instead (reduces cognitive load).";
+    private static final String messageControversialIsset    = "Doesn't match to previous isset-alike handling (perhaps always false when reached).";
+    private static final String messageControversialFalsy    = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
+    private static final String messageControversialNull     = "Doesn't match to previous null value handling (perhaps always false when reached).";
+    private static final String messageNonContributing       = "Seems to be always true when reached.";
+    private static final String messageNotEmpty              = "'isset(...) && ...' here can be replaced with '!empty(...)'.";
+    private static final String messageEmpty                 = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
+    private static final String messageNotIsset              = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
+    private static final String messageIsset                 = "'!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
+    private static final String messageNotEmptyArrayImplicit = "'is_array(...) && !empty(...)' here can be replaced with '... !== []'.";
+    private static final String messageEmptyArrayImplicit    = "'is_array(...) && empty(...)' here can be replaced with '... === []'.";
+    private static final String messageNotEmptyArrayIndirect = "'is_array(...) && ...' here can be replaced with '... !== []'.";
+    private static final String messageEmptyArrayIndirect    = "'is_array(...) && !...' here can be replaced with '... === []'.";
+    private static final String messageUseCoalescing         = "'%s' can be used instead (reduces cognitive load).";
 
     // Inspection options.
     public boolean SUGGEST_SIMPLIFICATIONS  = true;
@@ -206,15 +208,21 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                         .filter(e -> "is_array".equals(((FunctionReference) e).getName()))
                         .findFirst();
                 if (reference.isPresent() && !this.isInverted(reference.get())) {
-                    // TODO: implicit subject usage do the same
-                    final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
-                    if (empty.isPresent()) {
-                        final PsiElement node = this.target(empty.get(), argument);
+                    final Optional<PsiElement> first = contexts.stream()
+                            .filter(e -> e instanceof PhpEmpty || e instanceof Variable)
+                            .findFirst();
+                    if (first.isPresent()) {
+                        final PsiElement expression = first.get();
+                        final PsiElement node       = this.target(expression, argument);
                         if (reported.add(node)) {
-                            if (this.isInverted(empty.get())) {
-                                holder.registerProblem(node, messageNotEmptyArray);
-                            } else {
-                                holder.registerProblem(node, messageEmptyArray);
+                            /* is_array(...) && [!]empty(...) */
+                            if (expression instanceof PhpEmpty) {
+                                final String message = this.isInverted(expression) ? messageNotEmptyArrayImplicit : messageEmptyArrayImplicit;
+                                holder.registerProblem(node, message);
+                            } else if (expression instanceof Variable) {
+                                /* is_array($...) && [!]$... */
+                                final String message = this.isInverted(expression) ? messageEmptyArrayIndirect : messageNotEmptyArrayIndirect;
+                                holder.registerProblem(node, message);
                             }
                         }
                     }

@@ -8,7 +8,6 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpExitPointInstru
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpReturnInstruction;
 import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -48,9 +47,8 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.isContainingFileSkipped(method)) { return; }
 
-                final PhpClass clazz            = method.getContainingClass();
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
-                if (nameIdentifier != null && clazz != null && !clazz.isInterface()) {
+                if (nameIdentifier != null && !method.isAbstract()) {
                     final PhpExitPointInstruction exitPoint = method.getControlFlow().getExitPoint();
 
                     int returnsCount = 0;

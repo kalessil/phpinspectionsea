@@ -46,9 +46,8 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                final PhpClass clazz            = method.getContainingClass();
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
-                if (nameIdentifier != null && clazz != null && !clazz.isInterface()) {
+                if (nameIdentifier != null && !method.isAbstract()) {
                     final PhpExitPointInstruction exitPoint = method.getControlFlow().getExitPoint();
 
                     int returnsCount = 0;

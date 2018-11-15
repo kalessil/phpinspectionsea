@@ -31,8 +31,8 @@ import java.util.Set;
 
 public class TestingUnfriendlyApisInspector extends BasePhpInspection {
     // Inspection options.
-    public int COMPLAIN_THRESHOLD = 3;
-    public int SCREAM_THRESHOLD   = 5;
+    public int COMPLAIN_THRESHOLD = 5;
+    public int SCREAM_THRESHOLD   = 7;
 
     private final static String messagePattern = "%s mocks has been introduced here: either test cases is too big, either API has design issues.";
 
@@ -60,9 +60,13 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
 
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
                 if (nameIdentifier != null && !method.isAbstract() && this.isTestContext(method)) {
-                    final long mocksCount = PsiTreeUtil.findChildrenOfType(method, MethodReference.class).stream()
-                            .filter(m -> methods.contains(m.getName()))
-                            .count();
+                    long mocksCount = 0;
+                    for (final MethodReference reference : PsiTreeUtil.findChildrenOfType(method, MethodReference.class)) {
+                        if (methods.contains(reference.getName()) && ++mocksCount >= SCREAM_THRESHOLD) {
+                            break;
+                        }
+                    }
+
                     if (mocksCount >= SCREAM_THRESHOLD) {
                         holder.registerProblem(
                                 nameIdentifier,

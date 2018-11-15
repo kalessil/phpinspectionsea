@@ -926,7 +926,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.CompositionAndInheritanceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="TestingUnfriendlyApisInspection"                 displayName="Testing unfriendly APIs"
-        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.TestingUnfriendlyApisInspector"/>
 
 

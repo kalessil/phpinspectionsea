@@ -65,10 +65,8 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
                     final long mocksCount = PsiTreeUtil.findChildrenOfType(method, MethodReference.class).stream()
                             .filter(reference -> methods.contains(reference.getName()))
                             .filter(reference -> {
-                                final PsiElement parent      = reference.getParent();
-                                final PsiElement grandParent = parent.getParent();
-                                final boolean inConstructor  = parent instanceof ParametersList && grandParent instanceof NewExpression;
-                                return !inConstructor;
+                                final PsiElement grandParent = reference.getParent().getParent();
+                                return !(grandParent instanceof NewExpression);
                             })
                             .count();
 

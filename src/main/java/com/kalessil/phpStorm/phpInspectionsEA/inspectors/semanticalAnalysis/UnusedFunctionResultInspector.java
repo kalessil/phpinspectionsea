@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 public class UnusedFunctionResultInspector extends BasePhpInspection {
     // Inspection options.
     public boolean REPORT_ONLY_SCALARS = false;
+    public boolean REPORT_MIXED_TYPE   = false;
 
     private static final String message = "Function result is not used.";
 
@@ -100,6 +101,9 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                         types.remove(Types.strBoolean); /* APIs returning false on failures */
                         types.remove(Types.strInteger); /* APIs returning c-alike result codes */
                         types.remove(Types.strVoid);
+                        if (!REPORT_MIXED_TYPE) {
+                            types.remove(Types.strMixed);
+                        }
                         if (!types.isEmpty()) {
                             final boolean skip      = REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty();
                             final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
@@ -116,7 +120,10 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create(
-            (component) -> component.addCheckbox("Report only unused scalar results", REPORT_ONLY_SCALARS, (isSelected) -> REPORT_ONLY_SCALARS = isSelected)
+            (component) -> {
+                component.addCheckbox("Report only unused scalar results", REPORT_ONLY_SCALARS, (isSelected) -> REPORT_ONLY_SCALARS = isSelected);
+                component.addCheckbox("Report 'mixed' type", REPORT_MIXED_TYPE, (isSelected) -> REPORT_MIXED_TYPE = isSelected);
+            }
         );
     }
 }

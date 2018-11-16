@@ -9,14 +9,18 @@ function cases_holder() {
 
     /* types identification */
     ignored();
-    <warning descr="Function result is not used.">reported</warning>();
+    <warning descr="Function result is not used.">reported_because_of_float</warning>();
+    <warning descr="Function result is not used.">reported_because_of_mixed</warning>();
 }
 
 /** @return bool|int|void */
 function ignored() {}
 
 /** @return bool|int|void|float */
-function reported() {}
+function reported_because_of_float() {}
+
+/** @return bool|int|void|mixed */
+function reported_because_of_mixed() {}
 
 class Clazz extends \stdClass
 {

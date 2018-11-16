@@ -67,6 +67,7 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
                             .filter(reference -> methods.contains(reference.getName()))
                             .filter(reference -> {
                                 final PsiElement grandParent = reference.getParent().getParent();
+                                /* ->setConstructorArgs([ $this->createMock(...) ]) */
                                 if (grandParent instanceof ArrayCreationExpression) {
                                     final PsiElement candidate = grandParent.getParent().getParent();
                                     if (candidate instanceof MethodReference) {
@@ -75,6 +76,7 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
                                     }
                                 }
 
+                                /* new Clazz( $this->createMock(...) ) */
                                 return !(grandParent instanceof NewExpression) &&
                                         ExpressionSemanticUtil.getScope(reference) == method;
                             })

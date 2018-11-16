@@ -2,10 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.execution.configurations.ParametersList;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.NewExpression;
@@ -65,9 +65,19 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
                 if (nameIdentifier != null && !method.isAbstract() && this.isTestContext(method)) {
                     final long mocksCount = PsiTreeUtil.findChildrenOfType(method, MethodReference.class).stream()
                             .filter(reference -> methods.contains(reference.getName()))
-                            .filter(reference -> !(reference.getParent().getParent() instanceof NewExpression) &&
-                                                 ExpressionSemanticUtil.getScope(reference) == method
-                            )
+                            .filter(reference -> {
+                                final PsiElement grandParent = reference.getParent().getParent();
+                                if (grandParent instanceof ArrayCreationExpression) {
+                                    final PsiElement candidate = grandParent.getParent().getParent();
+                                    if (candidate instanceof MethodReference) {
+                                        final String methodName = ((MethodReference) candidate).getName();
+                                        return methodName != null && !methodName.equals("setConstructorArgs");
+                                    }
+                                }
+
+                                return !(grandParent instanceof NewExpression) &&
+                                        ExpressionSemanticUtil.getScope(reference) == method;
+                            })
                             .count();
 
                     if (mocksCount >= SCREAM_THRESHOLD) {

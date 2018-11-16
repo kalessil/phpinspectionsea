@@ -276,10 +276,12 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 final PsiElement from = this.from.getElement();
                 final PsiElement to   = this.to.getElement();
                 if (from != null && to != null) {
-                    final PsiElement implant = PhpPsiElementFactory.createStatement(project, this.replacement + ";");
                     if (from == to) {
-                        from.replace(implant);
+                        final boolean wrap       = from instanceof If && from.getParent() instanceof Else;
+                        final String replacement = wrap ? "{ " + this.replacement + "; }" : this.replacement + ";";
+                        from.replace(PhpPsiElementFactory.createStatement(project, replacement));
                     } else {
+                        final PsiElement implant = PhpPsiElementFactory.createStatement(project, this.replacement + ";");
                         from.getParent().addBefore(implant, from);
                         from.getParent().deleteChildRange(from, to);
                     }

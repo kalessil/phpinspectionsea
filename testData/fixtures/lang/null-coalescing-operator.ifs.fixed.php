@@ -15,6 +15,12 @@ function cases_holder() {
 
     $container = $value ?? 'default';
 
+    if (isset($value)) {
+        $container = $value;
+    } else {
+        $container = $value ?? 'default';
+    }
+
     /* false-positives: value or container mismatches */
     if (isset($value)) {
         $container = trim($value);

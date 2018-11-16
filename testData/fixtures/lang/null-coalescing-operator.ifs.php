@@ -22,6 +22,14 @@ function cases_holder() {
         $container = 'default';
     }
 
+    if (isset($value)) {
+        $container = $value;
+    } else <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+        $container = $value;
+    } else {
+        $container = 'default';
+    }
+
     /* false-positives: value or container mismatches */
     if (isset($value)) {
         $container = trim($value);

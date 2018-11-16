@@ -137,7 +137,9 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
 
     }
     public void testIfFindsExpectsOncePattern() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
+        final PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
+        inspector.PROMOTE_MOCKING_ONCE        = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/phpUnit/expects-once.php");
         myFixture.testHighlighting(true, false, true);
 
@@ -146,7 +148,9 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.checkResultByFile("testData/fixtures/phpUnit/expects-once.fixed.php");
     }
     public void testIfFindsWillReturnPattern() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
+        final PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
+        inspector.PROMOTE_MOCKING_WILL_RETURN = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/phpUnit/will-return.php");
         myFixture.testHighlighting(true, false, true);
 

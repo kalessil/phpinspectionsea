@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,10 +65,9 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
                 if (nameIdentifier != null && !method.isAbstract() && this.isTestContext(method)) {
                     final long mocksCount = PsiTreeUtil.findChildrenOfType(method, MethodReference.class).stream()
                             .filter(reference -> methods.contains(reference.getName()))
-                            .filter(reference -> {
-                                final PsiElement grandParent = reference.getParent().getParent();
-                                return !(grandParent instanceof NewExpression);
-                            })
+                            .filter(reference ->
+                                    !(reference.getParent().getParent() instanceof NewExpression) &&
+                                    ExpressionSemanticUtil.getScope(reference) == method)
                             .count();
 
                     if (mocksCount >= SCREAM_THRESHOLD) {

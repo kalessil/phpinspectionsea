@@ -60,12 +60,9 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
 
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
                 if (nameIdentifier != null && !method.isAbstract() && this.isTestContext(method)) {
-                    long mocksCount = 0;
-                    for (final MethodReference reference : PsiTreeUtil.findChildrenOfType(method, MethodReference.class)) {
-                        if (methods.contains(reference.getName()) && ++mocksCount >= SCREAM_THRESHOLD) {
-                            break;
-                        }
-                    }
+                    final long mocksCount = PsiTreeUtil.findChildrenOfType(method, MethodReference.class).stream()
+                            .filter(m -> methods.contains(m.getName()))
+                            .count();
 
                     if (mocksCount >= SCREAM_THRESHOLD) {
                         holder.registerProblem(

@@ -2,11 +2,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.execution.configurations.ParametersList;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.NewExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -34,7 +36,7 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
     public int COMPLAIN_THRESHOLD = 5;
     public int SCREAM_THRESHOLD   = 7;
 
-    private final static String messagePattern = "%s mocks has been introduced here: either test cases is too big, either API has design issues.";
+    private final static String messagePattern = "%s mocks has been introduced here: either the test case should be refactored, either API has design issues.";
 
     private final static Set<String> methods = new HashSet<>();
     static {
@@ -61,7 +63,12 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
                 if (nameIdentifier != null && !method.isAbstract() && this.isTestContext(method)) {
                     final long mocksCount = PsiTreeUtil.findChildrenOfType(method, MethodReference.class).stream()
-                            .filter(m -> methods.contains(m.getName()))
+                            .filter(reference -> methods.contains(reference.getName()))
+                            .filter(reference -> {
+                                final PsiElement parent      = reference.getParent();
+                                final PsiElement grandParent = parent.getParent();
+                                return !(parent instanceof ParametersList) || !(grandParent instanceof NewExpression);
+                            })
                             .count();
 
                     if (mocksCount >= SCREAM_THRESHOLD) {

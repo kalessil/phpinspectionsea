@@ -67,7 +67,8 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
                             .filter(reference -> {
                                 final PsiElement parent      = reference.getParent();
                                 final PsiElement grandParent = parent.getParent();
-                                return !(parent instanceof ParametersList) || !(grandParent instanceof NewExpression);
+                                final boolean inConstructor  = parent instanceof ParametersList && grandParent instanceof NewExpression;
+                                return !inConstructor;
                             })
                             .count();
 

@@ -20,12 +20,14 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.n
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -40,6 +42,10 @@ import java.util.function.Function;
  */
 
 public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean SUGGEST_SIMPLIFYING_TERNARIES = true;
+    public boolean SUGGEST_SIMPLIFYING_IFS       = true;
+
     private static final String messagePattern = "'%s' can be used instead (reduces cognitive load).";
 
     private static final List<Function<TernaryExpression, String>> ternaryStrategies = new ArrayList<>();
@@ -61,7 +67,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                if (SUGGEST_SIMPLIFYING_TERNARIES && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     for (final Function<TernaryExpression, String> strategy : ternaryStrategies) {
                         final String replacement = strategy.apply(expression);
                         if (replacement != null) {
@@ -79,7 +85,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             @Override
             public void visitPhpIf(@NotNull If expression) {
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                if (SUGGEST_SIMPLIFYING_IFS && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     final PsiElement condition = expression.getCondition();
                     if (condition instanceof PhpIsset) {
                         final PhpIsset isset         = (PhpIsset) condition;
@@ -280,6 +286,13 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 }
             }
         }
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Simplify ternary expressions", SUGGEST_SIMPLIFYING_TERNARIES, (isSelected) -> SUGGEST_SIMPLIFYING_TERNARIES = isSelected);
+            component.addCheckbox("Simplify if-statements", SUGGEST_SIMPLIFYING_IFS, (isSelected) -> SUGGEST_SIMPLIFYING_IFS = isSelected);
+        });
     }
 
     private static final class ReplaceSingleConstructFix extends UseSuggestedReplacementFixer {

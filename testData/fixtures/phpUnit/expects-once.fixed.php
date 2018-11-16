@@ -3,7 +3,7 @@
 class CasesHolder
 {
     public function testExpectsOnce() {
-        $mock = $this->getMockBuilder(\SimpleXMLElement::class)->getMock();
+        $mock = $this->createMock(\SimpleXMLElement::class);
         $mock->expects($this->once())->method('asXML')->willReturn('...');
     }
 }

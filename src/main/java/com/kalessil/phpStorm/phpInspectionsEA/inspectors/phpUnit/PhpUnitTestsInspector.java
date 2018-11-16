@@ -185,8 +185,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
                 if (methodName != null) {
-                    final boolean isAssertion = (methodName.startsWith("assert") && !methodName.equals("assert"));
-                    if (isAssertion) {
+                    if (methodName.startsWith("assert") && !methodName.equals("assert")) {
                         final List<BooleanSupplier> callbacks = new ArrayList<>();
                         callbacks.add(() -> AssertBoolInvertedStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertBoolOfComparisonStrategy.apply(methodName, reference, holder));
@@ -214,6 +213,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         callbacks.clear();
                     } else if (methodName.equals("expects")) {
                         ExpectsOnceStrategy.apply(methodName, reference, holder);
+                    } else if (methodName.equals("will")) {
+                        WillReturnStrategy.apply(methodName, reference, holder);
                     }
                 }
             }

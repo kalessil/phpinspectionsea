@@ -145,4 +145,13 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/phpUnit/expects-once.fixed.php");
     }
+    public void testIfFindsWillReturnPattern() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("testData/fixtures/phpUnit/will-return.php");
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/phpUnit/will-return.fixed.php");
+    }
 }

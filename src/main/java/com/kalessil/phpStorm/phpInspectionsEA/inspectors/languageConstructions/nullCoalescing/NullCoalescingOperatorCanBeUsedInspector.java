@@ -116,13 +116,17 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     previous = previous.getFirstChild();
                     own      = own.getFirstChild();
                     if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
-                        final String replacement = this.generateReplacement(argument, (AssignmentExpression) own, (AssignmentExpression) previous);
-                        if (replacement != null) {
-                            holder.registerProblem(
-                                    expression.getFirstChild(),
-                                    String.format(messagePattern, replacement),
-                                    new ReplaceMultipleConstructsFix(previous.getParent(), expression, replacement)
-                            );
+                        final AssignmentExpression previousAssignment = (AssignmentExpression) previous;
+                        /* false-positives: the preceding assignment is by reference, not a target pattern */
+                        if (!OpenapiTypesUtil.isAssignmentByReference(previousAssignment)) {
+                            final String replacement = this.generateReplacement(argument, (AssignmentExpression) own, previousAssignment);
+                            if (replacement != null) {
+                                holder.registerProblem(
+                                        expression.getFirstChild(),
+                                        String.format(messagePattern, replacement),
+                                        new ReplaceMultipleConstructsFix(previousAssignment.getParent(), expression, replacement)
+                                );
+                            }
                         }
                     }
                 }

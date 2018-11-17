@@ -6,12 +6,16 @@ function cases_holder() {
         $container = $value;
     }
 
-    /* false-positives: value or container mismatches */
+    /* false-positives: value or container mismatches, assignment by reference */
     $container = 'default';
     if (isset($value)) {
         $container = trim($value);
     }
     $container = 'default';
+    if (isset($value)) {
+        $value = $value;
+    }
+    $container = &$reference;
     if (isset($value)) {
         $value = $value;
     }

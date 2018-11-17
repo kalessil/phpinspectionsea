@@ -197,18 +197,18 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     @NotNull PhpReturn positive,
                     @NotNull PhpReturn negative
             ) {
-                String result                  = null;
                 final PsiElement negativeValue = ExpressionSemanticUtil.getReturnValue(negative);
                 if (negativeValue != null) {
                     final PsiElement positiveValue = ExpressionSemanticUtil.getReturnValue(positive);
                     if (positiveValue != null && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
-                        /* false-positives: assignments */
-                        if (!OpenapiTypesUtil.isAssignment(positiveValue) && !OpenapiTypesUtil.isAssignment(negativeValue)) {
-                            result = String.format("return %s ?? %s", positiveValue.getText(), negativeValue.getText());
+                        final boolean isAnyAssignment = OpenapiTypesUtil.isAssignment(positiveValue) ||
+                                                        OpenapiTypesUtil.isAssignment(negativeValue);
+                        if (!isAnyAssignment) {
+                            return String.format("return %s ?? %s", positiveValue.getText(), negativeValue.getText());
                         }
                     }
                 }
-                return result;
+                return null;
             }
 
             @Nullable
@@ -217,7 +217,6 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     @NotNull AssignmentExpression positive,
                     @NotNull AssignmentExpression negative
             ) {
-                String result                      = null;
                 final PsiElement negativeContainer = negative.getVariable();
                 final PsiElement negativeValue     = negative.getValue();
                 if (negativeContainer != null && negativeValue != null) {
@@ -233,7 +232,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 final boolean isAnyByReference = OpenapiTypesUtil.isAssignmentByReference(positive) ||
                                                                  OpenapiTypesUtil.isAssignmentByReference(negative);
                                 if (!isAnyByReference) {
-                                    result = String.format(
+                                    return String.format(
                                             "%s = %s ?? %s",
                                             positiveContainer.getText(),
                                             positiveValue.getText(),
@@ -244,7 +243,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         }
                     }
                 }
-                return result;
+                return null;
             }
 
         };

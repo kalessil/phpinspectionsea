@@ -46,7 +46,7 @@ final public class OpenapiPsiSearchUtil {
     }
 
     @Nullable
-    static PsiElement findAssignmentOperator(@Nullable AssignmentExpression assignment) {
+    public static PsiElement findAssignmentOperator(@Nullable AssignmentExpression assignment) {
         if (assignment != null) {
             final PsiElement value = assignment.getValue();
             if (value != null) {

@@ -5,7 +5,10 @@
         foreach ($arr as $i => $iValue) {
             echo $arr[$i], $iValue->property;
             $x = $iValue;
+            $x = !$iValue;
+            $x = trim($iValue);
             $x = $iValue > 0;
+            $x = ($iValue) > 0;
         }
         foreach ($arr as $i => $iValue) {
             echo $arr[$i], $iValue->property;

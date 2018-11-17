@@ -45,6 +45,24 @@ final public class OpenapiPsiSearchUtil {
         return null;
     }
 
+    @Nullable
+    public static PsiElement findAssignmentOperator(@Nullable AssignmentExpression assignment) {
+        if (assignment != null) {
+            final PsiElement value = assignment.getValue();
+            if (value != null) {
+                PsiElement current = assignment.getVariable();
+                while (current != null && current != value) {
+                    if (current.getNode().getElementType() == PhpTokenTypes.opASGN) {
+                        return current;
+                    }
+                    current = current.getNextSibling();
+                }
+            }
+
+        }
+        return null;
+    }
+
     /* NOTE: get nodes even from inner lambdas */
     public static List<PsiElement> findEqual(@NotNull PsiElement where, @NotNull PsiElement what) {
         final List<PsiElement> result = new ArrayList<>();

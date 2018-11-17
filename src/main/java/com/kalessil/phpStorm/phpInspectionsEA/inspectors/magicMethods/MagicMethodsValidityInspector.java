@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.lang.psi.elements.ClassReference;
+import com.jetbrains.php.lang.psi.elements.ExtendsList;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -35,11 +37,14 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
     private static final PhpType stringType        = (new PhpType()).add(PhpType.STRING);
     private static final PhpType arrayOrNullType   = (new PhpType()).add(PhpType.NULL).add(PhpType.ARRAY);
     private static final Set<String> knownNonMagic = new HashSet<>();
+    private static final Set<String> knownLegacyNonMagicClasses = new HashSet<>();
     static {
         knownNonMagic.add("__inject");
         knownNonMagic.add("__prepare");
         knownNonMagic.add("__toArray");
         knownNonMagic.add("__");
+        knownLegacyNonMagicClasses.add("SoapClient");
+        knownLegacyNonMagicClasses.add("\\SoapClient");
     }
 
     @NotNull
@@ -61,6 +66,8 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 if (clazz == null || nameNode == null || !methodName.startsWith("_") || method.isAbstract()) {
                     return;
                 }
+
+                final ExtendsList clazzParents  = clazz.getExtendsList();
 
                 switch (methodName) {
                     case "__construct":
@@ -144,7 +151,8 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                         holder.registerProblem(nameNode, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                         break;
                     default:
-                        if (methodName.startsWith("__") && !knownNonMagic.contains(methodName)) {
+                        if (methodName.startsWith("__") && !knownNonMagic.contains(methodName)
+                                && !isLegacyNameFromExtendedClass(clazzParents, method)) {
                             holder.registerProblem(nameNode, messageNotMagic);
                         } else {
                             MissingUnderscoreStrategy.apply(method, holder);
@@ -153,5 +161,22 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    /**
+     * Returns true if the class extends a Legacy class using "__" methods and the current method is an overwrite
+     * of one of them.
+     * @param clazzParents list of parents for the current class
+     * @param method method being checked
+     * @return boolean
+     */
+    private boolean isLegacyNameFromExtendedClass(ExtendsList clazzParents, Method method) {
+        for (ClassReference className : clazzParents.getReferenceElements()) {
+            if (knownLegacyNonMagicClasses.contains(className.getFQN()) && method.getParent() != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

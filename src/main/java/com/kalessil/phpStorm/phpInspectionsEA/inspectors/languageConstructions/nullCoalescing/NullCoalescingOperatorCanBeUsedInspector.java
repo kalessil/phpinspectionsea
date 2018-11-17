@@ -20,12 +20,14 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.n
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -40,6 +42,10 @@ import java.util.function.Function;
  */
 
 public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean SUGGEST_SIMPLIFYING_TERNARIES = true;
+    public boolean SUGGEST_SIMPLIFYING_IFS       = true;
+
     private static final String messagePattern = "'%s' can be used instead (reduces cognitive load).";
 
     private static final List<Function<TernaryExpression, String>> ternaryStrategies = new ArrayList<>();
@@ -63,7 +69,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 if (this.isContainingFileSkipped(expression)) { return; }
 
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                if (SUGGEST_SIMPLIFYING_TERNARIES && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     for (final Function<TernaryExpression, String> strategy : ternaryStrategies) {
                         final String replacement = strategy.apply(expression);
                         if (replacement != null) {
@@ -83,7 +89,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 if (this.isContainingFileSkipped(expression)) { return; }
 
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                if (SUGGEST_SIMPLIFYING_IFS && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     final PsiElement condition = expression.getCondition();
                     if (condition instanceof PhpIsset) {
                         final PhpIsset isset         = (PhpIsset) condition;
@@ -114,7 +120,11 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     previous = previous.getFirstChild();
                     own      = own.getFirstChild();
                     if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
-                        final String replacement = this.generateReplacement(argument, (AssignmentExpression) own, (AssignmentExpression) previous);
+                        final String replacement = this.generateReplacement(
+                                argument,
+                                (AssignmentExpression) own,
+                                (AssignmentExpression) previous
+                        );
                         if (replacement != null) {
                             holder.registerProblem(
                                     expression.getFirstChild(),
@@ -191,18 +201,18 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     @NotNull PhpReturn positive,
                     @NotNull PhpReturn negative
             ) {
-                String result                  = null;
                 final PsiElement negativeValue = ExpressionSemanticUtil.getReturnValue(negative);
                 if (negativeValue != null) {
                     final PsiElement positiveValue = ExpressionSemanticUtil.getReturnValue(positive);
                     if (positiveValue != null && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
-                        /* false-positives: assignments */
-                        if (!OpenapiTypesUtil.isAssignment(positiveValue) && !OpenapiTypesUtil.isAssignment(negativeValue)) {
-                            result = String.format("return %s ?? %s", positiveValue.getText(), negativeValue.getText());
+                        final boolean isAnyAssignment = OpenapiTypesUtil.isAssignment(positiveValue) ||
+                                                        OpenapiTypesUtil.isAssignment(negativeValue);
+                        if (!isAnyAssignment) {
+                            return String.format("return %s ?? %s", positiveValue.getText(), negativeValue.getText());
                         }
                     }
                 }
-                return result;
+                return null;
             }
 
             @Nullable
@@ -211,7 +221,6 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     @NotNull AssignmentExpression positive,
                     @NotNull AssignmentExpression negative
             ) {
-                String result                      = null;
                 final PsiElement negativeContainer = negative.getVariable();
                 final PsiElement negativeValue     = negative.getValue();
                 if (negativeContainer != null && negativeValue != null) {
@@ -224,18 +233,23 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             final boolean isPush = PsiTreeUtil.findChildrenOfType(positiveContainer, ArrayIndex.class).stream()
                                     .anyMatch(index -> index.getValue() == null);
                             if (!isPush) {
-                                result = String.format(
-                                        "%s = %s ?? %s",
-                                        positiveContainer.getText(),
-                                        positiveValue.getText(),
-                                        negativeValue.getText()
-                                );
+                                final boolean isAnyByReference = OpenapiTypesUtil.isAssignmentByReference(positive) ||
+                                                                 OpenapiTypesUtil.isAssignmentByReference(negative);
+                                if (!isAnyByReference) {
+                                    return String.format(
+                                            "%s = %s ?? %s",
+                                            positiveContainer.getText(),
+                                            positiveValue.getText(),
+                                            negativeValue.getText()
+                                    );
+                                }
                             }
                         }
                     }
                 }
-                return result;
+                return null;
             }
+
         };
     }
 
@@ -274,16 +288,25 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 final PsiElement from = this.from.getElement();
                 final PsiElement to   = this.to.getElement();
                 if (from != null && to != null) {
-                    final PsiElement implant = PhpPsiElementFactory.createStatement(project, this.replacement + ";");
                     if (from == to) {
-                        from.replace(implant);
+                        final boolean wrap       = from instanceof If && from.getParent() instanceof Else;
+                        final String replacement = wrap ? "{ " + this.replacement + "; }" : this.replacement + ";";
+                        from.replace(PhpPsiElementFactory.createStatement(project, replacement));
                     } else {
+                        final PsiElement implant = PhpPsiElementFactory.createStatement(project, this.replacement + ";");
                         from.getParent().addBefore(implant, from);
                         from.getParent().deleteChildRange(from, to);
                     }
                 }
             }
         }
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Simplify ternary expressions", SUGGEST_SIMPLIFYING_TERNARIES, (isSelected) -> SUGGEST_SIMPLIFYING_TERNARIES = isSelected);
+            component.addCheckbox("Simplify if-statements", SUGGEST_SIMPLIFYING_IFS, (isSelected) -> SUGGEST_SIMPLIFYING_IFS = isSelected);
+        });
     }
 
     private static final class ReplaceSingleConstructFix extends UseSuggestedReplacementFixer {

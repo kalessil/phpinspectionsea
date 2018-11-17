@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -16,26 +15,23 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class ExpectsOnceStrategy {
-    private final static String message = "'->once()' would make more sense here.";
+final public class WillReturnStrategy {
+    private final static String message = "'->willReturn(...)' would make more sense here.";
 
     static public void apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
-        if (methodName.equals("expects")) {
+        if (methodName.equals("will")) {
             final PsiElement[] arguments = reference.getParameters();
             if (arguments.length == 1 && arguments[0] instanceof MethodReference) {
                 final MethodReference innerReference = (MethodReference) arguments[0];
                 final String innerMethodName         = innerReference.getName();
-                if (innerMethodName != null && innerMethodName.equals("exactly")) {
+                if (innerMethodName != null && innerMethodName.equals("returnValue")) {
                     final PsiElement[] innerArguments = innerReference.getParameters();
-                    if (innerArguments.length == 1 && OpenapiTypesUtil.isNumber(innerArguments[0])) {
-                        final boolean isResult = innerArguments[0].getText().equals("1");
-                        if (isResult) {
-                            holder.registerProblem(
-                                    innerReference,
-                                    message,
-                                    new PhpUnitAssertFixer("once", new String[]{})
-                            );
-                        }
+                    if (innerArguments.length == 1) {
+                        holder.registerProblem(
+                                reference,
+                                message,
+                                new PhpUnitAssertFixer("willReturn", new String[]{innerArguments[0].getText()})
+                        );
                     }
                 }
             }

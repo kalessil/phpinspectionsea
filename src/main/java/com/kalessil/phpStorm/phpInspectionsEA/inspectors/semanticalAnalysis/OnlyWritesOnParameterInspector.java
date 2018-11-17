@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
@@ -192,9 +191,11 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         }
 
                         if (objTopSemanticExpression instanceof UnaryExpression) {
-                            final PsiElement operation  = ((UnaryExpression) objTopSemanticExpression).getOperation();
-                            final IElementType operator = operation == null ? null : operation.getNode().getElementType();
-                            if (operator == PhpTokenTypes.opINCREMENT || operator == PhpTokenTypes.opDECREMENT) {
+                            final PsiElement operation = ((UnaryExpression) objTopSemanticExpression).getOperation();
+                            if (
+                                OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT) ||
+                                OpenapiTypesUtil.is(operation, PhpTokenTypes.opDECREMENT)
+                            ) {
                                 targetExpressions.add(objLastSemanticExpression);
 
                                 ++intCountWriteAccesses;
@@ -208,8 +209,10 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     /* ++/-- operations */
                     if (parent instanceof UnaryExpression) {
                         final PsiElement operation  = ((UnaryExpression) parent).getOperation();
-                        final IElementType operator = operation == null ? null : operation.getNode().getElementType();
-                        if (operator == PhpTokenTypes.opINCREMENT || operator == PhpTokenTypes.opDECREMENT) {
+                        if (
+                            OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT) ||
+                            OpenapiTypesUtil.is(operation, PhpTokenTypes.opDECREMENT)
+                        ) {
                             ++intCountWriteAccesses;
                             if (isReference) {
                                 /* when modifying the reference it's link READ and linked WRITE semantics */
@@ -261,11 +264,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                     ++intCountReadAccesses;
                                 }
                                 /* now ensure operation is assignment of reference */
-                                PsiElement operation = sameVariableCandidate.getNextSibling();
-                                while (operation != null && !OpenapiTypesUtil.is(operation, PhpTokenTypes.opASGN)) {
-                                    operation = operation.getNextSibling();
-                                }
-                                if (operation != null && operation.getText().replaceAll("\\s+", "").equals("=&")) {
+                                if (OpenapiTypesUtil.isAssignmentByReference(referenceAssignmentCandidate)) {
                                     isReference = true;
                                 }
                                 /* false-negative: inline assignment result has been used */

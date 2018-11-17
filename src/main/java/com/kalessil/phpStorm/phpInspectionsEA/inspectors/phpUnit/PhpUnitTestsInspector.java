@@ -47,6 +47,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     public boolean SUGGEST_TO_USE_ASSERTSAME     = false;
     public boolean SUGGEST_TO_USE_NAMED_DATASETS = false;
     public boolean PROMOTE_PHPUNIT_API           = true;
+    public boolean PROMOTE_MOCKING_ONCE          = true;
+    public boolean PROMOTE_MOCKING_WILL_RETURN   = true;
 
     private final static String messageNamedProvider = "It would be better for maintainability to to use named datasets in @dataProvider.";
     private final static String messageDataProvider  = "@dataProvider referencing to a non-existing entity.";
@@ -189,8 +191,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
                 final String methodName = reference.getName();
                 if (methodName != null) {
-                    final boolean isAssertion = (methodName.startsWith("assert") && !methodName.equals("assert"));
-                    if (isAssertion) {
+                    if (methodName.startsWith("assert") && !methodName.equals("assert")) {
                         final List<BooleanSupplier> callbacks = new ArrayList<>();
                         callbacks.add(() -> AssertBoolInvertedStrategy.apply(methodName, reference, holder));
                         callbacks.add(() -> AssertBoolOfComparisonStrategy.apply(methodName, reference, holder));
@@ -217,7 +218,13 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         }
                         callbacks.clear();
                     } else if (methodName.equals("expects")) {
-                        ExpectsOnceStrategy.apply(methodName, reference, holder);
+                        if (PROMOTE_MOCKING_ONCE) {
+                            ExpectsOnceStrategy.apply(methodName, reference, holder);
+                        }
+                    } else if (methodName.equals("will")) {
+                        if (PROMOTE_MOCKING_WILL_RETURN) {
+                            WillReturnStrategy.apply(methodName, reference, holder);
+                        }
                     }
                 }
             }
@@ -227,6 +234,8 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Promote dedicated asserts", PROMOTE_PHPUNIT_API, (isSelected) -> PROMOTE_PHPUNIT_API = isSelected);
+            component.addCheckbox("Promote ->once()", PROMOTE_MOCKING_ONCE, (isSelected) -> PROMOTE_MOCKING_ONCE = isSelected);
+            component.addCheckbox("Promote ->willReturn(...)", PROMOTE_MOCKING_WILL_RETURN, (isSelected) -> PROMOTE_MOCKING_WILL_RETURN = isSelected);
             component.addCheckbox("Suggest to use type safe asserts", SUGGEST_TO_USE_ASSERTSAME, (isSelected) -> SUGGEST_TO_USE_ASSERTSAME = isSelected);
             component.addCheckbox("Suggest to use named datasets", SUGGEST_TO_USE_NAMED_DATASETS, (isSelected) -> SUGGEST_TO_USE_NAMED_DATASETS = isSelected);
         });

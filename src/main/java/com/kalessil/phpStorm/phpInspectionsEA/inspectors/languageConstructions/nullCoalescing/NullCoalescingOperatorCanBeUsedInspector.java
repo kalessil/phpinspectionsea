@@ -116,17 +116,17 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     previous = previous.getFirstChild();
                     own      = own.getFirstChild();
                     if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
-                        final AssignmentExpression previousAssignment = (AssignmentExpression) previous;
-                        /* false-positives: the preceding assignment is by reference, not a target pattern */
-                        if (!OpenapiTypesUtil.isAssignmentByReference(previousAssignment)) {
-                            final String replacement = this.generateReplacement(argument, (AssignmentExpression) own, previousAssignment);
-                            if (replacement != null) {
-                                holder.registerProblem(
-                                        expression.getFirstChild(),
-                                        String.format(messagePattern, replacement),
-                                        new ReplaceMultipleConstructsFix(previousAssignment.getParent(), expression, replacement)
-                                );
-                            }
+                        final String replacement = this.generateReplacement(
+                                argument,
+                                (AssignmentExpression) own,
+                                (AssignmentExpression) previous
+                        );
+                        if (replacement != null) {
+                            holder.registerProblem(
+                                    expression.getFirstChild(),
+                                    String.format(messagePattern, replacement),
+                                    new ReplaceMultipleConstructsFix(previous.getParent(), expression, replacement)
+                            );
                         }
                     }
                 }
@@ -230,18 +230,23 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             final boolean isPush = PsiTreeUtil.findChildrenOfType(positiveContainer, ArrayIndex.class).stream()
                                     .anyMatch(index -> index.getValue() == null);
                             if (!isPush) {
-                                result = String.format(
-                                        "%s = %s ?? %s",
-                                        positiveContainer.getText(),
-                                        positiveValue.getText(),
-                                        negativeValue.getText()
-                                );
+                                final boolean isAnyByReference = OpenapiTypesUtil.isAssignmentByReference(positive) ||
+                                                                 OpenapiTypesUtil.isAssignmentByReference(negative);
+                                if (!isAnyByReference) {
+                                    result = String.format(
+                                            "%s = %s ?? %s",
+                                            positiveContainer.getText(),
+                                            positiveValue.getText(),
+                                            negativeValue.getText()
+                                    );
+                                }
                             }
                         }
                     }
                 }
                 return result;
             }
+
         };
     }
 

@@ -101,14 +101,15 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                         types.remove(Types.strBoolean); /* APIs returning false on failures */
                         types.remove(Types.strInteger); /* APIs returning c-alike result codes */
                         types.remove(Types.strVoid);
-                        if (!REPORT_MIXED_TYPE) {
-                            types.remove(Types.strMixed);
-                        }
+                        types.remove(Types.strNull);
                         if (!types.isEmpty()) {
-                            final boolean skip      = REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty();
                             final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
-                            if (target != null && !skip) {
-                                holder.registerProblem(target, message);
+                            if (target != null) {
+                                final boolean skip = (!REPORT_MIXED_TYPE && types.remove(Types.strMixed) && types.isEmpty()) ||
+                                                     (REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty());
+                                if (!skip) {
+                                    holder.registerProblem(target, message);
+                                }
                             }
                         }
                         types.clear();

@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 public class UnusedFunctionResultInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean REPORT_ONLY_SCALARS      = false;
     public boolean REPORT_MIXED_TYPE        = false;
     public boolean REPORT_FLUENT_INTERFACES = false;
 
@@ -107,8 +106,7 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                             final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
                             if (target != null) {
                                 final boolean skip = (!REPORT_MIXED_TYPE && types.remove(Types.strMixed) && types.isEmpty()) ||
-                                                     (!REPORT_FLUENT_INTERFACES && types.remove(Types.strStatic) && types.isEmpty()) ||
-                                                     (REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty());
+                                                     (!REPORT_FLUENT_INTERFACES && types.remove(Types.strStatic) && types.isEmpty());
                                 if (!skip) {
                                     holder.registerProblem(target, message);
                                 }
@@ -124,7 +122,6 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create(
             (component) -> {
-                component.addCheckbox("Report only unused scalar results", REPORT_ONLY_SCALARS, (isSelected) -> REPORT_ONLY_SCALARS = isSelected);
                 component.addCheckbox("Report 'mixed' type", REPORT_MIXED_TYPE, (isSelected) -> REPORT_MIXED_TYPE = isSelected);
                 component.addCheckbox("Report fluent interfaces", REPORT_FLUENT_INTERFACES, (isSelected) -> REPORT_FLUENT_INTERFACES = isSelected);
             }

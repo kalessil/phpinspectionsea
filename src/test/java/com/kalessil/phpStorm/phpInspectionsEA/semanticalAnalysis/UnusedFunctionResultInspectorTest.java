@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Unus
 public class UnusedFunctionResultInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         final UnusedFunctionResultInspector inspector = new UnusedFunctionResultInspector();
-        inspector.REPORT_ONLY_SCALARS                 = true;
         inspector.REPORT_MIXED_TYPE                   = true;
         inspector.REPORT_FLUENT_INTERFACES            = true;
         myFixture.enableInspections(inspector);

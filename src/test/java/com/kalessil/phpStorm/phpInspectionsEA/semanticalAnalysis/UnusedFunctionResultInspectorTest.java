@@ -8,6 +8,7 @@ public class UnusedFunctionResultInspectorTest extends PhpCodeInsightFixtureTest
         final UnusedFunctionResultInspector inspector = new UnusedFunctionResultInspector();
         inspector.REPORT_ONLY_SCALARS                 = true;
         inspector.REPORT_MIXED_TYPE                   = true;
+        inspector.REPORT_FLUENT_INTERFACES            = true;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/semanticalAnalysis/unused-function-result.php");
         myFixture.testHighlighting(true, false, true);

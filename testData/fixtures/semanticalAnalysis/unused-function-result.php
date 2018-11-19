@@ -11,6 +11,9 @@ function cases_holder() {
     ignored();
     <warning descr="Function result is not used.">reported_because_of_float</warning>();
     <warning descr="Function result is not used.">reported_because_of_mixed</warning>();
+
+    /* fluent interfaces */
+    (new Clazz())-><warning descr="Function result is not used.">fluent</warning>();
 }
 
 /** @return bool|int|void */
@@ -27,5 +30,10 @@ class Clazz extends \stdClass
     public function __construct()
     {
         parent::__construct();
+    }
+
+    /** @return $this */
+    public function fluent()
+    {
     }
 }

@@ -20,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -289,33 +290,39 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         ) {
             PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class).stream()
                 .filter(offset  -> {
-                    boolean result          = false;
                     final PsiElement parent = offset.getParent();
-                    if (parent instanceof MemberReference || parent instanceof BinaryExpression) {
+                    if (
+                        parent instanceof MemberReference || parent instanceof BinaryExpression ||
+                        parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression
+                    ) {
                         /* common cases which can be fixed */
-                        result = true;
+                        return true;
+                    } else if (parent instanceof ParameterList) {
+                        final PsiElement grandParent = parent.getParent();
+                        if (grandParent instanceof FunctionReference) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) grandParent);
+                            if (resolved instanceof Function) {
+                                return Arrays.stream(((Function) resolved).getParameters()).noneMatch(Parameter::isPassByRef);
+                            }
+                        }
                     } else if (parent instanceof AssignmentExpression) {
                         /* assignments, but not by reference */
                         final AssignmentExpression assignment = (AssignmentExpression) parent;
                         if (assignment.getValue() == offset) {
-                            PsiElement operation = offset.getPrevSibling();
-                            while (operation != null && !OpenapiTypesUtil.is(operation, PhpTokenTypes.opASGN)) {
-                                operation = operation.getPrevSibling();
-                            }
-                            result = operation != null && !operation.getText().replaceAll("\\s+", "").equals("=&");
+                            return !OpenapiTypesUtil.isAssignmentByReference(assignment);
                         }
                     }
-                    return result;
+                    return false;
                 }).forEach(offset -> {
                     final ArrayIndex offsetIndex   = offset.getIndex();
                     final PsiElement usedIndex     = offsetIndex == null ? null : offsetIndex.getValue();
                     final PsiElement usedContainer = offset.getValue();
-                    if (
-                        usedIndex != null && usedContainer != null &&
-                        OpenapiEquivalenceUtil.areEqual(index, usedIndex) &&
-                        OpenapiEquivalenceUtil.areEqual(container, usedContainer)
-                    ) {
-                        offset.replace(replacement);
+                    if (usedIndex != null && usedContainer != null) {
+                        final boolean replace = OpenapiEquivalenceUtil.areEqual(index, usedIndex) &&
+                                                OpenapiEquivalenceUtil.areEqual(container, usedContainer);
+                        if (replace) {
+                            offset.replace(replacement);
+                        }
                     }
                 });
         }

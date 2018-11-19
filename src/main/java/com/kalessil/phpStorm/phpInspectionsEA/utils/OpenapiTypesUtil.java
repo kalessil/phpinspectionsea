@@ -34,23 +34,19 @@ final public class OpenapiTypesUtil {
     }
 
     static public boolean isAssignment(@Nullable PsiElement expression) {
-        boolean result = is(expression, PhpElementTypes.ASSIGNMENT_EXPRESSION);
-        if (result) {
-            /* see com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor.visitPhpAssignmentExpression */
-            final AssignmentExpression assignment = (AssignmentExpression) expression;
-            final PsiElement container            = assignment.getVariable();
-            final PsiElement value                = assignment.getValue();
-            if (container != null && value != null) {
-                PsiElement current = container;
-                while (current != null && current != value) {
-                    if (result = (current.getNode().getElementType() == PhpTokenTypes.opASGN)) {
-                        break;
-                    }
-                    current = current.getNextSibling();
-                }
-            }
+        if (is(expression, PhpElementTypes.ASSIGNMENT_EXPRESSION)) {
+            return OpenapiPsiSearchUtil.findAssignmentOperator((AssignmentExpression) expression) != null;
         }
-        return result;
+        return false;
+    }
+
+    static public boolean isAssignmentByReference(@Nullable AssignmentExpression assignment) {
+        final PsiElement operator = OpenapiPsiSearchUtil.findAssignmentOperator(assignment);
+        if (operator != null) {
+            final int characters = operator.getTextLength();
+            return characters != 1 && operator.getText().replaceAll("\\s+", "").equals("=&");
+        }
+        return false;
     }
 
     static public boolean isFunctionReference(@Nullable PsiElement expression) {

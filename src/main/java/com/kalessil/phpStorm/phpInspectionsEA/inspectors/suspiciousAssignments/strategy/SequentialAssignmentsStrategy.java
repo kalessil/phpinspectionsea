@@ -130,8 +130,10 @@ final public class SequentialAssignmentsStrategy {
                             PsiTreeUtil.findChildrenOfType(consumerCandidate, container.getClass()).stream()
                                     .anyMatch(candidate -> OpenapiEquivalenceUtil.areEqual(candidate, container));
                     if (!isUsed) {
-                        final String message = String.format(patternConditional, container.getText());
-                        holder.registerProblem(container.getParent(), message);
+                        holder.registerProblem(
+                                container.getParent(),
+                                String.format(patternConditional, container.getText())
+                        );
                     }
                 }
             }
@@ -145,26 +147,19 @@ final public class SequentialAssignmentsStrategy {
     ) {
         final PsiElement previousContainer = previous.getVariable();
         if (previousContainer != null && OpenapiEquivalenceUtil.areEqual(previousContainer, container)) {
-            PsiElement operation = previousContainer.getNextSibling();
-            while (operation != null && operation.getNode().getElementType() != PhpTokenTypes.opASGN) {
-                operation = operation.getNextSibling();
-            }
-            if (operation != null) {
-                /* false-positives: preceding assignments by reference */
-                if (operation.getText().replaceAll("\\s+", "").equals("=&")) {
-                    return;
-                }
+            /* false-positives: preceding assignments by reference */
+            if (!OpenapiTypesUtil.isAssignmentByReference(previous)) {
                 /* false-positives: ++/-- are used inside the container expression */
                 for (final UnaryExpression unary : PsiTreeUtil.findChildrenOfType(container, UnaryExpression.class)) {
                     final PsiElement unaryOperation = unary.getOperation();
-                    final IElementType unaryType    = unaryOperation == null ? null : unaryOperation.getNode().getElementType();
-                    if (unaryOperation != null && PhpTokenTypes.tsUNARY_POSTFIX_OPS.contains(unaryType)) {
-                        return;
+                    if (unaryOperation != null) {
+                        final IElementType unaryType = unaryOperation.getNode().getElementType();
+                        if (PhpTokenTypes.tsUNARY_POSTFIX_OPS.contains(unaryType)) {
+                            return;
+                        }
                     }
                 }
-
-                final String message = String.format(patternGeneral, container.getText());
-                holder.registerProblem(container, message);
+                holder.registerProblem(container, String.format(patternGeneral, container.getText()));
             }
         }
     }

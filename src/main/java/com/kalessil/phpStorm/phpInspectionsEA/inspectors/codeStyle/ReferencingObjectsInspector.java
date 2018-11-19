@@ -14,6 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -28,7 +30,7 @@ import java.util.Arrays;
  */
 
 public class ReferencingObjectsInspector extends BasePhpInspection {
-    private static final String messageParameter  = "Objects are always passed by reference; please correct '& $%p%'.";
+    private static final String messageParameter  = "Objects are always passed by reference; please correct '& $%s'.";
     private static final String messageAssignment = "Objects are always passed by reference; please correct '= & new '.";
 
     private static final PhpType php7Types = new PhpType();
@@ -52,7 +54,6 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /* re-dispatch to inspector */
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.isContainingFileSkipped(method)) { return; }
@@ -71,34 +72,37 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                 if (NamedElementUtil.getNameIdentifier(callable) != null) {
                     Arrays.stream(callable.getParameters())
                         .filter(parameter -> {
-                            final PhpType declared = parameter.getDeclaredType();
-                            return !declared.isEmpty() && parameter.isPassByRef() && !PhpType.isSubType(declared, php7Types);
+                            if (parameter.isPassByRef()) {
+                                final PhpType declared = parameter.getDeclaredType();
+                                return !declared.isEmpty() && !PhpType.isSubType(declared, php7Types);
+                            }
+                            return false;
                         })
                         .filter(parameter -> {
-                            boolean result             = true;
                             final String parameterName = parameter.getName();
                             final GroupStatement body  = ExpressionSemanticUtil.getGroupStatement(callable);
                             for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
                                 if (parameterName.equals(variable.getName())) {
                                     final PsiElement parent = variable.getParent();
                                     if (parent instanceof AssignmentExpression) {
-                                        final boolean isWrite = ((AssignmentExpression) parent).getVariable() == variable;
-                                        if (isWrite) {
-                                            result = false;
-                                            break;
+                                        final AssignmentExpression assignment = (AssignmentExpression) parent;
+                                        if (assignment.getValue() != variable) {
+                                            return false;
                                         }
                                     } else if (ExpressionSemanticUtil.isUsedAsLogicalOperand(variable)) {
-                                        result = false;
-                                        break;
+                                        return false;
                                     }
                                 }
                             }
-                            return result;
+                            return true;
                         })
-                        .forEach(parameter -> {
-                            final String message = messageParameter.replace("%p%", parameter.getName());
-                            holder.registerProblem(parameter, message, new ParameterLocalFix(parameter));
-                        });
+                        .forEach(parameter ->
+                                holder.registerProblem(
+                                        parameter,
+                                        String.format(messageParameter, parameter.getName()),
+                                        new ParameterLocalFix(parameter)
+                                )
+                        );
                 }
             }
 
@@ -109,15 +113,12 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof AssignmentExpression) {
                     final AssignmentExpression assignment = (AssignmentExpression) parent;
-                    if (assignment.getValue() == expression) {
-                        PsiElement operation = assignment.getValue().getPrevSibling();
-                        if (operation instanceof PsiWhiteSpace) {
-                            operation = operation.getPrevSibling();
-                        }
-
-                        if (operation != null && operation.getText().replaceAll("\\s+", "").equals("=&")) {
-                            holder.registerProblem(expression, messageAssignment, new InstantiationLocalFix(operation));
-                        }
+                    if (OpenapiTypesUtil.isAssignmentByReference(assignment)) {
+                        holder.registerProblem(
+                                expression,
+                                messageAssignment,
+                                new InstantiationLocalFix()
+                        );
                     }
                 }
             }
@@ -126,14 +127,6 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
     private static final class InstantiationLocalFix implements LocalQuickFix {
         private static final String title = "Replace with regular assignment";
-
-        final private SmartPsiElementPointer<PsiElement> assignOperator;
-
-        InstantiationLocalFix(@NotNull PsiElement assignOperator) {
-            super();
-
-            this.assignOperator = SmartPointerManager.getInstance(assignOperator.getProject()).createSmartPsiElementPointer(assignOperator);
-        }
 
         @NotNull
         @Override
@@ -149,11 +142,14 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement assignOperator = this.assignOperator.getElement();
-            if (assignOperator != null && !project.isDisposed()) {
-                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
-                if (replacement != null) {
-                    assignOperator.replace(replacement);
+            final PsiElement target = descriptor.getPsiElement().getParent();
+            if (target instanceof AssignmentExpression && !project.isDisposed()) {
+                final PsiElement operator = OpenapiPsiSearchUtil.findAssignmentOperator((AssignmentExpression) target);
+                if (operator != null) {
+                    final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "=");
+                    if (replacement != null) {
+                        operator.replace(replacement);
+                    }
                 }
             }
         }

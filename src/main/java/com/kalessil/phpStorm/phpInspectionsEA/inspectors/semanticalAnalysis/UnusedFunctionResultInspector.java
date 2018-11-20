@@ -18,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /*
@@ -38,7 +40,8 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
 
     private static final String message = "Function result is not used.";
 
-    private static final Set<String> ignoredFunctions = new HashSet<>();
+    private static final Map<String, String> validFunctionsCache = new ConcurrentHashMap<>();
+    private static final Set<String> ignoredFunctions            = new HashSet<>();
     static {
         ignoredFunctions.add("end");
         ignoredFunctions.add("next");
@@ -78,7 +81,7 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(reference))              { return; }
 
                 final String methodName = reference.getName();
-                if (methodName != null && !methodName.equals("__construct")) {
+                if (methodName != null && !methodName.isEmpty() && !methodName.equals("__construct")) {
                     this.analyze(reference);
                 }
             }
@@ -88,12 +91,18 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
-                this.analyze(reference);
+                final String functionName = reference.getName();
+                if (functionName != null && !functionName.isEmpty()) {
+                    final boolean skip = ignoredFunctions.contains(functionName) || validFunctionsCache.containsKey(functionName);
+                    if (!skip) {
+                        this.analyze(reference);
+                    }
+                }
             }
 
             private void analyze(@NotNull FunctionReference reference) {
                 final boolean isTargetContext = OpenapiTypesUtil.isStatementImpl(reference.getParent());
-                if (isTargetContext && !ignoredFunctions.contains(reference.getName())) {
+                if (isTargetContext) {
                     final PhpType resolved = OpenapiResolveUtil.resolveType(reference, reference.getProject());
                     if (resolved != null) {
                         final Set<String> types = resolved.filterUnknown().getTypes().stream()
@@ -111,6 +120,14 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                                                      (REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty());
                                 if (!skip) {
                                     holder.registerProblem(target, message);
+                                }
+                            }
+                        } else {
+                            /* there are no types we'd like to report, skip those functions processing */
+                            if (OpenapiTypesUtil.isFunctionReference(reference)) {
+                                final String functionName = reference.getName();
+                                if (functionName != null) {
+                                    validFunctionsCache.putIfAbsent(functionName, functionName);
                                 }
                             }
                         }

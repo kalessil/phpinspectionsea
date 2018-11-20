@@ -25,6 +25,14 @@ import java.util.*;
  */
 
 final public class OpenapiResolveUtil {
+    static public long hitsResolveTypeArrayAccess = 0;
+    static public long hitsResolveTypeFunctionReference = 0;
+    static public long hitsResolveTypeTernary = 0;
+    static public long hitsResolveTypeBinaryPlusMinusMultiply = 0;
+    static public long hitsResolveTypeBinaryCoalesce = 0;
+    static public long hitsResolveTypeBinary = 0;
+    static public long hitsResolveTypeUnary = 0;
+
     @Nullable
     static public PsiElement resolveReference(@NotNull PsiReference reference) {
         try {
@@ -42,6 +50,7 @@ final public class OpenapiResolveUtil {
         PhpType result = null;
         try {
             if (expression instanceof ArrayAccessExpression) {
+                ++hitsResolveTypeArrayAccess;
                 /* `_GET[...] & co` gets resolved with missing string type */
                 final PsiElement globalCandidate = ((ArrayAccessExpression) expression).getValue();
                 if (globalCandidate instanceof Variable) {
@@ -51,6 +60,7 @@ final public class OpenapiResolveUtil {
                     }
                 }
             } else if (expression instanceof UnaryExpression) {
+                ++hitsResolveTypeUnary;
                 final UnaryExpression unary = (UnaryExpression) expression;
                 if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opBIT_NOT)) {
                     final PsiElement argument = unary.getValue();
@@ -59,9 +69,11 @@ final public class OpenapiResolveUtil {
                     }
                 }
             } else if (expression instanceof BinaryExpression) {
+                ++hitsResolveTypeBinary;
                 final BinaryExpression binary = (BinaryExpression) expression;
                 final IElementType operator   = binary.getOperationType();
                 if (operator == PhpTokenTypes.opCOALESCE) {
+                    ++hitsResolveTypeBinaryCoalesce;
                     /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
                     final PsiElement left  = binary.getLeftOperand();
                     final PsiElement right = binary.getRightOperand();
@@ -80,6 +92,7 @@ final public class OpenapiResolveUtil {
                         operator == PhpTokenTypes.opMINUS ||
                         operator == PhpTokenTypes.opMUL
                 ) {
+                    ++hitsResolveTypeBinaryPlusMinusMultiply;
                     /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
                     boolean hasFloat      = true;
                     boolean hasArray      = false;
@@ -118,6 +131,7 @@ final public class OpenapiResolveUtil {
                             : result;
                 }
             } if (expression instanceof TernaryExpression) {
+                ++hitsResolveTypeTernary;
                 final TernaryExpression ternary = (TernaryExpression) expression;
                 if (ternary.isShort()) {
                     final PsiElement left  = ternary.getTrueVariant();
@@ -134,6 +148,7 @@ final public class OpenapiResolveUtil {
                     }
                 }
             } else if (expression instanceof FunctionReference) {
+                ++hitsResolveTypeFunctionReference;
                 /* resolve function and get it's type or fallback to empty type */
                 final PsiElement function = resolveReference((FunctionReference) expression);
                 result = function instanceof Function

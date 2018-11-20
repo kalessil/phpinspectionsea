@@ -51,16 +51,9 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
                 final String methodName = reference.getName();
-                if (methodName != null && !methodName.isEmpty()) {
-                    if (!this.isStatic(reference) || !staticMethodsCache.containsKey(methodName)) {
-                        this.inspectCaseIdentity(reference, methodName);
-                    }
+                if (methodName != null && !methodName.isEmpty() && !staticMethodsCache.containsKey(methodName)) {
+                    this.inspectCaseIdentity(reference, methodName);
                 }
-            }
-
-            private boolean isStatic(@NotNull MethodReference reference) {
-                final PsiElement first = reference.getFirstChild();
-                return first instanceof ClassReference && fixedClassReferences.contains(first.getText());
             }
 
             @Override

@@ -22,14 +22,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /*
@@ -123,37 +120,26 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
             }
 
             private boolean isComparableObject(@NotNull PsiElement operand) {
-                /* extract types of operand, check if classes are/inherited from \DateTime */
-                final Set<String> operandTypes = new HashSet<>();
                 if (operand instanceof PhpTypedElement) {
                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
                     if (resolved != null) {
-                        resolved.filterUnknown().getTypes().forEach(t -> operandTypes.add(Types.getType(t)));
+                        final PhpIndex index               = PhpIndex.getInstance(operand.getProject());
+                        final Set<PhpClass> operandClasses = new HashSet<>();
+                        resolved.filterUnknown().getTypes().stream()
+                                .filter(t  -> t.charAt(0) == '\\')
+                                .forEach(t -> operandClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(Types.getType(t), index)));
+                        for (final PhpClass clazz : operandClasses) {
+                            final boolean hasAny =
+                                    comparable.contains(clazz.getFQN()) ||
+                                    InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream().anyMatch(c -> comparable.contains(c.getFQN()));
+                            if (hasAny) {
+                                operandClasses.clear();
+                                return true;
+                            }
+                        }
+                        operandClasses.clear();
                     }
                 }
-                if (!TypesSemanticsUtil.isNullableObjectInterface(operandTypes)) {
-                    operandTypes.clear();
-                    return false;
-                }
-
-                /* collect classes to check for \DateTime relationship */
-                final PhpIndex index                = PhpIndex.getInstance(operand.getProject());
-                final List<PhpClass> operandClasses = new ArrayList<>();
-                operandTypes.stream()
-                        .filter(fqn  -> fqn.charAt(0) == '\\')
-                        .forEach(fqn -> operandClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(fqn, index)));
-                operandTypes.clear();
-
-                /* inspect classes for being a/child of special once */
-                for (final PhpClass clazz : operandClasses) {
-                    final boolean hasAny =
-                            comparable.contains(clazz.getFQN()) ||
-                            InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream().anyMatch(c -> comparable.contains(c.getFQN()));
-                    if (hasAny) {
-                        return true;
-                    }
-                }
-                operandClasses.clear();
 
                 return false;
             }

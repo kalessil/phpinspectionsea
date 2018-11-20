@@ -9,3 +9,6 @@
     class myMiddlewareClass extends myClassHasToString {}
     (function() { return '' == new myMiddlewareClass(); })();
 
+    /* a reported false-positive */
+    $compared = date_create('today') == date_create('today');
+

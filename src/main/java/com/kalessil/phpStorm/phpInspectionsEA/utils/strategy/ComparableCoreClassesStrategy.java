@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils.strategy;
 
-import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.Function;
@@ -34,20 +33,18 @@ final public class ComparableCoreClassesStrategy {
         comparableObjects.add("\\SplObjectStorage");
     }
 
-    public static boolean apply (@Nullable PsiElement leftOperand, @Nullable PsiElement rightOperand, ProblemsHolder holder) {
-        /* validate parameters and prepare needed objects */
-        if (null == leftOperand || null == rightOperand) {
-            return false;
+    public static boolean apply (@Nullable PsiElement leftOperand, @Nullable PsiElement rightOperand) {
+        if (leftOperand != null && rightOperand != null) {
+            final Function scope = ExpressionSemanticUtil.getScope(leftOperand);
+            if (scope != null) {
+                return isComparableObject(leftOperand) || isComparableObject(rightOperand);
+            }
         }
-        final Function scope = ExpressionSemanticUtil.getScope(leftOperand);
-        if (null == scope) {
-            return false;
-        }
-        final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-        return isComparableObject(leftOperand, index) && isComparableObject(rightOperand, index);
+
+        return false;
     }
 
-    private static boolean isComparableObject(@NotNull PsiElement operand, @NotNull PhpIndex index) {
+    private static boolean isComparableObject(@NotNull PsiElement operand) {
         /* extract types of operand, check if classes are/inherited from \DateTime */
         final Set<String> operandTypes = new HashSet<>();
         if (operand instanceof PhpTypedElement) {
@@ -62,6 +59,7 @@ final public class ComparableCoreClassesStrategy {
         }
 
         /* collect classes to check for \DateTime relationship */
+        final PhpIndex index                = PhpIndex.getInstance(operand.getProject());
         final List<PhpClass> operandClasses = new ArrayList<>();
         operandTypes.stream()
                 .filter(fqn  -> fqn.charAt(0) == '\\')
@@ -70,13 +68,11 @@ final public class ComparableCoreClassesStrategy {
 
         /* inspect classes for being a/child of special once */
         for (final PhpClass clazz : operandClasses) {
-            final HashSet<PhpClass> hierarchy = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true);
-            for (final PhpClass oneClass : hierarchy){
-                if (comparableObjects.contains(oneClass.getFQN())) {
-                    return true;
-                }
+            final boolean hasAny = InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
+                    .anyMatch(c -> comparableObjects.contains(c.getFQN()));
+            if (hasAny) {
+                return true;
             }
-            hierarchy.clear();
         }
         operandClasses.clear();
 

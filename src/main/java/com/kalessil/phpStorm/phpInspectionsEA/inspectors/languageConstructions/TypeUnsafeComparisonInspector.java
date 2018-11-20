@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class TypeUnsafeComparisonInspector extends BasePhpInspection {
-    private static final String patternHarden                = "Please consider using more strict '%o%' here (hidden types casting will not be applied anymore).";
+    private static final String patternHarden                = "Please consider using more strict '%s' here (hidden types casting will not be applied anymore).";
     private static final String patternCompareStrict         = "Safely use '%o%' here.";
     private static final String messageToStringMethodMissing = "Class %class% must implement __toString().";
 
@@ -47,11 +47,11 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 final IElementType operator = expression.getOperationType();
                 if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opNOT_EQUAL) {
-                    this.triggerProblem(expression, operator);
+                    this.analyze(expression, operator);
                 }
             }
 
-            private void triggerProblem(@NotNull final BinaryExpression subject, @NotNull final IElementType operator) {
+            private void analyze(@NotNull final BinaryExpression subject, @NotNull final IElementType operator) {
                 final String targetOperator = PhpTokenTypes.opEQUAL == operator ? "===" : "!==";
                 final PsiElement left       = subject.getLeftOperand();
                 final PsiElement right      = subject.getRightOperand();
@@ -82,12 +82,13 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                 }
 
                 /* some of objects supporting direct comparison: search for .compare_objects in PHP sources */
-                if (ComparableCoreClassesStrategy.apply(left, right, holder)) {
-                    return;
+                if (!ComparableCoreClassesStrategy.apply(left, right)) {
+                    holder.registerProblem(
+                            subject,
+                            String.format(patternHarden, targetOperator),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
-
-                final String messageHarden = patternHarden.replace("%o%", targetOperator);
-                holder.registerProblem(subject, messageHarden, ProblemHighlightType.WEAK_WARNING);
             }
         };
     }

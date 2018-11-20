@@ -9,16 +9,25 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ComparableCoreClassesStrategy;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -30,9 +39,22 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class TypeUnsafeComparisonInspector extends BasePhpInspection {
-    private static final String patternHarden                = "Please consider using more strict '%o%' here (hidden types casting will not be applied anymore).";
-    private static final String patternCompareStrict         = "Safely use '%o%' here.";
+    private static final String patternHarden                = "Please consider using more strict '%s' here (hidden types casting will not be applied anymore).";
+    private static final String patternCompareStrict         = "Safely use '%s' here.";
     private static final String messageToStringMethodMissing = "Class %class% must implement __toString().";
+
+    private final static Set<String> comparable = new HashSet<>();
+    static {
+        comparable.add("\\Closure");
+        comparable.add("\\DateTime");
+        comparable.add("\\DateTimeImmutable");
+        comparable.add("\\IntlBreakIterator");
+        comparable.add("\\IntlTimeZone");
+        comparable.add("\\PDO");
+        comparable.add("\\PDOStatement");
+        comparable.add("\\ArrayObject");
+        comparable.add("\\SplObjectStorage");
+    }
 
     @NotNull
     public String getShortName() {
@@ -49,11 +71,11 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
                 final IElementType operator = expression.getOperationType();
                 if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opNOT_EQUAL) {
-                    this.triggerProblem(expression, operator);
+                    this.analyze(expression, operator);
                 }
             }
 
-            private void triggerProblem(@NotNull final BinaryExpression subject, @NotNull final IElementType operator) {
+            private void analyze(@NotNull final BinaryExpression subject, @NotNull final IElementType operator) {
                 final String targetOperator = PhpTokenTypes.opEQUAL == operator ? "===" : "!==";
                 final PsiElement left       = subject.getLeftOperand();
                 final PsiElement right      = subject.getRightOperand();
@@ -76,23 +98,56 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
                     /* string literal is numeric or empty, no strict compare possible */
                     if (!literalValue.isEmpty() && !literalValue.matches("^[0-9+-]+$")) {
-                        final String messageCompareStrict = patternCompareStrict.replace("%o%", targetOperator);
-                        holder.registerProblem(subject, messageCompareStrict, new CompareStrictFix(targetOperator));
-
+                        holder.registerProblem(
+                                subject,
+                                String.format(patternCompareStrict, targetOperator),
+                                new CompareStrictFix(targetOperator)
+                        );
                         return;
                     }
                 }
 
                 /* some of objects supporting direct comparison: search for .compare_objects in PHP sources */
-                if (ComparableCoreClassesStrategy.apply(left, right, holder)) {
-                    return;
+                if (left != null && right != null) {
+                    final boolean isComparableObject = this.isComparableObject(left) || this.isComparableObject(right);
+                    if (!isComparableObject) {
+                        holder.registerProblem(
+                                subject,
+                                String.format(patternHarden, targetOperator),
+                                ProblemHighlightType.WEAK_WARNING
+                        );
+                    }
+
+                }
+            }
+
+            private boolean isComparableObject(@NotNull PsiElement operand) {
+                if (operand instanceof PhpTypedElement) {
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
+                    if (resolved != null) {
+                        final PhpIndex index        = PhpIndex.getInstance(operand.getProject());
+                        final Set<PhpClass> classes = new HashSet<>();
+                        resolved.filterUnknown().getTypes().stream()
+                                .filter(t  -> t.charAt(0) == '\\')
+                                .forEach(t -> classes.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(Types.getType(t), index)));
+                        for (final PhpClass clazz : classes) {
+                            final boolean hasAny =
+                                    comparable.contains(clazz.getFQN()) ||
+                                    InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream().anyMatch(c -> comparable.contains(c.getFQN()));
+                            if (hasAny) {
+                                classes.clear();
+                                return true;
+                            }
+                        }
+                        classes.clear();
+                    }
                 }
 
-                final String messageHarden = patternHarden.replace("%o%", targetOperator);
-                holder.registerProblem(subject, messageHarden, ProblemHighlightType.WEAK_WARNING);
+                return false;
             }
         };
     }
+
 
     private static final class CompareStrictFix implements LocalQuickFix {
         private static final String title = "Apply strict comparison";

@@ -9,3 +9,6 @@
     class myMiddlewareClass extends myClassHasToString {}
     (function() { return '' == new myMiddlewareClass(); })();
 
+    /* false-positive: global context should not influence analysis */
+    $compared = date_create('today') == date_create('today');
+

@@ -2,11 +2,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.strategy;
 
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
@@ -35,10 +33,7 @@ final public class ComparableCoreClassesStrategy {
 
     public static boolean apply (@Nullable PsiElement leftOperand, @Nullable PsiElement rightOperand) {
         if (leftOperand != null && rightOperand != null) {
-            final Function scope = ExpressionSemanticUtil.getScope(leftOperand);
-            if (scope != null) {
-                return isComparableObject(leftOperand) || isComparableObject(rightOperand);
-            }
+            return isComparableObject(leftOperand) || isComparableObject(rightOperand);
         }
 
         return false;

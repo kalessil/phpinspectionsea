@@ -6,15 +6,15 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*
@@ -27,8 +27,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
-    private static final Map<String, String> cache = new ConcurrentHashMap<>();
-    private static final String messagePattern     = "Name provided in this call should be '%n%' (case mismatch).";
+    private static final String messagePattern = "Name provided in this call should be '%s' (case mismatch).";
+
+    private static final Map<String, String> globalFunctionsCache = new ConcurrentHashMap<>();
+    private static final Map<String, String> staticMethodsCache   = new ConcurrentHashMap<>();
+    private static final Set<String> fixedClassReferences         = new HashSet<>();
+    static {
+        fixedClassReferences.add("static");
+        fixedClassReferences.add("self");
+    }
 
     @NotNull
     public String getShortName() {
@@ -45,32 +52,48 @@ public class CallableReferenceNameMismatchInspector extends BasePhpInspection {
 
                 final String methodName = reference.getName();
                 if (methodName != null && !methodName.isEmpty()) {
-                    this.inspectCaseIdentity(reference, methodName, false);
+                    if (!this.isStatic(reference) || !staticMethodsCache.containsKey(methodName)) {
+                        this.inspectCaseIdentity(reference, methodName);
+                    }
                 }
             }
+
+            private boolean isStatic(@NotNull MethodReference reference) {
+                final PsiElement first = reference.getFirstChild();
+                return first instanceof ClassReference && fixedClassReferences.contains(first.getText());
+            }
+
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null && !functionName.isEmpty() && !cache.containsKey(functionName)) {
-                    this.inspectCaseIdentity(reference, functionName, true);
+                if (functionName != null && !functionName.isEmpty() && !globalFunctionsCache.containsKey(functionName)) {
+                    this.inspectCaseIdentity(reference, functionName);
                 }
             }
 
-            private void inspectCaseIdentity(@NotNull FunctionReference reference, @NotNull String referenceName, boolean useCache) {
+            private void inspectCaseIdentity(@NotNull FunctionReference reference, @NotNull String referenceName) {
                 /* resolve callable and ensure the case matches */
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof Function) {
                     final Function function = (Function) resolved;
                     final String realName   = function.getName();
-                    if (useCache && function.getFQN().equals('\\' + realName)) {
-                        cache.putIfAbsent(realName, realName);
+                    if (resolved instanceof Method) {
+                        /* only static methods */
+                        if (((Method) resolved).isStatic()) {
+                            staticMethodsCache.putIfAbsent(realName, realName);
+                        }
+                    } else {
+                        /* only global functions */
+                        if (function.getFQN().equals('\\' + realName)) {
+                            globalFunctionsCache.putIfAbsent(realName, realName);
+                        }
                     }
                     if (!referenceName.equals(realName) && referenceName.equalsIgnoreCase(realName)) {
                         holder.registerProblem(
                                 reference,
-                                messagePattern.replace("%n%", realName),
+                                String.format(messagePattern, realName),
                                 new CallableReferenceNameMismatchQuickFix()
                         );
                     }

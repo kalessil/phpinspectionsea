@@ -137,9 +137,9 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                         } else if (OpenapiTypesUtil.isStatementImpl(previous)) {
                             /* case: sequential calls */
                             final PsiElement candidate = previous.getFirstChild();
-                            if (candidate instanceof MethodReference) {
+                            if (candidate instanceof MethodReference && !this.isTestContext(parent)) {
                                 final PsiElement previousBase = candidate.getFirstChild();
-                                if (OpenapiEquivalenceUtil.areEqual(currentBase, previousBase) && !this.isTestContext(parent)) {
+                                if (OpenapiEquivalenceUtil.areEqual(currentBase, previousBase)) {
                                     holder.registerProblem(currentBase, messageSequential);
                                 }
                             }
@@ -175,9 +175,15 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                     final List<MethodReference> checked = new ArrayList<>(references.size());
                     iterate:
                     for (final MethodReference first : references) {
+                        final String firstName = first.getName();
                         for (final MethodReference second : references) {
                             if (first != second && !checked.contains(second)) {
-                                final boolean matches = OpenapiEquivalenceUtil.areEqual(first, second);
+                                final boolean matches;
+                                if (firstName != null) {
+                                    matches = firstName.equals(second.getName()) && OpenapiEquivalenceUtil.areEqual(first, second);
+                                } else {
+                                    matches = OpenapiEquivalenceUtil.areEqual(first, second);
+                                }
                                 if (matches) {
                                     holder.registerProblem(second, messageSequential);
                                     break iterate;

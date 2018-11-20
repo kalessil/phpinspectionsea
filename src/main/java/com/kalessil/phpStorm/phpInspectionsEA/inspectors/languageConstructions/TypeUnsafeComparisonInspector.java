@@ -123,21 +123,21 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                 if (operand instanceof PhpTypedElement) {
                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
                     if (resolved != null) {
-                        final PhpIndex index               = PhpIndex.getInstance(operand.getProject());
-                        final Set<PhpClass> operandClasses = new HashSet<>();
+                        final PhpIndex index        = PhpIndex.getInstance(operand.getProject());
+                        final Set<PhpClass> classes = new HashSet<>();
                         resolved.filterUnknown().getTypes().stream()
                                 .filter(t  -> t.charAt(0) == '\\')
-                                .forEach(t -> operandClasses.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(Types.getType(t), index)));
-                        for (final PhpClass clazz : operandClasses) {
+                                .forEach(t -> classes.addAll(OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(Types.getType(t), index)));
+                        for (final PhpClass clazz : classes) {
                             final boolean hasAny =
                                     comparable.contains(clazz.getFQN()) ||
                                     InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream().anyMatch(c -> comparable.contains(c.getFQN()));
                             if (hasAny) {
-                                operandClasses.clear();
+                                classes.clear();
                                 return true;
                             }
                         }
-                        operandClasses.clear();
+                        classes.clear();
                     }
                 }
 

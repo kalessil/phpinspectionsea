@@ -25,14 +25,6 @@ import java.util.*;
  */
 
 final public class OpenapiResolveUtil {
-    static public long hitsResolveTypeArrayAccess = 0;
-    static public long hitsResolveTypeFunctionReference = 0;
-    static public long hitsResolveTypeTernary = 0;
-    static public long hitsResolveTypeBinaryPlusMinusMultiply = 0;
-    static public long hitsResolveTypeBinaryCoalesce = 0;
-    static public long hitsResolveTypeBinary = 0;
-    static public long hitsResolveTypeUnary = 0;
-
     @Nullable
     static public PsiElement resolveReference(@NotNull PsiReference reference) {
         try {
@@ -49,8 +41,13 @@ final public class OpenapiResolveUtil {
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
         PhpType result = null;
         try {
-            if (expression instanceof ArrayAccessExpression) {
-                ++hitsResolveTypeArrayAccess;
+            if (expression instanceof FunctionReference) {
+                /* resolve function and get it's type or fallback to empty type */
+                final PsiElement function = resolveReference((FunctionReference) expression);
+                result = function instanceof Function
+                        ? ((Function) function).getType().global(project)
+                        : new PhpType();
+            } else if (expression instanceof ArrayAccessExpression) {
                 /* `_GET[...] & co` gets resolved with missing string type */
                 final PsiElement globalCandidate = ((ArrayAccessExpression) expression).getValue();
                 if (globalCandidate instanceof Variable) {
@@ -59,40 +56,10 @@ final public class OpenapiResolveUtil {
                         result = new PhpType().add(PhpType.STRING).add(PhpType.ARRAY);
                     }
                 }
-            } else if (expression instanceof UnaryExpression) {
-                ++hitsResolveTypeUnary;
-                final UnaryExpression unary = (UnaryExpression) expression;
-                if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opBIT_NOT)) {
-                    final PsiElement argument = unary.getValue();
-                    if (argument instanceof PhpTypedElement) {
-                        result = resolveType((PhpTypedElement) argument, project);
-                    }
-                }
             } else if (expression instanceof BinaryExpression) {
-                ++hitsResolveTypeBinary;
                 final BinaryExpression binary = (BinaryExpression) expression;
                 final IElementType operator   = binary.getOperationType();
-                if (operator == PhpTokenTypes.opCOALESCE) {
-                    ++hitsResolveTypeBinaryCoalesce;
-                    /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
-                    final PsiElement left  = binary.getLeftOperand();
-                    final PsiElement right = binary.getRightOperand();
-                    result                 = PhpType.EMPTY;
-                    if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
-                        final PhpType leftType = resolveType((PhpTypedElement) left, project);
-                        if (leftType != null && !leftType.filterUnknown().isEmpty()) {
-                            final PhpType rightType = resolveType((PhpTypedElement) right, project);
-                            if (rightType != null && !rightType.filterUnknown().isEmpty()) {
-                                result = new PhpType().add(leftType.filterNull()).add(rightType);
-                            }
-                        }
-                    }
-                } else if (
-                        operator == PhpTokenTypes.opPLUS ||
-                        operator == PhpTokenTypes.opMINUS ||
-                        operator == PhpTokenTypes.opMUL
-                ) {
-                    ++hitsResolveTypeBinaryPlusMinusMultiply;
+                if (operator == PhpTokenTypes.opPLUS || operator == PhpTokenTypes.opMINUS || operator == PhpTokenTypes.opMUL) {
                     /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
                     boolean hasFloat      = true;
                     boolean hasArray      = false;
@@ -129,9 +96,22 @@ final public class OpenapiResolveUtil {
                     result = hasArray
                             ? new PhpType().add(PhpType.ARRAY)
                             : result;
+                } else if (operator == PhpTokenTypes.opCOALESCE) {
+                    /* workaround for https://youtrack.jetbrains.com/issue/WI-37013 & co */
+                    final PsiElement left  = binary.getLeftOperand();
+                    final PsiElement right = binary.getRightOperand();
+                    result                 = PhpType.EMPTY;
+                    if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
+                        final PhpType leftType = resolveType((PhpTypedElement) left, project);
+                        if (leftType != null && !leftType.filterUnknown().isEmpty()) {
+                            final PhpType rightType = resolveType((PhpTypedElement) right, project);
+                            if (rightType != null && !rightType.filterUnknown().isEmpty()) {
+                                result = new PhpType().add(leftType.filterNull()).add(rightType);
+                            }
+                        }
+                    }
                 }
-            } if (expression instanceof TernaryExpression) {
-                ++hitsResolveTypeTernary;
+            } else if (expression instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) expression;
                 if (ternary.isShort()) {
                     final PsiElement left  = ternary.getTrueVariant();
@@ -147,13 +127,14 @@ final public class OpenapiResolveUtil {
                         }
                     }
                 }
-            } else if (expression instanceof FunctionReference) {
-                ++hitsResolveTypeFunctionReference;
-                /* resolve function and get it's type or fallback to empty type */
-                final PsiElement function = resolveReference((FunctionReference) expression);
-                result = function instanceof Function
-                        ? ((Function) function).getType().global(project)
-                        : new PhpType();
+            } else if (expression instanceof UnaryExpression) {
+                final UnaryExpression unary = (UnaryExpression) expression;
+                if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opBIT_NOT)) {
+                    final PsiElement argument = unary.getValue();
+                    if (argument instanceof PhpTypedElement) {
+                        result = resolveType((PhpTypedElement) argument, project);
+                    }
+                }
             }
             /* default behaviour */
             result = result == null

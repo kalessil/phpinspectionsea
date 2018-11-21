@@ -56,23 +56,6 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
 
                 final String methodName = reference.getName();
                 if (methodName != null && !methodName.startsWith("static") /* workaround for WI-33569 */) {
-                    if (methodName.equals("statTypeResolverHits")) {
-                        // FR 167218; AA 3148; B 1197 BM 320 BC 2 T 947 U 193
-                        holder.registerProblem(
-                                reference,
-                                String.format(
-                                        "AA %s FR %s T %s BM %s BC %s B %s U %s",
-                                        OpenapiResolveUtil.hitsResolveTypeArrayAccess,
-                                        OpenapiResolveUtil.hitsResolveTypeFunctionReference,
-                                        OpenapiResolveUtil.hitsResolveTypeTernary,
-                                        OpenapiResolveUtil.hitsResolveTypeBinaryPlusMinusMultiply,
-                                        OpenapiResolveUtil.hitsResolveTypeBinaryCoalesce,
-                                        OpenapiResolveUtil.hitsResolveTypeBinary,
-                                        OpenapiResolveUtil.hitsResolveTypeUnary
-                                )
-                        );
-                    }
-
                     final PsiElement base = reference.getFirstChild();
                     if (base != null && !(base instanceof FunctionReference)) {
                         final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);

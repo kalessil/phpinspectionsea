@@ -5,8 +5,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.lang.psi.elements.ClassReference;
-import com.jetbrains.php.lang.psi.elements.ExtendsList;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -30,21 +28,32 @@ import java.util.Set;
  */
 
 public class MagicMethodsValidityInspector extends BasePhpInspection {
-    private static final String messageUseSplAutoloading = "Prefer 'spl_autoload_register(...)' instead.";
+    private static final String messageUseSplAutoloading = "Has been deprecated in favour of 'spl_autoload_register(...)' as of PHP 7.2.0.";
     private static final String messageNotMagic          = "Only magic methods should start with '__'.";
 
     private static final PhpType arrayType         = (new PhpType()).add(PhpType.ARRAY);
     private static final PhpType stringType        = (new PhpType()).add(PhpType.STRING);
     private static final PhpType arrayOrNullType   = (new PhpType()).add(PhpType.NULL).add(PhpType.ARRAY);
     private static final Set<String> knownNonMagic = new HashSet<>();
-    private static final Set<String> knownLegacyNonMagicClasses = new HashSet<>();
     static {
+        /* Magento & co */
         knownNonMagic.add("__inject");
         knownNonMagic.add("__prepare");
         knownNonMagic.add("__toArray");
         knownNonMagic.add("__");
-        knownLegacyNonMagicClasses.add("SoapClient");
-        knownLegacyNonMagicClasses.add("\\SoapClient");
+        /* SoapClient */
+        knownNonMagic.add("__doRequest");
+        knownNonMagic.add("__getCookies");
+        knownNonMagic.add("__getFunctions");
+        knownNonMagic.add("__getLastRequest");
+        knownNonMagic.add("__getLastRequestHeaders");
+        knownNonMagic.add("__getLastResponse");
+        knownNonMagic.add("__getLastResponseHeaders");
+        knownNonMagic.add("__getTypes");
+        knownNonMagic.add("__setCookie");
+        knownNonMagic.add("__setLocation");
+        knownNonMagic.add("__setSoapHeaders");
+        knownNonMagic.add("__soapCall");
     }
 
     @NotNull
@@ -66,8 +75,6 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 if (clazz == null || nameNode == null || !methodName.startsWith("_") || method.isAbstract()) {
                     return;
                 }
-
-                final ExtendsList clazzParents  = clazz.getExtendsList();
 
                 switch (methodName) {
                     case "__construct":
@@ -148,11 +155,11 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                         break;
                     case "__autoload":
                         TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
+                        CanNotReturnTypeStrategy.apply(method, holder);
                         holder.registerProblem(nameNode, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                         break;
                     default:
-                        if (methodName.startsWith("__") && !knownNonMagic.contains(methodName)
-                                && !isLegacyNameFromExtendedClass(clazzParents, method)) {
+                        if (methodName.startsWith("__") && !knownNonMagic.contains(methodName)) {
                             holder.registerProblem(nameNode, messageNotMagic);
                         } else {
                             MissingUnderscoreStrategy.apply(method, holder);
@@ -161,22 +168,5 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                 }
             }
         };
-    }
-
-    /**
-     * Returns true if the class extends a Legacy class using "__" methods and the current method is an overwrite
-     * of one of them.
-     * @param clazzParents list of parents for the current class
-     * @param method method being checked
-     * @return boolean
-     */
-    private boolean isLegacyNameFromExtendedClass(ExtendsList clazzParents, Method method) {
-        for (ClassReference className : clazzParents.getReferenceElements()) {
-            if (knownLegacyNonMagicClasses.contains(className.getFQN()) && method.getParent() != null) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

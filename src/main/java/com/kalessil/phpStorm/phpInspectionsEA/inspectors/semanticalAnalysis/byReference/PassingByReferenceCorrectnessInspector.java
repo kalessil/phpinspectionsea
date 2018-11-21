@@ -16,8 +16,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -31,7 +34,8 @@ import java.util.Set;
 public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
     private static final String message = "Emits a notice (only variable references should be returned/passed by reference).";
 
-    private static final Set<String> skippedFunctions = new HashSet<>();
+    private static final Map<String, String> skippedFunctionsCache = new ConcurrentHashMap<>();
+    private static final Set<String> skippedFunctions              = new HashSet<>();
     static {
         /* workaround for https://youtrack.jetbrains.com/issue/WI-37984 */
         skippedFunctions.add("current");
@@ -50,56 +54,63 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null) {
+                if (functionName != null && !functionName.isEmpty() && !skippedFunctionsCache.containsKey(functionName)) {
                     final boolean skip = skippedFunctions.contains(functionName) && this.isFromRootNamespace(reference);
-                    if (!skip) {
-                        this.analyze(
-                                reference,
-                                PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel()
-                        );
+                    if (!skip && this.hasIncompatibleArguments(reference)) {
+                        this.analyze(reference);
                     }
                 }
             }
 
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                this.analyze(
-                        reference,
-                        PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel()
-                );
+                final String methodName = reference.getName();
+                if (methodName != null && !methodName.isEmpty() && this.hasIncompatibleArguments(reference)) {
+                    this.analyze(reference);
+                }
             }
 
-            private void analyze(@NotNull FunctionReference reference, @NotNull PhpLanguageLevel php) {
+            private boolean hasIncompatibleArguments(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
                 if (arguments.length > 0) {
-                    /* lazy analysis: if all args are valid, not even bother resolving the reference */
-                    boolean doAnalyze = false;
-                    for (final PsiElement argument : arguments) {
-                        boolean isRefCompatible = argument instanceof Variable ||
-                                                  (argument instanceof NewExpression && php.compareTo(PhpLanguageLevel.PHP560) <= 0);
-                        if (!isRefCompatible) {
-                            doAnalyze = true;
-                            break;
+                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                    final boolean supportsNew  = php.compareTo(PhpLanguageLevel.PHP560) <= 0;
+                    return !Arrays.stream(arguments).allMatch(a -> a instanceof Variable || (supportsNew && a instanceof NewExpression));
+                }
+                return false;
+            }
+
+            private void analyze(@NotNull FunctionReference reference) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                if (resolved instanceof Function) {
+                    final Function function      = (Function) resolved;
+                    final Parameter[] parameters = function.getParameters();
+                    final PsiElement[] arguments = reference.getParameters();
+                    /* search for anomalies */
+                    for (int index = 0, max = Math.min(parameters.length, arguments.length); index < max; ++index) {
+                        if (parameters[index].isPassByRef()) {
+                            final PsiElement argument = arguments[index];
+                            if (argument instanceof FunctionReference && !this.isByReference(argument)) {
+                                final PsiElement inner = OpenapiResolveUtil.resolveReference((FunctionReference) argument);
+                                if (inner instanceof Function) {
+                                    final PsiElement name = NamedElementUtil.getNameIdentifier((Function) inner);
+                                    if (!this.isByReference(name)) {
+                                        holder.registerProblem(argument, message);
+                                    }
+                                }
+                            } else if (argument instanceof NewExpression) {
+                                holder.registerProblem(argument, message);
+                            }
                         }
                     }
-
-                    final PsiElement resolved = doAnalyze ? OpenapiResolveUtil.resolveReference(reference) : null;
-                    if (resolved instanceof Function) {
-                        final Parameter[] parameters = ((Function) resolved).getParameters();
-                        for (int index = 0, max = Math.min(parameters.length, arguments.length); index < max; ++index) {
-                            if (parameters[index].isPassByRef()) {
-                                final PsiElement argument = arguments[index];
-                                if (argument instanceof FunctionReference && !this.isByReference(argument)) {
-                                    final PsiElement function = OpenapiResolveUtil.resolveReference((FunctionReference) argument);
-                                    if (function instanceof Function) {
-                                        final PsiElement name = NamedElementUtil.getNameIdentifier((Function) function);
-                                        if (!this.isByReference(name)) {
-                                            holder.registerProblem(argument, message);
-                                        }
-                                    }
-                                } else if (argument instanceof NewExpression) {
-                                    holder.registerProblem(argument, message);
-                                }
+                    /* remember global functions without references */
+                    if (parameters.length > 0 && OpenapiTypesUtil.isFunctionReference(reference)) {
+                        final boolean hasReferences = Arrays.stream(parameters).anyMatch(Parameter::isPassByRef);
+                        if (!hasReferences) {
+                            final String functionName         = function.getName();
+                            final boolean isFromRootNamespace = function.getFQN().equals('\\' + functionName);
+                            if (isFromRootNamespace) {
+                                skippedFunctionsCache.putIfAbsent(functionName, functionName);
                             }
                         }
                     }

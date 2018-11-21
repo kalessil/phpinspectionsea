@@ -53,7 +53,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null) {
+                if (functionName != null && !functionName.isEmpty()) {
                     final boolean skip = skippedFunctions.contains(functionName) && this.isFromRootNamespace(reference);
                     if (!skip && this.hasIncompatibleArguments(reference)) {
                         this.analyze(reference);
@@ -65,7 +65,8 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
-                if (this.hasIncompatibleArguments(reference)) {
+                final String methodName = reference.getName();
+                if (methodName != null && !methodName.isEmpty() && this.hasIncompatibleArguments(reference)) {
                     this.analyze(reference);
                 }
             }

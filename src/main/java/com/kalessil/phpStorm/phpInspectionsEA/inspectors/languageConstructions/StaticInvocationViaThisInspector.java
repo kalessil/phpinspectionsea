@@ -57,6 +57,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 final String methodName = reference.getName();
                 if (methodName != null && !methodName.startsWith("static") /* workaround for WI-33569 */) {
                     if (methodName.equals("statTypeResolverHits")) {
+                        // FR 167218; AA 3148; B 1197 BM 320 BC 2 T 947 U 193
                         holder.registerProblem(
                                 reference,
                                 String.format(

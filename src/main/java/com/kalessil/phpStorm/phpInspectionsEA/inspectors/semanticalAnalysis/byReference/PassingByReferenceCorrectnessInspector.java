@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,11 +55,8 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null) {
                     final boolean skip = skippedFunctions.contains(functionName) && this.isFromRootNamespace(reference);
-                    if (!skip) {
-                        this.analyze(
-                                reference,
-                                PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel()
-                        );
+                    if (!skip && this.hasIncompatibleArguments(reference)) {
+                        this.analyze(reference);
                     }
                 }
             }
@@ -67,43 +65,40 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
-                this.analyze(
-                        reference,
-                        PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel()
-                );
+                if (this.hasIncompatibleArguments(reference)) {
+                    this.analyze(reference);
+                }
             }
 
-            private void analyze(@NotNull FunctionReference reference, @NotNull PhpLanguageLevel php) {
+            private boolean hasIncompatibleArguments(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
                 if (arguments.length > 0) {
-                    /* lazy analysis: if all args are valid, not even bother resolving the reference */
-                    boolean doAnalyze = false;
-                    for (final PsiElement argument : arguments) {
-                        boolean isRefCompatible = argument instanceof Variable ||
-                                                  (argument instanceof NewExpression && php.compareTo(PhpLanguageLevel.PHP560) <= 0);
-                        if (!isRefCompatible) {
-                            doAnalyze = true;
-                            break;
-                        }
-                    }
+                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
+                    final boolean supportsNew  = php.compareTo(PhpLanguageLevel.PHP560) <= 0;
+                    return !Arrays.stream(arguments).allMatch(a -> a instanceof Variable || (supportsNew && a instanceof NewExpression));
+                }
+                return false;
+            }
 
-                    final PsiElement resolved = doAnalyze ? OpenapiResolveUtil.resolveReference(reference) : null;
-                    if (resolved instanceof Function) {
-                        final Parameter[] parameters = ((Function) resolved).getParameters();
-                        for (int index = 0, max = Math.min(parameters.length, arguments.length); index < max; ++index) {
-                            if (parameters[index].isPassByRef()) {
-                                final PsiElement argument = arguments[index];
-                                if (argument instanceof FunctionReference && !this.isByReference(argument)) {
-                                    final PsiElement function = OpenapiResolveUtil.resolveReference((FunctionReference) argument);
-                                    if (function instanceof Function) {
-                                        final PsiElement name = NamedElementUtil.getNameIdentifier((Function) function);
-                                        if (!this.isByReference(name)) {
-                                            holder.registerProblem(argument, message);
-                                        }
+            private void analyze(@NotNull FunctionReference reference) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                if (resolved instanceof Function) {
+                    final Function function      = (Function) resolved;
+                    final Parameter[] parameters = function.getParameters();
+                    final PsiElement[] arguments = reference.getParameters();
+                    for (int index = 0, max = Math.min(parameters.length, arguments.length); index < max; ++index) {
+                        if (parameters[index].isPassByRef()) {
+                            final PsiElement argument = arguments[index];
+                            if (argument instanceof FunctionReference && !this.isByReference(argument)) {
+                                final PsiElement inner = OpenapiResolveUtil.resolveReference((FunctionReference) argument);
+                                if (inner instanceof Function) {
+                                    final PsiElement name = NamedElementUtil.getNameIdentifier((Function) inner);
+                                    if (!this.isByReference(name)) {
+                                        holder.registerProblem(argument, message);
                                     }
-                                } else if (argument instanceof NewExpression) {
-                                    holder.registerProblem(argument, message);
                                 }
+                            } else if (argument instanceof NewExpression) {
+                                holder.registerProblem(argument, message);
                             }
                         }
                     }

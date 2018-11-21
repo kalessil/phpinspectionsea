@@ -18,7 +18,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -32,7 +34,8 @@ import java.util.Set;
 public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
     private static final String message = "Emits a notice (only variable references should be returned/passed by reference).";
 
-    private static final Set<String> skippedFunctions = new HashSet<>();
+    private static final Map<String, String> skippedFunctionsCache = new ConcurrentHashMap<>();
+    private static final Set<String> skippedFunctions              = new HashSet<>();
     static {
         /* workaround for https://youtrack.jetbrains.com/issue/WI-37984 */
         skippedFunctions.add("current");
@@ -53,7 +56,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null && !functionName.isEmpty()) {
+                if (functionName != null && !functionName.isEmpty() && !skippedFunctionsCache.containsKey(functionName)) {
                     final boolean skip = skippedFunctions.contains(functionName) && this.isFromRootNamespace(reference);
                     if (!skip && this.hasIncompatibleArguments(reference)) {
                         this.analyze(reference);
@@ -87,6 +90,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                     final Function function      = (Function) resolved;
                     final Parameter[] parameters = function.getParameters();
                     final PsiElement[] arguments = reference.getParameters();
+                    /* search for anomalies */
                     for (int index = 0, max = Math.min(parameters.length, arguments.length); index < max; ++index) {
                         if (parameters[index].isPassByRef()) {
                             final PsiElement argument = arguments[index];
@@ -100,6 +104,17 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                                 }
                             } else if (argument instanceof NewExpression) {
                                 holder.registerProblem(argument, message);
+                            }
+                        }
+                    }
+                    /* remember global functions without references */
+                    if (parameters.length > 0 && OpenapiTypesUtil.isFunctionReference(reference)) {
+                        final boolean hasReferences = Arrays.stream(parameters).anyMatch(Parameter::isPassByRef);
+                        if (!hasReferences) {
+                            final String functionName         = function.getName();
+                            final boolean isFromRootNamespace = function.getFQN().equals('\\' + functionName);
+                            if (isFromRootNamespace) {
+                                skippedFunctionsCache.putIfAbsent(functionName, functionName);
                             }
                         }
                     }

@@ -223,8 +223,9 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     final PsiElement positiveContainer = positive.getVariable();
                     final PsiElement positiveValue     = positive.getValue();
                     if (positiveContainer != null && positiveValue != null) {
-                        final boolean check = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer);
-                        if (check && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
+                        final boolean matching = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer) &&
+                                                 OpenapiEquivalenceUtil.areEqual(argument, positiveValue);
+                        if (matching) {
                             /* false-positives: array push */
                             final boolean isPush = PsiTreeUtil.findChildrenOfType(positiveContainer, ArrayIndex.class).stream()
                                     .anyMatch(index -> index.getValue() == null);
@@ -232,12 +233,18 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 final boolean isAnyByReference = OpenapiTypesUtil.isAssignmentByReference(positive) ||
                                                                  OpenapiTypesUtil.isAssignmentByReference(negative);
                                 if (!isAnyByReference) {
-                                    return String.format(
-                                            "%s = %s ?? %s",
-                                            positiveContainer.getText(),
-                                            positiveValue.getText(),
-                                            negativeValue.getText()
-                                    );
+                                    PsiElement extractedNegative = negativeValue;
+                                    while (extractedNegative != null && OpenapiTypesUtil.isAssignment(extractedNegative)) {
+                                        extractedNegative = ((AssignmentExpression) extractedNegative).getValue();
+                                    }
+                                    if (extractedNegative != null) {
+                                        return String.format(
+                                                "%s = %s ?? %s",
+                                                positiveContainer.getText(),
+                                                positiveValue.getText(),
+                                                extractedNegative.getText()
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -289,9 +296,18 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         final String replacement = wrap ? "{ " + this.replacement + "; }" : this.replacement + ";";
                         from.replace(PhpPsiElementFactory.createStatement(project, replacement));
                     } else {
-                        final PsiElement implant = PhpPsiElementFactory.createStatement(project, this.replacement + ";");
-                        from.getParent().addBefore(implant, from);
-                        from.getParent().deleteChildRange(from, to);
+                        final PsiElement scope = from.getParent();
+                        /* inject the new construct */
+                        scope.addBefore(PhpPsiElementFactory.createStatement(project, this.replacement + ";"), from);
+                        /* deal with remaining multi-assignments if any */
+                        if (OpenapiTypesUtil.isAssignment(from.getFirstChild())) {
+                            final PsiElement value = ((AssignmentExpression) from.getFirstChild()).getValue();
+                            if (OpenapiTypesUtil.isAssignment(value)) {
+                                scope.addBefore(PhpPsiElementFactory.createStatement(project, value.getText() + ";"), from);
+                            }
+                        }
+                        /* drop original constructs */
+                        scope.deleteChildRange(from, to);
                     }
                 }
             }

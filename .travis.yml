@@ -11,6 +11,9 @@ addons:
 matrix:
   include:
     - jdk: oraclejdk8
+      env: IDEA_VERSION="IU-2018.3" PHP_PLUGIN_VERSION="183.4284.150" PSI_VIEWER_PLUGIN_VERSION="183.2153"
+
+    - jdk: oraclejdk8
       env: IDEA_VERSION="IU-2018.2.2" PHP_PLUGIN_VERSION="182.4129.45" PSI_VIEWER_PLUGIN_VERSION="182.2757.2"
 
     - jdk: oraclejdk8

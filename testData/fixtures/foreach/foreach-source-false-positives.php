@@ -73,3 +73,8 @@
     function buggy_array_parameter_processing_resolving(array $array) {
         foreach (array_reverse($array) as $item) {}
     }
+
+    function values_has_been_annotated($parameter) {
+        /** @var string $value */
+        foreach ($parameter as $value) {}
+    }

@@ -9,6 +9,9 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocVariable;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
@@ -57,9 +60,27 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(foreach)) { return; }
 
                 final PsiElement source = ExpressionSemanticUtil.getExpressionTroughParenthesis(foreach.getArray());
-                if (source instanceof PhpTypedElement && !isEnsuredByPyParentIf(foreach, source)) {
-                    this.analyseContainer(source);
+                if (source instanceof PhpTypedElement) {
+                    final boolean skip = this.isEnsuredByPyParentIf(foreach, source) || this.isValueAnnotated(foreach);
+                    if (!skip) {
+                        this.analyseContainer(source);
+                    }
                 }
+            }
+
+            private boolean isValueAnnotated(@NotNull ForeachStatement foreach) {
+                final Variable value = foreach.getValue();
+                if (value != null) {
+                    final PsiElement phpdocCandidate = foreach.getPrevPsiSibling();
+                    if (phpdocCandidate instanceof PhpDocComment) {
+                        final PhpDocTag[] hints = ((PhpDocComment) phpdocCandidate).getTagElementsByName("@var");
+                        if (hints.length == 1) {
+                            final PhpDocVariable specified = PsiTreeUtil.findChildOfType(hints[0], PhpDocVariable.class);
+                            return specified != null && specified.getName().equals(value.getName());
+                        }
+                    }
+                }
+                return false;
             }
 
             /* should cover is_array/is_iterable in direct parent if of the loop, while PS types resolving gets improved */

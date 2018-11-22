@@ -29,6 +29,11 @@ final public class MagicMethodsValidityInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-toString.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testAutoloadMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-autoload.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testMissingUnderscoreMethods() {
         myFixture.enableInspections(new MagicMethodsValidityInspector());
         myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-missing-underscore.php");

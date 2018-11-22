@@ -59,21 +59,23 @@ public class YieldFromCanBeUsedInspector extends BasePhpInspection {
                             final PsiElement yieldCandidate = instruction.getFirstChild();
                             if (yieldCandidate instanceof PhpYield) {
                                 final PsiElement[] yieldChildren = yieldCandidate.getChildren();
-                                final PsiElement yieldValue      = yieldChildren.length == 2 ? yieldChildren[1] : yieldChildren[0];
-                                final PsiElement value           = statement.getValue();
-                                if (yieldValue != null && value != null && OpenapiEquivalenceUtil.areEqual(yieldValue, value)) {
-                                    final PsiElement yieldKey = yieldChildren.length == 2 ? yieldChildren[0] : null;
-                                    final PsiElement key      = statement.getKey();
-                                    final boolean isTarget =
-                                            (yieldKey == key && key == null && !ONLY_KEY_VALUE_YIELDS) ||
-                                            (yieldKey != null && key != null && OpenapiEquivalenceUtil.areEqual(yieldKey, key));
-                                    if (isTarget) {
-                                        final String replacement = String.format("yield from %s", source.getText());
-                                        holder.registerProblem(
-                                                statement.getFirstChild(),
-                                                message,
-                                                new UseYieldFromFix(replacement)
-                                        );
+                                if (yieldChildren.length > 0) {
+                                    final PsiElement yieldValue = yieldChildren.length == 2 ? yieldChildren[1] : yieldChildren[0];
+                                    final PsiElement value      = statement.getValue();
+                                    if (yieldValue != null && value != null && OpenapiEquivalenceUtil.areEqual(yieldValue, value)) {
+                                        final PsiElement yieldKey = yieldChildren.length == 2 ? yieldChildren[0] : null;
+                                        final PsiElement key      = statement.getKey();
+                                        final boolean isTarget =
+                                                (yieldKey == key && key == null && !ONLY_KEY_VALUE_YIELDS) ||
+                                                (yieldKey != null && key != null && OpenapiEquivalenceUtil.areEqual(yieldKey, key));
+                                        if (isTarget) {
+                                            final String replacement = String.format("yield from %s", source.getText());
+                                            holder.registerProblem(
+                                                    statement.getFirstChild(),
+                                                    message,
+                                                    new UseYieldFromFix(replacement)
+                                            );
+                                        }
                                     }
                                 }
                             }

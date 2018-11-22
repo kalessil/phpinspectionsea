@@ -6,7 +6,7 @@ function cases_holder() {
         $container = $value;
     }
 
-    /* false-positives: value or container mismatches */
+    /* false-positives: value or container mismatches, assignment by reference */
     $container = 'default';
     if (isset($value)) {
         $container = trim($value);
@@ -15,8 +15,20 @@ function cases_holder() {
     if (isset($value)) {
         $value = $value;
     }
+    $container = &$reference;
+    if (isset($value)) {
+        $value = $value;
+    }
 
     <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+        $container = $value;
+    } else {
+        $container = 'default';
+    }
+
+    if (isset($value)) {
+        $container = $value;
+    } else <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
     } else {
         $container = 'default';

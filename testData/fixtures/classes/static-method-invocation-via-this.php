@@ -19,6 +19,7 @@ class MethodsHolder {
 function cases_holder() {
     $one = new MethodsHolder();
     <warning descr="'...::method(...)' should be used instead.">$one->method()</warning>;
+    <warning descr="'...::method(...)' should be used instead.">(new MethodsHolder())->method()</warning>;
 }
 
 function parameters_and_used_variables_case_holder() {

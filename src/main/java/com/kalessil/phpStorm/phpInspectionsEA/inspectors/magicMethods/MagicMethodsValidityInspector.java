@@ -28,7 +28,7 @@ import java.util.Set;
  */
 
 public class MagicMethodsValidityInspector extends BasePhpInspection {
-    private static final String messageUseSplAutoloading = "Prefer 'spl_autoload_register(...)' instead.";
+    private static final String messageUseSplAutoloading = "Has been deprecated in favour of 'spl_autoload_register(...)' as of PHP 7.2.0.";
     private static final String messageNotMagic          = "Only magic methods should start with '__'.";
 
     private static final PhpType arrayType         = (new PhpType()).add(PhpType.ARRAY);
@@ -36,10 +36,24 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
     private static final PhpType arrayOrNullType   = (new PhpType()).add(PhpType.NULL).add(PhpType.ARRAY);
     private static final Set<String> knownNonMagic = new HashSet<>();
     static {
+        /* Magento & co */
         knownNonMagic.add("__inject");
         knownNonMagic.add("__prepare");
         knownNonMagic.add("__toArray");
         knownNonMagic.add("__");
+        /* SoapClient */
+        knownNonMagic.add("__doRequest");
+        knownNonMagic.add("__getCookies");
+        knownNonMagic.add("__getFunctions");
+        knownNonMagic.add("__getLastRequest");
+        knownNonMagic.add("__getLastRequestHeaders");
+        knownNonMagic.add("__getLastResponse");
+        knownNonMagic.add("__getLastResponseHeaders");
+        knownNonMagic.add("__getTypes");
+        knownNonMagic.add("__setCookie");
+        knownNonMagic.add("__setLocation");
+        knownNonMagic.add("__setSoapHeaders");
+        knownNonMagic.add("__soapCall");
     }
 
     @NotNull
@@ -53,9 +67,10 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                final PhpClass clazz      = method.getContainingClass();
-                final String methodName   = method.getName();
-                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                final PhpClass clazz            = method.getContainingClass();
+                final String methodName         = method.getName();
+                final PsiElement nameNode       = NamedElementUtil.getNameIdentifier(method);
+
                 if (clazz == null || nameNode == null || !methodName.startsWith("_") || method.isAbstract()) {
                     return;
                 }
@@ -139,6 +154,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                         break;
                     case "__autoload":
                         TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
+                        CanNotReturnTypeStrategy.apply(method, holder);
                         holder.registerProblem(nameNode, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
                         break;
                     default:

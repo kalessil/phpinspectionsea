@@ -19,6 +19,7 @@ class MethodsHolder {
 function cases_holder() {
     $one = new MethodsHolder();
     $one->method();
+    (new MethodsHolder())->method();
 }
 
 function parameters_and_used_variables_case_holder() {

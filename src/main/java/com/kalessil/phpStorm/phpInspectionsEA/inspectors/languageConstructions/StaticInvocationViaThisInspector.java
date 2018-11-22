@@ -22,8 +22,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -58,44 +58,55 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     if (base != null && !(base instanceof FunctionReference)) {
                         final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
                         if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
-                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                            final Method method       = resolved instanceof Method ? (Method) resolved : null;
-                            if (method != null && method.isStatic()) {
-                                if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
-                                    final Function scope = ExpressionSemanticUtil.getScope(reference);
-                                    if (scope instanceof Method && !((Method) scope).isStatic()) {
-                                        /* $this->static() */
-                                        this.handleLateStaticBinding(base, operator, method);
-                                    }
-                                } else {
-                                    /* false-positives: parameters and use-variables */
-                                    if (base instanceof Variable) {
-                                        final Function scope = ExpressionSemanticUtil.getScope(reference);
-                                        if (scope != null) {
-                                            final String name = ((Variable) base).getName();
-                                            if (Arrays.stream(scope.getParameters()).anyMatch(parameter -> name.equals(parameter.getName()))) {
-                                                return;
-                                            }
-                                            final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(scope);
-                                            if (variables != null) {
-                                                if (variables.stream().anyMatch(used -> name.equals(used.getName()))) {
-                                                    return;
-                                                }
-                                                variables.clear();
-                                            }
+                            if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
+                                /* $this->static() */
+                                final Function scope = ExpressionSemanticUtil.getScope(reference);
+                                if (scope instanceof Method && !((Method) scope).isStatic()) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof Method) {
+                                        final Method method = (Method) resolved;
+                                        if (method.isStatic()) {
+                                            this.handleLateStaticBinding(base, operator, method);
                                         }
                                     }
-
-                                    /* <expression>->static() */
-                                    holder.registerProblem(
-                                            reference,
-                                            String.format(messageExpressionUsed, methodName)
-                                    );
+                                }
+                            } else {
+                                /* <expression>->static() */
+                                if (!(base instanceof Variable) || !this.isParameterOrUseVariable((Variable) base)) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof Method && ((Method) resolved).isStatic()) {
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(messageExpressionUsed, methodName)
+                                        );
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            private boolean isParameterOrUseVariable(@NotNull Variable variable) {
+                final String name = variable.getName();
+                if (!name.isEmpty()) {
+                    final Function scope = ExpressionSemanticUtil.getScope(variable);
+                    if (scope != null) {
+                        if (Stream.of(scope.getParameters()).anyMatch(p -> name.equals(p.getName()))) {
+                            return true;
+                        }
+
+                        final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(scope);
+                        if (variables != null) {
+                            if (variables.stream().anyMatch(v -> name.equals(v.getName()))) {
+                                variables.clear();
+                                return true;
+                            }
+                            variables.clear();
+                        }
+                    }
+                }
+                return false;
             }
 
             private void handleLateStaticBinding(@NotNull PsiElement base, @NotNull PsiElement operator, @NotNull Method method) {

@@ -11,7 +11,6 @@ final public class DisconnectedForeachInstructionInspectorTest extends PhpCodeIn
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
-
     public void testFalsePositives() {
         final DisconnectedForeachInstructionInspector inspector = new DisconnectedForeachInstructionInspector();
         inspector.SUGGEST_USING_CLONE                           = true;

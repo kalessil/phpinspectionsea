@@ -136,7 +136,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
             private Set<String> collectCurrentAndOuterLoopVariables(@NotNull ForeachStatement foreach) {
                 final Set<String> variables = new HashSet<>();
-                PsiElement current = foreach;
+                PsiElement current          = foreach;
                 while (current != null && !(current instanceof Function) && !(current instanceof PsiFile)) {
                     if (current instanceof ForeachStatement) {
                         ((ForeachStatement) current).getVariables().forEach(v -> variables.add(v.getName()));

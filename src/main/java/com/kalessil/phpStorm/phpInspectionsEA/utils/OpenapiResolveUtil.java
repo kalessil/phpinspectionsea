@@ -73,7 +73,6 @@ final public class OpenapiResolveUtil {
                     /* some of replacement function result can be narrowed from arguments type */
                     if (name != null && functionReturnBase.containsKey(name)) {
                         final PsiElement[] arguments = reference.getParameters();
-                        /* first, identify the argument */
                         if (arguments.length >= 3 && arguments[2] instanceof PhpTypedElement) {
                             final PhpType argumentType = resolveType((PhpTypedElement) arguments[2], project);
                             if (argumentType != null && !argumentType.isEmpty() && !argumentType.hasUnknown()) {

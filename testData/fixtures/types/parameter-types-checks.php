@@ -121,9 +121,14 @@
     }
 
     /* false-positive: core functions returning string|false, string|null */
-    function core_api_functions_consistency(string $string) {
+    function core_api_functions_consistency(string $string, array $array) {
         $string = substr($string, -1);
+
+        $string = str_replace('', '', $string);
         $string = preg_replace('', '', $string);
+
+        $array = str_replace('', '', $array);
+        $array = preg_replace('', '', $array);
     }
 
     /* false-positive: nullable objects */

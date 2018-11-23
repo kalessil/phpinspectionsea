@@ -25,12 +25,19 @@ import java.util.*;
  */
 
 final public class OpenapiResolveUtil {
-    private static final Map<String, PhpType> replacingFunctions = new HashMap<>();
+    private static final Map<String, PhpType> functionReturnTypes = new HashMap<>();
+    private static final Map<String, PhpType> functionReturnBase  = new HashMap<>();
     static {
-        replacingFunctions.put("str_replace", new PhpType());
-        replacingFunctions.put("str_ireplace", new PhpType());
-        replacingFunctions.put("preg_replace", new PhpType().add(PhpType.NULL));
-        replacingFunctions.put("preg_replace_callback", new PhpType().add(PhpType.NULL));
+        functionReturnTypes.put("str_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
+        functionReturnTypes.put("str_ireplace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
+        functionReturnTypes.put("substr_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
+        functionReturnTypes.put("preg_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
+        functionReturnTypes.put("preg_replace_callback", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
+
+        functionReturnBase.put("str_replace", new PhpType());
+        functionReturnBase.put("str_ireplace", new PhpType());
+        functionReturnBase.put("preg_replace", new PhpType().add(PhpType.NULL));
+        functionReturnBase.put("preg_replace_callback", new PhpType().add(PhpType.NULL));
     }
 
     @Nullable
@@ -56,18 +63,22 @@ final public class OpenapiResolveUtil {
                 result = function instanceof Function
                         ? ((Function) function).getType().global(project)
                         : new PhpType();
+
                 if (!result.isEmpty() && !(function instanceof Method)) {
-                    /* some of replacement function result can be narrowed from arguments type */
                     final String name = reference.getName();
-                    if (name != null && replacingFunctions.containsKey(name)) {
+                    /* override signatures if we specified custom signatures */
+                    if (name != null && functionReturnTypes.containsKey(name)) {
+                        result = functionReturnTypes.get(name);
+                    }
+                    /* some of replacement function result can be narrowed from arguments type */
+                    if (name != null && functionReturnBase.containsKey(name)) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length >= 3 && arguments[2] instanceof PhpTypedElement) {
                             final PhpType argumentType = resolveType((PhpTypedElement) arguments[2], project);
                             if (argumentType != null && !argumentType.isEmpty() && !argumentType.hasUnknown()) {
-                                argumentType.add(replacingFunctions.get(name));
-                                final boolean isCompatible = PhpType.isSubType(argumentType, result);
-                                if (isCompatible) {
-                                    result = argumentType;
+                                final boolean canTakeArgumentType = PhpType.isSubType(argumentType, result);
+                                if (canTakeArgumentType) {
+                                    result = argumentType.add(functionReturnBase.get(name));
                                 }
                             }
                         }

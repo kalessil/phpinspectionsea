@@ -35,6 +35,12 @@ import java.util.stream.Stream;
 public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
     private static final String message = "The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json";
 
+    final static private Set<String> references = new HashSet<>();
+    static {
+        references.add("self");
+        references.add("static");
+    }
+
     // Inspection options.
     public final List<String> configuration  = new ArrayList<>();
 
@@ -52,7 +58,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
-                if (!this.isTestContext(reference)) {
+                if (!references.contains(reference.getText()) && !this.isTestContext(reference)) {
                     final Project project    = holder.getProject();
                     final String ownManifest = this.getManifest(reference, project);
                     if (ownManifest != null) {

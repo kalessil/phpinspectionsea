@@ -50,25 +50,28 @@ final public class OpenapiResolveUtil {
         PhpType result = null;
         try {
             if (expression instanceof FunctionReference) {
-                /* some of replacement function are requiring special handling */
+                /* resolve function and get it's type or fallback to empty type */
                 final FunctionReference reference = (FunctionReference) expression;
-                final String name                 = reference.getName();
-                if (name != null && replacingFunctions.containsKey(name) && OpenapiTypesUtil.isFunctionReference(reference)) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length >= 3 && arguments[2] instanceof PhpTypedElement) {
-                        result = resolveType((PhpTypedElement) arguments[2], project);
-                        if (result != null) {
-                            result = result.add(replacingFunctions.get(name));
+                final PsiElement function         = resolveReference(reference);
+                result = function instanceof Function
+                        ? ((Function) function).getType().global(project)
+                        : new PhpType();
+                if (!result.isEmpty() && !(function instanceof Method)) {
+                    /* some of replacement function result can be narrowed from arguments type */
+                    final String name = reference.getName();
+                    if (name != null && replacingFunctions.containsKey(name)) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length >= 3 && arguments[2] instanceof PhpTypedElement) {
+                            final PhpType argumentType = resolveType((PhpTypedElement) arguments[2], project);
+                            if (argumentType != null && !argumentType.isEmpty() && !argumentType.hasUnknown()) {
+                                argumentType.add(replacingFunctions.get(name));
+                                final boolean isCompatible = PhpType.isSubType(argumentType, result);
+                                if (isCompatible) {
+                                    result = argumentType;
+                                }
+                            }
                         }
                     }
-                }
-
-                /* resolve function and get it's type or fallback to empty type */
-                if (result == null) {
-                    final PsiElement function = resolveReference((FunctionReference) expression);
-                    result = function instanceof Function
-                            ? ((Function) function).getType().global(project)
-                            : new PhpType();
                 }
             } else if (expression instanceof ArrayAccessExpression) {
                 /* `_GET[...] & co` gets resolved with missing string type */

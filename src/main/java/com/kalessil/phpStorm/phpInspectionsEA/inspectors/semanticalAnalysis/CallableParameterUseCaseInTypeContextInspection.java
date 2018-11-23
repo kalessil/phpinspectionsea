@@ -210,8 +210,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     }
 
                                     if (resolved.size() >= 2) {
-                                        /* false-positives: core functions returning string|false, string|null */
-                                        if (resolved.contains(Types.strString)) {
+                                        /* false-positives: core functions returning string|array & false|null */
+                                        if (resolved.contains(Types.strString) || resolved.contains(Types.strArray)) {
                                             if (resolved.contains(Types.strBoolean)) {
                                                 final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
                                                 if (isFunctionCall) {
@@ -226,9 +226,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         }
                                         /* false-positives: nullable objects */
                                         else if (resolved.contains(Types.strNull)) {
-                                            final boolean isNullableObject = paramTypes.stream().anyMatch(t ->
-                                                t.startsWith("\\") && !t.equals("\\Closure") || classReferences.contains(t)
-                                            );
+                                            final boolean isNullableObject = paramTypes.stream()
+                                                    .anyMatch(t -> classReferences.contains(t) ||
+                                                                   t.startsWith("\\") && !t.equals("\\Closure"));
                                             if (isNullableObject) {
                                                 resolved.remove(Types.strNull);
                                             }

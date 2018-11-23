@@ -121,14 +121,14 @@
     }
 
     /* false-positive: core functions returning string|false, string|null */
-    function core_api_functions_consistency(string $string, array $array) {
+    function core_api_functions_consistency(string $string, string $replace, string $regex, array $replaces, array $regexes) {
         $string = substr($string, -1);
 
-        $string = str_replace('', '', $string);
-        $string = preg_replace('', '', $string);
+        $replace = str_replace('', '', $replace);
+        $regex = preg_replace('', '', $regex);
 
-        $array = str_replace('', '', $array);
-        $array = preg_replace('', '', $array);
+        $replaces = str_replace('', '', $replaces);
+        $regexes = preg_replace('', '', $regexes);
     }
 
     /* false-positive: nullable objects */

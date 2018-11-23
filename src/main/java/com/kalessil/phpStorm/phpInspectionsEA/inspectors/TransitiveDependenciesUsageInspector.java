@@ -39,6 +39,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
     static {
         references.add("self");
         references.add("static");
+        references.add("parent");
     }
 
     // Inspection options.

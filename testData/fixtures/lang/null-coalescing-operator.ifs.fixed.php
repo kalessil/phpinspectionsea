@@ -53,4 +53,7 @@ function cases_holder() {
         return trim($value);
     }
     return 'default';
+
+    $one = $value ?? 'default';
+    $two = 'default';
 }

@@ -122,3 +122,11 @@ foreach ([] as $item) {
     call($second = new Clazz());
     $second->method();
 }
+
+/* false-positive: outer loop variables */
+foreach ([] as $outerIndex => $outerValue) {
+    foreach ([] as $innerValue) {
+        echo $outerIndex;
+        echo $outerValue;
+    }
+}

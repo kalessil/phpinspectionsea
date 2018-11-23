@@ -69,4 +69,9 @@ function cases_holder() {
         return trim($value);
     }
     return 'default';
+
+    $one = $two = 'default';
+    <weak_warning descr="'$one = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+        $one = $value;
+    }
 }

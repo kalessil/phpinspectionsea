@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
@@ -21,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -59,13 +59,11 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 if (this.isContainingFileSkipped(foreach)) { return; }
 
-                final List<Variable> variables   = foreach.getVariables();
                 final GroupStatement foreachBody = ExpressionSemanticUtil.getGroupStatement(foreach);
                 /* ensure foreach structure is ready for inspection */
-                if (null != foreachBody && !variables.isEmpty()) {
+                if (foreachBody != null) {
                     /* pre-collect introduced and internally used variables */
-                    final Set<String> allModifiedVariables
-                            = variables.stream().map(PhpNamedElement::getName).collect(Collectors.toSet());
+                    final Set<String> allModifiedVariables = this.collectCurrentAndOuterLoopVariables(foreach);
 
                     final Map<PsiElement, Set<String>> instructionDependencies = new HashMap<>();
                     /* iteration 1 - investigate what are dependencies and influence */
@@ -104,11 +102,9 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                 ) {
                                     /* loops, ifs, switches, try's needs to be reported on keyword, others - complete */
                                     final PsiElement reportingTarget =
-                                            (
-                                                oneInstruction instanceof ControlStatement ||
-                                                oneInstruction instanceof Try ||
-                                                oneInstruction instanceof PhpSwitch
-                                            )
+                                            oneInstruction instanceof ControlStatement ||
+                                            oneInstruction instanceof Try ||
+                                            oneInstruction instanceof PhpSwitch
                                                     ? oneInstruction.getFirstChild()
                                                     : oneInstruction;
 
@@ -132,9 +128,24 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             }
                         }
                     }
-                    /* empty dependencies details container */
+
+                    /* release containers content */
+                    allModifiedVariables.clear();
+                    instructionDependencies.values().forEach(Set::clear);
                     instructionDependencies.clear();
                 }
+            }
+
+            private Set<String> collectCurrentAndOuterLoopVariables(@NotNull ForeachStatement foreach) {
+                final Set<String> variables = new HashSet<>();
+                PsiElement current          = foreach;
+                while (current != null && !(current instanceof Function) && !(current instanceof PsiFile)) {
+                    if (current instanceof ForeachStatement) {
+                        ((ForeachStatement) current).getVariables().forEach(v -> variables.add(v.getName()));
+                    }
+                    current = current.getParent();
+                }
+                return variables;
             }
 
             private void investigateInfluence(

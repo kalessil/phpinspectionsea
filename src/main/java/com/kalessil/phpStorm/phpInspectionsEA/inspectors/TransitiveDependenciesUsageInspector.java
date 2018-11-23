@@ -63,6 +63,10 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                     final Project project    = holder.getProject();
                     final String ownManifest = this.getManifest(reference, project);
                     if (ownManifest != null) {
+                        // TODO: performance boost
+                        // if parent is use-statement or reference contains '\', go ahead without additional checks
+                        // if we can not identify class or it is in root NS, then we do resolve reference
+
                         final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                         if (resolved != null) {
                             final String dependencyManifest = this.getManifest(resolved, project);

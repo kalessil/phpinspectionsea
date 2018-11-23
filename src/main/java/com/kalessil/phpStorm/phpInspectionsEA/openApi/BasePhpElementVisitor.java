@@ -98,13 +98,12 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         if (fileName.endsWith("Test.php") || fileName.endsWith("Spec.php") || fileName.endsWith(".phpt")) {
             result = true;
         } else {
-            /* identify class */
-            final PhpClass clazz = expression instanceof PhpClass ?
-                (PhpClass) expression : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, (Class) PsiFile.class);
-            /* if identified, check its' FQN */
-            final String clazzFqn = clazz == null ? null : clazz.getFQN();
-            if (clazzFqn != null) {
-                result = clazzFqn.endsWith("Test") || clazzFqn.contains("\\Tests\\") || clazzFqn.contains("\\Test\\");
+            final PhpClass containingClass = expression instanceof PhpClass
+                    ? (PhpClass) expression
+                    : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, (Class) PsiFile.class);
+            if (containingClass != null) {
+                final String fqn = containingClass.getFQN();
+                result = fqn.endsWith("Test") || fqn.contains("\\Tests\\") || fqn.contains("\\Test\\");
             }
         }
         return result;

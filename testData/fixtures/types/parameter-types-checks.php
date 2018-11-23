@@ -17,9 +17,9 @@
         ;
     };
 
-    /** @param callable $callable */
-    function callableTypes ($callable) {
+    function callableTypes (callable $callable) {
         return [
+            is_object($callable),
             is_callable($callable),
             is_string($callable),
             is_array($callable)
@@ -121,9 +121,14 @@
     }
 
     /* false-positive: core functions returning string|false, string|null */
-    function core_api_functions_consistency(string $string) {
+    function core_api_functions_consistency(string $string, string $replace, string $regex, array $replaces, array $regexes) {
         $string = substr($string, -1);
-        $string = preg_replace('', '', $string);
+
+        $replace = str_replace('', '', $replace);
+        $regex = preg_replace('', '', $regex);
+
+        $replaces = str_replace('', '', $replaces);
+        $regexes = preg_replace('', '', $regexes);
     }
 
     /* false-positive: nullable objects */

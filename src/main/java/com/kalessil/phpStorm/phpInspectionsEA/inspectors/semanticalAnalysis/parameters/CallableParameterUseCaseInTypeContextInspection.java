@@ -167,10 +167,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     break;
                                 case "is_object":
                                     isTypeAnnounced =
-                                        parameterTypes.contains(Types.strObject) ||
-                                        parameterTypes.stream().anyMatch(t ->
-                                            (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
-                                        );
+                                        parameterTypes.contains(Types.strObject) || parameterTypes.contains(Types.strCallable) ||
+                                        parameterTypes.stream().anyMatch(t -> classReferences.contains(t) ||
+                                                                              (t.startsWith("\\") && !t.equals("\\Closure")));
                                     break;
                                 case "is_subclass_of":
                                 case "is_a":
@@ -225,8 +224,8 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     }
 
                                     if (resolved.size() >= 2) {
-                                        /* false-positives: core functions returning string|false, string|null */
-                                        if (resolved.contains(Types.strString)) {
+                                        /* false-positives: core functions returning string|array & false|null */
+                                        if (resolved.contains(Types.strString) || resolved.contains(Types.strArray)) {
                                             if (resolved.contains(Types.strBoolean)) {
                                                 final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
                                                 if (isFunctionCall) {
@@ -236,18 +235,14 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                                 final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
                                                 if (isFunctionCall) {
                                                     resolved.remove(Types.strNull);
-                                                    /* preg_replace got better stub and brought lots of false-positives */
-                                                    if ("preg_replace".equals(value.getName())) {
-                                                        resolved.remove(Types.strArray);
-                                                    }
                                                 }
                                             }
                                         }
                                         /* false-positives: nullable objects */
                                         else if (resolved.contains(Types.strNull)) {
-                                            final boolean isNullableObject = resolved.stream().anyMatch(t ->
-                                                t.startsWith("\\") && !t.equals("\\Closure") || classReferences.contains(t)
-                                            );
+                                            final boolean isNullableObject = resolved.stream()
+                                                    .anyMatch(t -> classReferences.contains(t) ||
+                                                                   t.startsWith("\\") && !t.equals("\\Closure"));
                                             if (isNullableObject) {
                                                 resolved.remove(Types.strNull);
                                             }

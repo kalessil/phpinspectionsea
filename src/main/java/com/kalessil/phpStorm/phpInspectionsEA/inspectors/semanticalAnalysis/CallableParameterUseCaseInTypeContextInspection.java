@@ -167,10 +167,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     break;
                                 case "is_object":
                                     isTypeAnnounced =
-                                        paramTypes.contains(Types.strObject) ||
-                                        paramTypes.stream().anyMatch(t ->
-                                            (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
-                                        );
+                                        paramTypes.contains(Types.strObject) || paramTypes.contains(Types.strCallable) ||
+                                        paramTypes.stream().anyMatch(t -> classReferences.contains(t) ||
+                                                                          (t.startsWith("\\") && !t.equals("\\Closure")));
                                     break;
                                 case "is_a":
                                     isTypeAnnounced =

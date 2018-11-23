@@ -17,9 +17,9 @@
         ;
     };
 
-    /** @param callable $callable */
-    function callableTypes ($callable) {
+    function callableTypes (callable $callable) {
         return [
+            is_object($callable),
             is_callable($callable),
             is_string($callable),
             is_array($callable)

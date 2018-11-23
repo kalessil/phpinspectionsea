@@ -31,8 +31,10 @@ final public class OpenapiResolveUtil {
         functionReturnTypes.put("str_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
         functionReturnTypes.put("str_ireplace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
         functionReturnTypes.put("substr_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
-        functionReturnTypes.put("preg_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
+        functionReturnTypes.put("preg_filter", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
+        functionReturnTypes.put("preg_replace_callback_array", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
         functionReturnTypes.put("preg_replace_callback", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
+        functionReturnTypes.put("preg_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
 
         functionReturnBase.put("str_replace", new PhpType());
         functionReturnBase.put("str_ireplace", new PhpType());

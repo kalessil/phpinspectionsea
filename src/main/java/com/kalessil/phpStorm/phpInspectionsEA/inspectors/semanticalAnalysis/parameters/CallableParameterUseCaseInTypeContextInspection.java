@@ -225,7 +225,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                                     if (resolved.size() >= 2) {
                                         /* false-positives: core functions returning string|array & false|null */
-                                        if (resolved.contains(Types.strString)) {
+                                        if (resolved.contains(Types.strString) || resolved.contains(Types.strArray)) {
                                             if (resolved.contains(Types.strBoolean)) {
                                                 final boolean isFunctionCall = OpenapiTypesUtil.isFunctionReference(value);
                                                 if (isFunctionCall) {

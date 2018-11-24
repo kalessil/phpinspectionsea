@@ -54,38 +54,49 @@ final public class OpenapiResolveUtil {
         }
     }
 
+    static private PhpType resolveFunctionReferenceType(@NotNull FunctionReference reference) {
+        /* resolve function and get it's type or fallback to empty type */
+        final PsiElement function = resolveReference(reference);
+        PhpType result = function instanceof Function
+                ? ((Function) function).getType().global(reference.getProject())
+                : new PhpType();
+
+        if (!result.isEmpty() && !(function instanceof Method)) {
+            result = respecifyFunctionReferenceType(reference, result);
+        }
+
+        return result;
+    }
+
+    @NotNull
+    static private PhpType respecifyFunctionReferenceType(@NotNull FunctionReference reference, @NotNull PhpType result) {
+        final String name = reference.getName();
+        /* override signatures if we specified custom signatures */
+        if (name != null && functionReturnTypes.containsKey(name)) {
+            result = functionReturnTypes.get(name);
+        }
+        /* some of replacement function result can be narrowed from arguments type */
+        if (name != null && functionReturnBase.containsKey(name)) {
+            final PsiElement[] arguments = reference.getParameters();
+            if (arguments.length >= 3 && arguments[2] instanceof PhpTypedElement) {
+                final PhpType argumentType = resolveType((PhpTypedElement) arguments[2], reference.getProject());
+                if (argumentType != null && !argumentType.isEmpty() && !argumentType.hasUnknown()) {
+                    final boolean canTakeArgumentType = PhpType.isSubType(argumentType, result);
+                    if (canTakeArgumentType) {
+                        result = argumentType.add(functionReturnBase.get(name));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     @Nullable
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
         PhpType result = null;
         try {
             if (expression instanceof FunctionReference) {
-                /* resolve function and get it's type or fallback to empty type */
-                final FunctionReference reference = (FunctionReference) expression;
-                final PsiElement function         = resolveReference(reference);
-                result = function instanceof Function
-                        ? ((Function) function).getType().global(project)
-                        : new PhpType();
-
-                if (!result.isEmpty() && !(function instanceof Method)) {
-                    final String name = reference.getName();
-                    /* override signatures if we specified custom signatures */
-                    if (name != null && functionReturnTypes.containsKey(name)) {
-                        result = functionReturnTypes.get(name);
-                    }
-                    /* some of replacement function result can be narrowed from arguments type */
-                    if (name != null && functionReturnBase.containsKey(name)) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length >= 3 && arguments[2] instanceof PhpTypedElement) {
-                            final PhpType argumentType = resolveType((PhpTypedElement) arguments[2], project);
-                            if (argumentType != null && !argumentType.isEmpty() && !argumentType.hasUnknown()) {
-                                final boolean canTakeArgumentType = PhpType.isSubType(argumentType, result);
-                                if (canTakeArgumentType) {
-                                    result = argumentType.add(functionReturnBase.get(name));
-                                }
-                            }
-                        }
-                    }
-                }
+                result = resolveFunctionReferenceType((FunctionReference) expression);
             } else if (expression instanceof ArrayAccessExpression) {
                 /* `_GET[...] & co` gets resolved with missing string type */
                 final PsiElement globalCandidate = ((ArrayAccessExpression) expression).getValue();

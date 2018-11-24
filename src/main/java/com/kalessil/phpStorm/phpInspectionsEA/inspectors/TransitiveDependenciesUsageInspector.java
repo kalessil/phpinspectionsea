@@ -5,9 +5,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
@@ -59,12 +63,10 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
-                if (!references.contains(reference.getText()) && !this.isTestContext(reference)) {
+                if (this.isTarget(reference) && !this.isTestContext(reference)) {
                     final Project project    = holder.getProject();
                     final String ownManifest = this.getManifest(reference, project);
                     if (ownManifest != null) {
-                        // TODO: performance boost
-                        // if parent is use-statement or reference contains '\', go ahead without additional checks
                         // if we can not identify class or it is in root NS, then we do resolve reference
 
                         final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
@@ -80,6 +82,20 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean isTarget(@NotNull ClassReference reference) {
+                final String asString = reference.getText();
+                if (!references.contains(asString)) {
+                    if (asString.indexOf('\\') != -1 || reference.getParent() instanceof PhpUse)  {
+                        return true;
+                    }
+                    final PhpClass clazz = PsiTreeUtil.getParentOfType(reference, PhpClass.class, false, (Class) PsiFile.class);
+                    if (clazz == null || clazz.getNamespaceName().equals("\\")) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             @Nullable

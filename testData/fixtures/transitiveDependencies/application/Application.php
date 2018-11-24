@@ -1,5 +1,6 @@
 <?php
 
+/* the ignored one is by ignore-configuration */
 return [
     new \stdClass(),
     new \First\Clazz(),

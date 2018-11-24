@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.TransitiveDependenciesUsageInspector;
 
 final public class TransitiveDependenciesUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
-    public void testNoComposerJson() {
+    public void testIfFindsPatterns() {
         final TransitiveDependenciesUsageInspector inspection = new TransitiveDependenciesUsageInspector();
         inspection.configuration.add("vendor/ignored");
 

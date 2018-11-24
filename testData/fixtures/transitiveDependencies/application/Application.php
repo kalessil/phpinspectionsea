@@ -1,9 +1,37 @@
 <?php
 
-/* the ignored one is by ignore-configuration */
-return [
-    new \stdClass(),
-    new \First\Clazz(),
-    new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz()</warning>,
-    new \Ignored\Clazz(),
-];
+namespace Company {
+    use First\Clazz as FirstClass;
+    use <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">Second\Clazz</warning> as SecondClass;
+    use Ignored\Clazz as IgnoredClass;
+
+    class Application extends SecondClass {
+        use SecondClass;
+
+        public function method() {
+            return [
+                new self(),
+                new static(),
+
+                new \stdClass(),
+                new \First\Clazz(),
+                new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz()</warning>,
+                new \Ignored\Clazz(),
+
+                new FirstClass(),
+                new SecondClass(),
+                new IgnoredClass(),
+            ];
+        }
+    }
+}
+
+namespace Company {
+    /* the ignored one is by ignore-configuration */
+    return [
+        new \stdClass(),
+        new \First\Clazz(),
+        new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz()</warning>,
+        new \Ignored\Clazz(),
+    ];
+}

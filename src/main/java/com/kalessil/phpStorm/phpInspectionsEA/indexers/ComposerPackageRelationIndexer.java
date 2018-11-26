@@ -44,13 +44,17 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
                 currentFolder = currentFolder.getParent();
             }
 
-            final Map<String, String> result = new THashMap<>();
-            final String key                 = file.getFile().getCanonicalPath();
-            final String value               = manifest == null ? null : manifest.getCanonicalPath();
-            if (key != null && value != null) {
-                result.put(key, value);
+            final String key = file.getFile().getCanonicalPath();
+            if (key != null) {
+                final String value = manifest == null ? null : manifest.getCanonicalPath();
+                if (value != null) {
+                    final Map<String, String> result = new THashMap<>(1);
+                    result.put(key, value);
+                    return result;
+                }
             }
-            return result;
+
+            return new THashMap<>();
         };
     }
 
@@ -68,7 +72,7 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 
     @NotNull

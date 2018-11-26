@@ -83,6 +83,6 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
 
     @Override
     public boolean dependsOnFileContent() {
-        return false;
+        return true;
     }
 }

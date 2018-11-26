@@ -71,8 +71,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                         if (resolved != null) {
                             final String dependencyManifest = this.getManifest(resolved, project);
                             if (dependencyManifest != null && !ownManifest.equals(dependencyManifest)) {
-                                final boolean isTarget
-                                        = this.isTransitiveDependency(ownManifest, dependencyManifest, project);
+                                final boolean isTarget = this.isTransitiveDependency(ownManifest, dependencyManifest, project);
                                 if (isTarget) {
                                     holder.registerProblem(reference, message);
                                 }
@@ -118,17 +117,21 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                 return result;
             }
 
-            private boolean isTransitiveDependency(@NotNull String current, @NotNull String dependency, @NotNull Project project) {
+            private boolean isTransitiveDependency(
+                    @NotNull String ownManifest,
+                    @NotNull String dependencyManifest,
+                    @NotNull Project project
+            ) {
                 boolean result             = false;
                 final FileBasedIndex index = this.getIndex();
                 if (index != null) {
                     final GlobalSearchScope scope        = GlobalSearchScope.allScope(project);
-                    final List<String> dependencyDetails = index.getValues(ComposerPackageManifestIndexer.identity, dependency, scope);
+                    final List<String> dependencyDetails = index.getValues(ComposerPackageManifestIndexer.identity, dependencyManifest, scope);
                     if (dependencyDetails.size() == 1) {
                         final String[] dependencySplit = dependencyDetails.get(0).split(":");
                         final String dependencyName    = dependencySplit.length == 2 ? dependencySplit[0] : "";
                         if (!dependencyName.isEmpty() && !this.isDependencyIgnored(dependencyName)) {
-                            final List<String> currentDetails = index.getValues(ComposerPackageManifestIndexer.identity, current, scope);
+                            final List<String> currentDetails = index.getValues(ComposerPackageManifestIndexer.identity, ownManifest, scope);
                             if (currentDetails.size() == 1) {
                                 final String[] currentSplit      = currentDetails.get(0).split(":");
                                 final String currentDependencies = currentSplit.length == 2 ? currentSplit[1] : "";

@@ -68,12 +68,17 @@ public class ComposerPackageManifestIndexer extends FileBasedIndexExtension<Stri
                 });
             }
 
-            final Map<String, String> result = new THashMap<>();
-            final String key                 = file.getFile().getCanonicalPath();
+            final String key = file.getFile().getCanonicalPath();
             if (key != null) {
+                final Map<String, String> result = new THashMap<>();
                 result.put(key, String.format("%s:%s", packageName, String.join(",", dependencies)));
+                dependencies.clear();
+
+                return result;
             }
-            return result;
+            dependencies.clear();
+
+            return new THashMap<>();
         };
     }
 

@@ -1,17 +1,20 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.jetbrains.php.lang.psi.elements.ClassReference;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpUse;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
@@ -72,7 +75,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                             if (dependencyManifest != null && !ownManifest.equals(dependencyManifest)) {
                                 final boolean isTarget = this.isTransitiveDependency(ownManifest, dependencyManifest, project);
                                 if (isTarget) {
-                                    holder.registerProblem(reference, message);
+                                    holder.registerProblem(reference, message, new OpenDependencyManifest(dependencyManifest));
                                 }
                             }
                         }
@@ -207,5 +210,36 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
 
         /* sort entries */
         Collections.sort(configuration);
+    }
+
+    private static final class OpenDependencyManifest implements LocalQuickFix {
+        private static final String title = "Open dependency manifest";
+        private final String file;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        OpenDependencyManifest(@NotNull String file) {
+            this.file = file;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            if (!project.isDisposed()) {
+                final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(this.file);
+                if (file != null) {
+                    new OpenFileDescriptor(project, file).navigate(true);
+                }
+            }
+        }
     }
 }

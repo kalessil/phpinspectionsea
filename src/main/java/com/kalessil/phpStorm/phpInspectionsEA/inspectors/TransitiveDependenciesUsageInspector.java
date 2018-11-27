@@ -152,8 +152,10 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                                                 break;
                                             }
                                         }
+                                        details.clear();
                                     }
                                 }
+                                currentDependencies.clear();
                             }
                             currentDetails.clear();
                         }

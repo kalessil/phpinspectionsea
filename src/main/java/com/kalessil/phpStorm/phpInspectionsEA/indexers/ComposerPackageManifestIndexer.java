@@ -41,6 +41,7 @@ public class ComposerPackageManifestIndexer extends FileBasedIndexExtension<Stri
     public DataIndexer<String, String, FileContent> getIndexer() {
         return file -> {
             String packageName              = "";
+            final List<String> packages     = new ArrayList<>();
             final List<String> dependencies = new ArrayList<>();
 
             final PsiElement content = file.getPsiFile().getFirstChild();
@@ -57,12 +58,18 @@ public class ComposerPackageManifestIndexer extends FileBasedIndexExtension<Stri
                 }
 
                 /* extract packages */
-                Stream.of("require", "require-dev").forEach(name -> {
-                    final JsonProperty property = manifest.findProperty(name);
+                packages.add(packageName);
+                Stream.of("require", "require-dev", "replace").forEach(sectionName -> {
+                    final JsonProperty property = manifest.findProperty(sectionName);
                     if (property != null) {
                         final JsonValue value = property.getValue();
                         if (value instanceof JsonObject) {
-                            ((JsonObject) value).getPropertyList().forEach(entry -> dependencies.add(entry.getName()));
+                            final List<JsonProperty> list = ((JsonObject) value).getPropertyList();
+                            if (sectionName.equals("replace")) {
+                                list.forEach(entry -> packages.add(entry.getName()));
+                            } else {
+                                list.forEach(entry -> dependencies.add(entry.getName()));
+                            }
                         }
                     }
                 });
@@ -71,11 +78,13 @@ public class ComposerPackageManifestIndexer extends FileBasedIndexExtension<Stri
             final String key = file.getFile().getCanonicalPath();
             if (key != null) {
                 final Map<String, String> result = new THashMap<>(1);
-                result.put(key, String.format("%s:%s", packageName, String.join(",", dependencies)));
+                result.put(key, String.format("%s:%s", String.join(",", packages), String.join(",", dependencies)));
+                packages.clear();
                 dependencies.clear();
 
                 return result;
             }
+            packages.clear();
             dependencies.clear();
 
             return new THashMap<>();

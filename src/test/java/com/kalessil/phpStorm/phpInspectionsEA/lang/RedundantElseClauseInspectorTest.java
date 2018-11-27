@@ -8,5 +8,9 @@ final public class RedundantElseClauseInspectorTest extends PhpCodeInsightFixtur
         myFixture.enableInspections(new RedundantElseClauseInspector());
         myFixture.configureByFile("testData/fixtures/controlFlow/unnecessary-else-elseif.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/controlFlow/unnecessary-else-elseif.fixed.php");
     }
 }

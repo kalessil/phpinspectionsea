@@ -5,7 +5,7 @@ Abbreviations meaning:
 - QF   - Quick-Fix;
 - UTs  - Inspection has tests;
 - QFTs - Inspection has QF tests;
-- Doc  - documentation at GitJub (IDE also has shorter version of inspections descriptions, not reflected in the list);
+- Doc  - documentation at GitHub (IDE also has shorter version of inspections descriptions, not reflected in the list);
 
 Inspections Lists (Type compatibility)
 ---
@@ -38,7 +38,7 @@ Inspections Lists (Control flow)
 | Control Flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | yes | yes | yes  | no  |
 | Control Flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | yes | yes | yes  | no  |
 | Control Flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | yes  | no  |
-| Control Flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | no   | no  |
+| Control Flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | yes  | no  |
 | Control Flow         | InvertedIfElseConstructsInspection              | Inverted 'if-else' constructs                                                     | yes | yes | yes  | no  |
 | Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | no  |
 | Control Flow         | ArrayUniqueCanBeUsedInspection                  | 'array_unique(...)' can be used                                                   | yes | yes | yes  | no  |

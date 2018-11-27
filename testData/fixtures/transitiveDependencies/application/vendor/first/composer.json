@@ -1,3 +1,6 @@
 {
-    "name": "vendor/first"
+    "name": "vendor/first",
+    "replace": {
+        "vendor/first-subsplit": "self.version"
+    }
 }

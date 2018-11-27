@@ -5,7 +5,7 @@ Abbreviations meaning:
 - QF   - Quick-Fix;
 - UTs  - Inspection has tests;
 - QFTs - Inspection has QF tests;
-- Doc  - documentation at GitJub (IDE also has shorter version of inspections descriptions, not reflected in the list);
+- Doc  - documentation at GitHub (IDE also has shorter version of inspections descriptions, not reflected in the list);
 
 Inspections Lists (Type compatibility)
 ---

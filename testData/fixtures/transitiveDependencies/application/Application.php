@@ -7,8 +7,6 @@ namespace Company {
     use Ignored\Clazz as IgnoredClass;
 
     class Application extends SecondClass {
-        use SecondClass;
-
         public function method() {
             return [
                 new self(),

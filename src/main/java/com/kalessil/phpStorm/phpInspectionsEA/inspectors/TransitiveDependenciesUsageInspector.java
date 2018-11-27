@@ -128,13 +128,13 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                     final List<String> dependencyDetails = index.getValues(ComposerPackageManifestIndexer.identity, dependencyManifest, scope);
                     if (dependencyDetails.size() == 1) {
                         /* dependency should be listed in own manifest */
-                        final String[] dependencySplit    = dependencyDetails.get(0).split(":");
+                        final String[] dependencySplit    = dependencyDetails.get(0).split(":", 2);
                         final String[] dependencyPackages = (dependencySplit.length == 2 ? dependencySplit[0] : "").split(",");
                         final String dependencyName       = dependencyPackages.length > 0 ? dependencyPackages[0] : "";
                         if (!dependencyName.isEmpty() && !this.isDependencyIgnored(dependencyName)) {
                             final List<String> currentDetails = index.getValues(ComposerPackageManifestIndexer.identity, ownManifest, scope);
                             if (currentDetails.size() == 1) {
-                                final String[] currentSplit            = currentDetails.get(0).split(":");
+                                final String[] currentSplit            = currentDetails.get(0).split(":", 2);
                                 final List<String> currentDependencies = Arrays.asList((currentSplit.length == 2 ? currentSplit[1] : "").split(","));
                                 /* false-positive: one of own dependencies replaces the dependency being analyzed */
                                 if (result = currentDependencies.stream().noneMatch(d -> d.equals(dependencyName))) {
@@ -145,7 +145,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                                         /* find manifest replacing the dependency */
                                         final List<String> details = index.getValues(ComposerPackageManifestIndexer.identity, file, scope);
                                         if (details.size() == 1) {
-                                            final String[] split        = details.get(0).split(":");
+                                            final String[] split        = details.get(0).split(":", 2);
                                             final List<String> packages = Arrays.asList((split.length == 2 ? split[0] : "").split(","));
                                             if (packages.contains(dependencyName)) {
                                                 result = packages.stream().noneMatch(currentDependencies::contains);
@@ -155,7 +155,6 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
                                         details.clear();
                                     }
                                 }
-                                currentDependencies.clear();
                             }
                             currentDetails.clear();
                         }

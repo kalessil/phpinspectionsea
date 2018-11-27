@@ -15,7 +15,7 @@ namespace Company {
                 new \stdClass(),
                 new \First\Subsplit\Clazz(),
                 new \First\Clazz(),
-                new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz()</warning>,
+                new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz</warning>(),
                 new \Ignored\Clazz(),
 
                 new SubsplitClazz(),
@@ -32,7 +32,7 @@ namespace Company {
     return [
         new \stdClass(),
         new \First\Clazz(),
-        new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz()</warning>,
+        new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz</warning>(),
         new \Ignored\Clazz(),
     ];
 }

@@ -76,49 +76,32 @@ public class ReferenceMismatchInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /**
-             * TODO: checkReferenceReturnedByCallable - ternary operator, argument usages ?
-             */
-
-            /* parameters by reference */
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (!php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
+                if (php.compareTo(PhpLanguageLevel.PHP560) <= 0) {
                     this.checkParameters(method.getParameters(), method);
                 }
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                /* PHP7 seems to be ref mismatch free */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
-                    return;
+                if (php.compareTo(PhpLanguageLevel.PHP560) <= 0) {
+                    this.checkParameters(function.getParameters(), function);
                 }
-
-                /* older versions are still affected */
-                this.checkParameters(function.getParameters(), function);
             }
 
-            private void checkParameters(Parameter[] arrParameters, Function objScopeHolder) {
-                PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
-
-                HashSet<PsiElement> emptyReportedItemsRegistry =
-                        ReferenceMismatchInspector.getFunctionReportingRegistry(objScopeHolder);
-
-                for (Parameter parameter : arrParameters) {
-                    /* skip un-discoverable and non-reference parameters */
-                    String strParameterName = parameter.getName();
-                    if (!parameter.isPassByRef() || StringUtils.isEmpty(strParameterName)) {
-                        continue;
+            private void checkParameters(@NotNull Parameter[] parameters, @NotNull Function function) {
+                final PhpEntryPointInstruction start    = function.getControlFlow().getEntryPoint();
+                final Set<PsiElement> reportingRegistry = getFunctionReportingRegistry(function);
+                for (final Parameter parameter : parameters) {
+                    final String parameterName = parameter.getName();
+                    if (!parameterName.isEmpty() && parameter.isPassByRef()) {
+                        inspectScopeForReferenceMissUsages(start, parameterName, reportingRegistry);
                     }
-
-                    inspectScopeForReferenceMissUsages(objEntryPoint, strParameterName, emptyReportedItemsRegistry);
                 }
-
-                emptyReportedItemsRegistry.clear();
+                reportingRegistry.clear();
             }
 
             /* = & variable/property patterns */

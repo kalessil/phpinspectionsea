@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
@@ -36,9 +37,11 @@ public class DuplicateArrayKeysInspector extends BasePhpInspection {
 
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new PhpElementVisitor() {
+        return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
+                if (this.isContainingFileSkipped(expression)) { return; }
+
                 final Map<String, PsiElement> processed = new HashMap<>();
                 for (final ArrayHashElement pair : expression.getHashElements()) {
                     final PhpPsiElement key = pair.getKey();

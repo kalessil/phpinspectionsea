@@ -12,7 +12,6 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -20,8 +19,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +29,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /*
@@ -88,23 +86,19 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                 }
 
                 /* Skip certain contexts processing and strings with inline injections */
+                if (!OpenapiTypesUtil.isString(expression) || expression.getFirstPsiChild() != null) {
+                    return;
+                }
                 PsiElement parent = expression.getParent();
-                if (
-                    parent instanceof BinaryExpression || parent instanceof SelfAssignmentExpression ||
-                    null != expression.getFirstPsiChild()
-                ) {
+                if (parent instanceof BinaryExpression || parent instanceof SelfAssignmentExpression) {
                     return;
                 }
 
                 /* Process if has no inline statements and at least 3 chars long (foo, bar and etc. are not a case) */
                 final String contents = expression.getContents();
-                if (contents.length() > 3) {
-                    final Matcher regexMatcher = classNameRegex.matcher(contents);
-                    if (!regexMatcher.matches() || ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment) {
-                        return;
-                    }
+                if (contents.length() > 3 && classNameRegex.matcher(contents).matches()) {
                     /* do not process lowercase-only strings */
-                    if (-1 == contents.indexOf('\\') && contents.toLowerCase().equals(contents)) {
+                    if (contents.indexOf('\\') == -1 && contents.toLowerCase().equals(contents)) {
                         return;
                     }
 

@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.MultiMap;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -116,8 +115,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                             final PsiFile file = reference.getContainingFile();
                             if (file instanceof PhpFile) {
                                 /* find imports inside a file without namespace */
-                                final MultiMap<String, PhpNamedElement> definitions = ((PhpFile) file).getTopLevelDefs();
-                                definitions.values().stream()
+                                ((PhpFile) file).getTopLevelDefs().values().stream()
                                         .filter(definition  -> definition instanceof PhpUse)
                                         .forEach(definition -> uses.add((PhpUse) definition));
                             } else {

@@ -7,6 +7,7 @@ final public class ClassConstantUsageCorrectnessInspectorTest extends PhpCodeIns
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new ClassConstantUsageCorrectnessInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/class-constant-cases-mismatch.php");
+        myFixture.testHighlighting(true, false, true);
         myFixture.configureByFile("testData/fixtures/pitfalls/class-constant-cases-mismatch.import-and-alias.php");
         myFixture.testHighlighting(true, false, true);
     }

@@ -34,11 +34,7 @@ final public class OpenapiTypesUtil {
     }
 
     static public boolean isString(@Nullable PsiElement expression) {
-        if (expression != null) {
-            final IElementType elementType = expression.getNode().getElementType();
-            return elementType == PhpTokenTypes.STRING_LITERAL || elementType == PhpTokenTypes.STRING_LITERAL_SINGLE_QUOTE;
-        }
-        return false;
+        return expression != null && expression.getNode().getElementType() == PhpElementTypes.STRING;
     }
 
     static public boolean isAssignment(@Nullable PsiElement expression) {

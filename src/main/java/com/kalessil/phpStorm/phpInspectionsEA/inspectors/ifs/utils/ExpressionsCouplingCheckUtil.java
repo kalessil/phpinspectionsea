@@ -83,25 +83,20 @@ final public class ExpressionsCouplingCheckUtil {
             }
 
             /* if we have expressions to lookup in first one, then work  them out and release references */
-            if (expressionsInSecond.size() > 0) {
+            if (!expressionsInSecond.isEmpty()) {
                 for (final PsiElement expression : expressionsInSecond) {
                     /* find expression in first, stop processing if found match */
-                    final Collection<PsiElement> findings = PsiTreeUtil.findChildrenOfType(first, expression.getClass());
-                    if (findings.size() > 0) {
-                        for (PsiElement subject : findings){
-                            /* if subject[], do not process it */
-                            final PsiElement parent = subject.getParent();
-                            if (parent instanceof ArrayAccessExpression && subject == ((ArrayAccessExpression) parent).getValue()) {
-                                continue;
-                            }
-
-                            if (OpenapiEquivalenceUtil.areEqual(subject, expression)) {
-                                isCoupled = true;
-                                break;
-                            }
+                    for (final PsiElement subject : PsiTreeUtil.findChildrenOfType(first, expression.getClass())){
+                        /* if subject[], do not process it */
+                        final PsiElement parent = subject.getParent();
+                        if (parent instanceof ArrayAccessExpression && subject == ((ArrayAccessExpression) parent).getValue()) {
+                            continue;
                         }
 
-                        findings.clear();
+                        if (OpenapiEquivalenceUtil.areEqual(subject, expression)) {
+                            isCoupled = true;
+                            break;
+                        }
                     }
 
                     /* inner loop found coupled expressions break this loop as well */

@@ -13,7 +13,6 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/pitfalls/suspicious-binary-operations.fixed.php");
     }
-
     public void testIfFindsMistypedOperations() {
         myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.mistyped.php");
@@ -23,6 +22,11 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
     public void testIfFindsCountChecks() {
         myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.count.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testIfFindsArrayConcatenationPatterns() {
+        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.array-concatenation.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

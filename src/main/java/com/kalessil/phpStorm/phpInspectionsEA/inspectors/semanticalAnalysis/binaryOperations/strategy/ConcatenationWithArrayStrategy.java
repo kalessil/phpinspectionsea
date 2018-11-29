@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -16,14 +17,15 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class EqualsInAssignmentContextStrategy {
-    private static final String message = "It seems that '=' should be here.";
+final public class ConcatenationWithArrayStrategy {
+    private static final String message = "Concatenation with an array doesn't make much sense here.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         final PsiElement operation = expression.getOperation();
-        if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opEQUAL)) {
-            final PsiElement parent = expression.getParent();
-            if (OpenapiTypesUtil.isStatementImpl(parent)) {
+        if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opCONCAT)) {
+            final boolean isTarget = expression.getLeftOperand() instanceof ArrayCreationExpression ||
+                                     expression.getRightOperand() instanceof ArrayCreationExpression;
+            if (isTarget) {
                 holder.registerProblem(operation, message);
                 return true;
             }

@@ -50,6 +50,7 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                 callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityStrategy.apply(expression, holder));
                 callbacks.add(() -> ConstantConditionsCountCheckStrategy.apply(expression, holder));
+                callbacks.add(() -> ConcatenationWithArrayStrategy.apply(expression, holder));
 
                 /* TODO: === and !== on non-intersecting types */
 

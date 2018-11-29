@@ -6,7 +6,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.MultiMap;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -101,8 +103,30 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                             }
                         }
                     } else {
+                        final List<PhpUse> uses = new ArrayList<>();
+                        if (namespace != null) {
+                            /* find imports inside know namespace */
+                            final GroupStatement body = namespace.getStatements();
+                            if (body != null) {
+                                Arrays.stream(body.getStatements())
+                                        .filter(statement  -> statement instanceof PhpUseList)
+                                        .forEach(statement -> Collections.addAll(uses, ((PhpUseList) statement).getDeclarations()));
+                            }
+                        } else {
+                            final PsiFile file = reference.getContainingFile();
+                            if (file instanceof PhpFile) {
+                                /* find imports inside a file without namespace */
+                                final MultiMap<String, PhpNamedElement> definitions = ((PhpFile) file).getTopLevelDefs();
+                                definitions.values().stream()
+                                        .filter(definition  -> definition instanceof PhpUse)
+                                        .forEach(definition -> uses.add((PhpUse) definition));
+                            } else {
+                                /* fallback, the most greedy strategy */
+                                uses.addAll(PsiTreeUtil.findChildrenOfType(current, PhpUse.class));
+                            }
+                        }
                         /* imports (incl. aliases) */
-                        for (final PhpUse use : PsiTreeUtil.findChildrenOfType(current, PhpUse.class)) {
+                        for (final PhpUse use : uses) {
                             if (use.getFQN().equalsIgnoreCase(classFqn)) {
                                 final String alias    = use.getAliasName();
                                 final PsiElement what = use.getFirstChild();
@@ -127,6 +151,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                                 }
                             }
                         }
+                        uses.clear();
                     }
                 }
                 return result;

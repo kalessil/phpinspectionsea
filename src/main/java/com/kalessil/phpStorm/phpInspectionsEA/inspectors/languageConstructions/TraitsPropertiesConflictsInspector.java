@@ -17,6 +17,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
     private static final String messagePattern = "'%c%' and '%t%' define the same property ($%p%).";
 
@@ -40,13 +49,12 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                 /* check conflict with own fields */
                 for (final Field ownField : clazz.getOwnFields()) {
                     /* get own field name and default value */
-                    final PsiElement ownFieldNameNode = NamedElementUtil.getNameIdentifier(ownField);
-                    if (null == ownFieldNameNode || ownField.isConstant() || ownField.getModifier().isAbstract()) {
+                    final String ownFieldName = ownField.getName();
+                    if (ownFieldName.isEmpty() || ownField.isConstant() || ownField.getModifier().isAbstract()) {
                         continue;
                     }
-                    final String ownFieldName        = ownField.getName();
-                    final PsiElement ownFieldDefault = ownField.getDefaultValue();
 
+                    final PsiElement ownFieldDefault = ownField.getDefaultValue();
                     for (final PhpClass trait : traits) {
                         final Field traitField = OpenapiResolveUtil.resolveField(trait, ownFieldName);
                         if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
@@ -60,7 +68,8 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                             }
 
                             /* error case already covered by the IDEs */
-                            if (!isError) {
+                            final PsiElement ownFieldNameNode = NamedElementUtil.getNameIdentifier(ownField);
+                            if (!isError && ownFieldNameNode != null) {
                                 final String message = messagePattern
                                     .replace("%p%", ownFieldName)
                                     .replace("%t%", trait.getName())
@@ -87,28 +96,27 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                     }
                 }
                 final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
-                if (null == parent || useReportTargets.isEmpty()) {
+                if (parent == null || useReportTargets.isEmpty()) {
                     useReportTargets.clear();
                     return;
                 }
 
                 /* iterate parent non-private fields to find conflicting properties */
                 for (final Field parentField : parent.getFields()) {
-                    final PsiElement parentFieldNameNode = NamedElementUtil.getNameIdentifier(parentField);
-                    final PhpModifier modifier           = parentField.getModifier();
-                    if (null == parentFieldNameNode || parentField.isConstant() || modifier.isPrivate() || modifier.isAbstract()) {
+                    final String parentFieldName = parentField.getName();
+                    final PhpModifier modifier   = parentField.getModifier();
+                    if (parentFieldName.isEmpty() || parentField.isConstant() || modifier.isPrivate() || modifier.isAbstract()) {
                         continue;
                     }
-                    final String parentFieldName        = parentField.getName();
-                    final PsiElement parentFieldDefault = parentField.getDefaultValue();
 
+                    final PsiElement parentFieldDefault = parentField.getDefaultValue();
                     for (final PhpClass trait : traits) {
                         final Field traitField = OpenapiResolveUtil.resolveField(trait, parentFieldName);
                         if (traitField != null) {
                             final PsiElement traitFieldDefault = traitField.getDefaultValue();
 
                             final boolean isError;
-                            if (null == parentFieldDefault || null == traitFieldDefault) {
+                            if (parentFieldDefault == null || traitFieldDefault == null) {
                                 isError = traitFieldDefault != parentFieldDefault;
                             } else {
                                 isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);

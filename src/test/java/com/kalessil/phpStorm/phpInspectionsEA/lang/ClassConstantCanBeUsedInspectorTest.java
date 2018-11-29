@@ -9,9 +9,9 @@ final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFix
         inspector.IMPORT_CLASSES_ON_QF                  = true;
         inspector.USE_RELATIVE_QF                       = true;
         inspector.LOOK_ROOT_NS_UP                       = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/lang/classConstant/class-in-the-same-namespace.php");
         myFixture.configureByFile("testData/fixtures/lang/classConstant/class-name-constant-ns.php");
-        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
@@ -27,8 +27,8 @@ final public class ClassConstantCanBeUsedInspectorTest extends PhpCodeInsightFix
         inspector.IMPORT_CLASSES_ON_QF                  = true;
         inspector.USE_RELATIVE_QF                       = true;
         inspector.LOOK_ROOT_NS_UP                       = true;
-        myFixture.configureByFile("testData/fixtures/lang/classConstant/class-name-constant-collisions.php");
         myFixture.enableInspections(inspector);
+        myFixture.configureByFile("testData/fixtures/lang/classConstant/class-name-constant-collisions.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));

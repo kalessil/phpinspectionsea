@@ -33,6 +33,10 @@ final public class OpenapiTypesUtil {
         return expression instanceof Function && ((Function) expression).isClosure();
     }
 
+    static public boolean isString(@Nullable PsiElement expression) {
+        return expression != null && expression.getNode().getElementType() == PhpElementTypes.STRING;
+    }
+
     static public boolean isAssignment(@Nullable PsiElement expression) {
         if (is(expression, PhpElementTypes.ASSIGNMENT_EXPRESSION)) {
             return OpenapiPsiSearchUtil.findAssignmentOperator((AssignmentExpression) expression) != null;

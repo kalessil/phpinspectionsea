@@ -96,7 +96,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PackedHashtableOptimizationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnqualifiedReferenceInspection"                displayName="Unqualified function/constant reference"
-        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
+        groupName="Performance"                                   enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnqualifiedReferenceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ExplodeMissUseInspection"                      displayName="'explode(...)' misused"
@@ -300,7 +300,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.SuspiciousLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ReferenceMismatchInspection"                   displayName="Reference mismatch"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        groupName="Probable bugs"                                 enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byReference.ReferenceMismatchInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="SwitchContinuationInLoopInspection"            displayName="Continue misbehaviour in switch"
@@ -882,11 +882,11 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.parameters.CallableParameterUseCaseInTypeContextInspection"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ClassOverridesFieldOfSuperClassInspection"       displayName="Class overrides a field of a parent class"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassOverridesFieldOfSuperClassInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="LongInheritanceChainInspection"                  displayName="Long inheritance chain"
-        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.LongInheritanceChainInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="PropertyCanBeStaticInspection"                   displayName="Property could be static"

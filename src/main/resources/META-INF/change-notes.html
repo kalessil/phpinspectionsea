@@ -1,22 +1,19 @@
 <html>
-Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Maintenance release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Class mocking correctness: new patterns<br/>
-- Null coalescing operator can be used: new patterns<br/>
-- Passing arguments by reference correctness: new patterns<br/>
-- PhpUnit: API deprecations: implemented<br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
-- Switch-case could be simplified: new patterns<br/>
-- 'yield from' can be used: implemented<br/>
+- CallableParameterUseCaseInTypeContextInspection: resolved false-positives (multiple cases)<br/>
+- DisconnectedForeachInstructionInspector: resolved a false-positive (outer loop variables)<br/>
+- ForeachSourceInspector: resolved a false-positive (type-hinted value)<br/>
+- TypeUnsafeComparisonInspector: multiple bug-fixes<br/>
+- NullCoalescingOperatorCanBeUsedInspector: resolved a false-positive (assignment by reference)<br/>
+- NullCoalescingOperatorCanBeUsedInspector: QF bug-fixes<br/>
+- NullCoalescingOperatorCanBeUsedInspector: new settings<br/>
+- PhpUnitTestsInspector: new settings<br/>
 <br/>
-- Callable parameter usage violates definition: resolved a false-positive (static)<br/>
-- General '\Exception' is thrown: QF bug-fix<br/>
-- Null reference: resolved false-positives (multiple cases)<br/>
-- One-time use variables: resolved false-positives (multiple cases)<br/>
-- Magic methods validity: resolved a false-positive (__set_state and static)<br/>
-- Nested not operators usage: fixed a crash report<br/>
-- 'substr(...)' used as index-based access: resolved a false-positive (non-string types)<br/>
-- ::class constant usage correctness: resolved false-positives (multiple cases)<br/>
+- Overall performance has been optimized<br/>
+- SuspiciousBinaryOperationInspector: new patterns<br/>
+- ReferenceMismatchInspector (Reference mismatch): dropped<br/>
+- PhpUnitTestsInspector: new patterns<br/>
 <br/>
 <hr/>
 </html>

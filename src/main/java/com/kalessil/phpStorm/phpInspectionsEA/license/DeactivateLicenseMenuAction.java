@@ -15,14 +15,12 @@ final public class DeactivateLicenseMenuAction extends AnAction implements DumbA
     public void update(AnActionEvent event) {
         final Presentation presentation = event.getPresentation();
         presentation.setVisible(true);
-        presentation.setEnabled(false);
+        presentation.setEnabled(true);
 
         final LicenseService service = EAUltimateApplicationComponent.getLicenseService();
         if (service != null && service.shouldCheckPluginLicense() && service.isClientInitialized()) {
             try {
-                if (service.isActiveLicense()) {
-                    presentation.setEnabled(true);
-                }
+                presentation.setEnabled(service.isActiveLicense());
             } catch (TurboActivateException serviceError) {
                 presentation.setEnabled(false);
             }

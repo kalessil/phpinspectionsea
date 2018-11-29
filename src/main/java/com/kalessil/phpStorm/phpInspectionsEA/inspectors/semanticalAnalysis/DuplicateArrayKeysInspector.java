@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
+import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
@@ -25,8 +26,8 @@ import java.util.Map;
  */
 
 public class DuplicateArrayKeysInspector extends BasePhpInspection {
-    private static final String messageDuplicateKey  = "The key is duplicated, but value is different from the previously defined.";
-    private static final String messageDuplicatePair = "The key-value pair is duplicated, you can safely remove it.";
+    private static final String messageDuplicateKey  = "The key is duplicated (and you should remove the outdated one).";
+    private static final String messageDuplicatePair = "The key-value pair is duplicated (and you can safely remove it).";
 
     @NotNull
     public String getShortName() {
@@ -39,7 +40,7 @@ public class DuplicateArrayKeysInspector extends BasePhpInspection {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
                 final Map<String, PsiElement> processed = new HashMap<>();
-                expression.getHashElements().forEach(pair -> {
+                for (final ArrayHashElement pair : expression.getHashElements()) {
                     final PhpPsiElement key = pair.getKey();
                     if (key instanceof StringLiteralExpression && key.getFirstPsiChild() == null) {
                         final PsiElement value = pair.getValue();
@@ -57,7 +58,7 @@ public class DuplicateArrayKeysInspector extends BasePhpInspection {
                             processed.put(literal, value);
                         }
                     }
-                });
+                }
                 processed.clear();
             }
         };

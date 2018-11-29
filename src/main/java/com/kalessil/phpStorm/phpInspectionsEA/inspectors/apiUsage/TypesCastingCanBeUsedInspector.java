@@ -4,7 +4,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -14,7 +13,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -112,16 +110,11 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression literal) {
-                if (
-                    REPORT_INLINES &&
-                    !literal.isHeredoc() &&
-                    !(ExpressionSemanticUtil.getBlockScope(literal) instanceof PhpDocComment)
-                ) {
+                if (REPORT_INLINES && OpenapiTypesUtil.isString(literal) && !literal.isHeredoc()) {
                     final PsiElement[] children = literal.getChildren();
                     if (children.length == 1) {
-                        final boolean isTarget =
-                                children[0].getPrevSibling() == literal.getFirstChild() &&
-                                children[0].getNextSibling() == literal.getLastChild();
+                        final boolean isTarget = children[0].getPrevSibling() == literal.getFirstChild() &&
+                                                 children[0].getNextSibling() == literal.getLastChild();
                         if (isTarget) {
                             final PsiElement candidate = children[0].getFirstChild();
                             final boolean isWrapped    = OpenapiTypesUtil.is(candidate, PhpTokenTypes.chLBRACE);

@@ -33,7 +33,7 @@ import java.util.*;
 public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
     // Inspection options.
     public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = false;
-    public boolean SUGGEST_TO_USE_NULL_COMPARISON  = true;
+    public boolean SUGGEST_TO_USE_NULL_COMPARISON  = false;
     public boolean REPORT_CONCATENATION_IN_INDEXES = true;
 
     // static messages for triggered messages

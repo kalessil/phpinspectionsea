@@ -2,11 +2,14 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -17,12 +20,19 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class ConcatenationWithArrayStrategy {
-    private static final String message = "Concatenation with an array doesn't make much sense here.";
+final public class InvalidArrayOperationStrategy {
+    private static final String message = "Operation on an array doesn't make much sense here.";
+
+    private final static Set<IElementType> validOperations = new HashSet<>();
+    static {
+        validOperations.add(PhpTokenTypes.opCOALESCE);
+        validOperations.add(PhpTokenTypes.opPLUS);
+        validOperations.add(PhpTokenTypes.opSPACESHIP);
+    }
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         final PsiElement operation = expression.getOperation();
-        if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opCONCAT)) {
+        if (operation != null && !validOperations.contains(operation.getNode().getElementType())) {
             final boolean isTarget = expression.getLeftOperand() instanceof ArrayCreationExpression ||
                                      expression.getRightOperand() instanceof ArrayCreationExpression;
             if (isTarget) {

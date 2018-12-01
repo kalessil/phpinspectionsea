@@ -83,8 +83,8 @@ public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspect
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Tolerate classes without contracts", TOLERATE_MISSING_CONTRACTS, (value) -> TOLERATE_MISSING_CONTRACTS = value);
-        });
+        return OptionsComponent.create((component)
+                -> component.addCheckbox("Tolerate classes without contracts", TOLERATE_MISSING_CONTRACTS, (value) -> TOLERATE_MISSING_CONTRACTS = value)
+        );
     }
 }

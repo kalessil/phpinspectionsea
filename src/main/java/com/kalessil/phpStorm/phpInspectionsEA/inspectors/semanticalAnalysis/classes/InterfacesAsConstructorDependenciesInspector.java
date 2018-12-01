@@ -17,6 +17,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspection {
+    private static final String messageMissingContract = "The parameter class doesn't implement any interfaces (contracts), consider introducing one (extensibility concerns).";
+    private static final String messageUseContract     = "The parameter should use a class interface (contract) as type instead (extensibility concerns).";
+
+    // Inspection options.
+    public boolean TOLERATE_MISSING_CONTRACTS = true;
+
     @NotNull
     public String getShortName() {
         return "InterfacesAsConstructorDependenciesInspection";
@@ -28,7 +34,7 @@ public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspect
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 final String methodName = method.getName();
-                if (methodName.equals("__construct") /* or setter */) {
+                if (methodName.equals("__construct")) {
                     final Parameter[] parameters = method.getParameters();
                     if (parameters.length > 0) {
                         final PhpIndex index = PhpIndex.getInstance(method.getProject());
@@ -52,8 +58,11 @@ public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspect
                             .filter(contract -> !contract.getNamespaceName().equals("\\") || contract.getFQN().indexOf('_') != -1)
                             .collect(Collectors.toList());
                     if (!contracts.isEmpty()) {
-                        /* do reporting here */
-
+                        holder.registerProblem(parameter, messageUseContract);
+                    } else {
+                        if (!TOLERATE_MISSING_CONTRACTS) {
+                            holder.registerProblem(parameter, messageMissingContract);
+                        }
                     }
                     contracts.clear();
                 }

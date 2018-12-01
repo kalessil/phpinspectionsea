@@ -928,6 +928,10 @@
         shortName="TestingUnfriendlyApisInspection"                 displayName="Testing unfriendly APIs"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.TestingUnfriendlyApisInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="InterfacesAsConstructorDependenciesInspection"   displayName="Interfaces as constructor dependencies"
+        groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.InterfacesAsConstructorDependenciesInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

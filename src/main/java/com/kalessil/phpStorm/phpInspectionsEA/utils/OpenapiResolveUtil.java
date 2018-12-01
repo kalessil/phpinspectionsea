@@ -81,6 +81,9 @@ final public class OpenapiResolveUtil {
                                 final boolean canTakeArgumentType = PhpType.isSubType(argumentType, result);
                                 if (canTakeArgumentType) {
                                     result = argumentType.add(functionReturnBase.get(name));
+                                } else if (argumentType.equals((new PhpType()).add(PhpType._MIXED))) {
+                                    // mixed due to e.g. default functions signatures
+                                    result = argumentType.add(functionReturnBase.get(name));
                                 }
                             }
                         }

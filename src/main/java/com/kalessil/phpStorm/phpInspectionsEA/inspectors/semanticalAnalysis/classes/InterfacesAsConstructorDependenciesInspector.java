@@ -61,9 +61,7 @@ public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspect
             }
 
             private void analyze(@NotNull Parameter parameter, @NotNull Collection<PhpClass> classes) {
-                final List<PhpClass> filtered = classes.stream()
-                        .filter(clazz -> clazz.isInterface() || clazz.isAbstract())
-                        .collect(Collectors.toList());
+                final List<PhpClass> filtered = classes.stream().filter(clazz -> !clazz.isInterface()).collect(Collectors.toList());
                 if (filtered.size() == 1) {
                     final List<PhpClass> contracts = InterfacesExtractUtil.getCrawlInheritanceTree(filtered.iterator().next(), false).stream()
                             .filter(contract -> !contract.getNamespaceName().equals("\\") || contract.getFQN().indexOf('_') != -1)

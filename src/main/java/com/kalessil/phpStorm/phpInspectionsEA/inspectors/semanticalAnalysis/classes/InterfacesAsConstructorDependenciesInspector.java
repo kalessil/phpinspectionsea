@@ -10,9 +10,11 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspection {
     @NotNull
@@ -46,10 +48,14 @@ public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspect
             private void analyze(@NotNull Parameter parameter, @NotNull Collection<PhpClass> classes) {
                 classes.removeIf(clazz -> clazz.isInterface() || clazz.isAbstract());
                 if (classes.size() == 1) {
-                    final PhpClass[] interfaces = classes.iterator().next().getImplementedInterfaces();
-                    if (interfaces.length > 0) {
+                    final List<PhpClass> contracts = InterfacesExtractUtil.getCrawlInheritanceTree(classes.iterator().next(), false).stream()
+                            .filter(contract -> !contract.getNamespaceName().equals("\\") || contract.getFQN().indexOf('_') != -1)
+                            .collect(Collectors.toList());
+                    if (!contracts.isEmpty()) {
+                        /* do reporting here */
 
                     }
+                    contracts.clear();
                 }
                 classes.clear();
             }

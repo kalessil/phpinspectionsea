@@ -130,6 +130,10 @@
         $replaces = str_replace('', '', $replaces);
         $regexes = preg_replace('', '', $regexes);
     }
+    function core_api_functions_consistency_side_effects(string $string) {
+        $string = str_replace('...', '...', $string);
+        $string = str_replace('...', '...', $string);
+    }
 
     /* false-positive: nullable objects */
     function returns_nullable_object(): ?stdClass {}

@@ -16,9 +16,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspection {
-    private static final String messageMissingContract = "The parameter class doesn't implement any interfaces (contracts), consider introducing one (extensibility concerns).";
-    private static final String messageUseContract     = "The parameter should use a class interface (contract) as type instead (extensibility concerns).";
+    private static final String messageMissingContract = "The parameters' class doesn't implement any interfaces (contracts), consider introducing one (extensibility concerns).";
+    private static final String messageUseContract     = "The parameters' type should be replaced with an interface (contract) (extensibility concerns).";
 
     // Inspection options.
     public boolean TOLERATE_MISSING_CONTRACTS = true;
@@ -52,21 +61,21 @@ public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspect
             }
 
             private void analyze(@NotNull Parameter parameter, @NotNull Collection<PhpClass> classes) {
-                classes.removeIf(clazz -> clazz.isInterface() || clazz.isAbstract());
-                if (classes.size() == 1) {
-                    final List<PhpClass> contracts = InterfacesExtractUtil.getCrawlInheritanceTree(classes.iterator().next(), false).stream()
+                final List<PhpClass> filtered = classes.stream()
+                        .filter(clazz -> clazz.isInterface() || clazz.isAbstract())
+                        .collect(Collectors.toList());
+                if (filtered.size() == 1) {
+                    final List<PhpClass> contracts = InterfacesExtractUtil.getCrawlInheritanceTree(filtered.iterator().next(), false).stream()
                             .filter(contract -> !contract.getNamespaceName().equals("\\") || contract.getFQN().indexOf('_') != -1)
                             .collect(Collectors.toList());
                     if (!contracts.isEmpty()) {
                         holder.registerProblem(parameter, messageUseContract);
-                    } else {
-                        if (!TOLERATE_MISSING_CONTRACTS) {
-                            holder.registerProblem(parameter, messageMissingContract);
-                        }
+                    } else if (!TOLERATE_MISSING_CONTRACTS) {
+                        holder.registerProblem(parameter, messageMissingContract);
                     }
                     contracts.clear();
                 }
-                classes.clear();
+                filtered.clear();
             }
         };
     }

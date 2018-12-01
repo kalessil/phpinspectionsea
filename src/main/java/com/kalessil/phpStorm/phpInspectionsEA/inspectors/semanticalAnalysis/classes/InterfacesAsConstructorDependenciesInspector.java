@@ -9,10 +9,12 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,7 +63,9 @@ public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspect
             }
 
             private void analyze(@NotNull Parameter parameter, @NotNull Collection<PhpClass> classes) {
-                final List<PhpClass> filtered = classes.stream().filter(clazz -> !clazz.isInterface()).collect(Collectors.toList());
+                final List<PhpClass> filtered = classes.stream()
+                        .filter(clazz -> !clazz.isInterface() && !clazz.isAbstract())
+                        .collect(Collectors.toList());
                 if (filtered.size() == 1) {
                     final List<PhpClass> contracts = InterfacesExtractUtil.getCrawlInheritanceTree(filtered.iterator().next(), false).stream()
                             .filter(contract -> !contract.getNamespaceName().equals("\\") || contract.getFQN().indexOf('_') != -1)
@@ -76,5 +80,11 @@ public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspect
                 filtered.clear();
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Tolerate classes without contracts", TOLERATE_MISSING_CONTRACTS, (value) -> TOLERATE_MISSING_CONTRACTS = value);
+        });
     }
 }

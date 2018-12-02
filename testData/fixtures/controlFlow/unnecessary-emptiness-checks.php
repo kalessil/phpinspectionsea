@@ -76,20 +76,20 @@ class CasesHolder {
 
     private function emptyArrayChecks($parameter, $more) {
         return [
-            is_array($parameter) && <warning descr="'is_array(...) && empty(...)' here probably can be replaced with '... === []'.">empty($parameter)</warning>,
-            is_array($parameter) && !<warning descr="'is_array(...) && !empty(...)' here probably can be replaced with '... !== []'.">empty($parameter)</warning>,
+            is_array($parameter) && empty($parameter),
+            is_array($parameter) && !empty($parameter),
 
-            is_array($parameter) && <warning descr="'is_array(...) && ...' here probably can be replaced with '... !== []'.">$parameter</warning>,
-            is_array($parameter) && !<warning descr="'is_array(...) && !...' here probably can be replaced with '... === []'.">$parameter</warning>,
+            is_array($parameter) && $parameter,
+            is_array($parameter) && !$parameter,
 
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... !== []'.">count($parameter)</warning>,
-            is_array($parameter) && !<warning descr="'is_array(...) && !count(...)' here probably can be replaced with '... === []'.">count($parameter)</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.">count($parameter)</warning>,
+            is_array($parameter) && !<warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!... && is_array(...)'.">count($parameter)</warning>,
 
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... !== []'.">count($parameter) > 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... !== []'.">count($parameter) != 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... !== []'.">count($parameter) !== 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '... === []'.">count($parameter) == 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '... === []'.">count($parameter) === 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.">count($parameter) > 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.">count($parameter) != 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.">count($parameter) !== 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!... && is_array(...)'.">count($parameter) == 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!... && is_array(...)'.">count($parameter) === 0</warning>,
 
             is_array($parameter) && empty($more),
             is_array($parameter) && !empty($more),

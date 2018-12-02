@@ -42,12 +42,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     private static final String messageEmpty                 = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
     private static final String messageNotIsset              = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
     private static final String messageIsset                 = "'!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
-    private static final String messageNotEmptyArrayImplicit = "'is_array(...) && !empty(...)' here probably can be replaced with '... !== []'.";
-    private static final String messageEmptyArrayImplicit    = "'is_array(...) && empty(...)' here probably can be replaced with '... === []'.";
-    private static final String messageNotEmptyArrayIndirect = "'is_array(...) && ...' here probably can be replaced with '... !== []'.";
-    private static final String messageEmptyArrayIndirect    = "'is_array(...) && !...' here probably can be replaced with '... === []'.";
-    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here probably can be replaced with '... !== []'.";
-    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here probably can be replaced with '... === []'.";
+    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.";
+    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here probably can be replaced with '!... && is_array(...)'.";
     private static final String messageUseCoalescing         = "'%s' can be used instead (reduces cognitive load).";
 
     // Inspection options.
@@ -77,8 +73,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            /* [!]empty($argument) -> [!]$argument: do not report as it add much warnings is typical projects */
-
             @Override
             public void visitPhpIsset(@NotNull PhpIsset isset) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
@@ -146,7 +140,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 /* firstly suggest simplifications */
                                 if (SUGGEST_SIMPLIFICATIONS) {
                                     if (operator == PhpTokenTypes.opAND) {
-                                        this.analyzeForUsingEmptyArrayComparison(argument, contexts, reported);
+                                        this.analyzeForUsingEmptyArrayComparison(contexts, reported);
                                     }
 
                                     if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
@@ -205,7 +199,6 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
             }
 
             private void analyzeForUsingEmptyArrayComparison(
-                    @NotNull PsiElement argument,
                     @NotNull List<PsiElement> contexts,
                     @NotNull Set<PsiElement> reported
             ) {
@@ -217,21 +210,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     final Optional<PsiElement> first = contexts.stream()
                             .filter(e -> e instanceof PhpEmpty || e instanceof Variable)
                             .findFirst();
-                    if (first.isPresent()) {
-                        final PsiElement expression = first.get();
-                        final PsiElement node       = this.target(expression, argument);
-                        if (reported.add(node)) {
-                            /* is_array(...) && [!]empty(...) */
-                            if (expression instanceof PhpEmpty) {
-                                final String message = this.isInverted(expression) ? messageNotEmptyArrayImplicit : messageEmptyArrayImplicit;
-                                holder.registerProblem(node, message);
-                            } else if (expression instanceof Variable) {
-                                /* is_array($...) && [!]$... */
-                                final String message = this.isInverted(expression) ? messageEmptyArrayIndirect : messageNotEmptyArrayIndirect;
-                                holder.registerProblem(node, message);
-                            }
-                        }
-                    } else {
+                    if (!first.isPresent()) {
                         for (final PsiElement expression : contexts) {
                             if (expression instanceof BinaryExpression) {
                                 /* is_array(...) && count() ([!]==[=]|>) 0 */

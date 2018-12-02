@@ -367,6 +367,8 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                     } else {
                         result = STATE_DEFINED;
                     }
+                } else if (expression instanceof FunctionReference) {
+                    result = 0;
                 } else {
                     result = isInverted ? (STATE_DEFINED | STATE_IS_FALSY) : (STATE_DEFINED | STATE_NOT_FALSY);
                 }

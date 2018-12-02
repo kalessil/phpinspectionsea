@@ -24,8 +24,6 @@ import java.util.Set;
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
- * (c) Funivan <alotofall@gmail.com>
- * (c) Artem Khvastunov <contact@artspb.me>
  * (c) Vladimir Reznichenko <kalessil@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -37,7 +35,7 @@ public class TestingUnfriendlyApisInspector extends BasePhpInspection {
     public int COMPLAIN_THRESHOLD = 5;
     public int SCREAM_THRESHOLD   = 7;
 
-    private final static String messagePattern = "%s mocks has been introduced here: either the test case should be refactored, either API has design issues.";
+    private final static String messagePattern = "%s mocks has been introduced here: either the test case should be refactored or API has design issues.";
 
     private final static Set<String> methods = new HashSet<>();
     static {

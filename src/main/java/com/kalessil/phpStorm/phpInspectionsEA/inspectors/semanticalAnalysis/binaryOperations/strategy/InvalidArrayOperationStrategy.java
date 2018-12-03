@@ -27,7 +27,10 @@ final public class InvalidArrayOperationStrategy {
     static {
         validOperations.add(PhpTokenTypes.opCOALESCE);
         validOperations.add(PhpTokenTypes.opPLUS);
-        validOperations.add(PhpTokenTypes.opSPACESHIP);
+        validOperations.add(PhpTokenTypes.opIDENTICAL);
+        validOperations.add(PhpTokenTypes.opNOT_IDENTICAL);
+        validOperations.add(PhpTokenTypes.opEQUAL);
+        validOperations.add(PhpTokenTypes.opNOT_EQUAL);
     }
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {

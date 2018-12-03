@@ -138,7 +138,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
 
                     /* extract parts into local variables for further processing */
-                    PsiElement firstPart  = callableParts.size() > 0 ? callableParts.get(0) : null;
+                    PsiElement firstPart  = !callableParts.isEmpty() ? callableParts.get(0) : null;
                     PsiElement secondPart = callableParts.size() > 1 ? callableParts.get(1) : null;
                     callableParts.clear();
 

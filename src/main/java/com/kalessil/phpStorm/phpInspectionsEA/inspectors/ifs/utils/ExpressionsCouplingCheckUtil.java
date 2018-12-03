@@ -21,7 +21,7 @@ final public class ExpressionsCouplingCheckUtil {
         if (first instanceof AssignmentExpression) {
             assign.add((AssignmentExpression) first);
         }
-        if (assign.size() > 0) {
+        if (!assign.isEmpty()) {
             /* extract all containers */
             for (AssignmentExpression expression : assign) {
                 if (expression instanceof MultiassignmentExpression) {
@@ -33,11 +33,11 @@ final public class ExpressionsCouplingCheckUtil {
             }
             assign.clear();
 
-            if (expressionsInFirst.size() > 0) {
+            if (!expressionsInFirst.isEmpty()) {
                 /* now find containers usage, we can perform same class search multiple time - perhaps improvements possible */
                 for (final PsiElement expression : expressionsInFirst) {
                     final Collection<PsiElement> findings = PsiTreeUtil.findChildrenOfType(second, expression.getClass());
-                    if (findings.size() > 0) {
+                    if (!findings.isEmpty()) {
                         for (final PsiElement subject : findings) {
                             if (OpenapiEquivalenceUtil.areEqual(subject, expression)) {
                                 isCoupled = true;
@@ -64,7 +64,7 @@ final public class ExpressionsCouplingCheckUtil {
         /* TODO: non-static method/property */
         final Set<PsiElement> expressionsInSecond           = new HashSet<>();
         final Collection<ArrayAccessExpression> arrayAccess = PsiTreeUtil.findChildrenOfType(second, ArrayAccessExpression.class);
-        if (arrayAccess.size() > 0) {
+        if (!arrayAccess.isEmpty()) {
             /* extract array accesses, get unique variable expressions from them */
             for (ArrayAccessExpression expression : arrayAccess) {
                 /* if expression[], do not store it */

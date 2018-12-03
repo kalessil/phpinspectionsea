@@ -64,7 +64,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                 }
 
                 final List<Variable> variables = foreach.getVariables();
-                if (variables.size() > 0) {
+                if (!variables.isEmpty()) {
                     PsiElement childNode = foreach.getFirstChild();
                     while (null != childNode) {
                         if (childNode.getClass() == LeafPsiElement.class && PhpTokenTypes.kwLIST == childNode.getNode().getElementType()) {

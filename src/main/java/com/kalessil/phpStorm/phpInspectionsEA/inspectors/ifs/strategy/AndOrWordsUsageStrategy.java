@@ -28,7 +28,7 @@ final public class AndOrWordsUsageStrategy {
             expressions.add((BinaryExpression) condition);
         }
 
-        if (expressions.size() > 0) {
+        if (!expressions.isEmpty()) {
             for (BinaryExpression expression : expressions) {
                 final PsiElement operation = expression.getOperation();
                 if (null == operation) {

@@ -71,7 +71,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 /* cleanup the tag and ensure we have anything to check */
                 final String tagValue     = tag.getTagValue().replaceAll("[^\\p{L}\\p{Nd}]+", " ").trim();
                 final String[] suppressed = tagValue.split("\\s+");
-                if (0 == suppressed.length || 0 == tagValue.length()) {
+                if (0 == suppressed.length || tagValue.isEmpty()) {
                     return;
                 }
 
@@ -84,7 +84,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 }
 
                 /* report unknown inspections; if inspections provided by not loaded plugin they are reported */
-                if (reported.size() > 0) {
+                if (!reported.isEmpty()) {
                     final PsiElement target = tag.getFirstChild();
                     if (null != target) {
                         holder.registerProblem(target, message.replace("%i%", String.join(", ", reported)), ProblemHighlightType.WEAK_WARNING);
@@ -118,7 +118,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
 
                 final Attribute name   = node.getAttribute("shortName");
                 final String shortName = null == name ? null : name.getValue();
-                if (null != shortName && shortName.length() > 0) {
+                if (null != shortName && !shortName.isEmpty()) {
                     names.add(shortName);
                 }
             }

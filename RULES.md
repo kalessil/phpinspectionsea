@@ -226,6 +226,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | IteratorToArrayKeysCollisionInspection          | 'iterator_to_array(...)' keys merging correctness         | yes | yes | yes  | no  |
 | Probable bugs        | LateStaticBindingInspection                     | Late static binding usage correctness                     | yes | yes | yes  | no  |
 | Probable bugs        | DuplicateArrayKeysInspection                    | Duplicate array keys                                      | n/a | yes | n/a  | no  |
+| Probable bugs        | TraitsMethodsConflictsInspection                | Traits methods conflicts resolution                       | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

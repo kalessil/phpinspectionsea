@@ -40,20 +40,22 @@ public class TraitsMethodsConflictsInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(clazz))                  { return; }
 
-                final PhpClass[] traits = clazz.getTraits();
-                if (traits.length > 1) {
+                if (clazz.getTraitNames().length > 1) {
                     final Set<String> classMethods = Arrays.stream(clazz.getOwnMethods())
                             .map(PhpNamedElement::getName)
                             .collect(Collectors.toSet());
                     final Map<String, PhpClass> traitsMethods = new HashMap<>();
-                    for (final PhpClass trait : traits) {
-                        for (final Method method : trait.getOwnMethods()) {
+                    for (final Map.Entry<PhpClass, ClassReference> pair : this.extractTraits(clazz).entrySet()) {
+                        for (final Method method : pair.getKey().getOwnMethods()) {
                             final String methodName = method.getName();
                             if (!classMethods.contains(methodName)) {
                                 if (traitsMethods.containsKey(methodName)) {
-                                    this.report(clazz, methodName, trait, traitsMethods.get(methodName));
+                                    holder.registerProblem(
+                                            pair.getValue(),
+                                            String.format(messagePattern, methodName, traitsMethods.get(methodName).getFQN())
+                                    );
                                 }
-                                traitsMethods.putIfAbsent(methodName, trait);
+                                traitsMethods.putIfAbsent(methodName, pair.getKey());
                             }
                         }
                     }
@@ -62,26 +64,19 @@ public class TraitsMethodsConflictsInspector extends BasePhpInspection {
                 }
             }
 
-            private void report(
-                    @NotNull PhpClass clazz,
-                    @NotNull String methodName,
-                    @NotNull PhpClass trigger,
-                    @NotNull PhpClass provider
-            ) {
-                for (final PsiElement child: clazz.getChildren()) {
+            private Map<PhpClass, ClassReference> extractTraits(@NotNull PhpClass clazz) {
+                final Map<PhpClass, ClassReference> traits = new LinkedHashMap<>();
+                for (final PsiElement child : clazz.getChildren()) {
                     if (child instanceof PhpUseList) {
                         for (final ClassReference reference : PsiTreeUtil.findChildrenOfType(child, ClassReference.class)) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                            if (resolved instanceof PhpClass && trigger == resolved) {
-                                holder.registerProblem(
-                                        reference,
-                                        String.format(messagePattern, methodName, provider.getFQN())
-                                );
-                                return;
+                            if (resolved instanceof PhpClass) {
+                                traits.put((PhpClass) resolved, reference);
                             }
                         }
                     }
                 }
+                return traits;
             }
         };
     }

@@ -12,7 +12,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -79,14 +81,16 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                     if (namesLengthDelta != levenshteinDistance) {
                                         final PhpClass clazz = method.getContainingClass();
                                         if (clazz != null) {
-                                            final int levenshteinThreshold = Math.min(fieldNameNormalized.length(), methodNameNormalized.length());
-                                            final boolean hasAlternatives  = clazz.getFields().stream()
+                                            final List<String> alternatives = new ArrayList<>();
+                                            final int levenshteinThreshold  = Math.min(fieldNameNormalized.length(), methodNameNormalized.length());
+                                            final boolean hasAlternatives   = clazz.getFields().stream()
                                                     .filter(field   -> !field.isConstant() && !fieldName.equals(field.getName()))
                                                     .anyMatch(field -> {
-                                                        final String normalized = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
-                                                        if (normalized.length() <= methodNameNormalized.length()) {
-                                                            final int levenshteinAlternative = StringUtils.getLevenshteinDistance(normalized, methodNameNormalized);
-                                                            return levenshteinAlternative < levenshteinDistance && levenshteinAlternative < levenshteinThreshold;
+                                                        final String normalized          = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
+                                                        final int levenshteinAlternative = StringUtils.getLevenshteinDistance(normalized, methodNameNormalized);
+                                                        if (levenshteinAlternative < levenshteinDistance && levenshteinAlternative < levenshteinThreshold) {
+                                                            alternatives.add(field.getName());
+                                                            return true;
                                                         }
                                                         return false;
                                                     });
@@ -96,7 +100,7 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                                 if (!isDelegating) {
                                                     holder.registerProblem(
                                                             NamedElementUtil.getNameIdentifier(method),
-                                                            String.format(messagePattern, fieldName, levenshteinDistance)
+                                                            String.format(messagePattern, fieldName, alternatives.get(0))
                                                     );
                                                 }
                                             }

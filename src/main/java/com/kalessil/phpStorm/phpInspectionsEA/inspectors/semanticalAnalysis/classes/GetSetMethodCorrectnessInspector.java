@@ -57,7 +57,11 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                 final PsiElement base = reference.getFirstChild();
                                 if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
                                     final PsiElement context = reference.getParent();
-                                    if (!(context instanceof MemberReference) && !(context instanceof ParameterList)) {
+                                    if (
+                                            !(context instanceof MemberReference) &&
+                                            !(context instanceof ParameterList) &&
+                                            !(context instanceof ArrayAccessExpression)
+                                    ) {
                                         usedFields.add(reference.getName());
                                     }
                                 }

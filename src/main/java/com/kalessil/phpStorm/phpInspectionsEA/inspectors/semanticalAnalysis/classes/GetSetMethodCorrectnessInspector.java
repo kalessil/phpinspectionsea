@@ -67,23 +67,20 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                             }
                             if (usedFields.size() == 1) {
                                 final String fieldName            = usedFields.iterator().next();
-                                final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").toLowerCase();
+                                final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").replaceAll("_", "").toLowerCase();
                                 final String fieldNameNormalized  = fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
-                                /* TODO: or we searching fields with lower Levenshtein distance */
-                                if (!methodNameNormalized.contains(fieldNameNormalized) && !fieldNameNormalized.contains(methodNameNormalized)) {
-                                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                                    if (nameNode != null) {
-                                        final boolean isDelegating = PsiTreeUtil.findChildrenOfType(body, MethodReference.class).stream()
-                                                .anyMatch(reference -> methodName.equals(reference.getName()));
-                                        if (!isDelegating) {
-                                            final int similarity = StringUtils.getLevenshteinDistance(methodName, fieldName);
-                                            holder.registerProblem(
-                                                    nameNode,
-                                                    String.format(messagePattern, fieldName, similarity)
-                                            );
-                                        }
+                                final int levenshteinDistance     = StringUtils.getLevenshteinDistance(fieldNameNormalized, methodNameNormalized);
+                                if (levenshteinDistance > 0) {
+                                    final int namesLengthDelta = Math.abs(methodNameNormalized.length() - fieldNameNormalized.length());
+                                    if (namesLengthDelta != levenshteinDistance) {
+                                        /* TODO: search for better fitted field and report only if found one */
+                                        holder.registerProblem(
+                                                NamedElementUtil.getNameIdentifier(method),
+                                                String.format(messagePattern, fieldName, levenshteinDistance)
+                                        );
                                     }
                                 }
+
                             }
                             usedFields.clear();
                         }

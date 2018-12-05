@@ -49,7 +49,7 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                     final boolean isTargetMethod = !method.isAbstract() &&
                                                    method.getAccess().isPublic() &&
                                                    method.getParameters().length < 2;
-                    if (isTargetMethod) {
+                    if (isTargetMethod && !this.isTestContext(method)) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                         if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
                             final Set<String> usedFields = new HashSet<>();

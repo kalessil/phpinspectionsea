@@ -73,11 +73,22 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                 if (levenshteinDistance > 0) {
                                     final int namesLengthDelta = Math.abs(methodNameNormalized.length() - fieldNameNormalized.length());
                                     if (namesLengthDelta != levenshteinDistance) {
-                                        /* TODO: search for better fitted field and report only if found one */
-                                        holder.registerProblem(
-                                                NamedElementUtil.getNameIdentifier(method),
-                                                String.format(messagePattern, fieldName, levenshteinDistance)
-                                        );
+                                        final PhpClass clazz = method.getContainingClass();
+                                        if (clazz != null) {
+                                            final boolean hasAlternatives = clazz.getFields().stream()
+                                                    .filter(field   -> !field.isConstant())
+                                                    .anyMatch(field -> {
+                                                        final String normalized          = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
+                                                        final int levenshteinAlternative = StringUtils.getLevenshteinDistance(normalized, methodNameNormalized);
+                                                        return levenshteinAlternative < levenshteinDistance && levenshteinAlternative < fieldNameNormalized.length();
+                                                    });
+                                            if (hasAlternatives) {
+                                                holder.registerProblem(
+                                                        NamedElementUtil.getNameIdentifier(method),
+                                                        String.format(messagePattern, fieldName, levenshteinDistance)
+                                                );
+                                            }
+                                        }
                                     }
                                 }
 

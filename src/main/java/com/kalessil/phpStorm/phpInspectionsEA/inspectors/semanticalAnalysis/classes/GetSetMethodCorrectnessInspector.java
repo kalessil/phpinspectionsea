@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
  */
 
 public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
-    private static final String messagePattern = "It's probably a wrong field was used here (%s).";
+    private static final String messagePattern = "It's probably a wrong field was used here (%s, %s).";
 
     private static final Pattern regexTargetName;
     static {
@@ -55,20 +56,32 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                             for (final FieldReference reference : PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {
                                 final PsiElement base = reference.getFirstChild();
                                 if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
-                                    usedFields.add(reference.getName());
+                                    final PsiElement context = reference.getParent();
+                                    if (!(context instanceof MemberReference) && !(context instanceof ParameterList)) {
+                                        usedFields.add(reference.getName());
+                                    }
                                 }
                                 if (usedFields.size() > 1) {
                                     break;
                                 }
                             }
                             if (usedFields.size() == 1) {
-                                /* TODO: words extraction and intersection, also before reporting ensure there are alternatives */
+                                final String fieldName            = usedFields.iterator().next();
                                 final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").toLowerCase();
-                                final String fieldNameNormalized  = usedFields.iterator().next().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
+                                final String fieldNameNormalized  = fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
+                                /* TODO: or we searching fields with lower Levenshtein distance */
                                 if (!methodNameNormalized.contains(fieldNameNormalized) && !fieldNameNormalized.contains(methodNameNormalized)) {
                                     final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                                     if (nameNode != null) {
-                                        holder.registerProblem(nameNode, String.format(messagePattern, usedFields.iterator().next()));
+                                        final boolean isDelegating = PsiTreeUtil.findChildrenOfType(body, MethodReference.class).stream()
+                                                .anyMatch(reference -> methodName.equals(reference.getName()));
+                                        if (!isDelegating) {
+                                            final int similarity = StringUtils.getLevenshteinDistance(methodName, fieldName);
+                                            holder.registerProblem(
+                                                    nameNode,
+                                                    String.format(messagePattern, fieldName, similarity)
+                                            );
+                                        }
                                     }
                                 }
                             }

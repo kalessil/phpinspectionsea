@@ -88,10 +88,14 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                                         return levenshteinAlternative < levenshteinDistance && levenshteinAlternative < levenshteinThreshold;
                                                     });
                                             if (hasAlternatives) {
-                                                holder.registerProblem(
-                                                        NamedElementUtil.getNameIdentifier(method),
-                                                        String.format(messagePattern, fieldName, levenshteinDistance)
-                                                );
+                                                final boolean isDelegating = PsiTreeUtil.findChildrenOfType(body, MethodReference.class).stream()
+                                                        .anyMatch(reference -> methodName.equals(reference.getName()));
+                                                if (!isDelegating) {
+                                                    holder.registerProblem(
+                                                            NamedElementUtil.getNameIdentifier(method),
+                                                            String.format(messagePattern, fieldName, levenshteinDistance)
+                                                    );
+                                                }
                                             }
                                         }
                                     }

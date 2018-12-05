@@ -75,12 +75,13 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                     if (namesLengthDelta != levenshteinDistance) {
                                         final PhpClass clazz = method.getContainingClass();
                                         if (clazz != null) {
-                                            final boolean hasAlternatives = clazz.getFields().stream()
+                                            final int levenshteinThreshold = Math.min(fieldNameNormalized.length(), methodNameNormalized.length());
+                                            final boolean hasAlternatives  = clazz.getFields().stream()
                                                     .filter(field   -> !field.isConstant())
                                                     .anyMatch(field -> {
                                                         final String normalized          = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
                                                         final int levenshteinAlternative = StringUtils.getLevenshteinDistance(normalized, methodNameNormalized);
-                                                        return levenshteinAlternative < levenshteinDistance && levenshteinAlternative < fieldNameNormalized.length();
+                                                        return levenshteinAlternative < levenshteinDistance && levenshteinAlternative < levenshteinThreshold;
                                                     });
                                             if (hasAlternatives) {
                                                 holder.registerProblem(

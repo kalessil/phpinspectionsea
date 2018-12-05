@@ -81,11 +81,14 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                         if (clazz != null) {
                                             final int levenshteinThreshold = Math.min(fieldNameNormalized.length(), methodNameNormalized.length());
                                             final boolean hasAlternatives  = clazz.getFields().stream()
-                                                    .filter(field   -> !field.isConstant())
+                                                    .filter(field   -> !field.isConstant() && !fieldName.equals(field.getName()))
                                                     .anyMatch(field -> {
-                                                        final String normalized          = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
-                                                        final int levenshteinAlternative = StringUtils.getLevenshteinDistance(normalized, methodNameNormalized);
-                                                        return levenshteinAlternative < levenshteinDistance && levenshteinAlternative < levenshteinThreshold;
+                                                        final String normalized = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
+                                                        if (normalized.length() <= methodNameNormalized.length()) {
+                                                            final int levenshteinAlternative = StringUtils.getLevenshteinDistance(normalized, methodNameNormalized);
+                                                            return levenshteinAlternative < levenshteinDistance && levenshteinAlternative < levenshteinThreshold;
+                                                        }
+                                                        return false;
                                                     });
                                             if (hasAlternatives) {
                                                 final boolean isDelegating = PsiTreeUtil.findChildrenOfType(body, MethodReference.class).stream()

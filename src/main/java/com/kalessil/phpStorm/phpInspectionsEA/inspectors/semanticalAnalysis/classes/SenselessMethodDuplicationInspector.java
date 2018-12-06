@@ -67,8 +67,11 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 /* ensure parent, parent methods are existing and contains the same amount of expressions */
                 final PhpClass parent           = OpenapiResolveUtil.resolveSuperClass(clazz);
                 final Method parentMethod       = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, method.getName());
-                final GroupStatement parentBody = null == parentMethod ? null : ExpressionSemanticUtil.getGroupStatement(parentMethod);
-                if (parentBody == null || countExpressions != ExpressionSemanticUtil.countExpressionsInGroup(parentBody)) {
+                if (parentMethod == null || parentMethod.isAbstract()) {
+                    return;
+                }
+                final GroupStatement parentBody = ExpressionSemanticUtil.getGroupStatement(parentMethod);
+                if (parentBody == null || ExpressionSemanticUtil.countExpressionsInGroup(parentBody) != countExpressions) {
                     return;
                 }
 
@@ -98,7 +101,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
 
                 /* methods seems to be identical: resolve used classes to avoid ns/imports magic */
                 final Collection<String> collection = this.getUsedReferences(body);
-                if (!collection.containsAll(this.getUsedReferences(parentBody))) {
+                if (!collection.isEmpty() && !collection.containsAll(this.getUsedReferences(parentBody))) {
                     collection.clear();
                     return;
                 }
@@ -108,8 +111,12 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 if (methodName != null) {
                     final boolean canFix = !parentMethod.getAccess().isPrivate();
                     if (method.getAccess().equals(parentMethod.getAccess())) {
-                        final String message = messagePatternIdentical.replace("%s%", method.getName());
-                        holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new DropMethodFix() : null);
+                        holder.registerProblem(
+                                methodName,
+                                messagePatternIdentical.replace("%s%", method.getName()),
+                                ProblemHighlightType.WEAK_WARNING,
+                                canFix ? new DropMethodFix() : null
+                        );
                     } else {
                         final String message = messagePatternProxy.replace("%s%", method.getName());
                         holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new ProxyCallFix() : null);
@@ -118,22 +125,15 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
             }
 
             private Collection<String> getUsedReferences(@NotNull GroupStatement body) {
-                final Collection<PhpReference> references = PsiTreeUtil.findChildrenOfAnyType(
-                        body, ClassReference.class, ConstantReference.class, FunctionReference.class);
-
-                final Set<String> fqns = new HashSet<>(references.size());
-                for (final PhpReference reference : references) {
-                    if (reference instanceof MethodReference) {
-                        continue;
-                    }
-
-                    final PsiElement entry = OpenapiResolveUtil.resolveReference(reference);
-                    if (entry instanceof PhpNamedElement) {
-                        fqns.add(((PhpNamedElement) entry).getFQN());
+                final Set<String> fqns = new HashSet<>();
+                for (final PhpReference reference : PsiTreeUtil.findChildrenOfAnyType(body, ClassReference.class, ConstantReference.class, FunctionReference.class)) {
+                    if (!(reference instanceof MethodReference)) {
+                        final PsiElement entry = OpenapiResolveUtil.resolveReference(reference);
+                        if (entry instanceof PhpNamedElement) {
+                            fqns.add(((PhpNamedElement) entry).getFQN());
+                        }
                     }
                 }
-                references.clear();
-
                 return fqns;
             }
         };

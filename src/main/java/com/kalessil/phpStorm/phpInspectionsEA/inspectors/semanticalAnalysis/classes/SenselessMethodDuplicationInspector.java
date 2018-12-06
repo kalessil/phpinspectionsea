@@ -48,7 +48,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 /* process only real classes and methods */
-                if (method.isAbstract() || method.isDeprecated()) {
+                if (method.isAbstract() || method.isDeprecated() || this.isTestContext(method)) {
                     return;
                 }
                 final PhpClass clazz = method.getContainingClass();

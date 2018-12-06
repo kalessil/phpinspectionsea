@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -34,8 +33,8 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
     public int MAX_METHOD_SIZE = 20;
     /* TODO: configurable via drop-down; clean code: 20 lines/method; PMD: 50; Checkstyle: 100 */
 
-    private static final String messagePatternIdentical = "'%s%' method can be dropped, as it identical to parent's one.";
-    private static final String messagePatternProxy     = "'%s%' method should call parent's one instead of duplicating code.";
+    private static final String messagePatternIdentical = "'%s' method can be dropped, as it identical to parent's one.";
+    private static final String messagePatternProxy     = "'%s' method should call parent's one instead of duplicating code.";
 
     @NotNull
     public String getShortName() {
@@ -113,13 +112,15 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     if (method.getAccess().equals(parentMethod.getAccess())) {
                         holder.registerProblem(
                                 methodName,
-                                messagePatternIdentical.replace("%s%", method.getName()),
-                                ProblemHighlightType.WEAK_WARNING,
+                                String.format(messagePatternIdentical, method.getName()),
                                 canFix ? new DropMethodFix() : null
                         );
                     } else {
-                        final String message = messagePatternProxy.replace("%s%", method.getName());
-                        holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING, canFix ? new ProxyCallFix() : null);
+                        holder.registerProblem(
+                                methodName,
+                                String.format(messagePatternProxy, method.getName()),
+                                canFix ? new ProxyCallFix() : null
+                        );
                     }
                 }
             }

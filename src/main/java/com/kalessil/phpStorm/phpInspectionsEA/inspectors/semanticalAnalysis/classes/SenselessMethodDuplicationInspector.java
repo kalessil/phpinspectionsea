@@ -66,7 +66,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 /* ensure parent, parent methods are existing and contains the same amount of expressions */
                 final PhpClass parent           = OpenapiResolveUtil.resolveSuperClass(clazz);
                 final Method parentMethod       = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, method.getName());
-                if (parentMethod == null || parentMethod.isAbstract()) {
+                if (parentMethod == null || parentMethod.isAbstract() || parentMethod.isDeprecated()) {
                     return;
                 }
                 final GroupStatement parentBody = ExpressionSemanticUtil.getGroupStatement(parentMethod);

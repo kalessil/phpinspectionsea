@@ -238,7 +238,9 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                     ((PhpFile) file).getTopLevelDefs().values().stream()
                             .filter(definition  -> definition instanceof PhpNamespace)
                             .forEach(definition -> namespaces.add((PhpNamespace) definition));
-                    if (namespaces.size() == 1) {
+                    if (namespaces.isEmpty()) {
+                        return null;
+                    } else if (namespaces.size() == 1) {
                         return namespaces.get(0);
                     }
                     namespaces.clear();

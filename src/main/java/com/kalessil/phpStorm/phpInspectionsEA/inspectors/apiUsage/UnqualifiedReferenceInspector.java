@@ -7,11 +7,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -20,12 +23,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -192,7 +193,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 if (nsCandidate instanceof PhpNamespaceReference || OpenapiTypesUtil.is(nsCandidate, PhpTokenTypes.NAMESPACE_RESOLUTION)) {
                     return;
                 }
-                final PhpNamespace ns = (PhpNamespace) PsiTreeUtil.findFirstParent(reference, PARENT_NAMESPACE);
+                final PhpNamespace ns = this.findNamespace(reference);
                 if (ns == null) {
                     return;
                 }
@@ -227,6 +228,22 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                             new TheLocalFix()
                     );
                 }
+            }
+
+            @Nullable
+            private PhpNamespace findNamespace(@NotNull PhpReference reference) {
+                final PsiFile file = reference.getContainingFile();
+                if (file.getFileType() == PhpFileType.INSTANCE) {
+                    final List<PhpNamespace> namespaces = new ArrayList<>();
+                    ((PhpFile) file).getTopLevelDefs().values().stream()
+                            .filter(definition  -> definition instanceof PhpNamespace)
+                            .forEach(definition -> namespaces.add((PhpNamespace) definition));
+                    if (namespaces.size() == 1) {
+                        return namespaces.get(0);
+                    }
+                    namespaces.clear();
+                }
+                return (PhpNamespace) PsiTreeUtil.findFirstParent(reference, PARENT_NAMESPACE);
             }
         };
     }

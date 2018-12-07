@@ -205,7 +205,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                             final List<PhpUse> imports = new ArrayList<>();
                             for (final PsiElement child : body.getChildren()) {
                                 if (child instanceof PhpUseList) {
-                                    imports.addAll(PsiTreeUtil.findChildrenOfType(ns, PhpUse.class));
+                                    Collections.addAll(imports, ((PhpUseList) child).getDeclarations());
                                 }
                             }
                             /* false-positive: function/constant are imported already */

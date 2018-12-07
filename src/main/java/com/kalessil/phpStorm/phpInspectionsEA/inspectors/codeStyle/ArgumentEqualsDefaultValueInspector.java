@@ -136,7 +136,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                     final String[] meta = details.get(0).split(";", 3); // the data format "ref:%s;var:%s;def:%s"
                     if (meta.length == 3) {
                         final String[] defaultMeta = meta[2].split(":", 2);
-                        if (defaultMeta.length == 2) {
+                        if (defaultMeta.length == 2 && !defaultMeta[1].isEmpty()) {
                             result = defaultMeta[1];
                         }
                     }

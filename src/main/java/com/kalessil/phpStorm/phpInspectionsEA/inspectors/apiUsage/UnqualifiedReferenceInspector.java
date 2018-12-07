@@ -203,30 +203,41 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 final boolean isFunction = subject instanceof Function;
                 if (isFunction || subject instanceof Constant) {
                     /* false-positives: non-root NS function/constant referenced */
-                    final String fqn = ((PhpNamedElement) subject).getFQN();
-                    if (fqn.length() != 1 + referenceName.length() || !fqn.equals('\\' + referenceName)) {
-                        return;
-                    }
+                    if (((PhpNamedElement) subject).getFQN().equals('\\' + referenceName)) {
+                        final GroupStatement body = ns.getStatements();
+                        if (body != null) {
+                            final List<PhpUse> imports = new ArrayList<>();
+                            for (final PsiElement child : body.getChildren()) {
+                                if (child instanceof PhpUseList) {
+                                    imports.addAll(PsiTreeUtil.findChildrenOfType(ns, PhpUse.class));
+                                }
+                            }
+                            /* false-positive: function/constant are imported already */
+                            boolean isImported = false;
+                            for (final PhpUse use : imports) {
+                                final PsiElement candidate = use.getFirstPsiChild();
+                                String importedSymbol = null;
+                                if (candidate instanceof FunctionReference) {
+                                    importedSymbol = ((FunctionReference) candidate).getName();
+                                } else if (candidate instanceof ConstantReference) {
+                                    importedSymbol = ((ConstantReference) candidate).getName();
+                                }
+                                if (isImported = referenceName.equals(importedSymbol)) {
+                                    break;
+                                }
+                            }
+                            imports.clear();
 
-                    /* false-positive: function/constant are imported already */
-                    for (final PhpUse use : PsiTreeUtil.findChildrenOfType(ns, PhpUse.class)) {
-                        final PsiElement candidate = use.getFirstPsiChild();
-                        String importedSymbol = null;
-                        if (candidate instanceof FunctionReference) {
-                            importedSymbol = ((FunctionReference) candidate).getName();
-                        } else if (candidate instanceof ConstantReference) {
-                            importedSymbol = ((ConstantReference) candidate).getName();
+                            if (!isImported) {
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(messagePattern, referenceName + (isFunction ? "(...)" : "")),
+                                        new TheLocalFix()
+                                );
+                            }
                         }
-                        if (referenceName.equals(importedSymbol)) {
-                            return;
-                        }
-                    }
 
-                    holder.registerProblem(
-                            reference,
-                            String.format(messagePattern, referenceName + (isFunction ? "(...)" : "")),
-                            new TheLocalFix()
-                    );
+                    }
                 }
             }
 

@@ -20,6 +20,12 @@
   ]]></change-notes>
 
   <extensions defaultExtensionNs="com.intellij">
+    <!-- indexers -->
+
+    <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer"/>
+
+    <!-- inspections -->
+
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="AmbiguousMethodsCallsInArrayMappingInspection" displayName="Non-optimized arrays mapping"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"

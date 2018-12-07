@@ -204,19 +204,16 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
                         importMarker = use;
                         for (final PsiElement used : use.getChildren()){
-                            if (!(used instanceof PhpUse)) {
-                                continue;
-                            }
-
-                            final PhpUse useStatement = (PhpUse) used;
-                            if (useStatement.getFQN().equals(fqn)) {
-                                classForReplacement = useStatement.getName();
-                                isImportedAlready   = true;
-                                break;
-                            }
-
-                            if (className.equals(useStatement.getName())) {
-                                isImportNameCollision = true;
+                            if (used instanceof PhpUse) {
+                                final PhpUse useStatement = (PhpUse) used;
+                                if (useStatement.getFQN().equals(fqn)) {
+                                    classForReplacement = useStatement.getName();
+                                    isImportedAlready   = true;
+                                    break;
+                                }
+                                if (className.equals(useStatement.getName())) {
+                                    isImportNameCollision = true;
+                                }
                             }
                         }
                     }

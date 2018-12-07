@@ -6,17 +6,24 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.Parameter;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /*
@@ -87,17 +94,15 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                         if (OpenapiTypesUtil.DEFAULT_VALUES.contains(valueType)) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                             if (resolved instanceof Function) {
-                                final Parameter[] parameters = ((Function) resolved).getParameters();
+                                final Function function      = (Function) resolved;
+                                final Parameter[] parameters = function.getParameters();
                                 if (arguments.length <= parameters.length) {
                                     for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
-                                        final PsiElement value = parameters[index].getDefaultValue();
-                                        /* false-positives: magic constants */
-                                        if (value instanceof ConstantReference && specialConstants.contains(value.getText())) {
-                                            break;
-                                        }
-                                        /* false-positives: unmatched values */
+                                        final Parameter parameter = parameters[index];
                                         final PsiElement argument = arguments[index];
-                                        if (value == null || !OpenapiEquivalenceUtil.areEqual(value, argument)) {
+                                        final String defaultValue = this.getDefaultValue(function, parameter.getName());
+                                        /* false-positives: magic constants, unmatched values */
+                                        if (defaultValue == null || specialConstants.contains(defaultValue) || !defaultValue.equals(argument.getText())) {
                                             break;
                                         }
 
@@ -122,6 +127,28 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            @Nullable
+            private String getDefaultValue(@NotNull Function function, @NotNull String parameterName) {
+                String result              = null;
+                final List<String> details = FileBasedIndex.getInstance().getValues(
+                        NamedCallableParametersMetaIndexer.identity,
+                        String.format("%s.%s", function.getFQN(), parameterName),
+                        GlobalSearchScope.allScope(function.getProject())
+                );
+                if (details.size() == 1) {
+                    final String[] meta = details.get(0).split(";", 3); // the data format "ref:%s;var:%s;def:%s"
+                    if (meta.length == 3) {
+                        final String[] defaultMeta = meta[2].split(":", 2);
+                        if (defaultMeta.length == 2 && !defaultMeta[1].isEmpty()) {
+                            result = defaultMeta[1];
+                        }
+                    }
+                }
+                details.clear();
+
+                return result;
             }
         };
     }

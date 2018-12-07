@@ -129,13 +129,13 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
-                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
-                    final String functionName = reference.getName();
-                    if (functionName != null) {
+                final String functionName = reference.getName();
+                if (functionName != null && !functionName.isEmpty()) {
+                    /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
+                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                    if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
                         if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
-                            this.analyzeReference(reference);
+                            this.analyzeReference(reference, functionName);
                         }
                         if (callbacksPositions.containsKey(functionName)) {
                             this.analyzeCallback(reference, functionName);
@@ -148,11 +148,12 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
-                if (REPORT_CONSTANTS) {
+                final String constantName = reference.getName();
+                if (constantName != null && !constantName.isEmpty() && REPORT_CONSTANTS) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
                     final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
                     if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
-                        analyzeReference(reference);
+                        this.analyzeReference(reference, constantName);
                     }
                 }
             }
@@ -181,12 +182,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
             }
 
-            private void analyzeReference(@NotNull PhpReference reference) {
-                /* constructs structure expectations */
-                final String referenceName = reference.getName();
-                if (referenceName == null) {
-                    return;
-                }
+            private void analyzeReference(@NotNull PhpReference reference, @NotNull String referenceName) {
                 /* some constants prefixing is making no sense IMO */
                 if (reference instanceof ConstantReference && falsePositives.contains(referenceName)) {
                     return;

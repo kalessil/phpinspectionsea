@@ -54,11 +54,11 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    final PsiElement ownFieldDefault = ownField.getDefaultValue();
+                    final PsiElement ownFieldDefault = OpenapiResolveUtil.resolveDefaultValue(ownField);
                     for (final PhpClass trait : traits) {
                         final Field traitField = OpenapiResolveUtil.resolveField(trait, ownFieldName);
                         if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
-                            final PsiElement traitFieldDefault = traitField.getDefaultValue();
+                            final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
 
                             final boolean isError;
                             if (ownFieldDefault == null || traitFieldDefault == null) {
@@ -109,11 +109,11 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                         continue;
                     }
 
-                    final PsiElement parentFieldDefault = parentField.getDefaultValue();
+                    final PsiElement parentFieldDefault = OpenapiResolveUtil.resolveDefaultValue(parentField);
                     for (final PhpClass trait : traits) {
                         final Field traitField = OpenapiResolveUtil.resolveField(trait, parentFieldName);
                         if (traitField != null) {
-                            final PsiElement traitFieldDefault = traitField.getDefaultValue();
+                            final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
 
                             final boolean isError;
                             if (parentFieldDefault == null || traitFieldDefault == null) {

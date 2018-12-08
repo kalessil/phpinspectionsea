@@ -249,6 +249,18 @@ final public class OpenapiResolveUtil {
         }
     }
 
+    @Nullable
+    static public PsiElement resolveDefaultValue(@NotNull Field field) {
+        try {
+            return field.getDefaultValue();
+        } catch (final Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return null;
+        }
+    }
+
     @NotNull
     static public List<PhpClass> resolveImplementedInterfaces(@NotNull PhpClass clazz) {
         try {

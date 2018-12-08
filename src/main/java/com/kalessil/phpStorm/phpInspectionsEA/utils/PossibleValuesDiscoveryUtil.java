@@ -110,7 +110,7 @@ public class PossibleValuesDiscoveryUtil {
         final String name      = reference.getName();
         final PsiElement field = (name == null || name.isEmpty()) ? null : OpenapiResolveUtil.resolveReference(reference);
         if (field instanceof Field) {
-            final PsiElement defaultValue = ((Field) field).getDefaultValue();
+            final PsiElement defaultValue = OpenapiResolveUtil.resolveDefaultValue((Field) field);
             if (defaultValue != null) {
                 result.add(defaultValue);
             }
@@ -126,7 +126,7 @@ public class PossibleValuesDiscoveryUtil {
         final PsiElement field = (name == null || name.isEmpty()) ? null : OpenapiResolveUtil.resolveReference(reference);
         if (field instanceof Field) {
             /* TODO: properties without defaults returning variable as default are difficult to identify */
-            final PsiElement defaultValue = ((Field) field).getDefaultValue();
+            final PsiElement defaultValue = OpenapiResolveUtil.resolveDefaultValue((Field) field);
             if (defaultValue != null && !defaultValue.getText().endsWith(name)) {
                 result.add(defaultValue);
             }

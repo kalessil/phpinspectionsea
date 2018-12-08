@@ -55,8 +55,8 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                     final PhpClass parentClazz = clazz == null ? null : OpenapiResolveUtil.resolveSuperClass(clazz);
                     final Field originField    = parentClazz == null ? null : OpenapiResolveUtil.resolveField(parentClazz, field.getName());
 
-                    final PsiElement fieldDefault  = field.getDefaultValue();
-                    final PsiElement originDefault = originField == null ? null : originField.getDefaultValue();
+                    final PsiElement fieldDefault  = OpenapiResolveUtil.resolveDefaultValue(field);
+                    final PsiElement originDefault = originField == null ? null : OpenapiResolveUtil.resolveDefaultValue(originField);
 
                     if (PhpLanguageUtil.isNull(fieldDefault)) {
                         holder.registerProblem(
@@ -126,7 +126,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                     if (!field.isConstant()) {
                         final PhpModifier modifiers = field.getModifier();
                         if (modifiers.isPrivate() && !modifiers.isStatic()) {
-                            final PsiElement defaultValue = field.getDefaultValue();
+                            final PsiElement defaultValue = OpenapiResolveUtil.resolveDefaultValue(field);
                             if (defaultValue instanceof PhpPsiElement && !PhpLanguageUtil.isNull(defaultValue)) {
                                 propertiesToCheck.put(field.getName(), defaultValue);
                             } else {

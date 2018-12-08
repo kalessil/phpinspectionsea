@@ -275,12 +275,15 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         result = (Variable) candidate;
                     }
                 } else if (expression instanceof MethodReference) {
-                    final PsiElement candidate = expression.getFirstChild();
+                    PsiElement candidate = expression.getFirstChild();
+                    while (candidate instanceof MethodReference) {
+                        candidate = candidate.getFirstChild();
+                    }
                     if (candidate instanceof Variable) {
                         final Variable variable   = (Variable) candidate;
                         final String variableName = variable.getName();
                         final long variableUsages = PsiTreeUtil.findChildrenOfType(expression, Variable.class).stream()
-                                .filter(v -> v == candidate || v.getName().equals(variableName))
+                                .filter(v -> v == variable || v.getName().equals(variableName))
                                 .count();
                         if (variableUsages == 1) {
                             result = variable;

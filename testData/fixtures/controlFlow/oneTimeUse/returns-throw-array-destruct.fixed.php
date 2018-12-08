@@ -28,7 +28,12 @@ function assignment()
     return trim($result);
 }
 
-function method_call_case()
+function method_call_case($argument)
 {
-    return (new \stdClass())->method();
+    if ($argument) {
+        return (new \stdClass())->method()->method();
+    } else {
+        $two = new \stdClass();
+        return $two->method()->method($two);
+    }
 }

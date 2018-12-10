@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -49,8 +50,8 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                                 /* do not process strings with injections */
                                 final StringLiteralExpression targetFunction = (StringLiteralExpression) arguments[0];
                                 if (targetFunction.getFirstPsiChild() == null) {
-                                    final String replacement
-                                            = String.format("%s(...%s)", targetFunction.getContents(), arguments[1].getText());
+                                    final String function    = PhpStringUtil.unescapeText(targetFunction.getContents(), targetFunction.isSingleQuote());
+                                    final String replacement = String.format("%s(...%s)", function, arguments[1].getText());
                                     holder.registerProblem(
                                             reference,
                                             String.format(messagePattern, replacement),

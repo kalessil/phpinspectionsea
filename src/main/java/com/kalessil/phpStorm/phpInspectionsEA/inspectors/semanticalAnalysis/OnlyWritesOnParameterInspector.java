@@ -16,11 +16,13 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +37,9 @@ import java.util.List;
  */
 
 public class OnlyWritesOnParameterInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean IGNORE_INCLUDES = true;
+
     private static final String messageOnlyWrites = "Parameter/variable is overridden, but is never used or appears outside of the scope.";
     private static final String messageUnused     = "The variable seems to be not used.";
 
@@ -117,7 +122,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         }
 
                         if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-                            if (getVariableUsages(parameterName, scopeHolder).length == 0) {
+                            if (this.getVariableUsages(parameterName, scopeHolder).length == 0) {
                                 holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                             }
                         } else if (this.analyzeAndReturnUsagesCount(parameterName, scopeHolder) == 0) {
@@ -128,7 +133,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             }
 
             private int analyzeAndReturnUsagesCount(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
-                final PhpAccessVariableInstruction[] usages = getVariableUsages(parameterName, scopeHolder);
+                final PhpAccessVariableInstruction[] usages = this.getVariableUsages(parameterName, scopeHolder);
                 if (usages.length == 0) {
                     return usages.length;
                 }
@@ -308,15 +313,24 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 }
                 return false;
             }
+
+            @NotNull
+            private PhpAccessVariableInstruction[] getVariableUsages(
+                    @NotNull String parameterName,
+                    @NotNull PhpScopeHolder scopeHolder
+            ) {
+                return PhpControlFlowUtil.getFollowingVariableAccessInstructions(
+                        scopeHolder.getControlFlow().getEntryPoint(),
+                        parameterName,
+                        false
+                );
+            }
         };
     }
 
-    @NotNull
-    static private PhpAccessVariableInstruction[] getVariableUsages(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
-        return PhpControlFlowUtil.getFollowingVariableAccessInstructions(
-                scopeHolder.getControlFlow().getEntryPoint(),
-                parameterName,
-                false
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+                component.addCheckbox("Ignore 'include' and 'require' statements", IGNORE_INCLUDES, (isSelected) -> IGNORE_INCLUDES = isSelected)
         );
     }
 }

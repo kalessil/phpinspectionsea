@@ -35,8 +35,13 @@ function assignment()
     return trim($result);
 }
 
-function method_call_case()
+function method_call_case($argument)
 {
-    <warning descr="Variable $temporary is redundant.">$temporary</warning> = new \stdClass();
-    return $temporary->method();
+    if ($argument) {
+        <warning descr="Variable $one is redundant.">$one</warning> = new \stdClass();
+        return $one->method()->method();
+    } else {
+        $two = new \stdClass();
+        return $two->method()->method($two);
+    }
 }

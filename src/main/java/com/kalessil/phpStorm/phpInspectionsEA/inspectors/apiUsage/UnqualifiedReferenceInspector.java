@@ -7,11 +7,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
+import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -20,12 +23,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -129,13 +130,13 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
-                /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
-                    final String functionName = reference.getName();
-                    if (functionName != null) {
+                final String functionName = reference.getName();
+                if (functionName != null && !functionName.isEmpty()) {
+                    /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
+                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                    if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
                         if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
-                            this.analyzeReference(reference);
+                            this.analyzeReference(reference, functionName);
                         }
                         if (callbacksPositions.containsKey(functionName)) {
                             this.analyzeCallback(reference, functionName);
@@ -148,11 +149,12 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
-                if (REPORT_CONSTANTS) {
+                final String constantName = reference.getName();
+                if (constantName != null && !constantName.isEmpty() && REPORT_CONSTANTS) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
                     final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
                     if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
-                        analyzeReference(reference);
+                        this.analyzeReference(reference, constantName);
                     }
                 }
             }
@@ -181,12 +183,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 }
             }
 
-            private void analyzeReference(@NotNull PhpReference reference) {
-                /* constructs structure expectations */
-                final String referenceName = reference.getName();
-                if (referenceName == null) {
-                    return;
-                }
+            private void analyzeReference(@NotNull PhpReference reference, @NotNull String referenceName) {
                 /* some constants prefixing is making no sense IMO */
                 if (reference instanceof ConstantReference && falsePositives.contains(referenceName)) {
                     return;
@@ -196,7 +193,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 if (nsCandidate instanceof PhpNamespaceReference || OpenapiTypesUtil.is(nsCandidate, PhpTokenTypes.NAMESPACE_RESOLUTION)) {
                     return;
                 }
-                final PhpNamespace ns = (PhpNamespace) PsiTreeUtil.findFirstParent(reference, PARENT_NAMESPACE);
+                final PhpNamespace ns = this.findNamespace(reference);
                 if (ns == null) {
                     return;
                 }
@@ -206,31 +203,60 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 final boolean isFunction = subject instanceof Function;
                 if (isFunction || subject instanceof Constant) {
                     /* false-positives: non-root NS function/constant referenced */
-                    final String fqn = ((PhpNamedElement) subject).getFQN();
-                    if (fqn.length() != 1 + referenceName.length() || !fqn.equals('\\' + referenceName)) {
-                        return;
-                    }
+                    if (((PhpNamedElement) subject).getFQN().equals('\\' + referenceName)) {
+                        final GroupStatement body = ns.getStatements();
+                        if (body != null) {
+                            final List<PhpUse> imports = new ArrayList<>();
+                            for (final PsiElement child : body.getChildren()) {
+                                if (child instanceof PhpUseList) {
+                                    Collections.addAll(imports, ((PhpUseList) child).getDeclarations());
+                                }
+                            }
+                            /* false-positive: function/constant are imported already */
+                            boolean isImported = false;
+                            for (final PhpUse use : imports) {
+                                final PsiElement candidate = use.getFirstPsiChild();
+                                String importedSymbol = null;
+                                if (candidate instanceof FunctionReference) {
+                                    importedSymbol = ((FunctionReference) candidate).getName();
+                                } else if (candidate instanceof ConstantReference) {
+                                    importedSymbol = ((ConstantReference) candidate).getName();
+                                }
+                                if (isImported = referenceName.equals(importedSymbol)) {
+                                    break;
+                                }
+                            }
+                            imports.clear();
 
-                    /* false-positive: function/constant are imported already */
-                    for (final PhpUse use : PsiTreeUtil.findChildrenOfType(ns, PhpUse.class)) {
-                        final PsiElement candidate = use.getFirstPsiChild();
-                        String importedSymbol = null;
-                        if (candidate instanceof FunctionReference) {
-                            importedSymbol = ((FunctionReference) candidate).getName();
-                        } else if (candidate instanceof ConstantReference) {
-                            importedSymbol = ((ConstantReference) candidate).getName();
+                            if (!isImported) {
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(messagePattern, referenceName + (isFunction ? "(...)" : "")),
+                                        new TheLocalFix()
+                                );
+                            }
                         }
-                        if (referenceName.equals(importedSymbol)) {
-                            return;
-                        }
-                    }
 
-                    holder.registerProblem(
-                            reference,
-                            String.format(messagePattern, referenceName + (isFunction ? "(...)" : "")),
-                            new TheLocalFix()
-                    );
+                    }
                 }
+            }
+
+            @Nullable
+            private PhpNamespace findNamespace(@NotNull PhpReference reference) {
+                final PsiFile file = reference.getContainingFile();
+                if (file.getFileType() == PhpFileType.INSTANCE) {
+                    final List<PhpNamespace> namespaces = new ArrayList<>();
+                    ((PhpFile) file).getTopLevelDefs().values().stream()
+                            .filter(definition  -> definition instanceof PhpNamespace)
+                            .forEach(definition -> namespaces.add((PhpNamespace) definition));
+                    if (namespaces.isEmpty()) {
+                        return null;
+                    } else if (namespaces.size() == 1) {
+                        return namespaces.get(0);
+                    }
+                    namespaces.clear();
+                }
+                return (PhpNamespace) PsiTreeUtil.findFirstParent(reference, PARENT_NAMESPACE);
             }
         };
     }

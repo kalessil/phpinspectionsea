@@ -28,10 +28,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUt
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -234,7 +231,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                                 /* scan for imports in current group statement */
                                 for (final PsiElement child : groupCandidate.getChildren()) {
                                     if (child instanceof PhpUseList) {
-                                        imports.addAll(PsiTreeUtil.findChildrenOfType(child, PhpUse.class));
+                                        Collections.addAll(imports, ((PhpUseList) child).getDeclarations());
                                     }
                                 }
                                 /* iterate imports and search for targets */

@@ -19,6 +19,7 @@
 
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer"/>
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIndexer"/>
+    <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer"/>
 
     <!-- inspections -->
 
@@ -672,7 +673,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SenselessProxyMethodInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="SenselessMethodDuplicationInspection"          displayName="Child method is exactly the same"
-        groupName="Unused"                                        enabledByDefault="true" level="WARNING"
+        groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SenselessMethodDuplicationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnusedGotoLabelInspection"                     displayName="Unused goto labels"

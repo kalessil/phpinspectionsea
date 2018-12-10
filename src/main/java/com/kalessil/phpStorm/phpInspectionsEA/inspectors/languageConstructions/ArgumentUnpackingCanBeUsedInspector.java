@@ -40,13 +40,12 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                     final String functionName = reference.getName();
                     if (functionName != null && functionName.equals("call_user_func_array")) {
                         final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 2) {
-                            final boolean isContainerValid =
-                                    arguments[1] instanceof Variable ||
-                                    arguments[1] instanceof FieldReference ||
-                                    arguments[1] instanceof ArrayCreationExpression ||
-                                    arguments[1] instanceof FunctionReference;
-                            if (isContainerValid && arguments[0] instanceof StringLiteralExpression) {
+                        if (arguments.length == 2 && arguments[0] instanceof StringLiteralExpression) {
+                            final boolean isContainerValid = arguments[1] instanceof Variable ||
+                                                             arguments[1] instanceof FieldReference ||
+                                                             arguments[1] instanceof ArrayCreationExpression ||
+                                                             arguments[1] instanceof FunctionReference;
+                            if (isContainerValid) {
                                 /* do not process strings with injections */
                                 final StringLiteralExpression targetFunction = (StringLiteralExpression) arguments[0];
                                 if (targetFunction.getFirstPsiChild() == null) {

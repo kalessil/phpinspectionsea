@@ -51,7 +51,7 @@ class Container {
 
     public function method4() {
         $x = new UnknownClass($y = new ClassWithArrayAccess());
-        $y[] = null;
+        <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$y[]</weak_warning> = null;
     }
 
     public function unused_in_assignments_as_binary_operand() {
@@ -101,17 +101,17 @@ class Container {
 
     function foreach_case_holder()
     {
-        foreach (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = [] as $item) {}
+        foreach (<weak_warning descr="The variable seems to be not used.">$unused</weak_warning> = [] as $item) {}
     }
 
     function if_case_holder()
     {
-        if (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = []) {}
-        elseif (<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = []) {}
+        if (<weak_warning descr="The variable seems to be not used.">$one</weak_warning> = []) {}
+        elseif (<weak_warning descr="The variable seems to be not used.">$two</weak_warning> = []) {}
     }
 
     function argument_case_holder()
     {
-        return trim(<weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused</weak_warning> = []);
+        return trim(<weak_warning descr="The variable seems to be not used.">$unused</weak_warning> = []);
     }
 }

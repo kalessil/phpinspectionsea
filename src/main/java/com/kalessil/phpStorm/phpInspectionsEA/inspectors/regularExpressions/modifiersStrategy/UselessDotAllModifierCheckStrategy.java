@@ -5,15 +5,30 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class UselessDotAllModifierCheckStrategy {
-    private static final String strProblemDescription = "'s' modifier is ambiguous here (no . in given pattern).";
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtils.isEmpty(modifiers) && !StringUtils.isEmpty(pattern) && modifiers.indexOf('s') >= 0) {
-            int countDots = StringUtils.countMatches(pattern, ".") - StringUtils.countMatches(pattern, "\\.");
-            if (0 == countDots) {
-                holder.registerProblem(target, strProblemDescription, ProblemHighlightType.WEAK_WARNING);
+final public class UselessDotAllModifierCheckStrategy {
+    private static final String message = "'s' modifier is ambiguous here ('.' is missing in the given pattern).";
+
+    static public void apply(
+            @Nullable String modifiers,
+            @Nullable String pattern,
+            @NotNull  StringLiteralExpression target,
+            @NotNull  ProblemsHolder holder
+    ) {
+        if (modifiers != null && pattern != null && !pattern.isEmpty() && modifiers.indexOf('s') != -1) {
+            final String normalized = pattern.replaceAll("\\[[^\\]]+\\]", "");
+            if (StringUtils.countMatches(normalized, ".") - StringUtils.countMatches(normalized, "\\.") == 0) {
+                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
             }
         }
     }

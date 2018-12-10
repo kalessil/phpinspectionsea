@@ -8,6 +8,9 @@ class CasesHolder {
         <warning descr="'reference(...array())' should be used instead (3x+ faster)">call_user_func_array('reference', array())</warning>;
         <warning descr="'reference(...reference())' should be used instead (3x+ faster)">call_user_func_array('reference', reference())</warning>;
 
+        <warning descr="'array_merge(...$arguments)' should be used instead (3x+ faster)">\call_user_func_array('array_merge', $arguments)</warning>;
+        <warning descr="'\array_merge(...$arguments)' should be used instead (3x+ faster)">\call_user_func_array('\\array_merge', $arguments)</warning>;
+
         call_user_func_array([], $arguments);
     }
 }

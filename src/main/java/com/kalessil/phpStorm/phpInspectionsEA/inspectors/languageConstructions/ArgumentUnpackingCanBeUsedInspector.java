@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -41,18 +42,16 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                     final String functionName = reference.getName();
                     if (functionName != null && functionName.equals("call_user_func_array")) {
                         final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 2) {
-                            final boolean isContainerValid =
-                                    arguments[1] instanceof Variable ||
-                                    arguments[1] instanceof FieldReference ||
-                                    arguments[1] instanceof ArrayCreationExpression ||
-                                    arguments[1] instanceof FunctionReference;
-                            if (isContainerValid && arguments[0] instanceof StringLiteralExpression) {
-                                /* do not process strings with injections */
+                        if (arguments.length == 2 && arguments[0] instanceof StringLiteralExpression) {
+                            final boolean isContainerValid = arguments[1] instanceof Variable ||
+                                                             arguments[1] instanceof FieldReference ||
+                                                             arguments[1] instanceof ArrayCreationExpression ||
+                                                             arguments[1] instanceof FunctionReference;
+                            if (isContainerValid) {
                                 final StringLiteralExpression targetFunction = (StringLiteralExpression) arguments[0];
                                 if (targetFunction.getFirstPsiChild() == null) {
-                                    final String replacement
-                                            = String.format("%s(...%s)", targetFunction.getContents(), arguments[1].getText());
+                                    final String function    = PhpStringUtil.unescapeText(targetFunction.getContents(), targetFunction.isSingleQuote());
+                                    final String replacement = String.format("%s(...%s)", function, arguments[1].getText());
                                     holder.registerProblem(
                                             reference,
                                             String.format(messagePattern, replacement),

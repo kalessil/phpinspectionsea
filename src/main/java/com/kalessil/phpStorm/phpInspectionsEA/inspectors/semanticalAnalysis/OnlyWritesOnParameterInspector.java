@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
@@ -18,11 +19,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +40,9 @@ import java.util.List;
  */
 
 public class OnlyWritesOnParameterInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean IGNORE_INCLUDES = true;
+
     private static final String messageOnlyWrites = "Parameter/variable is overridden, but is never used or appears outside of the scope.";
     private static final String messageUnused     = "The variable seems to be not used.";
 
@@ -129,7 +135,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 }
             }
 
-            private void checkUseVariables(@NotNull List<Variable> variables, @NotNull PhpScopeHolder scopeHolder) {
+            private void checkUseVariables(@NotNull List<Variable> variables, @NotNull Function function) {
                 for (final Variable variable : variables) {
                     final String parameterName = variable.getName();
                     if (!parameterName.isEmpty()) {
@@ -139,18 +145,18 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         }
 
                         if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-                            if (getVariableUsages(parameterName, scopeHolder).length == 0) {
+                            if (this.getVariableUsages(parameterName, function).length == 0) {
                                 holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                             }
-                        } else if (this.analyzeAndReturnUsagesCount(parameterName, scopeHolder) == 0) {
+                        } else if (this.analyzeAndReturnUsagesCount(parameterName, function) == 0) {
                             holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                         }
                     }
                 }
             }
 
-            private int analyzeAndReturnUsagesCount(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
-                final PhpAccessVariableInstruction[] usages = getVariableUsages(parameterName, scopeHolder);
+            private int analyzeAndReturnUsagesCount(@NotNull String parameterName, @NotNull Function function) {
+                final PhpAccessVariableInstruction[] usages = this.getVariableUsages(parameterName, function);
                 if (usages.length == 0) {
                     return usages.length;
                 }
@@ -303,8 +309,15 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
 
                 if (intCountReadAccesses == 0 && intCountWriteAccesses > 0 && !this.isAnySuppressed(targetExpressions)) {
-                    for (final PsiElement targetExpression : targetExpressions) {
-                        holder.registerProblem(targetExpression, messageOnlyWrites, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                    final boolean report = IGNORE_INCLUDES || !this.hasIncludes(function);
+                    if (report) {
+                        for (final PsiElement targetExpression : targetExpressions) {
+                            holder.registerProblem(
+                                    targetExpression,
+                                    messageOnlyWrites,
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                            );
+                        }
                     }
                 }
                 targetExpressions.clear();
@@ -330,15 +343,32 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 }
                 return false;
             }
+
+            private boolean hasIncludes(@NotNull Function function) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                if (body != null) {
+                    return PsiTreeUtil.findChildOfType(body, Include.class) != null;
+                }
+                return false;
+            }
+
+            @NotNull
+            private PhpAccessVariableInstruction[] getVariableUsages(
+                    @NotNull String parameterName,
+                    @NotNull PhpScopeHolder scopeHolder
+            ) {
+                return PhpControlFlowUtil.getFollowingVariableAccessInstructions(
+                        scopeHolder.getControlFlow().getEntryPoint(),
+                        parameterName,
+                        false
+                );
+            }
         };
     }
 
-    @NotNull
-    static private PhpAccessVariableInstruction[] getVariableUsages(@NotNull String parameterName, @NotNull PhpScopeHolder scopeHolder) {
-        return PhpControlFlowUtil.getFollowingVariableAccessInstructions(
-                scopeHolder.getControlFlow().getEntryPoint(),
-                parameterName,
-                false
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+                component.addCheckbox("Ignore 'include' and 'require' statements", IGNORE_INCLUDES, (isSelected) -> IGNORE_INCLUDES = isSelected)
         );
     }
 }

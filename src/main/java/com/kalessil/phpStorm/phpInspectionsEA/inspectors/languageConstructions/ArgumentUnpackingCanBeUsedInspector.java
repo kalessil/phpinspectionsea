@@ -46,7 +46,6 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
                                                              arguments[1] instanceof ArrayCreationExpression ||
                                                              arguments[1] instanceof FunctionReference;
                             if (isContainerValid) {
-                                /* do not process strings with injections */
                                 final StringLiteralExpression targetFunction = (StringLiteralExpression) arguments[0];
                                 if (targetFunction.getFirstPsiChild() == null) {
                                     final String function    = PhpStringUtil.unescapeText(targetFunction.getContents(), targetFunction.isSingleQuote());

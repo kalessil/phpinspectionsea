@@ -75,34 +75,28 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                 final String fieldName            = usedFields.iterator().next();
                                 final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").replaceAll("_", "").toLowerCase();
                                 final String fieldNameNormalized  = fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
-                                final int levenshteinDistance     = StringUtils.getLevenshteinDistance(fieldNameNormalized, methodNameNormalized);
-                                if (levenshteinDistance > 0) {
-                                    final int namesLengthDelta = Math.abs(methodNameNormalized.length() - fieldNameNormalized.length());
-                                    if (namesLengthDelta != levenshteinDistance) {
-                                        final PhpClass clazz = method.getContainingClass();
-                                        if (clazz != null) {
-                                            final List<String> alternatives = new ArrayList<>();
-                                            final int levenshteinThreshold  = Math.min(fieldNameNormalized.length(), methodNameNormalized.length());
-                                            final boolean hasAlternatives   = clazz.getFields().stream()
-                                                    .filter(field   -> !field.isConstant() && !fieldName.equals(field.getName()))
-                                                    .anyMatch(field -> {
-                                                        final String normalized          = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
-                                                        final int levenshteinAlternative = StringUtils.getLevenshteinDistance(normalized, methodNameNormalized);
-                                                        if (levenshteinAlternative < levenshteinDistance && levenshteinAlternative < levenshteinThreshold) {
-                                                            alternatives.add(field.getName());
-                                                            return true;
-                                                        }
-                                                        return false;
-                                                    });
-                                            if (hasAlternatives) {
-                                                final boolean isDelegating = PsiTreeUtil.findChildrenOfType(body, MethodReference.class).stream()
-                                                        .anyMatch(reference -> methodName.equals(reference.getName()));
-                                                if (!isDelegating) {
-                                                    holder.registerProblem(
-                                                            NamedElementUtil.getNameIdentifier(method),
-                                                            String.format(messagePattern, fieldName, alternatives.get(0))
-                                                    );
-                                                }
+                                if (StringUtils.getLevenshteinDistance(fieldNameNormalized, methodNameNormalized) != 0) {
+                                    final PhpClass clazz = method.getContainingClass();
+                                    if (clazz != null) {
+                                        final List<String> alternatives = new ArrayList<>();
+                                        final boolean hasAlternatives   = clazz.getFields().stream()
+                                                .filter(field   -> !field.isConstant() && !fieldName.equals(field.getName()))
+                                                .anyMatch(field -> {
+                                                    final String normalized = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
+                                                    if (StringUtils.getLevenshteinDistance(normalized, methodNameNormalized) == 0) {
+                                                        alternatives.add(field.getName());
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                });
+                                        if (hasAlternatives) {
+                                            final boolean isDelegating = PsiTreeUtil.findChildrenOfType(body, MethodReference.class).stream()
+                                                    .anyMatch(reference -> methodName.equals(reference.getName()));
+                                            if (!isDelegating) {
+                                                holder.registerProblem(
+                                                        NamedElementUtil.getNameIdentifier(method),
+                                                        String.format(messagePattern, fieldName, alternatives.get(0))
+                                                );
                                             }
                                         }
                                     }

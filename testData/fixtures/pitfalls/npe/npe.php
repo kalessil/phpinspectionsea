@@ -71,7 +71,9 @@ class CasesHolder {
 
     public function npeCheckLocalVariables(?\stdClass $one) {
         $local = $one;
-        <warning descr="Null pointer exception may occur here.">$local</warning>->property = '...';
+        if (!isset($local->property[0])) {
+            <warning descr="Null pointer exception may occur here.">$local</warning>->property = '...';
+        }
     }
 
     public function npeReportingFunctionReference(?\stdClass $one, \stdClass $two = null, \stdClass $three, $four) {

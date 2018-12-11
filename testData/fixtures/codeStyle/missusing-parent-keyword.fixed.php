@@ -18,7 +18,7 @@ class CasesHolder extends ParentClass
 {
     public function target()
     {
-        <weak_warning descr="It was probably intended to use '$this->overridden('...', '...')' here.">parent::overridden('...', '...')</weak_warning>;
+        $this->overridden('...', '...');
         parent::blocked();
     }
 }

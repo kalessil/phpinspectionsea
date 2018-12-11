@@ -45,7 +45,7 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
                             final String referenceName = reference.getName();
                             if (!methodName.isEmpty() && !methodName.equals(referenceName)) {
                                 final PhpClass clazz = method.getContainingClass();
-                                if (clazz != null && clazz.findOwnMethodByName(referenceName) == null) {
+                                if (clazz != null && !clazz.isTrait() && clazz.findOwnMethodByName(referenceName) == null) {
                                     final boolean blockedUsingThis =
                                             !clazz.isFinal() &&
                                             OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), PhpIndex.getInstance(reference.getProject())).stream()

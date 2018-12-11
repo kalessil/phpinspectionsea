@@ -240,11 +240,11 @@ final public class NullableVariablesStrategy {
                 final PsiElement subject        = reference.getClassReference();
                 if (subject instanceof Variable && ((Variable) subject).getName().equals(variableName)) {
 
-                    /* false-positives: `$variable->property ?? ...`, isset($variable->property) */
+                    /* false-positives: `$variable->property ?? ...`, isset($variable->property), isset($variable->property[...]) */
                     if (reference instanceof FieldReference) {
                         PsiElement lastReference    = reference;
                         PsiElement referenceContext = reference;
-                        while (referenceContext instanceof FieldReference) {
+                        while (referenceContext instanceof FieldReference || referenceContext instanceof ArrayAccessExpression) {
                             lastReference    = referenceContext;
                             referenceContext = referenceContext.getParent();
                         }

@@ -141,6 +141,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);
+                UselessUngreedyModifierCheckStrategy.apply(modifiers, regex, target, holder);
 
                 /* Classes shortening (done):
                  * + [0-9] => \d

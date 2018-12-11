@@ -38,14 +38,18 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
                 if (base instanceof ClassReference && base.getText().equals("parent")) {
                     final Function scope = ExpressionSemanticUtil.getScope(reference);
                     if (scope instanceof Method) {
-                        final String methodName = scope.getName();
-                        final PhpClass clazz    = ((Method) scope).getContainingClass();
-                        if (clazz != null && clazz.findOwnMethodByName(methodName) == null) {
-                            final PhpIndex index           = PhpIndex.getInstance(reference.getProject());
-                            final boolean blockedUsingThis = OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).stream()
-                                    .anyMatch(c -> c.findOwnMethodByName(methodName) != null);
-                            if (!blockedUsingThis) {
-                                holder.registerProblem(base, message);
+                        final String methodName    = scope.getName();
+                        final String referenceName = reference.getName();
+                        if (!methodName.isEmpty() && !methodName.equals(referenceName)) {
+                            final PhpClass clazz = ((Method) scope).getContainingClass();
+                            if (clazz != null && clazz.findOwnMethodByName(referenceName) == null) {
+                                final boolean blockedUsingThis =
+                                        !clazz.isFinal() &&
+                                        OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), PhpIndex.getInstance(reference.getProject())).stream()
+                                                .anyMatch(c -> c.findOwnMethodByName(referenceName) != null);
+                                if (!blockedUsingThis) {
+                                    holder.registerProblem(base, message);
+                                }
                             }
                         }
                     }

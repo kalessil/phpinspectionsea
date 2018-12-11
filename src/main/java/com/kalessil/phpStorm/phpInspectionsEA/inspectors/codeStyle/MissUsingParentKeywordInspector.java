@@ -35,6 +35,8 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final PsiElement base = reference.getClassReference();
                 if (base instanceof ClassReference && base.getText().equals("parent")) {
                     final Function scope = ExpressionSemanticUtil.getScope(reference);

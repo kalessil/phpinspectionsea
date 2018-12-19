@@ -28,8 +28,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection {
-    private static final String messagePattern               = "'%e%' can be used instead.";
-    private static final String patternMissingToStringMethod = "%class% miss __toString() implementation.";
+    private static final String messagePattern       = "'%s' can be used instead.";
+    private static final String patternMissingMethod = "%class% miss __toString() implementation.";
 
     @NotNull
     public String getShortName() {
@@ -42,7 +42,6 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                /* check if it's the target function */
                 final String functionName = reference.getName();
                 if (functionName != null && (functionName.equals("strlen") || functionName.equals("mb_strlen"))) {
                     final PsiElement[] arguments = reference.getParameters();
@@ -95,9 +94,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                         /* investigate possible issues */
                         if (isMatchedPattern) {
-                            final boolean isStrict
-                                = !ClassInStringContextStrategy.apply(arguments[0], holder, target, patternMissingToStringMethod);
-
+                            final boolean isStrict   = !ClassInStringContextStrategy.apply(arguments[0], holder, target, patternMissingMethod);
                             final boolean isRegular  = ComparisonStyle.isRegular();
                             final String operator    = (isEmptyString ? "=" : "!") + (isStrict ? "==" : "=");
                             final String replacement = String.format(
@@ -107,7 +104,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                             );
                             holder.registerProblem(
                                     target,
-                                    messagePattern.replace("%e%", replacement),
+                                    String.format(messagePattern, replacement),
                                     new CompareToEmptyStringFix(replacement)
                             );
                         }

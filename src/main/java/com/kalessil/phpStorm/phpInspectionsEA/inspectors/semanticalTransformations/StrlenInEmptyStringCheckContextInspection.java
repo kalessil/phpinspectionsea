@@ -7,15 +7,14 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -28,8 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection {
-    private static final String messagePattern       = "'%s' can be used instead.";
-    private static final String patternMissingMethod = "%class% miss __toString() implementation.";
+    private static final String messagePattern = "'%s' can be used instead.";
 
     @NotNull
     public String getShortName() {
@@ -94,9 +92,8 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                         /* investigate possible issues */
                         if (isMatchedPattern) {
-                            final boolean isStrict   = !ClassInStringContextStrategy.apply(arguments[0], holder, target, patternMissingMethod);
                             final boolean isRegular  = ComparisonStyle.isRegular();
-                            final String operator    = (isEmptyString ? "=" : "!") + (isStrict ? "==" : "=");
+                            final String operator    = (isEmptyString ? "=" : "!") + (this.canApplyIdentityOperator(arguments[0]) ? "==" : "=");
                             final String replacement = String.format(
                                     isRegular ? "%s %s ''" : "'' %s %s",
                                     isRegular ? arguments[0].getText() : operator,
@@ -110,6 +107,14 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                         }
                     }
                 }
+            }
+
+            private boolean canApplyIdentityOperator(@NotNull PsiElement value) {
+                final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) value, value.getProject());
+                if (resolved != null && !resolved.isEmpty() && !resolved.hasUnknown()) {
+                    return resolved.getTypes().stream().allMatch(type -> Types.strString.equals(Types.getType(type)));
+                }
+                return false;
             }
         };
     }

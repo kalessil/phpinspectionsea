@@ -26,30 +26,30 @@ function checkClasses(ClassWithToString $c1, ClassWithoutToString $c2) {
     ) {}
 }
 
-function checkUseCases($strToTest) {
-    if (<weak_warning descr="''' !== $strToTest' can be used instead.">mb_strlen($strToTest)</weak_warning>)  {}
-    if (<weak_warning descr="''' === $strToTest' can be used instead.">!mb_strlen($strToTest)</weak_warning>) {}
-    if (<weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest)</weak_warning>)     {}
-    if (<weak_warning descr="''' === $strToTest' can be used instead.">!strlen($strToTest)</weak_warning>)    {}
+function checkUseCases(string $string) {
+    if (<weak_warning descr="''' !== $string' can be used instead.">mb_strlen($string)</weak_warning>)  {}
+    if (<weak_warning descr="''' === $string' can be used instead.">!mb_strlen($string)</weak_warning>) {}
+    if (<weak_warning descr="''' !== $string' can be used instead.">strlen($string)</weak_warning>)     {}
+    if (<weak_warning descr="''' === $string' can be used instead.">!strlen($string)</weak_warning>)    {}
 
-    if ($strToTest || <weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest)</weak_warning>) {}
-    if ($strToTest && <weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest)</weak_warning>) {}
+    if ($string || <weak_warning descr="''' !== $string' can be used instead.">strlen($string)</weak_warning>) {}
+    if ($string && <weak_warning descr="''' !== $string' can be used instead.">strlen($string)</weak_warning>) {}
 
-    if (<weak_warning descr="''' === $strToTest' can be used instead.">strlen($strToTest) == 0</weak_warning>)  {}
-    if (<weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest) != 0</weak_warning>)  {}
-    if (<weak_warning descr="''' === $strToTest' can be used instead.">strlen($strToTest) === 0</weak_warning>) {}
-    if (<weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest) !== 0</weak_warning>) {}
+    if (<weak_warning descr="''' === $string' can be used instead.">strlen($string) == 0</weak_warning>)  {}
+    if (<weak_warning descr="''' !== $string' can be used instead.">strlen($string) != 0</weak_warning>)  {}
+    if (<weak_warning descr="''' === $string' can be used instead.">strlen($string) === 0</weak_warning>) {}
+    if (<weak_warning descr="''' !== $string' can be used instead.">strlen($string) !== 0</weak_warning>) {}
 
-    if (<weak_warning descr="''' === $strToTest' can be used instead.">0 ==  strlen($strToTest)</weak_warning>) {}
-    if (<weak_warning descr="''' !== $strToTest' can be used instead.">0 !=  strlen($strToTest)</weak_warning>) {}
-    if (<weak_warning descr="''' === $strToTest' can be used instead.">0 === strlen($strToTest)</weak_warning>) {}
-    if (<weak_warning descr="''' !== $strToTest' can be used instead.">0 !== strlen($strToTest)</weak_warning>) {}
+    if (<weak_warning descr="''' === $string' can be used instead.">0 ==  strlen($string)</weak_warning>) {}
+    if (<weak_warning descr="''' !== $string' can be used instead.">0 !=  strlen($string)</weak_warning>) {}
+    if (<weak_warning descr="''' === $string' can be used instead.">0 === strlen($string)</weak_warning>) {}
+    if (<weak_warning descr="''' !== $string' can be used instead.">0 !== strlen($string)</weak_warning>) {}
 
-    if (<weak_warning descr="''' === $strToTest' can be used instead.">strlen($strToTest) < 1</weak_warning>)   {}
-    if (<weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest) >= 1</weak_warning>)  {}
-    if (<weak_warning descr="''' !== $strToTest' can be used instead.">strlen($strToTest) > 0</weak_warning>)   {}
+    if (<weak_warning descr="''' === $string' can be used instead.">strlen($string) < 1</weak_warning>)   {}
+    if (<weak_warning descr="''' !== $string' can be used instead.">strlen($string) >= 1</weak_warning>)  {}
+    if (<weak_warning descr="''' !== $string' can be used instead.">strlen($string) > 0</weak_warning>)   {}
 
     /* not yet supported */
-    if (1 >  strlen($strToTest))   {}
-    if (1 <= strlen($strToTest))  {}
+    if (1 >  strlen($string)) {}
+    if (1 <= strlen($string)) {}
 }

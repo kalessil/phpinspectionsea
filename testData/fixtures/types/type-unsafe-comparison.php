@@ -1,12 +1,38 @@
 <?php
 
+    interface IWithToString                { public function __toString(); }
+    interface IWithoutToString             {}
+    abstract class AbstractWithToString    { abstract public function __toString(); }
+    abstract class AbstractWithoutToString {}
+    class ClassWithToString                { public function __toString() {} }
+    class ClassWithoutToString             {}
+
+    function check_interfaces(IWithToString $i1, IWithoutToString $i2) {
+        return [
+            $i1 != '',
+            <error descr="\IWithoutToString miss __toString() implementation.">$i2 != ''</error>,
+        ];
+    }
+    function check_abstract_classes(AbstractWithToString $a1, AbstractWithoutToString $a2) {
+        return [
+            $a1 != '',
+            <error descr="\AbstractWithoutToString miss __toString() implementation.">$a2 != ''</error>,
+        ];
+    }
+    function check_implementation_classes(ClassWithToString $c1, ClassWithoutToString $c2) {
+        return [
+            $c1 != '',
+            <error descr="\ClassWithoutToString miss __toString() implementation.">$c2 != ''</error>,
+        ];
+    }
+
     class ClassNeedsToStringMethod {}
 
     /* pattern: object can not be used in string context */
     $object = new ClassNeedsToStringMethod();
-    $result = <error descr="Class \ClassNeedsToStringMethod must implement __toString().">$object == '...'</error>;
-    $result = <error descr="Class \ClassNeedsToStringMethod must implement __toString().">$object != '...'</error>;
-    $result = <error descr="Class \ClassNeedsToStringMethod must implement __toString().">$object <> '...'</error>;
+    $result = <error descr="\ClassNeedsToStringMethod miss __toString() implementation.">$object == '...'</error>;
+    $result = <error descr="\ClassNeedsToStringMethod miss __toString() implementation.">$object != '...'</error>;
+    $result = <error descr="\ClassNeedsToStringMethod miss __toString() implementation.">$object <> '...'</error>;
 
     /* pattern: safe comparison */
     $result = <warning descr="Safely use '===' here.">$x == '...'</warning>;

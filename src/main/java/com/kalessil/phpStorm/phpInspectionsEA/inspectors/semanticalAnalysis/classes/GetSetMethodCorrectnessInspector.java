@@ -9,7 +9,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                 final String fieldName            = usedFields.iterator().next();
                                 final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").replaceAll("_", "").toLowerCase();
                                 final String fieldNameNormalized  = fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
-                                if (StringUtils.getLevenshteinDistance(fieldNameNormalized, methodNameNormalized) != 0) {
+                                if (!fieldNameNormalized.equals(methodNameNormalized)) {
                                     final PhpClass clazz = method.getContainingClass();
                                     if (clazz != null) {
                                         final List<String> alternatives = new ArrayList<>();
@@ -83,7 +82,7 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                                 .filter(field   -> !field.isConstant() && !fieldName.equals(field.getName()))
                                                 .anyMatch(field -> {
                                                     final String normalized = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
-                                                    if (StringUtils.getLevenshteinDistance(normalized, methodNameNormalized) == 0) {
+                                                    if (normalized.equals(methodNameNormalized)) {
                                                         alternatives.add(field.getName());
                                                         return true;
                                                     }

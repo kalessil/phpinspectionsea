@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 
 public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
-    private static final String messagePattern = "It's probably a wrong field was used here (%s, %s).";
+    private static final String messagePattern = "It's probably a wrong field was used here ('%s' would fit).";
 
     private static final Pattern regexTargetName;
     static {
@@ -57,29 +57,20 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                             for (final FieldReference reference : PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {
                                 final PsiElement base = reference.getFirstChild();
                                 if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
-                                    final PsiElement context = reference.getParent();
-                                    if (
-                                            !(context instanceof MemberReference) &&
-                                            !(context instanceof ParameterList) &&
-                                            !(context instanceof ArrayAccessExpression)
-                                    ) {
-                                        usedFields.add(reference.getName());
-                                    }
-                                }
-                                if (usedFields.size() > 1) {
-                                    break;
+                                    usedFields.add(reference.getName());
                                 }
                             }
-                            if (usedFields.size() == 1) {
-                                final String fieldName            = usedFields.iterator().next();
+                            if (!usedFields.isEmpty()) {
                                 final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").replaceAll("_", "").toLowerCase();
-                                final String fieldNameNormalized  = fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
-                                if (!fieldNameNormalized.equals(methodNameNormalized)) {
+                                final boolean usesTheRightField   = usedFields.stream().anyMatch(fieldName ->
+                                        fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized)
+                                );
+                                if (!usesTheRightField) {
                                     final PhpClass clazz = method.getContainingClass();
                                     if (clazz != null) {
                                         final List<String> alternatives = new ArrayList<>();
                                         final boolean hasAlternatives   = clazz.getFields().stream()
-                                                .filter(field   -> !field.isConstant() && !fieldName.equals(field.getName()))
+                                                .filter(field   -> !field.isConstant())
                                                 .anyMatch(field -> {
                                                     final String normalized = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
                                                     if (normalized.equals(methodNameNormalized)) {
@@ -94,13 +85,12 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                             if (!isDelegating) {
                                                 holder.registerProblem(
                                                         NamedElementUtil.getNameIdentifier(method),
-                                                        String.format(messagePattern, fieldName, alternatives.get(0))
+                                                        String.format(messagePattern, alternatives.get(0))
                                                 );
                                             }
                                         }
                                     }
                                 }
-
                             }
                             usedFields.clear();
                         }

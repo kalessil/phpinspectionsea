@@ -45,7 +45,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                 final String functionName = reference.getName();
                 if (functionName != null && (functionName.equals("strlen") || functionName.equals("mb_strlen"))) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length > 0) {
+                    if (arguments.length > 0 && ExpressionSemanticUtil.getBlockScope(reference) != null) {
                         boolean isMatchedPattern = false;
                         boolean isEmptyString    = false;
                         PsiElement target        = null;

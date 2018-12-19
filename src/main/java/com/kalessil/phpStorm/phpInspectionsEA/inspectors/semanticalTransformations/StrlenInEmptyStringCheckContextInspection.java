@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection {
-    private static final String messagePattern = "'%s' can be used instead.";
+    private static final String messagePattern = "'%s' would make more sense here (it also slightly faster).";
 
     @NotNull
     public String getShortName() {

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 
 public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
-    private static final String messagePattern = "It's probably a wrong field was used here ('%s' would fit).";
+    private static final String messagePattern = "It's probably a wrong field was used here ('%s' could fit).";
 
     private static final Pattern regexTargetName;
     static {
@@ -53,29 +53,16 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                     if (isTargetMethod && !this.isTestContext(method)) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                         if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
-                            final Set<String> usedFields    = new HashSet<>();
-                            final Set<String> skippedFields = new HashSet<>();
+                            final Set<String> usedFields = new HashSet<>();
                             for (final FieldReference reference : PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {
                                 final PsiElement base = reference.getFirstChild();
                                 if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
-                                    final PsiElement context = reference.getParent();
-                                    if (
-                                            !(context instanceof MemberReference) &&
-                                            !(context instanceof ParameterList) &&
-                                            !(context instanceof ArrayAccessExpression) &&
-                                            !(context instanceof ForeachStatement)
-                                    ) {
-                                        usedFields.add(reference.getName());
-                                    } else {
-                                        skippedFields.add(reference.getName());
-                                    }
+                                    usedFields.add(reference.getName());
                                 }
                             }
-                            if (!usedFields.isEmpty() || !skippedFields.isEmpty()) {
+                            if (!usedFields.isEmpty()) {
                                 final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").replaceAll("_", "").toLowerCase();
-                                final boolean usesTheRightField   =
-                                        usedFields.stream().anyMatch(fieldName    -> fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized)) ||
-                                        skippedFields.stream().anyMatch(fieldName -> fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized));
+                                final boolean usesTheRightField   = usedFields.stream().anyMatch(fieldName -> fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized));
                                 if (!usesTheRightField) {
                                     final PhpClass clazz = method.getContainingClass();
                                     if (clazz != null) {
@@ -104,7 +91,6 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                 }
                             }
                             usedFields.clear();
-                            skippedFields.clear();
                         }
                     }
                 }

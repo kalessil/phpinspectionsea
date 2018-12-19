@@ -74,8 +74,8 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                             if (!usedFields.isEmpty() || !skippedFields.isEmpty()) {
                                 final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").replaceAll("_", "").toLowerCase();
                                 final boolean usesTheRightField   =
-                                        usedFields.stream().anyMatch(fieldName     -> fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized)) ||
-                                        skippedFields.stream().noneMatch(fieldName -> fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized));
+                                        usedFields.stream().anyMatch(fieldName    -> fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized)) ||
+                                        skippedFields.stream().anyMatch(fieldName -> fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized));
                                 if (!usesTheRightField) {
                                     final PhpClass clazz = method.getContainingClass();
                                     if (clazz != null) {

@@ -41,7 +41,7 @@ import java.util.Set;
 public class TypeUnsafeComparisonInspector extends BasePhpInspection {
     private static final String patternHarden                = "Please consider using more strict '%s' here (hidden types casting will not be applied anymore).";
     private static final String patternCompareStrict         = "Safely use '%s' here.";
-    private static final String messageToStringMethodMissing = "Class %class% must implement __toString().";
+    private static final String messageToStringMethodMissing = "%class% miss __toString() implementation.";
 
     private final static Set<String> comparable = new HashSet<>();
     static {

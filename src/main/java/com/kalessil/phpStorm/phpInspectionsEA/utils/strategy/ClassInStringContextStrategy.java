@@ -61,9 +61,11 @@ final public class ClassInStringContextStrategy {
         /* check methods, error on first one violated requirements */
         for (final PhpClass clazz : listClasses) {
             if (OpenapiResolveUtil.resolveMethod(clazz, "__toString") == null) {
-                final String message = classHasNoToStringMessage.replace("%class%", clazz.getFQN());
-                holder.registerProblem(expression, message, ProblemHighlightType.ERROR);
-
+                holder.registerProblem(
+                        expression,
+                        classHasNoToStringMessage.replace("%class%", clazz.getFQN()),
+                        ProblemHighlightType.ERROR
+                );
                 break;
             }
         }

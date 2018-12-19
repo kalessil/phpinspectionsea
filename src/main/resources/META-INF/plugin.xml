@@ -28,10 +28,6 @@
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.AmbiguousMethodsCallsInArrayMappingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="StrlenInEmptyStringCheckContextInspection"     displayName="'(mb_)strlen(...)' misused"
-        groupName="Performance"                                   enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="CallableInLoopTerminationConditionInspection"  displayName="Callable calls in loops termination condition"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.CallableInLoopTerminationConditionInspector"/>
@@ -275,12 +271,10 @@
         shortName="FuncNumArgsCanBeUsedInspection"                 displayName="'func_num_args(...)' can be used"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.FuncNumArgsCanBeUsedInspector"/>
-
-
-  <!--localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-       shortName="ArrayFunctionsInvariantsInspection"             displayName="Foreach behaves as an array function"
-       groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
-       implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ArrayFunctionsInvariantsInspector"/-->
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="StrlenInEmptyStringCheckContextInspection"      displayName="'strlen(...)' misused"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

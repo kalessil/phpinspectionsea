@@ -45,6 +45,8 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
                 final String methodName = method.getName();
                 if (!methodName.isEmpty() && regexTargetName.matcher(methodName).matches()) {
                     final boolean isTargetMethod = !method.isAbstract() &&

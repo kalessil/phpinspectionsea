@@ -62,7 +62,7 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                             }
                             if (!usedFields.isEmpty()) {
                                 final String methodNameNormalized = methodName.replaceFirst("^(set|get|is)", "").replaceAll("_", "").toLowerCase();
-                                final boolean usesTheRightField   = usedFields.stream().anyMatch(fieldName -> fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase().equals(methodNameNormalized));
+                                final boolean usesTheRightField   = usedFields.stream().anyMatch(fieldName -> this.normalize(fieldName).equals(methodNameNormalized));
                                 if (!usesTheRightField) {
                                     final PhpClass clazz = method.getContainingClass();
                                     if (clazz != null) {
@@ -70,7 +70,7 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                         final boolean hasAlternatives   = clazz.getFields().stream()
                                                 .filter(field   -> !field.isConstant())
                                                 .anyMatch(field -> {
-                                                    final String normalized = field.getName().replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
+                                                    final String normalized = this.normalize(field.getName());
                                                     if (normalized.equals(methodNameNormalized)) {
                                                         alternatives.add(field.getName());
                                                         return true;
@@ -81,10 +81,10 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                             final boolean isDelegating = PsiTreeUtil.findChildrenOfType(body, MethodReference.class).stream()
                                                     .anyMatch(reference -> methodName.equals(reference.getName()));
                                             if (!isDelegating) {
-                                                holder.registerProblem(
-                                                        NamedElementUtil.getNameIdentifier(method),
-                                                        String.format(messagePattern, alternatives.get(0))
-                                                );
+                                                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                                                if (nameNode != null) {
+                                                    holder.registerProblem(nameNode, String.format(messagePattern, alternatives.get(0)));
+                                                }
                                             }
                                         }
                                     }
@@ -94,6 +94,11 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            @NotNull
+            private String normalize(@NotNull String fieldName) {
+                return fieldName.replaceFirst("^(is)", "").replaceAll("_", "").toLowerCase();
             }
         };
     }

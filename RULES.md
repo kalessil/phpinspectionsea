@@ -229,6 +229,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | LateStaticBindingInspection                     | Late static binding usage correctness                     | yes | yes | yes  | no  |
 | Probable bugs        | DuplicateArrayKeysInspection                    | Duplicate array keys                                      | n/a | yes | n/a  | no  |
 | Probable bugs        | TraitsMethodsConflictsInspection                | Traits methods conflicts resolution                       | n/a | yes | n/a  | no  |
+| Probable bugs        | GetSetMethodCorrectnessInspection               | get/set methods correctness                               | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

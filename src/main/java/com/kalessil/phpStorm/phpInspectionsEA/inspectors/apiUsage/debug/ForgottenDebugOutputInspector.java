@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -33,9 +33,9 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
     public final List<String> configuration = new ArrayList<>();
     public boolean migratedIntoUserSpace    = false;
 
-    final private Set<String> customFunctions                     = new HashSet<>();
-    final private Map<String, Pair<String, String>> customMethods = new HashMap<>();
-    final private Set<String> customMethodsNames                  = new HashSet<>();
+    final private Set<String> customFunctions               = new HashSet<>();
+    final private Map<String, Couple<String>> customMethods = new HashMap<>();
+    final private Set<String> customMethodsNames            = new HashSet<>();
 
     // prepared content for smooth runtime
     static private final String message = "Please ensure this is not a forgotten debug statement.";
@@ -84,7 +84,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             final String[] disassembledDescriptor = stringDescriptor.split("::", 2);
             customMethods.put(
                     stringDescriptor.toLowerCase(),
-                    Pair.create(disassembledDescriptor[0], disassembledDescriptor[1])
+                    Couple.of(disassembledDescriptor[0], disassembledDescriptor[1])
             );
             customMethodsNames.add(disassembledDescriptor[1]);
         }
@@ -188,18 +188,17 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
-                if (customMethods.isEmpty() || methodName == null || !customMethodsNames.contains(methodName)) {
-                    return;
-                }
-
-                for (final Pair<String, String> match : customMethods.values()) {
-                    final PsiElement resolved
-                        = methodName.equals(match.getSecond()) ? OpenapiResolveUtil.resolveReference(reference) : null;
-                    if (resolved instanceof Method) {
-                        final PhpClass clazz = ((Method) resolved).getContainingClass();
-                        if (clazz != null && match.getFirst().equals(clazz.getFQN()) && !this.isInDebugFunction(reference)) {
-                            holder.registerProblem(reference, message);
-                            return;
+                if (methodName != null && customMethodsNames.contains(methodName)) {
+                    for (final Couple<String> match : customMethods.values()) {
+                        if (methodName.equals(match.getSecond())) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                            if (resolved instanceof Method) {
+                                final PhpClass clazz = ((Method) resolved).getContainingClass();
+                                if (clazz != null && match.getFirst().equals(clazz.getFQN()) && !this.isInDebugFunction(reference)) {
+                                    holder.registerProblem(reference, message);
+                                    return;
+                                }
+                            }
                         }
                     }
                 }
@@ -231,7 +230,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 /* statement can be prepended by @ (silence) */
                 if (parent instanceof UnaryExpression) {
                     final PsiElement operation = ((UnaryExpression) parent).getOperation();
-                    if (operation != null && operation.getNode().getElementType() == PhpTokenTypes.opSILENCE) {
+                    if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opSILENCE)) {
                         parent = parent.getParent();
                     }
                 }
@@ -239,8 +238,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 if (OpenapiTypesUtil.isStatementImpl(parent)) {
                     final PsiElement preceding = ((Statement) parent).getPrevPsiSibling();
                     if (preceding != null && OpenapiTypesUtil.isFunctionReference(preceding.getFirstChild())) {
-                        final FunctionReference precedingCall = (FunctionReference) preceding.getFirstChild();
-                        final String precedingFunctionName    = precedingCall.getName();
+                        final String precedingFunctionName = ((FunctionReference) preceding.getFirstChild()).getName();
                         if (precedingFunctionName != null && precedingFunctionName.equals("ob_start")) {
                             result = true;
                         }

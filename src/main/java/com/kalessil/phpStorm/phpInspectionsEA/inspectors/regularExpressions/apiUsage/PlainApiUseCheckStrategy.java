@@ -137,8 +137,8 @@ final public class PlainApiUseCheckStrategy {
                 params[1] instanceof StringLiteralExpression && params[1].getText().length() == 2 &&
                 trimMatcher.find()
             ) {
-                /* false-positives: the `m` modifier make the replacement impossible */
-                if (modifiers != null && modifiers.indexOf('m') != -1) {
+                /* false-positives: the `m` or `u` modifiers making the replacement impossible */
+                if (modifiers != null && (modifiers.indexOf('m') != -1 || modifiers.indexOf('u') != -1)) {
                     return;
                 }
 

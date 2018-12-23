@@ -43,6 +43,7 @@
     <warning descr="'trim($string)' can be used instead.">preg_replace('/^\s*|\s*$/', '', $string)</warning>;
     /* false-positives */
     preg_replace('/^a+/m', '', $string);
+    preg_replace('/^a+/u', '', $string);
     preg_replace('/^a+/', 'b', $string);
     preg_replace('/a+$/', 'b', $string);
     preg_replace('/^.+/', '', $string);

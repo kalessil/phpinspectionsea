@@ -99,6 +99,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         list.add("\\Codeception\\Util\\Debug::debug");
         /* Doctrine-related debug functions */
         list.add("\\Doctrine\\Common\\Util\\Debug::dump");
+        list.add("\\Doctrine::dump");
         list.add("\\Doctrine\\Common\\Util\\Debug::export");
         /* Symfony-related debug functions */
         list.add("\\Symfony\\Component\\Debug\\Debug::enable");
@@ -107,12 +108,14 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         list.add("\\Symfony\\Component\\Debug\\DebugClassLoader::enable");
         /* Zend-related debug functions */
         list.add("\\Zend\\Debug\\Debug::dump");
+        list.add("\\Zend_Debug::dump");
         list.add("\\Zend\\Di\\Display\\Console::export");
         /* Typo3-related debug functions */
         list.add("\\TYPO3\\CMS\\Core\\Utility\\DebugUtility::debug");
         /* Laravel-related debug functions */
         list.add("\\Illuminate\\Support\\Debug\\Dumper::dump");
         list.add("dd");
+        list.add("dump");
         /* Core-php debug functions */
         list.add("debug_print_backtrace");
         list.add("debug_zval_dump");

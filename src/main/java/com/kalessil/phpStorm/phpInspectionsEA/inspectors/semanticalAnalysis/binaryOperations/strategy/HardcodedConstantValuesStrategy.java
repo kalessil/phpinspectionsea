@@ -38,6 +38,7 @@ final public class HardcodedConstantValuesStrategy {
                 holder.registerProblem(right, message);
                 result = true;
             }
+            // TODO: [], '', ""
         }
         return result;
     }

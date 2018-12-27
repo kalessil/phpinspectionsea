@@ -81,7 +81,7 @@ final public class ChainedCallsStrategy {
                     if (PhpLanguageUtil.isNull(secondOperand)) {
                         nullTestedReferences.put(reference, reference.getName());
                     }
-                } else if (operation == PhpTokenTypes.kwINSTANCEOF) {
+                } else if (operation == PhpTokenTypes.kwINSTANCEOF || PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation)) {
                     nullTestedReferences.put(reference, reference.getName());
                 }
             } else if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {

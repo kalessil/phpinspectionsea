@@ -108,6 +108,9 @@ class CasesHolder {
         if ($this->npeReportingChainedCalls() instanceof self) { return $this->npeReportingChainedCalls()->npeReportingChainedCalls(); }
         return $this->npeReportingChainedCalls() instanceof self ? $this->npeReportingChainedCalls()->npeReportingChainedCalls() : null;
     }
+    public function npeSafeChainedCalls4(): bool {
+        return $this->npeReportingChainedCalls() && $this->npeReportingChainedCalls()->npeReportingChainedCalls();
+    }
 
     public function npeSafeTestCase(?CasesHolder $first, ?CasesHolder $second, ?CasesHolder $third) {
         self::assertNotNull($first);

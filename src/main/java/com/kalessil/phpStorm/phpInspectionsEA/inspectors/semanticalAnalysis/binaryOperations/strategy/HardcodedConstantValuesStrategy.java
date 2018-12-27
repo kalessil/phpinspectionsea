@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -7,6 +8,9 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -18,27 +22,53 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class HardcodedConstantValuesStrategy {
-    private static final String message = "This makes no sense or enforces the operation result.";
+    private static final String messageEnforces  = "This operand enforces the operation result.";
+    private static final String messageSenseless = "This operand doesn't make any sense here.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
-        boolean result               = false;
         final IElementType operation = expression.getOperationType();
-        if (
-            PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ||
-            PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)
-        ) {
-            final PsiElement left  = expression.getLeftOperand();
-            final PsiElement right = expression.getRightOperand();
-            if (PhpLanguageUtil.isBoolean(left) || PhpLanguageUtil.isNull(left)) {
-                holder.registerProblem(left, message);
-                result = true;
-            }
-            /* no else-if, as it breaks proper processing */
-            /* else */ if (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right)) {
-                holder.registerProblem(right, message);
-                result = true;
-            }
+        if (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation)) {
+            return analyzeAndOperation(expression.getLeftOperand(), expression.getRightOperand(), holder);
         }
-        return result;
+        if (PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)) {
+            return analyzeOrOperation(expression.getLeftOperand(), expression.getRightOperand(), holder);
+        }
+        return false;
+    }
+
+    private static boolean analyzeAndOperation(
+            @Nullable PsiElement left,
+            @Nullable PsiElement right,
+            @NotNull ProblemsHolder holder
+    ) {
+        return Stream.of(left, right).anyMatch(operand -> {
+            if (PhpLanguageUtil.isFalse(operand) || PhpLanguageUtil.isNull(operand)) {
+                holder.registerProblem(operand, messageEnforces);
+                return true;
+            }
+            if (PhpLanguageUtil.isTrue(operand)) {
+                holder.registerProblem(operand, messageSenseless, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private static boolean analyzeOrOperation(
+            @Nullable PsiElement left,
+            @Nullable PsiElement right,
+            @NotNull ProblemsHolder holder
+    ) {
+        return Stream.of(left, right).anyMatch(operand -> {
+            if (PhpLanguageUtil.isTrue(operand)) {
+                holder.registerProblem(operand, messageEnforces);
+                return true;
+            }
+            if (PhpLanguageUtil.isFalse(operand) || PhpLanguageUtil.isNull(operand)) {
+                holder.registerProblem(operand, messageSenseless, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                return true;
+            }
+            return false;
+        });
     }
 }

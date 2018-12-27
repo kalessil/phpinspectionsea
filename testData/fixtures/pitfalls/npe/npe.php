@@ -98,9 +98,18 @@ class CasesHolder {
     }
     public function npeSafeChainedCalls1(): ?CasesHolder {
         if ($this->npeReportingChainedCalls() !== null) { return $this->npeReportingChainedCalls()->npeReportingChainedCalls(); }
+        return $this->npeReportingChainedCalls() !== null ? $this->npeReportingChainedCalls()->npeReportingChainedCalls() : null;
     }
     public function npeSafeChainedCalls2(): ?CasesHolder {
-        if ($this->npeReportingChainedCalls())          { return $this->npeReportingChainedCalls()->npeReportingChainedCalls(); }
+        if ($this->npeReportingChainedCalls()) { return $this->npeReportingChainedCalls()->npeReportingChainedCalls(); }
+        return $this->npeReportingChainedCalls() ? $this->npeReportingChainedCalls()->npeReportingChainedCalls() : null;
+    }
+    public function npeSafeChainedCalls3(): ?CasesHolder {
+        if ($this->npeReportingChainedCalls() instanceof self) { return $this->npeReportingChainedCalls()->npeReportingChainedCalls(); }
+        return $this->npeReportingChainedCalls() instanceof self ? $this->npeReportingChainedCalls()->npeReportingChainedCalls() : null;
+    }
+    public function npeSafeChainedCalls4(): bool {
+        return $this->npeReportingChainedCalls() && $this->npeReportingChainedCalls()->npeReportingChainedCalls();
     }
 
     public function npeSafeTestCase(?CasesHolder $first, ?CasesHolder $second, ?CasesHolder $third) {

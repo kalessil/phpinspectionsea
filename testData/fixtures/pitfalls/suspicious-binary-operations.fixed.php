@@ -35,12 +35,14 @@ class MisplacedOperations
 }
 
 /* a bug: hardcoded booleans */
-$x = (
-    true ||
-    false ||
-    null ||
-    false === true
-);
+$x = [
+    $x && false,
+    $x && null,
+    $x && true,
+    $x || false,
+    $x || null,
+    $x || true,
+];
 
 /* a bug: ternary always returns the argument */
 $y = [

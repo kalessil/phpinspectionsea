@@ -41,3 +41,12 @@
         $object->method()->one() ||
         <warning descr="Same as in the previous call, consider introducing a local variable instead.">$object->method()</warning>->two()
     ) {}
+
+
+    $ternaries = [
+        $source->getUser() ? <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName() : null,
+        $source->getUser() !== null ? <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName() : null,
+        $source->getUser() instanceof $class ? <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName() : null,
+        /* skipped */
+        $source->getUser() ? $source->getUser() : null, // short ternary can be applied
+    ];

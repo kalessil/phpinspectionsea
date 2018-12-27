@@ -110,6 +110,35 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
             }
 
             @Override
+            public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
+
+                if (!expression.isShort()) {
+                    PsiElement base = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                    if (base instanceof BinaryExpression) {
+                        /* instance of, comparison operations */
+                        base = ((BinaryExpression) base).getLeftOperand();
+                    }
+                    if (base instanceof MethodReference) {
+                        final List<MethodReference> references = new ArrayList<>();
+                        references.add((MethodReference) base);
+
+                        final PsiElement candidate = expression.getTrueVariant();
+                        if (candidate instanceof MethodReference) {
+                            final PsiElement candidateBase = candidate.getFirstChild();
+                            if (candidateBase instanceof MethodReference) {
+                                references.add((MethodReference) candidateBase);
+                            }
+                        }
+
+                        this.analyzeReferences(references);
+                        references.clear();
+                    }
+                }
+            }
+
+            @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }

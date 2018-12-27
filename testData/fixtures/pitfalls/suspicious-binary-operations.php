@@ -35,12 +35,14 @@ class MisplacedOperations
 }
 
 /* a bug: hardcoded booleans */
-$x = (
-    <error descr="This makes no sense or enforces the operation result.">true</error> ||
-    <error descr="This makes no sense or enforces the operation result.">false</error> ||
-    <error descr="This makes no sense or enforces the operation result.">null</error> ||
-    false === true
-);
+$x = [
+    $x && <error descr="This operand enforces the operation result.">false</error>,
+    $x && <error descr="This operand enforces the operation result.">null</error>,
+    $x && <error descr="This operand doesn't make any sense here.">true</error>,
+    $x || <error descr="This operand doesn't make any sense here.">false</error>,
+    $x || <error descr="This operand doesn't make any sense here.">null</error>,
+    $x || <error descr="This operand enforces the operation result.">true</error>,
+];
 
 /* a bug: ternary always returns the argument */
 $y = [

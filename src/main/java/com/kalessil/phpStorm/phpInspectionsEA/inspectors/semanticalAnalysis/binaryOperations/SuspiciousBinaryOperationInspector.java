@@ -33,7 +33,7 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                final Collection<BooleanSupplier> callbacks = new ArrayList<>(9);
+                final Collection<BooleanSupplier> callbacks = new ArrayList<>();
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
                 callbacks.add(() -> EqualsInAssignmentContextStrategy.apply(expression, holder));
                 callbacks.add(() -> GreaterOrEqualInHashElementStrategy.apply(expression, holder));
@@ -51,7 +51,6 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                         break;
                     }
                 }
-
                 callbacks.clear();
             }
         };

@@ -110,6 +110,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         advancedOpcode.add("dirname");
         advancedOpcode.add("constant");
         advancedOpcode.add("define");
+        advancedOpcode.add("array_key_exists");
     }
 
     final private static Condition<PsiElement> PARENT_NAMESPACE = new Condition<PsiElement>() {

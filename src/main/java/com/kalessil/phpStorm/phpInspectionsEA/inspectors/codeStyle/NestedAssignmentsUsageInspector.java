@@ -40,7 +40,7 @@ public class NestedAssignmentsUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression expression) {
                 final PsiElement parent = expression.getParent();
-                if (!(parent instanceof AssignmentExpression)) {
+                if (!(parent instanceof AssignmentExpression) && expression.getValue() instanceof AssignmentExpression) {
                     holder.registerProblem(
                             expression,
                             message,

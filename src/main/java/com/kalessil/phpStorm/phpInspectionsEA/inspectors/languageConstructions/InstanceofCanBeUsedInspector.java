@@ -9,15 +9,12 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -44,100 +41,111 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null) {
-                    final PsiElement parent = reference.getParent();
-                    if (functionName.equals("get_class")) {
-                        if (parent instanceof BinaryExpression) {
-                            this.checkGetClass(reference, (BinaryExpression) parent);
-                        }
-                    } else if (functionName.equals("class_parents") || functionName.equals("class_implements")) {
-                        if (parent instanceof ParameterList) {
-                            final PsiElement grandParent = parent.getParent();
-                            if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
-                                this.checkHierarhyLookup(reference, (FunctionReference) grandParent);
+                    switch (functionName) {
+                        case "get_class":
+                        case "get_parent_class": {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 1 && this.isTargetBinaryContext(reference) && this.isNotString(arguments[0])) {
+                                final BinaryExpression binary = (BinaryExpression) reference.getParent();
+                                final PsiElement candidate    = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                if (candidate != null) {
+                                    final String fqn = this.extractClassFqn(candidate);
+                                    if (fqn != null) {
+                                        this.analyze(binary, arguments[0], fqn, !functionName.equals("get_class"));
+                                    }
+                                }
                             }
+                            break;
                         }
-                    }
-                }
-            }
-
-            private void checkHierarhyLookup(@NotNull FunctionReference reference, @NotNull FunctionReference context) {
-                final String functionName = context.getName();
-                if (functionName != null && functionName.equals("in_array")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1) {
-                        final PsiElement[] contextArguments = context.getParameters();
-                        if (contextArguments.length > 0 && contextArguments[0] instanceof StringLiteralExpression) {
-                            final StringLiteralExpression literal = (StringLiteralExpression) contextArguments[0];
-                            final String clazz                    = literal.getContents();
-                            if (clazz.length() > 3 && !clazz.equals("__PHP_Incomplete_Class") && literal.getFirstPsiChild() == null) {
-                                final Project project              = holder.getProject();
-                                final String fqn                   = '\\' + clazz.replaceAll("\\\\\\\\", "\\\\");
-                                final Collection<PhpClass> classes
-                                        = OpenapiResolveUtil.resolveClassesByFQN(fqn, PhpIndex.getInstance(project));
-                                if (!classes.isEmpty()) {
-                                    final PsiElement object = arguments[0];
-                                    if (object instanceof PhpTypedElement) {
-                                        final PhpType resolved
-                                                = OpenapiResolveUtil.resolveType((PhpTypedElement) object, project);
-                                        if (resolved != null) {
-                                            final boolean isTarget = resolved.filterUnknown().getTypes().stream()
-                                                    .noneMatch(t -> {
-                                                        final String normalized = Types.getType(t);
-                                                        return normalized.equals(Types.strMixed) || normalized.equals(Types.strString);
-                                                    });
-                                            if (isTarget) {
-                                                final String replacement = String.format("%s instanceof %s", object.getText(), fqn);
-                                                holder.registerProblem(
-                                                        context,
-                                                        String.format(messagePattern, replacement),
-                                                        new UseInstanceofFix(replacement)
-                                                );
-                                            }
+                        case "is_a":
+                        case "is_subclass_of": {
+                            final PsiElement[] arguments = reference.getParameters();
+                            final boolean isTarget       = arguments.length == 2 || (arguments.length == 3 && PhpLanguageUtil.isFalse(arguments[2]));
+                            if (isTarget && this.isNotString(arguments[0])) {
+                                final String fqn = this.extractClassFqn(arguments[1]);
+                                if (fqn != null) {
+                                    this.analyze(reference, arguments[0], fqn, true);
+                                }
+                            }
+                            break;
+                        }
+                        case "in_array": {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length >= 2 && OpenapiTypesUtil.isFunctionReference(arguments[1])) {
+                                final FunctionReference innerCall = (FunctionReference) arguments[1];
+                                final String innerName            = innerCall.getName();
+                                if (innerName != null && (innerName.equals("class_implements") || innerName.equals("class_parents"))) {
+                                    final PsiElement[] innerArguments = innerCall.getParameters();
+                                    if (innerArguments.length > 0 && this.isNotString(innerArguments[0])) {
+                                        final String fqn = this.extractClassFqn(arguments[0]);
+                                        if (fqn != null) {
+                                            this.analyze(reference, innerArguments[0], fqn, true);
                                         }
                                     }
                                 }
                             }
+                            break;
                         }
                     }
                 }
             }
 
-            private void checkGetClass(@NotNull FunctionReference reference, @NotNull BinaryExpression context) {
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length == 1) {
-                    final IElementType operator = context.getOperationType();
-                    if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
-                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(context, reference);
-                        if (second instanceof StringLiteralExpression) {
-                            final StringLiteralExpression literal = (StringLiteralExpression) second;
-                            final String clazz                    = literal.getContents();
-                            if (clazz.length() > 3 && !clazz.equals("__PHP_Incomplete_Class") && literal.getFirstPsiChild() == null) {
-                                final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
-                                final String fqn                   = '\\' + clazz.replaceAll("\\\\\\\\", "\\\\");
-                                final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
-                                if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
-                                    final boolean isInverted =
-                                            operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL;
-                                    final String replacement = String.format(
-                                            isInverted ? "! %s instanceof %s" : "%s instanceof %s",
-                                            arguments[0].getText(),
-                                            fqn
-                                    );
-                                    holder.registerProblem(
-                                            context,
-                                            String.format(messagePattern, replacement),
-                                            new UseInstanceofFix(replacement)
-                                    );
-                                }
-                            }
-                        }
+            private void analyze(
+                    @NotNull PsiElement context,
+                    @NotNull PsiElement subject,
+                    @NotNull String fqn,
+                    boolean allowChildClasses
+            ) {
+                final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
+                final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
+                if (!classes.isEmpty() && (allowChildClasses || index.getDirectSubclasses(fqn).isEmpty())) {
+                    boolean isInverted = false; /* the calls can be inverted, less work for us */
+                    if (context instanceof BinaryExpression) {
+                        final IElementType operator = ((BinaryExpression) context).getOperationType();
+                        isInverted = operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL;
+                    }
+                    final String replacement = String.format(
+                            isInverted ? "! %s instanceof %s" : "%s instanceof %s",
+                            subject.getText(),
+                            fqn
+                    );
+                    holder.registerProblem(context, String.format(messagePattern, replacement), new UseInstanceofFix(replacement));
+                }
+            }
+
+            @Nullable
+            private String extractClassFqn(@NotNull PsiElement candidate) {
+                if (candidate instanceof StringLiteralExpression) {
+                    final StringLiteralExpression string = (StringLiteralExpression) candidate;
+                    final String clazz                   = string.getContents();
+                    if (clazz.length() > 3 && !clazz.equals("__PHP_Incomplete_Class") && string.getFirstPsiChild() == null) {
+                        return '\\' + clazz.replaceAll("\\\\\\\\", "\\\\");
                     }
                 }
+                return null;
+            }
+
+            private boolean isTargetBinaryContext(@NotNull FunctionReference reference) {
+                final PsiElement parent = reference.getParent();
+                if (parent instanceof BinaryExpression) {
+                    return OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType());
+
+                }
+                return false;
+            }
+
+            private boolean isNotString(@NotNull PsiElement subject) {
+                if (subject instanceof PhpTypedElement && !(subject instanceof StringLiteralExpression)) {
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) subject, subject.getProject());
+                    if (resolved != null && !resolved.hasUnknown()) {
+                        return resolved.getTypes().stream().noneMatch(type -> Types.getType(type).equals(Types.strString));
+                    }
+                }
+                return false;
             }
         };
     }

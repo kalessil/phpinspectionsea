@@ -38,9 +38,13 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
     private static final String patternReplace    = "'%s' would make more sense here (it also faster).";
 
     final private static Map<String, String> arrayFunctionsMapping = new HashMap<>();
+    final private static Set<String> callerFunctions               = new HashSet<>();
     static {
         arrayFunctionsMapping.put("call_user_func_array", "call_user_func");
         arrayFunctionsMapping.put("forward_static_call_array", "forward_static_call");
+
+        callerFunctions.add("call_user_func");
+        callerFunctions.add("forward_static_call");
     }
 
     @NotNull
@@ -75,7 +79,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 dispatched.clear();
                             }
                         }
-                    } else if (functionName.equals("call_user_func")) {
+                    } else if (callerFunctions.contains(functionName)) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length > 0) {
                             /* extract callable */
@@ -117,10 +121,11 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             if (suggestedCallable.getFirst() != null) {
                                 final String replacement;
                                 if (suggestedCallable.getSecond() != null) {
+                                    final boolean useScopeResolution = (!(first instanceof Variable) || functionName.equals("forward_static_call"));
                                     replacement = String.format(
                                             "%s%s%s(%s)",
                                             suggestedCallable.getFirst(),
-                                            first instanceof Variable ? "->" : "::",
+                                            useScopeResolution ? "::" : "->",
                                             suggestedCallable.getSecond(),
                                             Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length)).map(this::argumentAsString).collect(Collectors.joining(", "))
                                     );

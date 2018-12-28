@@ -50,7 +50,7 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                             if (candidate != null) {
                                 final String fqn = this.extractClassFqn(candidate);
                                 if (fqn != null) {
-                                    this.analyze(reference, binary, fqn, !functionName.equals("get_class"));
+                                    this.analyze(binary, arguments[0], fqn, !functionName.equals("get_class"));
                                 }
                             }
                         }
@@ -60,7 +60,22 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                         if (isTarget && this.isNotString(arguments[0])) {
                             final String fqn = this.extractClassFqn(arguments[1]);
                             if (fqn != null) {
-                                this.analyze(reference, reference, fqn, true);
+                                this.analyze(reference, arguments[0], fqn, true);
+                            }
+                        }
+                    } else if (functionName.equals("in_array")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length >= 2 && OpenapiTypesUtil.isFunctionReference(arguments[1])) {
+                            final FunctionReference innerCall = (FunctionReference) arguments[1];
+                            final String innerName            = innerCall.getName();
+                            if (innerName != null && (innerName.equals("class_implements") || innerName.equals("class_parents"))) {
+                                final PsiElement[] innerArguments = innerCall.getParameters();
+                                if (innerArguments.length > 0 && this.isNotString(innerArguments[0])) {
+                                    final String fqn = this.extractClassFqn(arguments[0]);
+                                    if (fqn != null) {
+                                        this.analyze(reference, innerArguments[0], fqn, true);
+                                    }
+                                }
                             }
                         }
                     }
@@ -68,8 +83,8 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
             }
 
             private void analyze(
-                    @NotNull FunctionReference reference,
                     @NotNull PsiElement context,
+                    @NotNull PsiElement subject,
                     @NotNull String fqn,
                     boolean allowChildClasses
             ) {
@@ -83,7 +98,7 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                     }
                     final String replacement = String.format(
                             isInverted ? "! %s instanceof %s" : "%s instanceof %s",
-                            reference.getParameters()[0].getText(),
+                            subject.getText(),
                             fqn
                     );
                     holder.registerProblem(context, String.format(messagePattern, replacement), new UseInstanceofFix(replacement));

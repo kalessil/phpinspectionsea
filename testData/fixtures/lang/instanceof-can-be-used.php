@@ -73,3 +73,31 @@ function is_subclass_of_cases_holder(\stdClass $object, string $string) {
         is_subclass_of($object, 'FinalClass', true),
     ];
 }
+
+function class_implements_cases_holder(\stdClass $object, string $string) {
+    return [
+        <warning descr="'$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_implements($object))</warning>,
+
+        <warning descr="'$object instanceof \FinalClass' can be used instead.">in_array('FinalClass', class_implements($object))</warning>,
+        <warning descr="'$object instanceof \ChildClass' can be used instead.">in_array('ChildClass', class_implements($object))</warning>,
+        <warning descr="'$object instanceof \ParentClass' can be used instead.">in_array('ParentClass', class_implements($object))</warning>,
+
+        /* false-positives: string */
+        in_array('stdClass', class_implements($string)),
+        in_array('FinalClass', class_implements($string)),
+    ];
+}
+
+function class_parents_cases_holder(\stdClass $object, string $string) {
+    return [
+        <warning descr="'$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_parents($object))</warning>,
+
+        <warning descr="'$object instanceof \FinalClass' can be used instead.">in_array('FinalClass', class_parents($object))</warning>,
+        <warning descr="'$object instanceof \ChildClass' can be used instead.">in_array('ChildClass', class_parents($object))</warning>,
+        <warning descr="'$object instanceof \ParentClass' can be used instead.">in_array('ParentClass', class_parents($object))</warning>,
+
+        /* false-positives: string */
+        in_array('stdClass', class_parents($string)),
+        in_array('FinalClass', class_parents($string)),
+    ];
+}

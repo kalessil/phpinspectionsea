@@ -73,3 +73,31 @@ function is_subclass_of_cases_holder(\stdClass $object, string $string) {
         is_subclass_of($object, 'FinalClass', true),
     ];
 }
+
+function class_implements_cases_holder(\stdClass $object, string $string) {
+    return [
+        $object instanceof \stdClass,
+
+        $object instanceof \FinalClass,
+        $object instanceof \ChildClass,
+        $object instanceof \ParentClass,
+
+        /* false-positives: string */
+        in_array('stdClass', class_implements($string)),
+        in_array('FinalClass', class_implements($string)),
+    ];
+}
+
+function class_parents_cases_holder(\stdClass $object, string $string) {
+    return [
+        $object instanceof \stdClass,
+
+        $object instanceof \FinalClass,
+        $object instanceof \ChildClass,
+        $object instanceof \ParentClass,
+
+        /* false-positives: string */
+        in_array('stdClass', class_parents($string)),
+        in_array('FinalClass', class_parents($string)),
+    ];
+}

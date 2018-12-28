@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,49 +53,23 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 if (functionName == null || !functionName.startsWith("call_user_func")) {
                     return;
                 }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length == 0) {
-                    return;
-                }
 
                 /* only `call_user_func_array(..., array(...))` needs to be checked */
-                if (arguments.length == 2 && functionName.equals("call_user_func_array")) {
-                    if (arguments[1] instanceof ArrayCreationExpression) {
-                        final List<String> parametersUsed = new ArrayList<>();
-                        for (final PsiElement argument : arguments[1].getChildren()) {
-                            /* get the array item */
-                            final PsiElement extracted;
-                            if (argument instanceof ArrayHashElement) {
-                                extracted = ((ArrayHashElement) argument).getValue();
-                            } else if (argument instanceof PhpPsiElement) {
-                                extracted = ((PhpPsiElement) argument).getFirstPsiChild();
-                            } else {
-                                extracted = null;
+                if (functionName.equals("call_user_func_array")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
+                        final List<PsiElement> dispatched = this.extractArguments((ArrayCreationExpression) arguments[1]);
+                        if (!dispatched.isEmpty()) {
+                            final boolean hasByReferences = dispatched.stream().anyMatch(argument -> this.argumentAsString(argument).startsWith("&"));
+                            if (!hasByReferences) {
+                                final String replacement = String.format(
+                                        "call_user_func(%s, %s)",
+                                        arguments[0].getText(),
+                                        dispatched.stream().map(this::argumentAsString).collect(Collectors.joining(", "))
+                                );
+                                holder.registerProblem(reference, String.format(patternInlineArgs, replacement), new InlineFix(replacement));
                             }
-                            /* store the extracted item */
-                            if (extracted != null) {
-                                final String extractedAsString = this.parameterAsString(extracted);
-                                /* false-positives: call_user_func does not support arguments by reference */
-                                if (extractedAsString.startsWith("&")) {
-                                    parametersUsed.clear();
-                                    return;
-                                }
-                                parametersUsed.add(extractedAsString);
-                            }
-                        }
-
-                        if (!parametersUsed.isEmpty()) {
-                            final String replacement = String.format(
-                                    "call_user_func(%s, %s)",
-                                    arguments[0].getText(),
-                                    String.join(", ", parametersUsed)
-                            );
-                            holder.registerProblem(
-                                    reference,
-                                    String.format(patternInlineArgs, replacement),
-                                    new InlineFix(replacement)
-                            );
-                            parametersUsed.clear();
+                            dispatched.clear();
                         }
                     }
                     return;
@@ -103,6 +78,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
                 /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
                 if (functionName.equals("call_user_func")) {
+                    final PsiElement[] arguments = reference.getParameters();
                     /* collect callable parts */
                     final PsiElement firstParam          = arguments[0];
                     final List<PsiElement> callableParts = new ArrayList<>();
@@ -196,7 +172,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
 
                     final String suggestedArguments = Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length))
-                            .map(this::parameterAsString)
+                            .map(this::argumentAsString)
                             .collect(Collectors.joining(", "));
                     final String replacement = "%f%%o%%s%(%p%)"
                         .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
@@ -214,17 +190,31 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
             }
 
             @NotNull
-            private String parameterAsString(@NotNull PsiElement parameter) {
-                String asString     = parameter.getText();
+            private List<PsiElement> extractArguments(@NotNull ArrayCreationExpression container) {
+                return Stream.of(container.getChildren())
+                        .map(child -> {
+                            if (child instanceof ArrayHashElement) {
+                                return ((ArrayHashElement) child).getValue();
+                            }
+                            if (child instanceof PhpPsiElement) {
+                                return ((PhpPsiElement) child).getFirstPsiChild();
+                            }
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+            }
+
+            @NotNull
+            private String argumentAsString(@NotNull PsiElement parameter) {
                 PsiElement previous = parameter.getPrevSibling();
                 if (previous instanceof PsiWhiteSpace) {
                     previous = previous.getPrevSibling();
                 }
-                if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-                    asString = '&' + asString;
-                }
 
-                return asString;
+                return OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)
+                            ? '&' + parameter.getText()
+                            : parameter.getText();
             }
         };
     }

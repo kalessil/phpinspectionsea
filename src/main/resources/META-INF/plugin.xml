@@ -791,7 +791,7 @@
         shortName="MissUsingParentKeywordInspection"              displayName="'parent' keyword misused"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MissUsingParentKeywordInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="NestedAssignmentsUsageInspection"              displayName="Nested assignments usage"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.NestedAssignmentsUsageInspector"/>

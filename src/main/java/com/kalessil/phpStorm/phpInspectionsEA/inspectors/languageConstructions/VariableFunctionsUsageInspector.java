@@ -34,8 +34,8 @@ import java.util.stream.Stream;
  */
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
-    private static final String patternInlineArgs = "'%s' should be used instead (enables further analysis).";
-    private static final String patternReplace    = "'%s' should be used instead.";
+    private static final String patternInlineArgs = "'%s' would make possible to perform better code analysis here.";
+    private static final String patternReplace    = "'%s' would make more sense here (it also faster).";
 
     final private static Map<String, String> arrayFunctionsMapping = new HashMap<>();
     static {

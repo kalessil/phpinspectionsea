@@ -42,41 +42,50 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
                 if (functionName != null) {
-                    if (functionName.equals("get_class") || functionName.equals("get_parent_class")) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 1 && this.isTargetBinaryContext(reference) && this.isNotString(arguments[0])) {
-                            final BinaryExpression binary = (BinaryExpression) reference.getParent();
-                            final PsiElement candidate    = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                            if (candidate != null) {
-                                final String fqn = this.extractClassFqn(candidate);
-                                if (fqn != null) {
-                                    this.analyze(binary, arguments[0], fqn, !functionName.equals("get_class"));
-                                }
-                            }
-                        }
-                    } else if (functionName.equals("is_a") || functionName.equals("is_subclass_of")) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        final boolean isTarget       = arguments.length == 2 || (arguments.length == 3 && PhpLanguageUtil.isFalse(arguments[2]));
-                        if (isTarget && this.isNotString(arguments[0])) {
-                            final String fqn = this.extractClassFqn(arguments[1]);
-                            if (fqn != null) {
-                                this.analyze(reference, arguments[0], fqn, true);
-                            }
-                        }
-                    } else if (functionName.equals("in_array")) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length >= 2 && OpenapiTypesUtil.isFunctionReference(arguments[1])) {
-                            final FunctionReference innerCall = (FunctionReference) arguments[1];
-                            final String innerName            = innerCall.getName();
-                            if (innerName != null && (innerName.equals("class_implements") || innerName.equals("class_parents"))) {
-                                final PsiElement[] innerArguments = innerCall.getParameters();
-                                if (innerArguments.length > 0 && this.isNotString(innerArguments[0])) {
-                                    final String fqn = this.extractClassFqn(arguments[0]);
+                    switch (functionName) {
+                        case "get_class":
+                        case "get_parent_class": {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 1 && this.isTargetBinaryContext(reference) && this.isNotString(arguments[0])) {
+                                final BinaryExpression binary = (BinaryExpression) reference.getParent();
+                                final PsiElement candidate    = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                if (candidate != null) {
+                                    final String fqn = this.extractClassFqn(candidate);
                                     if (fqn != null) {
-                                        this.analyze(reference, innerArguments[0], fqn, true);
+                                        this.analyze(binary, arguments[0], fqn, !functionName.equals("get_class"));
                                     }
                                 }
                             }
+                            break;
+                        }
+                        case "is_a":
+                        case "is_subclass_of": {
+                            final PsiElement[] arguments = reference.getParameters();
+                            final boolean isTarget       = arguments.length == 2 || (arguments.length == 3 && PhpLanguageUtil.isFalse(arguments[2]));
+                            if (isTarget && this.isNotString(arguments[0])) {
+                                final String fqn = this.extractClassFqn(arguments[1]);
+                                if (fqn != null) {
+                                    this.analyze(reference, arguments[0], fqn, true);
+                                }
+                            }
+                            break;
+                        }
+                        case "in_array": {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length >= 2 && OpenapiTypesUtil.isFunctionReference(arguments[1])) {
+                                final FunctionReference innerCall = (FunctionReference) arguments[1];
+                                final String innerName            = innerCall.getName();
+                                if (innerName != null && (innerName.equals("class_implements") || innerName.equals("class_parents"))) {
+                                    final PsiElement[] innerArguments = innerCall.getParameters();
+                                    if (innerArguments.length > 0 && this.isNotString(innerArguments[0])) {
+                                        final String fqn = this.extractClassFqn(arguments[0]);
+                                        if (fqn != null) {
+                                            this.analyze(reference, innerArguments[0], fqn, true);
+                                        }
+                                    }
+                                }
+                            }
+                            break;
                         }
                     }
                 }

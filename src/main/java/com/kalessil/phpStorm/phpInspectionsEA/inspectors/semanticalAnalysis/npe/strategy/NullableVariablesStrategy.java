@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -38,43 +39,49 @@ final public class NullableVariablesStrategy {
         objectTypes.add(Types.strObject);
     }
 
+    final private static Condition<PsiElement> PARENT_FUNCTION = new Condition<PsiElement>() {
+        public boolean value(PsiElement element) { return element instanceof Function; }
+        public String toString()                 { return "Condition.PARENT_FUNCTION"; }
+    };
+
     public static void applyToLocalVariables(@NotNull Function function, @NotNull ProblemsHolder holder) {
-        final Set<String> parameters = Arrays.stream(function.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
-        final GroupStatement body    = ExpressionSemanticUtil.getGroupStatement(function);
-
-        /* group variables assignments, except parameters */
-        final Map<String, List<AssignmentExpression>> assignments = new HashMap<>();
-        for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
-            final String variableName = variable.getName();
-            final PsiElement parent   = variable.getParent();
-            if (parent instanceof AssignmentExpression && !parameters.contains(variableName)) {
-                final AssignmentExpression assignment = (AssignmentExpression) parent;
-                if (assignment.getVariable() == variable && OpenapiTypesUtil.isStatementImpl(assignment.getParent())) {
-                    /* skip unsupported assignments */
-                    final PsiElement value = assignment.getValue(); /* TODO: strict method reference type check */
-                    if (value instanceof FieldReference || value instanceof UnaryExpression) {
-                        continue;
+        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+        if (body != null) {
+            /* group variables assignments, except parameters */
+            final Set<String> parameters = Arrays.stream(function.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
+            final Map<String, List<AssignmentExpression>> assignments = new HashMap<>();
+            for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
+                final String variableName = variable.getName();
+                final PsiElement parent   = variable.getParent();
+                if (parent instanceof AssignmentExpression && !parameters.contains(variableName)) {
+                    final AssignmentExpression assignment = (AssignmentExpression) parent;
+                    if (assignment.getVariable() == variable && OpenapiTypesUtil.isStatementImpl(assignment.getParent())) {
+                        /* skip unsupported assignments */
+                        final PsiElement value = assignment.getValue(); /* TODO: strict method reference type check */
+                        if (value instanceof FieldReference || value instanceof UnaryExpression) {
+                            continue;
+                        }
+                        /* pick up the assignment */
+                        assignments.computeIfAbsent(variableName, v -> new ArrayList<>()).add(assignment);
                     }
-                    /* pick up the assignment */
-                    assignments.computeIfAbsent(variableName, v -> new ArrayList<>()).add(assignment);
                 }
             }
-        }
 
-        /* check if the variable has been written only once, inspect when null/void values are possible */
-        final Project project = holder.getProject();
-        for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
-            final List<AssignmentExpression> variableAssignments = pair.getValue();
-            if (!variableAssignments.isEmpty()) {
-                final AssignmentExpression assignment = variableAssignments.get(0);
-                if (isNullableResult(assignment, project)) {
-                    /* find first nullable assignments, invoke analyzing statements after it */
-                    apply(pair.getKey(), assignment, body, holder);
+            /* check if the variable has been written only once, inspect when null/void values are possible */
+            final Project project = holder.getProject();
+            for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
+                final List<AssignmentExpression> variableAssignments = pair.getValue();
+                if (!variableAssignments.isEmpty()) {
+                    final AssignmentExpression assignment = variableAssignments.get(0);
+                    if (isNullableResult(assignment, project)) {
+                        /* find first nullable assignments, invoke analyzing statements after it */
+                        apply(pair.getKey(), assignment, body, holder);
+                    }
+                    variableAssignments.clear();
                 }
-                variableAssignments.clear();
             }
+            assignments.clear();
         }
-        assignments.clear();
     }
 
     static private boolean isNullableResult(@NotNull AssignmentExpression assignment, @NotNull Project project) {
@@ -119,41 +126,43 @@ final public class NullableVariablesStrategy {
 
     public static void applyToParameters(@NotNull Function function, @NotNull ProblemsHolder holder) {
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
-        for (final Parameter parameter : function.getParameters()) {
-            final Set<String> declaredTypes = new HashSet<>();
-            parameter.getDeclaredType().getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
-            if (declaredTypes.contains(Types.strNull) || PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
-                declaredTypes.remove(Types.strNull);
+        if (body != null) {
+            for (final Parameter parameter : function.getParameters()) {
+                final Set<String> declaredTypes = new HashSet<>();
+                parameter.getDeclaredType().getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
+                if (declaredTypes.contains(Types.strNull) || PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
+                    declaredTypes.remove(Types.strNull);
 
-                boolean isObject = !declaredTypes.isEmpty();
-                for (final String type : declaredTypes) {
-                    if (!type.startsWith("\\") && !objectTypes.contains(type)) {
-                        isObject = false;
-                        break;
+                    boolean isObject = !declaredTypes.isEmpty();
+                    for (final String type : declaredTypes) {
+                        if (!type.startsWith("\\") && !objectTypes.contains(type)) {
+                            isObject = false;
+                            break;
+                        }
+                    }
+
+                    if (isObject) {
+                        apply(parameter.getName(), null, body, holder);
                     }
                 }
-
-                if (isObject) {
-                    apply(parameter.getName(), null, body, holder);
-                }
+                declaredTypes.clear();
             }
-            declaredTypes.clear();
         }
     }
 
     private static void apply(
         @NotNull String variableName,
         @Nullable AssignmentExpression variableDeclaration,
-        @Nullable GroupStatement body,
+        @NotNull GroupStatement body,
         @NotNull ProblemsHolder holder
     ) {
-        final Project project                 = holder.getProject();
-        final boolean skipToDeclarationNeeded = variableDeclaration != null;
-        boolean skipPerformed                 = false;
         /* find variable usages, control flow is not our friend here */
+        final Function function        = (Function) body.getParent();
         final List<Variable> variables = new ArrayList<>();
         PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
-                .filter(variable  -> variableName.equals(variable.getName()))
+                .filter(variable  ->
+                    variableName.equals(variable.getName()) && PsiTreeUtil.findFirstParent(variable, PARENT_FUNCTION) == function
+                )
                 .forEach(variable -> {
                     final PsiElement parent = variable.getParent();
                     if (parent instanceof AssignmentExpression) {
@@ -174,6 +183,9 @@ final public class NullableVariablesStrategy {
                     }
                 });
         /* analyze collected variable usages */
+        final Project project                 = holder.getProject();
+        boolean skipPerformed                 = false;
+        final boolean skipToDeclarationNeeded = variableDeclaration != null;
         for (final Variable variable : variables){
             final PsiElement parent      = variable.getParent();
             final PsiElement grandParent = parent.getParent();

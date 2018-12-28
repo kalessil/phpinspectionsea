@@ -74,6 +74,10 @@ class CasesHolder {
         if (!isset($local->property[0])) {
             <warning descr="Null pointer exception may occur here.">$local</warning>->property = '...';
         }
+
+        $item = $this->npeReportingChainedCalls(function (\stdClass $item): ?\stdClass {
+            return $item->property;
+        });
     }
 
     public function npeReportingFunctionReference(?\stdClass $one, \stdClass $two = null, \stdClass $three, $four) {

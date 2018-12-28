@@ -72,12 +72,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             dispatched.clear();
                         }
                     }
-                    return;
-                }
-
-
-                /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
-                if (functionName.equals("call_user_func")) {
+                } else if (functionName.equals("call_user_func")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0) {
                         /* extract callable */
@@ -102,6 +97,14 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 extracted.clear();
                             }
                         } else {
+                            /* $func(...) is not working for arrays in PHP below 5.4 */
+                            if (arguments[0] instanceof Variable) {
+                                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                                if (php == PhpLanguageLevel.PHP530) {
+                                    return;
+                                }
+                            }
+                            /* regular behaviour */
                             callable.add(arguments[0]);
                         }
 
@@ -133,28 +136,16 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
                         /* The first part should be a variable or string literal without injections */
                         String firstAsString = null;
-                        //if (null != firstParam) {
                         if (first instanceof StringLiteralExpression) {
                             final StringLiteralExpression firstPartExpression = (StringLiteralExpression) first;
                             if (firstPartExpression.getFirstPsiChild() == null) {
                                 firstAsString = PhpStringUtil.unescapeText(firstPartExpression.getContents(), firstPartExpression.isSingleQuote());
                             }
-                        }
-                        if (first instanceof Variable) {
+                        } else if (first instanceof Variable) {
                             firstAsString = first.getText();
                         }
-                        //}
                         if (null == firstAsString) {
                             return;
-                        }
-
-
-                        /* $func(...) is not working for arrays in PHP below 5.4 */
-                        if (second == null && first instanceof Variable) {
-                            PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                            if (PhpLanguageLevel.PHP530 == php) {
-                                return;
-                            }
                         }
 
 

@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -135,44 +136,40 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             }
                         }
 
-                        /* The first part should be a variable or string literal without injections */
-                        String firstAsString = null;
-                        if (first instanceof StringLiteralExpression) {
-                            final StringLiteralExpression literal = (StringLiteralExpression) first;
-                            if (literal.getFirstPsiChild() == null) {
-                                firstAsString = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
-                            }
-                        } else if (first instanceof Variable) {
-                            firstAsString = first.getText();
+                        final Couple<String> suggestedCallable = this.callable(first, second);
+                        if (suggestedCallable.getFirst() != null) {
+                            final String replacement = "%f%%o%%s%(%p%)"
+                                .replace("%o%%s%", second == null ? "" : "%o%%s%")
+                                .replace("%p%", Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length)).map(this::argumentAsString).collect(Collectors.joining(", ")))
+                                .replace("%s%", second == null ? ""   : secondAsString)
+                                .replace("%o%", first instanceof Variable ? "->" : "::")
+                                .replace("%f%", suggestedCallable.getFirst());
+                            holder.registerProblem(
+                                    reference,
+                                    String.format(patternReplace, replacement),
+                                    new ReplaceFix(replacement)
+                            );
                         }
-                        if (null == firstAsString) {
-                            return;
-                        }
-
-
-                        final String suggestedArguments = Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length))
-                                .map(this::argumentAsString)
-                                .collect(Collectors.joining(", "));
-                        final String replacement = "%f%%o%%s%(%p%)"
-                            .replace("%o%%s%", secondAsString == null ? "" : "%o%%s%")
-                            .replace("%p%", suggestedArguments)
-                            .replace("%s%", secondAsString == null ? ""   : secondAsString)
-                            .replace("%o%", first instanceof Variable ? "->" : "::")
-                            .replace("%f%", firstAsString);
-
-                        holder.registerProblem(
-                                reference,
-                                String.format(patternReplace, replacement),
-                                new ReplaceFix(replacement)
-                        );
-
-
                     }
                 }
             }
 
-//            private String callable(@Nullable PsiElement first) {
-//            }
+            @NotNull
+            private Couple<String> callable(@Nullable PsiElement first, @Nullable PsiElement second) {
+                final String[] callable = {null, null};
+
+                /* the first part should be a variable or string literal without injections */
+                if (first instanceof StringLiteralExpression) {
+                    final StringLiteralExpression literal = (StringLiteralExpression) first;
+                    if (literal.getFirstPsiChild() == null) {
+                        callable[0] = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                    }
+                } else if (first instanceof Variable) {
+                    callable[0] = first.getText();
+                }
+
+                return Couple.of(callable[0], callable[1]);
+            }
 
             @NotNull
             private List<PsiElement> extract(@NotNull ArrayCreationExpression container) {

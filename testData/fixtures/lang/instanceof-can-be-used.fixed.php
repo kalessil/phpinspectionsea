@@ -5,7 +5,7 @@ final class FinalClass               {}
 class ParentClass                    {}
 class ChildClass extends ParentClass {}
 
-function get_class_cases_holder($object) {
+function get_class_cases_holder(\stdClass $object) {
     return [
         $object instanceof \stdClass,
         !$object instanceof \stdClass,
@@ -23,7 +23,7 @@ function get_class_cases_holder($object) {
     ];
 }
 
-function get_parent_class_cases_holder($object) {
+function get_parent_class_cases_holder(\stdClass $object, string $string) {
     return [
         $object instanceof \stdClass,
         !$object instanceof \stdClass,
@@ -32,7 +32,10 @@ function get_parent_class_cases_holder($object) {
 
         $object instanceof \FinalClass,
         $object instanceof \ChildClass,
-
         $object instanceof \ParentClass,
+
+        /* false-positives: string */
+        get_parent_class($string) === 'stdClass',
+        get_parent_class($string) == 'FinalClass',
     ];
 }

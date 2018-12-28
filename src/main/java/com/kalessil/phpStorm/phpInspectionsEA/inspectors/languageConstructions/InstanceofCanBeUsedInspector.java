@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -41,7 +40,7 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (this.isContainingFileSkipped(reference))              { return; }
+                if (this.isContainingFileSkipped(reference)) { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null) {
@@ -142,7 +141,11 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                 if (subject instanceof PhpTypedElement && !(subject instanceof StringLiteralExpression)) {
                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) subject, subject.getProject());
                     if (resolved != null && !resolved.hasUnknown()) {
-                        return resolved.getTypes().stream().noneMatch(type -> Types.getType(type).equals(Types.strString));
+                        return resolved.getTypes().stream()
+                                .noneMatch(type -> {
+                                    final String normalized = Types.getType(type);
+                                    return normalized.equals(Types.strString) || normalized.equals(Types.strMixed);
+                                });
                     }
                 }
                 return false;

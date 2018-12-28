@@ -5,7 +5,8 @@ final class FinalClass               {}
 class ParentClass                    {}
 class ChildClass extends ParentClass {}
 
-function get_class_cases_holder(\stdClass $object) {
+/** @param mixed $mixed */
+function get_class_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
         $object instanceof \stdClass,
         !$object instanceof \stdClass,
@@ -20,10 +21,17 @@ function get_class_cases_holder(\stdClass $object) {
 
         /* false-positives: incomplete classes */
         get_class($object) == '__PHP_Incomplete_Class',
+
+        /* false-positives: string and mixed */
+        get_class($string) === 'stdClass',
+        get_class($string) == 'FinalClass',
+        get_class($mixed) === 'stdClass',
+        get_class($mixed) == 'FinalClass',
     ];
 }
 
-function get_parent_class_cases_holder(\stdClass $object, string $string) {
+/** @param mixed $mixed */
+function get_parent_class_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
         $object instanceof \stdClass,
         !$object instanceof \stdClass,
@@ -34,13 +42,16 @@ function get_parent_class_cases_holder(\stdClass $object, string $string) {
         $object instanceof \ChildClass,
         $object instanceof \ParentClass,
 
-        /* false-positives: string */
+        /* false-positives: string and mixed */
         get_parent_class($string) === 'stdClass',
         get_parent_class($string) == 'FinalClass',
+        get_parent_class($string) === '$mixed',
+        get_parent_class($string) == '$mixed',
     ];
 }
 
-function is_a_cases_holder(\stdClass $object, string $string) {
+/** @param mixed $mixed */
+function is_a_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
         $object instanceof \stdClass,
         $object instanceof \stdClass,
@@ -49,15 +60,18 @@ function is_a_cases_holder(\stdClass $object, string $string) {
         $object instanceof \ChildClass,
         $object instanceof \ParentClass,
 
-        /* false-positives: string */
+        /* false-positives: string and mixed */
         is_a($string, 'stdClass'),
         is_a($string, 'FinalClass'),
+        is_a($mixed, 'stdClass'),
+        is_a($mixed, 'FinalClass'),
         is_a($object, 'stdClass', true),
         is_a($object, 'FinalClass', true),
     ];
 }
 
-function is_subclass_of_cases_holder(\stdClass $object, string $string) {
+/** @param mixed $mixed */
+function is_subclass_of_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
         $object instanceof \stdClass,
         $object instanceof \stdClass,
@@ -66,15 +80,18 @@ function is_subclass_of_cases_holder(\stdClass $object, string $string) {
         $object instanceof \ChildClass,
         $object instanceof \ParentClass,
 
-        /* false-positives: string */
+        /* false-positives: string and mixed */
         is_subclass_of($string, 'stdClass'),
         is_subclass_of($string, 'FinalClass'),
+        is_subclass_of($mixed, 'stdClass'),
+        is_subclass_of($mixed, 'FinalClass'),
         is_subclass_of($object, 'stdClass', true),
         is_subclass_of($object, 'FinalClass', true),
     ];
 }
 
-function class_implements_cases_holder(\stdClass $object, string $string) {
+/** @param mixed $mixed */
+function class_implements_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
         $object instanceof \stdClass,
 
@@ -82,13 +99,16 @@ function class_implements_cases_holder(\stdClass $object, string $string) {
         $object instanceof \ChildClass,
         $object instanceof \ParentClass,
 
-        /* false-positives: string */
+        /* false-positives: string and mixed */
         in_array('stdClass', class_implements($string)),
         in_array('FinalClass', class_implements($string)),
+        in_array('stdClass', class_implements($mixed)),
+        in_array('FinalClass', class_implements($mixed)),
     ];
 }
 
-function class_parents_cases_holder(\stdClass $object, string $string) {
+/** @param mixed $mixed */
+function class_parents_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
         $object instanceof \stdClass,
 
@@ -96,8 +116,10 @@ function class_parents_cases_holder(\stdClass $object, string $string) {
         $object instanceof \ChildClass,
         $object instanceof \ParentClass,
 
-        /* false-positives: string */
+        /* false-positives: string and mixed */
         in_array('stdClass', class_parents($string)),
         in_array('FinalClass', class_parents($string)),
+        in_array('stdClass', class_parents($mixed)),
+        in_array('FinalClass', class_parents($mixed)),
     ];
 }

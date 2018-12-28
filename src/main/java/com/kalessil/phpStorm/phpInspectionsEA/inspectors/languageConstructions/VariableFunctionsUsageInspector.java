@@ -20,10 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,6 +37,12 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
     private static final String patternInlineArgs = "'%s' should be used instead (enables further analysis).";
     private static final String patternReplace    = "'%s' should be used instead.";
 
+    final private static Map<String, String> arrayFunctionsMapping = new HashMap<>();
+    static {
+        arrayFunctionsMapping.put("call_user_func_array", "call_user_func");
+        arrayFunctionsMapping.put("forward_static_call_array", "forward_static_call");
+    }
+
     @NotNull
     public String getShortName() {
         return "VariableFunctionsUsageInspection";
@@ -54,7 +57,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null) {
                     /* case: `call_user_func_array(..., array(...))` */
-                    if (functionName.equals("call_user_func_array")) {
+                    if (arrayFunctionsMapping.containsKey(functionName)) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
                             final List<PsiElement> dispatched = this.extract((ArrayCreationExpression) arguments[1]);
@@ -62,7 +65,8 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 final boolean hasByReferences = dispatched.stream().anyMatch(argument -> this.argumentAsString(argument).startsWith("&"));
                                 if (!hasByReferences) {
                                     final String replacement = String.format(
-                                            "call_user_func(%s, %s)",
+                                            "%s(%s, %s)",
+                                            arrayFunctionsMapping.get(functionName),
                                             arguments[0].getText(),
                                             dispatched.stream().map(this::argumentAsString).collect(Collectors.joining(", "))
                                     );

@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -44,41 +45,61 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("get_class")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    final PsiElement parent      = reference.getParent();
-                    if (arguments.length == 1 && parent instanceof BinaryExpression) {
-                        final BinaryExpression binary = (BinaryExpression) parent;
-                        final IElementType operator   = binary.getOperationType();
-                        if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
-                            final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                            if (second instanceof StringLiteralExpression) {
-                                final StringLiteralExpression string = (StringLiteralExpression) second;
-                                final String clazz                   = string.getContents();
-                                if (clazz.length() > 3 && !clazz.equals("__PHP_Incomplete_Class") && string.getFirstPsiChild() == null) {
-                                    final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
-                                    final String fqn                   = '\\' + clazz.replaceAll("\\\\\\\\", "\\\\");
-                                    final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
-                                    if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
-                                        final boolean isInverted =
-                                                operator == PhpTokenTypes.opNOT_IDENTICAL ||
-                                                operator == PhpTokenTypes.opNOT_EQUAL;
-                                        final String replacement = String.format(
-                                                isInverted ? "! %s instanceof %s" : "%s instanceof %s",
-                                                arguments[0].getText(),
-                                                fqn
-                                        );
-                                        holder.registerProblem(
-                                                binary,
-                                                String.format(messagePattern, replacement),
-                                                new UseInstanceofFix(replacement)
-                                        );
-                                    }
-                                }
+                if (functionName != null) {
+                    if (functionName.equals("get_class")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 1 && this.isTargetContext(reference)) {
+                            final BinaryExpression binary = (BinaryExpression) reference.getParent();
+                            final String fqn              = this.extractClassFqn(reference, binary);
+                            if (fqn != null) {
+                                this.analyze(reference, binary, fqn);
                             }
+                        }
+                    } else if (functionName.equals("get_parent_class")) {
+                        // get_parent_class($MyChildrenClassObject) === 'MyClass';
+                        // but not get_parent_class('MyChildrenClass') === 'MyClass';
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 1 && this.isTargetContext(reference)) {
                         }
                     }
                 }
+            }
+
+            private void analyze(@NotNull FunctionReference reference, @NotNull BinaryExpression binary, @NotNull String fqn) {
+                final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
+                final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
+                if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
+                    final IElementType operator = binary.getOperationType();
+                    final boolean isInverted    = operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL;
+                    final String replacement = String.format(
+                            isInverted ? "! %s instanceof %s" : "%s instanceof %s",
+                            reference.getParameters()[0].getText(),
+                            fqn
+                    );
+                    holder.registerProblem(binary, String.format(messagePattern, replacement), new UseInstanceofFix(replacement));
+                }
+            }
+
+            @Nullable
+            private String extractClassFqn(@NotNull FunctionReference reference, @NotNull BinaryExpression binary) {
+                final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                if (second instanceof StringLiteralExpression) {
+                    final StringLiteralExpression string = (StringLiteralExpression) second;
+                    final String clazz                   = string.getContents();
+                    if (clazz.length() > 3 && !clazz.equals("__PHP_Incomplete_Class") && string.getFirstPsiChild() == null) {
+                        return '\\' + clazz.replaceAll("\\\\\\\\", "\\\\");
+                    }
+                }
+                return null;
+            }
+
+            private boolean isTargetContext(@NotNull FunctionReference reference) {
+                final PsiElement parent = reference.getParent();
+                if (parent instanceof BinaryExpression) {
+                    return OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType());
+
+                }
+                return false;
             }
         };
     }

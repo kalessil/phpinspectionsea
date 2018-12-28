@@ -42,7 +42,7 @@ public class NestedAssignmentsUsageInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(expression)) { return; }
 
                 final PsiElement parent = expression.getParent();
-                if (!(parent instanceof AssignmentExpression)) {
+                if (!(parent instanceof AssignmentExpression) && expression.getValue() instanceof AssignmentExpression) {
                     holder.registerProblem(
                             expression,
                             message,

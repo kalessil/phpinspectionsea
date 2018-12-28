@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -70,14 +72,14 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 extracted = null;
                             }
                             /* store the extracted item */
-                            final String itemValueString = extracted == null ? null : parameterAsString(extracted);
-                            if (itemValueString != null) {
+                            if (extracted != null) {
+                                final String extractedAsString = this.parameterAsString(extracted);
                                 /* false-positives: call_user_func does not support arguments by reference */
-                                if (itemValueString.startsWith("&")) {
+                                if (extractedAsString.startsWith("&")) {
                                     parametersUsed.clear();
                                     return;
                                 }
-                                parametersUsed.add(itemValueString);
+                                parametersUsed.add(extractedAsString);
                             }
                         }
 
@@ -145,7 +147,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
                     /* check second part: in some cases it overrides the first one completely */
                     String secondAsString = null;
-                    if (null != secondPart) {
+                    if (secondPart != null) {
                         secondAsString = secondPart instanceof Variable ? secondPart.getText() : '{' + secondPart.getText() + '}';
                         if (secondPart instanceof StringLiteralExpression) {
                             final StringLiteralExpression secondPartExpression = (StringLiteralExpression) secondPart;
@@ -153,7 +155,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 final String content = secondPartExpression.getContents();
                                 secondAsString       = content;
 
-                                if (-1 != content.indexOf(':')) {
+                                if (content.indexOf(':') != -1) {
                                     /* don't touch relative invocation at all */
                                     if (content.startsWith("parent::")) {
                                         return;
@@ -185,7 +187,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
 
 
                     /* $func(...) is not working for arrays in PHP below 5.4 */
-                    if (null == secondPart && firstPart instanceof Variable) {
+                    if (secondPart == null && firstPart instanceof Variable) {
                         PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                         if (PhpLanguageLevel.PHP530 == php) {
                             return;
@@ -193,17 +195,15 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     }
 
 
-                    final List<String> parametersToSuggest = new ArrayList<>();
-                    for (PsiElement parameter : Arrays.copyOfRange(arguments, 1, arguments.length)) {
-                        parametersToSuggest.add(parameterAsString(parameter));
-                    }
+                    final String suggestedArguments = Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length))
+                            .map(this::parameterAsString)
+                            .collect(Collectors.joining(", "));
                     final String replacement = "%f%%o%%s%(%p%)"
                         .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
-                        .replace("%p%", String.join(", ", parametersToSuggest))
+                        .replace("%p%", suggestedArguments)
                         .replace("%s%", null == secondPart            ? ""   : secondAsString)
                         .replace("%o%", firstPart instanceof Variable ? "->" : "::")
                         .replace("%f%", firstAsString);
-                    parametersToSuggest.clear();
 
                     holder.registerProblem(
                             reference,
@@ -212,21 +212,21 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     );
                 }
             }
+
+            @NotNull
+            private String parameterAsString(@NotNull PsiElement parameter) {
+                String asString     = parameter.getText();
+                PsiElement previous = parameter.getPrevSibling();
+                if (previous instanceof PsiWhiteSpace) {
+                    previous = previous.getPrevSibling();
+                }
+                if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
+                    asString = '&' + asString;
+                }
+
+                return asString;
+            }
         };
-    }
-
-    @NotNull
-    private String parameterAsString(@NotNull PsiElement parameter) {
-        String asString     = parameter.getText();
-        PsiElement previous = parameter.getPrevSibling();
-        if (previous instanceof PsiWhiteSpace) {
-            previous = previous.getPrevSibling();
-        }
-        if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-            asString = '&' + asString;
-        }
-
-        return asString;
     }
 
     private static final class ReplaceFix extends UseSuggestedReplacementFixer {

@@ -58,7 +58,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 if (functionName.equals("call_user_func_array")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
-                        final List<PsiElement> dispatched = this.extractArguments((ArrayCreationExpression) arguments[1]);
+                        final List<PsiElement> dispatched = this.extract((ArrayCreationExpression) arguments[1]);
                         if (!dispatched.isEmpty()) {
                             final boolean hasByReferences = dispatched.stream().anyMatch(argument -> this.argumentAsString(argument).startsWith("&"));
                             if (!hasByReferences) {
@@ -79,118 +79,108 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
                 if (functionName.equals("call_user_func")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    /* collect callable parts */
-                    final PsiElement firstParam          = arguments[0];
-                    final List<PsiElement> callableParts = new ArrayList<>();
-                    if (firstParam instanceof ArrayCreationExpression) {
-                        /* extract parts */
-                        PhpPsiElement firstPart  = ((ArrayCreationExpression) firstParam).getFirstPsiChild();
-                        PhpPsiElement secondPart = null == firstPart ? null : firstPart.getNextPsiSibling();
-
-                        /* now expression themselves */
-                        firstPart  = null == firstPart  ? null : firstPart.getFirstPsiChild();
-                        secondPart = null == secondPart ? null : secondPart.getFirstPsiChild();
-                        if (firstPart == null || secondPart == null) {
-                            return;
-                        }
-                        /* false-positive: first part must not be a string - '<string>->...' is invalid code */
-                        if (firstPart instanceof Variable) {
-                            final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) firstPart, holder.getProject());
-                            if (type != null) {
-                                /* incompletely resolved types, we shouldn't continue */
-                                if (type.hasUnknown()) {
-                                    return;
-                                }
-                                /* '<string>->method(...)' breaks at runtime */
-                                else if (type.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strString))) {
-                                    return;
-                                }
-                            }
-                        }
-
-                        callableParts.add(firstPart);
-                        callableParts.add(secondPart);
-                    } else {
-                        callableParts.add(firstParam);
-                    }
-
-
-                    /* extract parts into local variables for further processing */
-                    PsiElement firstPart  = !callableParts.isEmpty() ? callableParts.get(0) : null;
-                    PsiElement secondPart = callableParts.size() > 1 ? callableParts.get(1) : null;
-                    callableParts.clear();
-
-
-                    /* check second part: in some cases it overrides the first one completely */
-                    String secondAsString = null;
-                    if (secondPart != null) {
-                        secondAsString = secondPart instanceof Variable ? secondPart.getText() : '{' + secondPart.getText() + '}';
-                        if (secondPart instanceof StringLiteralExpression) {
-                            final StringLiteralExpression secondPartExpression = (StringLiteralExpression) secondPart;
-                            if (null == secondPartExpression.getFirstPsiChild()) {
-                                final String content = secondPartExpression.getContents();
-                                secondAsString       = content;
-
-                                if (content.indexOf(':') != -1) {
-                                    /* don't touch relative invocation at all */
-                                    if (content.startsWith("parent::")) {
+                    if (arguments.length > 0) {
+                        /* extract callable */
+                        final List<PsiElement> callable = new ArrayList<>();
+                        if (arguments[0] instanceof ArrayCreationExpression) {
+                            final List<PsiElement> extracted = this.extract((ArrayCreationExpression) arguments[0]);
+                            if (!extracted.isEmpty()) {
+                                /* false-positive: first part must not be a string - '<string>->...' is invalid code */
+                                final PsiElement candidate = extracted.get(0);
+                                if (candidate instanceof Variable) {
+                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, holder.getProject());
+                                    final boolean skip     = resolved == null ||
+                                                             resolved.hasUnknown() ||
+                                                             resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strString));
+                                    if (skip) {
+                                        extracted.clear();
                                         return;
                                     }
-                                    firstPart      = secondPart;
-                                    secondPart     = null;
-                                    secondAsString = null;
+                                }
+                                /* regular behaviour */
+                                callable.addAll(extracted);
+                                extracted.clear();
+                            }
+                        } else {
+                            callable.add(arguments[0]);
+                        }
+
+                        PsiElement first  = !callable.isEmpty() ? callable.get(0) : null;
+                        PsiElement second = callable.size() > 1 ? callable.get(1) : null;
+
+                        /* check second part: in some cases it overrides the first one completely */
+                        String secondAsString = null;
+                        if (second != null) {
+                            secondAsString = second instanceof Variable ? second.getText() : '{' + second.getText() + '}';
+                            if (second instanceof StringLiteralExpression) {
+                                final StringLiteralExpression secondPartExpression = (StringLiteralExpression) second;
+                                if (null == secondPartExpression.getFirstPsiChild()) {
+                                    final String content = secondPartExpression.getContents();
+                                    secondAsString       = content;
+
+                                    if (content.indexOf(':') != -1) {
+                                        /* don't touch relative invocation at all */
+                                        if (content.startsWith("parent::")) {
+                                            return;
+                                        }
+                                        first      = second;
+                                        second     = null;
+                                        secondAsString = null;
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    /* The first part should be a variable or string literal without injections */
-                    String firstAsString = null;
-                    if (null != firstParam) {
-                        if (firstPart instanceof StringLiteralExpression) {
-                            final StringLiteralExpression firstPartExpression = (StringLiteralExpression) firstPart;
+                        /* The first part should be a variable or string literal without injections */
+                        String firstAsString = null;
+                        //if (null != firstParam) {
+                        if (first instanceof StringLiteralExpression) {
+                            final StringLiteralExpression firstPartExpression = (StringLiteralExpression) first;
                             if (firstPartExpression.getFirstPsiChild() == null) {
                                 firstAsString = PhpStringUtil.unescapeText(firstPartExpression.getContents(), firstPartExpression.isSingleQuote());
                             }
                         }
-                        if (firstPart instanceof Variable) {
-                            firstAsString = firstPart.getText();
+                        if (first instanceof Variable) {
+                            firstAsString = first.getText();
                         }
-                    }
-                    if (null == firstAsString) {
-                        return;
-                    }
-
-
-                    /* $func(...) is not working for arrays in PHP below 5.4 */
-                    if (secondPart == null && firstPart instanceof Variable) {
-                        PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                        if (PhpLanguageLevel.PHP530 == php) {
+                        //}
+                        if (null == firstAsString) {
                             return;
                         }
+
+
+                        /* $func(...) is not working for arrays in PHP below 5.4 */
+                        if (second == null && first instanceof Variable) {
+                            PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                            if (PhpLanguageLevel.PHP530 == php) {
+                                return;
+                            }
+                        }
+
+
+                        final String suggestedArguments = Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length))
+                                .map(this::argumentAsString)
+                                .collect(Collectors.joining(", "));
+                        final String replacement = "%f%%o%%s%(%p%)"
+                            .replace("%o%%s%", second == null ? "" : "%o%%s%")
+                            .replace("%p%", suggestedArguments)
+                            .replace("%s%", second == null ? ""   : secondAsString)
+                            .replace("%o%", first instanceof Variable ? "->" : "::")
+                            .replace("%f%", firstAsString);
+
+                        holder.registerProblem(
+                                reference,
+                                String.format(patternReplace, replacement),
+                                new ReplaceFix(replacement)
+                        );
+
+
                     }
-
-
-                    final String suggestedArguments = Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length))
-                            .map(this::argumentAsString)
-                            .collect(Collectors.joining(", "));
-                    final String replacement = "%f%%o%%s%(%p%)"
-                        .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
-                        .replace("%p%", suggestedArguments)
-                        .replace("%s%", null == secondPart            ? ""   : secondAsString)
-                        .replace("%o%", firstPart instanceof Variable ? "->" : "::")
-                        .replace("%f%", firstAsString);
-
-                    holder.registerProblem(
-                            reference,
-                            String.format(patternReplace, replacement),
-                            new ReplaceFix(replacement)
-                    );
                 }
             }
 
             @NotNull
-            private List<PsiElement> extractArguments(@NotNull ArrayCreationExpression container) {
+            private List<PsiElement> extract(@NotNull ArrayCreationExpression container) {
                 return Stream.of(container.getChildren())
                         .map(child -> {
                             if (child instanceof ArrayHashElement) {

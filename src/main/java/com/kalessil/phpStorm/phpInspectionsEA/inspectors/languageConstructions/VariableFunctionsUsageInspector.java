@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,7 +98,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 extracted.clear();
                             }
                         } else {
-                            /* $func(...) is not working for arrays in PHP below 5.4 */
+                            /* false-positive: $func(...) is not working for arrays in PHP below 5.4 */
                             if (arguments[0] instanceof Variable) {
                                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                                 if (php == PhpLanguageLevel.PHP530) {
@@ -137,9 +138,9 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                         /* The first part should be a variable or string literal without injections */
                         String firstAsString = null;
                         if (first instanceof StringLiteralExpression) {
-                            final StringLiteralExpression firstPartExpression = (StringLiteralExpression) first;
-                            if (firstPartExpression.getFirstPsiChild() == null) {
-                                firstAsString = PhpStringUtil.unescapeText(firstPartExpression.getContents(), firstPartExpression.isSingleQuote());
+                            final StringLiteralExpression literal = (StringLiteralExpression) first;
+                            if (literal.getFirstPsiChild() == null) {
+                                firstAsString = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                             }
                         } else if (first instanceof Variable) {
                             firstAsString = first.getText();
@@ -153,9 +154,9 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 .map(this::argumentAsString)
                                 .collect(Collectors.joining(", "));
                         final String replacement = "%f%%o%%s%(%p%)"
-                            .replace("%o%%s%", second == null ? "" : "%o%%s%")
+                            .replace("%o%%s%", secondAsString == null ? "" : "%o%%s%")
                             .replace("%p%", suggestedArguments)
-                            .replace("%s%", second == null ? ""   : secondAsString)
+                            .replace("%s%", secondAsString == null ? ""   : secondAsString)
                             .replace("%o%", first instanceof Variable ? "->" : "::")
                             .replace("%f%", firstAsString);
 
@@ -169,6 +170,9 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                     }
                 }
             }
+
+//            private String callable(@Nullable PsiElement first) {
+//            }
 
             @NotNull
             private List<PsiElement> extract(@NotNull ArrayCreationExpression container) {

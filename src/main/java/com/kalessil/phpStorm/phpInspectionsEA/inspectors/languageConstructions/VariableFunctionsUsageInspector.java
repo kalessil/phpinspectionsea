@@ -52,80 +52,88 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || !functionName.startsWith("call_user_func")) {
-                    return;
-                }
-
-                /* only `call_user_func_array(..., array(...))` needs to be checked */
-                if (functionName.equals("call_user_func_array")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
-                        final List<PsiElement> dispatched = this.extract((ArrayCreationExpression) arguments[1]);
-                        if (!dispatched.isEmpty()) {
-                            final boolean hasByReferences = dispatched.stream().anyMatch(argument -> this.argumentAsString(argument).startsWith("&"));
-                            if (!hasByReferences) {
-                                final String replacement = String.format(
-                                        "call_user_func(%s, %s)",
-                                        arguments[0].getText(),
-                                        dispatched.stream().map(this::argumentAsString).collect(Collectors.joining(", "))
-                                );
-                                holder.registerProblem(reference, String.format(patternInlineArgs, replacement), new InlineFix(replacement));
+                if (functionName != null) {
+                    /* case: `call_user_func_array(..., array(...))` */
+                    if (functionName.equals("call_user_func_array")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
+                            final List<PsiElement> dispatched = this.extract((ArrayCreationExpression) arguments[1]);
+                            if (!dispatched.isEmpty()) {
+                                final boolean hasByReferences = dispatched.stream().anyMatch(argument -> this.argumentAsString(argument).startsWith("&"));
+                                if (!hasByReferences) {
+                                    final String replacement = String.format(
+                                            "call_user_func(%s, %s)",
+                                            arguments[0].getText(),
+                                            dispatched.stream().map(this::argumentAsString).collect(Collectors.joining(", "))
+                                    );
+                                    holder.registerProblem(reference, String.format(patternInlineArgs, replacement), new InlineFix(replacement));
+                                }
+                                dispatched.clear();
                             }
-                            dispatched.clear();
                         }
-                    }
-                } else if (functionName.equals("call_user_func")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length > 0) {
-                        /* extract callable */
-                        final List<PsiElement> callable = new ArrayList<>();
-                        if (arguments[0] instanceof ArrayCreationExpression) {
-                            final List<PsiElement> extracted = this.extract((ArrayCreationExpression) arguments[0]);
-                            if (!extracted.isEmpty()) {
-                                /* false-positive: first part must not be a string - '<string>->...' is invalid code */
-                                final PsiElement candidate = extracted.get(0);
-                                if (candidate instanceof Variable) {
-                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, holder.getProject());
-                                    final boolean skip     = resolved == null ||
-                                                             resolved.hasUnknown() ||
-                                                             resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strString));
-                                    if (skip) {
-                                        extracted.clear();
+                    } else if (functionName.equals("call_user_func")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length > 0) {
+                            /* extract callable */
+                            final List<PsiElement> callable = new ArrayList<>();
+                            if (arguments[0] instanceof ArrayCreationExpression) {
+                                final List<PsiElement> extracted = this.extract((ArrayCreationExpression) arguments[0]);
+                                if (!extracted.isEmpty()) {
+                                    /* false-positive: first part must not be a string - '<string>->...' is invalid code */
+                                    final PsiElement candidate = extracted.get(0);
+                                    if (candidate instanceof Variable) {
+                                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, holder.getProject());
+                                        final boolean skip     = resolved == null ||
+                                                                 resolved.hasUnknown() ||
+                                                                 resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strString));
+                                        if (skip) {
+                                            extracted.clear();
+                                            return;
+                                        }
+                                    }
+                                    /* regular behaviour */
+                                    callable.addAll(extracted);
+                                    extracted.clear();
+                                }
+                            } else {
+                                /* false-positive: $func(...) is not working for arrays in PHP below 5.4 */
+                                if (arguments[0] instanceof Variable) {
+                                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                                    if (php == PhpLanguageLevel.PHP530) {
                                         return;
                                     }
                                 }
                                 /* regular behaviour */
-                                callable.addAll(extracted);
-                                extracted.clear();
+                                callable.add(arguments[0]);
                             }
-                        } else {
-                            /* false-positive: $func(...) is not working for arrays in PHP below 5.4 */
-                            if (arguments[0] instanceof Variable) {
-                                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                                if (php == PhpLanguageLevel.PHP530) {
-                                    return;
-                                }
-                            }
-                            /* regular behaviour */
-                            callable.add(arguments[0]);
-                        }
 
-                        final PsiElement first  = !callable.isEmpty() ? callable.get(0) : null;
-                        final PsiElement second = callable.size() > 1 ? callable.get(1) : null;
-                        final Couple<String> suggestedCallable = this.callable(first, second);
-                        if (suggestedCallable.getFirst() != null) {
-                            final boolean hasSecond  = suggestedCallable.getSecond() != null;
-                            final String replacement = "%f%%o%%s%(%p%)"
-                                .replace("%o%%s%", hasSecond ? "%o%%s%" : "")
-                                .replace("%p%", Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length)).map(this::argumentAsString).collect(Collectors.joining(", ")))
-                                .replace("%s%", hasSecond ? suggestedCallable.getSecond() : "")
-                                .replace("%o%", first instanceof Variable ? "->" : "::")
-                                .replace("%f%", suggestedCallable.getFirst());
-                            holder.registerProblem(
-                                    reference,
-                                    String.format(patternReplace, replacement),
-                                    new ReplaceFix(replacement)
-                            );
+                            final PsiElement first  = !callable.isEmpty() ? callable.get(0) : null;
+                            final PsiElement second = callable.size() > 1 ? callable.get(1) : null;
+                            final Couple<String> suggestedCallable = this.callable(first, second);
+                            if (suggestedCallable.getFirst() != null) {
+                                final String replacement;
+                                if (suggestedCallable.getSecond() != null) {
+                                    replacement = String.format(
+                                            "%s%s%s(%s)",
+                                            suggestedCallable.getFirst(),
+                                            first instanceof Variable ? "->" : "::",
+                                            suggestedCallable.getSecond(),
+                                            Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length)).map(this::argumentAsString).collect(Collectors.joining(", "))
+                                    );
+                                } else {
+                                    replacement = String.format(
+                                            "%s(%s)",
+                                            suggestedCallable.getFirst(),
+                                            Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length)).map(this::argumentAsString).collect(Collectors.joining(", "))
+                                    );
+                                }
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(patternReplace, replacement),
+                                        new ReplaceFix(replacement)
+                                );
+                            }
+                            callable.clear();
                         }
                     }
                 }

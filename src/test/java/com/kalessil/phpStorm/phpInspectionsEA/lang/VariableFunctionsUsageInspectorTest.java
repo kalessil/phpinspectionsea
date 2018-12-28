@@ -12,7 +12,6 @@ final public class VariableFunctionsUsageInspectorTest extends PhpCodeInsightFix
         myFixture.configureByFile("testData/fixtures/lang/variable-functions-php53.php");
         myFixture.testHighlighting(true, false, true);
     }
-
     public void testIfFindsAllPatternsPhp54() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP540);
         myFixture.enableInspections(new VariableFunctionsUsageInspector());
@@ -23,7 +22,6 @@ final public class VariableFunctionsUsageInspectorTest extends PhpCodeInsightFix
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/lang/variable-functions-php54.fixed.php");
     }
-
     public void testFalsePositives() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP530);
         myFixture.enableInspections(new VariableFunctionsUsageInspector());

@@ -8,5 +8,9 @@ final public class NestedAssignmentsUsageInspectorTest extends PhpCodeInsightFix
         myFixture.enableInspections(new NestedAssignmentsUsageInspector());
         myFixture.configureByFile("testData/fixtures/codeStyle/nested-assignments.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/nested-assignments.fixed.php");
     }
 }

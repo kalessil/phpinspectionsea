@@ -46,20 +46,14 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
                 if (functionName != null) {
-                    if (functionName.equals("get_class")) {
+                    if (functionName.equals("get_class") || functionName.equals("get_parent_class")) {
                         final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 1 && this.isTargetContext(reference)) {
+                        if (arguments.length == 1 && this.isTargetBinaryContext(reference)) {
                             final BinaryExpression binary = (BinaryExpression) reference.getParent();
                             final String fqn              = this.extractClassFqn(reference, binary);
                             if (fqn != null) {
                                 this.analyze(reference, binary, fqn);
                             }
-                        }
-                    } else if (functionName.equals("get_parent_class")) {
-                        // get_parent_class($MyChildrenClassObject) === 'MyClass';
-                        // but not get_parent_class('MyChildrenClass') === 'MyClass';
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 1 && this.isTargetContext(reference)) {
                         }
                     }
                 }
@@ -93,7 +87,7 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                 return null;
             }
 
-            private boolean isTargetContext(@NotNull FunctionReference reference) {
+            private boolean isTargetBinaryContext(@NotNull FunctionReference reference) {
                 final PsiElement parent = reference.getParent();
                 if (parent instanceof BinaryExpression) {
                     return OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType());

@@ -119,6 +119,7 @@ Inspections Lists (Code style)
 | Code Style           | SelfClassReferencingInspection                  | Self class referencing                              | yes | yes | yes  | no  |
 | Code Style           | UnnecessaryClosureInspection                    | Unnecessary closures                                | yes | yes | yes  | no  |
 | Code Style           | MissUsingParentKeywordInspection                | 'parent' keyword misused                            | yes | yes | yes  | no  |
+| Code Style           | MultiAssignmentsUsageInspection                 | Multi-assignments usage                             | no  | yes | no   | no  |
 
 Inspections Lists (Language level migration)
 ---

@@ -11,10 +11,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,9 +46,21 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 1 && this.isTargetBinaryContext(reference) && this.isNotString(arguments[0])) {
                             final BinaryExpression binary = (BinaryExpression) reference.getParent();
-                            final String fqn              = this.extractClassFqn(reference, binary);
+                            final PsiElement candidate    = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                            if (candidate != null) {
+                                final String fqn = this.extractClassFqn(candidate);
+                                if (fqn != null) {
+                                    this.analyze(reference, binary, fqn, !functionName.equals("get_class"));
+                                }
+                            }
+                        }
+                    } else if (functionName.equals("is_a") || functionName.equals("is_subclass_of")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        final boolean isTarget       = arguments.length == 2 || (arguments.length == 3 && PhpLanguageUtil.isFalse(arguments[2]));
+                        if (isTarget && this.isNotString(arguments[0])) {
+                            final String fqn = this.extractClassFqn(arguments[1]);
                             if (fqn != null) {
-                                this.analyze(reference, binary, fqn, !functionName.equals("get_class"));
+                                this.analyze(reference, reference, fqn, true);
                             }
                         }
                     }
@@ -60,29 +69,31 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
 
             private void analyze(
                     @NotNull FunctionReference reference,
-                    @NotNull BinaryExpression binary,
+                    @NotNull PsiElement context,
                     @NotNull String fqn,
                     boolean allowChildClasses
             ) {
                 final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
                 final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
                 if (!classes.isEmpty() && (allowChildClasses || index.getDirectSubclasses(fqn).isEmpty())) {
-                    final IElementType operator = binary.getOperationType();
-                    final boolean isInverted    = operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL;
+                    boolean isInverted = false; /* the calls can be inverted, less work for us */
+                    if (context instanceof BinaryExpression) {
+                        final IElementType operator = ((BinaryExpression) context).getOperationType();
+                        isInverted = operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL;
+                    }
                     final String replacement = String.format(
                             isInverted ? "! %s instanceof %s" : "%s instanceof %s",
                             reference.getParameters()[0].getText(),
                             fqn
                     );
-                    holder.registerProblem(binary, String.format(messagePattern, replacement), new UseInstanceofFix(replacement));
+                    holder.registerProblem(context, String.format(messagePattern, replacement), new UseInstanceofFix(replacement));
                 }
             }
 
             @Nullable
-            private String extractClassFqn(@NotNull FunctionReference reference, @NotNull BinaryExpression binary) {
-                final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                if (second instanceof StringLiteralExpression) {
-                    final StringLiteralExpression string = (StringLiteralExpression) second;
+            private String extractClassFqn(@NotNull PsiElement candidate) {
+                if (candidate instanceof StringLiteralExpression) {
+                    final StringLiteralExpression string = (StringLiteralExpression) candidate;
                     final String clazz                   = string.getContents();
                     if (clazz.length() > 3 && !clazz.equals("__PHP_Incomplete_Class") && string.getFirstPsiChild() == null) {
                         return '\\' + clazz.replaceAll("\\\\\\\\", "\\\\");

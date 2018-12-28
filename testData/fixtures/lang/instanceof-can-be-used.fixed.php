@@ -39,3 +39,37 @@ function get_parent_class_cases_holder(\stdClass $object, string $string) {
         get_parent_class($string) == 'FinalClass',
     ];
 }
+
+function is_a_cases_holder(\stdClass $object, string $string) {
+    return [
+        $object instanceof \stdClass,
+        $object instanceof \stdClass,
+
+        $object instanceof \FinalClass,
+        $object instanceof \ChildClass,
+        $object instanceof \ParentClass,
+
+        /* false-positives: string */
+        is_a($string, 'stdClass'),
+        is_a($string, 'FinalClass'),
+        is_a($object, 'stdClass', true),
+        is_a($object, 'FinalClass', true),
+    ];
+}
+
+function is_subclass_of_cases_holder(\stdClass $object, string $string) {
+    return [
+        $object instanceof \stdClass,
+        $object instanceof \stdClass,
+
+        $object instanceof \FinalClass,
+        $object instanceof \ChildClass,
+        $object instanceof \ParentClass,
+
+        /* false-positives: string */
+        is_subclass_of($string, 'stdClass'),
+        is_subclass_of($string, 'FinalClass'),
+        is_subclass_of($object, 'stdClass', true),
+        is_subclass_of($object, 'FinalClass', true),
+    ];
+}

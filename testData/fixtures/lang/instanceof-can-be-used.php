@@ -33,7 +33,6 @@ function get_parent_class_cases_holder($object) {
         <warning descr="'$object instanceof \FinalClass' can be used instead.">get_parent_class($object) == 'FinalClass'</warning>,
         <warning descr="'$object instanceof \ChildClass' can be used instead.">get_parent_class($object) == 'ChildClass'</warning>,
 
-        /* false-positives: has child classes */
-        get_parent_class($object) == 'ParentClass',
+        <warning descr="'$object instanceof \ParentClass' can be used instead.">get_parent_class($object) == 'ParentClass'</warning>,
     ];
 }

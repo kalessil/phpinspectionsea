@@ -52,17 +52,22 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                             final BinaryExpression binary = (BinaryExpression) reference.getParent();
                             final String fqn              = this.extractClassFqn(reference, binary);
                             if (fqn != null) {
-                                this.analyze(reference, binary, fqn);
+                                this.analyze(reference, binary, fqn, !functionName.equals("get_class"));
                             }
                         }
                     }
                 }
             }
 
-            private void analyze(@NotNull FunctionReference reference, @NotNull BinaryExpression binary, @NotNull String fqn) {
+            private void analyze(
+                    @NotNull FunctionReference reference,
+                    @NotNull BinaryExpression binary,
+                    @NotNull String fqn,
+                    boolean allowChildClasses
+            ) {
                 final PhpIndex index               = PhpIndex.getInstance(holder.getProject());
                 final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(fqn, index);
-                if (!classes.isEmpty() && index.getDirectSubclasses(fqn).isEmpty()) {
+                if (!classes.isEmpty() && (allowChildClasses || index.getDirectSubclasses(fqn).isEmpty())) {
                     final IElementType operator = binary.getOperationType();
                     final boolean isInverted    = operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL;
                     final String replacement = String.format(

@@ -33,7 +33,6 @@ function get_parent_class_cases_holder($object) {
         $object instanceof \FinalClass,
         $object instanceof \ChildClass,
 
-        /* false-positives: has child classes */
-        get_parent_class($object) == 'ParentClass',
+        $object instanceof \ParentClass,
     ];
 }

@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -17,10 +18,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -32,8 +34,18 @@ import java.util.List;
  */
 
 public class VariableFunctionsUsageInspector extends BasePhpInspection {
-    private static final String patternInlineArgs = "'%s' should be used instead (enables further analysis).";
-    private static final String patternReplace    = "'%s' should be used instead.";
+    private static final String patternInlineArgs = "'%s' would make possible to perform better code analysis here.";
+    private static final String patternReplace    = "'%s' would make more sense here (it also faster).";
+
+    final private static Map<String, String> arrayFunctionsMapping = new HashMap<>();
+    final private static Set<String> callerFunctions               = new HashSet<>();
+    static {
+        arrayFunctionsMapping.put("call_user_func_array", "call_user_func");
+        arrayFunctionsMapping.put("forward_static_call_array", "forward_static_call");
+
+        callerFunctions.add("call_user_func");
+        callerFunctions.add("forward_static_call");
+    }
 
     @NotNull
     public String getShortName() {
@@ -49,186 +61,163 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName == null || !functionName.startsWith("call_user_func")) {
-                    return;
-                }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length == 0) {
-                    return;
-                }
-
-                /* only `call_user_func_array(..., array(...))` needs to be checked */
-                if (arguments.length == 2 && functionName.equals("call_user_func_array")) {
-                    if (arguments[1] instanceof ArrayCreationExpression) {
-                        final List<String> parametersUsed = new ArrayList<>();
-                        for (final PsiElement argument : arguments[1].getChildren()) {
-                            /* get the array item */
-                            final PsiElement extracted;
-                            if (argument instanceof ArrayHashElement) {
-                                extracted = ((ArrayHashElement) argument).getValue();
-                            } else if (argument instanceof PhpPsiElement) {
-                                extracted = ((PhpPsiElement) argument).getFirstPsiChild();
+                if (functionName != null) {
+                    /* case: `call_user_func_array(..., array(...))` */
+                    if (arrayFunctionsMapping.containsKey(functionName)) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
+                            final List<PsiElement> dispatched = this.extract((ArrayCreationExpression) arguments[1]);
+                            if (!dispatched.isEmpty()) {
+                                final boolean hasByReferences = dispatched.stream().anyMatch(argument -> this.argumentAsString(argument).startsWith("&"));
+                                if (!hasByReferences) {
+                                    final String replacement = String.format(
+                                            "%s(%s, %s)",
+                                            arrayFunctionsMapping.get(functionName),
+                                            arguments[0].getText(),
+                                            dispatched.stream().map(this::argumentAsString).collect(Collectors.joining(", "))
+                                    );
+                                    holder.registerProblem(reference, String.format(patternInlineArgs, replacement), new InlineFix(replacement));
+                                }
+                                dispatched.clear();
+                            }
+                        }
+                    } else if (callerFunctions.contains(functionName)) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length > 0) {
+                            /* extract callable */
+                            final List<PsiElement> callable = new ArrayList<>();
+                            if (arguments[0] instanceof ArrayCreationExpression) {
+                                final List<PsiElement> extracted = this.extract((ArrayCreationExpression) arguments[0]);
+                                if (!extracted.isEmpty()) {
+                                    /* false-positive: first part must not be a string - '<string>->...' is invalid code */
+                                    final PsiElement candidate = extracted.get(0);
+                                    if (candidate instanceof Variable) {
+                                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, holder.getProject());
+                                        final boolean skip     = resolved == null ||
+                                                                 resolved.hasUnknown() ||
+                                                                 resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strString));
+                                        if (skip) {
+                                            extracted.clear();
+                                            return;
+                                        }
+                                    }
+                                    /* regular behaviour */
+                                    callable.addAll(extracted);
+                                    extracted.clear();
+                                }
                             } else {
-                                extracted = null;
-                            }
-                            /* store the extracted item */
-                            final String itemValueString = extracted == null ? null : parameterAsString(extracted);
-                            if (itemValueString != null) {
-                                /* false-positives: call_user_func does not support arguments by reference */
-                                if (itemValueString.startsWith("&")) {
-                                    parametersUsed.clear();
-                                    return;
-                                }
-                                parametersUsed.add(itemValueString);
-                            }
-                        }
-
-                        if (!parametersUsed.isEmpty()) {
-                            final String replacement = String.format(
-                                    "call_user_func(%s, %s)",
-                                    arguments[0].getText(),
-                                    String.join(", ", parametersUsed)
-                            );
-                            holder.registerProblem(
-                                    reference,
-                                    String.format(patternInlineArgs, replacement),
-                                    new InlineFix(replacement)
-                            );
-                            parametersUsed.clear();
-                        }
-                    }
-                    return;
-                }
-
-
-                /* TODO: `callReturningCallable()(...)` syntax not yet supported, re-evaluate */
-                if (functionName.equals("call_user_func")) {
-                    /* collect callable parts */
-                    final PsiElement firstParam          = arguments[0];
-                    final List<PsiElement> callableParts = new ArrayList<>();
-                    if (firstParam instanceof ArrayCreationExpression) {
-                        /* extract parts */
-                        PhpPsiElement firstPart  = ((ArrayCreationExpression) firstParam).getFirstPsiChild();
-                        PhpPsiElement secondPart = null == firstPart ? null : firstPart.getNextPsiSibling();
-
-                        /* now expression themselves */
-                        firstPart  = null == firstPart  ? null : firstPart.getFirstPsiChild();
-                        secondPart = null == secondPart ? null : secondPart.getFirstPsiChild();
-                        if (firstPart == null || secondPart == null) {
-                            return;
-                        }
-                        /* false-positive: first part must not be a string - '<string>->...' is invalid code */
-                        if (firstPart instanceof Variable) {
-                            final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) firstPart, holder.getProject());
-                            if (type != null) {
-                                /* incompletely resolved types, we shouldn't continue */
-                                if (type.hasUnknown()) {
-                                    return;
-                                }
-                                /* '<string>->method(...)' breaks at runtime */
-                                else if (type.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strString))) {
-                                    return;
-                                }
-                            }
-                        }
-
-                        callableParts.add(firstPart);
-                        callableParts.add(secondPart);
-                    } else {
-                        callableParts.add(firstParam);
-                    }
-
-
-                    /* extract parts into local variables for further processing */
-                    PsiElement firstPart  = !callableParts.isEmpty() ? callableParts.get(0) : null;
-                    PsiElement secondPart = callableParts.size() > 1 ? callableParts.get(1) : null;
-                    callableParts.clear();
-
-
-                    /* check second part: in some cases it overrides the first one completely */
-                    String secondAsString = null;
-                    if (null != secondPart) {
-                        secondAsString = secondPart instanceof Variable ? secondPart.getText() : '{' + secondPart.getText() + '}';
-                        if (secondPart instanceof StringLiteralExpression) {
-                            final StringLiteralExpression secondPartExpression = (StringLiteralExpression) secondPart;
-                            if (null == secondPartExpression.getFirstPsiChild()) {
-                                final String content = secondPartExpression.getContents();
-                                secondAsString       = content;
-
-                                if (-1 != content.indexOf(':')) {
-                                    /* don't touch relative invocation at all */
-                                    if (content.startsWith("parent::")) {
+                                /* false-positive: $func(...) is not working for arrays in PHP below 5.4 */
+                                if (arguments[0] instanceof Variable) {
+                                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                                    if (php == PhpLanguageLevel.PHP530) {
                                         return;
                                     }
-                                    firstPart      = secondPart;
-                                    secondPart     = null;
-                                    secondAsString = null;
                                 }
+                                /* regular behaviour */
+                                callable.add(arguments[0]);
                             }
-                        }
-                    }
 
-                    /* The first part should be a variable or string literal without injections */
-                    String firstAsString = null;
-                    if (null != firstParam) {
-                        if (firstPart instanceof StringLiteralExpression) {
-                            final StringLiteralExpression firstPartExpression = (StringLiteralExpression) firstPart;
-                            if (firstPartExpression.getFirstPsiChild() == null) {
-                                firstAsString = PhpStringUtil.unescapeText(firstPartExpression.getContents(), firstPartExpression.isSingleQuote());
+                            final PsiElement first  = !callable.isEmpty() ? callable.get(0) : null;
+                            final PsiElement second = callable.size() > 1 ? callable.get(1) : null;
+                            final Couple<String> suggestedCallable = this.callable(first, second);
+                            if (suggestedCallable.getFirst() != null) {
+                                final String replacement;
+                                if (suggestedCallable.getSecond() != null) {
+                                    final boolean useScopeResolution = (!(first instanceof Variable) || functionName.equals("forward_static_call"));
+                                    replacement = String.format(
+                                            "%s%s%s(%s)",
+                                            suggestedCallable.getFirst(),
+                                            useScopeResolution ? "::" : "->",
+                                            suggestedCallable.getSecond(),
+                                            Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length)).map(this::argumentAsString).collect(Collectors.joining(", "))
+                                    );
+                                } else {
+                                    replacement = String.format(
+                                            "%s(%s)",
+                                            suggestedCallable.getFirst(),
+                                            Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length)).map(this::argumentAsString).collect(Collectors.joining(", "))
+                                    );
+                                }
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(patternReplace, replacement),
+                                        new ReplaceFix(replacement)
+                                );
                             }
-                        }
-                        if (firstPart instanceof Variable) {
-                            firstAsString = firstPart.getText();
+                            callable.clear();
                         }
                     }
-                    if (null == firstAsString) {
-                        return;
-                    }
-
-
-                    /* $func(...) is not working for arrays in PHP below 5.4 */
-                    if (null == secondPart && firstPart instanceof Variable) {
-                        PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                        if (PhpLanguageLevel.PHP530 == php) {
-                            return;
-                        }
-                    }
-
-
-                    final List<String> parametersToSuggest = new ArrayList<>();
-                    for (PsiElement parameter : Arrays.copyOfRange(arguments, 1, arguments.length)) {
-                        parametersToSuggest.add(parameterAsString(parameter));
-                    }
-                    final String replacement = "%f%%o%%s%(%p%)"
-                        .replace("%o%%s%", null == secondPart ? "" : "%o%%s%")
-                        .replace("%p%", String.join(", ", parametersToSuggest))
-                        .replace("%s%", null == secondPart            ? ""   : secondAsString)
-                        .replace("%o%", firstPart instanceof Variable ? "->" : "::")
-                        .replace("%f%", firstAsString);
-                    parametersToSuggest.clear();
-
-                    holder.registerProblem(
-                            reference,
-                            String.format(patternReplace, replacement),
-                            new ReplaceFix(replacement)
-                    );
                 }
             }
+
+            @NotNull
+            private Couple<String> callable(@Nullable PsiElement first, @Nullable PsiElement second) {
+                final String[] callable = {null, null};
+
+                /* check second part: in some cases it overrides the first one completely */
+                if (second != null) {
+                    callable[1] =  '{' + second.getText() + '}';
+                    if (second instanceof StringLiteralExpression) {
+                        final StringLiteralExpression literal = (StringLiteralExpression) second;
+                        if (literal.getFirstPsiChild() == null) {
+                            final String content = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                            /* false-positives: relative invocation */
+                            if (content.startsWith("parent::")) {
+                                return Couple.of(null, null);
+                            }
+                            /* special case: the second overrides first one */
+                            if (content.indexOf(':') != -1) {
+                                return Couple.of(content, null);
+                            }
+                            /* regular behaviour cases */
+                            callable[1] = content;
+                        }
+                    } else if (second instanceof Variable) {
+                        callable[1] = second.getText();
+                    }
+                }
+
+                /* the first part should be a variable or string literal without injections */
+                if (first instanceof StringLiteralExpression) {
+                    final StringLiteralExpression literal = (StringLiteralExpression) first;
+                    if (literal.getFirstPsiChild() == null) {
+                        callable[0] = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                    }
+                } else if (first instanceof Variable) {
+                    callable[0] = first.getText();
+                }
+
+                return Couple.of(callable[0], callable[1]);
+            }
+
+            @NotNull
+            private List<PsiElement> extract(@NotNull ArrayCreationExpression container) {
+                return Stream.of(container.getChildren())
+                        .map(child -> {
+                            if (child instanceof ArrayHashElement) {
+                                return ((ArrayHashElement) child).getValue();
+                            }
+                            if (child instanceof PhpPsiElement) {
+                                return ((PhpPsiElement) child).getFirstPsiChild();
+                            }
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+            }
+
+            @NotNull
+            private String argumentAsString(@NotNull PsiElement parameter) {
+                PsiElement previous = parameter.getPrevSibling();
+                if (previous instanceof PsiWhiteSpace) {
+                    previous = previous.getPrevSibling();
+                }
+
+                return OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)
+                            ? '&' + parameter.getText()
+                            : parameter.getText();
+            }
         };
-    }
-
-    @NotNull
-    private String parameterAsString(@NotNull PsiElement parameter) {
-        String asString     = parameter.getText();
-        PsiElement previous = parameter.getPrevSibling();
-        if (previous instanceof PsiWhiteSpace) {
-            previous = previous.getPrevSibling();
-        }
-        if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-            asString = '&' + asString;
-        }
-
-        return asString;
     }
 
     private static final class ReplaceFix extends UseSuggestedReplacementFixer {

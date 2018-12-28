@@ -110,38 +110,15 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             callable.add(arguments[0]);
                         }
 
-                        PsiElement first  = !callable.isEmpty() ? callable.get(0) : null;
-                        PsiElement second = callable.size() > 1 ? callable.get(1) : null;
-
-                        /* check second part: in some cases it overrides the first one completely */
-                        String secondAsString = null;
-                        if (second != null) {
-                            secondAsString = second instanceof Variable ? second.getText() : '{' + second.getText() + '}';
-                            if (second instanceof StringLiteralExpression) {
-                                final StringLiteralExpression secondPartExpression = (StringLiteralExpression) second;
-                                if (null == secondPartExpression.getFirstPsiChild()) {
-                                    final String content = secondPartExpression.getContents();
-                                    secondAsString       = content;
-
-                                    if (content.indexOf(':') != -1) {
-                                        /* don't touch relative invocation at all */
-                                        if (content.startsWith("parent::")) {
-                                            return;
-                                        }
-                                        first      = second;
-                                        second     = null;
-                                        secondAsString = null;
-                                    }
-                                }
-                            }
-                        }
-
+                        final PsiElement first  = !callable.isEmpty() ? callable.get(0) : null;
+                        final PsiElement second = callable.size() > 1 ? callable.get(1) : null;
                         final Couple<String> suggestedCallable = this.callable(first, second);
                         if (suggestedCallable.getFirst() != null) {
+                            final boolean hasSecond  = suggestedCallable.getSecond() != null;
                             final String replacement = "%f%%o%%s%(%p%)"
-                                .replace("%o%%s%", second == null ? "" : "%o%%s%")
+                                .replace("%o%%s%", hasSecond ? "%o%%s%" : "")
                                 .replace("%p%", Stream.of(Arrays.copyOfRange(arguments, 1, arguments.length)).map(this::argumentAsString).collect(Collectors.joining(", ")))
-                                .replace("%s%", second == null ? ""   : secondAsString)
+                                .replace("%s%", hasSecond ? suggestedCallable.getSecond() : "")
                                 .replace("%o%", first instanceof Variable ? "->" : "::")
                                 .replace("%f%", suggestedCallable.getFirst());
                             holder.registerProblem(
@@ -157,6 +134,29 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
             @NotNull
             private Couple<String> callable(@Nullable PsiElement first, @Nullable PsiElement second) {
                 final String[] callable = {null, null};
+
+                /* check second part: in some cases it overrides the first one completely */
+                if (second != null) {
+                    callable[1] =  '{' + second.getText() + '}';
+                    if (second instanceof StringLiteralExpression) {
+                        final StringLiteralExpression literal = (StringLiteralExpression) second;
+                        if (literal.getFirstPsiChild() == null) {
+                            final String content = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                            /* false-positives: relative invocation */
+                            if (content.startsWith("parent::")) {
+                                return Couple.of(null, null);
+                            }
+                            /* special case: the second overrides first one */
+                            if (content.indexOf(':') != -1) {
+                                return Couple.of(content, null);
+                            }
+                            /* regular behaviour cases */
+                            callable[1] = content;
+                        }
+                    } else if (second instanceof Variable) {
+                        callable[1] = second.getText();
+                    }
+                }
 
                 /* the first part should be a variable or string literal without injections */
                 if (first instanceof StringLiteralExpression) {

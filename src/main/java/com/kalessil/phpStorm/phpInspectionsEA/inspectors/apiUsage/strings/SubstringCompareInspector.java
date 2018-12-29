@@ -84,7 +84,7 @@ public class SubstringCompareInspector extends BasePhpInspection {
                                     stringCandidate = binary.getRightOperand();
                                 }
                                 final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(stringCandidate);
-                                if (literal != null) {
+                                if (literal != null && literal.getFirstPsiChild() == null) {
                                     /* workaround for https://youtrack.jetbrains.com/issue/WI-44824 */
                                     final String patched   = literal.isSingleQuote() ? literal.getContents() : literal.getContents().replaceAll("\\\\r", "\r");
                                     final String unescaped = PhpStringUtil.unescapeText(patched, literal.isSingleQuote());

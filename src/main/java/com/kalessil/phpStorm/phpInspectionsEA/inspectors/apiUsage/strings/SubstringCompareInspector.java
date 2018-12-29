@@ -85,22 +85,21 @@ public class SubstringCompareInspector extends BasePhpInspection {
                                 }
                                 final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(stringCandidate);
                                 if (literal != null) {
+                                    /* workaround for https://youtrack.jetbrains.com/issue/WI-44824 */
+                                    final String unescaped  = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                                    final String normalized = literal.isSingleQuote() ? unescaped : unescaped.replaceAll("\\\\r", "\r");
+
+                                    int givenOffset  = 0;
+                                    int stringLength = normalized.length();
                                     boolean isTarget;
-                                    int givenOffset;
-                                    int stringLength = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote()).length();
                                     try {
                                         isTarget = stringLength != Math.abs(givenOffset = Integer.parseInt(offset.getText()));
                                     } catch (NumberFormatException lengthParsingHasFailed) {
-                                        isTarget     = false;
-                                        stringLength = -1;
-                                        givenOffset  = 0;
+                                        isTarget = false;
                                     }
-                                    if (isTarget && stringLength != -1) {
-                                        final String replacement = String.format(
-                                            "%s%s",
-                                            givenOffset > 0 || stringLength == 0 ? "" : "-",
-                                            stringLength
-                                        );
+
+                                    if (isTarget) {
+                                        final String replacement = String.format("%s%s", givenOffset > 0 || stringLength == 0 ? "" : "-", stringLength);
                                         holder.registerProblem(offset, message, new LengthFix(replacement));
                                     }
                                 }

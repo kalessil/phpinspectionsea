@@ -17,5 +17,9 @@ function cases_holder() {
 
         substr('...', 0, -3) == '...',
         substr('...', 0, 3) === '...',
+
+        /* workaround for https://youtrack.jetbrains.com/issue/WI-44824 */
+        substr('...', 0, -1) == "\r",
+        substr('...', 0, -1) == "\r",
     ];
 }

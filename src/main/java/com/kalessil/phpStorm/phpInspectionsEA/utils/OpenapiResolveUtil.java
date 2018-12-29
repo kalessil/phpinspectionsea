@@ -79,7 +79,7 @@ final public class OpenapiResolveUtil {
                     if (name != null && functionToNarrow.containsKey(name)) {
                         final int targetPosition     = functionToNarrow.get(name);
                         final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length >= targetPosition + 1 && arguments[targetPosition] instanceof PhpTypedElement) {
+                        if (arguments.length > targetPosition && arguments[targetPosition] instanceof PhpTypedElement) {
                             final PhpType argumentType = resolveType((PhpTypedElement) arguments[targetPosition], project);
                             if (argumentType != null && !argumentType.isEmpty() && !argumentType.hasUnknown()) {
                                 if (argumentType.getTypes().stream().noneMatch(t -> Types.getType(t).equals(Types.strArray))) {

@@ -26,20 +26,23 @@ import java.util.*;
 
 final public class OpenapiResolveUtil {
     private static final Map<String, PhpType> functionReturnTypes = new HashMap<>();
-    private static final Map<String, PhpType> functionReturnBase  = new HashMap<>();
+    private static final Map<String, Integer> functionToNarrow    = new HashMap<>();
     static {
         functionReturnTypes.put("str_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
         functionReturnTypes.put("str_ireplace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
+        functionReturnTypes.put("preg_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
+        functionReturnTypes.put("preg_replace_callback", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
         functionReturnTypes.put("substr_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
-        functionReturnTypes.put("preg_filter", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
-        functionReturnTypes.put("preg_replace_callback_array", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
-        functionReturnTypes.put("preg_replace_callback", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
-        functionReturnTypes.put("preg_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY).add(PhpType.NULL));
+        functionReturnTypes.put("preg_filter", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
+        functionReturnTypes.put("preg_replace_callback_array", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
 
-        functionReturnBase.put("str_replace", new PhpType());
-        functionReturnBase.put("str_ireplace", new PhpType());
-        functionReturnBase.put("preg_replace", new PhpType().add(PhpType.NULL));
-        functionReturnBase.put("preg_replace_callback", new PhpType().add(PhpType.NULL));
+        functionToNarrow.put("str_replace", 2);
+        functionToNarrow.put("str_ireplace", 2);
+        functionToNarrow.put("preg_replace", 2);
+        functionToNarrow.put("preg_replace_callback", 2);
+        functionToNarrow.put("substr_replace", 0);
+        functionToNarrow.put("preg_filter", 2);
+        functionToNarrow.put("preg_replace_callback_array", 1);
     }
 
     @Nullable
@@ -73,17 +76,17 @@ final public class OpenapiResolveUtil {
                         result = functionReturnTypes.get(name);
                     }
                     /* some of replacement function result can be narrowed from arguments type */
-                    if (name != null && functionReturnBase.containsKey(name)) {
+                    if (name != null && functionToNarrow.containsKey(name)) {
+                        final int targetPosition     = functionToNarrow.get(name);
                         final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length >= 3 && arguments[2] instanceof PhpTypedElement) {
-                            final PhpType argumentType = resolveType((PhpTypedElement) arguments[2], project);
+                        if (arguments.length >= targetPosition + 1 && arguments[targetPosition] instanceof PhpTypedElement) {
+                            final PhpType argumentType = resolveType((PhpTypedElement) arguments[targetPosition], project);
                             if (argumentType != null && !argumentType.isEmpty() && !argumentType.hasUnknown()) {
-                                final boolean canTakeArgumentType = PhpType.isSubType(argumentType, result);
-                                if (canTakeArgumentType) {
-                                    result = argumentType.add(functionReturnBase.get(name));
-                                } else if (argumentType.equals((new PhpType()).add(PhpType._MIXED))) {
-                                    // mixed due to e.g. default functions signatures
-                                    result = argumentType.add(functionReturnBase.get(name));
+                                if (argumentType.getTypes().stream().noneMatch(t -> Types.getType(t).equals(Types.strArray))) {
+                                    result.getTypes().removeIf(t -> Types.getType(t).equals(Types.strArray));
+                                }
+                                if (argumentType.getTypes().stream().noneMatch(t -> Types.getType(t).equals(Types.strString))) {
+                                    result.getTypes().removeIf(t -> Types.getType(t).equals(Types.strString));
                                 }
                             }
                         }

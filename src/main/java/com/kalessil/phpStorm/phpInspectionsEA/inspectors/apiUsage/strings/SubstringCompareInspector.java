@@ -93,13 +93,13 @@ public class SubstringCompareInspector extends BasePhpInspection {
                                     int stringLength = unescaped.length();
                                     boolean isTarget;
                                     try {
-                                        isTarget = stringLength != Math.abs(givenOffset = Integer.parseInt(offset.getText()));
+                                        isTarget = stringLength > 0 && stringLength != Math.abs(givenOffset = Integer.parseInt(offset.getText()));
                                     } catch (NumberFormatException lengthParsingHasFailed) {
                                         isTarget = false;
                                     }
 
                                     if (isTarget) {
-                                        final String replacement = String.format("%s%s", givenOffset > 0 || stringLength == 0 ? "" : "-", stringLength);
+                                        final String replacement = String.valueOf(givenOffset > 0 ? stringLength : -stringLength);
                                         holder.registerProblem(offset, message, new LengthFix(replacement));
                                     }
                                 }

@@ -2,16 +2,16 @@
 
 function cases_holder() {
     return [
-        strtolower(substr('', 0, 0)) == '',
-        strtolower(substr('', 0, 0)) != '',
-        strtolower(substr('', 0, 0)) === '',
-        strtolower(substr('', 0, 0)) !== '',
+        strtolower(substr('', 0, -1)) == '.',
+        strtolower(substr('', 0, -1)) != '.',
+        strtolower(substr('', 0, 1)) === '.',
+        strtolower(substr('', 0, 1)) !== '.',
 
-        substr('', 0, 0) == '',
-        substr('', 0, 0) === '',
+        substr('', 0, -1) == '.',
+        substr('', 0, 1) === '.',
 
-        substr('', 0) == '',
-        substr('', 0) === '',
+        substr('', -1) == '.',
+        substr('', 1) === '.',
         substr('', -1) === 'a',
         substr('', 1) === 'a',
 
@@ -21,5 +21,8 @@ function cases_holder() {
         /* workaround for https://youtrack.jetbrains.com/issue/WI-44824 */
         substr('...', 0, -1) == "\r",
         substr('...', 0, -1) == "\r",
+
+        /* false-positives: edge cases */
+        substr('...', 3) === '', /* string length check tolerant to input, works in PHP 7.0
     ];
 }

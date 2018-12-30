@@ -25,7 +25,7 @@ namespace ClassExistenceAndRelation {
         is_subclass_of($object, I::class),
         <error descr="This call seems to always return false, please inspect the ::class expression.">is_subclass_of</error> ($object, T::class),
         is_subclass_of($object, C::class),
-        <error descr="This call might work not as expected, please specify the third argument.">is_subclass_of</error> ($string, C::class),
+        is_subclass_of($string, C::class),
 
         is_a($object, I::class),
         <error descr="This call seems to always return false, please inspect the ::class expression.">is_a</error> ($object, T::class),

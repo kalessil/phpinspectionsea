@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -68,10 +67,10 @@ public class ClassExistenceCheckInspector extends BasePhpInspection {
                     final int argumentsCount = arguments.length;
                     if (functionName.equals("is_subclass_of") || functionName.equals("is_a")) {
                         /* case 2: the object is a string, but the third argument is missing */
-                        if (argumentsCount == 2 && arguments[0] instanceof PhpTypedElement) {
+                        if (functionName.equals("is_a") && argumentsCount == 2 && arguments[0] instanceof PhpTypedElement) {
                             final PhpType types = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], project);
                             if (types != null && types.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strString))) {
-                                holder.registerProblem(reference, messageString, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(reference, messageString);
                             }
                         }
                         candidate = argumentsCount >= 2 ? arguments[1] : null;
@@ -86,7 +85,7 @@ public class ClassExistenceCheckInspector extends BasePhpInspection {
                         if (constantName != null && constantName.equals("class") && targetClass instanceof ClassReference) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) targetClass);
                             if (resolved instanceof PhpClass && !callbacks.get(functionName).apply((PhpClass) resolved)) {
-                                holder.registerProblem(reference, messageMismatch, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(reference, messageMismatch);
                             }
                         }
                     }

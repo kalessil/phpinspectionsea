@@ -63,16 +63,13 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                 } else if (callArgument instanceof Variable) {
                                     final Variable argument     = (Variable) callArgument;
                                     final String argumentName   = argument.getName();
+                                    /* argument can be a variable variable, hence we need to verify value container existence */
                                     final Set<String> variables = PossibleValuesDiscoveryUtil.discover(argument).stream()
-                                        .filter(value  -> value instanceof StringLiteralExpression && ((PhpPsiElement) value).getFirstPsiChild() == null)
                                         .map(literal   -> ((StringLiteralExpression) literal).getContents())
                                         .filter(string -> !string.isEmpty() && !string.equals(argumentName) && string.matches("^[a-z0-9_]+$"))
                                         .collect(Collectors.toSet());
-                                    boolean found = false;
-                                    if (variables.size() == 1) {
-                                        found = PsiTreeUtil.findChildrenOfType(scope, Variable.class).stream()
-                                                .anyMatch(v -> v != argument && variables.contains(v.getName()));
-                                    }
+                                    boolean found = variables.size() == 1 &&
+                                                    PsiTreeUtil.findChildrenOfType(scope, Variable.class).stream().anyMatch(v -> variables.contains(v.getName()));
                                     if (!found) {
                                         holder.registerProblem(
                                                 argument,

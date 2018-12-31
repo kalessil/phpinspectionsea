@@ -16,9 +16,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -57,10 +56,32 @@ public class InArrayCanBeUsedInspector extends BasePhpInspection {
 
                     final List<PsiElement> conditions = this.extract(expression, operator);
                     if (conditions.size() > 1) {
-
+                        final List<BinaryExpression> binaries = this.filter(conditions, operator);
+                        if (binaries.size() > 1) {
+                            /* `x !=[=] ... && x !=[=] ...`, `x ==[=] ... || x ==[=] ...` */
+                            /* TODO: group (values should be a number, string, or not contain calls) */
+                            /* TODO: if subject contains calls, report 2+ values, otherwise 3+ values */
+                        }
+                        binaries.clear();
                     }
                     conditions.clear();
                 }
+            }
+
+            @NotNull
+            private List<BinaryExpression> filter(@NotNull List<PsiElement> conditions, @Nullable IElementType operator) {
+                final Set<IElementType> targetOperators = new HashSet<>();
+                if (operator == PhpTokenTypes.opAND) {
+                    targetOperators.add(PhpTokenTypes.opNOT_EQUAL);
+                    targetOperators.add(PhpTokenTypes.opNOT_IDENTICAL);
+                } else {
+                    targetOperators.add(PhpTokenTypes.opEQUAL);
+                    targetOperators.add(PhpTokenTypes.opIDENTICAL);
+                }
+                return conditions.stream()
+                        .filter(b -> b instanceof BinaryExpression && targetOperators.contains(((BinaryExpression) b).getOperationType()))
+                        .map(b    -> (BinaryExpression) b)
+                        .collect(Collectors.toList());
             }
 
             @NotNull

@@ -1,21 +1,10 @@
 <?php
 
-function buggy_compact($x, $y)
-{
-    $z = $x + $y;
-    return
-        <error descr="'$zz' might not be defined in the scope.">compact</error> ('x', 'y', 'z', 'zz', 'zz', "$$z")
-        +
-        <error descr="'$$zz' might not be defined in the scope.">compact</error>('x', 'y', 'z', '$zz', '$zz', "$$z")
-        +
-        compact(<weak_warning descr="There is chance that it should be 'z' here.">$z</weak_warning>)
-    ;
-}
+function variable_variables() {
+    $value = 'value';
+    $name = 'value';
 
-function buggy_compact_control_flow($x, $y)
-{
-    $temp = <error descr="'$z' might not be defined in the scope.">compact</error>('x', 'y', 'z');
-    $z    = $x + $y;
+    $reported = 'reported';
 
-    return $temp;
+    return compact($name, <weak_warning descr="There is chance that it should be 'reported' here.">$reported</weak_warning>);
 }

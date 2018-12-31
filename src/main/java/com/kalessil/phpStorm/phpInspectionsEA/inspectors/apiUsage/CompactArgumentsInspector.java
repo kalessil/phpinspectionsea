@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -60,16 +61,32 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                         compactedVariables.add(name);
                                     }
                                 } else if (callArgument instanceof Variable) {
-                                    final String message = String.format(patternStringExpected, ((Variable) callArgument).getName());
-                                    holder.registerProblem(callArgument, message, ProblemHighlightType.WEAK_WARNING);
+                                    final Variable argument     = (Variable) callArgument;
+                                    final String argumentName   = argument.getName();
+                                    final Set<String> variables = PossibleValuesDiscoveryUtil.discover(argument).stream()
+                                        .filter(value  -> value instanceof StringLiteralExpression && ((PhpPsiElement) value).getFirstPsiChild() == null)
+                                        .map(literal   -> ((StringLiteralExpression) literal).getContents())
+                                        .filter(string -> !string.isEmpty() && !string.equals(argumentName) && string.matches("^[a-z0-9_]+$"))
+                                        .collect(Collectors.toSet());
+                                    boolean found = false;
+                                    if (variables.size() == 1) {
+                                        found = PsiTreeUtil.findChildrenOfType(scope, Variable.class).stream()
+                                                .anyMatch(v -> v != argument && variables.contains(v.getName()));
+                                    }
+                                    if (!found) {
+                                        holder.registerProblem(
+                                                argument,
+                                                String.format(patternStringExpected, argument.getName()),
+                                                ProblemHighlightType.WEAK_WARNING
+                                        );
+                                    }
+                                    variables.clear();
                                 }
                             }
                             /* if we have something to analyze, collect what scope provides */
                             if (!compactedVariables.isEmpty()) {
                                 /* parameters and local variables can be compacted, just ensure the order is correct */
-                                final Set<String> declaredVariables = Arrays.stream(scope.getParameters())
-                                        .map(Parameter::getName)
-                                        .collect(Collectors.toSet());
+                                final Set<String> declaredVariables = Arrays.stream(scope.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
                                 for (final PhpReference entry : PsiTreeUtil.findChildrenOfAnyType(scope, Variable.class, FunctionReference.class)) {
                                     if (entry == reference) {
                                         break;

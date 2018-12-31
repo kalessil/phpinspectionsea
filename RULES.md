@@ -50,6 +50,7 @@ Inspections Lists (Control flow)
 | Control Flow         | IssetConstructsCanBeMergedInspection            | 'isset(...)' constructs can be merged                                             | yes | yes | yes  | no  |
 | Control Flow         | FuncNumArgsCanBeUsedInspection                  | 'func_num_args(...)' can be used                                                  | yes | yes | yes  | no  |
 | Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | no  |
+| Control Flow         | InArrayCanBeUsedInspection                      | 'in_array(...)' can be used                                                       | n/a | yes | n/a  | no  |
 
 Inspections Lists (PhpUnit)
 ---

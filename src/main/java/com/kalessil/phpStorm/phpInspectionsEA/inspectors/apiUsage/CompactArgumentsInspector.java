@@ -65,6 +65,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                     final String argumentName   = argument.getName();
                                     /* argument can be a variable variable, hence we need to verify value container existence */
                                     final Set<String> variables = PossibleValuesDiscoveryUtil.discover(argument).stream()
+                                        .filter(value  -> value instanceof StringLiteralExpression)
                                         .map(literal   -> ((StringLiteralExpression) literal).getContents())
                                         .filter(string -> !string.isEmpty() && !string.equals(argumentName) && string.matches("^[a-z0-9_]+$"))
                                         .collect(Collectors.toSet());

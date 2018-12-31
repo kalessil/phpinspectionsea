@@ -275,6 +275,10 @@
         shortName="StrlenInEmptyStringCheckContextInspection"      displayName="'strlen(...)' misused"
         groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.StrlenInEmptyStringCheckContextInspection"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="InArrayCanBeUsedInspection"                     displayName="'in_array(...)' can be used"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayCanBeUsedInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

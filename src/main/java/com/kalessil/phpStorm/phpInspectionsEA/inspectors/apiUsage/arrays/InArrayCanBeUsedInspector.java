@@ -8,8 +8,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -17,6 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,6 +34,7 @@ import java.util.stream.Stream;
  */
 
 public class InArrayCanBeUsedInspector extends BasePhpInspection {
+    private static final String message = "It's possible to use 'in_array(...)' here (reduces cognitive load).";
 
     @NotNull
     public String getShortName() {
@@ -66,7 +70,7 @@ public class InArrayCanBeUsedInspector extends BasePhpInspection {
                             final boolean isTarget = values.size() > 2 ||
                                                      PsiTreeUtil.findChildOfType(subject, FunctionReference.class) != null;
                             if (isTarget) {
-                                /* TODO: reporting */
+                                holder.registerProblem(values.get(values.size() - 1).getParent(), message);
                             }
                             values.clear();
                         }

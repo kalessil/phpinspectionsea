@@ -61,13 +61,14 @@ public class InArrayCanBeUsedInspector extends BasePhpInspection {
                         /* `x !=[=] ... && x !=[=] ...`, `x ==[=] ... || x ==[=] ...` */
                         final Map<PsiElement, List<PsiElement>> groups = this.group(conditions);
                         for (final Map.Entry<PsiElement, List<PsiElement>> entry : groups.entrySet()) {
-                            final PsiElement subject      = entry.getKey();
                             final List<PsiElement> values = entry.getValue();
-                            /* if subject contains calls, report 2+ values, otherwise 3+ values */
-                            final boolean isTarget = values.size() > 2 ||
-                                                     PsiTreeUtil.findChildOfType(subject, FunctionReference.class) != null;
-                            if (isTarget) {
-                                holder.registerProblem(values.get(values.size() - 1).getParent(), message);
+                            if (values.size() > 1) {
+                                /* if subject contains calls, report 2+ values, otherwise 3+ values */
+                                final boolean isTarget = values.size() > 2 ||
+                                                         PsiTreeUtil.findChildOfType(entry.getKey(), FunctionReference.class) != null;
+                                if (isTarget) {
+                                    holder.registerProblem(values.get(values.size() - 1).getParent(), message);
+                                }
                             }
                             values.clear();
                         }

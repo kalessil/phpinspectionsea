@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  */
 
 public class InArrayCanBeUsedInspector extends BasePhpInspection {
-    private static final String message = "It's possible to use 'in_array(...)' here (reduces cognitive load).";
+    private static final String messagePattern = "It's possible to use '%s' here (reduces cognitive load).";
 
     @NotNull
     public String getShortName() {
@@ -67,7 +67,8 @@ public class InArrayCanBeUsedInspector extends BasePhpInspection {
                                 final boolean isTarget = values.size() > 2 ||
                                                          PsiTreeUtil.findChildOfType(entry.getKey(), FunctionReference.class) != null;
                                 if (isTarget) {
-                                    holder.registerProblem(values.get(values.size() - 1).getParent(), message);
+                                    final String alternative = String.format("%sin_array(..., [...])", operator == PhpTokenTypes.opOR ? "" : "!");
+                                    holder.registerProblem(values.get(values.size() - 1).getParent(), String.format(messagePattern, alternative));
                                 }
                             }
                             values.clear();

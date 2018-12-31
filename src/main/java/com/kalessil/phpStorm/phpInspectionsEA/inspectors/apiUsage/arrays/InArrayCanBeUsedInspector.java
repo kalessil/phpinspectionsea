@@ -63,9 +63,11 @@ public class InArrayCanBeUsedInspector extends BasePhpInspection {
                         for (final Map.Entry<PsiElement, List<PsiElement>> entry : groups.entrySet()) {
                             final List<PsiElement> values = entry.getValue();
                             if (values.size() > 1) {
+                                final PsiElement subject = entry.getKey();
                                 /* if subject contains calls, report 2+ values, otherwise 3+ values */
-                                final boolean isTarget = values.size() > 2 ||
-                                                         PsiTreeUtil.findChildOfType(entry.getKey(), FunctionReference.class) != null;
+                                final boolean isTarget   = values.size() > 2 ||
+                                                           subject instanceof FunctionReference ||
+                                                           PsiTreeUtil.findChildOfType(subject, FunctionReference.class) != null;
                                 if (isTarget) {
                                     final String alternative = String.format("%sin_array(..., [...])", operator == PhpTokenTypes.opOR ? "" : "!");
                                     holder.registerProblem(values.get(values.size() - 1).getParent(), String.format(messagePattern, alternative));

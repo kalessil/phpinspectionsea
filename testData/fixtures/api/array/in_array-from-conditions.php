@@ -7,7 +7,7 @@ function cases_holder($argument) {
         $argument != 0 && $argument != '...' && <warning descr="It's possible to use '!in_array(..., [...])' here (reduces cognitive load).">$argument != PHP_INT_MAX</warning>,
         $argument !== 0 && $argument !== '...' && <warning descr="It's possible to use '!in_array(..., [...])' here (reduces cognitive load).">$argument !== PHP_INT_MAX</warning>,
 
-        trim($argument) == 0 || <warning descr="It's possible to use '!in_array(..., [...])' here (reduces cognitive load).">trim($argument) == '...'</warning>,
+        trim($argument) == 0 || <warning descr="It's possible to use 'in_array(..., [...])' here (reduces cognitive load).">trim($argument) == '...'</warning>,
         trim($argument) != 0 && <warning descr="It's possible to use '!in_array(..., [...])' here (reduces cognitive load).">trim($argument) != '...'</warning>,
 
         /* false-positives */

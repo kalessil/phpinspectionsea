@@ -440,7 +440,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                 final List<PsiElement> result = new ArrayList<>();
                 if (binary.getOperationType() == operator) {
                     Stream.of(binary.getLeftOperand(), binary.getRightOperand())
-                        .filter(Objects::nonNull).map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
+                        .map(ExpressionSemanticUtil::getExpressionTroughParenthesis).filter(Objects::nonNull)
                         .forEach(expression -> {
                             if (expression instanceof BinaryExpression) {
                                 result.addAll(this.extract((BinaryExpression) expression, operator));

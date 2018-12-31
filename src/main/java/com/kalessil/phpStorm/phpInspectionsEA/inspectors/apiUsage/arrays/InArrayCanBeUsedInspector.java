@@ -33,7 +33,7 @@ public class InArrayCanBeUsedInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "InArrayMissUseInspection";
+        return "InArrayCanBeUsedInspection";
     }
 
     @Override
@@ -54,17 +54,13 @@ public class InArrayCanBeUsedInspector extends BasePhpInspection {
                         return;
                     }
 
-                    final List<PsiElement> conditions = this.extract(expression, operator);
-                    if (conditions.size() > 1) {
-                        final List<BinaryExpression> binaries = this.filter(conditions, operator);
-                        if (binaries.size() > 1) {
-                            /* `x !=[=] ... && x !=[=] ...`, `x ==[=] ... || x ==[=] ...` */
-                            /* TODO: group (values should be a number, string, or not contain calls) */
-                            /* TODO: if subject contains calls, report 2+ values, otherwise 3+ values */
-                        }
-                        binaries.clear();
+                    final List<BinaryExpression> binaries = this.filter(this.extract(expression, operator), operator);
+                    if (binaries.size() > 1) {
+                        /* `x !=[=] ... && x !=[=] ...`, `x ==[=] ... || x ==[=] ...` */
+                        /* TODO: group (values should be a number, string, or not contain calls) */
+                        /* TODO: if subject contains calls, report 2+ values, otherwise 3+ values */
                     }
-                    conditions.clear();
+                    binaries.clear();
                 }
             }
 

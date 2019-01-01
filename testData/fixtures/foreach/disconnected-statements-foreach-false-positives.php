@@ -130,3 +130,8 @@ foreach ([] as $outerIndex => $outerValue) {
         echo $outerValue;
     }
 }
+
+/* false-positive: templating */
+foreach ([] as $value) {
+    ?><input type="text" class="<?php echo $class ?>"/><?php
+}

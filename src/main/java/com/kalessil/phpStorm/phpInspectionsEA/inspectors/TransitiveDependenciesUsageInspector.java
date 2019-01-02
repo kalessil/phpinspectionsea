@@ -239,7 +239,7 @@ public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
             if (!project.isDisposed()) {
                 final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(this.file);
                 if (file != null) {
-                    new OpenFileDescriptor(project, file).navigate(true);
+                    (new OpenFileDescriptor(project, file)).navigate(true);
                 }
             }
         }

@@ -2,18 +2,18 @@
 Maintenance release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
 - Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
-- Foreach source to iterate over: resolved a false-positive (type-hinted value)<br/>
-- Null coalescing operator can be used: multiple fixes<br/>
-- Null coalescing operator can be used: new settings<br/>
-- PhpUnit: bugs and best practices: new settings<br/>
-- Statement could be decoupled from foreach: resolved a false-positive (outer loop variables)<br/>
-- Type unsafe comparison: multiple bug-fixes<br/>
+- Non-optimal regular expression: resolved false-positives (multiple cases)<br/>
+- Null reference: resolved false-positives (multiple cases)<br/>
+- Parameter/variable is not used: introduced new setting (ignore inclusion statements)<br/>
+- Statement could be decoupled from foreach: resolved false-positives (skip html templating)<br/>
+- Suspicious binary operations: reworked hardcoded constants reporting<br/>
+- Unnecessary call arguments specification: enabled by default<br/>
 <br/>
-- Overall performance has been optimized<br/>
-- Duplicate array keys: implemented<br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
-- Reference mismatch: dropped<br/>
-- Suspicious binary operations: new patterns<br/>
+- Basic malware patterns: new patterns<br/>
+- Nested assignments usage: implemented (needs activation)<br/>
+- Variable functions usage: new patterns<br/>
+- 'instanceof' can be used: new patterns (thank you @orklah the specification)<br/>
+- 'parent' keyword misused: implemented<br/>
 <br/>
 <hr/>
 </html>

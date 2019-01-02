@@ -22,6 +22,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class UnnecessaryContinueInspector extends BasePhpInspection {
     private static final String message = "It's not really makes sense placing continue here as loop will continue from here anyway.";
 

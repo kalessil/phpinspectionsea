@@ -279,6 +279,10 @@
         shortName="InArrayCanBeUsedInspection"                     displayName="'in_array(...)' can be used"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnnecessaryBooleanCheckInspection"              displayName="Unnecessary boolean check"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryBooleanCheckInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

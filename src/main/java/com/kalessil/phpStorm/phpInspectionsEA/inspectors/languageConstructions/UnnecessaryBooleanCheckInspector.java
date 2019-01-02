@@ -34,7 +34,7 @@ public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "UnnecessaryContinueInspection";
+        return "UnnecessaryBooleanCheckInspection";
     }
 
     @Override

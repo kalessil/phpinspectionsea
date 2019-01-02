@@ -14,8 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,7 +29,9 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class UnnecessaryBolleanCheckInspector extends BasePhpInspection {
+public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
+    private static final String message = "'%s' would fit better here (reduces cognitive load).";
+
     @NotNull
     public String getShortName() {
         return "UnnecessaryContinueInspection";
@@ -45,7 +47,7 @@ public class UnnecessaryBolleanCheckInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(expression))             { return; }
 
                 final IElementType operation = expression.getOperationType();
-                if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
+                if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
                     final List<PsiElement> booleans = Stream.of(expression.getLeftOperand(), expression.getRightOperand())
                             .filter(PhpLanguageUtil::isBoolean)
                             .collect(Collectors.toList());
@@ -54,15 +56,30 @@ public class UnnecessaryBolleanCheckInspector extends BasePhpInspection {
                         final PsiElement second = OpenapiElementsUtil.getSecondOperand(expression, bool);
                         if (second != null) {
                             /* extract value */
-                            PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(second);
+                            boolean isValueInverted = false;
+                            PsiElement value        = ExpressionSemanticUtil.getExpressionTroughParenthesis(second);
                             if (second instanceof UnaryExpression) {
                                 final UnaryExpression unary = (UnaryExpression) second;
                                 if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
-                                    value = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
+                                    value           = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
+                                    isValueInverted = true;
                                 }
                             }
-                            if (this.isBooleanOnly(value)) {
-
+                            if (value != null && this.isBooleanOnly(value)) {
+                                if (isValueInverted) {
+                                    final boolean isClassicStyle = expression.getRightOperand() == bool;
+                                    final List<String> parts     = new ArrayList<>();
+                                    parts.add(isClassicStyle ? value.getText() : bool.getText());
+                                    parts.add(operation == PhpTokenTypes.opIDENTICAL ? "!==" : "===");
+                                    parts.add(isClassicStyle ? bool.getText() : value.getText());
+                                    holder.registerProblem(expression, String.format(message, String.join(" ", parts)));
+                                } else {
+                                    final boolean isTarget = (operation == PhpTokenTypes.opNOT_IDENTICAL && PhpLanguageUtil.isFalse(bool)) ||
+                                                             (operation == PhpTokenTypes.opIDENTICAL && PhpLanguageUtil.isTrue(bool));
+                                    if (isTarget) {
+                                        holder.registerProblem(expression, String.format(message, value.getText()));
+                                    }
+                                }
                             }
                         }
                     }
@@ -70,7 +87,7 @@ public class UnnecessaryBolleanCheckInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean isBooleanOnly(@Nullable PsiElement expression) {
+            private boolean isBooleanOnly(@NotNull PsiElement expression) {
                 if (expression instanceof PhpTypedElement) {
                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, holder.getProject());
                     if (resolved != null) {

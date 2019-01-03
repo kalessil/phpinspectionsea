@@ -65,12 +65,17 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 final GroupStatement foreachBody = ExpressionSemanticUtil.getGroupStatement(foreach);
                 /* ensure foreach structure is ready for inspection */
                 if (foreachBody != null) {
+                    final PsiElement[] statements = foreachBody.getChildren();
+                    if (statements.length > 0 && OpenapiTypesUtil.is(statements[0], PhpElementTypes.HTML)) {
+                        return;
+                    }
+
                     /* pre-collect introduced and internally used variables */
                     final Set<String> allModifiedVariables = this.collectCurrentAndOuterLoopVariables(foreach);
 
                     final Map<PsiElement, Set<String>> instructionDependencies = new HashMap<>();
                     /* iteration 1 - investigate what are dependencies and influence */
-                    for (final PsiElement oneInstruction : foreachBody.getStatements()) {
+                    for (final PsiElement oneInstruction : statements) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             final Set<String> individualDependencies = new HashSet<>();
                             instructionDependencies.put(oneInstruction, individualDependencies);
@@ -79,7 +84,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     }
 
                     /* iteration 2 - analyse dependencies */
-                    for (final PsiElement oneInstruction : foreachBody.getStatements()) {
+                    for (final PsiElement oneInstruction : statements) {
                         if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
                             boolean isDependOnModified = false;
 
@@ -117,8 +122,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                         final PsiElement loopInterrupter
                                             = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, PhpBreak.class, PhpContinue.class, PhpThrow.class, PhpReturn.class);
                                         /* operating with variables should be taken into account */
-                                        final boolean isVariablesUsed
-                                            = null != PsiTreeUtil.findChildOfAnyType(oneInstruction, true, (Class) Variable.class);
+                                        final boolean isVariablesUsed = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, (Class) Variable.class) != null;
                                         if (null == loopInterrupter && isVariablesUsed) {
                                             holder.registerProblem(reportingTarget, messageDisconnected);
                                         }

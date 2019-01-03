@@ -6,6 +6,9 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -16,7 +19,14 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class WillReturnStrategy {
-    private final static String message = "'->willReturn(...)' would make more sense here.";
+    private final static String messagePattern = "'->%s(...)' would make more sense here.";
+
+    final private static Map<String, String> methodsMapping = new HashMap<>();
+    static {
+        methodsMapping.put("returnValueMap", "willReturnMap");
+        methodsMapping.put("returnCallback", "willReturnCallback");
+        methodsMapping.put("returnValue",    "willReturn");
+    }
 
     static public void apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         if (methodName.equals("will")) {
@@ -24,13 +34,14 @@ final public class WillReturnStrategy {
             if (arguments.length == 1 && arguments[0] instanceof MethodReference) {
                 final MethodReference innerReference = (MethodReference) arguments[0];
                 final String innerMethodName         = innerReference.getName();
-                if (innerMethodName != null && innerMethodName.equals("returnValue")) {
+                if (innerMethodName != null && methodsMapping.containsKey(innerMethodName)) {
                     final PsiElement[] innerArguments = innerReference.getParameters();
                     if (innerArguments.length == 1) {
+                        final String suggestedAssertion = methodsMapping.get(innerMethodName);
                         holder.registerProblem(
                                 reference,
-                                message,
-                                new PhpUnitAssertFixer("willReturn", new String[]{innerArguments[0].getText()})
+                                String.format(messagePattern, suggestedAssertion),
+                                new PhpUnitAssertFixer(suggestedAssertion, new String[]{innerArguments[0].getText()})
                         );
                     }
                 }

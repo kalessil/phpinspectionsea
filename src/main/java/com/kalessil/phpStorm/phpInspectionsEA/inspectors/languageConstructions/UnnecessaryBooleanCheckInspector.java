@@ -15,7 +15,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,7 +50,7 @@ public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
                     final List<PsiElement> booleans = Stream.of(expression.getLeftOperand(), expression.getRightOperand())
                             .filter(PhpLanguageUtil::isBoolean)
                             .collect(Collectors.toList());
-                    if (booleans.size() == 1) {
+                    if (booleans.size() == 1 && ExpressionSemanticUtil.getBlockScope(expression) != null) {
                         final PsiElement bool   = booleans.get(0);
                         final PsiElement second = OpenapiElementsUtil.getSecondOperand(expression, bool);
                         if (second != null) {
@@ -65,21 +64,18 @@ public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
                                     isValueInverted = true;
                                 }
                             }
-                            if (value != null && this.isBooleanOnly(value)) {
-                                if (isValueInverted) {
-                                    final boolean isClassicStyle = expression.getRightOperand() == bool;
-                                    final List<String> parts     = new ArrayList<>();
-                                    parts.add(isClassicStyle ? value.getText() : bool.getText());
-                                    parts.add(operation == PhpTokenTypes.opIDENTICAL ? "!==" : "===");
-                                    parts.add(isClassicStyle ? bool.getText() : value.getText());
-                                    holder.registerProblem(expression, String.format(message, String.join(" ", parts)));
-                                } else {
-                                    final boolean isTarget = (operation == PhpTokenTypes.opNOT_IDENTICAL && PhpLanguageUtil.isFalse(bool)) ||
-                                                             (operation == PhpTokenTypes.opIDENTICAL && PhpLanguageUtil.isTrue(bool));
-                                    if (isTarget) {
-                                        holder.registerProblem(expression, String.format(message, value.getText()));
-                                    }
-                                }
+                            if (value != null && this.isBooleanTypeOnly(value)) {
+                                // !$bool !== true  -> $bool === true  -> $bool
+                                // !$bool === true  -> $bool !== true  -> !$bool
+                                // !$bool !== false -> $bool === false -> !$bool
+                                // !$bool === false -> $bool !== false -> $bool
+                                final boolean invertValue = (isValueInverted && operation == PhpTokenTypes.opIDENTICAL && PhpLanguageUtil.isTrue(bool)) ||
+                                                            (!isValueInverted && operation == PhpTokenTypes.opNOT_IDENTICAL && PhpLanguageUtil.isTrue(bool)) ||
+                                                            (isValueInverted && operation == PhpTokenTypes.opNOT_IDENTICAL && PhpLanguageUtil.isFalse(bool)) ||
+                                                            (!isValueInverted && operation == PhpTokenTypes.opIDENTICAL && PhpLanguageUtil.isFalse(bool));
+
+                                final String replacement = (invertValue ? "!" : "") + value.getText();
+                                holder.registerProblem(expression, String.format(message, replacement));
                             }
                         }
                     }
@@ -87,7 +83,7 @@ public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean isBooleanOnly(@NotNull PsiElement expression) {
+            private boolean isBooleanTypeOnly(@NotNull PsiElement expression) {
                 if (expression instanceof PhpTypedElement) {
                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, holder.getProject());
                     if (resolved != null) {

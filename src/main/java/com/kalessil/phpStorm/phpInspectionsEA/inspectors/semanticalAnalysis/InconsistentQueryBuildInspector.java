@@ -41,19 +41,19 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(reference))              { return; }
 
-                final String function = reference.getName();
-                if (function != null && function.equals("ksort")) {
+                final String functionName = reference.getName();
+                if (functionName != null && functionName.equals("ksort")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
                         /* pre-condition satisfied, now check if http_build_query used in the scope */
-                        final Function scope = ExpressionSemanticUtil.getScope(reference);
-                        if (scope != null) {
-                            for (final FunctionReference call : PsiTreeUtil.findChildrenOfType(scope, FunctionReference.class)) {
-                                if (call != reference && OpenapiTypesUtil.isFunctionReference(call)) {
-                                    final String callFunctionName = call.getName();
-                                    if (callFunctionName != null && callFunctionName.equals("http_build_query")) {
-                                        final PsiElement[] callArguments = call.getParameters();
-                                        if (callArguments.length > 0 && OpenapiEquivalenceUtil.areEqual(callArguments[0], arguments[0])) {
+                        final Function function = ExpressionSemanticUtil.getScope(reference);
+                        if (function != null) {
+                            for (final FunctionReference candidate : PsiTreeUtil.findChildrenOfType(function, FunctionReference.class)) {
+                                if (candidate != reference && OpenapiTypesUtil.isFunctionReference(candidate)) {
+                                    final String candidateName = candidate.getName();
+                                    if (candidateName != null && candidateName.equals("http_build_query")) {
+                                        final PsiElement[] candidateArguments = candidate.getParameters();
+                                        if (candidateArguments.length > 0 && OpenapiEquivalenceUtil.areEqual(candidateArguments[0], arguments[0])) {
                                             final String replacement = String.format("ksort(%s, SORT_STRING)", arguments[0].getText());
                                             holder.registerProblem(
                                                     reference,

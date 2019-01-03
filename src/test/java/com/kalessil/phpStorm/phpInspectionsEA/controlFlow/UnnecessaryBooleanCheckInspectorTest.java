@@ -8,5 +8,9 @@ final public class UnnecessaryBooleanCheckInspectorTest extends PhpCodeInsightFi
         myFixture.enableInspections(new UnnecessaryBooleanCheckInspector());
         myFixture.configureByFile("testData/fixtures/controlFlow/unnecessary-boolean-check.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/controlFlow/unnecessary-boolean-check.fixed.php");
     }
 }

@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -70,7 +71,7 @@ public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
                                                             (isValueInverted && operation == PhpTokenTypes.opNOT_IDENTICAL && PhpLanguageUtil.isFalse(bool)) ||
                                                             (!isValueInverted && operation == PhpTokenTypes.opIDENTICAL && PhpLanguageUtil.isFalse(bool));
                                 final String replacement  = (invertValue ? "!" : "") + value.getText();
-                                holder.registerProblem(expression, String.format(message, replacement));
+                                holder.registerProblem(expression, String.format(message, replacement), new SimplifyFix(replacement));
                             }
                         }
                     }
@@ -90,5 +91,19 @@ public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
                 return false;
             }
         };
+    }
+
+    private static final class SimplifyFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Simplify expression";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        SimplifyFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

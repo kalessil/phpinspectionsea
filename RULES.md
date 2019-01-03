@@ -198,7 +198,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes | yes | yes  | no  |
 | Probable bugs        | SuspiciousReturnInspection                      | Suspicious returns                                        | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousBinaryOperationInspection             | Suspicious binary operations                              | n/a | yes | n/a  | no  |
-| Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes | yes | no   | no  |
+| Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes | yes | yes  | no  |
 | Probable bugs        | AutoloadingIssuesInspection                     | Class autoloading correctness                             | n/a | yes | n/a  | yes |
 | Probable bugs        | IssetArgumentExistenceInspection                | Isset operations variables existence                      | n/a | yes | n/a  | no  |
 | Probable bugs        | TraitsPropertiesConflictsInspection             | Traits properties conflicts resolution                    | n/a | yes | n/a  | no  |

@@ -231,7 +231,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Promote dedicated asserts", PROMOTE_PHPUNIT_API, (isSelected) -> PROMOTE_PHPUNIT_API = isSelected);
             component.addCheckbox("Promote ->once()", PROMOTE_MOCKING_ONCE, (isSelected) -> PROMOTE_MOCKING_ONCE = isSelected);
-            component.addCheckbox("Promote ->willReturn(...)", PROMOTE_MOCKING_WILL_RETURN, (isSelected) -> PROMOTE_MOCKING_WILL_RETURN = isSelected);
+            component.addCheckbox("Promote ->willReturn*(...)", PROMOTE_MOCKING_WILL_RETURN, (isSelected) -> PROMOTE_MOCKING_WILL_RETURN = isSelected);
             component.addCheckbox("Suggest to use type safe asserts", SUGGEST_TO_USE_ASSERTSAME, (isSelected) -> SUGGEST_TO_USE_ASSERTSAME = isSelected);
             component.addCheckbox("Suggest to use named datasets", SUGGEST_TO_USE_NAMED_DATASETS, (isSelected) -> SUGGEST_TO_USE_NAMED_DATASETS = isSelected);
         });

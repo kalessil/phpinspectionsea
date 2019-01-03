@@ -65,16 +65,11 @@ public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
                                 }
                             }
                             if (value != null && this.isBooleanTypeOnly(value)) {
-                                // !$bool !== true  -> $bool === true  -> $bool
-                                // !$bool === true  -> $bool !== true  -> !$bool
-                                // !$bool !== false -> $bool === false -> !$bool
-                                // !$bool === false -> $bool !== false -> $bool
                                 final boolean invertValue = (isValueInverted && operation == PhpTokenTypes.opIDENTICAL && PhpLanguageUtil.isTrue(bool)) ||
                                                             (!isValueInverted && operation == PhpTokenTypes.opNOT_IDENTICAL && PhpLanguageUtil.isTrue(bool)) ||
                                                             (isValueInverted && operation == PhpTokenTypes.opNOT_IDENTICAL && PhpLanguageUtil.isFalse(bool)) ||
                                                             (!isValueInverted && operation == PhpTokenTypes.opIDENTICAL && PhpLanguageUtil.isFalse(bool));
-
-                                final String replacement = (invertValue ? "!" : "") + value.getText();
+                                final String replacement  = (invertValue ? "!" : "") + value.getText();
                                 holder.registerProblem(expression, String.format(message, replacement));
                             }
                         }

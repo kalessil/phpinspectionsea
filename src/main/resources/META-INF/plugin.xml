@@ -281,7 +281,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.InArrayCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnnecessaryBooleanCheckInspection"              displayName="Unnecessary boolean check"
-        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.UnnecessaryBooleanCheckInspector"/>
 
 

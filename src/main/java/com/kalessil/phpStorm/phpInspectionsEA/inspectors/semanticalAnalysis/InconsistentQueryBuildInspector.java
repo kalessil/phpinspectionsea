@@ -1,15 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -27,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class InconsistentQueryBuildInspector extends BasePhpInspection {
-    private static final String messagePattern = "'ksort(%a%, SORT_STRING)' should be used instead, so http_build_query() produces result independent from key types.";
+    private static final String messagePattern = "'%s' should be used instead, so http_build_query() produces result independent from key types.";
 
     @NotNull
     public String getShortName() {
@@ -40,7 +38,8 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (this.isContainingFileSkipped(reference)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
 
                 final String function = reference.getName();
                 if (function != null && function.equals("ksort")) {
@@ -50,26 +49,20 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
                         if (scope != null) {
                             for (final FunctionReference call : PsiTreeUtil.findChildrenOfType(scope, FunctionReference.class)) {
-                                /* skip inspected call and calls without arguments */
-                                if (call == reference || !OpenapiTypesUtil.isFunctionReference(call)) {
-                                    continue;
-                                }
-                                /* skip non-target function */
-                                final String callFunctionName = call.getName();
-                                if (callFunctionName == null || !callFunctionName.equals("http_build_query")) {
-                                    continue;
-                                }
-                                final PsiElement[] callArguments = call.getParameters();
-                                if (callArguments.length == 0) {
-                                    continue;
-                                }
-
-                                /* pattern match: ksort and http_build_query operating on the same expression */
-                                if (OpenapiEquivalenceUtil.areEqual(callArguments[0], arguments[0])) {
-                                    final String message = messagePattern.replace("%a%", arguments[0].getText());
-                                    holder.registerProblem(reference, message, new TheLocalFix());
-
-                                    break;
+                                if (call != reference && OpenapiTypesUtil.isFunctionReference(call)) {
+                                    final String callFunctionName = call.getName();
+                                    if (callFunctionName != null && callFunctionName.equals("http_build_query")) {
+                                        final PsiElement[] callArguments = call.getParameters();
+                                        if (callArguments.length > 0 && OpenapiEquivalenceUtil.areEqual(callArguments[0], arguments[0])) {
+                                            final String replacement = String.format("ksort(%s, SORT_STRING)", arguments[0].getText());
+                                            holder.registerProblem(
+                                                    reference,
+                                                    String.format(messagePattern, replacement),
+                                                    new AddSortingFlagFix(replacement)
+                                            );
+                                            return;
+                                        }
+                                   }
                                 }
                             }
                         }
@@ -79,7 +72,7 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
         };
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static final class AddSortingFlagFix extends UseSuggestedReplacementFixer {
         private static final String title = "Add SORT_STRING as an argument";
 
         @NotNull
@@ -88,28 +81,9 @@ public class InconsistentQueryBuildInspector extends BasePhpInspection {
             return title;
         }
 
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return title;
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference && !project.isDisposed()) {
-                final FunctionReference call = (FunctionReference) expression;
-                final PsiElement[] params    = call.getParameters();
-
-                /* override existing parameters */
-                final FunctionReference replacement = PhpPsiElementFactory.createFunctionReference(project, "ksort(null, SORT_STRING)");
-                replacement.getParameters()[0].replace(params[0]);
-
-                /* replace parameters list */
-                call.getParameterList().replace(replacement.getParameterList());
-            }
+        AddSortingFlagFix(@NotNull String expression) {
+            super(expression);
         }
     }
-
 }
 

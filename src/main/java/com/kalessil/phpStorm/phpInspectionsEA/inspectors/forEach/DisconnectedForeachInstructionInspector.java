@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -66,7 +67,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 /* ensure foreach structure is ready for inspection */
                 if (foreachBody != null) {
                     final PsiElement[] statements = foreachBody.getChildren();
-                    if (statements.length > 0 && OpenapiTypesUtil.is(statements[0], PhpElementTypes.HTML)) {
+                    if (statements.length > 0 && Stream.of(statements).anyMatch(s -> OpenapiTypesUtil.is(s, PhpElementTypes.HTML))) {
                         return;
                     }
 

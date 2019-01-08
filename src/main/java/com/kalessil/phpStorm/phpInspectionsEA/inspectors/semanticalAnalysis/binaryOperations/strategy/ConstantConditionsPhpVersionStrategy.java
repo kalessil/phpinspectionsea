@@ -64,7 +64,7 @@ public class ConstantConditionsPhpVersionStrategy {
                         final IElementType operator = expression.getOperationType();
                         if (result = (operator == PhpTokenTypes.opGREATER_OR_EQUAL)) {
                             holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
-                        } if (result = (operator == PhpTokenTypes.opLESS)) {
+                        } else if (result = (operator == PhpTokenTypes.opLESS)) {
                             holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                         }
                     }

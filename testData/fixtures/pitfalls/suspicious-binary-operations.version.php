@@ -27,7 +27,7 @@ return [
     PHP_VERSION_ID >= 70000,
 
     <error descr="'PHP_VERSION_ID < 50300' seems to be always false.">PHP_VERSION_ID < 50300</error>,
-    PHP_VERSION_ID < 50600,
+    <error descr="'PHP_VERSION_ID < 50600' seems to be always false.">PHP_VERSION_ID < 50600</error>,
     PHP_VERSION_ID < 70000,
 
     <error descr="'PHP_VERSION_ID <= 50300' seems to be always false.">PHP_VERSION_ID <= 50300</error>,

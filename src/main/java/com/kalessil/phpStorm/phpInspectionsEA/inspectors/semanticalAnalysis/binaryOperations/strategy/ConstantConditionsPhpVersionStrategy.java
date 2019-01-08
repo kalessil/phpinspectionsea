@@ -42,7 +42,7 @@ public class ConstantConditionsPhpVersionStrategy {
         boolean result        = false;
         final PsiElement left = expression.getLeftOperand();
         if (left instanceof ConstantReference && "PHP_VERSION_ID".equals(((ConstantReference) left).getName())) {
-            final PsiElement right = expression.getLeftOperand();
+            final PsiElement right = expression.getRightOperand();
             if (right != null && OpenapiTypesUtil.isNumber(right)) {
                 final String checkedVersion = right.getText();
                 if (versionsMapping.containsKey(checkedVersion)) {
@@ -56,14 +56,16 @@ public class ConstantConditionsPhpVersionStrategy {
                         } else if (result = (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL)) {
                             holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
                         } else if (result = (operator == PhpTokenTypes.opGREATER || operator == PhpTokenTypes.opGREATER_OR_EQUAL)) {
-                            holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
-                        } else if (result = (operator == PhpTokenTypes.opLESS || operator == PhpTokenTypes.opLESS_OR_EQUAL)) {
                             holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
+                        } else if (result = (operator == PhpTokenTypes.opLESS || operator == PhpTokenTypes.opLESS_OR_EQUAL)) {
+                            holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                         }
                     } else if (checked.compareTo(current) == 0) {
                         final IElementType operator = expression.getOperationType();
                         if (result = (operator == PhpTokenTypes.opGREATER_OR_EQUAL)) {
                             holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
+                        } if (result = (operator == PhpTokenTypes.opLESS)) {
+                            holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                         }
                     }
                 }

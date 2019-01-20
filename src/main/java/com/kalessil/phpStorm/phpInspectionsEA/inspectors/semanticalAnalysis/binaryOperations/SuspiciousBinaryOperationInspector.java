@@ -49,6 +49,7 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                 callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
                 callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityStrategy.apply(expression, holder));
+                callbacks.add(() -> ConstantConditionsPhpVersionStrategy.apply(expression, holder));
                 callbacks.add(() -> ConstantConditionsCountCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> TypesIntersectionStrategy.apply(expression, holder));

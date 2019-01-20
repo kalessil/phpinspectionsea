@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
-/*
- * This file is part of the Php Inspections (EA Extended) package.
- *
- * (c) Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -25,6 +16,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.temporal.ValueRange;
 import java.util.*;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class ConstantConditionsCountCheckStrategy {
     private static final String messageAlwaysTrue  = "'%s' seems to be always true.";

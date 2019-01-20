@@ -1,5 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.pitfalls;
 
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.SuspiciousBinaryOperationInspector;
 
@@ -21,6 +23,12 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
     public void testIfFindsCountChecks() {
         myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.count.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testIfFindsVersionChecks() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP560);
+        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.version.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsInvalidArrayOperationPatterns() {

@@ -28,4 +28,9 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.array-concatenation.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsComparingNonIntersectingFunctionResultsPatterns() {
+        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.non-intersecting-types.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

@@ -10,5 +10,4 @@ if [ -n "$INSPECTIONCONFIG" ]
     INSPECTIONCONFIGFILE=/var/ci/Project_Default.xml
 fi
 
-/root/vendor/bin/phpstorm-inspect `ls -d ~/PhpStorm-*/`bin/inspect.sh /root/.PhpStorm${PHPSTORMVERSION}/system /var/ci ${INSPECTIONCONFIGFILE} /var/ci/project checkstyle > ${INSPECTIONRESULTFILE}
-
+/vendor/bin/phpstorm-inspect `ls -d /PhpStorm-*/`bin/inspect.sh /root/.PhpStorm${PHPSTORMVERSION}/system /var/ci ${INSPECTIONCONFIGFILE} /var/ci/project checkstyle > ${INSPECTIONRESULTFILE}

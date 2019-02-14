@@ -95,6 +95,17 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                 /* extract base method references */
                 final List<MethodReference> references = new ArrayList<>();
                 for (final PsiElement child : expression.getChildren()) {
+                    /* find calls in keys */
+                    final PsiElement key = child instanceof ArrayHashElement
+                            ? ((ArrayHashElement) child).getKey()
+                            : null;
+                    if (key instanceof MethodReference) {
+                        final PsiElement base = key.getFirstChild();
+                        if (base instanceof MethodReference) {
+                            references.add((MethodReference) base);
+                        }
+                    }
+                    /* find calls in values */
                     final PsiElement value = child instanceof ArrayHashElement
                             ? ((ArrayHashElement) child).getValue()
                             : child.getFirstChild();

@@ -309,7 +309,10 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         }
                     } else if (parent instanceof ArrayAccessExpression) {
                         return ((ArrayAccessExpression) parent).getValue() == offset;
+                    } else if (parent instanceof ArrayIndex) {
+                        return true;
                     }
+
                     return false;
                 }).forEach(offset -> {
                     final ArrayIndex offsetIndex   = offset.getIndex();

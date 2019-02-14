@@ -35,7 +35,10 @@
     $details = array(
         $source->getUser()->getName() => <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getName(),
         $source->getUser()->getEmail() => 'email',
-
+    );
+    $details = array(
+        $source->getUser()->getName() => 'name',
+        <warning descr="Same as in the previous call, consider introducing a local variable instead.">$source->getUser()</warning>->getEmail() => 'email',
     );
 
     if (

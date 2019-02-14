@@ -100,9 +100,10 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                             ? ((ArrayHashElement) child).getKey()
                             : null;
                     if (key instanceof MethodReference) {
-                        final PsiElement base = key.getFirstChild();
-                        if (base instanceof MethodReference) {
+                        PsiElement base = key.getFirstChild();
+                        while (base instanceof MethodReference) {
                             references.add((MethodReference) base);
+                            base = base.getFirstChild();
                         }
                     }
                     /* find calls in values */
@@ -110,9 +111,10 @@ public class RepetitiveMethodCallsInspector extends BasePhpInspection {
                             ? ((ArrayHashElement) child).getValue()
                             : child.getFirstChild();
                     if (value instanceof MethodReference) {
-                        final PsiElement base = value.getFirstChild();
-                        if (base instanceof MethodReference) {
+                        PsiElement base = value.getFirstChild();
+                        while (base instanceof MethodReference) {
                             references.add((MethodReference) base);
+                            base = base.getFirstChild();
                         }
                     }
                 }

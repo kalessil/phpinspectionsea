@@ -13,9 +13,12 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -27,6 +30,9 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArrayPushMissUseInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean REPORT_EXCESSIVE_COUNT_CALLS = true;
+
     private static final String messageMisuse   = "'%s' here would be up to 2x faster.";
     private static final String messageUnneeded = "It seems that the index can be omitted at all.";
 
@@ -63,26 +69,28 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
-                final PsiElement parent = expression.getParent();
-                if (OpenapiTypesUtil.isAssignment(parent)) {
-                    final PsiElement value = ((AssignmentExpression) parent).getValue();
-                    if (value != expression) {
-                        final ArrayIndex index = expression.getIndex();
-                        if (index != null) {
-                            final PsiElement candidate = index.getValue();
-                            if (OpenapiTypesUtil.isFunctionReference(candidate)) {
-                                final FunctionReference reference = (FunctionReference) candidate;
-                                final String functionName         = reference.getName();
-                                if (functionName != null && functionName.equals("count")) {
-                                    final PsiElement[] arguments = reference.getParameters();
-                                    if (arguments.length == 1) {
-                                        final PsiElement container = expression.getValue();
-                                        if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
-                                            holder.registerProblem(
-                                                    reference,
-                                                    messageUnneeded,
-                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                                            );
+                if (REPORT_EXCESSIVE_COUNT_CALLS) {
+                    final PsiElement parent = expression.getParent();
+                    if (OpenapiTypesUtil.isAssignment(parent)) {
+                        final PsiElement value = ((AssignmentExpression) parent).getValue();
+                        if (value != expression) {
+                            final ArrayIndex index = expression.getIndex();
+                            if (index != null) {
+                                final PsiElement candidate = index.getValue();
+                                if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                                    final FunctionReference reference = (FunctionReference) candidate;
+                                    final String functionName         = reference.getName();
+                                    if (functionName != null && functionName.equals("count")) {
+                                        final PsiElement[] arguments = reference.getParameters();
+                                        if (arguments.length == 1) {
+                                            final PsiElement container = expression.getValue();
+                                            if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
+                                                holder.registerProblem(
+                                                        reference,
+                                                        messageUnneeded,
+                                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                                );
+                                            }
                                         }
                                     }
                                 }
@@ -106,5 +114,12 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
         UseElementPushFix(@NotNull String expression) {
             super(expression);
         }
+    }
+
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Report excessive count() calls", REPORT_EXCESSIVE_COUNT_CALLS, (isSelected) -> REPORT_EXCESSIVE_COUNT_CALLS = isSelected)
+        );
     }
 }

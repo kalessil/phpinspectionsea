@@ -289,9 +289,10 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     final PsiElement parent = offset.getParent();
                     if (
                         parent instanceof MemberReference || parent instanceof BinaryExpression ||
-                        parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression
+                        parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression ||
+                        parent instanceof ArrayIndex      || parent instanceof PhpEchoStatement ||
+                        (parent instanceof Variable && parent.getParent() instanceof StringLiteralExpression)
                     ) {
-                        /* common cases which can be fixed */
                         return true;
                     } else if (parent instanceof ParameterList) {
                         final PsiElement grandParent = parent.getParent();
@@ -309,8 +310,6 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         }
                     } else if (parent instanceof ArrayAccessExpression) {
                         return ((ArrayAccessExpression) parent).getValue() == offset;
-                    } else if (parent instanceof ArrayIndex) {
-                        return true;
                     }
 
                     return false;

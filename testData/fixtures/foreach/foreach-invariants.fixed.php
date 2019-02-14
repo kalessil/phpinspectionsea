@@ -2,8 +2,8 @@
 
     function cases_holder($arr) {
         /* case: invariant */
-        foreach ($arr as $i => $iValue) {
-            echo $arr[$i], $iValue->property;
+        foreach ($arr as $iValue) {
+            echo $iValue, $iValue->property;
             $x = $iValue;
             $x = !$iValue;
             $x = trim($iValue);
@@ -11,13 +11,14 @@
             $x = ($iValue) > 0;
         }
         foreach ($arr as $i => $iValue) {
-            echo $arr[$i], $iValue->property;
+            echo $iValue, $iValue->property;
             $x = & $arr[$i];
             $x = &$arr[$i];
             $x =& $arr[$i];
         }
         foreach ($arr as $iValue) {
             echo $iValue->property, $iValue->property[0], $iValue[0];
+            echo $iValue, $iValue . " $iValue " . " {$iValue} ";
         }
 
         /* case: slow loop */

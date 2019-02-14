@@ -307,6 +307,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         if (assignment.getValue() == offset) {
                             return !OpenapiTypesUtil.isAssignmentByReference(assignment);
                         }
+                    } else if (parent instanceof ArrayAccessExpression) {
+                        return ((ArrayAccessExpression) parent).getValue() == offset;
                     }
                     return false;
                 }).forEach(offset -> {

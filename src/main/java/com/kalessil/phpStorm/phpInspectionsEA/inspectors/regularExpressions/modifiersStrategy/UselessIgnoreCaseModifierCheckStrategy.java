@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 /*

@@ -8,7 +8,11 @@ trait PropertiesTraitForBase2 {
     protected $baseDifferent2 = false;
 }
 
-/* @property $phpdoc */
+/**
+ * @property $privatePhpdocProperty
+ * @property $protectedPhpdocProperty
+ * @property $publicPhpdocProperty
+ */
 trait PropertiesTrait {
     public $same              = true;
     private $different        = false;
@@ -29,5 +33,8 @@ class PropertiesExample extends BasePropertiesExample {
     use PropertiesTrait;
     public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning> = true;
     private $different = true;
-    private $phpdoc = '...';
+    
+    private $privatePhpdocProperty = '...';
+    protected $protectedPhpdocProperty = '...';
+    public $publicPhpdocProperty = '...';
 }

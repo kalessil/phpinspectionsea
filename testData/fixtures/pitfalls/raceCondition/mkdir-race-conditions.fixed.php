@@ -21,7 +21,7 @@ function cases_holder() {
     mkdir('...') or die('...');
 
     /* case: incomplete conditions */
-    if (!mkdir('...', 0644) && !is_dir('...')) {}
+    if (mkdir('...', 0644) || is_dir('...')) {}
     if (!mkdir('...', 0644) && !is_dir('...')) {}
     if (!mkdir('...', 0644) && !is_dir('...')) {}
     if (!is_dir('...') && !mkdir('...', 0644) && !is_dir('...')) {}
@@ -39,7 +39,7 @@ function quickfix_with_variable() {
     }
 
     /* case: incomplete conditions */
-    if (!mkdir($concurrentDirectory = trim('...')) && !is_dir($concurrentDirectory)) {}
+    if (mkdir($concurrentDirectory = trim('...')) || !is_dir($concurrentDirectory)) {}
     if (!mkdir($concurrentDirectory = trim('...')) && !is_dir($concurrentDirectory)) {}
     if (!is_dir(trim('...')) && !mkdir($concurrentDirectory = trim('...')) && !is_dir($concurrentDirectory)) {}
     if (is_dir(trim('...')) || mkdir($concurrentDirectory = trim('...')) || is_dir($concurrentDirectory)) {}

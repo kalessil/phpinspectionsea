@@ -114,4 +114,14 @@ class Container {
     {
         return trim(<weak_warning descr="The variable seems to be not used.">$unused</weak_warning> = []);
     }
+
+    public function value_by_reference_in_assignment() {
+        $list = [];
+        foreach ([] as $value) {
+            $list[] = $value;
+        }
+        $results = &$list;
+
+        return $results;
+    }
 }

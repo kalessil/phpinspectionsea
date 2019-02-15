@@ -19,7 +19,7 @@ else { c(); d(); }
 if (true === true) { c(); d(); }
 else { a(); b(); }
 
-if (expr()) { c(); d(); }
+if (false !== expr()) { c(); d(); }
 else { a(); b(); }
 
 /* not supported: must follow PSR and use `{}` */

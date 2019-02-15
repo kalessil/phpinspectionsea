@@ -293,9 +293,10 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     final PsiElement parent = offset.getParent();
                     if (
                         parent instanceof MemberReference || parent instanceof BinaryExpression ||
-                        parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression
+                        parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression ||
+                        parent instanceof ArrayIndex      || parent instanceof PhpEchoStatement ||
+                        (parent instanceof Variable && parent.getParent() instanceof StringLiteralExpression)
                     ) {
-                        /* common cases which can be fixed */
                         return true;
                     } else if (parent instanceof ParameterList) {
                         final PsiElement grandParent = parent.getParent();
@@ -311,7 +312,10 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         if (assignment.getValue() == offset) {
                             return !OpenapiTypesUtil.isAssignmentByReference(assignment);
                         }
+                    } else if (parent instanceof ArrayAccessExpression) {
+                        return ((ArrayAccessExpression) parent).getValue() == offset;
                     }
+
                     return false;
                 }).forEach(offset -> {
                     final ArrayIndex offsetIndex   = offset.getIndex();
@@ -321,7 +325,9 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         final boolean replace = OpenapiEquivalenceUtil.areEqual(index, usedIndex) &&
                                                 OpenapiEquivalenceUtil.areEqual(container, usedContainer);
                         if (replace) {
-                            offset.replace(replacement);
+                            final PsiElement parent = offset.getParent();
+                            // PhpStorm backward compatibility: 2018.*+ the fixed tree structure differs
+                            (parent instanceof Variable ? parent : offset).replace(replacement);
                         }
                     }
                 });

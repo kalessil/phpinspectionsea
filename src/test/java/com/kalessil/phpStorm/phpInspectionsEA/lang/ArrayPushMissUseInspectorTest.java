@@ -5,7 +5,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayPu
 
 final public class ArrayPushMissUseInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new ArrayPushMissUseInspector());
+        final ArrayPushMissUseInspector inspector = new ArrayPushMissUseInspector();
+        inspector.REPORT_EXCESSIVE_COUNT_CALLS    = true;
+
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/lang/array-push-via-function.php");
         myFixture.testHighlighting(true, false, true);
     }

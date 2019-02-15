@@ -73,8 +73,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
 
                     /* Case 1: empty(array) - hidden logic - empty array */
                     if (this.isArrayType(resolvedTypes)) {
-                        resolvedTypes.clear();
-
                         if (SUGGEST_TO_USE_COUNT_CHECK) {
                             final String comparision = isInverted ? "!==" : "===";
                             final String replacement = ComparisonStyle.isRegular()
@@ -83,14 +81,13 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                             final PsiElement target  = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new UseCountFix(replacement));
                         }
+                        resolvedTypes.clear();
 
                         return;
                     }
 
-                    /* case 2: nullable classes, int, float, resource */
+                    /* case 2: nullable classes, nullable target core types */
                     if (this.isNullableCoreType(resolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes)) {
-                        resolvedTypes.clear();
-
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
                             final String comparision = isInverted ? "!==" : "===";
                             final String replacement = ComparisonStyle.isRegular()
@@ -99,6 +96,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                             final PsiElement target  = isInverted ? parent : emptyExpression;
                             holder.registerProblem(target, String.format(patternAlternative, replacement), new CompareToNullFix(replacement));
                         }
+                        resolvedTypes.clear();
 
                         return;
                     }
@@ -121,7 +119,6 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 if (resolvedTypesSet.size() == 2 && resolvedTypesSet.contains(Types.strNull)) {
                     result = resolvedTypesSet.contains(Types.strInteger) ||
                              resolvedTypesSet.contains(Types.strFloat)   ||
-                             resolvedTypesSet.contains(Types.strString ) ||
                              resolvedTypesSet.contains(Types.strBoolean) ||
                              resolvedTypesSet.contains(Types.strResource);
 

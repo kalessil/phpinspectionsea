@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,19 +96,25 @@ final public class MultipleValuesEqualityStrategy {
                                     secondValue = followingLeft;
                                 }
                                 if (source != null && !isValueType(source) && isValueType(firstValue) && isValueType(secondValue)) {
-                                    final boolean isAndOperator = operator == PhpTokenTypes.opAND;
-                                    final String fragment       = String.format(
-                                            (isAndOperator ? equalOperators : notEqualOperators).get(operation),
-                                            source.getText(),
-                                            firstValue.getText(),
-                                            source.getText(),
-                                            secondValue.getText()
-                                    );
-                                    holder.registerProblem(
-                                            following,
-                                            String.format(isAndOperator ? messageAlwaysFalse : messageAlwaysTrue, fragment)
-                                    );
-                                    return true;
+                                    final boolean shouldReport = operator == PhpTokenTypes.opIDENTICAL ||
+                                                                 operator == PhpTokenTypes.opNOT_IDENTICAL ||
+                                                                 !isFalsyValue(firstValue) ||
+                                                                 !isFalsyValue(secondValue);
+                                    if (shouldReport) {
+                                        final boolean isAndOperator = operator == PhpTokenTypes.opAND;
+                                        final String fragment       = String.format(
+                                                (isAndOperator ? equalOperators : notEqualOperators).get(operation),
+                                                source.getText(),
+                                                firstValue.getText(),
+                                                source.getText(),
+                                                secondValue.getText()
+                                        );
+                                        holder.registerProblem(
+                                                following,
+                                                String.format(isAndOperator ? messageAlwaysFalse : messageAlwaysTrue, fragment)
+                                        );
+                                        return true;
+                                    }
                                 }
                             }
                         }
@@ -124,6 +131,17 @@ final public class MultipleValuesEqualityStrategy {
                 element instanceof ConstantReference ||
                 element instanceof ClassConstantReference ||
                 OpenapiTypesUtil.isNumber(element);
+    }
+
+    private static boolean isFalsyValue(@NotNull PsiElement element) {
+        if (element instanceof StringLiteralExpression) {
+            return ((StringLiteralExpression) element).getContents().isEmpty();
+        } else if (element instanceof ConstantReference) {
+            return PhpLanguageUtil.isFalse(element);
+        } else if (OpenapiTypesUtil.isNumber(element)) {
+            return element.getText().equals("0");
+        }
+        return false;
     }
 
     @NotNull

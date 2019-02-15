@@ -94,7 +94,7 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                 alternative = binary.getRightOperand();
                             }
                         }
-                        /* since alternative is known, we did hiy yhe pattern */
+                        /* since alternative is known, we did hit the pattern */
                         if (alternative != null) {
                             final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                             if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {

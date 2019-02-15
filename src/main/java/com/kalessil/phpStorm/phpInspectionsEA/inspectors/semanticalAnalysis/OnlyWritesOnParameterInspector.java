@@ -238,9 +238,10 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     if (parent instanceof AssignmentExpression) {
                         /* ensure variable with the same name being written */
                         final AssignmentExpression referenceAssignmentCandidate = (AssignmentExpression) parent;
-                        final PsiElement sameVariableCandidate                  = referenceAssignmentCandidate.getVariable();
-                        if (sameVariableCandidate instanceof Variable) {
-                            final Variable candidate = (Variable) sameVariableCandidate;
+                        /* check if the target used as a container */
+                        final PsiElement assignmentVariableCandidate = referenceAssignmentCandidate.getVariable();
+                        if (assignmentVariableCandidate instanceof Variable) {
+                            final Variable candidate = (Variable) assignmentVariableCandidate;
                             if (candidate.getName().equals(parameterName)) {
                                 ++intCountWriteAccesses;
                                 if (isReference) {
@@ -253,9 +254,18 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 }
                                 /* false-negative: inline assignment result has been used */
                                 if (usages.length == 2 && usages[0].getAnchor() == usages[1].getAnchor()) {
-                                    holder.registerProblem(sameVariableCandidate, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(assignmentVariableCandidate, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                     return 1;
                                 }
+                                continue;
+                            }
+                        }
+                        /* check if the target used as a value */
+                        final PsiElement assignmentValueCandidate = referenceAssignmentCandidate.getValue();
+                        if (assignmentValueCandidate instanceof Variable) {
+                            final Variable candidate = (Variable) assignmentValueCandidate;
+                            if (candidate.getName().equals(parameterName)) {
+                                ++intCountReadAccesses;
                                 continue;
                             }
                         }

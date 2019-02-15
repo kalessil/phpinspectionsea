@@ -91,4 +91,14 @@ class Container {
             <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$second[]</weak_warning> = $parameter;
         }
     }
+
+    public function value_by_reference_in_assignment() {
+        $list = [];
+        foreach ([] as $value) {
+            $list[] = $value;
+        }
+        $results = &$list;
+
+        return $results;
+    }
 }

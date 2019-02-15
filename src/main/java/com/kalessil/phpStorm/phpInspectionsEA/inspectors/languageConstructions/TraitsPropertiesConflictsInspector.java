@@ -112,7 +112,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                     final PsiElement parentFieldDefault = OpenapiResolveUtil.resolveDefaultValue(parentField);
                     for (final PhpClass trait : traits) {
                         final Field traitField = OpenapiResolveUtil.resolveField(trait, parentFieldName);
-                        if (traitField != null) {
+                        if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
                             final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
 
                             final boolean isError;

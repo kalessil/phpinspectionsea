@@ -18,7 +18,7 @@
         }
         foreach ($arr as $iValue) {
             echo $iValue->property, $iValue->property[0], $iValue[0];
-            echo $iValue, $iValue . " $iValue " . " {$iValue} ";
+            echo $iValue, $iValue . " $iValue " . " $iValue ";
         }
 
         /* case: slow loop */

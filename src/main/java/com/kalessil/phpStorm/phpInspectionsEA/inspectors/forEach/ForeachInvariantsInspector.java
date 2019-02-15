@@ -321,7 +321,9 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         final boolean replace = OpenapiEquivalenceUtil.areEqual(index, usedIndex) &&
                                                 OpenapiEquivalenceUtil.areEqual(container, usedContainer);
                         if (replace) {
-                            offset.replace(replacement);
+                            final PsiElement parent = offset.getParent();
+                            // PhpStorm backward compatibility: 2018.*+ the fixed tree structure differs
+                            (parent instanceof Variable ? parent : offset).replace(replacement);
                         }
                     }
                 });

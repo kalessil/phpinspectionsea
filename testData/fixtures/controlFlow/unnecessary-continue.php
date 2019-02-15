@@ -31,6 +31,16 @@ function cases_holder() {
         }
     }
 
+    foreach ([] as $value) {
+        try {
+            <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+        } catch (Exception $exception) {
+            <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+        } finally {
+            <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+        }
+    }
+
     /* false-positives: switch-case context */
     foreach ([] as $value) {
         switch ($value) {

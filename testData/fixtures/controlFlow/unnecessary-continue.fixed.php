@@ -23,6 +23,13 @@ function cases_holder() {
         }
     }
 
+    foreach ([] as $value) {
+        try {
+        } catch (Exception $exception) {
+        } finally {
+        }
+    }
+
     /* false-positives: switch-case context */
     foreach ([] as $value) {
         switch ($value) {

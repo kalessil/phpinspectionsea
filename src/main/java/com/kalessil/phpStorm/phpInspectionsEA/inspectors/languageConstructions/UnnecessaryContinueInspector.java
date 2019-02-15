@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -68,6 +69,19 @@ public class UnnecessaryContinueInspector extends BasePhpInspection {
                 final PsiElement lastStatement = ExpressionSemanticUtil.getLastStatement(body);
                 if (lastStatement instanceof PhpContinue) {
                     lastStatements.add(lastStatement);
+                } else if (lastStatement instanceof Try) {
+                    final Try tryStatement = (Try) lastStatement;
+                    Stream.of(tryStatement, tryStatement.getFinallyBlock())
+                            .filter(Objects::nonNull).map(ExpressionSemanticUtil::getGroupStatement)
+                            .filter(Objects::nonNull).forEach(block -> collectLastStatements(block, lastStatements));
+                    Stream.of(tryStatement.getCatchClauses())
+                            .filter(Objects::nonNull).map(ExpressionSemanticUtil::getGroupStatement)
+                            .filter(Objects::nonNull).forEach(block -> collectLastStatements(block, lastStatements));
+                } else if (lastStatement instanceof Catch) {
+                    final GroupStatement block = ExpressionSemanticUtil.getGroupStatement(lastStatement);
+                    if (block != null) {
+                        collectLastStatements(block, lastStatements);
+                    }
                 } else if (lastStatement instanceof If) {
                     /* collect branches */
                     final If ifStatement            = (If) lastStatement;

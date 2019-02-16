@@ -92,7 +92,7 @@ final public class MultipleFalsyValuesCheckStrategy {
         if (element instanceof StringLiteralExpression) {
             return ((StringLiteralExpression) element).getContents().isEmpty();
         } else if (element instanceof ConstantReference) {
-            return PhpLanguageUtil.isFalse(element);
+            return PhpLanguageUtil.isFalse(element) || PhpLanguageUtil.isNull(element);
         } else if (element instanceof ArrayCreationExpression) {
             return element.getChildren().length == 0;
         } else if (OpenapiTypesUtil.isNumber(element)) {

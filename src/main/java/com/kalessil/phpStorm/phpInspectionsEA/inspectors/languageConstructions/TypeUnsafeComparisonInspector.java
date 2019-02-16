@@ -117,7 +117,6 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                                 ProblemHighlightType.WEAK_WARNING
                         );
                     }
-
                 }
             }
 

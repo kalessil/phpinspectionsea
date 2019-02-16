@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -159,9 +160,15 @@ public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
                                         final int newState      = accumulatedState | stateChange;
                                         if (accumulatedState == newState) {
                                             if (REPORT_NON_CONTRIBUTIONG) {
-                                                final PsiElement node = this.target(target, argument);
-                                                if (reported.add(node)) {
-                                                    holder.registerProblem(node, messageNonContributing);
+                                                /* false-positives: nested function calls in binary operations */
+                                                final boolean report = PsiTreeUtil.findChildrenOfType(target, argument.getClass()).stream()
+                                                        .filter(element -> OpenapiEquivalenceUtil.areEqual(element, argument))
+                                                        .noneMatch(element -> element.getParent() instanceof ParameterList);
+                                                if (report) {
+                                                    final PsiElement node = this.target(target, argument);
+                                                    if (reported.add(node)) {
+                                                        holder.registerProblem(node, messageNonContributing);
+                                                    }
                                                 }
                                             }
                                         } else if ((newState & STATE_CONFLICTING_IS_NULL) == STATE_CONFLICTING_IS_NULL) {

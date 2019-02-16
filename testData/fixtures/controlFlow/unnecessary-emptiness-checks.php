@@ -95,4 +95,24 @@ class CasesHolder {
             is_array($parameter) && !empty($more),
         ];
     }
+
+    private function callsHandlingCorrectness($parameter) {
+        return [
+            empty($parameter) || strlen(trim($parameter)) > 0,
+            isset($parameter) || strlen(trim($parameter)) > 0,
+            $parameter || strlen(trim($parameter)) > 0,
+
+            empty($parameter) || strlen($parameter) > 0,
+            isset($parameter) || strlen($parameter) > 0,
+            $parameter || strlen($parameter) > 0,
+
+            empty($parameter) || strlen($parameter),
+            isset($parameter) || strlen($parameter),
+            $parameter || strlen($parameter),
+
+            empty($parameter) || !strlen($parameter),
+            isset($parameter) || !strlen($parameter),
+            $parameter || !strlen($parameter),
+        ];
+    }
 }

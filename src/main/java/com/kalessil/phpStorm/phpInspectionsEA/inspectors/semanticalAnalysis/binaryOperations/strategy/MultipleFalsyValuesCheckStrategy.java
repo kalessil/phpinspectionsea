@@ -5,9 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,9 +35,30 @@ final public class MultipleFalsyValuesCheckStrategy {
             if (!(context instanceof BinaryExpression) || ((BinaryExpression) context).getOperationType() != operator) {
                 final List<BinaryExpression> fragments = extractFragments(expression, operator);
                 if (fragments.size() > 1) {
-                    // group by subject
-                    // maintain per-subject falsy/non-falsy state
-                    // depends on operand, report issues
+                    final Map<PsiElement, Boolean> falsyStates = new HashMap<>();
+                    for (final BinaryExpression binary : fragments) {
+                        final PsiElement right = binary.getRightOperand();
+                        if (right != null) {
+                            final PsiElement subject = isFalsyValue(right) ? binary.getLeftOperand() : right;
+                            if (subject != null) {
+                                final boolean isFalsyExpected      = binary.getOperationType() == PhpTokenTypes.opEQUAL;
+                                final Optional<PsiElement> matched = falsyStates.keySet().stream()
+                                        .filter(key -> OpenapiEquivalenceUtil.areEqual(key, subject))
+                                        .findFirst();
+                                if (result = matched.isPresent()) {
+                                    if (operator == PhpTokenTypes.opAND) {
+                                        final String message = isFalsyExpected == falsyStates.get(matched.get()) ? messageAlwaysTrue : messageAlwaysFalse;
+                                        holder.registerProblem(binary, String.format(message, binary.getText()));
+                                    } else {
+                                    }
+                                    break;
+                                } else {
+                                    falsyStates.put(subject, isFalsyExpected);
+                                }
+                            }
+                        }
+                    }
+                    falsyStates.clear();
                 }
                 fragments.clear();
             }

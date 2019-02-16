@@ -41,4 +41,9 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.non-intersecting-types.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsMultipleFalsyValuesCheckPatterns() {
+        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.multiple-falsy-values.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

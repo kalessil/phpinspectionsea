@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -46,10 +47,19 @@ final public class MultipleFalsyValuesCheckStrategy {
                                         .filter(key -> OpenapiEquivalenceUtil.areEqual(key, subject))
                                         .findFirst();
                                 if (result = matched.isPresent()) {
+                                    final boolean isFalsySame = isFalsyExpected == falsyStates.get(matched.get());
                                     if (operator == PhpTokenTypes.opAND) {
-                                        final String message = isFalsyExpected == falsyStates.get(matched.get()) ? messageAlwaysTrue : messageAlwaysFalse;
-                                        holder.registerProblem(binary, String.format(message, binary.getText()));
+                                        holder.registerProblem(
+                                                binary,
+                                                String.format(isFalsySame ? messageAlwaysTrue : messageAlwaysFalse, binary.getText()),
+                                                isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                                        );
                                     } else {
+                                        holder.registerProblem(
+                                                binary,
+                                                String.format(isFalsySame ? messageAlwaysFalse : messageAlwaysTrue, binary.getText()),
+                                                isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                                        );
                                     }
                                     break;
                                 } else {

@@ -130,6 +130,7 @@ final public class MultipleValuesEqualityStrategy {
         return  element instanceof StringLiteralExpression ||
                 element instanceof ConstantReference ||
                 element instanceof ClassConstantReference ||
+                element instanceof ArrayCreationExpression ||
                 OpenapiTypesUtil.isNumber(element);
     }
 
@@ -138,6 +139,8 @@ final public class MultipleValuesEqualityStrategy {
             return ((StringLiteralExpression) element).getContents().isEmpty();
         } else if (element instanceof ConstantReference) {
             return PhpLanguageUtil.isFalse(element);
+        } else if (element instanceof ArrayCreationExpression) {
+            return element.getChildren().length == 0;
         } else if (OpenapiTypesUtil.isNumber(element)) {
             return element.getText().equals("0");
         }

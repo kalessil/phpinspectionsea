@@ -11,9 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 /*
@@ -37,9 +35,11 @@ final public class MultipleFalsyValuesCheckStrategy {
             final PsiElement parent  = expression.getParent();
             final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
             if (!(context instanceof BinaryExpression) || ((BinaryExpression) context).getOperationType() != operator) {
-                final List<PsiElement> fragments = extractFragments(expression, operator);
+                final List<BinaryExpression> fragments = extractFragments(expression, operator);
                 if (fragments.size() > 1) {
-
+                    // group by subject
+                    // maintain per-subject falsy/non-falsy state
+                    // depends on operand, report issues
                 }
                 fragments.clear();
             }
@@ -47,23 +47,10 @@ final public class MultipleFalsyValuesCheckStrategy {
         return result;
     }
 
-    private static boolean isFalsyValue(@NotNull PsiElement element) {
-        if (element instanceof StringLiteralExpression) {
-            return ((StringLiteralExpression) element).getContents().isEmpty();
-        } else if (element instanceof ConstantReference) {
-            return PhpLanguageUtil.isFalse(element);
-        } else if (element instanceof ArrayCreationExpression) {
-            return element.getChildren().length == 0;
-        } else if (OpenapiTypesUtil.isNumber(element)) {
-            return element.getText().equals("0");
-        }
-        return false;
-    }
-
     @NotNull
-    private static List<PsiElement> extractFragments(@NotNull BinaryExpression binary, @Nullable IElementType operator) {
-        final List<PsiElement> result     = new ArrayList<>();
-        final IElementType binaryOperator = binary.getOperationType();
+    private static List<BinaryExpression> extractFragments(@NotNull BinaryExpression binary, @Nullable IElementType operator) {
+        final List<BinaryExpression> result = new ArrayList<>();
+        final IElementType binaryOperator   = binary.getOperationType();
         if (binaryOperator == operator) {
             Stream.of(binary.getLeftOperand(), binary.getRightOperand())
                     .filter(Objects::nonNull).map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
@@ -80,5 +67,18 @@ final public class MultipleFalsyValuesCheckStrategy {
             }
         }
         return result;
+    }
+
+    private static boolean isFalsyValue(@NotNull PsiElement element) {
+        if (element instanceof StringLiteralExpression) {
+            return ((StringLiteralExpression) element).getContents().isEmpty();
+        } else if (element instanceof ConstantReference) {
+            return PhpLanguageUtil.isFalse(element);
+        } else if (element instanceof ArrayCreationExpression) {
+            return element.getChildren().length == 0;
+        } else if (OpenapiTypesUtil.isNumber(element)) {
+            return element.getText().equals("0");
+        }
+        return false;
     }
 }

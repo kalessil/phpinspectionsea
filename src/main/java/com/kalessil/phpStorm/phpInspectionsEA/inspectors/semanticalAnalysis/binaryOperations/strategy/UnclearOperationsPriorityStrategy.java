@@ -58,7 +58,11 @@ final public class UnclearOperationsPriorityStrategy {
                     holder.registerProblem(parent, message, new WrapItAsItIsFix(replacement));
                     return true;
                 }
-            } else if (PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator) && operator != PhpTokenTypes.opSPACESHIP) {
+            } else if (
+                    operator == PhpTokenTypes.opEQUAL ||
+                    operator == PhpTokenTypes.opIDENTICAL ||
+                    (operator != PhpTokenTypes.opSPACESHIP && PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator))
+            ) {
                 final PsiElement left = expression.getLeftOperand();
                 if (left instanceof UnaryExpression) {
                     final UnaryExpression candidate = (UnaryExpression) left;

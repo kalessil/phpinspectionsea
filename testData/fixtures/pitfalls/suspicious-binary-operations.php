@@ -62,8 +62,12 @@ if ($a || ($b && $c)) {}
 if ($a && ($b || $c)) {}
 $z = $x && $b;
 if (<error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a > $b</error>) {}
+if (<error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a == $b</error>) {}
+if (<error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a === $b</error>) {}
 if (<error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">!($a) > $b</error>) {}
 if ((!$a) > $b) {}
+if ((!$a) == $b) {}
+if ((!$a) === $b) {}
 if (!$a <=> $b) {}
 
 /* operations priority issues: ternaries and null coalescing */

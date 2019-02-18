@@ -33,4 +33,8 @@ class CasesHolder {
         /* a comment here */
         return !($x > 0);
     }
+
+    public function ifNotReturnElseReturn($x) {
+        return !$x;
+    }
 }

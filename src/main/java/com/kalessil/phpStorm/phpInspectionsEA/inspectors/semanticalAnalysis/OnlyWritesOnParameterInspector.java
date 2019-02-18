@@ -85,35 +85,35 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignment) {
-                /* because this hook fired e.g. for `.=` assignments */
-                //if (OpenapiTypesUtil.isAssignment(assignment)) {
-                final PsiElement variable = assignment.getVariable();
-                if (variable instanceof Variable) {
-                    /* false-positives: predefined and global variables */
-                    final String variableName = ((Variable) variable).getName();
-                    if (variableName.isEmpty() || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
-                        return;
-                    }
-                    /* filter target contexts: we are supporting only certain of them */
-                    final PsiElement parent = assignment.getParent();
-                    final boolean isTargetContext =
-                        parent instanceof ParenthesizedExpression ||
-                        parent instanceof ArrayIndex ||
-                        (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
-                        OpenapiTypesUtil.isStatementImpl(parent) ||
-                        OpenapiTypesUtil.isAssignment(parent);
-                    if (isTargetContext) {
-                        final Function scope = ExpressionSemanticUtil.getScope(assignment);
-                        if (scope != null && Arrays.stream(scope.getParameters()).noneMatch(p -> p.getName().equals(variableName))) {
-                            final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(scope);
-                            final boolean isUseVariable = uses != null && uses.stream().anyMatch(u -> u.getName().equals(variableName));
-                            if (!isUseVariable) {
-                                this.analyzeAndReturnUsagesCount(variableName, scope);
+                /* because this hook fired e.g. for `.=` assignments (a BC break by PhpStorm) */
+                if (OpenapiTypesUtil.isAssignment(assignment)) {
+                    final PsiElement variable = assignment.getVariable();
+                    if (variable instanceof Variable) {
+                        /* false-positives: predefined and global variables */
+                        final String variableName = ((Variable) variable).getName();
+                        if (variableName.isEmpty() || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                            return;
+                        }
+                        /* filter target contexts: we are supporting only certain of them */
+                        final PsiElement parent = assignment.getParent();
+                        final boolean isTargetContext =
+                            parent instanceof ParenthesizedExpression ||
+                            parent instanceof ArrayIndex ||
+                            (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
+                            OpenapiTypesUtil.isStatementImpl(parent) ||
+                            OpenapiTypesUtil.isAssignment(parent);
+                        if (isTargetContext) {
+                            final Function scope = ExpressionSemanticUtil.getScope(assignment);
+                            if (scope != null && Arrays.stream(scope.getParameters()).noneMatch(p -> p.getName().equals(variableName))) {
+                                final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(scope);
+                                final boolean isUseVariable = uses != null && uses.stream().anyMatch(u -> u.getName().equals(variableName));
+                                if (!isUseVariable) {
+                                    this.analyzeAndReturnUsagesCount(variableName, scope);
+                                }
                             }
                         }
                     }
                 }
-                //}
             }
 
             private void checkUseVariables(@NotNull List<Variable> variables, @NotNull Function function) {

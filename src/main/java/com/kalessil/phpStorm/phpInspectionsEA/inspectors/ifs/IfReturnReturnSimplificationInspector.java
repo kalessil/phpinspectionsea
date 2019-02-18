@@ -17,7 +17,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -45,7 +44,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(statement)) { return; }
 
                 final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
-                if (this.isTargetCondition(condition) && statement.getElseIfBranches().length == 0) {
+                if (condition != null && this.isTargetCondition(condition) && statement.getElseIfBranches().length == 0) {
                     final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(statement);
                     if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
                         final PsiElement ifLast = ExpressionSemanticUtil.getLastStatement(ifBody);
@@ -86,11 +85,21 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                                     }
 
                                     /* final reporting step */
-                                    final String replacement = String.format(isReverse ? "return !(%s)" : "return %s", condition.getText());
-                                    final String message     = String.format(messagePattern, replacement);
+                                    final String replacement;
+                                    if (isReverse) {
+                                        if (condition instanceof UnaryExpression) {
+                                            PsiElement extracted = ((UnaryExpression) condition).getValue();
+                                            extracted            = ExpressionSemanticUtil.getExpressionTroughParenthesis(extracted);
+                                            replacement          = String.format("return %s", extracted == null ? "" : extracted.getText());
+                                        } else {
+                                            replacement = String.format("return !(%s)", condition.getText());
+                                        }
+                                    } else {
+                                        replacement = String.format("return %s", condition.getText());
+                                    }
                                     holder.registerProblem(
                                             statement.getFirstChild(),
-                                            message,
+                                            String.format(messagePattern, replacement),
                                             new SimplifyFix(statement, elseBranch == null ? second : statement, replacement)
                                     );
                                 }
@@ -100,7 +109,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 }
             }
 
-            final boolean isTargetCondition(@Nullable PsiElement condition) {
+            final boolean isTargetCondition(@NotNull PsiElement condition) {
                 if (condition instanceof BinaryExpression) {
                     return true;
                 } else if (condition instanceof UnaryExpression) {

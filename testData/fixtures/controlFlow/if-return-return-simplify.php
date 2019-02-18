@@ -42,5 +42,7 @@ class CasesHolder {
     public function ifNotReturnElseReturn($x) {
         <warning descr="The construct can be replaced with 'return !$x'.">if</warning> (!$x) { return true; }
         else { return false; }
+        <warning descr="The construct can be replaced with 'return $x'.">if</warning> (!$x) { return false; }
+        else { return true; }
     }
 }

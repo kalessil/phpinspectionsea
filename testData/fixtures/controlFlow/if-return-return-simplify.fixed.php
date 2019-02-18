@@ -36,5 +36,6 @@ class CasesHolder {
 
     public function ifNotReturnElseReturn($x) {
         return !$x;
+        return $x;
     }
 }

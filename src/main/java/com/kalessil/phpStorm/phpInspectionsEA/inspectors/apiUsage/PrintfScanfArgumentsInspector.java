@@ -137,8 +137,11 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                             return;
                         }
 
-                        final String message = messageParameters.replace("%c%", String.valueOf(expectedParametersCount));
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(
+                                reference,
+                                messageParameters.replace("%c%", String.valueOf(expectedParametersCount)),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
                     }
                 }
             }

@@ -8,13 +8,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -41,8 +44,8 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
             public void visitPhpIf(@NotNull If statement) {
                 if (this.isContainingFileSkipped(statement)) { return; }
 
-                final PsiElement cond = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
-                if (cond instanceof BinaryExpression && statement.getElseIfBranches().length == 0) {
+                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
+                if (this.isTargetCondition(condition) && statement.getElseIfBranches().length == 0) {
                     final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(statement);
                     if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
                         final PsiElement ifLast = ExpressionSemanticUtil.getLastStatement(ifBody);
@@ -83,7 +86,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                                     }
 
                                     /* final reporting step */
-                                    final String replacement = String.format(isReverse ? "return !(%s)" : "return %s", cond.getText());
+                                    final String replacement = String.format(isReverse ? "return !(%s)" : "return %s", condition.getText());
                                     final String message     = String.format(messagePattern, replacement);
                                     holder.registerProblem(
                                             statement.getFirstChild(),
@@ -95,6 +98,15 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            final boolean isTargetCondition(@Nullable PsiElement condition) {
+                if (condition instanceof BinaryExpression) {
+                    return true;
+                } else if (condition instanceof UnaryExpression) {
+                    return OpenapiTypesUtil.is(((UnaryExpression) condition).getOperation(), PhpTokenTypes.opNOT);
+                }
+                return false;
             }
         };
     }

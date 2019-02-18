@@ -11,11 +11,10 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -109,11 +108,31 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 }
             }
 
-            final boolean isTargetCondition(@NotNull PsiElement condition) {
+            private boolean isTargetCondition(@NotNull PsiElement condition) {
                 if (condition instanceof BinaryExpression) {
                     return true;
                 } else if (condition instanceof UnaryExpression) {
-                    return OpenapiTypesUtil.is(((UnaryExpression) condition).getOperation(), PhpTokenTypes.opNOT);
+                    final UnaryExpression unary = (UnaryExpression) condition;
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                        final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
+                        if (argument instanceof FunctionReference) {
+                            return this.isTargetFunction((FunctionReference) argument);
+                        }
+                    }
+                } else if (condition instanceof FunctionReference) {
+                    return this.isTargetFunction((FunctionReference) condition);
+                }
+                return false;
+            }
+
+            private boolean isTargetFunction(final FunctionReference reference) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                if (resolved instanceof Function) {
+                    final Function function = (Function) resolved;
+                    if (OpenapiElementsUtil.getReturnType(function) != null) {
+                        final PhpType returnType = function.getType();
+                        return returnType.size() == 1 && returnType.equals(PhpType.BOOLEAN);
+                    }
                 }
                 return false;
             }

@@ -34,8 +34,11 @@ class CasesHolder {
         return !($x > 0);
     }
 
-    public function ifNotReturnElseReturn($x) {
-        return !$x;
-        return $x;
+    public function ifNotReturnElseReturn($x): bool {
+        return !$this->ifNotReturnElseReturn();
+        return $this->ifNotReturnElseReturn();
+
+        return $this->ifNotReturnElseReturn();
+        return !($this->ifNotReturnElseReturn());
     }
 }

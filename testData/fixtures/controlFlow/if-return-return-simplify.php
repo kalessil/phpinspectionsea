@@ -39,10 +39,15 @@ class CasesHolder {
         else { return true; }
     }
 
-    public function ifNotReturnElseReturn($x) {
-        <warning descr="The construct can be replaced with 'return !$x'.">if</warning> (!$x) { return true; }
+    public function ifNotReturnElseReturn($x): bool {
+        <warning descr="The construct can be replaced with 'return !$this->ifNotReturnElseReturn()'.">if</warning> (!$this->ifNotReturnElseReturn()) { return true; }
         else { return false; }
-        <warning descr="The construct can be replaced with 'return $x'.">if</warning> (!$x) { return false; }
+        <warning descr="The construct can be replaced with 'return $this->ifNotReturnElseReturn()'.">if</warning> (!$this->ifNotReturnElseReturn()) { return false; }
+        else { return true; }
+
+        <warning descr="The construct can be replaced with 'return $this->ifNotReturnElseReturn()'.">if</warning> ($this->ifNotReturnElseReturn()) { return true; }
+        else { return false; }
+        <warning descr="The construct can be replaced with 'return !($this->ifNotReturnElseReturn())'.">if</warning> ($this->ifNotReturnElseReturn()) { return false; }
         else { return true; }
     }
 }

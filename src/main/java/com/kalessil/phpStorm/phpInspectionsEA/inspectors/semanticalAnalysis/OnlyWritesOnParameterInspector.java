@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /*
@@ -302,7 +303,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 if (intCountReadAccesses == 0 && intCountWriteAccesses > 0 && !this.isAnySuppressed(targetExpressions)) {
                     final boolean report = IGNORE_INCLUDES || !this.hasIncludes(function);
                     if (report) {
-                        for (final PsiElement targetExpression : targetExpressions) {
+                        for (final PsiElement targetExpression : new HashSet<>(targetExpressions)) {
                             holder.registerProblem(
                                     targetExpression,
                                     messageOnlyWrites,

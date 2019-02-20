@@ -331,7 +331,7 @@ final public class NullableVariablesStrategy {
             if (methodName != null) {
                 if (methodName.equals("assertNotNull") || methodName.equals("assertInstanceOf") ||
                     methodName.equals("notNull") || methodName.equals("isInstanceOf") ||
-                    methodName.equals("isInstanceOfAny")
+                    methodName.equals("isInstanceOfAny") || methodName.equals("isObject")
                 ) {
                     /* PHPUnit, beberlei/assert and webmozart/assert assertions */
                     result = true;

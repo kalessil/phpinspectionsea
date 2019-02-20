@@ -93,10 +93,11 @@
 
         public function interface_types(IndirectClassReference $parameter) {
             $parameter = $parameter ?? $this->returnSelf();
-            $parameter = $this->returnSelf();
+            $parameter = $this->returnSelf()->returnSelf();
 
             $parameter = $parameter ?? $this->returnStatic();
             $parameter = $this->returnStatic();
+            $parameter = $this->returnStatic()->returnStatic();
 
             $parameter = <warning descr="New value type (null) is not in annotated types.">null</warning>;
         }

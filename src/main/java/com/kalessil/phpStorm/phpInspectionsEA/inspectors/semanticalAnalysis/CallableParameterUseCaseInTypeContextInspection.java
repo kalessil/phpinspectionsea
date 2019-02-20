@@ -277,6 +277,10 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                                     }
                                                 }
                                             }
+                                            /* translate static/self into FQNs didn't work, skip */
+                                            if (classReferences.contains(type)) {
+                                                continue;
+                                            }
                                         }
 
                                         final boolean isViolation = !this.isTypeCompatibleWith(type, paramTypes, index);

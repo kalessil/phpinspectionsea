@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,7 +30,7 @@ import java.util.Set;
  */
 
 public class OffsetOperationsInspector extends BasePhpInspection {
-    private static final String patternNoOffsetSupport = "'%c%' may not support offset operations (or its type not annotated properly: %t%).";
+    private static final String patternNoOffsetSupport = "'%s' may not support offset operations (or its type not annotated properly: %s).";
     private static final String patternInvalidIndex    = "Resolved index type (%s) is incompatible with possible %s. Probably just proper type hinting needed.";
 
     @NotNull
@@ -51,10 +52,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 // ensure offsets operations are supported, do nothing if no types were resolved
                 final Set<String> allowedIndexTypes = new HashSet<>();
                 if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes) && !allowedIndexTypes.isEmpty()) {
-                    final String message = patternNoOffsetSupport
-                            .replace("%t%", allowedIndexTypes.toString())
-                            .replace("%c%", expression.getValue().getText());
-                    holder.registerProblem(expression, message);
+                    holder.registerProblem(
+                            expression,
+                            String.format(patternNoOffsetSupport, expression.getValue().getText(), allowedIndexTypes.toString())
+                    );
 
                     allowedIndexTypes.clear();
                     return;
@@ -89,7 +90,6 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         };
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isContainerSupportsArrayAccess(@NotNull ArrayAccessExpression expression, @NotNull Set<String> indexTypesSupported) {
 
         // ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later
@@ -103,6 +103,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
             if (type != null && !type.hasUnknown()) {
                 type.getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
+                Stream.of(Types.strSelf, Types.strStatic).forEach(containerTypes::remove);
             }
         }
 

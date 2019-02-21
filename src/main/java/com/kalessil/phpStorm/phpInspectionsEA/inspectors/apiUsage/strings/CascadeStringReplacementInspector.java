@@ -23,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -254,14 +256,15 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             final FunctionReference eliminate = this.eliminate.getElement();
             if (patch != null && eliminate != null && !project.isDisposed()) {
                 synchronized (eliminate.getContainingFile()) {
-                    this.mergeReplaces(patch, eliminate, this.useShortSyntax);
-                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0], this.useShortSyntax);
+                    this.mergeReplaces(patch, eliminate);
+                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0]);
                     this.mergeSources(patch, eliminate);
+                    this.applyArraySyntax(patch, this.useShortSyntax);
                 }
             }
         }
 
-        private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from, boolean useShortSyntax) {
+        private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from) {
             final Project project = to.getProject();
             if (to instanceof ArrayCreationExpression) {
                 final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
@@ -283,7 +286,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             } else {
                 if (from instanceof ArrayCreationExpression) {
                     final PsiElement comma                    = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    final String pattern                      = String.format(useShortSyntax ? "[%s]" : "array(%s)", to.getText());
+                    final String pattern                      = String.format("array(%s)", to.getText());
                     final ArrayCreationExpression replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
                     final PsiElement firstValue               = replacement.getFirstPsiChild();
                     final PsiElement marker                   = firstValue == null ? null : firstValue.getPrevSibling();
@@ -297,11 +300,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         to.replace(replacement);
                     }
                 } else {
-                    final String pattern = String.format(
-                            useShortSyntax ? "[%s, %s]" : "array(%s, %s)",
-                            from.getText(),
-                            to.getText()
-                    );
+                    final String pattern = String.format("array(%s, %s)", from.getText(), to.getText());
                     to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
                 }
             }
@@ -321,7 +320,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             return what;
         }
 
-        private void mergeReplaces(@NotNull FunctionReference to, @NotNull FunctionReference from, boolean useShortSyntax) {
+        private void mergeReplaces(@NotNull FunctionReference to, @NotNull FunctionReference from) {
             /* normalization here */
             final PsiElement fromNormalized = this.unbox(from.getParameters()[1]);
             final PsiElement toRaw          = to.getParameters()[1];
@@ -341,13 +340,13 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
             if (needsFurtherFixing) {
                 /* in order to perform the proper merging we'll need to expand short-hand replacement definitions */
-                this.expandReplacement(to, useShortSyntax);
-                this.expandReplacement(from, useShortSyntax);
-                this.mergeArguments(to.getParameters()[1], from.getParameters()[1], useShortSyntax);
+                this.expandReplacement(to);
+                this.expandReplacement(from);
+                this.mergeArguments(to.getParameters()[1], from.getParameters()[1]);
             }
         }
 
-        private void expandReplacement(@NotNull FunctionReference call, boolean useShortSyntax) {
+        private void expandReplacement(@NotNull FunctionReference call) {
             final PsiElement[] arguments = call.getParameters();
             final PsiElement search      = arguments[0];
             final PsiElement replace     = arguments[1];
@@ -359,7 +358,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         PhpPsiElementFactory.createPhpPsiFromText(
                             call.getProject(),
                             ArrayCreationExpression.class,
-                            String.format(useShortSyntax ? "[%s]" : "array(%s)", String.join(", ", replaces))
+                            String.format("array(%s)", String.join(", ", replaces))
                         )
                     );
                 }
@@ -376,6 +375,28 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 }
                 eliminateParent.delete();
             }
+        }
+
+        private void applyArraySyntax(@NotNull FunctionReference patch, boolean useShortSyntax) {
+            final List<String> arguments = new ArrayList<>();
+            for (final PsiElement argument : patch.getParameters()) {
+                if (argument instanceof ArrayCreationExpression) {
+                    if (((ArrayCreationExpression) argument).isShortSyntax() != useShortSyntax) {
+                        arguments.add(
+                                String.format(
+                                        useShortSyntax ? "[%s]" : "array(%s)",
+                                        Stream.of(argument.getChildren()).map(PsiElement::getText).collect(Collectors.joining(", "))
+                                )
+                        );
+                    }
+                } else {
+                    arguments.add(argument.getText());
+                }
+            }
+
+            final String replacement = String.format("%s%s(%s)", patch.getImmediateNamespaceName(), patch.getName(), String.join(", ", arguments));
+            patch.replace(PhpPsiElementFactory.createPhpPsiFromText(patch.getProject(), FunctionReference.class, replacement));
+            arguments.clear();
         }
     }
 }

@@ -10,10 +10,7 @@
     $str = str_replace(['-', ' ', ' '], ['_', '-', '-'], '...');
 
     /* nested calls pattern */
-    $nested = str_replace(
-        [' ', ' '], '-',
-        '...'
-    );
+    $nested = str_replace([' ', ' '], '-', '...');
 
     /* parameters simplification pattern */
     $simplify = str_replace(

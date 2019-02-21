@@ -388,10 +388,10 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                                         Stream.of(argument.getChildren()).map(PsiElement::getText).collect(Collectors.joining(", "))
                                 )
                         );
+                        continue;
                     }
-                } else {
-                    arguments.add(argument.getText());
                 }
+                arguments.add(argument.getText());
             }
 
             final String replacement = String.format("%s%s(%s)", patch.getImmediateNamespaceName(), patch.getName(), String.join(", ", arguments));

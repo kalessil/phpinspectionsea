@@ -82,7 +82,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
                         }
 
                         final String message = messagePattern.replace("%o%", functionName).replace("%n%", suggestion);
-                        holder.registerProblem(reference, message, new TheLocalFix(suggestion));
+                        holder.registerProblem(reference, message, new ModernizeCallFixer(suggestion));
                     }
                 }
             }
@@ -95,12 +95,12 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
         );
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static final class ModernizeCallFixer implements LocalQuickFix {
         private static final String title = "Use the recommended function";
 
         final private String suggestedName;
 
-        TheLocalFix(@NotNull String suggestedName) {
+        ModernizeCallFixer(@NotNull String suggestedName) {
             super();
             this.suggestedName = suggestedName;
         }
@@ -120,7 +120,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 ((FunctionReference) expression).handleElementRename(this.suggestedName);
             }
         }

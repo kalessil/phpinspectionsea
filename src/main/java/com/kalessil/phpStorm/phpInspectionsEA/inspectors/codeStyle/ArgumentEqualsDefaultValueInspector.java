@@ -92,10 +92,12 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                                 final Function function      = (Function) resolved;
                                 final Parameter[] parameters = function.getParameters();
                                 if (arguments.length <= parameters.length) {
+                                    final FileBasedIndex projectIndex   = FileBasedIndex.getInstance();
+                                    final GlobalSearchScope searchScope = GlobalSearchScope.allScope(function.getProject());
                                     for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
                                         final Parameter parameter = parameters[index];
                                         final PsiElement argument = arguments[index];
-                                        final String defaultValue = this.getDefaultValue(function, parameter.getName());
+                                        final String defaultValue = this.getDefaultValue(function, parameter.getName(), projectIndex, searchScope);
                                         /* false-positives: magic constants, unmatched values */
                                         if (defaultValue == null || specialConstants.contains(defaultValue) || !defaultValue.equals(argument.getText())) {
                                             break;
@@ -125,12 +127,17 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
             }
 
             @Nullable
-            private String getDefaultValue(@NotNull Function function, @NotNull String parameterName) {
+            private String getDefaultValue(
+                    @NotNull Function function,
+                    @NotNull String parameterName,
+                    @NotNull FileBasedIndex projectIndex,
+                    @NotNull GlobalSearchScope searchScope
+            ) {
                 String result              = null;
-                final List<String> details = FileBasedIndex.getInstance().getValues(
+                final List<String> details = projectIndex.getValues(
                         NamedCallableParametersMetaIndexer.identity,
                         String.format("%s.%s", function.getFQN(), parameterName),
-                        GlobalSearchScope.allScope(function.getProject())
+                        searchScope
                 );
                 if (details.size() == 1) {
                     final String[] meta = details.get(0).split(";", 3); // the data format "ref:%s;var:%s;def:%s"

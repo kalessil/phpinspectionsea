@@ -93,7 +93,12 @@ public class SubstringCompareInspector extends BasePhpInspection {
                                     int stringLength = unescaped.length();
                                     boolean isTarget;
                                     try {
-                                        isTarget = stringLength > 0 && stringLength != Math.abs(givenOffset = Integer.parseInt(offset.getText()));
+                                        givenOffset = Integer.parseInt(offset.getText());
+                                        if (arguments.length == 2) {
+                                            isTarget = stringLength > 0 && givenOffset < 0 && stringLength != Math.abs(givenOffset);
+                                        } else {
+                                            isTarget = stringLength > 0 && stringLength != Math.abs(givenOffset);
+                                        }
                                     } catch (NumberFormatException lengthParsingHasFailed) {
                                         isTarget = false;
                                     }

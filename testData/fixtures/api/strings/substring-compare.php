@@ -11,9 +11,9 @@ function cases_holder() {
         substr('', 0, <error descr="The specified length doesn't match the string length.">3</error>) === '.',
 
         substr('', <error descr="The specified length doesn't match the string length.">-3</error>) == '.',
-        substr('', <error descr="The specified length doesn't match the string length.">3</error>) === '.',
+        substr('', 3) === '.',
         substr('', <error descr="The specified length doesn't match the string length.">-3</error>) === 'a',
-        substr('', <error descr="The specified length doesn't match the string length.">3</error>) === 'a',
+        substr('', 3) === 'a',
 
         substr('...', 0, -3) == '...',
         substr('...', 0, 3) === '...',

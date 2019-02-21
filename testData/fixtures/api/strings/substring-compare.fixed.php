@@ -11,9 +11,9 @@ function cases_holder() {
         substr('', 0, 1) === '.',
 
         substr('', -1) == '.',
-        substr('', 1) === '.',
+        substr('', 3) === '.',
         substr('', -1) === 'a',
-        substr('', 1) === 'a',
+        substr('', 3) === 'a',
 
         substr('...', 0, -3) == '...',
         substr('...', 0, 3) === '...',

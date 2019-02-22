@@ -97,13 +97,13 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             }
 
             @Override
-            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignment) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(assignmentExpression))   { return; }
+                if (this.isContainingFileSkipped(assignment))             { return; }
 
                 /* because this hook fired e.g. for `.=` assignments (a BC break by PhpStorm) */
                 if (OpenapiTypesUtil.isAssignment(assignment)) {
-                    final PsiElement variable = assignmentExpression.getVariable();
+                    final PsiElement variable = assignment.getVariable();
                     if (variable instanceof Variable) {
                         /* false-positives: predefined and global variables */
                         final String variableName = ((Variable) variable).getName();
@@ -111,7 +111,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             return;
                         }
                         /* filter target contexts: we are supporting only certain of them */
-                        final PsiElement parent       = assignmentExpression.getParent();
+                        final PsiElement parent       = assignment.getParent();
                         final boolean isTargetContext =
                             parent instanceof ParenthesizedExpression ||
                             parent instanceof ForeachStatement ||
@@ -125,7 +125,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_KEY)   ||
                             OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_VALUE);
                         if (isTargetContext) {
-                            final Function scope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                            final Function scope = ExpressionSemanticUtil.getScope(assignment);
                             if (scope != null && Arrays.stream(scope.getParameters()).noneMatch(p -> p.getName().equals(variableName))) {
                                 final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(scope);
                                 final boolean isUseVariable = uses != null && uses.stream().anyMatch(u -> u.getName().equals(variableName));

@@ -60,7 +60,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(method))                 { return; }
 
-                this.inspectUsages(method.getParameters(), method);
+                if (!method.isAbstract()) {
+                    this.inspectUsages(method.getParameters(), method);
+                }
             }
 
             @Override

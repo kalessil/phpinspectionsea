@@ -62,3 +62,10 @@ function cases_holder_operations_priority() {
 
     if (($a ?? 0) && $b) {}
 }
+
+function preserve_comments_in_fix() {
+    /* comment 1 */
+    // comment 2
+    /** comment 3 */
+    if ($a && $b) {}
+}

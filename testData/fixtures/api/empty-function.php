@@ -11,7 +11,7 @@
      * @param resource|null $resource
      * @param null|string $string
      */
-    function typedParams($int, $float, $boolean, $resource, $string) {
+    function empty_with_typed_params($int, $float, $boolean, $resource, $string) {
         return [
             /* pattern: can be compared to null */
             <warning descr="You should probably use '$int === null' instead.">empty($int)</warning>,
@@ -22,10 +22,27 @@
         ];
     }
 
-    function getNullableInt(?int $int) { return $int; }
-    echo <warning descr="You should probably use 'getNullableInt() === null' instead.">empty(getNullableInt())</warning>;
-    echo <warning descr="You should probably use 'getNullableInt() !== null' instead.">!empty(getNullableInt())</warning>;
+    function nullable_int(?int $int) { return $int; }
+    echo <warning descr="You should probably use 'nullable_int() === null' instead.">empty(nullable_int())</warning>;
+    echo <warning descr="You should probably use 'nullable_int() !== null' instead.">!empty(nullable_int())</warning>;
 
     echo <weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty(1)</weak_warning>;
     echo <weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty('...')</weak_warning>;
     echo <weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty(null)</weak_warning>;
+
+    abstract class ClassForEmptyWithFields {
+        /** @var ClassForEmptyWithFields|null */
+        public $field;
+        /** @var ClassForEmptyWithFields[]|null */
+        public $fields;
+        /** @return ClassForEmptyWithFields|null */
+        abstract function get();
+    }
+    function empty_with_fields(ClassForEmptyWithFields $subject) {
+        return [
+            empty($subject->field),
+            empty($subject->field->field),
+            empty($subject->fields[0]->field),
+            empty($subject->get()->field),
+        ];
+    }

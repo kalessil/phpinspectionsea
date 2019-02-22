@@ -29,3 +29,12 @@
     echo empty(1);
     echo empty('...');
     echo empty(null);
+
+    function empty_with_fields(object $subject) {
+        return [
+            empty($subject->b),
+            empty($subject->b->c),
+            empty($subject->b[0]->c),
+            empty($subject->method()->c),
+        ];
+    }

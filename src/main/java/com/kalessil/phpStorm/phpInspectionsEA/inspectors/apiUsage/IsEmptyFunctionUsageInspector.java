@@ -87,12 +87,25 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     /* case 2: nullable classes, nullable target core types */
                     if (this.isNullableCoreType(resolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes)) {
                         if (SUGGEST_TO_USE_NULL_COMPARISON) {
-                            final String comparision = isInverted ? "!==" : "===";
-                            final String replacement = ComparisonStyle.isRegular()
-                                                       ? String.format("%s %s null", subject.getText(), comparision)
-                                                       : String.format("null %s %s", comparision, subject.getText());
-                            final PsiElement target  = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(target, String.format(patternAlternative, replacement), new CompareToNullFix(replacement));
+                            /* false-positive: a field reference used in the subject expression */
+                            PsiElement base = subject;
+                            while (base instanceof PhpPsiElement) {
+                                if (base instanceof FieldReference) {
+                                    break;
+                                }
+                                base = ((PhpPsiElement) base).getFirstPsiChild();
+                            }
+                            if (!(base instanceof FieldReference)) {
+                                final String comparision = isInverted ? "!==" : "===";
+                                final String replacement = ComparisonStyle.isRegular()
+                                                           ? String.format("%s %s null", subject.getText(), comparision)
+                                                           : String.format("null %s %s", comparision, subject.getText());
+                                holder.registerProblem(
+                                        isInverted ? parent : emptyExpression,
+                                        String.format(patternAlternative, replacement),
+                                        new CompareToNullFix(replacement)
+                                );
+                            }
                         }
                         resolvedTypes.clear();
 

@@ -11,7 +11,7 @@
      * @param resource|null $resource
      * @param null|string $string
      */
-    function typedParams($int, $float, $boolean, $resource, $string) {
+    function empty_with_typed_params($int, $float, $boolean, $resource, $string) {
         return [
             /* pattern: can be compared to null */
             $int === null,
@@ -22,19 +22,27 @@
         ];
     }
 
-    function getNullableInt(?int $int) { return $int; }
-    echo getNullableInt() === null;
-    echo getNullableInt() !== null;
+    function nullable_int(?int $int) { return $int; }
+    echo nullable_int() === null;
+    echo nullable_int() !== null;
 
     echo empty(1);
     echo empty('...');
     echo empty(null);
 
-    function empty_with_fields(object $subject) {
+    abstract class ClassForEmptyWithFields {
+        /** @var ClassForEmptyWithFields|null */
+        public $field;
+        /** @var ClassForEmptyWithFields[]|null */
+        public $fields;
+        /** @return ClassForEmptyWithFields|null */
+        abstract function get();
+    }
+    function empty_with_fields(ClassForEmptyWithFields $subject) {
         return [
-            empty($subject->b),
-            empty($subject->b->c),
-            empty($subject->b[0]->c),
-            empty($subject->method()->c),
+            empty($subject->field),
+            empty($subject->field->field),
+            empty($subject->fields[0]->field),
+            empty($subject->get()->field),
         ];
     }

@@ -53,4 +53,13 @@ class aClass {
         /* sscanf/fscanf special formats */
         sscanf($arg, $pattern5, $arg);
     }
+
+    public static function test_case_with_modification()
+    {
+        $string = 'original';
+        if(true) {
+            $string .= ', now modified: %s';
+        }
+        return sprintf($string, '...');
+    }
 }

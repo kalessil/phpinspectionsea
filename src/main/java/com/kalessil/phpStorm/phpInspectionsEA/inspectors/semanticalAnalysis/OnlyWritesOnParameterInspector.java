@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /*
@@ -100,35 +101,37 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(assignmentExpression))   { return; }
 
-
-                final PsiElement variable = assignmentExpression.getVariable();
-                if (variable instanceof Variable) {
-                    /* false-positives: predefined and global variables */
-                    final String variableName = ((Variable) variable).getName();
-                    if (variableName.isEmpty() || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
-                        return;
-                    }
-                    /* filter target contexts: we are supporting only certain of them */
-                    final PsiElement parent       = assignmentExpression.getParent();
-                    final boolean isTargetContext =
-                        parent instanceof ParenthesizedExpression ||
-                        parent instanceof ForeachStatement ||
-                        parent instanceof If ||
-                        parent instanceof ElseIf ||
-                        parent instanceof ParameterList ||
-                        (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
-                        OpenapiTypesUtil.isStatementImpl(parent)  ||
-                        OpenapiTypesUtil.isAssignment(parent)     ||
-                        OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_INDEX) ||
-                        OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_KEY)   ||
-                        OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_VALUE);
-                    if (isTargetContext) {
-                        final Function scope = ExpressionSemanticUtil.getScope(assignmentExpression);
-                        if (scope != null && Arrays.stream(scope.getParameters()).noneMatch(p -> p.getName().equals(variableName))) {
-                            final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(scope);
-                            final boolean isUseVariable = uses != null && uses.stream().anyMatch(u -> u.getName().equals(variableName));
-                            if (!isUseVariable) {
-                                this.analyzeAndReturnUsagesCount(variableName, scope);
+                /* because this hook fired e.g. for `.=` assignments (a BC break by PhpStorm) */
+                if (OpenapiTypesUtil.isAssignment(assignment)) {
+                    final PsiElement variable = assignmentExpression.getVariable();
+                    if (variable instanceof Variable) {
+                        /* false-positives: predefined and global variables */
+                        final String variableName = ((Variable) variable).getName();
+                        if (variableName.isEmpty() || ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                            return;
+                        }
+                        /* filter target contexts: we are supporting only certain of them */
+                        final PsiElement parent       = assignmentExpression.getParent();
+                        final boolean isTargetContext =
+                            parent instanceof ParenthesizedExpression ||
+                            parent instanceof ForeachStatement ||
+                            parent instanceof If ||
+                            parent instanceof ElseIf ||
+                            parent instanceof ParameterList ||
+                            (parent instanceof BinaryExpression && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(((BinaryExpression) parent).getOperationType())) ||
+                            OpenapiTypesUtil.isStatementImpl(parent)  ||
+                            OpenapiTypesUtil.isAssignment(parent)     ||
+                            OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_INDEX) ||
+                            OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_KEY)   ||
+                            OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_VALUE);
+                        if (isTargetContext) {
+                            final Function scope = ExpressionSemanticUtil.getScope(assignmentExpression);
+                            if (scope != null && Arrays.stream(scope.getParameters()).noneMatch(p -> p.getName().equals(variableName))) {
+                                final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(scope);
+                                final boolean isUseVariable = uses != null && uses.stream().anyMatch(u -> u.getName().equals(variableName));
+                                if (!isUseVariable) {
+                                    this.analyzeAndReturnUsagesCount(variableName, scope);
+                                }
                             }
                         }
                     }
@@ -321,7 +324,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 if (intCountReadAccesses == 0 && intCountWriteAccesses > 0 && !this.isAnySuppressed(targetExpressions)) {
                     final boolean report = IGNORE_INCLUDES || !this.hasIncludes(function);
                     if (report) {
-                        for (final PsiElement targetExpression : targetExpressions) {
+                        for (final PsiElement targetExpression : new HashSet<>(targetExpressions)) {
                             holder.registerProblem(
                                     targetExpression,
                                     messageOnlyWrites,

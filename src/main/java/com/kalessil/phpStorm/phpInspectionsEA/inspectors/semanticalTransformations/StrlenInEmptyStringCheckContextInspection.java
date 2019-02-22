@@ -112,9 +112,11 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
             }
 
             private boolean canApplyIdentityOperator(@NotNull PsiElement value) {
-                final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) value, value.getProject());
-                if (resolved != null && resolved.size() == 1) {
-                    return Types.strString.equals(Types.getType(resolved.getTypes().iterator().next()));
+                if (value instanceof PhpTypedElement) {
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) value, value.getProject());
+                    if (resolved != null && resolved.size() == 1) {
+                        return Types.strString.equals(Types.getType(resolved.getTypes().iterator().next()));
+                    }
                 }
                 return false;
             }

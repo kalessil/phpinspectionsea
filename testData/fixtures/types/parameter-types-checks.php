@@ -90,13 +90,27 @@
     abstract class IndirectClassReferenceTest implements IndirectClassReference {
         /** @return static */
         public abstract function ownStatic();
+        
+        public function fluent_interfaces(IndirectClassReference $one, IndirectClassReference $two, IndirectClassReference $three) {
+            $one = $one->returnSelf();
+            $one = $one->returnStatic();
+
+            $two = $two->returnSelf();
+            $two = $two->returnStatic();
+            $two = $two->returnStatic();
+
+            $three = $three->returnSelf();
+            $three = $three->returnStatic()->returnStatic();
+        }
 
         public function interface_types(IndirectClassReference $parameter) {
             $parameter = $parameter ?? $this->returnSelf();
             $parameter = $this->returnSelf();
+            $parameter = $this->returnSelf()->returnSelf();
 
             $parameter = $parameter ?? $this->returnStatic();
             $parameter = $this->returnStatic();
+            $parameter = $this->returnStatic()->returnStatic();
 
             $parameter = <warning descr="New value type (null) is not in annotated types.">null</warning>;
         }

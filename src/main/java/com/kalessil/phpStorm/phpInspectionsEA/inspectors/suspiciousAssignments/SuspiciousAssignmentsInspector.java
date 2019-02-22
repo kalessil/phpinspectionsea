@@ -64,7 +64,7 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignment) {
                 if (this.isContainingFileSkipped(assignment)) { return; }
 
-                /* because this hook fired e.g. for `.=` assignments */
+                /* because this hook fired e.g. for `.=` assignments (a BC break by PhpStorm) */
                 if (OpenapiTypesUtil.isAssignment(assignment)) {
                     SuspiciousOperatorFormattingStrategy.apply(assignment, holder);
                     SequentialAssignmentsStrategy.apply(assignment, holder);

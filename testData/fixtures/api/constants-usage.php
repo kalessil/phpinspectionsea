@@ -10,6 +10,8 @@
 
     echo phpversion('extension-name');
     echo phpversion($object);
+    echo php_uname('...');
+    echo php_uname();
 
     <weak_warning descr="'PHP_VERSION_ID >= 70000' should be used instead.">version_compare(PHP_VERSION, '7', '>=')</weak_warning>;
     <weak_warning descr="'PHP_VERSION_ID === 70100' should be used instead.">version_compare(PHP_VERSION, '7.1', '==')</weak_warning>;

@@ -124,4 +124,13 @@ class Container {
 
         return $results;
     }
+
+    public function assignment_nodes_proper_targeting() {
+        $string = '';
+        if (true) {
+            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$string</weak_warning> .= '';
+        } else {
+            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$string</weak_warning> .= '';
+        }
+    }
 }

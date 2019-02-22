@@ -145,7 +145,7 @@ final public class ExpressionSemanticUtil {
     @Nullable
     public static Function getScope(@NotNull PsiElement expression) {
         PsiElement parent = expression.getParent();
-        while (parent != null && !(parent instanceof PsiFile)) {
+        while (parent != null && !(parent instanceof PsiFile) && !(parent instanceof PhpClass)) {
             if (parent instanceof Function) {
                 return (Function) parent;
             }

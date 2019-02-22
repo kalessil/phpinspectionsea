@@ -68,11 +68,12 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpElseIf(ElseIf elseIfStatement) {}
     @Override public void visitPhpElse(Else elseStatement)       {}
 
-    @Override public void visitPhpBinaryExpression(BinaryExpression expression) {}
-    @Override public void visitPhpIsset(PhpIsset issetExpression)               {}
-    @Override public void visitPhpUnset(PhpUnset unsetStatement)                {}
-    @Override public void visitPhpEmpty(PhpEmpty emptyExpression)               {}
-    @Override public void visitPhpEchoStatement(PhpEchoStatement echoStatement) {}
+    @Override public void visitPhpBinaryExpression(BinaryExpression expression)       {}
+    @Override public void visitPhpIsset(PhpIsset issetExpression)                     {}
+    @Override public void visitPhpUnset(PhpUnset unsetStatement)                      {}
+    @Override public void visitPhpEmpty(PhpEmpty emptyExpression)                     {}
+    @Override public void visitPhpEchoStatement(PhpEchoStatement echoStatement)       {}
+    @Override public void visitPhpStaticStatement(PhpStaticStatement staticStatement) {}
 
     @Override public void visitPhpClass(PhpClass clazz)                                            {}
     @Override public void visitPhpConstantReference(ConstantReference reference)                   {}

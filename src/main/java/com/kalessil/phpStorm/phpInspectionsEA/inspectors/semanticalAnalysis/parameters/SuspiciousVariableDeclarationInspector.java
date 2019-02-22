@@ -53,7 +53,6 @@ public class SuspiciousVariableDeclarationInspector extends BasePhpInspection {
             }
 
             private void inspect(@NotNull Function function) {
-
                 final List<Variable> useVariables = ExpressionSemanticUtil.getUseListVariables(function);
                 final boolean hasUseVariables     = useVariables != null && !useVariables.isEmpty();
                 if (hasUseVariables) {
@@ -66,8 +65,6 @@ public class SuspiciousVariableDeclarationInspector extends BasePhpInspection {
                             holder.registerProblem(variable, String.format(messageSameParameter, variableName));
                         }
                     }
-                    /* release references */
-                    if (hasParameters) { parameters.clear(); }
                 }
                 /* release references */
                 if (hasUseVariables) { useVariables.clear(); }
@@ -101,9 +98,7 @@ public class SuspiciousVariableDeclarationInspector extends BasePhpInspection {
                             }
                         }
                     });
-
                     /* release references */
-                    if (hasParameters)   { parameters.clear();   }
                     if (hasUseVariables) { useVariables.clear(); }
                 }
             }

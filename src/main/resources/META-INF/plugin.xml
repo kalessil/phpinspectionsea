@@ -511,7 +511,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.GetSetMethodCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="SuspiciousVariableDeclarationInspection"       displayName="Suspicious variable declaration"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.parameters.SuspiciousVariableDeclarationInspector"/>
 
 

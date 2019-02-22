@@ -10,6 +10,8 @@
 
     echo phpversion('extension-name');
     echo phpversion($object);
+    echo php_uname('...');
+    echo php_uname();
 
     PHP_VERSION_ID >= 70000;
     PHP_VERSION_ID === 70100;

@@ -77,16 +77,14 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                 if (functionName != null && !(reference.getParent() instanceof PhpUse)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (functions.containsKey(functionName)) {
-                        /* classification part */
-                        boolean canUseConstant = false;
-                        if (arguments.length == 0) {
-                            canUseConstant = true;
-                        } else if (arguments.length == 1 && functionName.equals("php_uname")) {
-                            canUseConstant =
-                                arguments[0] instanceof StringLiteralExpression &&
-                                ((StringLiteralExpression) arguments[0]).getContents().equals("s");
+                        boolean canUseConstant = arguments.length == 0;
+                        /* special handling for "php_uname" */
+                        if (functionName.equals("php_uname")) {
+                            canUseConstant = false;
+                            if (arguments.length == 1 && arguments[0] instanceof StringLiteralExpression) {
+                                canUseConstant = ((StringLiteralExpression) arguments[0]).getContents().equals("s");
+                            }
                         }
-                        /* reporting part */
                         if (canUseConstant) {
                             final String constant = functions.get(functionName);
                             final String message  = String.format(useConstantPattern, constant);

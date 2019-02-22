@@ -2,10 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.par
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.Parameter;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -60,7 +58,8 @@ public class SuspiciousVariableDeclarationInspector extends BasePhpInspection {
 
                 /* pattern: use variable matches any parameter */
                 final List<Variable> useVariables = ExpressionSemanticUtil.getUseListVariables(function);
-                if (useVariables != null && !useVariables.isEmpty()) {
+                final boolean hasUseVariables     = useVariables != null && !useVariables.isEmpty();
+                if (hasUseVariables) {
                     for (final Variable variable : useVariables) {
                         final String variableName = variable.getName();
                         if (parameters.stream().anyMatch(p -> variableName.equals(p.getName()))) {
@@ -70,6 +69,32 @@ public class SuspiciousVariableDeclarationInspector extends BasePhpInspection {
                 }
 
                 /* pattern: static variables matches any parameter or use variables */
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                for (final PhpStaticStatement candidate : PsiTreeUtil.findChildrenOfType(body, PhpStaticStatement.class)) {
+                    candidate.getDeclarations().forEach(declaration -> {
+                        final PhpPsiElement declared = declaration.getVariable();
+                        if (declared instanceof Variable) {
+                            final String variableName = declared.getName();
+                            if (variableName != null && !variableName.isEmpty()) {
+                                /* pattern: static variable matches a parameter */
+                                if (parameters.stream().anyMatch(parameter -> variableName.equals(parameter.getName()))) {
+                                    holder.registerProblem(declared, String.format(messageSameParameter, variableName));
+                                }
+                                /* pattern: static variable matches a use-variable */
+                                if (hasUseVariables) {
+                                    if (useVariables.stream().anyMatch(variable -> variableName.equals(variable.getName()))) {
+                                        holder.registerProblem(declared, String.format(messageSameParameter, variableName));
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                parameters.clear();
+                if (hasUseVariables) {
+                    useVariables.clear();
+                }
             }
         };
     }

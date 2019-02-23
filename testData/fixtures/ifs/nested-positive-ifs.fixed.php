@@ -64,8 +64,6 @@ function cases_holder_operations_priority() {
 }
 
 function preserve_comments_in_fix() {
-    /* comment 1 */
-    // comment 2
-    /** comment 3 */
+    // comment
     if ($a && $b) {}
 }

@@ -2,15 +2,16 @@
 
 class ParentClass
 {
-    public function overridden() {}
-    public function blocked()    {}
+    public function overriddenRegular()       {}
+    static public function overriddenStatic() {}
+    public function blocked()                 {}
 }
 
 class ChildClass extends ParentClass
 {
-    public function overridden()
+    public function overriddenRegular()
     {
-        parent::overridden();
+        parent::overriddenRegular();
     }
 }
 
@@ -18,7 +19,8 @@ class CasesHolder extends ParentClass
 {
     public function target()
     {
-        <weak_warning descr="It was probably intended to use '$this->overridden('...', '...')' here.">parent::overridden('...', '...')</weak_warning>;
+        <weak_warning descr="It was probably intended to use '$this->overriddenRegular('...', '...')' here.">parent::overriddenRegular('...', '...')</weak_warning>;
+        <weak_warning descr="It was probably intended to use 'self::overriddenStatic('...', '...')' here.">parent::overriddenStatic('...', '...')</weak_warning>;
         parent::blocked();
     }
 }

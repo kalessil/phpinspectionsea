@@ -12,6 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -39,24 +41,26 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
                 if (base instanceof ClassReference && base.getText().equals("parent")) {
                     final Function scope = ExpressionSemanticUtil.getScope(reference);
                     if (scope instanceof Method) {
-                        final Method method = (Method) scope;
-                        if (!method.isStatic()) {
+                        final Method context = (Method) scope;
+                        final PhpClass clazz = context.getContainingClass();
+                        if (clazz != null && !clazz.isTrait() && !context.isStatic()) {
                             final String methodName    = scope.getName();
                             final String referenceName = reference.getName();
-                            if (!methodName.isEmpty() && !methodName.equals(referenceName)) {
-                                final PhpClass clazz = method.getContainingClass();
-                                if (clazz != null && !clazz.isTrait() && clazz.findOwnMethodByName(referenceName) == null) {
-                                    final boolean blockedUsingThis =
-                                            !clazz.isFinal() &&
-                                            OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), PhpIndex.getInstance(reference.getProject())).stream()
-                                                    .anyMatch(c -> c.findOwnMethodByName(referenceName) != null);
-                                    if (!blockedUsingThis) {
+                            if (referenceName != null && !referenceName.equals(methodName)) {
+                                final boolean isTarget = clazz.findOwnMethodByName(referenceName) == null &&
+                                                         !this.isOverridden(clazz, referenceName);
+                                if (isTarget) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof Method) {
                                         final PsiElement parameters = reference.getParameterList();
-                                        final String replacement    = String.format("$this->%s(%s)", referenceName, parameters == null ? "" : parameters.getText());
+                                        final String replacement    = String.format(
+                                                ((Method) resolved).isStatic() ? "self::%s(%s)" : "$this->%s(%s)",
+                                                referenceName,
+                                                parameters == null ? "" : parameters.getText());
                                         holder.registerProblem(
                                                 reference,
                                                 String.format(messagePattern, replacement),
-                                                new UseThisVariableFix(replacement)
+                                                new NormalizeClassReferenceFix(replacement)
                                         );
                                     }
                                 }
@@ -65,11 +69,20 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
                     }
                 }
             }
+
+            final boolean isOverridden(@NotNull PhpClass clazz, @NotNull String methodName) {
+                if (!clazz.isFinal()) {
+                    final PhpIndex index                = PhpIndex.getInstance(holder.getProject());
+                    final Collection<PhpClass> children = OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index);
+                    return children.stream().anyMatch(c -> c.findOwnMethodByName(methodName) != null);
+                }
+                return false;
+            }
         };
     }
 
-    private static final class UseThisVariableFix extends UseSuggestedReplacementFixer {
-        private static final String title = "Use '$this' instead";
+    private static final class NormalizeClassReferenceFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Apply suggested class reference";
 
         @NotNull
         @Override
@@ -77,7 +90,7 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
             return title;
         }
 
-        UseThisVariableFix(@NotNull String expression) {
+        NormalizeClassReferenceFix(@NotNull String expression) {
             super(expression);
         }
     }

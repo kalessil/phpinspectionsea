@@ -4,10 +4,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -19,6 +16,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 /*
@@ -187,26 +187,36 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     final PsiElement body       = target.getStatement();
                     final PsiElement parentBody = parent.getStatement();
                     if (body != null && parentBody != null) {
-                        boolean wrapParent       = parentCondition instanceof AssignmentExpression ||
-                                                   parentCondition instanceof TernaryExpression;
-                        if (!wrapParent && parentCondition instanceof BinaryExpression) {
-                            final BinaryExpression binary = (BinaryExpression) parentCondition;
-                            wrapParent                    = binary.getOperationType() != PhpTokenTypes.opAND;
+                        boolean wrap = parentCondition instanceof AssignmentExpression || parentCondition instanceof TernaryExpression;
+                        if (!wrap && parentCondition instanceof BinaryExpression) {
+                            wrap = ((BinaryExpression) parentCondition).getOperationType() != PhpTokenTypes.opAND;
                         }
-                        final String code        = String.format(
-                                wrapParent ? "((%s) && %s)" : "(%s && %s)",
-                                parentCondition.getText(),
-                                condition.getText()
-                        );
-                        final PsiElement implant = PhpPsiElementFactory
-                                .createPhpPsiFromText(project, ParenthesizedExpression.class, code)
-                                .getArgument();
+                        final String code        = String.format(wrap ? "((%s) && %s)" : "(%s && %s)", parentCondition.getText(), condition.getText());
+                        final PsiElement implant = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument();
                         if (implant != null) {
+                            this.preserveComments(target, parent);
+
                             parentBody.replace(body);
                             parentCondition.replace(implant);
                         }
                     }
                 }
+            }
+        }
+
+        private void preserveComments(@NotNull If target, @NotNull If parent) {
+            final List<PsiElement> comments = new ArrayList<>();
+            PsiElement candidate = target.getPrevSibling();
+            while (candidate != null) {
+                if (candidate instanceof PsiComment) {
+                    comments.add(candidate);
+                }
+                candidate = candidate.getPrevSibling();
+            }
+            if (!comments.isEmpty()) {
+                Collections.reverse(comments);
+                comments.forEach(comment -> parent.getParent().addBefore(comment, parent));
+                comments.clear();
             }
         }
     }

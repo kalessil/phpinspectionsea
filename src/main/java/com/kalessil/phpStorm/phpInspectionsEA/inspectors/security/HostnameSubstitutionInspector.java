@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +70,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                         /* at function/method/class level we can stop */
                         break;
                     } else if (parent instanceof ConcatenationExpression){
-                        this.inspectConcatenationContext((ConcatenationExpression) parent);
+                        this.inspectConcatenationContext(expression, (ConcatenationExpression) parent);
                         break;
                     } else if (OpenapiTypesUtil.isAssignment(parent)) {
                         this.inspectAssignmentContext(expression, (AssignmentExpression) parent);
@@ -80,20 +81,27 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
             }
 
             /* direct/decorated concatenation with "...@" */
-            private void inspectConcatenationContext(@NotNull ConcatenationExpression context) {
+            private void inspectConcatenationContext(
+                    @NotNull ArrayAccessExpression substitutedExpression,
+                    @NotNull ConcatenationExpression context
+            ) {
                 PsiElement left = context.getLeftOperand();
                 if (left instanceof ConcatenationExpression) {
                     left = ((ConcatenationExpression) left).getRightOperand();
                 }
                 final PsiElement right = context.getRightOperand();
                 if (right != null && left instanceof StringLiteralExpression) {
-                    if (((StringLiteralExpression) left).getContents().endsWith("@")) {
+                    final boolean containsAt = ((StringLiteralExpression) left).getContents().endsWith("@");
+                    if (containsAt && !this.isChecked(substitutedExpression)) {
                         holder.registerProblem(right, messageGeneral);
                     }
                 }
             }
 
-            private void inspectAssignmentContext(@NotNull ArrayAccessExpression expression, @NotNull AssignmentExpression context) {
+            private void inspectAssignmentContext(
+                @NotNull ArrayAccessExpression substitutedExpression,
+                @NotNull AssignmentExpression context
+            ) {
                 final PsiElement storage = context.getVariable();
                 if (storage instanceof ArrayAccessExpression) {
                     final ArrayIndex index = ((ArrayAccessExpression) storage).getIndex();
@@ -114,8 +122,8 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                     final String storageName = ((FieldReference) storage).getName();
                     if (!StringUtils.isEmpty(storageName)) {
                         final Matcher matcher = regexTargetNames.matcher(storageName);
-                        if (matcher.matches()) {
-                            holder.registerProblem(expression, messageNaming);
+                        if (matcher.matches() && !this.isChecked(substitutedExpression)) {
+                            holder.registerProblem(substitutedExpression, messageNaming);
                         }
                     }
                 } else if (storage instanceof Variable) {
@@ -130,7 +138,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                             } else if (candidate.getName().equals(variableName)) {
                                 final PsiElement parent = candidate.getParent();
                                 if (parent instanceof ConcatenationExpression) {
-                                    this.inspectConcatenationContext((ConcatenationExpression) parent);
+                                    this.inspectConcatenationContext(substitutedExpression, (ConcatenationExpression) parent);
                                 }
                             }
                         }
@@ -139,12 +147,32 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                         final String storageName = ((PhpNamedElement) storage).getName();
                         if (!storageName.isEmpty()) {
                             final Matcher matcher = regexTargetNames.matcher(storageName);
-                            if (matcher.matches()) {
-                                holder.registerProblem(expression, messageNaming);
+                            if (matcher.matches() && !this.isChecked(substitutedExpression)) {
+                                holder.registerProblem(substitutedExpression, messageNaming);
                             }
                         }
                     }
                 }
+            }
+
+            private boolean isChecked(@NotNull ArrayAccessExpression substitutedExpression) {
+                final Function scope = ExpressionSemanticUtil.getScope(substitutedExpression);
+                if (scope != null) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                    if (body != null) {
+                        return PsiTreeUtil.findChildrenOfType(body, FunctionReference.class).stream().anyMatch(c -> {
+                            final String functionName = c.getName();
+                            if (functionName != null && functionName.equals("in_array")) {
+                                final PsiElement[] arguments = c.getParameters();
+                                if (arguments.length > 0 && arguments[0] instanceof ArrayAccessExpression) {
+                                    return OpenapiEquivalenceUtil.areEqual(arguments[0], substitutedExpression);
+                                }
+                            }
+                            return false;
+                        });
+                    }
+                }
+                return false;
             }
         };
     }

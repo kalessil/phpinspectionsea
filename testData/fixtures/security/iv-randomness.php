@@ -29,7 +29,7 @@ class IvRandomness {
         mcrypt_encrypt('cipher', 'key', 'data', 'mode', $this->_iv);
     }
 
-    private function invalidCases($iv = 'variable'){
+    private function invalidCases($iv = 'variable') {
         $iv       = mt_rand();
         $this->iv = mt_rand();
 
@@ -47,5 +47,13 @@ class IvRandomness {
             <error descr="openssl_random_pseudo_bytes() should be used for IV, but found: 'constant'.">self::IV</error>);
         mcrypt_encrypt('cipher', 'key', 'data', 'mode',
             <error descr="mcrypt_create_iv() should be used for IV, but found: 'constant'.">self::IV</error>);
+    }
+
+    private function wrappedRandomBytes($length) {
+        return random_bytes($length);
+    }
+
+    private function testWrappedRandomBytes() {
+        openssl_encrypt('...', '...', '...', 0, $this->wrappedRandomBytes(32));
     }
 }

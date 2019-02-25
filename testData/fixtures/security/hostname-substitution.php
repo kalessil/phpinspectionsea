@@ -30,10 +30,16 @@
         return $domain;
     }
 
-    function reported_case_simplified(){
+    function reported_case_simplified() {
         $server = strtolower($_SERVER['SERVER_NAME']);
         if (strpos($server,'www.') === 0) {
             $server = substr($server, 4);
         }
         return 'me@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$server</error>;
+    }
+
+    function whitelisted_case() {
+        if (in_array($_SERVER['HTTP_HOST'], [])) {
+            $this->server = $_SERVER['HTTP_HOST'];
+        }
     }

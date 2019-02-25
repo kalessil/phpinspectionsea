@@ -81,3 +81,10 @@ function cases_holder_operations_priority() {
         <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
     }
 }
+
+function preserve_comments_in_fix() {
+    if ($a) {
+        // comment
+        <weak_warning descr="If construct can be merged with parent one.">if</weak_warning> ($b) {}
+    }
+}

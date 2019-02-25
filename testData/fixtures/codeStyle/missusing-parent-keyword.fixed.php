@@ -2,15 +2,16 @@
 
 class ParentClass
 {
-    public function overridden() {}
-    public function blocked()    {}
+    public function overriddenRegular()       {}
+    static public function overriddenStatic() {}
+    public function blocked()                 {}
 }
 
 class ChildClass extends ParentClass
 {
-    public function overridden()
+    public function overriddenRegular()
     {
-        parent::overridden();
+        parent::overriddenRegular();
     }
 }
 
@@ -18,7 +19,8 @@ class CasesHolder extends ParentClass
 {
     public function target()
     {
-        $this->overridden('...', '...');
+        $this->overriddenRegular('...', '...');
+        self::overriddenStatic('...', '...');
         parent::blocked();
     }
 }

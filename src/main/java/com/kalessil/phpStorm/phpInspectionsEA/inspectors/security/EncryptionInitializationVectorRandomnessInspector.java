@@ -4,9 +4,15 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +29,7 @@ import java.util.*;
  */
 
 public class EncryptionInitializationVectorRandomnessInspector extends BasePhpInspection {
-    private static final String messagePattern = "%f%() should be used for IV, but found: %e%.";
+    private static final String messagePattern = "%s() should be used for IV, but found: %s.";
 
     @NotNull
     private static final HashSet<String> secureFunctions = new HashSet<>();
@@ -55,9 +61,8 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                     /* discover and inspect possible values */
                     final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[4]);
                     if (!values.isEmpty()) {
-                        final List<String> reporting = new ArrayList<>();
-
                         /* check all possible values */
+                        final List<String> reporting = new ArrayList<>();
                         for (final PsiElement source : values) {
                             if (OpenapiTypesUtil.isFunctionReference(source)) {
                                 final String sourceName = ((FunctionReference) source).getName();
@@ -67,24 +72,37 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                             }
                             reporting.add(source.getText());
                         }
-                        values.clear();
 
-                        /* got something for reporting */
-                        if (!reporting.isEmpty()) {
+                        if (!reporting.isEmpty() && !this.isAggregatedGeneration(values)) {
                             /* sort reporting list to produce testable results */
                             Collections.sort(reporting);
 
-                            /* report now */
                             final String ivFunction = functionName.startsWith("openssl_") ? "openssl_random_pseudo_bytes" : "mcrypt_create_iv";
-                            final String message    = messagePattern
-                                    .replace("%e%", String.join(", ", reporting))
-                                    .replace("%f%", ivFunction);
+                            final String message    = String.format(messagePattern, ivFunction, String.join(", ", reporting));
                             holder.registerProblem(arguments[4], message, ProblemHighlightType.GENERIC_ERROR);
+                        }
 
-                            reporting.clear();
+                        reporting.clear();
+                        values.clear();
+                    }
+                }
+            }
+
+            private boolean isAggregatedGeneration(@NotNull Set<PsiElement> candidates) {
+                if (candidates.size() == 1) {
+                    final PsiElement candidate = candidates.iterator().next();
+                    if (candidate instanceof FunctionReference) {
+                        final PsiElement resolved = OpenapiResolveUtil.resolveReference((PsiReference) candidate);
+                        if (resolved instanceof Function) {
+                            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(resolved);
+                            if (body != null) {
+                                return PsiTreeUtil.findChildrenOfType(body, FunctionReference.class)
+                                                  .stream().anyMatch(c -> secureFunctions.contains(c.getName()));
+                            }
                         }
                     }
                 }
+                return false;
             }
         };
     }

@@ -9,9 +9,10 @@
     echo 'HTTP_HOST: ' . $_SERVER['HTTP_HOST'];
     echo 'SERVER_NAME: ' . $_SERVER['SERVER_NAME'];
 
-    $host   = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>);
-    $domain = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['SERVER_NAME']</error>);
-    $email  = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>);
+    $host            = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>);
+    $domain          = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['SERVER_NAME']</error>);
+    $email           = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>);
+    $array['domain'] = strtolower(<error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>);
 
     function cases_holder_second() {
         if (isset($_SERVER['HTTP_HOST'])) {

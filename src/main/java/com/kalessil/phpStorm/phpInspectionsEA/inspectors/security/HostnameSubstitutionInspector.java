@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -45,7 +46,8 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
-                if (this.isContainingFileSkipped(expression)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final PsiElement variable = expression.getValue();
                 if (variable instanceof Variable && ((Variable) variable).getName().equals("_SERVER")) {
@@ -93,7 +95,21 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
 
             private void inspectAssignmentContext(@NotNull ArrayAccessExpression expression, @NotNull AssignmentExpression context) {
                 final PsiElement storage = context.getVariable();
-                if (storage instanceof FieldReference) {
+                if (storage instanceof ArrayAccessExpression) {
+                    final ArrayIndex index = ((ArrayAccessExpression) storage).getIndex();
+                    if (index != null) {
+                        final PsiElement indexValue = index.getValue();
+                        if (indexValue instanceof StringLiteralExpression) {
+                            final StringLiteralExpression string = (StringLiteralExpression) indexValue;
+                            if (string.getFirstPsiChild() == null) {
+                                final Matcher matcher = regexTargetNames.matcher(string.getContents());
+                                if (matcher.matches()) {
+                                    holder.registerProblem(expression, messageNaming);
+                                }
+                            }
+                        }
+                    }
+                } else if (storage instanceof FieldReference) {
                     /* fields processing is too complex, just report it when naming matches */
                     final String storageName = ((FieldReference) storage).getName();
                     if (!StringUtils.isEmpty(storageName)) {

@@ -112,7 +112,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                             if (string.getFirstPsiChild() == null) {
                                 final Matcher matcher = regexTargetNames.matcher(string.getContents());
                                 if (matcher.matches()) {
-                                    holder.registerProblem(expression, messageNaming);
+                                    holder.registerProblem(substitutedExpression, messageNaming);
                                 }
                             }
                         }

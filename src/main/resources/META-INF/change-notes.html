@@ -3,18 +3,17 @@ New features release<br/>
 <br/>
 - Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/53701">v3.0.10</a><br/>
 <br/>
-- Class existence and relation check correctness: resolved a false-positive (is_subclass_of)<br/>
-- Substring comparison flaws: resolved a false-positive (unescaping correctness)<br/>
-- Suspicious binary operations: resolved false-positives (multiple cases)<br/>
-- 'compact(...)' variables existence: resolved a false-positive (variable variables)<br/>
+- UnnecessaryBooleanCheckInspector: disabled by default<br/>
+- SuspiciousBinaryOperationInspector: resolved a false-positive<br/>
+- SubstringCompareInspector: resolved a false-positive<br/>
+- OnlyWritesOnParameterInspector: resolved a false-positive<br/>
+- UnnecessaryEmptinessCheckInspector: resolved a false-positive (function calls in BOs)<br/>
 <br/>
-- Non-optimal regular expression: new patterns<br/>
-- One-time use variables: new patterns<br/>
-- Repetitive method calls: new patterns<br/>
-- Suspicious binary operations: new patterns<br/>
-- Unnecessary boolean check: implemented<br/>
-- get/set methods correctness: implemented<br/>
-- 'in_array(...)' can be used: implemented<br/>
+- SuspiciousVariableDeclarationInspector: implemented<br/>
+- RepetitiveMethodCallsInspector: new patterns<br/>
+- UnnecessaryContinueInspector: new patterns<br/>
+- SuspiciousBinaryOperationInspector: new patterns<br/>
+- IfReturnReturnSimplificationInspector: new patterns<br/>
 <br/>
 <hr/>
 </html>

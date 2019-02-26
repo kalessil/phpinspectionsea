@@ -1,5 +1,6 @@
 <?php
 
+/** @property mixed $annotatedProperty */
 class CasesHolder
 {
     protected $reported;
@@ -17,23 +18,15 @@ class CasesHolder
         $this->trigger = '...';
     }
 
+    /* the matched property is from PhpDoc */
+    public function getAnnotatedProperty() { return $this->trigger;}
+
+    /* multiple parameters, hardly setter/getter */
     protected $skipped;
-    public function isSkipped($one, $two)
-    {
-        return $this->trigger;
-    }
+    public function isSkipped($one, $two) { return $this->trigger; }
 
     protected $correct;
-    public function isCorrect()
-    {
-        return $this->correct;
-    }
-    public function getCorrect()
-    {
-        return $this->correct;
-    }
-    public function setCorrect()
-    {
-        $this->correct = '...';
-    }
+    public function isCorrect()  { return $this->correct;  }
+    public function getCorrect() { return $this->correct;  }
+    public function setCorrect() { $this->correct = '...'; }
 }

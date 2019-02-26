@@ -19,7 +19,7 @@ class CasesHolder
     }
 
     /* the matched property is from PhpDoc */
-    public function getAnnotatedProperty() { return $this->trigger;}
+    public function getAnnotatedProperty() { return $this->trigger; }
 
     /* multiple parameters, hardly setter/getter */
     protected $skipped;

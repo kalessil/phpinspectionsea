@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -45,7 +46,8 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                if (this.isContainingFileSkipped(method)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(method))                 { return; }
 
                 final String methodName = method.getName();
                 if (!methodName.isEmpty() && regexTargetName.matcher(methodName).matches()) {
@@ -69,16 +71,16 @@ public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
                                     final PhpClass clazz = method.getContainingClass();
                                     if (clazz != null) {
                                         final List<String> alternatives = new ArrayList<>();
-                                        final boolean hasAlternatives   = clazz.getFields().stream()
-                                                .filter(field   -> !field.isConstant())
-                                                .anyMatch(field -> {
-                                                    final String normalized = this.normalize(field.getName());
-                                                    if (normalized.equals(methodNameNormalized)) {
-                                                        alternatives.add(field.getName());
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                });
+                                        final boolean hasAlternatives   = clazz.getFields().stream().anyMatch(field -> {
+                                            if (!field.isConstant()) {
+                                                final String normalized = this.normalize(field.getName());
+                                                if (normalized.equals(methodNameNormalized)) {
+                                                    final PsiElement scope = ExpressionSemanticUtil.getBlockScope(field);
+                                                    return scope instanceof PhpClass && alternatives.add(field.getName());
+                                                }
+                                            }
+                                            return false;
+                                        });
                                         if (hasAlternatives) {
                                             final boolean isDelegating = PsiTreeUtil.findChildrenOfType(body, MethodReference.class).stream()
                                                     .anyMatch(reference -> methodName.equals(reference.getName()));

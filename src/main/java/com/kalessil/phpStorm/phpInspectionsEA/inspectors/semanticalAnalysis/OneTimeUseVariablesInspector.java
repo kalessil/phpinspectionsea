@@ -232,12 +232,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                 if (argument instanceof PhpPsiElement) {
-                    final Function scope = ExpressionSemanticUtil.getScope(expression);
-                    if (scope != null) {
-                        final Variable variable = this.getVariable(argument);
-                        if (variable != null) {
-                            this.checkOneTimeUse(expression, variable, scope);
-                        }
+                    final Variable variable = this.getVariable(argument);
+                    if (variable != null) {
+                        this.checkOneTimeUse(expression, variable, ExpressionSemanticUtil.getScope(expression));
                     }
                 }
             }

@@ -5,10 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -24,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -54,18 +52,17 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forExpression);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
                     final PsiElement indexVariable = this.getCounterVariable(forExpression);
-                    if (
-                        indexVariable != null &&
-                        this.isCounterVariableIncremented(forExpression, indexVariable) &&
-                        this.isCheckedAsExpected(forExpression, indexVariable)
-                    ) {
-                        final PsiElement container = this.getContainerByIndex(body, indexVariable);
-                        if (container != null && this.isIterableContainer(container)) {
-                            holder.registerProblem(
-                                    forExpression.getFirstChild(),
-                                    foreachInvariant,
-                                    new UseForeachFix(forExpression, indexVariable, null, container)
-                            );
+                    if (indexVariable != null && this.isCounterVariableIncremented(forExpression, indexVariable)) {
+                        final PsiElement limit = this.isCheckedAsExpected(forExpression, indexVariable);
+                        if (limit instanceof Variable) {
+                            final PsiElement container = this.getContainerByIndex(body, indexVariable);
+                            if (container != null && this.isIterableContainer(container)) {
+                                holder.registerProblem(
+                                        forExpression.getFirstChild(),
+                                        foreachInvariant,
+                                        new UseForeachFix(forExpression, indexVariable, null, container, limit)
+                                );
+                            }
                         }
                     }
                 }
@@ -105,7 +102,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                 if (parent instanceof While) {
                                     final List<PhpPsiElement> variables = assignmentExpression.getVariables();
                                     if (variables.size() == 2) {
-                                        fixer = new UseForeachFix(parent, variables.get(0), variables.get(1), arguments[0]);
+                                        fixer = new UseForeachFix(parent, variables.get(0), variables.get(1), arguments[0], null);
                                     }
                                 }
 
@@ -173,8 +170,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 return result;
             }
 
-            private boolean isCheckedAsExpected(@NotNull For expression, @NotNull PsiElement variable) {
-                boolean result               = false;
+            @Nullable
+            private PsiElement isCheckedAsExpected(@NotNull For expression, @NotNull PsiElement variable) {
                 final PsiElement[] conditions = expression.getConditionalExpressions();
                 if (conditions.length == 1) {
                     for (final PsiElement check : conditions) {
@@ -182,22 +179,21 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                             final BinaryExpression condition = (BinaryExpression) check;
                             final PsiElement left            = condition.getLeftOperand();
                             final PsiElement right           = condition.getRightOperand();
-
-                            final PsiElement value;
-                            if (left instanceof Variable && OpenapiEquivalenceUtil.areEqual(variable, left)) {
-                                value = right;
-                            } else if (right instanceof Variable && OpenapiEquivalenceUtil.areEqual(variable, right)) {
-                                value = left;
-                            } else {
-                                value = null;
+                            if (left != null && right != null) {
+                                final PsiElement value;
+                                if (left instanceof Variable && OpenapiEquivalenceUtil.areEqual(variable, left)) {
+                                    value = right;
+                                } else if (right instanceof Variable && OpenapiEquivalenceUtil.areEqual(variable, right)) {
+                                    value = left;
+                                } else {
+                                    value = null;
+                                }
+                                return value;
                             }
-
-                            result = value instanceof Variable;
-                            break;
                         }
                     }
                 }
-                return result;
+                return null;
             }
         };
     }
@@ -213,6 +209,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         private final SmartPsiElementPointer<PsiElement> value;
         @NotNull
         private final SmartPsiElementPointer<PsiElement> container;
+        @Nullable
+        private final SmartPsiElementPointer<PsiElement> limit;
 
         @NotNull
         @Override
@@ -230,7 +228,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             @NotNull PsiElement loop,
             @NotNull PsiElement index,
             @Nullable PsiElement value,
-            @NotNull PsiElement container
+            @NotNull PsiElement container,
+            @Nullable PsiElement limit
         ) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(loop.getProject());
@@ -239,18 +238,19 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             this.index     = factory.createSmartPsiElementPointer(index);
             this.value     = value == null ? null : factory.createSmartPsiElementPointer(value);
             this.container = factory.createSmartPsiElementPointer(container);
+            this.limit     = limit == null ? null : factory.createSmartPsiElementPointer(limit);
         }
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement loop      = this.loop.getElement();
             final PsiElement index     = this.index.getElement();
-            final PsiElement value     = this.value == null ? null : this.value.getElement();
             final PsiElement container = this.container.getElement();
             if (loop != null && index != null && container != null) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (body != null) {
-                    final String pattern = "foreach (%c% as %i% => %i%Value) {}"
+                    final PsiElement value = this.value == null ? null : this.value.getElement();
+                    final String pattern   = "foreach (%c% as %i% => %i%Value) {}"
                             .replace("%i%Value", value == null ? "%i%Value" : value.getText())
                             .replace("%i%", index.getText())
                             .replace("%i%", index.getText())
@@ -259,11 +259,37 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     final PsiElement replacementContainer = replacement.getValue();
                     final GroupStatement bodyHolder       = ExpressionSemanticUtil.getGroupStatement(replacement);
                     if (bodyHolder != null && replacementContainer != null) {
+                        final Function scope   = ExpressionSemanticUtil.getScope(loop);
+                        final PsiElement limit = this.limit == null ? null : this.limit.getElement();
                         this.updateContainersUsage(body, container, index, replacementContainer);
                         bodyHolder.replace(body);
                         this.cleanupUnusedIndex(replacement, body);
                         loop.replace(replacement);
+                        this.cleanupUnusedLimit(scope, limit);
                     }
+                }
+            }
+        }
+
+        private void cleanupUnusedLimit(@Nullable Function scope, @Nullable PsiElement limit) {
+            if (limit != null && scope != null) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                if (body != null) {
+                    final List<PsiElement> matches = PsiTreeUtil.findChildrenOfType(body, limit.getClass()).stream()
+                            .filter(c -> OpenapiEquivalenceUtil.areEqual(c, limit))
+                            .collect(Collectors.toList());
+                    if (matches.size() == 1) {
+                        final PsiElement match  = matches.get(0);
+                        final PsiElement parent = match.getParent();
+                        if (OpenapiTypesUtil.isAssignment(parent)) {
+                            final PsiElement grandParent          = parent.getParent();
+                            final AssignmentExpression assignment = (AssignmentExpression) parent;
+                            if (assignment.getVariable() == match && OpenapiTypesUtil.isStatementImpl(grandParent)) {
+                                grandParent.delete();
+                            }
+                        }
+                    }
+                    matches.clear();
                 }
             }
         }

@@ -22,13 +22,17 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -265,12 +269,40 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 if (source != null) {
                     final Function scope = ExpressionSemanticUtil.getScope(expression);
                     if (scope != null) {
-                        final Variable variable = this.getVariable(source);
-                        if (variable != null) {
-                            this.checkOneTimeUse(expression, variable, scope);
+                        final Variable extractedSource = this.getVariable(source);
+                        if (extractedSource != null) {
+                            this.checkOneTimeUse(expression, extractedSource, scope);
                         }
+                        Stream.of(expression.getKey(), expression.getValue())
+                                .filter(Objects::nonNull)
+                                .forEach(variable -> this.checkIfCanRename(expression, variable));
                     }
                 }
+            }
+
+            private void checkIfCanRename(@NotNull ForeachStatement expression, @NotNull Variable subject) {
+                /* find assignments directly in body, with subject as value (single subject use) */
+                final GroupStatement loopBody = ExpressionSemanticUtil.getGroupStatement(expression);
+                if (loopBody != null && ExpressionSemanticUtil.countExpressionsInGroup(loopBody) > 1) {
+                    final List<Variable> matches = PsiTreeUtil.findChildrenOfType(loopBody, Variable.class).stream()
+                            .filter(v -> OpenapiEquivalenceUtil.areEqual(v, subject))
+                            .collect(Collectors.toList());
+                    if (matches.size() == 1) {
+                        final Variable match    = matches.get(0);
+                        final PsiElement parent = match.getParent();
+                        if (OpenapiTypesUtil.isAssignment(parent)) { // (might be by reference)
+                            final AssignmentExpression assignment = (AssignmentExpression) parent;
+                            if (assignment.getValue() == match && assignment.getVariable() instanceof Variable) {
+                                final PsiElement grandParent = assignment.getParent();
+                                if (OpenapiTypesUtil.isStatementImpl(grandParent) && grandParent.getParent() == loopBody) {
+
+                                }
+                            }
+                        }
+                    }
+                    matches.clear();
+                }
+                // ensure the target container is not used outside
             }
 
             @Nullable

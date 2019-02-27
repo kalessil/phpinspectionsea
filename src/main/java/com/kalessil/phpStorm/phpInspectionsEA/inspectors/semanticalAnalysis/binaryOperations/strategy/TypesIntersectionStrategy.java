@@ -4,12 +4,11 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,10 +51,24 @@ final public class TypesIntersectionStrategy {
     }
 
     private static PhpType extract(@Nullable PsiElement expression) {
-        if (expression instanceof FunctionReference) {
-            final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) expression);
-            if (resolved instanceof Function && OpenapiElementsUtil.getReturnType((Function) resolved) != null) {
-                final PhpType type = OpenapiResolveUtil.resolveType((FunctionReference) expression, expression.getProject());
+        if (expression instanceof PhpTypedElement) {
+            if (expression instanceof FunctionReference) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) expression);
+                if (resolved instanceof Function && OpenapiElementsUtil.getReturnType((Function) resolved) != null) {
+                    final PhpType type = OpenapiResolveUtil.resolveType((FunctionReference) expression, expression.getProject());
+                    if (type != null) {
+                        return type;
+                    }
+                }
+            } else if (expression instanceof StringLiteralExpression) {
+                return PhpType.STRING;
+            } else if (
+                expression instanceof ArrayCreationExpression ||
+                expression instanceof ConstantReference ||
+                expression instanceof ClassConstantReference ||
+                OpenapiTypesUtil.isNumber(expression)
+            ) {
+                final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, expression.getProject());
                 if (type != null) {
                     return type;
                 }

@@ -275,12 +275,16 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         }
                         Stream.of(expression.getKey(), expression.getValue())
                                 .filter(Objects::nonNull)
-                                .forEach(variable -> this.checkIfCanRename(expression, variable));
+                                .forEach(variable -> this.checkIfCanRename(expression, variable, scope));
                     }
                 }
             }
 
-            private void checkIfCanRename(@NotNull ForeachStatement expression, @NotNull Variable subject) {
+            private void checkIfCanRename(
+                    @NotNull ForeachStatement expression,
+                    @NotNull Variable subject,
+                    @NotNull Function scope
+            ) {
                 /* find assignments directly in body, with subject as value (single subject use) */
                 final GroupStatement loopBody = ExpressionSemanticUtil.getGroupStatement(expression);
                 if (loopBody != null && ExpressionSemanticUtil.countExpressionsInGroup(loopBody) > 1) {
@@ -290,7 +294,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     if (matches.size() == 1) {
                         final Variable match    = matches.get(0);
                         final PsiElement parent = match.getParent();
-                        if (OpenapiTypesUtil.isAssignment(parent)) { // (might be by reference)
+                        if (OpenapiTypesUtil.isAssignment(parent)) { // might be by reference
                             final AssignmentExpression assignment = (AssignmentExpression) parent;
                             if (assignment.getValue() == match && assignment.getVariable() instanceof Variable) {
                                 final PsiElement grandParent = assignment.getParent();

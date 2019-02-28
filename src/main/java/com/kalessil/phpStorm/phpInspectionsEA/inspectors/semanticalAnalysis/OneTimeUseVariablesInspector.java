@@ -31,7 +31,6 @@ import javax.swing.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -285,28 +284,46 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                     @NotNull Variable subject,
                     @NotNull Function scope
             ) {
-                /* find assignments directly in body, with subject as value (single subject use) */
                 final GroupStatement loopBody = ExpressionSemanticUtil.getGroupStatement(expression);
                 if (loopBody != null && ExpressionSemanticUtil.countExpressionsInGroup(loopBody) > 1) {
-                    final List<Variable> matches = PsiTreeUtil.findChildrenOfType(loopBody, Variable.class).stream()
-                            .filter(v -> OpenapiEquivalenceUtil.areEqual(v, subject))
-                            .collect(Collectors.toList());
-                    if (matches.size() == 1) {
-                        final Variable match    = matches.get(0);
-                        final PsiElement parent = match.getParent();
-                        if (OpenapiTypesUtil.isAssignment(parent)) { // might be by reference
-                            final AssignmentExpression assignment = (AssignmentExpression) parent;
-                            if (assignment.getValue() == match && assignment.getVariable() instanceof Variable) {
-                                final PsiElement grandParent = assignment.getParent();
-                                if (OpenapiTypesUtil.isStatementImpl(grandParent) && grandParent.getParent() == loopBody) {
+                    AssignmentExpression targetAssignment = null;
+                    Variable targetVariable               = null;
 
+                    /* find assignments directly in body, with subject as value */
+                    for (final PsiElement child: loopBody.getChildren()) {
+                        final PsiElement first = child.getFirstChild();
+                        if (OpenapiTypesUtil.isAssignment(first)) {
+                            final AssignmentExpression assignment = (AssignmentExpression) first;
+                            final PsiElement container            = assignment.getVariable();
+                            if (container instanceof Variable) {
+                                final PsiElement value = assignment.getValue();
+                                if (value instanceof Variable && OpenapiEquivalenceUtil.areEqual(subject, value)) {
+                                    targetAssignment = assignment;
+                                    targetVariable   = (Variable) container;
+                                    break;
                                 }
                             }
                         }
                     }
-                    matches.clear();
+
+                    if (targetAssignment != null) {
+                        /* check subject usage: subject value stored in a local variable, which is used instead */
+                        final long subjectUsages = PsiTreeUtil.findChildrenOfType(loopBody, Variable.class).stream().filter(v -> OpenapiEquivalenceUtil.areEqual(v, subject)).count();
+                        if (subjectUsages == 1) {
+                            final GroupStatement scopeBody = ExpressionSemanticUtil.getGroupStatement(scope);
+                            if (scopeBody != null) {
+                                final Variable target        = targetVariable;
+                                final long targetUsageInLoop = PsiTreeUtil.findChildrenOfType(loopBody, Variable.class).stream().filter(v -> OpenapiEquivalenceUtil.areEqual(v, target)).count();
+                                if (targetUsageInLoop > 1) {
+                                    final long targetUsageInScope = PsiTreeUtil.findChildrenOfType(scopeBody, Variable.class).stream().filter(v -> OpenapiEquivalenceUtil.areEqual(v, target)).count();
+                                    if (targetUsageInLoop == targetUsageInScope) {
+                                        holder.registerProblem(target, "The local variable introduction doesn't make much sense here, consider renaming a loop variable instead.");
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                // ensure the target container is not used outside
             }
 
             @Nullable

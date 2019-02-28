@@ -17,4 +17,9 @@ function cases_holder() {
 
     $five = require $file;
     foreach ($five as $value) {}
+
+    foreach ([] as $loopVariable) {
+        <warning descr="The local variable introduction doesn't make much sense here, consider renaming a loop variable instead.">$localVariable</warning> = $loopVariable;
+        $result = $source[$localVariable];
+    }
 }

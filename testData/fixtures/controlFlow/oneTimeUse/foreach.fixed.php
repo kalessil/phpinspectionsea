@@ -13,4 +13,8 @@ function cases_holder() {
 
     $five = require $file;
     foreach ($five as $value) {}
+
+    foreach ([] as $localVariable) {
+        $result = $source[$localVariable];
+    }
 }

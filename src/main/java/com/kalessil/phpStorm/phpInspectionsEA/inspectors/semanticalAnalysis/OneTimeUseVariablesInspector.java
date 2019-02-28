@@ -47,6 +47,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     public boolean ALLOW_LONG_STATEMENTS = false;
 
     private static final String messagePattern = "Variable $%s is redundant.";
+    private static final String messageRename  = "The local variable introduction doesn't make much sense here, consider renaming a loop variable instead.";
 
     @NotNull
     public String getShortName() {
@@ -148,7 +149,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         holder.registerProblem(
                                 assignVariable,
                                 String.format(messagePattern, variableName),
-                                new TheLocalFix(assign.getParent(), argument, value)
+                                new InlineValueFix(assign.getParent(), argument, value)
                         );
                     }
                 }
@@ -317,7 +318,11 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                                 if (targetUsageInLoop > 1) {
                                     final long targetUsageInScope = PsiTreeUtil.findChildrenOfType(scopeBody, Variable.class).stream().filter(v -> OpenapiEquivalenceUtil.areEqual(v, target)).count();
                                     if (targetUsageInLoop == targetUsageInScope) {
-                                        holder.registerProblem(target, "The local variable introduction doesn't make much sense here, consider renaming a loop variable instead.");
+                                        holder.registerProblem(
+                                                target,
+                                                messageRename,
+                                                new RenameLoopVariableFix(targetAssignment, subject, targetVariable)
+                                        );
                                     }
                                 }
                             }
@@ -410,14 +415,54 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
         );
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static final class RenameLoopVariableFix implements LocalQuickFix {
+        private static final String title = "Rename the loop variable accordingly";
+
+        private final SmartPsiElementPointer<PsiElement> assignment;
+        private final SmartPsiElementPointer<Variable> variable;
+        private final SmartPsiElementPointer<Variable> subject;
+
+        RenameLoopVariableFix(@NotNull PsiElement assignment, @NotNull Variable subject, @NotNull Variable variable) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(variable.getProject());
+
+            this.assignment = factory.createSmartPsiElementPointer(assignment);
+            this.subject    = factory.createSmartPsiElementPointer(subject);
+            this.variable   = factory.createSmartPsiElementPointer(variable);
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement assignment = this.assignment.getElement();
+            final Variable subject      = this.subject.getElement();
+            final Variable variable     = this.variable.getElement();
+            if (assignment != null && subject != null && variable != null && !project.isDisposed()) {
+                subject.handleElementRename(variable.getName());
+                assignment.getParent().delete();
+            }
+        }
+    }
+
+    private static final class InlineValueFix implements LocalQuickFix {
         private static final String title = "Inline value";
 
         private final SmartPsiElementPointer<PsiElement> assignment;
         private final SmartPsiElementPointer<PsiElement> value;
         private final SmartPsiElementPointer<Variable> variable;
 
-        TheLocalFix(@NotNull PsiElement assignment, @NotNull Variable variable, @NotNull PsiElement value) {
+        InlineValueFix(@NotNull PsiElement assignment, @NotNull Variable variable, @NotNull PsiElement value) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
 

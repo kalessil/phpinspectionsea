@@ -1,5 +1,20 @@
 <?php
 
+namespace NS {
+    class CasesHolder {
+        public function casesHolder() {
+            foreach ($arr as $iValue) {
+                echo $iValue;
+            }
+
+            foreach ($arr as $v) {
+                echo $v;
+            }
+        }
+    }
+}
+
+namespace {
     function cases_holder($arr) {
         /* case: invariant */
         foreach ($arr as $iValue) {
@@ -56,3 +71,4 @@
             echo $string[$i];
         }
     }
+}

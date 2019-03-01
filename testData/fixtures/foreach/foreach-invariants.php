@@ -1,5 +1,21 @@
 <?php
 
+namespace NS {
+    class CasesHolder {
+        public function casesHolder() {
+            $iMax = count($arr);
+            <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $iMax; $i++, $z = 0) {
+                echo $arr[$i];
+            }
+
+            <error descr="Foreach should be used instead (8x faster).">while</error> (list($i, $v) = each($arr)) {
+                echo $arr[$i];
+            }
+        }
+    }
+}
+
+namespace {
     function cases_holder($arr) {
         /* case: invariant */
         <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max = count($arr); $i < $max; ++$i, $z = 0) {
@@ -57,3 +73,4 @@
             echo $string[$i];
         }
     }
+}

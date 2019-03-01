@@ -36,6 +36,10 @@
         return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $string;
     }
 
+    /** @return string */
+    function with_weak_return()           { return ''; }
+    function with_strict_return(): string { return ''; }
+
     class ClassWithSomeMethods {
         /** @var string */
         private $private;
@@ -50,10 +54,13 @@
             return <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $this->private;
         }
     }
+
     $instance = new ClassWithSomeMethods();
     return [
         (string) $instance->withWeakReturn(),
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $instance->withStrictReturn()
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> $instance->withStrictReturn(),
+        (string) with_weak_return(),
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(string)</weak_warning> with_strict_return(),
     ];
 
     /* false-positives: globals type resolving, null coalesce is problematic in general */

@@ -116,7 +116,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                             result = OpenapiResolveUtil.resolveType(referencedField, project);
                         }
                     }
-                } else if (expression instanceof MethodReference) { /* requires implicit return type declaration */
+                } else if (expression instanceof FunctionReference) { /* requires implicit return type declaration */
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) expression);
                     if (resolved instanceof Function) {
                         final Function referencedFunction = (Function) resolved;

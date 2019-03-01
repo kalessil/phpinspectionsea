@@ -36,6 +36,10 @@
         return $string;
     }
 
+    /** @return string */
+    function with_weak_return()           { return ''; }
+    function with_strict_return(): string { return ''; }
+
     class ClassWithSomeMethods {
         /** @var string */
         private $private;
@@ -50,10 +54,13 @@
             return $this->private;
         }
     }
+
     $instance = new ClassWithSomeMethods();
     return [
         (string) $instance->withWeakReturn(),
-        $instance->withStrictReturn()
+        $instance->withStrictReturn(),
+        (string) with_weak_return(),
+        with_strict_return(),
     ];
 
     /* false-positives: globals type resolving, null coalesce is problematic in general */

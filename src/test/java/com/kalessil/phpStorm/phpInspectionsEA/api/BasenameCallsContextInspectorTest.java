@@ -11,6 +11,6 @@ final public class BasenameCallsContextInspectorTest extends PhpCodeInsightFixtu
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("testData/fixtures/api/array/basename-context.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/basename-context.fixed.php");
     }
 }

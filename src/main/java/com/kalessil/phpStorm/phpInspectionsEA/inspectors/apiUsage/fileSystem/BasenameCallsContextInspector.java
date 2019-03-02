@@ -81,7 +81,7 @@ public class BasenameCallsContextInspector extends BasePhpInspection {
     }
 
     private static final class UseSecondArgumentFix extends UseSuggestedReplacementFixer {
-        private static final String title = "Collapse into single 'basename(...)' call";
+        private static final String title = "Filter extension in the 'basename(...)' call";
 
         @NotNull
         @Override

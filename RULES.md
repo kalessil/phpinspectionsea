@@ -52,6 +52,7 @@ Inspections Lists (Control flow)
 | Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | no  |
 | Control Flow         | InArrayCanBeUsedInspection                      | 'in_array(...)' can be used                                                       | n/a | yes | n/a  | no  |
 | Control Flow         | UnnecessaryBooleanCheckInspection               | Unnecessary boolean check                                                         | yes | yes | yes  | no  |
+| Control Flow         | BasenameCallsContextInspection                  | 'basename(...)' usage correctness                                                 | yes | yes | yes  | no  |
 
 Inspections Lists (PhpUnit)
 ---

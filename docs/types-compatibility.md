@@ -93,6 +93,18 @@ there you can also find relevant resources explaining how PHP comparison works.
 
 Take into account that while loose typing in PHP is a powerful feature, as any powerful feature it needs care when dealing with it.
 
+Example:
+
+Code that triggers the inspection:
+
+![Before](images/before-after/strict-comparison-before.png)
+
+
+After applying Quick-fix:
+
+![After](images/before-after/strict-comparison-after.png)
+
+
 ## Strict type search in arrays
 
 This inspection states that when the context requires strict types checking, then the third parameter flag should be used. Because
@@ -105,6 +117,7 @@ This inspection may help avoiding bugs like this:
 ```
 
 Example:
+
 Code that triggers the inspection:
 
 ![Before](images/before-after/strict-type-search-in-arrays-before.png)

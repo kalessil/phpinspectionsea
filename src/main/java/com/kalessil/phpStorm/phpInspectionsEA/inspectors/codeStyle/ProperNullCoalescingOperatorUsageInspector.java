@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 
 public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspection {
     private static final String messageSimplify = "It possible to use '%s' instead (reduces cognitive load).";
-    private static final String messageMismatch = "Resolved operands types are not complimentary (%s vs %s).";
+    private static final String messageMismatch = "Resolved operands types are not complimentary, while they should be (%s vs %s).";
 
     @NotNull
     public String getShortName() {
@@ -51,7 +52,12 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                     if (left != null && right != null) {
                         /* case: `call() ?? null` */
                         if (left instanceof FunctionReference && PhpLanguageUtil.isNull(right)) {
-                            holder.registerProblem(binary, String.format(messageSimplify, left.getText()));
+                            final String replacement = left.getText();
+                            holder.registerProblem(
+                                    binary,
+                                    String.format(messageSimplify, replacement),
+                                    new UseLeftOperandFix(replacement)
+                            );
                         }
                         /* case: `returns_string_or_null() ?? []` */
                         if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
@@ -86,5 +92,19 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                 return null;
             }
         };
+    }
+
+    private static final class UseLeftOperandFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use right operand instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        UseLeftOperandFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

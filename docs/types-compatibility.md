@@ -101,8 +101,3 @@ of the same explanation exposed in previous section, there will be cases in whic
 In order to emphasize on this, lets read more carefully the _WARNING_ that comes with documentation of **array_search** 
 [return value](http://php.net/manual/en/function.array-search.php#refsect1-function.array-search-returnvalues). Do you see how it is referenced
 again the issue with comparisons against loosely typed variables?
-
-## Parameter can be declared as array
-
-Reports if a callable parameter can be defined with the `array` type. Refactoring can affect class inheritance and
-test coverage should be verified before making changes.

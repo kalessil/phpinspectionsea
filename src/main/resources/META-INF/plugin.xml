@@ -811,6 +811,10 @@
         shortName="NestedAssignmentsUsageInspection"              displayName="Nested assignments usage"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.NestedAssignmentsUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ProperNullCoalescingOperatorUsageInspection"   displayName="Proper null-coalescing operator usage"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ProperNullCoalescingOperatorUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -57,9 +57,9 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                         if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
                             final Function scope = ExpressionSemanticUtil.getScope(binary);
                             if (scope != null) {
-                                final Set<String> leftTypes = this.resove((PhpTypedElement) left);
+                                final Set<String> leftTypes = this.resolve((PhpTypedElement) left);
                                 if (leftTypes != null) {
-                                    final Set<String> rightTypes = this.resove((PhpTypedElement) right);
+                                    final Set<String> rightTypes = this.resolve((PhpTypedElement) right);
                                     if (rightTypes != null && !leftTypes.containsAll(rightTypes)) {
                                         holder.registerProblem(
                                                 binary,
@@ -74,7 +74,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
             }
 
             @Nullable
-            private Set<String> resove(@NotNull PhpTypedElement subject) {
+            private Set<String> resolve(@NotNull PhpTypedElement subject) {
                 final PhpType type = OpenapiResolveUtil.resolveType(subject, holder.getProject());
                 if (type != null && !type.hasUnknown()) {
                     final Set<String> types = type.getTypes().stream().map(Types::getType).collect(Collectors.toSet());

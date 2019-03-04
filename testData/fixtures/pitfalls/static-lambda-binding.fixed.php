@@ -6,7 +6,7 @@ class CasesHolder {
     public function method() {
         return [
             function() { return $this->property; },
-            function() { return <error descr="'$this' can not be used in static closures.">$this</error>->property; },
+            function() { return $this->property; },
         ];
     }
 }

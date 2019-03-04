@@ -8,5 +8,9 @@ final public class StaticLambdaBindingInspectorTest extends PhpCodeInsightFixtur
         myFixture.enableInspections(new StaticLambdaBindingInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/static-lambda-binding.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/pitfalls/static-lambda-binding.fixed.php");
     }
 }

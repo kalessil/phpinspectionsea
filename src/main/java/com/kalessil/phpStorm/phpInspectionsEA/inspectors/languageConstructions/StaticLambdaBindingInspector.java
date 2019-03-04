@@ -1,7 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.Function;
@@ -45,7 +51,7 @@ public class StaticLambdaBindingInspector extends BasePhpInspection {
                     if (body != null) {
                         for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
                             if (variable.getName().equals("this")) {
-                                holder.registerProblem(variable, message);
+                                holder.registerProblem(variable, message, new HardenConditionFix(function.getFirstChild()));
                                 return;
                             }
                         }
@@ -53,5 +59,40 @@ public class StaticLambdaBindingInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    private static final class HardenConditionFix implements LocalQuickFix {
+        private static final String title = "Make the closure non-static";
+
+        private final SmartPsiElementPointer<PsiElement> staticKeyword;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        HardenConditionFix(@NotNull PsiElement staticKeyword) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(staticKeyword.getProject());
+            this.staticKeyword                = factory.createSmartPsiElementPointer(staticKeyword);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null && !project.isDisposed()) {
+                final PsiElement staticKeyword = this.staticKeyword.getElement();
+                if (staticKeyword != null) {
+                    staticKeyword.delete();
+                }
+            }
+        }
     }
 }

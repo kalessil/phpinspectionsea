@@ -236,6 +236,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | TraitsMethodsConflictsInspection                | Traits methods conflicts resolution                       | n/a | yes | n/a  | no  |
 | Probable bugs        | GetSetMethodCorrectnessInspection               | get/set methods correctness                               | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousVariableDeclarationInspection         | Suspicious variable declaration                           | n/a | yes | n/a  | no  |
+| Probable bugs        | StaticLambdaBindingInspection                   | Static lambdas binding                                    | no  | yes | no   | no  |
 
 Inspections Lists (Security)
 ---

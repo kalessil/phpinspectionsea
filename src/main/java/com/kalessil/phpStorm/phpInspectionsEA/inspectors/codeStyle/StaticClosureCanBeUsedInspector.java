@@ -43,7 +43,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                     final boolean isTarget = !OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
                     if (isTarget) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
-                        if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 1) {
+                        if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
                             final boolean usesThis = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
                                     .anyMatch(variable -> variable.getName().equals("this"));
                             if (!usesThis) {

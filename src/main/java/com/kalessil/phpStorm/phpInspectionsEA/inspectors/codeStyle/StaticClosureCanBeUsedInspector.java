@@ -24,12 +24,12 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class StaticClosuresCanBeUsedInspector extends BasePhpInspection {
+public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
     private static final String message = "This closure can be declared as static (a micro-optimization).";
 
     @NotNull
     public String getShortName() {
-        return "StaticClosuresCanBeUsedInspection";
+        return "StaticClosureCanBeUsedInspection";
     }
 
     @Override

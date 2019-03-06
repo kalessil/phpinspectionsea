@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
@@ -19,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,9 @@ import java.util.stream.Collectors;
  */
 
 public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean ANALYZE_TYPES = true;
+
     private static final String messageSimplify = "It possible to use '%s' instead (reduces cognitive load).";
     private static final String messageMismatch = "Resolved operands types are not complimentary, while they should be (%s vs %s).";
 
@@ -60,7 +65,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                             );
                         }
                         /* case: `returns_string_or_null() ?? []` */
-                        if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
+                        if (ANALYZE_TYPES && left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
                             final Function scope = ExpressionSemanticUtil.getScope(binary);
                             if (scope != null) {
                                 final Set<String> leftTypes = this.resolve((PhpTypedElement) left);
@@ -92,6 +97,12 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                 return null;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Verify complimentary operand types", ANALYZE_TYPES, (isSelected) -> ANALYZE_TYPES = isSelected)
+        );
     }
 
     private static final class UseLeftOperandFix extends UseSuggestedReplacementFixer {

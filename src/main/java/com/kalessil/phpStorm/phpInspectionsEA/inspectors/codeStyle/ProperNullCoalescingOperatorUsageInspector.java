@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -71,7 +72,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                                 final Set<String> leftTypes = this.resolve((PhpTypedElement) left);
                                 if (leftTypes != null) {
                                     final Set<String> rightTypes = this.resolve((PhpTypedElement) right);
-                                    if (rightTypes != null && !leftTypes.containsAll(rightTypes)) {
+                                    if (rightTypes != null && Sets.intersection(leftTypes, rightTypes).isEmpty()) {
                                         holder.registerProblem(
                                                 binary,
                                                 String.format(messageMismatch, leftTypes.toString(), rightTypes.toString())

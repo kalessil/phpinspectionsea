@@ -38,6 +38,8 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunction(@NotNull Function function) {
+                if (this.isContainingFileSkipped(function)) { return; }
+
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP540) >= 0 && OpenapiTypesUtil.isLambda(function)) {
                     final boolean isTarget = !OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);

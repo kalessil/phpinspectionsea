@@ -4,11 +4,9 @@ import com.google.common.collect.Sets;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -18,10 +16,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,16 +73,43 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                                 if (leftTypes != null) {
                                     final Set<String> rightTypes = this.resolve((PhpTypedElement) right);
                                     if (rightTypes != null && Sets.intersection(leftTypes, rightTypes).isEmpty()) {
-                                        holder.registerProblem(
-                                                binary,
-                                                String.format(messageMismatch, leftTypes.toString(), rightTypes.toString())
-                                        );
+                                        final boolean skip = this.areRelated(rightTypes, leftTypes);
+                                        if (!skip) {
+                                            holder.registerProblem(
+                                                    binary,
+                                                    String.format(messageMismatch, leftTypes.toString(), rightTypes.toString())
+                                            );
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            private boolean areRelated(@NotNull Set<String> rightTypes, @NotNull Set<String> leftTypes) {
+                final Set<PhpClass> left = this.extractClasses(leftTypes);
+                if (!left.isEmpty()) {
+                    final Set<PhpClass> right = this.extractClasses(rightTypes);
+                    if (!right.isEmpty() && !Sets.intersection(left, right).isEmpty()) {
+                        left.clear();
+                        right.clear();
+                        return true;
+                    }
+                    left.clear();
+                }
+                return false;
+            }
+
+            private HashSet<PhpClass> extractClasses(@NotNull Set<String> types) {
+                final HashSet<PhpClass> classes = new HashSet<>();
+                final PhpIndex index            = PhpIndex.getInstance(holder.getProject());
+                types.stream().filter(t -> t.startsWith("\\")).forEach(t ->
+                        OpenapiResolveUtil.resolveClassesByFQN(t, index)
+                                .forEach(c -> classes.addAll(InterfacesExtractUtil.getCrawlInheritanceTree(c, true)))
+                );
+                return classes;
             }
 
             @Nullable

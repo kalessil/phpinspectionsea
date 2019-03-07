@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-import com.google.common.collect.Sets;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -72,7 +71,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                                 final Set<String> leftTypes = this.resolve((PhpTypedElement) left);
                                 if (leftTypes != null) {
                                     final Set<String> rightTypes = this.resolve((PhpTypedElement) right);
-                                    if (rightTypes != null && Sets.intersection(leftTypes, rightTypes).isEmpty()) {
+                                    if (rightTypes != null && leftTypes.stream().noneMatch(rightTypes::contains)) {
                                         final boolean skip = this.areRelated(rightTypes, leftTypes);
                                         if (!skip) {
                                             holder.registerProblem(
@@ -92,7 +91,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                 final Set<PhpClass> left = this.extractClasses(leftTypes);
                 if (!left.isEmpty()) {
                     final Set<PhpClass> right = this.extractClasses(rightTypes);
-                    if (!right.isEmpty() && !Sets.intersection(left, right).isEmpty()) {
+                    if (!right.isEmpty() && left.stream().anyMatch(right::contains)) {
                         left.clear();
                         right.clear();
                         return true;

@@ -10,7 +10,7 @@ abstract class CasesHolder {
 
     abstract function method();
 
-    public function cases(?ContractOne $one, ?ContractTwo $two, ?ContractThree $three) {
+    public function cases(ContractOne $one, ContractTwo $two, ContractThree $three) {
         return [
             <weak_warning descr="It possible to use '$this->method()' instead (reduces cognitive load).">$this->method() ?? null</weak_warning>,
 

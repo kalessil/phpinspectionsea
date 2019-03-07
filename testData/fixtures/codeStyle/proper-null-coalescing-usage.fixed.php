@@ -10,7 +10,7 @@ abstract class CasesHolder {
 
     abstract function method();
 
-    public function cases() {
+    public function cases(ContractOne $one, ContractTwo $two, ContractThree $three) {
         return [
             $this->method(),
 

@@ -1,25 +1,27 @@
 <?php
 
-interface ContractOne {}
-interface ContractTwo extends ContractOne{}
-interface ContractThree {}
+namespace {
+    class ClazzOne {}
+    class ClazzTwo extends ClazzOne{}
+    class ClazzThree {}
 
-abstract class CasesHolder {
-    /** @var CasesHolder|null */
-    private $property;
+    abstract class CasesHolder {
+        /** @var CasesHolder|null */
+        private $property;
 
-    abstract function method();
+        abstract function method();
 
-    public function cases(ContractOne $one, ContractTwo $two, ContractThree $three) {
-        return [
-            $this->method(),
+        public function cases(ClazzOne $one, ClazzTwo $two, ClazzThree $three) {
+            return [
+                $this->method(),
 
-            $this->property ?? [],
-            $this->property ?? null,
+                $this->property ?? [],
+                $this->property ?? null,
 
-            $one ?? $two,
-            $two ?? $one,
-            $one ?? $three,
-        ];
+                $one ?? $two,
+                $two ?? $one,
+                $one ?? $three,
+            ];
+        }
     }
 }

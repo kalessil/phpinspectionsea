@@ -107,7 +107,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                 final HashSet<PhpClass> classes = new HashSet<>();
                 final PhpIndex index            = PhpIndex.getInstance(holder.getProject());
                 types.stream().filter(t -> t.startsWith("\\")).forEach(t ->
-                        OpenapiResolveUtil.resolveClassesByFQN(t, index)
+                        OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(t, index)
                                 .forEach(c -> classes.addAll(InterfacesExtractUtil.getCrawlInheritanceTree(c, true)))
                 );
                 return classes;

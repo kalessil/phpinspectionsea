@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,6 +30,7 @@ import java.util.List;
  */
 
 public class ArrayMergeMissUseInspector extends BasePhpInspection {
+    private static final String messageUseArray    = "'[...]' would fit more here (it also much faster).";
     private static final String messageArrayPush   = "'array_push(...)' would fit more here (it also faster).";
     private static final String messageNestedMerge = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
@@ -50,28 +52,40 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("array_merge")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= 2) {
-                        /* case 1: `... = array_merge(..., [])` */
                         if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
-                            final PsiElement[] elements = arguments[1].getChildren();
-                            if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
-                                final PsiElement parent = reference.getParent();
-                                if (OpenapiTypesUtil.isAssignment(parent)) {
-                                    final PsiElement container = ((AssignmentExpression) parent).getVariable();
-                                    if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
-                                        final List<String> fragments = new ArrayList<>();
-                                        fragments.add(arguments[0].getText());
-                                        Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                            if (arguments[0] instanceof ArrayCreationExpression) {
+                                /* case 1: `array_merge([], [])` */
+                                final List<String> fragments = new ArrayList<>();
+                                Stream.of(arguments[0].getChildren()).forEach(c -> fragments.add(c.getText()));
+                                Stream.of(arguments[1].getChildren()).forEach(c -> fragments.add(c.getText()));
 
-                                        final String replacement = String.format("array_push(%s)", String.join(", ", fragments));
-                                        holder.registerProblem(parent, messageArrayPush, new UseArrayPushFixer(replacement));
+                                final String replacement = String.format("[%s]", String.join(", ", fragments));
+                                holder.registerProblem(reference, messageUseArray, new UseArrayFixer(replacement));
 
-                                        fragments.clear();
+                                fragments.clear();
+                            } else {
+                                /* case 2: `... = array_merge(..., [])` */
+                                final PsiElement[] elements = arguments[1].getChildren();
+                                if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
+                                    final PsiElement parent = reference.getParent();
+                                    if (OpenapiTypesUtil.isAssignment(parent)) {
+                                        final PsiElement container = ((AssignmentExpression) parent).getVariable();
+                                        if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
+                                            final List<String> fragments = new ArrayList<>();
+                                            fragments.add(arguments[0].getText());
+                                            Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+
+                                            final String replacement = String.format("array_push(%s)", String.join(", ", fragments));
+                                            holder.registerProblem(parent, messageArrayPush, new UseArrayPushFixer(replacement));
+
+                                            fragments.clear();
+                                        }
                                     }
                                 }
                             }
                         }
 
-                        /* case 2: `array_merge(..., array_merge(), ...)` */
+                        /* case 3: `array_merge(..., array_merge(), ...)` */
                         for (final PsiElement argument : arguments) {
                             if (OpenapiTypesUtil.isFunctionReference(argument)) {
                                 final String innerFunctionName = ((FunctionReference) argument).getName();
@@ -126,6 +140,20 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
         }
 
         InlineNestedCallsFixer(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static final class UseArrayFixer extends UseSuggestedReplacementFixer {
+        private static final String title = "Replace with array declaration";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        UseArrayFixer(@NotNull String expression) {
             super(expression);
         }
     }

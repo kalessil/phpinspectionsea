@@ -8,5 +8,9 @@ function cases_holder($x) {
         array_push($x, 0, 1, 2),
         $x = array_merge($x, []),
         $x = array_merge($x, ['key' => 'value']),
+
+        $x = [],
+        $x = ['...', '...' => '...'],
+        $x = ['...' => '...', '...'],
     ];
 }

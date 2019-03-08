@@ -7,8 +7,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ProperNullCoa
 
 final public class ProperNullCoalescingOperatorUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        final ProperNullCoalescingOperatorUsageInspector inspector = new ProperNullCoalescingOperatorUsageInspector();
+        inspector.ANALYZE_TYPES                                    = true;
+
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
-        myFixture.enableInspections(new ProperNullCoalescingOperatorUsageInspector());
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/codeStyle/proper-null-coalescing-usage.php");
         myFixture.testHighlighting(true, false, true);
 

@@ -105,7 +105,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                 final HashSet<PhpClass> classes = new HashSet<>();
                 final PhpIndex index            = PhpIndex.getInstance(holder.getProject());
                 types.stream().filter(t -> t.startsWith("\\")).forEach(t ->
-                        OpenapiResolveUtil.resolveClassesByFQN(t, index)
+                        OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(t, index)
                                 .forEach(c -> classes.addAll(InterfacesExtractUtil.getCrawlInheritanceTree(c, true)))
                 );
                 return classes;
@@ -128,7 +128,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
-            component.addCheckbox("Verify complimentary operand types", ANALYZE_TYPES, (isSelected) -> ANALYZE_TYPES = isSelected)
+            component.addCheckbox("Verify complimentary operands types", ANALYZE_TYPES, (isSelected) -> ANALYZE_TYPES = isSelected)
         );
     }
 

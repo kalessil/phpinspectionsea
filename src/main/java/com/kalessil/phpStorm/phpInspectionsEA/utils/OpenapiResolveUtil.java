@@ -158,17 +158,16 @@ final public class OpenapiResolveUtil {
                 }
             } else if (expression instanceof TernaryExpression) {
                 final TernaryExpression ternary = (TernaryExpression) expression;
-                if (ternary.isShort()) {
-                    final PsiElement left  = ternary.getTrueVariant();
-                    final PsiElement right = ternary.getFalseVariant();
-                    result                 = PhpType.EMPTY;
-                    if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
-                        final PhpType leftType = resolveType((PhpTypedElement) left, project);
-                        if (leftType != null && !leftType.filterUnknown().isEmpty()) {
-                            final PhpType rightType = resolveType((PhpTypedElement) right, project);
-                            if (rightType != null && !rightType.filterUnknown().isEmpty()) {
-                                result = new PhpType().add(leftType.filterNull()).add(rightType);
-                            }
+                final PsiElement left           = ternary.getTrueVariant();
+                final PsiElement right          = ternary.getFalseVariant();
+                if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
+                    final PhpType leftType = resolveType((PhpTypedElement) left, project);
+                    if (leftType != null && !leftType.filterUnknown().isEmpty()) {
+                        final PhpType rightType = resolveType((PhpTypedElement) right, project);
+                        if (rightType != null && !rightType.filterUnknown().isEmpty()) {
+                            result = ternary.isShort()
+                                    ? new PhpType().add(leftType.filterNull()).add(rightType)
+                                    : new PhpType().add(leftType).add(rightType);
                         }
                     }
                 }

@@ -64,7 +64,7 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
 
                                 fragments.clear();
                             } else {
-                                /* case 2: `... = array_merge(..., [])` */
+                                /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` */
                                 final PsiElement[] elements = arguments[1].getChildren();
                                 if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
                                     final PsiElement parent = reference.getParent();

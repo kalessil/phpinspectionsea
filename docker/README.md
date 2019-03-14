@@ -11,6 +11,8 @@ Build:
 - copy your ~/.PhpStorm-*/config/phpstorm.key into this directory
 - execute "docker build -t phpinspections ."
 
+Note: when getting "No valid license found" error message, re-apply base64-encoded license format and try again.
+
 Run:
 - execute
 

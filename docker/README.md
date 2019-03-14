@@ -32,3 +32,9 @@ ENV Variables:
 
 - INSPECTIONCONFIG - optionally pass an inspection config XML as a string
 
+Project Settings:
+
+The following files can pushed into your repository in order align behaviour between the headless and regular usages.
+
+- `.idea/inspectionProfiles/Project_Default.xml`: inspections setting customization (disables, settings and etc.)
+- `.idea/php.xml`: PHP language level (IDE takes 5.6 when the file is not specified)

@@ -34,7 +34,7 @@ ENV Variables:
 
 Project Settings:
 
-The following files can pushed into your repository in order align behaviour between the headless and regular usages.
+The following files can pushed into your repository in order to align the headless behaviour with regular one.
 
 - `.idea/inspectionProfiles/Project_Default.xml`: inspections setting customization (disables, settings and etc.)
 - `.idea/php.xml`: PHP language level (IDE takes 5.6 when the file is not specified)

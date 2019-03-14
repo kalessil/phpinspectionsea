@@ -130,7 +130,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
-            component.addCheckbox("Verify complimentary operand types", ANALYZE_TYPES, (isSelected) -> ANALYZE_TYPES = isSelected)
+            component.addCheckbox("Verify complimentary operands types", ANALYZE_TYPES, (isSelected) -> ANALYZE_TYPES = isSelected)
         );
     }
 

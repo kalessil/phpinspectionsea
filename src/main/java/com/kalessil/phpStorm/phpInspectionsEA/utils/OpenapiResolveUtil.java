@@ -174,10 +174,21 @@ final public class OpenapiResolveUtil {
                 }
             } else if (expression instanceof UnaryExpression) {
                 final UnaryExpression unary = (UnaryExpression) expression;
-                if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opBIT_NOT)) {
-                    final PsiElement argument = unary.getValue();
-                    if (argument instanceof PhpTypedElement) {
-                        result = resolveType((PhpTypedElement) argument, project);
+                final PsiElement operation  = unary.getOperation();
+                if (operation != null) {
+                    if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opBIT_NOT)) {
+                        final PsiElement argument = unary.getValue();
+                        if (argument instanceof PhpTypedElement) {
+                            result = resolveType((PhpTypedElement) argument, project);
+                        }
+                    } else if (OpenapiTypesUtil.is(operation, PhpTokenTypes.kwCLONE)) {
+                        final PsiElement argument = unary.getValue();
+                        if (argument instanceof PhpTypedElement) {
+                            final PhpType argumentType = resolveType((PhpTypedElement) argument, project);
+                            if (argumentType != null && !argumentType.isEmpty()) {
+                                result = new PhpType().add(argumentType.filterPrimitives());
+                            }
+                        }
                     }
                 }
             }

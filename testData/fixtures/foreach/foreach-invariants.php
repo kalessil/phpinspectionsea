@@ -27,7 +27,11 @@ namespace {
             $x = ($arr[$i]) > 0;
         }
         <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) {
+            $arr[$i]->property    = '...';
+            $arr[$i]->property[0] = '...';
+            $arr[$i][0]           = '...';
             echo $arr[$i], $arr[$i]->property;
+
             $x = & $arr[$i];
             $x = &$arr[$i];
             $x =& $arr[$i];

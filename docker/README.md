@@ -11,6 +11,8 @@ Build:
 - copy your ~/.PhpStorm-*/config/phpstorm.key into this directory
 - execute "docker build -t phpinspections ."
 
+Note: when getting "No valid license found" error message, re-apply base64-encoded license and try again.
+
 Run:
 - execute
 
@@ -32,3 +34,9 @@ ENV Variables:
 
 - INSPECTIONCONFIG - optionally pass an inspection config XML as a string
 
+Project Settings:
+
+The following files can pushed into your repository in order to align the headless behaviour with regular one.
+
+- `.idea/inspectionProfiles/Project_Default.xml`: inspections setting customization (disables, settings and etc.)
+- `.idea/php.xml`: PHP language level (IDE takes 5.6 when the file is not specified)

@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 public class ArrayMergeMissUseInspector extends BasePhpInspection {
     private static final String messageUseArray    = "'[...]' would fit more here (it also much faster).";
+    private static final String messageArrayUnshift   = "'array_push(...)' would fit more here (it also faster).";
     private static final String messageArrayPush   = "'array_push(...)' would fit more here (it also faster).";
     private static final String messageNestedMerge = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
@@ -52,8 +53,8 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("array_merge")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= 2) {
-                        if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
-                            if (arguments[0] instanceof ArrayCreationExpression) {
+                        if (arguments.length == 2) {
+                            if (arguments[0] instanceof ArrayCreationExpression && arguments[1] instanceof ArrayCreationExpression) {
                                 /* case 1: `array_merge([], [])` */
                                 final List<String> fragments = new ArrayList<>();
                                 Stream.of(arguments[0].getChildren()).forEach(c -> fragments.add(c.getText()));
@@ -63,21 +64,29 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                                 holder.registerProblem(reference, messageUseArray, new UseArrayFixer(replacement));
 
                                 fragments.clear();
-                            } else {
+                            } else if (arguments[0] instanceof ArrayCreationExpression || arguments[1] instanceof ArrayCreationExpression) {
                                 /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` */
-                                final PsiElement[] elements = arguments[1].getChildren();
+                                final PsiElement array       = arguments[0] instanceof ArrayCreationExpression ? arguments[0] : arguments[1];
+                                final PsiElement destination = arguments[0] instanceof ArrayCreationExpression ? arguments[1] : arguments[0];
+                                final PsiElement[] elements  = array.getChildren();
                                 if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
                                     final PsiElement parent = reference.getParent();
                                     if (OpenapiTypesUtil.isAssignment(parent)) {
                                         final PsiElement container = ((AssignmentExpression) parent).getVariable();
-                                        if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
+                                        if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
                                             final List<String> fragments = new ArrayList<>();
-                                            fragments.add(arguments[0].getText());
-                                            Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
-
-                                            final String replacement = String.format("array_push(%s)", String.join(", ", fragments));
-                                            holder.registerProblem(parent, messageArrayPush, new UseArrayPushFixer(replacement));
-
+                                            if (arguments[0] instanceof ArrayCreationExpression) {
+                                                // the array should be by-reference compatible
+                                                fragments.add(destination.getText());
+                                                Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                                final String replacement = String.format("array_unshift(%s)", String.join(", ", fragments));
+                                                holder.registerProblem(parent, messageArrayUnshift, new UseArrayPushFixer(replacement));
+                                            } else {
+                                                fragments.add(destination.getText());
+                                                Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                                final String replacement = String.format("array_push(%s)", String.join(", ", fragments));
+                                                holder.registerProblem(parent, messageArrayPush, new UseArrayPushFixer(replacement));
+                                            }
                                             fragments.clear();
                                         }
                                     }

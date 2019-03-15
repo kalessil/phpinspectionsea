@@ -26,7 +26,11 @@ namespace {
             $x = ($iValue) > 0;
         }
         foreach ($arr as $i => $iValue) {
+            $iValue->property    = '...';
+            $iValue->property[0] = '...';
+            $arr[$i][0]           = '...';
             echo $iValue, $iValue->property;
+
             $x = & $arr[$i];
             $x = &$arr[$i];
             $x =& $arr[$i];

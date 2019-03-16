@@ -3,10 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -30,10 +27,10 @@ import java.util.stream.Stream;
  */
 
 public class ArrayMergeMissUseInspector extends BasePhpInspection {
-    private static final String messageUseArray    = "'[...]' would fit more here (it also much faster).";
-    private static final String messageArrayUnshift   = "'array_push(...)' would fit more here (it also faster).";
-    private static final String messageArrayPush   = "'array_push(...)' would fit more here (it also faster).";
-    private static final String messageNestedMerge = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
+    private static final String messageUseArray     = "'[...]' would fit more here (it also much faster).";
+    private static final String messageArrayUnshift = "'array_unshift(...)' would fit more here (it also faster).";
+    private static final String messageArrayPush    = "'array_push(...)' would fit more here (it also faster).";
+    private static final String messageNestedMerge  = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
     @NotNull
     public String getShortName() {
@@ -76,11 +73,12 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
                                         if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
                                             final List<String> fragments = new ArrayList<>();
                                             if (arguments[0] instanceof ArrayCreationExpression) {
-                                                // the array should be by-reference compatible
-                                                fragments.add(destination.getText());
-                                                Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
-                                                final String replacement = String.format("array_unshift(%s)", String.join(", ", fragments));
-                                                holder.registerProblem(parent, messageArrayUnshift, new UseArrayPushFixer(replacement));
+                                                if (destination instanceof Variable) {
+                                                    fragments.add(destination.getText());
+                                                    Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                                    final String replacement = String.format("array_unshift(%s)", String.join(", ", fragments));
+                                                    holder.registerProblem(parent, messageArrayUnshift, new UseArrayUnshiftFixer(replacement));
+                                                }
                                             } else {
                                                 fragments.add(destination.getText());
                                                 Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
@@ -135,6 +133,20 @@ public class ArrayMergeMissUseInspector extends BasePhpInspection {
         }
 
         UseArrayPushFixer(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static final class UseArrayUnshiftFixer extends UseSuggestedReplacementFixer {
+        private static final String title = "Use array_unshift(...) instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        UseArrayUnshiftFixer(@NotNull String expression) {
             super(expression);
         }
     }

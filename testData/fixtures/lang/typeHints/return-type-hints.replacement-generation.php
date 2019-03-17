@@ -36,6 +36,8 @@ namespace RootNamespace {
         public function unknownTypeProperty() { return $this->unknownTypeProperty; }
 
         public function unknownTypeParameter($unknownTypeParameter = null) { return $unknownTypeParameter; }
+
+        public function <weak_warning descr="': ?\Generator' can be declared as return type hint.">methodReturnsGenerator</weak_warning>() { yield from []; }
     }
 }
 

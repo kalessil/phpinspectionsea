@@ -46,4 +46,9 @@ class CasesHolder
             $something = isset($variableInDo) ? $variableInDo : '...';
         } while ($variableInDo = '...');
     }
+
+    public function withInclude() {
+        require '...';
+        return isset($variable);
+    }
 }

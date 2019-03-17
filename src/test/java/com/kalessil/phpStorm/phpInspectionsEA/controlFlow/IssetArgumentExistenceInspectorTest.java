@@ -8,7 +8,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.n
 final public class IssetArgumentExistenceInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-        myFixture.enableInspections(new IssetArgumentExistenceInspector());
+        final IssetArgumentExistenceInspector inspector = new IssetArgumentExistenceInspector();
+        inspector.IGNORE_INCLUDES                       = false;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/controlFlow/isset-operations-variable-existence.php");
         myFixture.testHighlighting(true, false, true);
     }

@@ -11,10 +11,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +31,9 @@ import java.util.Set;
  */
 
 public class IssetArgumentExistenceInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean IGNORE_INCLUDES = true;
+
     private static final String messagePattern = "'$%s' seems to be not defined in the scope.";
 
     private static final Set<String> specialVariables = new HashSet<>(ExpressionCostEstimateUtil.predefinedVars);
@@ -129,7 +134,7 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                                         }
                                         loopCandidate = loopCandidate.getParent();
                                     }
-                                    if (report) {
+                                    if (report && (IGNORE_INCLUDES || !this.hasIncludes(scope))) {
                                         holder.registerProblem(
                                                 variable,
                                                 String.format(messagePattern, variableName),
@@ -160,6 +165,20 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                 }
                 return result;
             }
+
+            private boolean hasIncludes(@NotNull Function function) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                if (body != null) {
+                    return PsiTreeUtil.findChildOfType(body, Include.class) != null;
+                }
+                return false;
+            }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+                component.addCheckbox("Ignore 'include' and 'require' statements", IGNORE_INCLUDES, (isSelected) -> IGNORE_INCLUDES = isSelected)
+        );
     }
 }

@@ -38,6 +38,7 @@ public class NonSecureHtmlentitiesUsageInspector extends BasePhpInspection {
     static {
         flags.add("ENT_QUOTES");
         flags.add("ENT_COMPAT");
+        flags.add("ENT_NOQUOTES");
 
         functions.add("call_user_func");
         functions.add("array_map");

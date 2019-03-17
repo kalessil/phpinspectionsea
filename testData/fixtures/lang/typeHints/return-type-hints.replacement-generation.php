@@ -37,7 +37,7 @@ namespace RootNamespace {
 
         public function unknownTypeParameter($unknownTypeParameter = null) { return $unknownTypeParameter; }
 
-        public function <weak_warning descr="': \Generator' can be declared as return type hint.">methodReturnsGenerator</weak_warning>() { yield from []; }
+        public function <weak_warning descr="': ?\Generator' can be declared as return type hint.">methodReturnsGenerator</weak_warning>() { yield from []; }
     }
 }
 

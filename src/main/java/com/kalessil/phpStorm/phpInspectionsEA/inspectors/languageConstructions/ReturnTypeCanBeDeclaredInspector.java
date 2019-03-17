@@ -266,6 +266,9 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     final PhpYield yield = PsiTreeUtil.findChildOfType(method, PhpYield.class);
                     if (yield != null && ExpressionSemanticUtil.getScope(yield) == method) {
                         types.add("\\Generator");
+                        if (PsiTreeUtil.findChildOfType(method, PhpReturn.class) == null) {
+                            types.remove(Types.strNull);
+                        }
                     }
                 }
             }

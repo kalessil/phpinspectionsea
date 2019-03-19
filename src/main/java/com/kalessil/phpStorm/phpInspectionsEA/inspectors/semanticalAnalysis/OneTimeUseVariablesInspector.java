@@ -146,11 +146,14 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             }
                         }
 
-                        holder.registerProblem(
-                                assignVariable,
-                                String.format(messagePattern, variableName),
-                                new InlineValueFix(assign.getParent(), argument, value)
-                        );
+                        final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                        if (!(value instanceof NewExpression) || php.compareTo(PhpLanguageLevel.PHP530) > 0) {
+                            holder.registerProblem(
+                                    assignVariable,
+                                    String.format(messagePattern, variableName),
+                                    new InlineValueFix(assign.getParent(), argument, value)
+                            );
+                        }
                     }
                 }
             }

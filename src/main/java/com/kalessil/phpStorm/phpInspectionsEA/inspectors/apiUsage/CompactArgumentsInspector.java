@@ -97,7 +97,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                 compactedVariables.keySet().forEach(subject -> {
                                     if (!declaredVariables.contains(subject)) {
                                         holder.registerProblem(
-                                                reference,
+                                                compactedVariables.get(subject),
                                                 String.format(patternUnknownVariable, subject),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );

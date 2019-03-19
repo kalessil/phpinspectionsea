@@ -14,7 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,13 +53,13 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
                         if (scope != null) {
                             /* extract variables names needed */
-                            final Set<String> compactedVariables = new HashSet<>();
-                            for (final PsiElement callArgument : arguments) {
-                                if (callArgument instanceof StringLiteralExpression) {
-                                    final StringLiteralExpression expression = (StringLiteralExpression) callArgument;
+                            final Map<String, PsiElement> compactedVariables = new HashMap<>();
+                            for (final PsiElement argument : arguments) {
+                                if (argument instanceof StringLiteralExpression) {
+                                    final StringLiteralExpression expression = (StringLiteralExpression) argument;
                                     final String name                        = expression.getContents();
                                     if (!name.isEmpty() && expression.getFirstPsiChild() == null) {
-                                        compactedVariables.add(name);
+                                        compactedVariables.put(name, argument);
                                     }
                                 } else if (callArgument instanceof Variable) {
                                     final Variable argument     = (Variable) callArgument;
@@ -94,11 +95,11 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                 }
 
                                 /* analyze and report suspicious parameters, release refs afterwards */
-                                compactedVariables.forEach(subject -> {
+                                compactedVariables.keySet().forEach(subject -> {
                                     if (!declaredVariables.contains(subject)) {
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(patternUnknownVariable, subject),
+                                                String.format(messagePattern, subject),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );
                                     }

@@ -29,7 +29,7 @@ import java.util.HashMap;
  */
 
 public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern  = "'%s' would be more performant here (up to 6x times faster).";
+    private static final String messagePattern  = "'%s' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).";
     private static final String messageInlining = "'%s' would express the intention here better (less types coercion magic).";
 
     // Inspection options.

@@ -1,27 +1,27 @@
 <?php
 
 function cases_holder() {
-    $x = <warning descr="'(int) $y' would be more performant here (up to 6x times faster).">intval($y)</warning>;
-    $x = <warning descr="'(float) $y' would be more performant here (up to 6x times faster).">floatval($y)</warning>;
-    $x = <warning descr="'(string) $y' would be more performant here (up to 6x times faster).">strval($y)</warning>;
-    $x = <warning descr="'(bool) $y' would be more performant here (up to 6x times faster).">boolval($y)</warning>;
+    $x = <weak_warning descr="'(int) $y' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">intval($y)</weak_warning>;
+    $x = <weak_warning descr="'(float) $y' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">floatval($y)</weak_warning>;
+    $x = <weak_warning descr="'(string) $y' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">strval($y)</weak_warning>;
+    $x = <weak_warning descr="'(bool) $y' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">boolval($y)</weak_warning>;
 
-    $x = <warning descr="'(int) ($y ?? 1)' would be more performant here (up to 6x times faster).">intval($y ?? 1)</warning>;
-    $x = <warning descr="'(int) ($y ?: 1)' would be more performant here (up to 6x times faster).">intval($y ?: 1)</warning>;
+    $x = <weak_warning descr="'(int) ($y ?? 1)' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">intval($y ?? 1)</weak_warning>;
+    $x = <weak_warning descr="'(int) ($y ?: 1)' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">intval($y ?: 1)</weak_warning>;
 
     $x = intval(1 / 2, 16);
 
-    <warning descr="'$x = (int) $x' would be more performant here (up to 6x times faster).">settype($x, 'int')</warning>;
-    <warning descr="'$x = (float) $x' would be more performant here (up to 6x times faster).">settype($x, 'float')</warning>;
-    <warning descr="'$x = (bool) $x' would be more performant here (up to 6x times faster).">settype($x, 'bool')</warning>;
-    <warning descr="'$x = (string) $x' would be more performant here (up to 6x times faster).">settype($x, 'string')</warning>;
-    <warning descr="'$x = (array) $x' would be more performant here (up to 6x times faster).">settype($x, 'array')</warning>;
+    <weak_warning descr="'$x = (int) $x' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">settype($x, 'int')</weak_warning>;
+    <weak_warning descr="'$x = (float) $x' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">settype($x, 'float')</weak_warning>;
+    <weak_warning descr="'$x = (bool) $x' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">settype($x, 'bool')</weak_warning>;
+    <weak_warning descr="'$x = (string) $x' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">settype($x, 'string')</weak_warning>;
+    <weak_warning descr="'$x = (array) $x' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">settype($x, 'array')</weak_warning>;
 
     settype($x, $x);
     settype($x, 'whatever');
 
-    $x = <warning descr="'(string) ($y)' would express the intention here better (less types coercion magic).">"{$y}"</warning>;
-    $x = <warning descr="'(string) $y' would express the intention here better (less types coercion magic).">"$y"</warning>;
+    $x = <weak_warning descr="'(string) ($y)' would express the intention here better (less types coercion magic).">"{$y}"</weak_warning>;
+    $x = <weak_warning descr="'(string) $y' would express the intention here better (less types coercion magic).">"$y"</weak_warning>;
 
     $x = " $y";
     $x = "$y ";

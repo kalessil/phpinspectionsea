@@ -20,4 +20,11 @@ function cases_holder(string $string, int $int)
     if ($int | $int | $int) {}
     if ($string && $int & $int) {}
     if ($string || $int | $int) {}
+
+    /* false-positives: an operand is a number */
+    if ($string & 0) {}
+    if ($string & 00) {}
+    if ($string & 0x0) {}
+    if ($string & 0.0) {}
+    if ($string & 0b0) {}
 }

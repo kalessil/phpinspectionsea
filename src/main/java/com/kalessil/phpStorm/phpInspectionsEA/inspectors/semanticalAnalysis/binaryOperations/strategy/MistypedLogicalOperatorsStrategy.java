@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,14 +31,17 @@ final public class MistypedLogicalOperatorsStrategy {
             final PsiElement left   = expression.getLeftOperand();
             final PsiElement right  = expression.getRightOperand();
             if (left != null && right != null) {
-                final boolean isTarget            = !isIntegerType(left) || !isIntegerType(right);
-                final PsiElement targetExpression = expression.getOperation();
-                if (isTarget && targetExpression != null) {
-                    result = true;
-                    holder.registerProblem(
-                            targetExpression,
-                            String.format(messagePattern, operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
-                    );
+                final boolean hasNumber = OpenapiTypesUtil.isNumber(right) || OpenapiTypesUtil.isNumber(left);
+                final boolean isTarget  = !hasNumber && (!isIntegerType(left) || !isIntegerType(right));
+                if (isTarget) {
+                    final PsiElement targetExpression = expression.getOperation();
+                    if (targetExpression != null) {
+                        result = true;
+                        holder.registerProblem(
+                                targetExpression,
+                                String.format(messagePattern, operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
+                        );
+                    }
                 }
             }
         }

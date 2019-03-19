@@ -38,12 +38,13 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     private static int minInspectionNameLength;
     static {
         inspectionsNames = collectKnownInspections();
+        inspectionsNames.add("phpinspectionsea");
         /* spell checker is a nameless plugin with no deps, hence hardcoding its inspections */
         inspectionsNames.add("SpellCheckingInspection");
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
         minInspectionNameLength = Integer.MAX_VALUE;
-        for (String shortName : inspectionsNames) {
+        for (final String shortName : inspectionsNames) {
             final int nameLength = shortName.length();
             if (nameLength < minInspectionNameLength) {
                 minInspectionNameLength = nameLength;
@@ -100,7 +101,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
         final Set<String> names   = new HashSet<>();
         final PluginId phpSupport = PluginId.getId("com.jetbrains.php");
 
-        for (IdeaPluginDescriptor plugin : PluginManager.getPlugins()) {
+        for (final IdeaPluginDescriptor plugin : PluginManager.getPlugins()) {
             /* check plugins' dependencies and extensions */
             /* we have to rely on impl-class, see  */
             final MultiMap<String, Element> extensions = ((IdeaPluginDescriptorImpl) plugin).getExtensions();
@@ -110,7 +111,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
             }
 
             /* extract inspections; short names */
-            for (Element node : extensions.values()) {
+            for (final Element node : extensions.values()) {
                 final String nodeName = node.getName();
                 if (null == nodeName || !nodeName.equals("localInspection")) {
                     continue;

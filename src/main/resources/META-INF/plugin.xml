@@ -835,7 +835,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.NullCoalescingOperatorCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="TypesCastingCanBeUsedInspection"               displayName="Type casting can be used"
-        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.TypesCastingCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="DirectoryConstantCanBeUsedInspection"          displayName="__DIR__ constant can be used"

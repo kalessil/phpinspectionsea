@@ -61,9 +61,8 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                     if (!name.isEmpty() && expression.getFirstPsiChild() == null) {
                                         compactedVariables.put(name, argument);
                                     }
-                                } else if (callArgument instanceof Variable) {
-                                    final Variable argument     = (Variable) callArgument;
-                                    final String argumentName   = argument.getName();
+                                } else if (argument instanceof Variable) {
+                                    final String argumentName   = ((Variable) argument).getName();
                                     /* argument can be a variable variable, hence we need to verify value container existence */
                                     final Set<String> variables = PossibleValuesDiscoveryUtil.discover(argument).stream()
                                         .filter(value  -> value instanceof StringLiteralExpression)
@@ -75,7 +74,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                     if (!found) {
                                         holder.registerProblem(
                                                 argument,
-                                                String.format(patternStringExpected, argument.getName()),
+                                                String.format(patternStringExpected, argumentName),
                                                 ProblemHighlightType.WEAK_WARNING
                                         );
                                     }
@@ -99,7 +98,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                     if (!declaredVariables.contains(subject)) {
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(messagePattern, subject),
+                                                String.format(patternUnknownVariable, subject),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );
                                     }

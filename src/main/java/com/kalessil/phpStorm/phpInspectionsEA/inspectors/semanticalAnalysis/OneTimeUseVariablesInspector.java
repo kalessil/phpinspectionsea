@@ -11,6 +11,8 @@ import com.jetbrains.php.codeInsight.PhpScopeHolder;
 import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocVariable;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -72,7 +74,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         /* check if variable as a function/use(...) parameter by reference */
                         final Function function = ExpressionSemanticUtil.getScope(construct);
                         if (null != function) {
-                            for (Parameter param: function.getParameters()) {
+                            for (final Parameter param: function.getParameters()) {
                                 if (param.isPassByRef() && param.getName().equals(variableName)) {
                                     return;
                                 }
@@ -80,7 +82,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
                             final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables(function);
                             if (null != useList) {
-                                for (Variable param: useList) {
+                                for (final Variable param: useList) {
                                     if (!param.getName().equals(variableName)) {
                                         continue;
                                     }
@@ -111,7 +113,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
                             int countWrites = 0;
                             int countReads  = 0;
-                            for (PhpAccessVariableInstruction oneCase: usages) {
+                            for (final PhpAccessVariableInstruction oneCase: usages) {
                                 final boolean isWrite = oneCase.getAccess().isWrite();
                                 if (isWrite) {
                                     /* false-positives: type specification */
@@ -132,9 +134,14 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             }
                         }
 
-                        final String message    = messagePattern.replace("%v%", variableName);
-                        final TheLocalFix fixer = new TheLocalFix(assign.getParent(), argument, assignValue);
-                        holder.registerProblem(assignVariable, message, fixer);
+                        final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                        if (!(assignValue instanceof NewExpression) || php.compareTo(PhpLanguageLevel.PHP530) > 0) {
+                            holder.registerProblem(
+                                    assignVariable,
+                                    messagePattern.replace("%v%", variableName),
+                                    new TheLocalFix(assign.getParent(), argument, assignValue)
+                            );
+                        }
                     }
                 }
             }

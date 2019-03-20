@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -83,6 +84,48 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     }
                 }
                 return result;
+            }
+
+            @Override
+            public void visitPhpWhile(@NotNull While whileStatement) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(whileStatement))         { return; }
+
+                final AssignmentExpression assignment = this.getValueExtraction(whileStatement.getCondition());
+                if (assignment != null) {
+
+                }
+            }
+
+            @Nullable
+            private AssignmentExpression getValueExtraction(@Nullable PsiElement condition) {
+                PsiElement current = ExpressionSemanticUtil.getExpressionTroughParenthesis(condition);
+                if (current != null) {
+                    /* [$array &&] [null !=[=]] $value = array_shift($array) */
+                    PsiElement source = null;
+                    /* filter source check */
+                    if (current instanceof BinaryExpression) {
+                        final BinaryExpression binary = (BinaryExpression) current;
+                        if (binary.getOperationType() == PhpTokenTypes.opAND) {
+                            source  = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
+                            current = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
+                        }
+                    }
+                    /* filter null comparison */
+                    if (current instanceof BinaryExpression) {
+                        final BinaryExpression binary = (BinaryExpression) current;
+                        final IElementType operation  = binary.getOperationType();
+                        if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL) {
+                            final PsiElement left  = binary.getLeftOperand();
+                            final PsiElement right = binary.getRightOperand();
+                            if (PhpLanguageUtil.isNull(right) || PhpLanguageUtil.isNull(left)) {
+                                current = ExpressionSemanticUtil.getExpressionTroughParenthesis(PhpLanguageUtil.isNull(right) ? left : right);
+                            }
+                        }
+                    }
+
+                }
+                return null;
             }
 
             @Override

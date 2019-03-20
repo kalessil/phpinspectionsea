@@ -6,9 +6,14 @@ namespace NS {
             foreach ($arr as $iValue) {
                 echo $iValue;
             }
-
             foreach ($arr as $v) {
                 echo $v;
+            }
+        }
+
+        public function falsePositives() {
+            while (list($i, $v) = each($arr)) {
+                echo $arr[$i];
             }
         }
     }

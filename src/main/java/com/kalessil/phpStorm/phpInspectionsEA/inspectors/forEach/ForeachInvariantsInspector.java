@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 public class ForeachInvariantsInspector extends BasePhpInspection {
     private static final String foreachInvariant = "Foreach can probably be used instead (easier to read and support).";
-    private static final String eachFunctionUsed = "Foreach should be used instead (8x faster).";
+    private static final String eachFunctionUsed = "Foreach should be used instead (8x faster, also deprecated since PHP 7.2).";
 
     @NotNull
     public String getShortName() {
@@ -105,9 +105,17 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                     }
                                 }
 
-                                holder.registerProblem(
-                                    parent.getFirstChild(), eachFunctionUsed, ProblemHighlightType.GENERIC_ERROR, fixer
-                                );
+                                final PsiElement container    = arguments[0];
+                                final boolean isContainerUsed = PsiTreeUtil.findChildrenOfType(body, container.getClass()).stream()
+                                        .anyMatch(candidate -> OpenapiEquivalenceUtil.areEqual(candidate, container));
+                                if (!isContainerUsed) {
+                                    holder.registerProblem(
+                                            parent.getFirstChild(),
+                                            eachFunctionUsed,
+                                            ProblemHighlightType.GENERIC_ERROR,
+                                            fixer
+                                    );
+                                }
                             }
                         }
                     }

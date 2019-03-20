@@ -123,7 +123,17 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                             }
                         }
                     }
-
+                    /* check for the assignment */
+                    if (current != null && OpenapiTypesUtil.isAssignment(current)) {
+                        final AssignmentExpression assignment = (AssignmentExpression) current;
+                        final PsiElement value                = assignment.getValue();
+                        if (OpenapiTypesUtil.isFunctionReference(value)) {
+                            final String functionName = ((FunctionReference) value).getName();
+                            if (functionName != null && functionName.equals("array_shift")) {
+                                return assignment;
+                            }
+                        }
+                    }
                 }
                 return null;
             }

@@ -93,7 +93,16 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
 
                 final AssignmentExpression assignment = this.getValueExtraction(whileStatement.getCondition());
                 if (assignment != null) {
-
+                    final FunctionReference reference = (FunctionReference) assignment.getValue();
+                    if (reference != null) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        // the source not to be used in the body
+                        holder.registerProblem(
+                                whileStatement.getFirstChild(),
+                                foreachInvariant,
+                                new UseForeachFix(whileStatement, null, null, arguments[0], null)
+                        );
+                    }
                 }
             }
 
@@ -128,9 +137,16 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         final AssignmentExpression assignment = (AssignmentExpression) current;
                         final PsiElement value                = assignment.getValue();
                         if (OpenapiTypesUtil.isFunctionReference(value)) {
-                            final String functionName = ((FunctionReference) value).getName();
+                            final FunctionReference reference = (FunctionReference) value;
+                            final String functionName         = reference.getName();
                             if (functionName != null && functionName.equals("array_shift")) {
-                                return assignment;
+                                final PsiElement[] arguments = reference.getParameters();
+                                if (arguments.length == 1) {
+                                    final boolean sameSource = source == null || OpenapiEquivalenceUtil.areEqual(source, arguments[0]);
+                                    if (sameSource) {
+                                        return assignment;
+                                    }
+                                }
                             }
                         }
                     }
@@ -262,7 +278,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
 
         @NotNull
         private final SmartPsiElementPointer<PsiElement> loop;
-        @NotNull
+        @Nullable
         private final SmartPsiElementPointer<PsiElement> index;
         @Nullable
         private final SmartPsiElementPointer<PsiElement> value;
@@ -285,7 +301,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
 
         UseForeachFix(
             @NotNull PsiElement loop,
-            @NotNull PsiElement index,
+            @Nullable PsiElement index,
             @Nullable PsiElement value,
             @NotNull PsiElement container,
             @Nullable PsiElement limit
@@ -294,7 +310,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             final SmartPointerManager factory = SmartPointerManager.getInstance(loop.getProject());
 
             this.loop      = factory.createSmartPsiElementPointer(loop);
-            this.index     = factory.createSmartPsiElementPointer(index);
+            this.index     = index == null ? null : factory.createSmartPsiElementPointer(index);
             this.value     = value == null ? null : factory.createSmartPsiElementPointer(value);
             this.container = factory.createSmartPsiElementPointer(container);
             this.limit     = limit == null ? null : factory.createSmartPsiElementPointer(limit);
@@ -303,28 +319,33 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement loop      = this.loop.getElement();
-            final PsiElement index     = this.index.getElement();
             final PsiElement container = this.container.getElement();
-            if (loop != null && index != null && container != null) {
+            if (loop != null && container != null) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (body != null) {
+                    final PsiElement index = this.index == null ? null : this.index.getElement();
                     final PsiElement value = this.value == null ? null : this.value.getElement();
                     final String pattern   = "foreach (%c% as %i% => %i%Value) {}"
                             .replace("%i%Value", value == null ? "%i%Value" : value.getText())
-                            .replace("%i%", index.getText())
-                            .replace("%i%", index.getText())
-                            .replace("%c%", container.getText());
+                            .replace("%i% => ",  index == null ? "" : "%i% => ")
+                            .replace("%i%",      index == null ? "" : index.getText())
+                            .replace("%i%",      index == null ? "" : index.getText())
+                            .replace("%c%",      container.getText());
                     final ForeachStatement replacement    = PhpPsiElementFactory.createPhpPsiFromText(project, ForeachStatement.class, pattern);
                     final PsiElement replacementContainer = replacement.getValue();
                     final GroupStatement bodyHolder       = ExpressionSemanticUtil.getGroupStatement(replacement);
                     if (bodyHolder != null && replacementContainer != null) {
-                        final Function scope   = ExpressionSemanticUtil.getScope(loop);
-                        final PsiElement limit = this.limit == null ? null : this.limit.getElement();
-                        this.updateContainersUsage(body, container, index, replacementContainer);
-                        bodyHolder.replace(body);
-                        this.cleanupUnusedIndex(replacement, body);
-                        loop.replace(replacement);
-                        this.cleanupUnusedLimit(scope, limit);
+                        if (index == null) {
+                            bodyHolder.replace(body);
+                            loop.replace(replacement);
+                        } else {
+                            this.updateContainersUsage(body, container, index, replacementContainer);
+                            bodyHolder.replace(body);
+                            this.cleanupUnusedIndex(replacement, body);
+                            loop.replace(replacement);
+                            final PsiElement limit = this.limit == null ? null : this.limit.getElement();
+                            this.cleanupUnusedLimit(ExpressionSemanticUtil.getScope(loop), limit);
+                        }
                     }
                 }
             }

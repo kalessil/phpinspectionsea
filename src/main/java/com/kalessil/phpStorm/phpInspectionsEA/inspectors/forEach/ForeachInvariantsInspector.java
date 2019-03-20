@@ -104,7 +104,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                 holder.registerProblem(
                                         whileStatement.getFirstChild(),
                                         foreachInvariant,
-                                        new UseForeachFix(whileStatement, null, null, container, null)
+                                        new UseForeachFix(whileStatement, null, assignment.getVariable(), container, null)
                                 );
                             }
                         }

@@ -6,9 +6,18 @@ namespace NS {
             foreach ($arr as $iValue) {
                 echo $iValue;
             }
-
             foreach ($arr as $v) {
                 echo $v;
+            }
+
+            foreach ($array as $value) {
+                echo $value;
+            }
+            foreach ($array as $value) {
+                echo $value;
+            }
+            foreach ($array as $value) {
+                echo $value;
             }
         }
     }

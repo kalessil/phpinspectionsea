@@ -7,9 +7,18 @@ namespace NS {
             <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $iMax; $i++, $z = 0) {
                 echo $arr[$i];
             }
-
             <error descr="Foreach should be used instead (8x faster).">while</error> (list($i, $v) = each($arr)) {
                 echo $arr[$i];
+            }
+
+            <warning descr="Foreach can probably be used instead (easier to read and support).">while</warning> ((($array) && ($value = array_shift($array)) !== null)) {
+                echo $value;
+            }
+            <warning descr="Foreach can probably be used instead (easier to read and support).">while</warning> (null != $value = array_shift($array)) {
+                echo $value;
+            }
+            <warning descr="Foreach can probably be used instead (easier to read and support).">while</warning> ($value = array_shift($array)) {
+                echo $value;
             }
         }
     }

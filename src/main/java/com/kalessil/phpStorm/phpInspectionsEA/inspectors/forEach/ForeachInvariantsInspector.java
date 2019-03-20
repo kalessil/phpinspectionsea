@@ -341,17 +341,14 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                     final PsiElement replacementContainer = replacement.getValue();
                     final GroupStatement bodyHolder       = ExpressionSemanticUtil.getGroupStatement(replacement);
                     if (bodyHolder != null && replacementContainer != null) {
-                        if (index == null) {
-                            bodyHolder.replace(body);
-                            loop.replace(replacement);
-                        } else {
+                        if (index != null) {
                             this.updateContainersUsage(body, container, index, replacementContainer);
-                            bodyHolder.replace(body);
-                            this.cleanupUnusedIndex(replacement, body);
-                            loop.replace(replacement);
-                            final PsiElement limit = this.limit == null ? null : this.limit.getElement();
-                            this.cleanupUnusedLimit(ExpressionSemanticUtil.getScope(loop), limit);
                         }
+                        bodyHolder.replace(body);
+                        this.cleanupUnusedIndex(replacement, body);
+                        loop.replace(replacement);
+                        final PsiElement limit = this.limit == null ? null : this.limit.getElement();
+                        this.cleanupUnusedLimit(ExpressionSemanticUtil.getScope(loop), limit);
                     }
                 }
             }

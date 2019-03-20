@@ -25,6 +25,11 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.count.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsIsNumericChecks() {
+        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.is_numeric.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testIfFindsVersionChecks() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP560);
         myFixture.enableInspections(new SuspiciousBinaryOperationInspector());

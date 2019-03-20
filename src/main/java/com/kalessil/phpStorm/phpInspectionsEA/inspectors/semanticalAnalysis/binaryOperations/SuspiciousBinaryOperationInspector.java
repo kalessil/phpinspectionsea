@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -63,6 +64,11 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                 }
 
                 callbacks.clear();
+            }
+
+            @Override
+            public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                ConstantConditionsIsNumericStrategy.apply(reference, holder);
             }
         };
     }

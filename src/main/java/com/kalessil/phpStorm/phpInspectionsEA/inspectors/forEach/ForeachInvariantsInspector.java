@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -50,7 +51,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFor(@NotNull For forExpression) {
-                if (this.isContainingFileSkipped(forExpression)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(forExpression))          { return; }
 
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forExpression);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
@@ -85,7 +87,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignmentExpression) {
-                if (this.isContainingFileSkipped(assignmentExpression)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(assignmentExpression))   { return; }
 
                 PsiElement value = assignmentExpression.getValue();
                 if (OpenapiTypesUtil.isPhpExpressionImpl(value)) {

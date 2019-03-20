@@ -91,17 +91,23 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(whileStatement))         { return; }
 
-                final AssignmentExpression assignment = this.getValueExtraction(whileStatement.getCondition());
-                if (assignment != null) {
-                    final FunctionReference reference = (FunctionReference) assignment.getValue();
-                    if (reference != null) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        // the source not to be used in the body
-                        holder.registerProblem(
-                                whileStatement.getFirstChild(),
-                                foreachInvariant,
-                                new UseForeachFix(whileStatement, null, null, arguments[0], null)
-                        );
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(whileStatement);
+                if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                    final AssignmentExpression assignment = this.getValueExtraction(whileStatement.getCondition());
+                    if (assignment != null) {
+                        final FunctionReference reference = (FunctionReference) assignment.getValue();
+                        if (reference != null) {
+                            final PsiElement container    = reference.getParameters()[0];
+                            final boolean isContainerUsed = PsiTreeUtil.findChildrenOfType(body, container.getClass()).stream()
+                                    .anyMatch(candidate -> OpenapiEquivalenceUtil.areEqual(candidate, container));
+                            if (!isContainerUsed) {
+                                holder.registerProblem(
+                                        whileStatement.getFirstChild(),
+                                        foreachInvariant,
+                                        new UseForeachFix(whileStatement, null, null, container, null)
+                                );
+                            }
+                        }
                     }
                 }
             }

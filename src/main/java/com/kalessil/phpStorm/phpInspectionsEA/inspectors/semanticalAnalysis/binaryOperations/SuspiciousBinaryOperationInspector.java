@@ -68,6 +68,9 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
+
                 ConstantConditionsIsNumericStrategy.apply(reference, holder);
             }
         };

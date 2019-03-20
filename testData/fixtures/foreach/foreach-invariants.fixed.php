@@ -22,8 +22,11 @@ namespace NS {
         }
 
         public function falsePositives() {
-            while (list($i, $v) = each($arr)) {
-                echo $arr[$i];
+            while (list($i, $v) = each($array)) {
+                echo $array[$i];
+            }
+            while ($value = array_shift($array)) {
+                echo $array[0];
             }
         }
     }

@@ -20,6 +20,12 @@ namespace NS {
                 echo $value;
             }
         }
+
+        public function falsePositives() {
+            while (list($i, $v) = each($arr)) {
+                echo $arr[$i];
+            }
+        }
     }
 }
 

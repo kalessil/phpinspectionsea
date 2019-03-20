@@ -8,7 +8,7 @@ namespace NS {
                 echo $arr[$i];
             }
             <error descr="Foreach should be used instead (8x faster).">while</error> (list($i, $v) = each($arr)) {
-                echo $arr[$i];
+                echo $v;
             }
 
             <warning descr="Foreach can probably be used instead (easier to read and support).">while</warning> ((($array) && ($value = array_shift($array)) !== null)) {
@@ -19,6 +19,12 @@ namespace NS {
             }
             <warning descr="Foreach can probably be used instead (easier to read and support).">while</warning> ($value = array_shift($array)) {
                 echo $value;
+            }
+        }
+
+        public function falsePositives() {
+            while (list($i, $v) = each($arr)) {
+                echo $arr[$i];
             }
         }
     }
@@ -52,8 +58,8 @@ namespace {
         }
 
         /* case: slow loop */
-        <error descr="Foreach should be used instead (8x faster).">while</error> (list($i, $v) = each($arr)) {
-            echo $arr[$i]->property;
+        <error descr="Foreach should be used instead (8x faster, also deprecated since PHP 7.2).">while</error> (list($i, $v) = each($arr)) {
+            echo $v->property;
         }
     }
 

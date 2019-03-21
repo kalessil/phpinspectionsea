@@ -8,5 +8,9 @@ final public class StrStrUsedAsStrPosInspectorTest extends PhpCodeInsightFixture
         myFixture.enableInspections(new StrStrUsedAsStrPosInspector());
         myFixture.configureByFile("testData/fixtures/api/strings/strstr-function.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/api/strings/strstr-function.fixed.php");
     }
 }

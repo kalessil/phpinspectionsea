@@ -50,4 +50,17 @@ class CasesHolder {
         }
         return $y;
     }
+
+    public function falsy($parameter) {
+        if ($parameter == null) {
+            return null;
+        } else {
+            return $parameter;
+        }
+
+        if ($parameter != null) {
+            return $parameter;
+        }
+        return null;
+    }
 }

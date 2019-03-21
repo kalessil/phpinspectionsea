@@ -18,6 +18,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -144,18 +146,35 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                         );
                         if (isTarget) {
                             final IElementType operation = binary.getOperationType();
-                            final boolean isInverted    = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
-                            final PsiElement falseValue = isInverted ? trueVariant : falseVariant;
-                            final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
-                            final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
-                            holder.registerProblem(
-                                    falseValue,
-                                    isConditional ? messageDegradedConditional : messageDegradedTernary,
-                                    new SimplifyFix(replaceFrom, replaceTo, replacement)
-                            );
+                            final boolean isSafe = (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) ||
+                                                   (!this.isFalsyValue(trueVariant) && !this.isFalsyValue(falseVariant));
+                            if (isSafe) {
+                                final boolean isInverted    = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
+                                final PsiElement falseValue = isInverted ? trueVariant : falseVariant;
+                                final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
+                                final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
+                                holder.registerProblem(
+                                        falseValue,
+                                        isConditional ? messageDegradedConditional : messageDegradedTernary,
+                                        new SimplifyFix(replaceFrom, replaceTo, replacement)
+                                );
+                            }
                         }
                     }
                 }
+            }
+
+            private boolean isFalsyValue(@NotNull PsiElement element) {
+                if (element instanceof StringLiteralExpression) {
+                    return ((StringLiteralExpression) element).getContents().isEmpty();
+                } else if (element instanceof ConstantReference) {
+                    return PhpLanguageUtil.isFalse(element) || PhpLanguageUtil.isNull(element);
+                } else if (element instanceof ArrayCreationExpression) {
+                    return element.getChildren().length == 0;
+                } else if (OpenapiTypesUtil.isNumber(element)) {
+                    return element.getText().equals("0");
+                }
+                return false;
             }
         };
     }

@@ -8,5 +8,9 @@ final public class PowerOperatorCanBeUsedInspectorTest extends PhpCodeInsightFix
         myFixture.enableInspections(new PowerOperatorCanBeUsedInspector());
         myFixture.configureByFile("testData/fixtures/lang/power-operator.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/lang/power-operator.fixed.php");
     }
 }

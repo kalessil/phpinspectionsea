@@ -11,5 +11,9 @@ final public class ShortListSyntaxCanBeUsedInspectorTest extends PhpCodeInsightF
         myFixture.enableInspections(new ShortListSyntaxCanBeUsedInspector());
         myFixture.configureByFile("testData/fixtures/lang/short-list-syntax.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/lang/short-list-syntax.fixed.php");
     }
 }

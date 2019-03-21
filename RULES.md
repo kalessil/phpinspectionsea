@@ -23,11 +23,11 @@ Inspections Lists (Control flow)
 | Control Flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | yes | yes | yes  | no  |
 | Control Flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | no  |
 | Control Flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | yes  | no  |
-| Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | no  | yes | no   | yes |
+| Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a | yes | n/a  | yes |
 | Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | no  |
 | Control Flow         | ThrowRawExceptionInspection                     | General '\Exception' is thrown                                                    | yes | yes | yes  | yes |
 | Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | no  |
-| Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | no  | yes | no   | no  |
+| Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a | yes | n/a  | no  |
 | Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | no  |
 | Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | no  |
 | Control Flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | no  |
@@ -133,17 +133,17 @@ Inspections Lists (Language level migration)
 ---
 | Group                    | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :----------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Language level migration | ElvisOperatorCanBeUsedInspection                | Elvis operator can be used                          | yes | yes | no   | no  |
+| Language level migration | ElvisOperatorCanBeUsedInspection                | Elvis operator can be used                          | yes | yes | yes  | no  |
 | Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes | yes | yes  | no  |
 | Language level migration | TypesCastingCanBeUsedInspection                 | Type casting can be used                            | yes | yes | yes  | no  |
 | Language level migration | DirectoryConstantCanBeUsedInspection            | __DIR__ constant can be used                        | yes | yes | yes  | no  |
 | Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
-| Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes | yes | no   | no  |
-| Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes | yes | no   | no  |
+| Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes | yes | yes  | no  |
+| Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes | yes | yes  | no  |
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes | yes | yes  | yes |
 | Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes | yes | yes  | no  |
-| Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname(...) calls                        | yes | yes | no   | no  |
-| Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | no   | no  |
+| Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname(...) calls                        | yes | yes | yes  | no  |
+| Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | yes  | no  |
 | Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes | yes | yes  | no  |
 | Language level migration | ArgumentUnpackingCanBeUsedInspection            | Argument unpacking can be used                      | yes | yes | yes  | no  |
 | Language level migration | ReturnTypeCanBeDeclaredInspection               | Return type hint can be used                        | yes | yes | yes  | no  |
@@ -191,7 +191,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a | yes | n/a  | no  |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes | yes | yes  | no  |
-| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes | yes | no   | yes |
+| Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes | yes | yes  | yes |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a | yes | n/a  | yes |
 | Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a | yes | n/a  | no  |
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes | yes | yes  | no  |
@@ -276,11 +276,11 @@ Inspections Lists (Performance)
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                      | n/a | yes | n/a  | yes |
 | Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                                     | n/a | yes | n/a  | no  |
 | Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | n/a | yes | n/a  | yes |
-| Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | no   | no  |
+| Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | yes  | no  |
 | Performance          | AlterInForeachInspection                        | Foreach variables reference usage correctness                                                     | n/a | yes | n/a  | yes |
-| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused                                                                         | yes | yes | no   | no  |
+| Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused                                                                         | yes | yes | yes  | no  |
 | Performance          | FileFunctionMissUseInspection                   | 'file(...)' misused                                                                               | yes | yes | yes  | no  |
-| Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    | no  | yes | no   | yes | 
+| Performance          | NotOptimalRegularExpressionsInspection          | Non-optimal regular expression                                                                    | n/a | yes | n/a  | yes | 
 | Performance          | VariableFunctionsUsageInspection                | Variable functions usage                                                                          | yes | yes | yes  | no  |
 | Performance          | SubStrShortHandUsageInspection                  | 'substr(...)' short-hand usage                                                                    | yes | yes | yes  | no  |
 | Performance          | InArrayMissUseInspection                        | 'in_array(...)' misused                                                                           | yes | yes | yes  | no  |

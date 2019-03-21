@@ -11,5 +11,9 @@ final public class CascadingDirnameCallsInspectorTest extends PhpCodeInsightFixt
         myFixture.enableInspections(new CascadingDirnameCallsInspector());
         myFixture.configureByFile("testData/fixtures/api/cascade-dirname.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/api/cascade-dirname.fixed.php");
     }
 }

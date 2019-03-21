@@ -8,5 +8,9 @@ final public class ElvisOperatorCanBeUsedInspectorTest extends PhpCodeInsightFix
         myFixture.enableInspections(new ElvisOperatorCanBeUsedInspector());
         myFixture.configureByFile("testData/fixtures/lang/elvis-operator.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/lang/elvis-operator.fixed.php");
     }
 }

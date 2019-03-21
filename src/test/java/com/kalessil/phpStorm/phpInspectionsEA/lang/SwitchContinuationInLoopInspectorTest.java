@@ -8,5 +8,9 @@ final public class SwitchContinuationInLoopInspectorTest extends PhpCodeInsightF
         myFixture.enableInspections(new SwitchContinuationInLoopInspector());
         myFixture.configureByFile("testData/fixtures/lang/continue-in-switch.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/lang/continue-in-switch.fixed.php");
     }
 }

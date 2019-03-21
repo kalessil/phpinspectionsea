@@ -8,7 +8,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -75,7 +74,6 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                                 holder.registerProblem(childNode, messageForeach, new TheLocalFix());
                                 break;
                             }
-
                             childNode = childNode.getNextSibling();
                         }
                     }
@@ -102,7 +100,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement listKeyword = descriptor.getPsiElement();
-            if (null == listKeyword) {
+            if (listKeyword == null || project.isDisposed()) {
                 return;
             }
 
@@ -111,30 +109,27 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             PsiElement closingBracket = null;
             PsiElement current        = listKeyword;
             int nestingLevel          = 0;
-            while (null != current) {
-                final IElementType nodeType = current.getNode().getElementType();
-
-                if (PhpTokenTypes.chLPAREN == nodeType) {
-                    if (0 == nestingLevel) {
+            while (current != null) {
+                if (OpenapiTypesUtil.is(current, PhpTokenTypes.chLPAREN)) {
+                    if (nestingLevel == 0) {
                         openingBracket = current;
                     }
                     ++nestingLevel;
                 }
-                if (PhpTokenTypes.chRPAREN == nodeType) {
+                if (OpenapiTypesUtil.is(current, PhpTokenTypes.chRPAREN)) {
                     --nestingLevel;
-                    if (0 == nestingLevel) {
+                    if (nestingLevel == 0) {
                         closingBracket = current;
                     }
                 }
-
                 current = current.getNextSibling();
             }
 
             /* apply refactoring */
-            if (null != openingBracket && null != closingBracket) {
+            if (openingBracket != null && closingBracket != null) {
                 final PsiElement openBracket  = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "[");
                 final PsiElement closeBracket = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "]");
-                if (null != openBracket && null != closeBracket) {
+                if (openBracket != null && closeBracket != null) {
                     /* cleanup following-up space */
                     final PsiElement after = listKeyword.getNextSibling();
                     if (after instanceof PsiWhiteSpace) {

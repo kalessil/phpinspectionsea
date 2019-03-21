@@ -71,7 +71,7 @@ Inspections Lists (Unused)
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | no  | yes | no   | no  |
 | Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | no   | no  |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |
-| Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | no   | no  |
+| Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | yes  | no  |
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | yes  | no  |
 | Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary call arguments specification            | yes | yes | yes  | no  |
@@ -92,7 +92,7 @@ Inspections Lists (Confusing constructs)
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a | yes | n/a  | no  |
-| Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | no  | yes | no   | no  |
+| Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | n/a | yes | n/a  | no  |
 | Confusing constructs | UselessReturnInspection                         | Useless return                                      | yes | yes | yes  | no  |
 | Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | yes  | no  |
 

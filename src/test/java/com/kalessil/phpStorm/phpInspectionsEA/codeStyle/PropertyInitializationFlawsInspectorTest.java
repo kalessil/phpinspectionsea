@@ -11,6 +11,10 @@ final public class PropertyInitializationFlawsInspectorTest extends PhpCodeInsig
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/codeStyle/property-null-initialization.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/property-null-initialization.fixed.php");
     }
     public void testPropertyOverridePatterns() {
         final PropertyInitializationFlawsInspector inspector = new PropertyInitializationFlawsInspector();

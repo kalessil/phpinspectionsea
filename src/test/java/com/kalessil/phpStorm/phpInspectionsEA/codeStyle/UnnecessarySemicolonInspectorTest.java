@@ -8,5 +8,9 @@ final public class UnnecessarySemicolonInspectorTest extends PhpCodeInsightFixtu
         myFixture.enableInspections(new UnnecessarySemicolonInspector());
         myFixture.configureByFile("testData/fixtures/codeStyle/semicolons.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/semicolons.fixed.php");
     }
 }

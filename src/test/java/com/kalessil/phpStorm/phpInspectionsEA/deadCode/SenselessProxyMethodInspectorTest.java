@@ -8,6 +8,10 @@ final public class SenselessProxyMethodInspectorTest extends PhpCodeInsightFixtu
         myFixture.enableInspections(new SenselessProxyMethodInspector());
         myFixture.configureByFile("testData/fixtures/deadCode/senselessProxy/senseless-proxy-common.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/deadCode/senselessProxy/senseless-proxy-common.fixed.php");
     }
     public void testIfFindsSignaturePatterns() {
         myFixture.enableInspections(new SenselessProxyMethodInspector());

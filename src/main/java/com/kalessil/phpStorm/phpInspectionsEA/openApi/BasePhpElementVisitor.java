@@ -77,8 +77,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpNewExpression(NewExpression expression)             {}
 
     @Override public void visitPhpClass(PhpClass clazz)                                            {}
-    @Override public void visitPhpConstantReference(ConstantReference reference)                   {}
-    @Override public void visitPhpNewExpression(NewExpression expression)                          {}
+    @Override public void visitPhpConstantReference(ConstantReference reference)                   {}     {}
     @Override public void visitPhpClassConstantReference(ClassConstantReference constantReference) {}
     @Override public void visitPhpClassReference(ClassReference classReference)                    {}
 

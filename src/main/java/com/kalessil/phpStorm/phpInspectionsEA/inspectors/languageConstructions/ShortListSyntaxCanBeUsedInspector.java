@@ -4,18 +4,13 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.ForeachStatement;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -46,16 +41,16 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression multiassignmentExpression) {
+            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignment) {
                 /* ensure php version is at least PHP 7.1 */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
                     /* verify if it's dedicated statement and it's the list(...) construction */
-                    final PsiElement parent = multiassignmentExpression.getParent();
+                    final PsiElement parent = assignment.getParent();
                     if (OpenapiTypesUtil.isStatementImpl(parent)) {
-                        final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
+                        final PsiElement listKeyword = assignment.getFirstChild();
                         if (OpenapiTypesUtil.is(listKeyword, PhpTokenTypes.kwLIST)) {
-                            holder.registerProblem(listKeyword, messageAssign, new TheLocalFix());
+                            holder.registerProblem(listKeyword, messageAssign, new TheLocalFix(assignment));
                         }
                     }
                 }
@@ -71,7 +66,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                         PsiElement childNode = foreach.getFirstChild();
                         while (childNode != null && !(childNode instanceof GroupStatement)) {
                             if (OpenapiTypesUtil.is(childNode, PhpTokenTypes.kwLIST)) {
-                                holder.registerProblem(childNode, messageForeach, new TheLocalFix());
+                                holder.registerProblem(childNode, messageForeach, new TheLocalFix(foreach));
                                 break;
                             }
                             childNode = childNode.getNextSibling();
@@ -85,6 +80,8 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
     private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use [...] instead";
 
+        private final SmartPsiElementPointer<PsiElement> context;
+
         @NotNull
         @Override
         public String getName() {
@@ -95,6 +92,12 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
         @Override
         public String getFamilyName() {
             return title;
+        }
+
+        TheLocalFix(@NotNull PsiElement context) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(context.getProject());
+            this.context = factory.createSmartPsiElementPointer(context);
         }
 
         @Override
@@ -139,6 +142,12 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                     openingBracket.replace(openBracket);
                     closingBracket.replace(closeBracket);
                     listKeyword.delete();
+
+                    final PsiElement context = this.context.getElement();
+                    if (context instanceof AssignmentExpression) {
+                        /* PhpStorm 2018.2 BC break: PSI tree structure has changed */
+                        context.replace(PhpPsiElementFactory.createPhpPsiFromText(project, AssignmentExpression.class, context.getText()));
+                    }
                 }
             }
         }

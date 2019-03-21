@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -25,6 +24,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
     private static final String messageForeach = "'foreach (... as [...])' can be used here.";
     private static final String messageAssign  = "'[...] = ...' can be used here.";
@@ -38,43 +46,37 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
+            @Override
+            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression multiassignmentExpression) {
                 /* ensure php version is at least PHP 7.1 */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP710) < 0) {
-                    return;
-                }
-
-                /* verify if it's dedicated statement and it's the list(...) construction */
-                final PsiElement parent = multiassignmentExpression.getParent();
-                if (!OpenapiTypesUtil.isStatementImpl(parent)) {
-                    return;
-                }
-                final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
-                if (null != listKeyword && PhpTokenTypes.kwLIST == listKeyword.getNode().getElementType()) {
-                    holder.registerProblem(listKeyword, messageAssign, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                    /* verify if it's dedicated statement and it's the list(...) construction */
+                    final PsiElement parent = multiassignmentExpression.getParent();
+                    if (OpenapiTypesUtil.isStatementImpl(parent)) {
+                        final PsiElement listKeyword = multiassignmentExpression.getFirstChild();
+                        if (OpenapiTypesUtil.is(listKeyword, PhpTokenTypes.kwLIST)) {
+                            holder.registerProblem(listKeyword, messageAssign, new TheLocalFix());
+                        }
+                    }
                 }
             }
 
-            public void visitPhpForeach(ForeachStatement foreach) {
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 /* ensure php version is at least PHP 7.1 */
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP710) < 0) {
-                    return;
-                }
+                if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                    final List<Variable> variables = foreach.getVariables();
+                    if (!variables.isEmpty()) {
+                        PsiElement childNode = foreach.getFirstChild();
+                        while (childNode != null && !(childNode instanceof GroupStatement)) {
+                            if (OpenapiTypesUtil.is(childNode, PhpTokenTypes.kwLIST)) {
+                                holder.registerProblem(childNode, messageForeach, new TheLocalFix());
+                                break;
+                            }
 
-                final List<Variable> variables = foreach.getVariables();
-                if (!variables.isEmpty()) {
-                    PsiElement childNode = foreach.getFirstChild();
-                    while (null != childNode) {
-                        if (childNode.getClass() == LeafPsiElement.class && PhpTokenTypes.kwLIST == childNode.getNode().getElementType()) {
-                            holder.registerProblem(childNode, messageForeach, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
-                            break;
-                        }
-
-                        childNode = childNode.getNextSibling();
-                        if (childNode instanceof GroupStatement) {
-                            break;
+                            childNode = childNode.getNextSibling();
                         }
                     }
                 }
@@ -146,5 +148,4 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             }
         }
     }
-
 }

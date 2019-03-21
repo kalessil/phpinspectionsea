@@ -68,7 +68,7 @@ Inspections Lists (Unused)
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a | yes | n/a  | no  |
-| Unused               | UselessUnsetInspection                          | Useless unset                                       | no  | yes | no   | no  |
+| Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a | yes | n/a  | no  |
 | Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | yes  | no  |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | yes  | no  |
@@ -107,7 +107,7 @@ Inspections Lists (Code style)
 | Code Style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | yes | yes | yes  | no  |
 | Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes | yes | yes  | no  |
 | Code Style           | UnnecessaryParenthesesInspection                | Unnecessary parentheses                             | yes | yes | yes  | no  |
-| Code Style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes | yes | no   | no  |
+| Code Style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes | yes | yes  | no  |
 | Code Style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes | yes | no   | no  |
 | Code Style           | UnnecessaryUseAliasInspection                   | Unnecessary use aliases                             | yes | yes | yes  | no  |
 | Code Style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes | yes | no   | no  |

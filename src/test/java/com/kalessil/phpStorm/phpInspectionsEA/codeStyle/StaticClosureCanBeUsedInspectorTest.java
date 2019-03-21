@@ -8,5 +8,9 @@ final public class StaticClosureCanBeUsedInspectorTest extends PhpCodeInsightFix
         myFixture.enableInspections(new StaticClosureCanBeUsedInspector());
         myFixture.configureByFile("testData/fixtures/codeStyle/static-closure-use.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/static-closure-use.fixed.php");
     }
 }

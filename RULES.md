@@ -136,7 +136,7 @@ Inspections Lists (Language level migration)
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes | yes | yes  | yes |
 | Language level migration | ClassConstantCanBeUsedInspection                | ::class can be used                                 | yes | yes | yes  | no  |
 | Language level migration | CascadingDirnameCallsInspection                 | Cascading dirname(...) calls                        | yes | yes | yes  | no  |
-| Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | no   | no  |
+| Language level migration | PowerOperatorCanBeUsedInspection                | Power operator can be used                          | yes | yes | yes  | no  |
 | Language level migration | ConstantCanBeUsedInspection                     | A constant can be used                              | yes | yes | yes  | no  |
 | Language level migration | ArgumentUnpackingCanBeUsedInspection            | Argument unpacking can be used                      | yes | yes | yes  | no  |
 | Language level migration | ReturnTypeCanBeDeclaredInspection               | Return type hint can be used                        | yes | yes | yes  | no  |

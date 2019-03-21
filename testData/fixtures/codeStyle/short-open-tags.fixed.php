@@ -1,0 +1,5 @@
+<?php ?>
+
+/* false-positives */
+<?php ?>
+<?=''?>

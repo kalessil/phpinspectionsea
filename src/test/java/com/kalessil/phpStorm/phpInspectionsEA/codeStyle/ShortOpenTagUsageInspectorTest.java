@@ -8,5 +8,9 @@ final public class ShortOpenTagUsageInspectorTest extends PhpCodeInsightFixtureT
         myFixture.enableInspections(new ShortOpenTagUsageInspector());
         myFixture.configureByFile("testData/fixtures/codeStyle/short-open-tags.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/short-open-tags.fixed.php");
     }
 }

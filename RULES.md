@@ -111,11 +111,11 @@ Inspections Lists (Code style)
 | Code Style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes | yes | yes  | no  |
 | Code Style           | UnnecessaryUseAliasInspection                   | Unnecessary use aliases                             | yes | yes | yes  | no  |
 | Code Style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes | yes | yes  | no  |
-| Code Style           | IncrementDecrementOperationEquivalentInspection | Increment/decrement operation equivalent            | yes | yes | no   | no  |
+| Code Style           | IncrementDecrementOperationEquivalentInspection | Increment/decrement operation equivalent            | yes | yes | yes  | no  |
 | Code Style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes | yes | yes  | no  |
 | Code Style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes | yes | yes  | no  |
 | Code Style           | UsingInclusionReturnValueInspection             | Usage of inclusion return value                     | n/a | yes | n/a  | no  |
-| Code Style           | ShortOpenTagUsageInspection                     | PHP short open tag usage                            | yes | yes | no   | no  |
+| Code Style           | ShortOpenTagUsageInspection                     | PHP short open tag usage                            | yes | yes | yes  | no  |
 | Code Style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes | yes | no   | no  |
 | Code Style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
 | Code Style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |

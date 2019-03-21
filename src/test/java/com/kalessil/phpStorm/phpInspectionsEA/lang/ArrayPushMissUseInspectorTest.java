@@ -11,5 +11,9 @@ final public class ArrayPushMissUseInspectorTest extends PhpCodeInsightFixtureTe
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/lang/array-push-via-function.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/lang/array-push-via-function.fixed.php");
     }
 }

@@ -25,7 +25,7 @@ import java.util.stream.Stream;
  */
 
 public class SenselessPropertyInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' property seems to be used as a local variable ('%s' method).";
+    private static final String messagePattern = "'%s' property seems to be used as a local variable in '%s' method.";
 
     @NotNull
     public String getShortName() {
@@ -68,17 +68,19 @@ public class SenselessPropertyInspector extends BasePhpInspection {
 
             private Map<String, Set<String>> extractFieldsUsage(@NotNull PhpClass clazz) {
                 final Map<String, Set<String>> result = new HashMap<>();
-                Stream.of(clazz.getOwnMethods()).filter(m -> !m.isStatic() && !m.isAbstract()).forEach(method -> {
-                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
-                    for (final FieldReference reference : PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {
-                        final PsiElement base = reference.getFirstChild();
-                        if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
-                            final String fieldName = reference.getName();
-                            result.putIfAbsent(fieldName, new HashSet<>());
-                            result.get(fieldName).add(method.getName());
-                        }
-                    }
-                });
+                Stream.of(clazz.getOwnMethods())
+                        .filter(m -> !m.isStatic() && !m.isAbstract())
+                        .forEach(method -> {
+                            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                            for (final FieldReference reference : PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {
+                                final PsiElement base = reference.getFirstChild();
+                                if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
+                                    final String fieldName = reference.getName();
+                                    result.putIfAbsent(fieldName, new HashSet<>());
+                                    result.get(fieldName).add(method.getName());
+                                }
+                            }
+                        });
                 return result;
             }
         };

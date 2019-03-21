@@ -23,6 +23,7 @@ function cases_holder() {
         substr('...', 0, -1) == "\r",
 
         /* false-positives: edge cases */
-        substr('...', 3) === '', /* string length check tolerant to input, works in PHP 7.0+ */
+        substr('...', 3) === '',  /* string length check tolerant to input, works in PHP 7.0+ */
+        substr('ё..', 2) === 'ё', /* multi-byte magic */
     ];
 }

@@ -88,9 +88,13 @@ public class SubstringCompareInspector extends BasePhpInspection {
                                     /* workaround for https://youtrack.jetbrains.com/issue/WI-44824 */
                                     final String patched   = literal.isSingleQuote() ? literal.getContents() : literal.getContents().replaceAll("\\\\r", "\r");
                                     final String unescaped = PhpStringUtil.unescapeText(patched, literal.isSingleQuote());
+                                    /* plain vs mb_* string functions magic */
+                                    int stringLength = unescaped.length();
+                                    if (functionName.equals("substr")) {
+                                        stringLength += unescaped.replaceAll("\\p{ASCII}", "").length();
+                                    }
 
                                     int givenOffset  = 0;
-                                    int stringLength = unescaped.length();
                                     boolean isTarget;
                                     try {
                                         givenOffset = Integer.parseInt(offset.getText());
@@ -99,7 +103,7 @@ public class SubstringCompareInspector extends BasePhpInspection {
                                         } else {
                                             isTarget = stringLength > 0 && stringLength != Math.abs(givenOffset);
                                         }
-                                    } catch (NumberFormatException lengthParsingHasFailed) {
+                                    } catch (final NumberFormatException lengthParsingHasFailed) {
                                         isTarget = false;
                                     }
 

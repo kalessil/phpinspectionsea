@@ -174,6 +174,7 @@ Inspections Lists (Architecture)
 | Architecture         | CompositionAndInheritanceInspection             | Composition and inheritance                         | n/a | yes | n/a  | no  |
 | Architecture         | TestingUnfriendlyApisInspection                 | Testing unfriendly APIs                             | n/a | yes | n/a  | no  |
 | Architecture         | InterfacesAsConstructorDependenciesInspection   | Interfaces as constructor dependencies              | n/a | yes | n/a  | no  |
+| Architecture         | SenselessPropertyInspection                     | Senseless property                                  | n/a | yes | n/a  | no  |
 
 Inspections Lists (Probable bugs)
 ---

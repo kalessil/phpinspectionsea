@@ -80,6 +80,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpConstantReference(ConstantReference reference)                   {}
     @Override public void visitPhpClassConstantReference(ClassConstantReference constantReference) {}
     @Override public void visitPhpClassReference(ClassReference classReference)                    {}
+    @Override public void visitPhpField(Field field)                                               {}
 
     @Override public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {}
     @Override public void visitPhpArrayAccessExpression(ArrayAccessExpression expression)     {}

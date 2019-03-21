@@ -967,6 +967,10 @@
         shortName="InterfacesAsConstructorDependenciesInspection"   displayName="Interfaces as constructor dependencies"
         groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.InterfacesAsConstructorDependenciesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="SenselessPropertyInspection"                     displayName="Senseless property"
+        groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.SenselessPropertyInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

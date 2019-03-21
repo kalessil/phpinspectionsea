@@ -1,14 +1,20 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -49,12 +55,39 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                             final boolean usesThis = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
                                     .anyMatch(variable -> variable.getName().equals("this"));
                             if (!usesThis) {
-                                holder.registerProblem(function.getFirstChild(), message);
+                                holder.registerProblem(function.getFirstChild(), message, new MakeClosureStaticFix());
                             }
                         }
                     }
                 }
             }
         };
+    }
+
+    private static final class MakeClosureStaticFix implements LocalQuickFix {
+        private static final String title = "Declare the closure static";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement functionKeyword = descriptor.getPsiElement();
+            if (functionKeyword != null && !project.isDisposed()) {
+                final PsiElement implant = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "static");
+                if (implant != null) {
+                    functionKeyword.getParent().addBefore(implant, functionKeyword);
+                }
+            }
+        }
     }
 }

@@ -127,7 +127,7 @@ Inspections Lists (Code style)
 | Code Style           | MissUsingParentKeywordInspection                | 'parent' keyword misused                            | yes | yes | yes  | no  |
 | Code Style           | NestedAssignmentsUsageInspection                | Nested assignments usage                            | yes | yes | yes  | no  |
 | Code Style           | ProperNullCoalescingOperatorUsageInspection     | Proper null-coalescing operator usage               | yes | yes | yes  | no  |
-| Code Style           | StaticClosureCanBeUsedInspection                | Static closure can be used                          | n/a | yes | n/a  | no  |
+| Code Style           | StaticClosureCanBeUsedInspection                | Static closure can be used                          | yes | yes | yes  | no  |
 
 Inspections Lists (Language level migration)
 ---

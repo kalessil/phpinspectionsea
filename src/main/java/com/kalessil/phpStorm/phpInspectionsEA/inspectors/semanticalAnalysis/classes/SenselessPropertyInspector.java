@@ -41,7 +41,7 @@ public class SenselessPropertyInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(clazz))                  { return; }
 
-                if (!clazz.isInterface()) {
+                if (!clazz.isInterface() && !clazz.isTrait()) {
                     final List<Field> fields = Stream.of(clazz.getOwnFields())
                             .filter(f -> !f.isConstant() &&
                                          f.getModifier().isPrivate() &&

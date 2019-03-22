@@ -55,7 +55,11 @@ public class SenselessPropertyInspector extends BasePhpInspection {
                             fields.forEach(f -> {
                                 final String fieldName = f.getName();
                                 if (fieldsUsages.containsKey(fieldName) && fieldsUsages.get(fieldName).size() == 1) {
-                                    holder.registerProblem(f, String.format(messagePattern, fieldName, fieldsUsages.get(fieldName).iterator().next()));
+                                    final String methodName = fieldsUsages.get(fieldName).iterator().next();
+                                    /* false-positives: unused constructor dependency */
+                                    if (!methodName.equals("__construct")) {
+                                        holder.registerProblem(f, String.format(messagePattern, fieldName, methodName));
+                                    }
                                 }
                             });
                             fieldsUsages.values().forEach(Set::clear);

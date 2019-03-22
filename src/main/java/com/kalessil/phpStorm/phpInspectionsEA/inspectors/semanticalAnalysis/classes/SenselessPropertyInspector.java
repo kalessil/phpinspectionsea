@@ -80,8 +80,8 @@ public class SenselessPropertyInspector extends BasePhpInspection {
             private boolean isTarget(@NotNull Field field, @NotNull Method method) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                 if (body != null) {
-                    final String fieldName               = field.getName();
-                    final Optional<FieldReference> first = PsiTreeUtil.findChildrenOfType(body, FieldReference.class).stream()
+                    final String fieldName            = field.getName();
+                    final List<FieldReference> usages = PsiTreeUtil.findChildrenOfType(body, FieldReference.class).stream()
                             .filter(r -> {
                                 if (fieldName.equals(r.getName())) {
                                     final PsiElement base = r.getFirstChild();
@@ -89,14 +89,20 @@ public class SenselessPropertyInspector extends BasePhpInspection {
                                 }
                                 return false;
                             })
-                            .findFirst();
-                    if (first.isPresent()) {
-                        final FieldReference reference = first.get();
-                        final PsiElement parent        = reference.getParent();
+                            .collect(Collectors.toList());
+                    if (!usages.isEmpty()) {
+                        final FieldReference first = usages.get(0);
+                        final PsiElement parent    = first.getParent();
                         if (OpenapiTypesUtil.isAssignment(parent)) {
                             final AssignmentExpression assignment = (AssignmentExpression) parent;
-                            return assignment.getValue() != reference;
+                            if (assignment.getValue() != first) {
+                                final boolean optional = PsiTreeUtil.getParentOfType(parent, If.class, false, Method.class) != null;
+                                if (!optional) {
+                                    return usages.stream().noneMatch(r -> ExpressionSemanticUtil.getScope(r) != method);
+                                }
+                            }
                         }
+                        usages.clear();
                     }
                 }
                 return false;
@@ -105,7 +111,7 @@ public class SenselessPropertyInspector extends BasePhpInspection {
             private Map<String, Set<String>> extractFieldsUsage(@NotNull PhpClass clazz) {
                 final Map<String, Set<String>> result = new HashMap<>();
                 Stream.of(clazz.getOwnMethods())
-                        .filter(m -> !m.isStatic() && !m.isAbstract())
+                        .filter(method  -> !method.isStatic() && !method.isAbstract())
                         .forEach(method -> {
                             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                             for (final FieldReference reference : PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {

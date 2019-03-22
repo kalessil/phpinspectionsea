@@ -14,8 +14,11 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -27,6 +30,9 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean ENFORCE_BINARY_MODIFIER_USAGE = true;
+
     private static final String messageMisplacedBinaryMode   = "The 'b' modifier needs to be the last one (e.g 'wb', 'wb+').";
     private static final String messageUseBinaryMode         = "The mode is not binary-safe ('b' is missing, as documentation recommends).";
     private static final String messageReplaceWithBinaryMode = "The mode is not binary-safe (replace 't' with 'b', as documentation recommends).";
@@ -61,15 +67,25 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                                     );
                                 }
                             } else if (modeText.indexOf('t') != -1) {
-                                holder.registerProblem(arguments[1], messageReplaceWithBinaryMode, new TheLocalFix(mode));
+                                if (ENFORCE_BINARY_MODIFIER_USAGE) {
+                                    holder.registerProblem(arguments[1], messageReplaceWithBinaryMode, new TheLocalFix(mode));
+                                }
                             } else {
-                                holder.registerProblem(arguments[1], messageUseBinaryMode, new TheLocalFix(mode));
+                                if (ENFORCE_BINARY_MODIFIER_USAGE) {
+                                    holder.registerProblem(arguments[1], messageUseBinaryMode, new TheLocalFix(mode));
+                                }
                             }
                         }
                     }
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Promote b-modifier (as per documentation)", ENFORCE_BINARY_MODIFIER_USAGE, (isSelected) -> ENFORCE_BINARY_MODIFIER_USAGE = isSelected)
+        );
     }
 
     private static final class TheLocalFix implements LocalQuickFix {

@@ -2,21 +2,31 @@
 
 /** @property $docBlockProperty */
 class Clazz {
-    private <weak_warning descr="'privateUsedAsLocal' property seems to be used as a local variable in 'method' method.">$privateUsedAsLocal</weak_warning>;
-    private $privateUsedAsProperty;
+    private <weak_warning descr="'privateAsLocal' property seems to be used as a local variable in 'method' method.">$privateAsLocal</weak_warning>;
+    private $privateAsProperty;
+
+    /** @Id */
+    private $privateAnnotated;
+    /** @var string */
+    private <weak_warning descr="'privateTyped' property seems to be used as a local variable in 'method' method.">$privateTyped</weak_warning>;
+
     private $privateUnusedDependency;
     protected $protected;
     public $public;
 
     public function __construct() {
-        $this->privateUsedAsProperty = '...';
+        $this->privateAsProperty = '...';
         $this->privateUnusedDependency = '...';
     }
 
     public function method() {
-        $this->privateUsedAsLocal = $this->privateUsedAsProperty;
-        $this->docBlockProperty = $this->privateUsedAsProperty;
-        $this->protected = $this->privateUsedAsProperty;
-        $this->public = $this->privateUsedAsProperty;
+        $this->privateAsLocal = $this->privateAsProperty;
+        $this->privateTyped = $this->privateAsProperty;
+
+        $this->docBlockProperty = $this->privateAsProperty;
+        $this->privateAnnotated = $this->privateAsProperty;
+
+        $this->protected = $this->privateAsProperty;
+        $this->public = $this->privateAsProperty;
     }
 }

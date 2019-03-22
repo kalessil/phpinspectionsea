@@ -4,11 +4,14 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -43,11 +46,12 @@ public class SenselessPropertyInspector extends BasePhpInspection {
 
                 if (!clazz.isInterface() && !clazz.isTrait()) {
                     final List<Field> fields = Stream.of(clazz.getOwnFields())
-                            .filter(f -> !f.isConstant() &&
-                                         f.getModifier().isPrivate() &&
-                                         !f.getModifier().isStatic() &&
-                                         ExpressionSemanticUtil.getBlockScope(f) == clazz
-                            )
+                            .filter(f -> !f.isConstant() && f.getModifier().isPrivate() && !f.getModifier().isStatic())
+                            .filter(f -> {
+                                final PhpDocTag[] tags  = PsiTreeUtil.getChildrenOfType(f.getDocComment(), PhpDocTag.class);
+                                final boolean annotated = tags != null && Arrays.stream(tags).anyMatch(t -> !t.getName().equals(t.getName().toLowerCase()));
+                                return !annotated;
+                            })
                             .collect(Collectors.toList());
                     if (!fields.isEmpty()) {
                         final Map<String, Set<String>> fieldsUsages = this.extractFieldsUsage(clazz);
@@ -58,7 +62,10 @@ public class SenselessPropertyInspector extends BasePhpInspection {
                                     final String methodName = fieldsUsages.get(fieldName).iterator().next();
                                     /* false-positives: unused constructor dependency */
                                     if (!methodName.equals("__construct")) {
-                                        holder.registerProblem(f, String.format(messagePattern, fieldName, methodName));
+                                        final Method method = OpenapiResolveUtil.resolveMethod(clazz, methodName);
+                                        if (method != null && this.isTarget(f, method)) {
+                                            holder.registerProblem(f, String.format(messagePattern, fieldName, methodName));
+                                        }
                                     }
                                 }
                             });
@@ -68,6 +75,31 @@ public class SenselessPropertyInspector extends BasePhpInspection {
                         fields.clear();
                     }
                 }
+            }
+
+            private boolean isTarget(@NotNull Field field, @NotNull Method method) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                if (body != null) {
+                    final String fieldName               = field.getName();
+                    final Optional<FieldReference> first = PsiTreeUtil.findChildrenOfType(body, FieldReference.class).stream()
+                            .filter(r -> {
+                                if (fieldName.equals(r.getName())) {
+                                    final PsiElement base = r.getFirstChild();
+                                    return base instanceof Variable && ((Variable) base).getName().equals("this");
+                                }
+                                return false;
+                            })
+                            .findFirst();
+                    if (first.isPresent()) {
+                        final FieldReference reference = first.get();
+                        final PsiElement parent        = reference.getParent();
+                        if (OpenapiTypesUtil.isAssignment(parent)) {
+                            final AssignmentExpression assignment = (AssignmentExpression) parent;
+                            return assignment.getValue() != reference;
+                        }
+                    }
+                }
+                return false;
             }
 
             private Map<String, Set<String>> extractFieldsUsage(@NotNull PhpClass clazz) {

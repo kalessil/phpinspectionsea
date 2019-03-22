@@ -65,9 +65,12 @@ class ClassUpdComplex
 class ClassWithAnnotations
 {
     /** @Id */
-    private $property;
+    private $annotatedProperty;
+    /** @var string */
+    private $typedProperty;
 
     public function __construct($property) {
-        $this->property = $property;
+        $this->annotatedProperty = $property;
+        <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->typedProperty</weak_warning> = $property;
     }
 }

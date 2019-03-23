@@ -9,6 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -31,12 +32,20 @@ import java.util.stream.Stream;
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
+    private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
     private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here.";
     private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here.";
     private static final String patternConditionAnomaly   = "A parent condition '%s' looks suspicious.";
 
-    private static final Set<IElementType> operationsAnomaly = new HashSet<>();
+
+    private static final Map<IElementType, IElementType> operationsInversion = new HashMap<>();
+    private static final Set<IElementType> operationsAnomaly                 = new HashSet<>();
     static {
+        operationsInversion.put(PhpTokenTypes.opGREATER,          PhpTokenTypes.opLESS_OR_EQUAL);
+        operationsInversion.put(PhpTokenTypes.opGREATER_OR_EQUAL, PhpTokenTypes.opLESS);
+        operationsInversion.put(PhpTokenTypes.opLESS,             PhpTokenTypes.opGREATER_OR_EQUAL);
+        operationsInversion.put(PhpTokenTypes.opLESS_OR_EQUAL,    PhpTokenTypes.opGREATER);
+
         operationsAnomaly.add(PhpTokenTypes.opLESS);
         operationsAnomaly.add(PhpTokenTypes.opLESS_OR_EQUAL);
         operationsAnomaly.add(PhpTokenTypes.opEQUAL);
@@ -62,10 +71,12 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFor(@NotNull For statement) {
-                if (this.isContainingFileSkipped(statement)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(statement))              { return; }
 
                 this.inspectConditions(statement);
                 this.inspectVariables(statement);
+                this.inspectBoundariesCorrectness(statement);
             }
 
             private void inspectParentConditions(@NotNull ForeachStatement statement) {
@@ -168,6 +179,75 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
             private void inspectConditions(@NotNull For forStatement) {
                 if (forStatement.getConditionalExpressions().length > 1) {
                     holder.registerProblem(forStatement.getFirstChild(), messageMultipleConditions);
+                }
+            }
+
+            private void inspectBoundariesCorrectness(@NotNull For forStatement) {
+                /* currently supported simple for-loops: one condition and one repeated operation */
+                final PsiElement[] repeated   = forStatement.getRepeatedExpressions();
+                final PsiElement[] conditions = forStatement.getConditionalExpressions();
+                if (repeated.length != 1 || conditions.length != 1 || !(conditions[0] instanceof BinaryExpression)) {
+                    return;
+                }
+
+                /* extract index and repeated operator */
+                final PsiElement index;
+                final IElementType repeatedOperator;
+                if (repeated[0] instanceof UnaryExpression) {
+                    final UnaryExpression unary = (UnaryExpression) repeated[0];
+                    final PsiElement operation  = unary.getOperation();
+                    repeatedOperator            = operation == null ? null : operation.getNode().getElementType();
+                    index                       = unary.getValue();
+                } else if (repeated[0] instanceof SelfAssignmentExpression) {
+                    final SelfAssignmentExpression selfAssign = (SelfAssignmentExpression) repeated[0];
+                    repeatedOperator                          = selfAssign.getOperationType();
+                    index                                     = selfAssign.getVariable();
+                } else if (repeated[0] instanceof AssignmentExpression) {
+                    final AssignmentExpression assignment = (AssignmentExpression) repeated[0];
+                    final PsiElement value                = assignment.getValue();
+                    repeatedOperator                      = value instanceof BinaryExpression ? ((BinaryExpression) value).getOperationType() : null;
+                    index                                 = assignment.getVariable();
+                } else {
+                    repeatedOperator = null;
+                    index            = null;
+                }
+                if (repeatedOperator == null || index == null) {
+                    return;
+                }
+
+                /* analyze condition and extract expected operations */
+                final List<IElementType> expectedRepeatedOperator = new ArrayList<>();
+                final BinaryExpression condition                  = (BinaryExpression) conditions[0];
+                IElementType checkOperator                        = condition.getOperationType();
+
+                /* false-positives: joda conditions applied, invert the operator */
+                if (operationsInversion.containsKey(checkOperator)) {
+                    final PsiElement right = condition.getRightOperand();
+                    if (OpenapiTypesUtil.isNumber(condition.getLeftOperand())) {
+                        checkOperator = operationsInversion.get(checkOperator);
+                    } else if (right != null && OpenapiEquivalenceUtil.areEqual(index, right)) {
+                        checkOperator = operationsInversion.get(checkOperator);
+                    }
+                }
+
+                if (checkOperator == PhpTokenTypes.opGREATER || checkOperator == PhpTokenTypes.opGREATER_OR_EQUAL) {
+                    expectedRepeatedOperator.add(PhpTokenTypes.opDECREMENT);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opMINUS);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opMINUS_ASGN);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opDIV_ASGN);
+                }
+                else if (checkOperator == PhpTokenTypes.opLESS || checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
+                    expectedRepeatedOperator.add(PhpTokenTypes.opINCREMENT);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opPLUS);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opPLUS_ASGN);
+                    expectedRepeatedOperator.add(PhpTokenTypes.opMUL_ASGN);
+                }
+
+                if (!expectedRepeatedOperator.isEmpty()) {
+                    if (!expectedRepeatedOperator.contains(repeatedOperator)) {
+                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundaries);
+                    }
+                    expectedRepeatedOperator.clear();
                 }
             }
 

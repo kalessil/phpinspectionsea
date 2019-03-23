@@ -98,7 +98,7 @@ public class SenselessPropertyInspector extends BasePhpInspection {
                             if (assignment.getValue() != first) {
                                 final boolean optional = PsiTreeUtil.getParentOfType(parent, If.class, false, Method.class) != null;
                                 if (!optional && usages.stream().noneMatch(r -> ExpressionSemanticUtil.getScope(r) != method)) {
-                                    return true;
+                                    return PsiTreeUtil.findChildOfType(body, Include.class) == null;
                                 }
                             }
                         }

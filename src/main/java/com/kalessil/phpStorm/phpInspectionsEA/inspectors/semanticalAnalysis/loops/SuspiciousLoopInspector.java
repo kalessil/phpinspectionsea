@@ -198,7 +198,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     /* inspect parent loops for conflicted variables */
                     if (parent instanceof For || parent instanceof ForeachStatement) {
                         final Set<String> parentVariables = this.getLoopVariables((PhpPsiElement) parent);
-                        loopVariables.forEach(variable -> {
+                        loopVariables.stream().forEach(variable -> {
                             if (parentVariables.contains(variable)) {
                                 final String message = patternOverridesLoopVars.replace("%v%", variable);
                                 holder.registerProblem(loop.getFirstChild(), message);

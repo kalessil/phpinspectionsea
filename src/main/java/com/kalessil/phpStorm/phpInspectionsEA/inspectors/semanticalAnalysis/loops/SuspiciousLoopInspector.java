@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
-    private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here.";
-    private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here.";
+    private static final String patternOverridesLoopVars  = "Variable '$%s' is introduced in a outer loop and overridden here.";
+    private static final String patternOverridesParameter = "Variable '$%s' is introduced as a %s parameter and overridden here.";
     private static final String patternConditionAnomaly   = "A parent condition '%s' looks suspicious.";
 
 
@@ -159,7 +159,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             final BinaryExpression binary = (BinaryExpression) outerContext;
                             if (call == binary.getLeftOperand()) {
                                 final PsiElement threshold = binary.getRightOperand();
-                                if (OpenapiTypesUtil.isNumber(threshold)) {
+                                if (threshold != null && OpenapiTypesUtil.isNumber(threshold)) {
                                     final String number   = threshold.getText();
                                     final IElementType op = binary.getOperationType();
                                     if (op == PhpTokenTypes.opLESS && number.equals("2")) {
@@ -260,13 +260,12 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     for (final Parameter param : function.getParameters()) {
                         parameters.add(param.getName());
                     }
-
                     loopVariables.forEach(variable -> {
                         if (parameters.contains(variable)) {
-                            final String message = patternOverridesParameter
-                                .replace("%v%", variable)
-                                .replace("%t%", function instanceof Method ? "method" : "function");
-                            holder.registerProblem(loop.getFirstChild(), message);
+                            holder.registerProblem(
+                                    loop.getFirstChild(),
+                                    String.format(patternOverridesParameter, variable, function instanceof Method ? "method" : "function")
+                            );
                         }
                     });
                     parameters.clear();
@@ -278,10 +277,9 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     /* inspect parent loops for conflicted variables */
                     if (parent instanceof For || parent instanceof ForeachStatement) {
                         final Set<String> parentVariables = this.getLoopVariables((PhpPsiElement) parent);
-                        loopVariables.stream().forEach(variable -> {
+                        loopVariables.forEach(variable -> {
                             if (parentVariables.contains(variable)) {
-                                final String message = patternOverridesLoopVars.replace("%v%", variable);
-                                holder.registerProblem(loop.getFirstChild(), message);
+                                holder.registerProblem(loop.getFirstChild(), String.format(patternOverridesLoopVars, variable));
                             }
                         });
                         parentVariables.clear();

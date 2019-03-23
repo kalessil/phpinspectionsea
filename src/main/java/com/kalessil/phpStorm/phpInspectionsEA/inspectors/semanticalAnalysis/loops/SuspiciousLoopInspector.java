@@ -12,10 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -63,7 +60,8 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement statement) {
-                if (this.isContainingFileSkipped(statement)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(statement))              { return; }
 
                 this.inspectVariables(statement);
                 this.inspectParentConditions(statement);
@@ -134,7 +132,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     final PsiElement directContext = parent instanceof ParameterList ? parent.getParent() : parent;
                     final PsiElement outerContext  = directContext.getParent();
 
-                    /* case: empty statement */
+                    /* case: empty-statement */
                     if (directContext instanceof PhpEmpty) {
                         if (outerContext instanceof UnaryExpression) {
                             final UnaryExpression unary = (UnaryExpression) outerContext;
@@ -143,31 +141,56 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             }
                         } else if (outerContext instanceof BinaryExpression) {
                             final IElementType operation = ((BinaryExpression) outerContext).getOperationType();
-                            /* skip analyzing comparisons - I don't want to invest my time into this right now*/
                             if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operation)) {
                                 return null;
                             }
                         }
                         return directContext;
                     }
-
+                    /* case: empty checks */
+                    else if (directContext instanceof UnaryExpression) {
+                        final UnaryExpression unary = (UnaryExpression) directContext;
+                        if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                            return directContext;
+                        }
+                    }
+                    else if (directContext instanceof BinaryExpression) {
+                        final BinaryExpression binary = (BinaryExpression) directContext;
+                        final IElementType operator   = binary.getOperationType();
+                        if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
+                            final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, expression);
+                            if (second instanceof ArrayCreationExpression) {
+                                final ArrayCreationExpression array = (ArrayCreationExpression) second;
+                                if (array.getChildren().length == 0) {
+                                    return binary;
+                                }
+                            }
+                        }
+                    }
                     /* case: count function/method */
-                    if (outerContext instanceof BinaryExpression && directContext instanceof FunctionReference) {
+                    else if (directContext instanceof FunctionReference) {
                         final FunctionReference call = (FunctionReference) directContext;
                         final String functionName    = call.getName();
                         if (functionName != null && functionName.equals("count")) {
-                            final BinaryExpression binary = (BinaryExpression) outerContext;
-                            if (call == binary.getLeftOperand()) {
-                                final PsiElement threshold = binary.getRightOperand();
-                                if (threshold != null && OpenapiTypesUtil.isNumber(threshold)) {
-                                    final String number   = threshold.getText();
-                                    final IElementType op = binary.getOperationType();
-                                    if (op == PhpTokenTypes.opLESS && number.equals("2")) {
-                                        return outerContext;
+                            if (outerContext instanceof BinaryExpression) {
+                                final BinaryExpression binary = (BinaryExpression) outerContext;
+                                if (call == binary.getLeftOperand()) {
+                                    final PsiElement threshold = binary.getRightOperand();
+                                    if (threshold != null && OpenapiTypesUtil.isNumber(threshold)) {
+                                        final String number   = threshold.getText();
+                                        final IElementType op = binary.getOperationType();
+                                        if (op == PhpTokenTypes.opLESS && number.equals("2")) {
+                                            return outerContext;
+                                        }
+                                        if (operationsAnomaly.contains(op) && (number.equals("0") || number.equals("1"))) {
+                                            return outerContext;
+                                        }
                                     }
-                                    if (operationsAnomaly.contains(op) && (number.equals("0") || number.equals("1"))) {
-                                        return outerContext;
-                                    }
+                                }
+                            } else if (outerContext instanceof UnaryExpression) {
+                                final UnaryExpression unary = (UnaryExpression) outerContext;
+                                if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                                    return outerContext;
                                 }
                             }
                         }

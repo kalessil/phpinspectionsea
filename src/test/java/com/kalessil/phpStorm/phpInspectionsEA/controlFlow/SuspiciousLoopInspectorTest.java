@@ -9,6 +9,11 @@ final public class SuspiciousLoopInspectorTest extends PhpCodeInsightFixtureTest
         myFixture.configureByFile("testData/fixtures/controlFlow/suspicious-loop-general.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsConditionPatterns() {
+        myFixture.enableInspections(new SuspiciousLoopInspector());
+        myFixture.configureByFile("testData/fixtures/controlFlow/suspicious-loop-conditions.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testIfFindsBoundaryPatterns() {
         myFixture.enableInspections(new SuspiciousLoopInspector());
         myFixture.configureByFile("testData/fixtures/controlFlow/suspicious-loop-boundaries.php");

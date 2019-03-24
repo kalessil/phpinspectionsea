@@ -1,9 +1,9 @@
 <?php
 
 function cases_holder() {
-    $content = ob_get_contents();
+    $content = <warning descr="'ob_get_clean()' can be used instead.">ob_get_contents()</warning>;
     ob_end_clean();
 
-    $content = trim(ob_get_contents());
+    $content = trim(<warning descr="'ob_get_clean()' can be used instead.">ob_get_contents()</warning>);
     ob_end_clean();
 }

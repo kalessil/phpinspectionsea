@@ -49,7 +49,8 @@ public class ObGetCleanCanBeUsedInspector extends BasePhpInspection {
                                 if (OpenapiTypesUtil.isFunctionReference(call)) {
                                     final String callName = call.getName();
                                     if (callName != null && callName.equals("ob_get_contents")) {
-                                        holder.registerProblem(reference, message, new SimplifyFixer(parent));
+                                        holder.registerProblem(call, message, new SimplifyFixer(parent));
+                                        return;
                                     }
                                 }
                             }

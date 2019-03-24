@@ -40,12 +40,8 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpStatement(@NotNull Statement statement) {
-                if (holder.getFile().getName().endsWith(".blade.php")) {
-                    /* syntax injection there causing false-positives */
-                    return;
-                }
-
-                if (statement.getChildren().length == 0) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (!isBlade && statement.getChildren().length == 0) {
                     final PsiElement parent = statement.getParent();
                     if (
                         parent instanceof If || parent instanceof ElseIf || parent instanceof Else ||
@@ -62,7 +58,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
     }
 
     private static final class TheLocalFix implements LocalQuickFix {
-        private static final String title = "Drop it";
+        private static final String title = "Drop unnecessary semicolon";
 
         @NotNull
         @Override
@@ -79,8 +75,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof Statement && !project.isDisposed()) {
-                /* drop preceding space */
+            if (expression != null && !project.isDisposed()) {
                 final PsiElement previous = expression.getPrevSibling();
                 if (previous instanceof PsiWhiteSpace) {
                     previous.delete();

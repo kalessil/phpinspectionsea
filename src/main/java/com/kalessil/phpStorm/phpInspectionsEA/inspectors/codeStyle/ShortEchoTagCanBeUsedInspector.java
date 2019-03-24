@@ -1,6 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
@@ -38,9 +41,9 @@ public class ShortEchoTagCanBeUsedInspector extends BasePhpInspection {
                 final PsiElement parent     = echo.getParent();
                 final PsiElement openingTag = parent.getFirstChild();
                 if (OpenapiTypesUtil.is(openingTag, PhpTokenTypes.PHP_OPENING_TAG)) {
-                    final PsiElement closingTag = parent.getFirstChild();
+                    final PsiElement closingTag = parent.getLastChild();
                     if (OpenapiTypesUtil.is(closingTag, PhpTokenTypes.PHP_CLOSING_TAG)) {
-                        holder.registerProblem(echo.getFirstChild(), message);
+                        holder.registerProblem(echo.getFirstChild(), message, new UseShortEchoTagInspector(openingTag));
                     }
                 }
             }
@@ -59,11 +62,38 @@ public class ShortEchoTagCanBeUsedInspector extends BasePhpInspection {
                             closingTag = closingTag.getNextSibling();
                         }
                         if (OpenapiTypesUtil.is(closingTag, PhpTokenTypes.PHP_CLOSING_TAG)) {
-                            holder.registerProblem(print.getFirstChild(), message);
+                            holder.registerProblem(print.getFirstChild(), message, new UseShortEchoTagInspector(openingTag));
                         }
                     }
                 }
             }
         };
     }
+
+    private static final class UseShortEchoTagInspector implements LocalQuickFix {
+        private static final String title = "Use '<?= ... ?>' instead";
+
+        private UseShortEchoTagInspector(@NotNull PsiElement tag) {
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        @Override
+        public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null && !project.isDisposed()) {
+            }
+        }
+    }
+
 }

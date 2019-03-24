@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -64,7 +65,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(statement))              { return; }
 
                 this.inspectVariables(statement);
-                this.inspectParentConditions(statement);
+                this.inspectParentConditions(statement, statement.getArray());
             }
 
             @Override
@@ -77,10 +78,9 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 this.inspectBoundariesCorrectness(statement);
             }
 
-            private void inspectParentConditions(@NotNull ForeachStatement statement) {
-                final PsiElement source = statement.getArray();
+            private void inspectParentConditions(@NotNull PsiElement loop, @Nullable PsiElement source) {
                 if (source instanceof Variable || source instanceof FieldReference) {
-                    PsiElement parent = statement.getParent();
+                    PsiElement parent = loop.getParent();
                     while (parent != null && !(parent instanceof Function) && !(parent instanceof PsiFile)) {
                         /* extract condition */
                         PsiElement condition = null;
@@ -97,10 +97,9 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             final PsiElement anomaly = this.findFirstConditionAnomaly(source, condition);
                             if (anomaly != null && !this.isOverridden(source, condition.getParent())) {
                                 holder.registerProblem(
-                                        statement.getFirstChild(),
+                                        loop.getFirstChild(),
                                         String.format(patternConditionAnomaly, anomaly.getText())
                                 );
-
                                 break;
                             }
                         }

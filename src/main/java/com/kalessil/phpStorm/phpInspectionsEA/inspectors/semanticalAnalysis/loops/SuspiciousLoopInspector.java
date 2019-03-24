@@ -75,7 +75,34 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
                 this.inspectConditions(statement);
                 this.inspectVariables(statement);
+                this.findUsedContainers(statement).forEach(c -> this.inspectParentConditions(statement, c));
                 this.inspectBoundariesCorrectness(statement);
+            }
+
+            @NotNull
+            private List<PsiElement> findUsedContainers(@NotNull For loop) {
+                final List<PsiElement> result    = new ArrayList<>();
+                final Set<String> loopVariables = this.getLoopVariables(loop);
+                if (loopVariables.size() == 1) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
+                    if (body != null) {
+                        PsiTreeUtil.findChildrenOfType(body, ArrayAccessExpression.class).forEach(a -> {
+                            final PsiElement base = a.getValue();
+                            if (base instanceof Variable || base instanceof FieldReference) {
+                                final ArrayIndex index = a.getIndex();
+                                final PsiElement key   = index == null ? null : index.getValue();
+                                if (key instanceof Variable && loopVariables.contains(((Variable) key).getName())) {
+                                    final boolean isKnown = result.stream().anyMatch(e -> OpenapiEquivalenceUtil.areEqual(e, a));
+                                    if (!isKnown) {
+                                        result.add(base);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                loopVariables.clear();
+                return result;
             }
 
             private void inspectParentConditions(@NotNull PsiElement loop, @Nullable PsiElement source) {

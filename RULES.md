@@ -53,6 +53,7 @@ Inspections Lists (Control flow)
 | Control Flow         | InArrayCanBeUsedInspection                      | 'in_array(...)' can be used                                                       | n/a | yes | n/a  | no  |
 | Control Flow         | UnnecessaryBooleanCheckInspection               | Unnecessary boolean check                                                         | yes | yes | yes  | no  |
 | Control Flow         | BasenameCallsContextInspection                  | 'basename(...)' usage correctness                                                 | yes | yes | yes  | no  |
+| Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | no  |
 
 Inspections Lists (PhpUnit)
 ---

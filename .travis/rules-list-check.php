@@ -110,6 +110,6 @@
         }
     }
     if (count($orphanedDescriptions) > 0) {
-        echo 'Following descriptions are outdated: ' . PHP_EOL . implode(',' . PHP_EOL, $orphanedDescriptions) . PHP_EOL;
+        echo 'Following descriptions are orphaned: ' . PHP_EOL . implode(',' . PHP_EOL, $orphanedDescriptions) . PHP_EOL;
         exit(-1);
     }

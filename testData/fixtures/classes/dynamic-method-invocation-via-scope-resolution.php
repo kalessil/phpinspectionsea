@@ -6,16 +6,16 @@ class CasesHolder
 
     public static function staticTrigger()
     {
-        static::<error descr="'...->method(...)' should be used instead.">method</error>();
+        <warning descr="'...->method(...)' should be used instead.">static::method()</warning>;
     }
 
     public function dynamicTrigger()
     {
-        <weak_warning descr="'$this->method(...)' should be used instead.">static::method()</weak_warning>;
-        <weak_warning descr="'$this->method(...)' should be used instead.">self::method()</weak_warning>;
-        <weak_warning descr="'$this->method(...)' should be used instead.">CasesHolder::method()</weak_warning>;
+        <warning descr="'$this->method(...)' should be used instead.">static::method()</warning>;
+        <warning descr="'$this->method(...)' should be used instead.">self::method()</warning>;
+        <warning descr="'$this->method(...)' should be used instead.">CasesHolder::method()</warning>;
     }
 }
 
 $object = new CasesHolder();
-<error descr="'...->method(...)' should be used instead.">$object::method()</error>;
+<warning descr="'...->method(...)' should be used instead.">$object::method()</warning>;

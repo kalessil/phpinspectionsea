@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -55,20 +54,24 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                     if (resoled instanceof Method) {
                         final Method method  = (Method) resoled;
                         final PhpClass clazz = method.getContainingClass();
-                        /* non-static methods and contract interfaces must not be reported */
                         if (clazz != null && !clazz.isInterface() && !method.isStatic() && !method.isAbstract()) {
-                            /* check first pattern [static|self]::dynamic */
+                            /* check first pattern [static|self|Clazz]::dynamic */
                             final PsiElement staticCandidate = reference.getFirstChild();
                             final String candidateContent    = staticCandidate.getText();
                             if (candidateContent.equals("static") || candidateContent.equals("self") || candidateContent.equals(clazz.getName())) {
                                 final Function scope = ExpressionSemanticUtil.getScope(reference);
                                 if (scope instanceof Method) {
                                     if (((Method) scope).isStatic()) {
-                                        final String message = String.format(patternExpressionUsed, reference.getName());
-                                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(patternExpressionUsed, reference.getName())
+                                        );
                                     } else {
-                                        final String message = String.format(patternScopeResolutionUsed, methodName);
-                                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operator, staticCandidate));
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(patternScopeResolutionUsed, methodName),
+                                                new TheLocalFix(operator, staticCandidate)
+                                        );
                                     }
                                 }
                                 return;
@@ -77,8 +80,11 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                             /* check second pattern <expression>::dynamic */
                             final PsiElement base = reference.getFirstPsiChild();
                             if (base != null && !(base instanceof FunctionReference) && !(staticCandidate instanceof ClassReference)) {
-                                final String message = String.format(patternExpressionUsed, reference.getName());
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(operator, null));
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(patternExpressionUsed, reference.getName()),
+                                        new TheLocalFix(operator, null)
+                                );
                             }
                         }
                     }

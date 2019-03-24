@@ -1,26 +1,21 @@
 <?php
 
-class dynamicObjectsKeeper
+class CasesHolder
 {
-    public function callMethod()
+    public function method() {}
+
+    public static function staticTrigger()
     {
+        static::method();
     }
 
-    public static function y()
+    public function dynamicTrigger()
     {
-        static::callMethod();
-    }
-
-    public function z()
-    {
-        $this->callMethod();
-    }
-
-    public function p()
-    {
-        $this->callMethod();
+        $this->method();
+        $this->method();
+        $this->method();
     }
 }
 
-$o = new dynamicObjectsKeeper();
-$o->z();
+$object = new CasesHolder();
+$object->method();

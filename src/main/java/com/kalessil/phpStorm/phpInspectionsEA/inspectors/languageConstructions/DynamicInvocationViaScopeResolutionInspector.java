@@ -60,7 +60,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                             /* check first pattern [static|self]::dynamic */
                             final PsiElement staticCandidate = reference.getFirstChild();
                             final String candidateContent    = staticCandidate.getText();
-                            if (candidateContent.equals("static") || candidateContent.equals("self")) {
+                            if (candidateContent.equals("static") || candidateContent.equals("self") || candidateContent.equals(clazz.getName())) {
                                 final Function scope = ExpressionSemanticUtil.getScope(reference);
                                 if (scope instanceof Method) {
                                     if (((Method) scope).isStatic()) {

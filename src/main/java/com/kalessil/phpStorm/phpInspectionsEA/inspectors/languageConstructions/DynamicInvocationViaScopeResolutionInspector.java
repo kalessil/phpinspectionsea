@@ -15,13 +15,21 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspection {
-    private static final String strProblemScopeResolutionUsed = "'$this->%m%(...)' should be used instead.";
-    private static final String strProblemExpressionUsed      = "'...->%m%(...)' should be used instead.";
+    private static final String patternScopeResolutionUsed = "'$this->%s(...)' should be used instead.";
+    private static final String patternExpressionUsed      = "'...->%s(...)' should be used instead.";
 
     @NotNull
     public String getShortName() {
@@ -32,50 +40,46 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethodReference(MethodReference reference) {
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
                 if (!OpenapiTypesUtil.is(operator, PhpTokenTypes.SCOPE_RESOLUTION)) {
                     return;
                 }
 
-                final PsiReference objReference = reference.getReference();
+                final PsiReference classReference = reference.getReference();
                 final String methodName         = reference.getName();
-                if (null != objReference && !StringUtils.isEmpty(methodName)) {
-                    final PsiElement objResolvedRef = OpenapiResolveUtil.resolveReference(objReference);
-                    /* resolved method is static but called with $ this*/
-                    if (objResolvedRef instanceof Method) {
-                        final Method method  = (Method) objResolvedRef;
+                if (classReference != null && methodName != null && !methodName.isEmpty()) {
+                    final PsiElement resoled = OpenapiResolveUtil.resolveReference(classReference);
+                    /* resolved method is static but called with $this */
+                    if (resoled instanceof Method) {
+                        final Method method  = (Method) resoled;
                         final PhpClass clazz = method.getContainingClass();
                         /* non-static methods and contract interfaces must not be reported */
-                        if (null == clazz || clazz.isInterface() || method.isStatic() || method.isAbstract()) {
-                            return;
-                        }
-
-                        /* check first pattern static::dynamic */
-                        final PsiElement staticCandidate = reference.getFirstChild();
-                        final String candidateContent    = staticCandidate.getText();
-                        if (candidateContent.equals("static") || candidateContent.equals("self")) {
-                            final Function scope = ExpressionSemanticUtil.getScope(reference);
-                            if (!(scope instanceof Method)) {
+                        if (clazz != null && !clazz.isInterface() && !method.isStatic() && !method.isAbstract()) {
+                            /* check first pattern [static|self]::dynamic */
+                            final PsiElement staticCandidate = reference.getFirstChild();
+                            final String candidateContent    = staticCandidate.getText();
+                            if (candidateContent.equals("static") || candidateContent.equals("self")) {
+                                final Function scope = ExpressionSemanticUtil.getScope(reference);
+                                if (scope instanceof Method) {
+                                    if (((Method) scope).isStatic()) {
+                                        final String message = String.format(patternExpressionUsed, reference.getName());
+                                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                                    } else {
+                                        final String message = String.format(patternScopeResolutionUsed, methodName);
+                                        holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operator, staticCandidate));
+                                    }
+                                }
                                 return;
                             }
 
-                            if (((Method) scope).isStatic()) {
-                                final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
-                            } else {
-                                final String message = strProblemScopeResolutionUsed.replace("%m%", methodName);
-                                holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(operator, staticCandidate));
+                            /* check second pattern <expression>::dynamic */
+                            final PsiElement base = reference.getFirstPsiChild();
+                            if (base != null && !(base instanceof FunctionReference) && !(staticCandidate instanceof ClassReference)) {
+                                final String message = String.format(patternExpressionUsed, reference.getName());
+                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(operator, null));
                             }
-
-                            return;
-                        }
-
-                        /* check second pattern <expression>::dynamic */
-                        final PsiElement objectExpression = reference.getFirstPsiChild();
-                        if (null != objectExpression && !(objectExpression instanceof FunctionReference) && !(staticCandidate instanceof ClassReference)) {
-                            final String message = strProblemExpressionUsed.replace("%m%", reference.getName());
-                            holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(operator, null));
                         }
                     }
                 }
@@ -86,14 +90,14 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
     private static final class TheLocalFix implements LocalQuickFix {
         private static final String title = "Use -> instead";
 
-        private final SmartPsiElementPointer<PsiElement> object;
+        private final SmartPsiElementPointer<PsiElement> base;
         private final SmartPsiElementPointer<PsiElement> operator;
 
-        TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement object) {
+        TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement base) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(operator.getProject());
 
-            this.object   = object == null ? null : factory.createSmartPsiElementPointer(object);
+            this.base     = base == null ? null : factory.createSmartPsiElementPointer(base);
             this.operator = factory.createSmartPsiElementPointer(operator);
         }
 
@@ -115,9 +119,9 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
             if (operator != null && !project.isDisposed()) {
                 operator.replace(PhpPsiElementFactory.createArrow(project));
 
-                final PsiElement object = this.object == null ? null : this.object.getElement();
-                if (object != null) {
-                    object.replace(PhpPsiElementFactory.createVariable(project, "this", true));
+                final PsiElement base = this.base == null ? null : this.base.getElement();
+                if (base != null) {
+                    base.replace(PhpPsiElementFactory.createVariable(project, "this", true));
                 }
             }
         }

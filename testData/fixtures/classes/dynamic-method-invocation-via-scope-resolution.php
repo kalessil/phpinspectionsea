@@ -1,26 +1,21 @@
 <?php
 
-class dynamicObjectsKeeper
+class CasesHolder
 {
-    public function callMethod()
+    public function method() {}
+
+    public static function staticTrigger()
     {
+        static::<error descr="'...->method(...)' should be used instead.">method</error>();
     }
 
-    public static function y()
+    public function dynamicTrigger()
     {
-        static::<error descr="'...->callMethod(...)' should be used instead.">callMethod</error>();
-    }
-
-    public function z()
-    {
-        <weak_warning descr="'$this->callMethod(...)' should be used instead.">static::callMethod()</weak_warning>;
-    }
-
-    public function p()
-    {
-        <weak_warning descr="'$this->callMethod(...)' should be used instead.">self::callMethod()</weak_warning>;
+        <weak_warning descr="'$this->method(...)' should be used instead.">static::method()</weak_warning>;
+        <weak_warning descr="'$this->method(...)' should be used instead.">self::method()</weak_warning>;
+        <weak_warning descr="'$this->method(...)' should be used instead.">CasesHolder::method()</weak_warning>;
     }
 }
 
-$o = new dynamicObjectsKeeper();
-<error descr="'...->z(...)' should be used instead.">$o::z()</error>;
+$object = new CasesHolder();
+<error descr="'...->method(...)' should be used instead.">$object::method()</error>;

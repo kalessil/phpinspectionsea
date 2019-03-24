@@ -53,6 +53,6 @@
     
     /* case: lookup containers used in for-loop */
     if (!$wrong || $correct) {
-        for ($index = 0; $index < count($correct); ++index) { unset($correct[$index]); }
-        <error descr="A parent condition '!$wrong' looks suspicious.">for</error> ($index = 0; $index < count($wrong); ++index) { unset($wrong[$index]); }
+        for ($index = 0; $index < count($correct); ++$index) { unset($correct[$index]); }
+        <error descr="A parent condition '!$wrong' looks suspicious.">for</error> ($index = 0; $index < count($wrong); ++$index) { unset($wrong[$index]); }
     }

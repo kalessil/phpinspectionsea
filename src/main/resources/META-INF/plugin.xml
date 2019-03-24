@@ -287,6 +287,10 @@
         shortName="BasenameCallsContextInspection"                 displayName="'basename(...)' usage correctness"
         groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.BasenameCallsContextInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ObGetCleanCanBeUsedInspection"                  displayName="'ob_get_clean()' can be used"
+        groupName="Control Flow"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ObGetCleanCanBeUsedInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -32,7 +32,8 @@
     }
 
     /* collect manifest rules */
-    $definedRules = array();
+    $definedRules     = array();
+    $descriptionFiles = array();
     foreach ($manifest->xpath('//localInspection') as $inspectionDefinition) {
         $attributes  = $inspectionDefinition->attributes();
 
@@ -59,6 +60,7 @@
         if (false === $description = file_get_contents($descriptionFile)) {
             throw new \RuntimeException('Could not read description file: ' . $descriptionFile);
         }
+        $descriptionFiles []= $descriptionFile;
         $valueObject->hasDocumentation = false !== strpos($description, '/kalessil/phpinspectionsea/blob/master/docs/');
     }
 
@@ -96,5 +98,18 @@
     }
     if (count($untested) > 0) {
         echo 'Following inspections are not tested: ' . PHP_EOL . implode(',' . PHP_EOL, $untested) . PHP_EOL;
+        exit(-1);
+    }
+
+    /* step 5: report orphaned description files */
+    $orphanedDescriptions = [];
+    $descriptionsBase     = sprintf('%s/src/main/resources/inspectionDescriptions', $basePath);
+    foreach (glob(sprintf('%s/*.html', $descriptionsBase)) as $file) {
+        if (!in_array($file, $descriptionFiles, true)) {
+            $orphanedDescriptions []= basename($file);
+        }
+    }
+    if (count($orphanedDescriptions) > 0) {
+        echo 'Following descriptions are outdated: ' . PHP_EOL . implode(',' . PHP_EOL, $orphanedDescriptions) . PHP_EOL;
         exit(-1);
     }

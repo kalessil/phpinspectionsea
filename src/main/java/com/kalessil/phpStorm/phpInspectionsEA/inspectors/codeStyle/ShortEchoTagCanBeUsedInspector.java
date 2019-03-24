@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpEchoStatement;
@@ -41,36 +40,27 @@ public class ShortEchoTagCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpEchoStatement(@NotNull PhpEchoStatement echo) {
-                PsiElement openingTag = echo.getPrevSibling();
-                if (openingTag instanceof PsiWhiteSpace) {
-                    openingTag = openingTag.getPrevSibling();
-                }
-                if (OpenapiTypesUtil.is(openingTag, PhpTokenTypes.PHP_OPENING_TAG)) {
-                    PsiElement closingTag = echo.getNextSibling();
-                    if (closingTag instanceof PsiWhiteSpace) {
-                        closingTag = closingTag.getNextSibling();
-                    }
-                    if (OpenapiTypesUtil.is(closingTag, PhpTokenTypes.PHP_CLOSING_TAG)) {
-                        holder.registerProblem(echo.getFirstChild(), message, new UseShortEchoTagInspector(openingTag, echo));
-                    }
-                }
+                this.analyze(echo, echo);
             }
 
             @Override
             public void visitPhpPrint(@NotNull PhpPrintExpression print) {
-                final PsiElement parent     = print.getParent();
-                final PsiElement expression = OpenapiTypesUtil.isStatementImpl(parent) ? parent : print;
-                PsiElement openingTag = expression.getPrevSibling();
+                final PsiElement parent = print.getParent();
+                this.analyze(print, OpenapiTypesUtil.isStatementImpl(parent) ? parent : print);
+            }
+
+            private void analyze(@NotNull PsiElement target, @NotNull PsiElement context) {
+                PsiElement openingTag = context.getPrevSibling();
                 if (openingTag instanceof PsiWhiteSpace) {
                     openingTag = openingTag.getPrevSibling();
                 }
                 if (OpenapiTypesUtil.is(openingTag, PhpTokenTypes.PHP_OPENING_TAG)) {
-                    PsiElement closingTag = expression.getNextSibling();
+                    PsiElement closingTag = context.getNextSibling();
                     if (closingTag instanceof PsiWhiteSpace) {
                         closingTag = closingTag.getNextSibling();
                     }
                     if (OpenapiTypesUtil.is(closingTag, PhpTokenTypes.PHP_CLOSING_TAG)) {
-                        holder.registerProblem(print.getFirstChild(), message, new UseShortEchoTagInspector(openingTag, expression));
+                        holder.registerProblem(target.getFirstChild(), message, new UseShortEchoTagInspector(openingTag, context));
                     }
                 }
             }

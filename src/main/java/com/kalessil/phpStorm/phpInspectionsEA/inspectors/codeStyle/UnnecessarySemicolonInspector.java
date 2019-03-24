@@ -8,10 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.Else;
-import com.jetbrains.php.lang.psi.elements.ElseIf;
-import com.jetbrains.php.lang.psi.elements.If;
-import com.jetbrains.php.lang.psi.elements.Statement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -51,13 +48,23 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
                         return;
                     }
 
-                    holder.registerProblem(statement, message, new TheLocalFix());
+                    holder.registerProblem(statement, message, new DropUnnecessarySemicolonFix());
+                }
+            }
+
+            @Override
+            public void visitPhpEchoStatement(PhpEchoStatement echo) {
+                if (!OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {
+                    final PsiElement last = echo.getLastChild();
+                    if (OpenapiTypesUtil.is(last, PhpTokenTypes.opSEMICOLON)) {
+                        holder.registerProblem(last, message, new DropUnnecessarySemicolonFix());
+                    }
                 }
             }
         };
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static final class DropUnnecessarySemicolonFix implements LocalQuickFix {
         private static final String title = "Drop unnecessary semicolon";
 
         @NotNull

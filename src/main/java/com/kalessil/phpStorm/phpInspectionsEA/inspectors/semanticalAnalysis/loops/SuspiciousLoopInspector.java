@@ -216,7 +216,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                                     }
                                 }
                             } else if (outerContext instanceof UnaryExpression) {
-                                if (functionName.equals("count") || functionName.equals("is_array")) {
+                                if (functionName.equals("count") || functionName.equals("is_array") || functionName.equals("is_iterable")) {
                                     final UnaryExpression unary = (UnaryExpression) outerContext;
                                     if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
                                         return outerContext;

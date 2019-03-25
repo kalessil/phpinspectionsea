@@ -17,6 +17,10 @@
         foreach ($correct as $value) {}
         <error descr="A parent condition '!is_array($wrong)' looks suspicious.">foreach</error> ($wrong as $value) {}
     }
+    if (!is_iterable($wrong) || is_iterable($correct)) {
+        foreach ($correct as $value) {}
+        <error descr="A parent condition '!is_iterable($wrong)' looks suspicious.">foreach</error> ($wrong as $value) {}
+    }
     if (!count($wrong) || count($correct)) {
         foreach ($correct as $value) {}
         <error descr="A parent condition '!count($wrong)' looks suspicious.">foreach</error> ($wrong as $value) {}

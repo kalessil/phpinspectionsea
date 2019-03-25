@@ -74,7 +74,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                         switch (outerFunctionName) {
                                             case "implode":
                                                 replacement = String.format(
-                                                        "str_replace(%s, %s, %s)",
+                                                        "%sstr_replace(%s, %s, %s)",
+                                                        reference.getImmediateNamespaceName(),
                                                         innerArguments[0].getText(),
                                                         outerArguments[0].getText(),
                                                         innerArguments[1].getText()
@@ -82,7 +83,8 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                                 break;
                                             case "count":
                                                 replacement = String.format(
-                                                        "substr_count(%s, %s) + 1",
+                                                        "%ssubstr_count(%s, %s) + 1",
+                                                        reference.getImmediateNamespaceName(),
                                                         innerArguments[1].getText(),
                                                         innerArguments[0].getText()
                                                 );

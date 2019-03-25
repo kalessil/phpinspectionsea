@@ -36,7 +36,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
     private static final Map<String, Integer> argumentMapping = new HashMap<>();
     static {
         argumentMapping.put("count", 0);    // -> "substr_count(%s%, %f%) + 1"
-        argumentMapping.put("implode", 1);  // -> "str_replace(%f%, ?, %s%)"
+        argumentMapping.put("in_array", 1);  // -> "strpos(%s%, %f%) !== false"
         // "in_array" -> "strpos(%s%, %f%)" change behaviour
         // "current"  -> "strstr(%s%, %f%, true)": if fragment missing, strstr changes behaviour
     }
@@ -72,13 +72,15 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                     if (innerArguments.length == 2 && this.isExclusiveUse(targetArgument, reference)) {
                                         final String replacement;
                                         switch (outerFunctionName) {
-                                            case "implode":
+                                            case "in_array":
+                                                // support inversion and wrapping
                                                 replacement = String.format(
-                                                        "%sstr_replace(%s, %s, %s)",
+                                                        "%sstrpos(%s, %s.%s.%s) !== false",
                                                         reference.getImmediateNamespaceName(),
+                                                        innerArguments[1].getText(),
                                                         innerArguments[0].getText(),
                                                         outerArguments[0].getText(),
-                                                        innerArguments[1].getText()
+                                                        innerArguments[0].getText()
                                                 );
                                                 break;
                                             case "count":

@@ -1,29 +1,33 @@
 <?php
 
-function explode_misuse_count($arg) {
+function explode_misuse_count($parameter) {
     /* case: misuse */
-    echo <warning descr="Consider using 'substr_count($arg, '') + 1' instead (consumes less cpu and memory resources).">count(explode('', $arg))</warning>;
+    echo <warning descr="Consider using 'substr_count($parameter, '') + 1' instead (consumes less cpu and memory resources).">count(explode('', $parameter))</warning>;
 
     /* case: misuse, with variants lookup */
-    $a = explode('', $arg);
-    echo <warning descr="Consider using 'substr_count($arg, '') + 1' instead (consumes less cpu and memory resources).">count($a)</warning>;
+    $array = explode('', $parameter);
+    echo <warning descr="Consider using 'substr_count($parameter, '') + 1' instead (consumes less cpu and memory resources).">count($array)</warning>;
 
-    /* false-positive: the variable in not one-time use */
-    $c = explode('', $arg);
-    echo count($c);
-    return $c;
+    /* false-positives */
+    $result = count(explode('', $parameter, 2));
+
+    $returned = explode('', $parameter);
+    $result = count($returned);
+    return $returned;
 }
 
-function explode_misuse_implode($arg) {
+function explode_misuse_in_array($parameter) {
     /* case: misuse */
-    echo <warning descr="Consider using 'str_replace('', '...', $arg)' instead (consumes less cpu and memory resources).">implode('...', explode('', $arg))</warning>;
+    $result = in_array('...', explode(',', $parameter));
 
     /* case: misuse, with variants lookup */
-    $a = explode('', $arg);
-    echo <warning descr="Consider using 'str_replace('', '...', $arg)' instead (consumes less cpu and memory resources).">implode('...', $a)</warning>;
+    $array = explode(',', $parameter);
+    $result = in_array('...', $array);
 
-    /* false-positive: the variable in not one-time use */
-    $c = explode('', $arg);
-    echo implode('', $c);
-    return $c;
+    /* false-positives */
+    $result = in_array('...', explode(',', $parameter, 2));
+
+    $returned = explode('', $parameter);
+    echo implode('', $returned);
+    return $returned;
 }

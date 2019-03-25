@@ -98,7 +98,7 @@
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ExplodeMissUseInspection"                      displayName="'explode(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ExplodeMissUseInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ExplodeMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ArrayKeysMissUseInspection"                    displayName="'array_keys(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"

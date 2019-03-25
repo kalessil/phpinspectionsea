@@ -197,26 +197,30 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                     else if (directContext instanceof FunctionReference) {
                         final FunctionReference call = (FunctionReference) directContext;
                         final String functionName    = call.getName();
-                        if (functionName != null && functionName.equals("count")) {
+                        if (functionName != null) {
                             if (outerContext instanceof BinaryExpression) {
-                                final BinaryExpression binary = (BinaryExpression) outerContext;
-                                if (call == binary.getLeftOperand()) {
-                                    final PsiElement threshold = binary.getRightOperand();
-                                    if (threshold != null && OpenapiTypesUtil.isNumber(threshold)) {
-                                        final String number   = threshold.getText();
-                                        final IElementType op = binary.getOperationType();
-                                        if (op == PhpTokenTypes.opLESS && number.equals("2")) {
-                                            return outerContext;
-                                        }
-                                        if (operationsAnomaly.contains(op) && (number.equals("0") || number.equals("1"))) {
-                                            return outerContext;
+                                if (functionName.equals("count")) {
+                                    final BinaryExpression binary = (BinaryExpression) outerContext;
+                                    if (call == binary.getLeftOperand()) {
+                                        final PsiElement threshold = binary.getRightOperand();
+                                        if (threshold != null && OpenapiTypesUtil.isNumber(threshold)) {
+                                            final String number   = threshold.getText();
+                                            final IElementType op = binary.getOperationType();
+                                            if (op == PhpTokenTypes.opLESS && number.equals("2")) {
+                                                return outerContext;
+                                            }
+                                            if (operationsAnomaly.contains(op) && (number.equals("0") || number.equals("1"))) {
+                                                return outerContext;
+                                            }
                                         }
                                     }
                                 }
                             } else if (outerContext instanceof UnaryExpression) {
-                                final UnaryExpression unary = (UnaryExpression) outerContext;
-                                if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
-                                    return outerContext;
+                                if (functionName.equals("count") || functionName.equals("is_array")) {
+                                    final UnaryExpression unary = (UnaryExpression) outerContext;
+                                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                                        return outerContext;
+                                    }
                                 }
                             }
                         }

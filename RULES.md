@@ -304,3 +304,4 @@ Inspections Lists (Performance)
 | Performance          | ArrayFlipCanBeUsedInspection                    | 'array_flip(...)' can be used                                                                     | yes | yes | yes  | no  |
 | Performance          | ArrayMergeMissUseInspection                     | 'array_merge(...)' misused                                                                        | yes | yes | yes  | no  |
 | Performance          | IteratorToArrayMissUseInspection                | 'iterator_to_array(...)' misused                                                                  | yes | yes | yes  | no  |
+| Performance          | ImplodeMissUseInspection                        | 'implode(...)' misused                                                                            | yes | yes | yes  | no  |

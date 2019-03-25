@@ -21,7 +21,7 @@ function explode_misuse_in_array($parameter) {
     $result = strpos($parameter, ',' . '...' . ',') !== false;
 
     /* case: replacement generation */
-    $result = !(strpos($parameter, ',' . '...' . ',') !== false);
+    $result = strpos($parameter, ',' . '...' . ',') === false;
     $result = (strpos($parameter, ',' . '...' . ',') !== false) === true;
 
     /* case: misuse, with variants lookup */

@@ -21,7 +21,7 @@ function explode_misuse_in_array($parameter) {
     $result = <warning descr="Consider using 'strpos($parameter, ','.'...'.',') !== false' instead (consumes less cpu and memory resources).">in_array('...', explode(',', $parameter))</warning>;
 
     /* case: replacement generation */
-    $result = !<warning descr="Consider using '(strpos($parameter, ','.'...'.',') !== false)' instead (consumes less cpu and memory resources).">in_array('...', explode(',', $parameter))</warning>;
+    $result = <warning descr="Consider using 'strpos($parameter, ','.'...'.',') === false' instead (consumes less cpu and memory resources).">!in_array('...', explode(',', $parameter))</warning>;
     $result = <warning descr="Consider using '(strpos($parameter, ','.'...'.',') !== false)' instead (consumes less cpu and memory resources).">in_array('...', explode(',', $parameter))</warning> === true;
 
     /* case: misuse, with variants lookup */

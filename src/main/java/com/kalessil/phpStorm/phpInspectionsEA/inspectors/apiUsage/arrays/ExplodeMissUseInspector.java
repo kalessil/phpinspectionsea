@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
@@ -70,13 +71,18 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                     final PsiElement[] innerArguments = innerCall.getParameters();
                                     if (innerArguments.length == 2 && this.isExclusiveUse(targetArgument, reference)) {
                                         final String replacement;
+                                        final PsiElement target;
                                         switch (outerFunctionName) {
                                             case "in_array":
-                                                final PsiElement parent = reference.getParent();
-                                                final boolean isRegular = ComparisonStyle.isRegular();
-                                                String pattern          = isRegular ? "%sstrpos(%s, %s.%s.%s) !== false" : "false !== %sstrpos(%s, %s.%s.%s)";
-                                                final boolean wrap      = parent instanceof UnaryExpression || parent instanceof BinaryExpression;
-                                                pattern                 = wrap ? '(' + pattern + ')' : pattern;
+                                                final PsiElement parent  = reference.getParent();
+                                                final boolean isRegular  = ComparisonStyle.isRegular();
+                                                String pattern           = isRegular ? "%sstrpos(%s, %s.%s.%s) !== false" : "false !== %sstrpos(%s, %s.%s.%s)";
+                                                final boolean isInverted = parent instanceof UnaryExpression &&
+                                                                           OpenapiTypesUtil.is(parent.getFirstChild(), PhpTokenTypes.opNOT);
+                                                pattern                  = isInverted ? pattern.replace("!==", "===") : pattern;
+                                                final boolean wrap       = (!isInverted && parent instanceof UnaryExpression) ||
+                                                                           parent instanceof BinaryExpression;
+                                                pattern                  = wrap ? '(' + pattern + ')' : pattern;
                                                 replacement = String.format(
                                                         pattern,
                                                         reference.getImmediateNamespaceName(),
@@ -85,6 +91,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                                         outerArguments[0].getText(),
                                                         innerArguments[0].getText()
                                                 );
+                                                target = isInverted ? parent : reference;
                                                 break;
                                             case "count":
                                                 replacement = String.format(
@@ -93,16 +100,18 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                                         innerArguments[1].getText(),
                                                         innerArguments[0].getText()
                                                 );
+                                                target = reference;
                                                 break;
                                             default:
                                                 replacement = "...";
+                                                target      = reference;
                                                 break;
                                         }
                                         final String message = String.format(messagePattern, replacement);
                                         if (innerCall == targetArgument) {
-                                            holder.registerProblem(reference, message, new UseAlternativeFix(replacement));
+                                            holder.registerProblem(target, message, new UseAlternativeFix(replacement));
                                         } else {
-                                            holder.registerProblem(reference, message);
+                                            holder.registerProblem(target, message);
                                         }
                                     }
                                 }

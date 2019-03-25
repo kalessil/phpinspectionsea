@@ -40,11 +40,15 @@ public class ShortEchoTagCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpEchoStatement(@NotNull PhpEchoStatement echo) {
+                if (this.isContainingFileSkipped(echo)) { return; }
+
                 this.analyze(echo, echo);
             }
 
             @Override
             public void visitPhpPrint(@NotNull PhpPrintExpression print) {
+                if (this.isContainingFileSkipped(print)) { return; }
+
                 final PsiElement parent = print.getParent();
                 this.analyze(print, OpenapiTypesUtil.isStatementImpl(parent) ? parent : print);
             }

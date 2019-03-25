@@ -251,5 +251,4 @@ Inspections Lists (Performance)
 | Performance          | PackedHashtableOptimizationInspection           | Packed hashtable optimizations                                                                    | n/a | yes | n/a  | yes |
 | Performance          | UnqualifiedReferenceInspection                  | Unqualified function/constant reference                                                           | yes | yes | yes  | no  |
 | Performance          | ExplodeMissUseInspection                        | 'explode(...)' misused                                                                            | yes | yes | yes  | no  |
-| Performance          | ScandirUsageInspection                          | 'scandir(...)' low performing usage                                                               | yes | yes | yes  | no  |
 | Performance          | FixedTimeStartWithInspection                    | Fixed-time string starts with checks                                                              | yes | yes | yes  | no  |

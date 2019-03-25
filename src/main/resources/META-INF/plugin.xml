@@ -827,6 +827,10 @@
         shortName="ImplodeArgumentsOrderInspection"               displayName="'implode(...)' arguments order"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ImplodeArgumentsOrderInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ShortEchoTagCanBeUsedInspection"               displayName="Short echo tag can be used"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ShortEchoTagCanBeUsedInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

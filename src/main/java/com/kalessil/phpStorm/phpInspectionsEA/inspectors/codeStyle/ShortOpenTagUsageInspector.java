@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -14,6 +13,15 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class ShortOpenTagUsageInspector extends BasePhpInspection {
     private static final String message = "Using the '<?' short tag considered to be a bad practice";
@@ -27,14 +35,15 @@ public class ShortOpenTagUsageInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitWhiteSpace(PsiWhiteSpace space) {
+            @Override
+            public void visitWhiteSpace(@NotNull PsiWhiteSpace space) {
                 if (this.isContainingFileSkipped(space)) { return; }
 
                 final PsiElement previous = space.getPrevSibling();
                 if (previous instanceof LeafPsiElement) {
                     final LeafPsiElement tag = (LeafPsiElement) previous;
-                    if (PhpTokenTypes.PHP_OPENING_TAG == tag.getElementType() && tag.getText().equals("<?")) {
-                        holder.registerProblem(tag, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    if (tag.getElementType() == PhpTokenTypes.PHP_OPENING_TAG && tag.getText().equals("<?")) {
+                        holder.registerProblem(tag, message, new TheLocalFix());
                     }
                 }
             }
@@ -59,7 +68,7 @@ public class ShortOpenTagUsageInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof LeafPsiElement) {
+            if (expression instanceof LeafPsiElement && !project.isDisposed()) {
                 expression.replace(PhpPsiElementFactory.createFromText(project, PhpTokenTypes.PHP_OPENING_TAG, "<?php"));
             }
         }

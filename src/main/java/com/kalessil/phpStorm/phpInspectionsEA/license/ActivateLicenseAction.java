@@ -29,8 +29,8 @@ final public class ActivateLicenseAction {
         Notifications.Bus.notify(group.createNotification(
             "<b>" + pluginName + "</b>",
             licenseActivated ?
-                String.format("Congrats, %s has been successfully activated.", pluginName) :
-                String.format("Something went wrong, we were not able to complete the activation: %s", activationError.toString()),
+                String.format("Congratulations, your copy of %s has been successfully activated.", pluginName) :
+                String.format("Something went wrong, the activation process encountered an issue: %s", activationError.toString()),
             licenseActivated ?
                 NotificationType.INFORMATION :
                 NotificationType.WARNING,

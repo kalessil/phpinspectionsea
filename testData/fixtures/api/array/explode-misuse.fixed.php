@@ -1,29 +1,37 @@
 <?php
 
-function explode_misuse_count($arg) {
+function explode_misuse_count($parameter) {
     /* case: misuse */
-    echo substr_count($arg, '') + 1;
+    echo substr_count($parameter, '') + 1;
 
     /* case: misuse, with variants lookup */
-    $a = explode('', $arg);
-    echo count($a);
+    $array = explode('', $parameter);
+    echo count($array);
 
-    /* false-positive: the variable in not one-time use */
-    $c = explode('', $arg);
-    echo count($c);
-    return $c;
+    /* false-positives */
+    $result = count(explode('', $parameter, 2));
+
+    $returned = explode('', $parameter);
+    $result = count($returned);
+    return $returned;
 }
 
-function explode_misuse_implode($arg) {
+function explode_misuse_in_array($parameter) {
     /* case: misuse */
-    echo str_replace('', '...', $arg);
+    $result = strpos($parameter, ',' . '...' . ',') !== false;
+
+    /* case: replacement generation */
+    $result = !(strpos($parameter, ',' . '...' . ',') !== false);
+    $result = (strpos($parameter, ',' . '...' . ',') !== false) === true;
 
     /* case: misuse, with variants lookup */
-    $a = explode('', $arg);
-    echo implode('...', $a);
+    $array = explode(',', $parameter);
+    $result = in_array('...', $array);
 
-    /* false-positive: the variable in not one-time use */
-    $c = explode('', $arg);
-    echo implode('', $c);
-    return $c;
+    /* false-positives */
+    $result = in_array('...', explode(',', $parameter, 2));
+
+    $returned = explode('', $parameter);
+    echo implode('', $returned);
+    return $returned;
 }

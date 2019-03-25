@@ -4,13 +4,12 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -73,9 +72,13 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                         final String replacement;
                                         switch (outerFunctionName) {
                                             case "in_array":
-                                                // support inversion and wrapping
+                                                final PsiElement parent = reference.getParent();
+                                                final boolean isRegular = ComparisonStyle.isRegular();
+                                                String pattern          = isRegular ? "%sstrpos(%s, %s.%s.%s) !== false" : "false !== %sstrpos(%s, %s.%s.%s)";
+                                                final boolean wrap      = parent instanceof UnaryExpression || parent instanceof BinaryExpression;
+                                                pattern                 = wrap ? '(' + pattern + ')' : pattern;
                                                 replacement = String.format(
-                                                        "%sstrpos(%s, %s.%s.%s) !== false",
+                                                        pattern,
                                                         reference.getImmediateNamespaceName(),
                                                         innerArguments[1].getText(),
                                                         innerArguments[0].getText(),

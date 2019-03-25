@@ -1,23 +1,25 @@
 <html>
-Stabilization release: bug-fixes. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+New features release: bug-fixes. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- A constant can be used: resolved a false-positive (php_uname)<br/>
-- Array and string offset validity: resolved false-positive (static/self)<br/>
-- Cascading 'str_replace(...)' calls: quick-fix bug-fixes<br/>
-- Foreach usage possible: quick-fix bug-fixes<br/>
-- Inverted 'if-else' constructs: quick-fix bug-fixes<br/>
-- Nested positive ifs: quick-fix bug-fixes<br/>
-- Non-optimal regular expression: resolved a false-negative (i-modifier)<br/>
-- Parameter/variable is not used: resolved a false-positive (assignment by reference)<br/>
-- Statement could be decoupled from foreach: resolved false-positives (html-templating)<br/>
-- Traits properties conflicts resolution: resolved a false-positive (phpdoc properties)<br/>
-- 'empty(...)' usage: resolved false-positives (multiple cases)<br/>
-- 'parent' keyword misused: resolved a false-positive (static functions)<br/>
-- 'mkdir(...)' race condition: quick-fix bug-fixes<br/>
-- *printf/*scanf arguments count mismatches: resolved a false-positive (pattern modifications)<br/>
+- Binary-unsafe 'fopen(...)' usage: new settings<br/>
+- Encryption initialization vector randomness: resolved a false-positive<br/>
+- Foreach usage possible: QF bug-fixes<br/>
+- Foreach usage possible: resoled a false-positive<br/>
+- Isset operations variables existence: new settings<br/>
+- Hostname substitution: resolved a false-positive (whitelist checked expressions)<br/>
+- One-time use variables: resolved a false-positive<br/>
+- Return type hint can be used: QF bug-fix<br/>
+- Unnecessary semicolon: new patterns<br/>
+- Unknown inspection suppression: resolved a false-positive<br/>
+- 'compact(...)' variables existence: reworked reporting<br/>
 <br/>
-- PhpUnit: bugs and best practices: new patterns<br/>
-- 'array_push(...)' misused: added new settings<br/>
+- Callable name case mismatched in a call: dropped (IDE offers a native inspection)<br/>
+- Dynamic methods invocation via '::': new patterns<br/>
+- Proper null-coalescing operator usage: implemented<br/>
+- Short echo tag can be used: implemented (needs activation)<br/>
+- Static closure can be used: implemented<br/>
+- 'ob_get_clean()' can be used: implemented<br/>
+- 'implode(...)' arguments order: implemented<br/>
 <br/>
 <hr/>
 </html>

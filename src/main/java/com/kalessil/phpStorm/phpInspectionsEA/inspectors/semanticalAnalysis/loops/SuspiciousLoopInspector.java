@@ -34,7 +34,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String patternOverridesLoopVars  = "Variable '$%s' is introduced in a outer loop and overridden here.";
     private static final String patternOverridesParameter = "Variable '$%s' is introduced as a %s parameter and overridden here.";
     private static final String patternConditionAnomaly   = "A parent condition '%s' looks suspicious.";
-
+    private static final String patternEmptyArray         = "'%s' is probably an empty array.";
 
     private static final Map<IElementType, IElementType> operationsInversion = new HashMap<>();
     private static final Set<IElementType> operationsAnomaly                 = new HashSet<>();
@@ -66,6 +66,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
 
                 this.inspectVariables(statement);
                 this.inspectParentConditions(statement, statement.getArray());
+                this.inspectSource(statement, statement.getArray());
             }
 
             @Override
@@ -77,6 +78,33 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 this.inspectVariables(statement);
                 this.findUsedContainers(statement).forEach(container -> this.inspectParentConditions(statement, container));
                 this.inspectBoundariesCorrectness(statement);
+            }
+
+            private void inspectSource(@NotNull ForeachStatement loop, @Nullable PsiElement source) {
+                PsiElement iterable = source;
+                /* resolve possible values for local variables */
+                if (iterable instanceof Variable) {
+                    final Function function = ExpressionSemanticUtil.getScope(loop);
+                    if (function != null) {
+                        final String variableName = ((Variable) iterable).getName();
+                        final boolean isParameter = Stream.of(function.getParameters()).anyMatch(p -> variableName.equals(p.getName()));
+                        if (!isParameter) {
+                            final List<Variable> used   = ExpressionSemanticUtil.getUseListVariables(function);
+                            final boolean isUseVariable = used != null && used.stream().anyMatch(u -> variableName.equals(u.getName()));
+                            if (!isUseVariable) {
+                                final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(iterable);
+                                if (values.size() == 1) {
+                                    iterable = values.iterator().next();
+                                }
+                                values.clear();
+                            }
+                        }
+                    }
+                }
+                /* analyze the source */
+                if (iterable instanceof ArrayCreationExpression && iterable.getChildren().length == 0) {
+                    holder.registerProblem(source, String.format(patternEmptyArray, source.getText()));
+                }
             }
 
             @NotNull

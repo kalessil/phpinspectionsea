@@ -20,7 +20,7 @@ final public class DeactivateLicenseAction {
             Notifications.Bus.notify(group.createNotification(
                 "<b>" + plugin.getName() + "</b>",
                 licenseDeactivated ?
-                    String.format("The product key has been released ('%s' can be used for activation again).", keyHolder.toString()) :
+                    String.format("The product key has been released (%s can be used for activation again).", keyHolder.toString()) :
                     String.format("Something went wrong, we were not able to complete the deactivation: %s", deactivationError.toString()),
                 licenseDeactivated ?
                     NotificationType.INFORMATION :

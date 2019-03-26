@@ -85,7 +85,7 @@ public class UnnecessaryBooleanCheckInspector extends BasePhpInspection {
                     if (resolved != null) {
                         return resolved.size() == 1 &&
                                !resolved.hasUnknown() &&
-                               resolved.getTypes().stream().allMatch(t -> Types.getType(t).equals(Types.strBoolean));
+                               Types.getType(resolved.getTypes().iterator().next()).equals(Types.strBoolean);
                     }
                 }
                 return false;

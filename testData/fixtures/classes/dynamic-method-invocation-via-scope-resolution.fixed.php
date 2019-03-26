@@ -17,5 +17,13 @@ class CasesHolder
     }
 }
 
+class ChildCasesHolder extends CasesHolder
+{
+    public function method()
+    {
+        return CasesHolder::method();
+    }
+}
+
 $object = new CasesHolder();
 $object->method();

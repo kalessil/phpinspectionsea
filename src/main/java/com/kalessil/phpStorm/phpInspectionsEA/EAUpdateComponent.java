@@ -3,9 +3,13 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.extensions.PluginId;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class EAUpdateComponent implements ProjectComponent {
     private EAApplicationComponent applicationComponent;
@@ -32,12 +36,16 @@ public class EAUpdateComponent implements ProjectComponent {
                 return;
             }
 
-            String popupTitle       = "<b> "+ plugin.getName() + "</b> update v" + plugin.getVersion();
-            NotificationGroup group = new NotificationGroup(plugin.getName(), NotificationDisplayType.STICKY_BALLOON, true);
-            Notification notification = group.createNotification(
-                    popupTitle, plugin.getChangeNotes(), NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER
+            final NotificationGroup group = new NotificationGroup(plugin.getName(), NotificationDisplayType.STICKY_BALLOON, true);
+            ApplicationManager.getApplication().invokeLater(() ->
+                Notifications.Bus.notify(group.createNotification(
+                        "<b> "+ plugin.getName() + "</b> update v" + plugin.getVersion(),
+                        plugin.getChangeNotes(),
+                        NotificationType.INFORMATION,
+                        NotificationListener.URL_OPENING_LISTENER
+                )),
+                ModalityState.NON_MODAL
             );
-            Notifications.Bus.notify(notification);
 
             applicationComponent.setUpdateNotificationShown(true);
         }

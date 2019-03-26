@@ -48,6 +48,15 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
                 : instance;
     }
 
+    private NotificationGroup notificationGroup;
+
+    @NotNull
+    public NotificationGroup getNotificationGroup() {
+        return notificationGroup == null
+                ? notificationGroup = new NotificationGroup(plugin.getName(), NotificationDisplayType.STICKY_BALLOON, true)
+                : notificationGroup;
+    }
+
     private void initLicensing() {
         licenseService = licenseService == null ? new LicenseService() : licenseService;
         if (licenseService.shouldCheckPluginLicense()) {
@@ -65,10 +74,8 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
             } catch (Throwable failure) {
                 final LicenseService service  = licenseService;
                 final String message          = failure.getMessage();
-                final String pluginName       = plugin.getName();
-                final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
-                Notifications.Bus.notify(group.createNotification(
-                    "<b>" + pluginName + "</b>",
+                Notifications.Bus.notify(this.getNotificationGroup().createNotification(
+                    "<b>" + plugin.getName() + "</b>",
                     message == null ? failure.getClass().getName() : message,
                     NotificationType.WARNING,
                     EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {

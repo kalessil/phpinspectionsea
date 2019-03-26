@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.license;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 
 final public class DeactivateLicenseAction {
@@ -9,14 +10,13 @@ final public class DeactivateLicenseAction {
         @NotNull LicenseService service,
         @NotNull IdeaPluginDescriptor plugin
     ) {
-        final String pluginName               = plugin.getName();
         final StringBuilder deactivationError = new StringBuilder();
         final StringBuilder keyHolder         = new StringBuilder();
         final boolean licenseDeactivated      = service.deactivateLicenseKey(keyHolder, deactivationError);
 
-        final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
+        final NotificationGroup group = EAUltimateApplicationComponent.getInstance().getNotificationGroup();
         Notifications.Bus.notify(group.createNotification(
-            "<b>" + pluginName + "</b>",
+            "<b>" + plugin.getName() + "</b>",
             licenseDeactivated ?
                 String.format("The product key has been released ('%s' can be used for activation again).", keyHolder.toString()) :
                 String.format("Something went wrong, we were not able to complete the deactivation: %s", deactivationError.toString()),

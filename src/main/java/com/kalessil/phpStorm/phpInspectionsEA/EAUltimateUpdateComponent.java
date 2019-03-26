@@ -32,11 +32,10 @@ public class EAUltimateUpdateComponent implements ProjectComponent {
                 return;
             }
 
-            final String pluginName       = ultimatePlugin.getName();
-            final NotificationGroup group = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
+            final NotificationGroup group = EAUltimateApplicationComponent.getInstance().getNotificationGroup();
             Notifications.Bus.notify(
                 group.createNotification(
-                    "<b>" + pluginName + "</b> update v" + ultimatePlugin.getVersion(),
+                    "<b>" + ultimatePlugin.getName() + "</b> update v" + ultimatePlugin.getVersion(),
                     ultimatePlugin.getChangeNotes(),
                     NotificationType.INFORMATION,
                     NotificationListener.URL_OPENING_LISTENER
@@ -47,7 +46,7 @@ public class EAUltimateUpdateComponent implements ProjectComponent {
             if (extendedPlugin != null) {
                 Notifications.Bus.notify(
                     group.createNotification(
-                        "<b>" + pluginName + "</b>",
+                        "<b>" + ultimatePlugin.getName() + "</b>",
                         "Please uninstall Php Inspections (EA Extended) in order to avoid unexpected surprises.",
                         NotificationType.WARNING,
                         NotificationListener.URL_OPENING_LISTENER

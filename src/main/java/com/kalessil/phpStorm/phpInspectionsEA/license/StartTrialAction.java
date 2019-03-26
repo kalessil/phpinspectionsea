@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.license;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 
 final public class StartTrialAction {
@@ -12,13 +13,12 @@ final public class StartTrialAction {
     ) {
         final StringBuilder trialError = new StringBuilder();
         final boolean trialStarted     = service.startTrial(trialError);
-        final String pluginName        = plugin.getName();
-        final NotificationGroup group  = new NotificationGroup(pluginName, NotificationDisplayType.STICKY_BALLOON, true);
+        final NotificationGroup group  = EAUltimateApplicationComponent.getInstance().getNotificationGroup();
         Notifications.Bus.notify(group.createNotification(
-            "<b>" + pluginName + "</b>",
+            "<b>" + plugin.getName() + "</b>",
             trialStarted ?
-                String.format("Congrats, a trial license was successfully applied (expires in %s days).", service.getTrialDaysRemaining()) :
-                String.format("Something went wrong, we were not able to obtain a trial license: %s", trialError.toString()),
+                String.format("Congratulations, a trial license was successfully applied (expires in %s days).", service.getTrialDaysRemaining()) :
+                String.format("Something went wrong, the activation process encountered an issue: %s", trialError.toString()),
             trialStarted ?
                 NotificationType.INFORMATION :
                 NotificationType.WARNING,

@@ -99,7 +99,7 @@ public class ImplodeMissUseInspector extends BasePhpInspection {
     }
 
     private static final class UseAlternativeFix extends UseSuggestedReplacementFixer {
-        private static final String title = "Use the suggested alternative";
+        private static final String title = "Use the suggested 'implode(...)' alternative";
 
         @NotNull
         @Override

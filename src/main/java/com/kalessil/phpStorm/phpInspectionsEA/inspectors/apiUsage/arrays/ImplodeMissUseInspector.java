@@ -3,13 +3,17 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +60,7 @@ public class ImplodeMissUseInspector extends BasePhpInspection {
                                 if (innerFunctionName != null) {
                                     if (innerFunctionName.equals("explode")) {
                                         final PsiElement[] innerArguments = innerCall.getParameters();
-                                        if (innerArguments.length == 2) {
+                                        if (innerArguments.length == 2 && this.isExclusiveUse(targetArgument, reference)) {
                                             final String replacement = String.format(
                                                     "%sstr_replace(%s, %s, %s)",
                                                     reference.getImmediateNamespaceName(),
@@ -72,7 +76,7 @@ public class ImplodeMissUseInspector extends BasePhpInspection {
                                         }
                                     } else if (innerFunctionName.equals("file")) {
                                         final PsiElement[] innerArguments = innerCall.getParameters();
-                                        if (innerArguments.length == 1) {
+                                        if (innerArguments.length == 1 && this.isExclusiveUse(targetArgument, reference)) {
                                             final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(outerArguments[0]);
                                             if (literal != null && literal.getContents().isEmpty()) {
                                                 final String replacement = String.format(
@@ -94,6 +98,21 @@ public class ImplodeMissUseInspector extends BasePhpInspection {
                         values.clear();
                     }
                 }
+            }
+
+            private boolean isExclusiveUse(@NotNull PsiElement candidate, @NotNull FunctionReference outer) {
+                boolean result = candidate instanceof FunctionReference;
+                if (!result) {
+                    final Function scope      = ExpressionSemanticUtil.getScope(outer);
+                    final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                    if (body != null) {
+                        final long candidateUsages = PsiTreeUtil.findChildrenOfType(body, candidate.getClass()).stream()
+                                .filter(expression -> OpenapiEquivalenceUtil.areEqual(expression, candidate))
+                                .count();
+                        result = candidateUsages == 2;
+                    }
+                }
+                return result;
             }
         };
     }

@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.extensions.PluginId;
 import org.jetbrains.annotations.NotNull;
@@ -33,24 +34,24 @@ public class EAUltimateUpdateComponent implements ProjectComponent {
             }
 
             final NotificationGroup group = EAUltimateApplicationComponent.getInstance().getNotificationGroup();
-            Notifications.Bus.notify(
-                group.createNotification(
-                    "<b>" + ultimatePlugin.getName() + "</b> update v" + ultimatePlugin.getVersion(),
-                    ultimatePlugin.getChangeNotes(),
-                    NotificationType.INFORMATION,
-                    NotificationListener.URL_OPENING_LISTENER
-                )
+            ApplicationManager.getApplication().executeOnPooledThread(() ->
+                Notifications.Bus.notify(group.createNotification(
+                        "<b>" + ultimatePlugin.getName() + "</b> update v" + ultimatePlugin.getVersion(),
+                        ultimatePlugin.getChangeNotes(),
+                        NotificationType.INFORMATION,
+                        NotificationListener.URL_OPENING_LISTENER
+                ))
             );
 
             final IdeaPluginDescriptor extendedPlugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
             if (extendedPlugin != null) {
-                Notifications.Bus.notify(
-                    group.createNotification(
-                        "<b>" + ultimatePlugin.getName() + "</b>",
-                        "Please uninstall Php Inspections (EA Extended) in order to avoid unexpected surprises.",
-                        NotificationType.WARNING,
-                        NotificationListener.URL_OPENING_LISTENER
-                    )
+                ApplicationManager.getApplication().executeOnPooledThread(() ->
+                    Notifications.Bus.notify(group.createNotification(
+                            "<b>" + ultimatePlugin.getName() + "</b>",
+                            "Please uninstall Php Inspections (EA Extended) in order to avoid unexpected surprises.",
+                            NotificationType.WARNING,
+                            NotificationListener.URL_OPENING_LISTENER
+                    ))
                 );
             }
 

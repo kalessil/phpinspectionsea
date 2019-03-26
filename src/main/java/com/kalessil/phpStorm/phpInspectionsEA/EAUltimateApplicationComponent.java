@@ -71,21 +71,24 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
                     }
                     throw new RuntimeException(message);
                 }
-            } catch (Throwable failure) {
+            } catch (final Throwable failure) {
                 final LicenseService service  = licenseService;
                 final String message          = failure.getMessage();
-                Notifications.Bus.notify(this.getNotificationGroup().createNotification(
-                    "<b>" + plugin.getName() + "</b>",
-                    message == null ? failure.getClass().getName() : message,
-                    NotificationType.WARNING,
-                    EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {
-                        switch (action) {
-                            case "#try":      (new StartTrialAction()).perform(service, plugin);      break;
-                            case "#buy":      (new PurchaseLicenseAction()).perform();                break;
-                            case "#activate": (new ActivateLicenseAction()).perform(service, plugin); break;
-                        }
-                    })
-                ));
+
+                ApplicationManager.getApplication().executeOnPooledThread(() ->
+                    Notifications.Bus.notify(getNotificationGroup().createNotification(
+                            "<b>" + plugin.getName() + "</b>",
+                            message == null ? failure.getClass().getName() : message,
+                            NotificationType.WARNING,
+                            EaNotificationLinksHandler.TAKE_LICENSE_ACTION_LISTENER.withActionCallback(action -> {
+                                switch (action) {
+                                    case "#try":      (new StartTrialAction()).perform(service, plugin);      break;
+                                    case "#buy":      (new PurchaseLicenseAction()).perform();                break;
+                                    case "#activate": (new ActivateLicenseAction()).perform(service, plugin); break;
+                                }
+                            })
+                    ))
+                );
             }
         }
     }

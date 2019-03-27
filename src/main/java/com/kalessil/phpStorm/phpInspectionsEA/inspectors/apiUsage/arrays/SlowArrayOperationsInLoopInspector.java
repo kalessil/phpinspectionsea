@@ -58,7 +58,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                     if (this.isTargetContext(context)) {
                         PsiElement current = context.getParent();
                         while (current != null && !(current instanceof PhpFile) && !(current instanceof Function)) {
-                            if (OpenapiTypesUtil.isLoop(parent)) {
+                            if (OpenapiTypesUtil.isLoop(current)) {
                                 if (context instanceof AssignmentExpression) {
                                     if (this.isTargetAssignment((AssignmentExpression) context, reference)) {
                                         holder.registerProblem(reference, String.format(messagePattern, functionName));
@@ -86,6 +86,21 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
             }
 
             private boolean isTargetReference(@NotNull MethodReference context, @NotNull FunctionReference reference) {
+                final String outerMethodName = context.getName();
+                if (outerMethodName != null && outerMethodName.startsWith("set")) {
+                    final PsiElement[] arguments = context.getParameters();
+                    if (arguments.length == 1) {
+                        return Stream.of(reference.getParameters()).anyMatch(argument -> {
+                            if (argument instanceof MethodReference) {
+                                final String innerMethodName = ((MethodReference) argument).getName();
+                                if (innerMethodName != null && innerMethodName.startsWith("get")) {
+                                    return OpenapiEquivalenceUtil.areEqual(argument.getFirstChild(), context.getFirstChild());
+                                }
+                            }
+                            return false;
+                        });
+                    }
+                }
                 return false;
             }
 

@@ -53,34 +53,54 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionsSet.contains(functionName)) {
-                    PsiElement parent = reference.getParent();
-                    if (parent instanceof AssignmentExpression) {
-                        final AssignmentExpression assignment = (AssignmentExpression) parent;
-                        /* false-positives: return/break as last group statement expression */
-                        boolean canLoop = true;
-                        if (OpenapiTypesUtil.isStatementImpl(parent = parent.getParent())) {
-                            final PsiElement groupCandidate = parent.getParent();
-                            if (groupCandidate instanceof GroupStatement) {
-                                final PsiElement last = ExpressionSemanticUtil.getLastStatement((GroupStatement) groupCandidate);
-                                canLoop               = !(last instanceof PhpBreak) && !(last instanceof PhpReturn);
-                            }
-                        }
-                        while (canLoop && parent != null && !(parent instanceof PhpFile) && !(parent instanceof Function)) {
+                    final PsiElement parent  = reference.getParent();
+                    final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
+                    if (this.isTargetContext(context)) {
+                        PsiElement current = context.getParent();
+                        while (current != null && !(current instanceof PhpFile) && !(current instanceof Function)) {
                             if (OpenapiTypesUtil.isLoop(parent)) {
-                                final PsiElement container = assignment.getVariable();
-                                if (container != null) {
-                                    final boolean modifiesSameContainer = Stream.of(reference.getParameters())
-                                            .anyMatch(a -> OpenapiEquivalenceUtil.areEqual(container, a));
-                                    if (modifiesSameContainer) {
+                                if (context instanceof AssignmentExpression) {
+                                    if (this.isTargetAssignment((AssignmentExpression) context, reference)) {
+                                        holder.registerProblem(reference, String.format(messagePattern, functionName));
+                                        return;
+                                    }
+                                } else if (context instanceof MethodReference) {
+                                    if (this.isTargetReference((MethodReference) context, reference)) {
                                         holder.registerProblem(reference, String.format(messagePattern, functionName));
                                         return;
                                     }
                                 }
                             }
-                            parent = parent.getParent();
+                            current = current.getParent();
                         }
                     }
                 }
+            }
+
+            private boolean isTargetAssignment(@NotNull AssignmentExpression context, @NotNull FunctionReference reference) {
+                final PsiElement container = context.getVariable();
+                if (container != null) {
+                    return Stream.of(reference.getParameters()).anyMatch(a -> OpenapiEquivalenceUtil.areEqual(container, a));
+                }
+                return false;
+            }
+
+            private boolean isTargetReference(@NotNull MethodReference context, @NotNull FunctionReference reference) {
+                return false;
+            }
+
+            private boolean isTargetContext(@NotNull PsiElement context) {
+                if (context instanceof AssignmentExpression || context instanceof MethodReference) {
+                    final PsiElement statementCandidate = context.getParent();
+                    if (OpenapiTypesUtil.isStatementImpl(statementCandidate)) {
+                        final PsiElement groupCandidate = statementCandidate.getParent();
+                        if (groupCandidate instanceof GroupStatement) {
+                            final PsiElement last = ExpressionSemanticUtil.getLastStatement((GroupStatement) groupCandidate);
+                            return !(last instanceof PhpBreak) && !(last instanceof PhpReturn);
+                        }
+                    }
+                }
+                return false;
             }
         };
     }

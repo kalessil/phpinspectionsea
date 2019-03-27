@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -46,30 +48,32 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (this.isContainingFileSkipped(reference)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionsSet.contains(functionName)) {
                     PsiElement parent = reference.getParent();
                     if (parent instanceof AssignmentExpression) {
+                        final AssignmentExpression assignment = (AssignmentExpression) parent;
                         /* false-positives: return/break as last group statement expression */
                         boolean canLoop = true;
                         if (OpenapiTypesUtil.isStatementImpl(parent = parent.getParent())) {
-                            final PsiElement grandParent = parent.getParent();
-                            if (grandParent instanceof GroupStatement) {
-                                final PsiElement last = ExpressionSemanticUtil.getLastStatement((GroupStatement) grandParent);
-                                canLoop = !(last instanceof PhpBreak) && !(last instanceof PhpReturn);
+                            final PsiElement groupCandidate = parent.getParent();
+                            if (groupCandidate instanceof GroupStatement) {
+                                final PsiElement last = ExpressionSemanticUtil.getLastStatement((GroupStatement) groupCandidate);
+                                canLoop               = !(last instanceof PhpBreak) && !(last instanceof PhpReturn);
                             }
                         }
                         while (canLoop && parent != null && !(parent instanceof PhpFile) && !(parent instanceof Function)) {
                             if (OpenapiTypesUtil.isLoop(parent)) {
-                                final PsiElement container = ((AssignmentExpression) reference.getParent()).getVariable();
+                                final PsiElement container = assignment.getVariable();
                                 if (container != null) {
-                                    for (final PsiElement parameter : reference.getParameters()) {
-                                        if (OpenapiEquivalenceUtil.areEqual(container, parameter)) {
-                                            holder.registerProblem(reference, String.format(messagePattern, functionName));
-                                            return;
-                                        }
+                                    final boolean modifiesSameContainer = Stream.of(reference.getParameters())
+                                            .anyMatch(a -> OpenapiEquivalenceUtil.areEqual(container, a));
+                                    if (modifiesSameContainer) {
+                                        holder.registerProblem(reference, String.format(messagePattern, functionName));
+                                        return;
                                     }
                                 }
                             }

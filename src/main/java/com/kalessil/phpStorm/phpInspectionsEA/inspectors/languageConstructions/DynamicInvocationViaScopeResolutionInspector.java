@@ -62,7 +62,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                             final String candidateContent    = staticCandidate.getText();
                             if (candidateContent.equals("static") || candidateContent.equals("self") || candidateContent.equals(clazz.getName())) {
                                 final Function scope = ExpressionSemanticUtil.getScope(reference);
-                                if (scope instanceof Method && !methodName.equals(scope.getName())) {
+                                if (scope instanceof Method && !methodName.equalsIgnoreCase(scope.getName())) {
                                     if (((Method) scope).isStatic()) {
                                         holder.registerProblem(
                                                 reference,

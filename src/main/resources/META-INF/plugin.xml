@@ -149,7 +149,10 @@
         shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
         groupName="Type compatibility"                            enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
-
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="JsonDecodeUsageInspection"                     displayName="'json_decode(...)' result type"
+        groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.JsonDecodeUsageInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnSafeIsSetOverArrayInspection"                displayName="'isset(...)' usage"

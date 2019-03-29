@@ -84,8 +84,8 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                     if (OpenapiTypesUtil.isFunctionReference(candidate)) {
                         return (FunctionReference) candidate;
                     }
-                } else if (OpenapiTypesUtil.isAssignment(last)) {
-                    final AssignmentExpression assignment = (AssignmentExpression) last;
+                } else if (OpenapiTypesUtil.isStatementImpl(last) && OpenapiTypesUtil.isAssignment(last.getFirstChild())) {
+                    final AssignmentExpression assignment = (AssignmentExpression) last.getFirstChild();
                     final PsiElement container            = assignment.getVariable();
                     if (container instanceof Variable) {
                         final PsiElement value = assignment.getValue();

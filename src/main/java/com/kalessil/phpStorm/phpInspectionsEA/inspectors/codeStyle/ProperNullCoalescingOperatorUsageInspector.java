@@ -56,13 +56,15 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                     final PsiElement right = binary.getRightOperand();
                     if (left != null && right != null) {
                         /* case: `call() ?? null` */
-                        if (left instanceof FunctionReference && PhpLanguageUtil.isNull(right)) {
-                            final String replacement = left.getText();
-                            holder.registerProblem(
-                                    binary,
-                                    String.format(messageSimplify, replacement),
-                                    new UseLeftOperandFix(replacement)
-                            );
+                        if (PhpLanguageUtil.isNull(right)) {
+                            if (left instanceof FunctionReference) {
+                                holder.registerProblem(
+                                        binary,
+                                        String.format(messageSimplify, left.getText()),
+                                        new UseLeftOperandFix(left.getText())
+                                );
+                            }
+                            return;
                         }
                         /* case: `returns_string_or_null() ?? []` */
                         if (ANALYZE_TYPES && left instanceof PhpTypedElement && right instanceof PhpTypedElement) {

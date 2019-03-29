@@ -11,7 +11,7 @@ namespace {
 
         abstract function method();
 
-        public function cases(ClazzOne $one, ClazzTwo $two, ClazzThree $three) {
+        public function cases(ClazzOne $one, ClazzTwo $two, ClazzThree $three, string $string) {
             return [
                 $this->method(),
 
@@ -21,6 +21,8 @@ namespace {
                 $one ?? $two,
                 $two ?? $one,
                 $one ?? $three,
+
+                $string ?? null,
             ];
         }
     }

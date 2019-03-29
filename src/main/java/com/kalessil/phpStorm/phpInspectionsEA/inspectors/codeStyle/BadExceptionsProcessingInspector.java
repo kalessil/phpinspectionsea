@@ -77,7 +77,7 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                                 if (catchStatement.getNextPsiSibling() == null) {
                                     final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
                                     if (last instanceof PhpThrow) {
-                                        final PhpThrow lastThrow = (PhpThrow) last;
+                                        final PhpThrow lastThrow  = (PhpThrow) last;
                                         final PsiElement argument = lastThrow.getArgument();
                                         if (argument != null && OpenapiEquivalenceUtil.areEqual(argument, variable)) {
                                             holder.registerProblem(variable, messageRethrown);

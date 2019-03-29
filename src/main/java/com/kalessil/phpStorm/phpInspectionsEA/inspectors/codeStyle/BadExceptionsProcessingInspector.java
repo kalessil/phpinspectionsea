@@ -73,12 +73,15 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                                     holder.registerProblem(variable, messageChainedException);
                                 }
                             } else {
-                                final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
-                                if (last instanceof PhpThrow) {
-                                    final PhpThrow lastThrow  = (PhpThrow) last;
-                                    final PsiElement argument = lastThrow.getArgument();
-                                    if (argument != null && OpenapiEquivalenceUtil.areEqual(argument, variable)) {
-                                        holder.registerProblem(variable, messageRethrown);
+                                /* the catch should be the last and only re-throw */
+                                if (catchStatement.getNextPsiSibling() == null) {
+                                    final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
+                                    if (last instanceof PhpThrow) {
+                                        final PhpThrow lastThrow = (PhpThrow) last;
+                                        final PsiElement argument = lastThrow.getArgument();
+                                        if (argument != null && OpenapiEquivalenceUtil.areEqual(argument, variable)) {
+                                            holder.registerProblem(variable, messageRethrown);
+                                        }
                                     }
                                 }
                             }

@@ -28,7 +28,7 @@ import java.util.Map;
  */
 
 public class UnnecessaryClosureInspector extends BasePhpInspection {
-    private static final String messagePattern = "The closure can be replaced with '%s' (reduces cognitive load).";
+    private static final String messagePattern = "The closure can be replaced with %s (reduces cognitive load).";
 
     final private static Map<String, Integer> closurePositions = new HashMap<>();
     static {
@@ -63,11 +63,16 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                                 if (last != null) {
                                     final FunctionReference callback = this.getCandidate(last);
                                     if (callback != null && this.canInline(callback, closure)) {
+                                        final String replacement = String.format(
+                                                "'%s%s'",
+                                                callback.getImmediateNamespaceName(),
+                                                callback.getName()
+                                        );
                                         holder.registerProblem(
                                                 expression,
-                                                String.format(messagePattern, callback.getName()),
+                                                String.format(messagePattern, replacement),
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                new UseCallbackFix(String.format("'%s'", callback.getName()))
+                                                new UseCallbackFix(replacement)
                                         );
                                     }
                                 }

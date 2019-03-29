@@ -39,6 +39,8 @@ public class JsonDecodeUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.isContainingFileSkipped(reference)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("json_decode")) {
                     final PsiElement[] arguments = reference.getParameters();

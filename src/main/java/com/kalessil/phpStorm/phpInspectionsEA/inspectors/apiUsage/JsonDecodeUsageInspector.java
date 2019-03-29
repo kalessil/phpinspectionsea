@@ -23,10 +23,10 @@ import javax.swing.*;
 
 public class JsonDecodeUsageInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean DECODE_AS_ARRAY = true;
+    public boolean DECODE_AS_ARRAY  = true;
     public boolean DECODE_AS_OBJECT = false;
 
-    private static final String message = "Please specify the second argument (clearly clarifies decoding into array or object).";
+    private static final String message = "Please specify the second argument (clarifies decoding into array or object).";
 
     @NotNull
     public String getShortName() {

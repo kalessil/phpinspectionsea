@@ -44,13 +44,6 @@ $x = [
     $x || <error descr="This operand enforces the operation result.">true</error>,
 ];
 
-/* a bug: ternary always returns the argument */
-$y = [
-    <error descr="The operation results to '(int)$x', please add missing parentheses.">(int)$x</error> ?? '...',
-    (<error descr="The operation results to '(string)$x', please add missing parentheses.">(string)$x</error>) ?? '...',
-    (<error descr="The operation results to '!$x', please add missing parentheses.">!$x</error>) ?? '...',
-];
-
 /* operations priority issues */
 if (<error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a = $b !== $c</error>) {}
 if ($a || <error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}

@@ -44,13 +44,6 @@ $x = [
     $x || true,
 ];
 
-/* a bug: ternary always returns the argument */
-$y = [
-    (int)$x ?? '...',
-    ((string)$x) ?? '...',
-    (!$x) ?? '...',
-];
-
 /* operations priority issues */
 if ($a = ($b !== $c)) {}
 if ($a || ($b && $c)) {}

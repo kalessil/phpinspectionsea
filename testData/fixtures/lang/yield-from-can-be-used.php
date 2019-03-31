@@ -13,6 +13,9 @@ function cases_holder($source)
     foreach ($source as $value) {
         yield trim($value);
     }
+    foreach ($source as $value) {
+        yield from $value;
+    }
     foreach ($source as $key => $value) {
         yield $key => trim($value);
     }

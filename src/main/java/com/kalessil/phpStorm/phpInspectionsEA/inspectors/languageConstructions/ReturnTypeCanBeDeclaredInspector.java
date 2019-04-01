@@ -301,7 +301,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
-            component.addCheckbox("Respect `@return self`", LOOKUP_PHPDOC_RETURN_DECLARATIONS, (isSelected) -> LOOKUP_PHPDOC_RETURN_DECLARATIONS = isSelected)
+            component.addCheckbox("Respect `@return self`, `@return $this`", LOOKUP_PHPDOC_RETURN_DECLARATIONS, (isSelected) -> LOOKUP_PHPDOC_RETURN_DECLARATIONS = isSelected)
         );
     }
 

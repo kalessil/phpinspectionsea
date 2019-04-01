@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -38,9 +39,13 @@ public class MktimeUsageInspector extends BasePhpInspection {
                 if (functionName != null && (functionName.equals("mktime") || functionName.equals("gmmktime"))) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 0) {
-                        holder.registerProblem(reference, messageUseTime, ProblemHighlightType.WEAK_WARNING, new UseTimeFunctionLocalFix());
-                    } else if (arguments.length == 7 && !arguments[6].getText().isEmpty()) {
-                        holder.registerProblem(arguments[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
+                        if (this.isFromRootNamespace(reference)) {
+                            holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix());
+                        }
+                    } else if (arguments.length == 7 && arguments[6] instanceof PhpTypedElement) {
+                        if (this.isFromRootNamespace(reference)) {
+                            holder.registerProblem(arguments[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
+                        }
                     }
                 }
             }

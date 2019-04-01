@@ -1,5 +1,8 @@
 <?php
 
+use mktime;
+
+function cases_holder() {
     time();
     mktime(0, 0, 0, 0, 0, 0, -1);
     time();
@@ -8,4 +11,5 @@
     /* false-positives */
     mktime(0);
     gmmktime(0);
+}
 

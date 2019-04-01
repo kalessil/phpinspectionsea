@@ -127,11 +127,12 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                                                     .filter(type  -> type.startsWith("\\"))
                                                     .forEach(type -> types.remove(Types.getType(type)));
                                         }
+                                        types.remove(Types.strStatic);
                                     }
                                 }
 
                                 final boolean skip = (!REPORT_MIXED_TYPE && types.remove(Types.strMixed) && types.isEmpty()) ||
-                                                     (!REPORT_FLUENT_INTERFACES && types.remove(Types.strStatic) && types.isEmpty()) ||
+                                                     (!REPORT_FLUENT_INTERFACES && types.isEmpty()) ||
                                                      (REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty());
                                 if (!skip) {
                                     holder.registerProblem(target, message);

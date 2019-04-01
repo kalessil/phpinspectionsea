@@ -26,11 +26,17 @@
     echo <warning descr="You should probably use 'nullable_int() === null' instead.">empty(nullable_int())</warning>;
     echo <warning descr="You should probably use 'nullable_int() !== null' instead.">!empty(nullable_int())</warning>;
 
+    function nullable_string(?string $string) { return $string; }
+    echo <weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty(nullable_string())</weak_warning>;
+    echo !<weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty(nullable_string())</weak_warning>;
+
     echo <weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty(1)</weak_warning>;
     echo <weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty('...')</weak_warning>;
     echo <weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty(null)</weak_warning>;
 
     abstract class ClassForEmptyWithFields {
+        /** @var string|null */
+        public $string;
         /** @var ClassForEmptyWithFields|null */
         public $field;
         /** @var ClassForEmptyWithFields[]|null */
@@ -40,6 +46,7 @@
     }
     function empty_with_fields(ClassForEmptyWithFields $subject) {
         return [
+            <weak_warning descr="'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty($subject->string)</weak_warning>,
             empty($subject->field),
             empty($subject->field->field),
             empty($subject->fields[0]->field),

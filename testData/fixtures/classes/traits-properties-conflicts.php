@@ -14,6 +14,8 @@ trait PropertiesTraitForBase2 {
  * @property $publicPhpdocProperty
  */
 trait PropertiesTrait {
+    /** @Id */
+    public $sameAnnotated     = true;
     public $same              = true;
     private $different        = false;
 }
@@ -31,6 +33,8 @@ class PropertiesExample extends BasePropertiesExample {
     ;
 
     use PropertiesTrait;
+        /** @Id */
+    public $sameAnnotated = true;
     public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning> = true;
     private $different = true;
     

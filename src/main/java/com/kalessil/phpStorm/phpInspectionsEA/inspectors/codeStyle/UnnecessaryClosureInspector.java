@@ -9,8 +9,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,14 +28,14 @@ import java.util.Map;
  */
 
 public class UnnecessaryClosureInspector extends BasePhpInspection {
-    private static final String messagePattern = "The closure can be replaced with '%s' (reduces cognitive load).";
+    private static final String messagePattern = "The closure can be replaced with %s (reduces cognitive load).";
 
     final private static Map<String, Integer> closurePositions = new HashMap<>();
     static {
         closurePositions.put("array_filter", 1);
         closurePositions.put("array_map", 0);
         closurePositions.put("array_walk", 1);
-        closurePositions.put("array_reduce", 1);
+        closurePositions.put("array_walk_recursive", 1);
     }
 
     @NotNull
@@ -60,20 +62,20 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(closure);
                             if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                                 final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
-                                if (last instanceof PhpReturn) {
-                                    final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
-                                    if (OpenapiTypesUtil.isFunctionReference(candidate)) {
-                                        final FunctionReference callback = (FunctionReference) candidate;
-                                        final boolean isTarget           = this.canInline(callback, closure);
-                                        if (isTarget) {
-                                            final String callbackName = callback.getName();
-                                            holder.registerProblem(
-                                                    expression,
-                                                    String.format(messagePattern, callbackName),
-                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                    new UseCallbackFix(String.format("'%s'", callbackName))
-                                            );
-                                        }
+                                if (last != null) {
+                                    final FunctionReference callback = this.getCandidate(last);
+                                    if (callback != null && this.canInline(callback, closure)) {
+                                        final String replacement = String.format(
+                                                "'%s%s'",
+                                                callback.getImmediateNamespaceName(),
+                                                callback.getName()
+                                        );
+                                        holder.registerProblem(
+                                                expression,
+                                                String.format(messagePattern, replacement),
+                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                new UseCallbackFix(replacement)
+                                        );
                                     }
                                 }
                             }
@@ -82,12 +84,36 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                 }
             }
 
+            @Nullable
+            private FunctionReference getCandidate(@NotNull PsiElement last) {
+                if (last instanceof PhpReturn) {
+                    final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
+                    if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                        return (FunctionReference) candidate;
+                    }
+                } else if (OpenapiTypesUtil.isStatementImpl(last) && OpenapiTypesUtil.isAssignment(last.getFirstChild())) {
+                    final AssignmentExpression assignment = (AssignmentExpression) last.getFirstChild();
+                    final PsiElement container            = assignment.getVariable();
+                    if (container instanceof Variable) {
+                        final PsiElement value = assignment.getValue();
+                        if (OpenapiTypesUtil.isFunctionReference(value)) {
+                            final FunctionReference candidate = (FunctionReference) value;
+                            final PsiElement[] arguments      = candidate.getParameters();
+                            if (arguments.length == 1 && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
+                                return candidate;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+
             private boolean canInline(@NotNull FunctionReference callback, @NotNull Function closure) {
                 boolean result               = false;
                 final PsiElement[] arguments = callback.getParameters();
-                if (arguments.length > 0) {
+                if (arguments.length == 1) {
                     final Parameter[] input = closure.getParameters();
-                    if (input.length == arguments.length && Arrays.stream(arguments).allMatch(a -> a instanceof Variable)) {
+                    if (input.length >= arguments.length && Arrays.stream(arguments).allMatch(a -> a instanceof Variable)) {
                         result = true;
                         for (int index = 0; index < arguments.length; ++index) {
                             final Variable argument       = (Variable) arguments[index];

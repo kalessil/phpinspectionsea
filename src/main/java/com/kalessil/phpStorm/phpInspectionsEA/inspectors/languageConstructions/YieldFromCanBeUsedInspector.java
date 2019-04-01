@@ -62,7 +62,7 @@ public class YieldFromCanBeUsedInspector extends BasePhpInspection {
                             final PsiElement yieldCandidate = instruction.getFirstChild();
                             if (yieldCandidate instanceof PhpYield) {
                                 final PsiElement[] yieldChildren = yieldCandidate.getChildren();
-                                if (yieldChildren.length > 0) {
+                                if (yieldChildren.length > 0 && !yieldCandidate.getText().startsWith("yield from ")) {
                                     final PsiElement yieldValue = yieldChildren.length == 2 ? yieldChildren[1] : yieldChildren[0];
                                     final PsiElement value      = statement.getValue();
                                     if (yieldValue != null && value != null && OpenapiEquivalenceUtil.areEqual(yieldValue, value)) {

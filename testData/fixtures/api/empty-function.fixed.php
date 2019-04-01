@@ -26,11 +26,17 @@
     echo nullable_int() === null;
     echo nullable_int() !== null;
 
+    function nullable_string(?string $string) { return $string; }
+    echo empty(nullable_string());
+    echo !empty(nullable_string());
+
     echo empty(1);
     echo empty('...');
     echo empty(null);
 
     abstract class ClassForEmptyWithFields {
+        /** @var string|null */
+        public $string;
         /** @var ClassForEmptyWithFields|null */
         public $field;
         /** @var ClassForEmptyWithFields[]|null */
@@ -40,6 +46,7 @@
     }
     function empty_with_fields(ClassForEmptyWithFields $subject) {
         return [
+            empty($subject->string),
             empty($subject->field),
             empty($subject->field->field),
             empty($subject->fields[0]->field),

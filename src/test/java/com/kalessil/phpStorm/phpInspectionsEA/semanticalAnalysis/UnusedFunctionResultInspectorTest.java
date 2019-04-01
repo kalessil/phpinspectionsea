@@ -13,5 +13,14 @@ public class UnusedFunctionResultInspectorTest extends PhpCodeInsightFixtureTest
         myFixture.configureByFile("testData/fixtures/semanticalAnalysis/unused-function-result.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsNonFluentPatterns() {
+        final UnusedFunctionResultInspector inspector = new UnusedFunctionResultInspector();
+        inspector.REPORT_ONLY_SCALARS                 = false;
+        inspector.REPORT_MIXED_TYPE                   = false;
+        inspector.REPORT_FLUENT_INTERFACES            = false;
+        myFixture.enableInspections(inspector);
+        myFixture.configureByFile("testData/fixtures/semanticalAnalysis/unused-function-result.non-fluent.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }
 

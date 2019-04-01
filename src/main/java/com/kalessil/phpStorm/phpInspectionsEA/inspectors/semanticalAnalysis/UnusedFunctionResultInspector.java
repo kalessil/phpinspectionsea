@@ -1,10 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -103,7 +105,8 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
             private void analyze(@NotNull FunctionReference reference) {
                 final boolean isTargetContext = OpenapiTypesUtil.isStatementImpl(reference.getParent());
                 if (isTargetContext) {
-                    final PhpType resolved = OpenapiResolveUtil.resolveType(reference, reference.getProject());
+                    final Project project  = reference.getProject();
+                    final PhpType resolved = OpenapiResolveUtil.resolveType(reference, project);
                     if (resolved != null) {
                         final Set<String> types = resolved.filterUnknown().getTypes().stream()
                                 .map(Types::getType)
@@ -115,6 +118,18 @@ public class UnusedFunctionResultInspector extends BasePhpInspection {
                         if (!types.isEmpty()) {
                             final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
                             if (target != null) {
+                                if (!REPORT_FLUENT_INTERFACES && reference instanceof MethodReference) {
+                                    final PsiElement base = reference.getFirstChild();
+                                    if (base instanceof PhpTypedElement) {
+                                        final PhpType baseType = OpenapiResolveUtil.resolveType((PhpTypedElement) base, project);
+                                        if (baseType != null) {
+                                            baseType.getTypes().stream()
+                                                    .filter(type  -> type.startsWith("\\"))
+                                                    .forEach(type -> types.remove(Types.getType(type)));
+                                        }
+                                    }
+                                }
+
                                 final boolean skip = (!REPORT_MIXED_TYPE && types.remove(Types.strMixed) && types.isEmpty()) ||
                                                      (!REPORT_FLUENT_INTERFACES && types.remove(Types.strStatic) && types.isEmpty()) ||
                                                      (REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty());

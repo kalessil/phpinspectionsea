@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -14,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +53,12 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                     /* get own field name and default value */
                     final String ownFieldName = ownField.getName();
                     if (ownFieldName.isEmpty() || ownField.isConstant() || ownField.getModifier().isAbstract()) {
+                        continue;
+                    }
+                    /* ensure field doesn't have any user-land annotations */
+                    final PhpDocTag[] tags  = PsiTreeUtil.getChildrenOfType(ownField.getDocComment(), PhpDocTag.class);
+                    final boolean annotated = tags != null && Arrays.stream(tags).anyMatch(t -> !t.getName().equals(t.getName().toLowerCase()));
+                    if (annotated) {
                         continue;
                     }
 

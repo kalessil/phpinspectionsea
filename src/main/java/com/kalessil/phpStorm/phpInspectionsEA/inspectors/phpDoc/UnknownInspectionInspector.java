@@ -41,6 +41,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
         inspectionsNames.add("phpinspectionsea");
         /* spell checker is a nameless plugin with no deps, hence hardcoding its inspections */
         inspectionsNames.add("SpellCheckingInspection");
+        inspectionsNames.add("SqlNoDataSourceInspection");
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
         minInspectionNameLength = Integer.MAX_VALUE;

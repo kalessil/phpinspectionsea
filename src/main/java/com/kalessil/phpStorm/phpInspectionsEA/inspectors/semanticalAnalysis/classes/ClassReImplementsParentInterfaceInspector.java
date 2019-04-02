@@ -58,11 +58,12 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                     implemented.clear();
 
                     if (!ownInterfaces.isEmpty()) {
+                        final Set<PsiElement> processed = new HashSet<>();
+
                         /* Case 1: own duplicate declaration (runtime error gets raised) */
                         if (ownInterfaces.size() > 1) {
-                            final Set<PhpClass> processed = new HashSet<>(ownInterfaces.size());
                             for (final Map.Entry<PsiElement, PhpClass> entry : ownInterfaces.entrySet()) {
-                                if (!processed.add(entry.getValue())) {
+                                if (!processed.add(entry.getValue()) && processed.add(entry.getKey())) {
                                     holder.registerProblem(
                                             entry.getKey(),
                                             messageImplicitDuplication,
@@ -72,7 +73,6 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                                     break;
                                 }
                             }
-                            processed.clear();
                         }
 
                         /* Case 2: indirect declaration duplication (parent already implements) */
@@ -82,7 +82,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                             if (!inherited.isEmpty()) {
                                 for (final Map.Entry<PsiElement, PhpClass> entry : ownInterfaces.entrySet()) {
                                     final PhpClass ownInterface = entry.getValue();
-                                    if (inherited.contains(ownInterface)) {
+                                    if (inherited.contains(ownInterface) && processed.add(entry.getKey())) {
                                         holder.registerProblem(
                                                 entry.getKey(),
                                                 String.format(patternIndirectDuplication, ownInterface.getFQN(), parent.getFQN()),
@@ -95,6 +95,8 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                             }
                         }
                         ownInterfaces.clear();
+
+                        processed.clear();
                     }
                 }
             }

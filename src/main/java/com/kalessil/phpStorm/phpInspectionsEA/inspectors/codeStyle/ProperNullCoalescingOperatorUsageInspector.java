@@ -76,8 +76,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                                 if (leftTypes != null && !leftTypes.isEmpty()) {
                                     final Set<String> rightTypes = this.resolve((PhpTypedElement) right);
                                     if (rightTypes != null && !rightTypes.isEmpty()) {
-                                        final boolean skip = leftTypes.stream().noneMatch(rightTypes::contains) &&
-                                                             this.areRelated(rightTypes, leftTypes);
+                                        final boolean skip = rightTypes.containsAll(leftTypes) || this.areRelated(rightTypes, leftTypes);
                                         if (!skip) {
                                             holder.registerProblem(
                                                     binary,

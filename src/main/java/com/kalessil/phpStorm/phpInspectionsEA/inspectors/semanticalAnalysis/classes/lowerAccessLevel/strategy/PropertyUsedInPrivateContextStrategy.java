@@ -40,10 +40,8 @@ final public class PropertyUsedInPrivateContextStrategy {
         magicMethods.add("__isset");
         magicMethods.add("__unset");
         magicMethods.add("__set");
-
         magicMethods.add("__toString");
         magicMethods.add("__debugInfo");
-
         magicMethods.add("__set_state");
         magicMethods.add("__wakeup");
         magicMethods.add("__sleep");
@@ -67,33 +65,31 @@ final public class PropertyUsedInPrivateContextStrategy {
                 /* collect usage contexts: iterate methods */
                 final Map<String, Set<String>> contextInformation = new HashMap<>();
                 for (final Method method : clazz.getOwnMethods()) {
-                    final GroupStatement body = method.isAbstract() ? null : ExpressionSemanticUtil.getGroupStatement(method);
-                    if (body == null) {
-                        continue;
-                    }
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                    if (body != null) {
+                        final boolean isMagicMethod     = magicMethods.contains(method.getName());
+                        final PhpModifier.Access access = method.getAccess();
+                        final boolean isPrivateMethod   = access.isPrivate();
+                        final boolean isProtectedMethod = !isPrivateMethod && access.isProtected();
+                        final boolean isPublicMethod    = !isPrivateMethod && !isProtectedMethod;
 
-                    final boolean isMagicMethod     = magicMethods.contains(method.getName());
-                    final PhpModifier.Access access = method.getAccess();
-                    final boolean isPrivateMethod   = access.isPrivate();
-                    final boolean isProtectedMethod = !isPrivateMethod && access.isProtected();
-                    final boolean isPublicMethod    = !isPrivateMethod && !isProtectedMethod;
-
-                    /* find fields references matching pre-collected names */
-                    for (final FieldReference reference :PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {
-                        final String referenceName = reference.getName();
-                        if (fields.containsKey(referenceName)) {
-                            /* store the context information */
-                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                            if (resolved != null && fields.get(referenceName) == resolved) {
-                                final Set<String> usages = contextInformation.computeIfAbsent(referenceName, r -> new HashSet<>());
-                                if (isMagicMethod || isPrivateMethod) {
-                                    usages.add("private");
-                                }
-                                if (!isMagicMethod) {
-                                    if (isProtectedMethod) {
-                                        usages.add("protected");
-                                    } else if (isPublicMethod) {
-                                        usages.add("public");
+                        /* find fields references matching pre-collected names */
+                        for (final FieldReference reference :PsiTreeUtil.findChildrenOfType(body, FieldReference.class)) {
+                            final String referenceName = reference.getName();
+                            if (fields.containsKey(referenceName)) {
+                                /* store the context information */
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                if (resolved != null && fields.get(referenceName) == resolved) {
+                                    final Set<String> usages = contextInformation.computeIfAbsent(referenceName, r -> new HashSet<>());
+                                    if (isMagicMethod || isPrivateMethod) {
+                                        usages.add("private");
+                                    }
+                                    if (!isMagicMethod) {
+                                        if (isProtectedMethod) {
+                                            usages.add("protected");
+                                        } else if (isPublicMethod) {
+                                            usages.add("public");
+                                        }
                                     }
                                 }
                             }

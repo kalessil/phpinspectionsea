@@ -20,7 +20,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class NullCoalescingOperatorCorrectnessStrategy {
-    private static final String messagePattern = "The operation results to '%s', the right operator can be omitted.";
+    private static final String messagePatternUnary = "The operation results to '%s', the right operator can be omitted.";
+    private static final String messagePatternCall  = "Due to '%s' used as left operand, using '?:' instead of '??' would make more sense.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result = false;
@@ -31,11 +32,11 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                 if (operation != null) {
                     final IElementType operator = operation.getNode().getElementType();
                     if (result = (operator == PhpTokenTypes.opNOT || PhpTokenTypes.tsCAST_OPS.contains(operator))) {
-                        holder.registerProblem(left, String.format(messagePattern, left.getText()));
+                        holder.registerProblem(left, String.format(messagePatternUnary, left.getText()));
                     }
                 }
             } if (left instanceof FunctionReference) {
-                holder.registerProblem(left, String.format(messagePattern, left.getText()));
+                holder.registerProblem(left, String.format(messagePatternCall, left.getText()));
             }
         }
         return result;

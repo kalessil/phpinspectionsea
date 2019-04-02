@@ -72,7 +72,7 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                                 } else {
                                     holder.registerProblem(variable, messageChainedException);
                                 }
-                            } else {
+                            } else if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                                 /* the catch should be the last and only re-throw */
                                 if (catchStatement.getNextPsiSibling() == null) {
                                     final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);

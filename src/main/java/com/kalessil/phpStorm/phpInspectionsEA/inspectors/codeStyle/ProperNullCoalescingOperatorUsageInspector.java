@@ -73,17 +73,20 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                             final Function scope = ExpressionSemanticUtil.getScope(binary);
                             if (scope != null) {
                                 final Set<String> leftTypes = this.resolve((PhpTypedElement) left);
-                                if (leftTypes != null) {
+                                if (leftTypes != null && !leftTypes.isEmpty()) {
                                     final Set<String> rightTypes = this.resolve((PhpTypedElement) right);
-                                    if (rightTypes != null && leftTypes.stream().noneMatch(rightTypes::contains)) {
-                                        final boolean skip = this.areRelated(rightTypes, leftTypes);
+                                    if (rightTypes != null && !rightTypes.isEmpty()) {
+                                        final boolean skip = leftTypes.stream().noneMatch(rightTypes::contains) &&
+                                                             this.areRelated(rightTypes, leftTypes);
                                         if (!skip) {
                                             holder.registerProblem(
                                                     binary,
                                                     String.format(messageMismatch, leftTypes.toString(), rightTypes.toString())
                                             );
                                         }
+                                        rightTypes.clear();
                                     }
+                                    leftTypes.clear();
                                 }
                             }
                         }

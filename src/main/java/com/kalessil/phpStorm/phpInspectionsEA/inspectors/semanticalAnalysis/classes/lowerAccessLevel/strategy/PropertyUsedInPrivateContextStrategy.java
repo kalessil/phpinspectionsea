@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.fixers.MakePrivateFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.utils.ModifierExtractionUtil;
@@ -10,10 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -62,6 +60,12 @@ final public class PropertyUsedInPrivateContextStrategy {
                 }
             }
             if (!fields.isEmpty()) {
+                /* false-positives: exposed fields */
+                if (!OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), PhpIndex.getInstance(holder.getProject())).isEmpty()) {
+                    fields.clear();
+                    return;
+                }
+
                 /* collect usage contexts: iterate methods */
                 final Map<String, Set<String>> contextInformation = new HashMap<>();
                 for (final Method method : clazz.getOwnMethods()) {

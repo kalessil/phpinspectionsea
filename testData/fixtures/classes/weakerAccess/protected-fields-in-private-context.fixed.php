@@ -53,9 +53,11 @@ class ProtectedFieldsInPrivateContext {
 
 class ProtectedFieldsInMagicContext {
     private $protectedUsedInMagic;
-
-    public function __toString()
-    {
-        return (string)$this->protectedUsedInMagic;
-    }
+    public function __toString() { return (string)$this->protectedUsedInMagic; }
 }
+
+class ExposesProtectedFields {
+    protected $exposed;
+    private function privateMethod() { return $this->exposed;}
+}
+class SeesProtectedFields extends ExposesProtectedFields {}

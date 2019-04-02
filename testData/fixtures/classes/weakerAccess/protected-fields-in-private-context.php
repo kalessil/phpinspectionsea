@@ -53,9 +53,11 @@ class ProtectedFieldsInPrivateContext {
 
 class ProtectedFieldsInMagicContext {
     <weak_warning descr="Since the property used in private context only, it could be declared private.">protected</weak_warning> $protectedUsedInMagic;
-
-    public function __toString()
-    {
-        return (string)$this->protectedUsedInMagic;
-    }
+    public function __toString() { return (string)$this->protectedUsedInMagic; }
 }
+
+class ExposesProtectedFields {
+    protected $exposed;
+    private function privateMethod() { return $this->exposed;}
+}
+class SeesProtectedFields extends ExposesProtectedFields {}

@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -55,30 +56,19 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
             @NotNull
             private Map<String, List<FieldReference>> getFieldReferences(@NotNull Method method, @NotNull Map<String, Field> privateFields) {
                 final Map<String, List<FieldReference>> filteredReferences = new HashMap<>();
-                /* not all methods needs to be analyzed */
-                if (method.isAbstract()) {
-                    return filteredReferences;
-                }
-
-                final Collection<FieldReference> references = PsiTreeUtil.findChildrenOfType(method, FieldReference.class);
-                for (final FieldReference ref : references) {
-                    /* if field name not in given list, skip heavy resolving */
-                    final String fieldName = ref.getName();
-                    if (null == fieldName || !privateFields.containsKey(fieldName)) {
-                        continue;
+                if (!method.isAbstract()) {
+                    final Collection<FieldReference> references = PsiTreeUtil.findChildrenOfType(method, FieldReference.class);
+                    for (final FieldReference ref : references) {
+                        final String fieldName = ref.getName();
+                        if (fieldName != null && privateFields.containsKey(fieldName)) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(ref);
+                            if (resolved instanceof Field && privateFields.containsValue(resolved)) {
+                                filteredReferences.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(ref);
+                            }
+                        }
                     }
-
-                    /* if not resolved or not in given list, continue */
-                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(ref);
-                    if (!(resolved instanceof Field) || !privateFields.containsValue(resolved)) {
-                        continue;
-                    }
-
-                    /* bingo, store newly found reference */
-                    filteredReferences.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(ref);
+                    references.clear();
                 }
-                references.clear();
-
                 return filteredReferences;
             }
 
@@ -106,11 +96,9 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     final Map<String, List<FieldReference>> innerReferences = getFieldReferences(method, privateFields);
                     if (!innerReferences.isEmpty()) {
                         /* merge method's scan results into common container */
-                        innerReferences.forEach((fieldName, fields) -> {
-                            filteredReferences
-                                .computeIfAbsent(fieldName, name -> new ArrayList<>())
-                                .addAll(fields);
-                            fields.clear();
+                        innerReferences.forEach((fieldName, references) -> {
+                            filteredReferences.computeIfAbsent(fieldName, name -> new ArrayList<>()).addAll(references);
+                            references.clear();
                         });
                         innerReferences.clear();
                     }
@@ -148,12 +136,15 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     /* constructor's references being identified */
                     final Map<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(clazz, constructor, clazzPrivateFields);
                     /* methods's references being identified, time to re-visit constructor's references */
-                    constructorsReferences.forEach((fieldName, fields) -> {
+                    constructorsReferences.forEach((fieldName, references) -> {
                         /* field is not used, report in constructor, IDE detects unused fields */
                         if (!otherReferences.containsKey(fieldName)) {
-                            this.doSmartReport(holder, fields);
+                            /* ensure the field reference in constructor is not bound to closures only */
+                            if (references.stream().anyMatch(r -> ExpressionSemanticUtil.getScope(r) == constructor)) {
+                                this.doSmartReport(holder, references);
+                            }
                         }
-                        fields.clear();
+                        references.clear();
                     });
                     /* release references found in the methods */
                     otherReferences.values().forEach(List::clear);

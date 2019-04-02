@@ -15,6 +15,11 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/pitfalls/suspicious-binary-operations.fixed.php");
     }
+    public void testIfFindsPossiblyTyposPatterns() {
+        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.possibly-typos.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testIfFindsNullCoalescingPatterns() {
         myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.null-coalescing.php");

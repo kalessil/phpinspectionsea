@@ -40,8 +40,9 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
 
                 final Collection<BooleanSupplier> callbacks = new ArrayList<>(11);
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
-                callbacks.add(() -> EqualsInAssignmentContextStrategy.apply(expression, holder));
+                callbacks.add(() -> PossiblyAssignmentStrategy.apply(expression, holder));
                 callbacks.add(() -> PossiblyArrayHashElementDeclarationStrategy.apply(expression, holder));
+                callbacks.add(() -> PossiblyMethodReferenceStrategy.apply(expression, holder));
                 callbacks.add(() -> NullableArgumentComparisonStrategy.apply(expression, holder));
                 callbacks.add(() -> IdenticalOperandsStrategy.apply(expression, holder));
                 callbacks.add(() -> MisplacedOperatorStrategy.apply(expression, holder));

@@ -17,13 +17,6 @@ $a = $x == ($x);
 $a = ($x) == $x;
 $a = $x == $x;
 
-/* a typo: comparison instead of assignment */
-$a == $b;
-
-/* a typo: greater or equal instead of has element definition */
-$a = ['x' >= 'y'];
-$a = [$x >= 'y']; // <- left operand is not a string, hence not reported
-
 /* a bug: misplaced operator */
 class MisplacedOperations
 {

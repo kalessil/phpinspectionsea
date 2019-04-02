@@ -17,13 +17,6 @@ $a = <error descr="Left and right operands are identical.">$x == ($x)</error>;
 $a = <error descr="Left and right operands are identical.">($x) == $x</error>;
 $a = <error descr="Left and right operands are identical.">$x == $x</error>;
 
-/* a typo: comparison instead of assignment */
-$a <error descr="It seems that '=' should be here.">==</error> $b;
-
-/* a typo: greater or equal instead of has element definition */
-$a = ['x' <error descr="It seems that '=>' should be here.">>=</error> 'y'];
-$a = [$x >= 'y']; // <- left operand is not a string, hence not reported
-
 /* a bug: misplaced operator */
 class MisplacedOperations
 {

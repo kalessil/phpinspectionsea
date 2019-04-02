@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class EqualsInAssignmentContextStrategy {
+final public class PossiblyAssignmentStrategy {
     private static final String message = "It seems that '=' should be here.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {

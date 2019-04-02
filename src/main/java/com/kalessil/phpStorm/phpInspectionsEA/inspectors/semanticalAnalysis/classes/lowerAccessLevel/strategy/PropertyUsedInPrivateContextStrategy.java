@@ -114,6 +114,7 @@ final public class PropertyUsedInPrivateContextStrategy {
                 });
                 fields.clear();
 
+                contextInformation.values().forEach(Set::clear);
                 contextInformation.clear();
             }
         }

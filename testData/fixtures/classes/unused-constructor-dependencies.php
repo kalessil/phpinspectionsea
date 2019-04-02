@@ -4,12 +4,14 @@ class ClassUpdSimple
 {
     use TraitUpd;
 
-    private $p1;
+    private $usedInClass;
     private $usedByTraitOnly;
-    public function __construct($p1, $p2)
+    private $closureBoundOnly;
+    public function __construct($usedInClass, $usedInTrait)
     {
-        <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->p1</weak_warning> = $p1;
-        $this->usedByTraitOnly = $p2;
+        <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->usedInClass</weak_warning> = $usedInClass;
+        $this->usedByTraitOnly = $usedInTrait;
+        (function(){ return $this->closureBoundOnly; })();
     }
 }
 

@@ -121,6 +121,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                 if (type != null && !type.hasUnknown()) {
                     final Set<String> types = type.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
                     if (!types.isEmpty() && !types.contains(Types.strMixed) && !types.contains(Types.strObject)) {
+                        types.remove(Types.strStatic);
                         return types;
                     }
                     types.clear();

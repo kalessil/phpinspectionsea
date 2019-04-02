@@ -48,6 +48,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         specialFunctions.add("json_decode");
         specialFunctions.add("is_subclass_of");
         specialFunctions.add("is_a");
+        specialFunctions.add("uniqid");
 
         specialConstants.add("__LINE__");
         specialConstants.add("__FILE__");

@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -17,27 +18,21 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class GreaterOrEqualInHashElementStrategy {
+final public class PossiblyArrayHashElementDeclarationStrategy {
     private static final String message = "It seems that '=>' should be here.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
-        /* general structure expectations */
         final PsiElement operation = expression.getOperation();
-        if (null == operation || PhpTokenTypes.opGREATER_OR_EQUAL != operation.getNode().getElementType()) {
-            return false;
+        if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opGREATER_OR_EQUAL)) {
+            final PsiElement left = expression.getLeftOperand();
+            if (left instanceof StringLiteralExpression) {
+                final PsiElement parent = expression.getParent();
+                if (parent != null && parent.getParent() instanceof ArrayCreationExpression) {
+                    holder.registerProblem(operation, message);
+                    return true;
+                }
+            }
         }
-        final PsiElement left = expression.getLeftOperand();
-        if (!(left instanceof StringLiteralExpression)) {
-            return false;
-        }
-
-        /* analysis itself */
-        final PsiElement parent = expression.getParent();
-        if (null != parent && parent.getParent() instanceof ArrayCreationExpression) {
-            holder.registerProblem(operation, message);
-            return true;
-        }
-
         return false;
     }
 }

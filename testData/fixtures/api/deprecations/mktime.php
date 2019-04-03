@@ -1,6 +1,6 @@
 <?php
 
-use mktime;
+use function mktime;
 
 function cases_holder() {
     <warning descr="You should use time() function instead (current usage produces a runtime warning).">mktime()</warning>;

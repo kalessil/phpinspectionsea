@@ -1,6 +1,6 @@
 <?php
 
-use mktime;
+use function mktime;
 
 function cases_holder() {
     time();

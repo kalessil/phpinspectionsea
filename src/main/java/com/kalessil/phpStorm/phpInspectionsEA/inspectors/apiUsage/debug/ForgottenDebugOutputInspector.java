@@ -214,7 +214,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(reference)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null && customFunctions.contains(functionName)) {
+                if (functionName != null && customFunctions.contains(functionName) && !(reference.getParent() instanceof PhpUse)) {
                     final Integer paramsNeeded = functionsRequirements.get(functionName);
                     if (paramsNeeded == null || reference.getParameters().length != paramsNeeded) {
                         final boolean isValidContext = this.isBuffered(reference) || this.isInDebugFunction(reference);

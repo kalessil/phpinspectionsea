@@ -10,6 +10,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -36,15 +37,26 @@ public class ShortOpenTagUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
+            public void visitPhpGroupStatement(@NotNull GroupStatement groupStatement) {
+                final PsiElement last = groupStatement.getLastChild();
+                if (last instanceof LeafPsiElement) {
+                    this.analyze((LeafPsiElement) last);
+                }
+            }
+
+            @Override
             public void visitWhiteSpace(@NotNull PsiWhiteSpace space) {
                 if (this.isContainingFileSkipped(space)) { return; }
 
                 final PsiElement previous = space.getPrevSibling();
                 if (previous instanceof LeafPsiElement) {
-                    final LeafPsiElement tag = (LeafPsiElement) previous;
-                    if (tag.getElementType() == PhpTokenTypes.PHP_OPENING_TAG && tag.getText().equals("<?")) {
-                        holder.registerProblem(tag, message, new TheLocalFix());
-                    }
+                    this.analyze((LeafPsiElement) previous);
+                }
+            }
+
+            private void analyze(@NotNull LeafPsiElement candidate) {
+                if (candidate.getElementType() == PhpTokenTypes.PHP_OPENING_TAG && candidate.getText().equals("<?")) {
+                    holder.registerProblem(candidate, message, new TheLocalFix());
                 }
             }
         };

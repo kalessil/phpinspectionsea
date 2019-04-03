@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class LowPerformingDirectoryOperationsInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s(...)' sorts results by default, please specify the second argument.";
+    private static final String messagePattern = "'%s(...)' sorts results by default, please provide second argument for specifying the intention.";
 
     @NotNull
     public String getShortName() {

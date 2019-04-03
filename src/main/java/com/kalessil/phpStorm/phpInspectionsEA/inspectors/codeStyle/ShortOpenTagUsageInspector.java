@@ -38,6 +38,8 @@ public class ShortOpenTagUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpGroupStatement(@NotNull GroupStatement groupStatement) {
+                if (this.isContainingFileSkipped(groupStatement)) { return; }
+
                 final PsiElement last = groupStatement.getLastChild();
                 if (last instanceof LeafPsiElement) {
                     this.analyze((LeafPsiElement) last);

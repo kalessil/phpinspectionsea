@@ -57,6 +57,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         functions.add("preg_replace_callback");
         functions.add("preg_replace");
         functions.add("preg_split");
+        functions.add("preg_quote");
     }
 
     final static private List<Pattern> matchers = new ArrayList<>();

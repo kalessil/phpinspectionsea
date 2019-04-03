@@ -50,6 +50,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         specialFunctions.add("is_a");
         specialFunctions.add("iterator_to_array");
         specialFunctions.add("uniqid");
+        specialFunctions.add("glob");
 
         specialConstants.add("__LINE__");
         specialConstants.add("__FILE__");

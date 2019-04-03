@@ -2,7 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
-import com.intellij.notification.*;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.extensions.PluginId;

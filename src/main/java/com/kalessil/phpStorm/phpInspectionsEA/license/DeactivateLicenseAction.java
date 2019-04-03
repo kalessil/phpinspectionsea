@@ -1,7 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA.license;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.notification.*;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import org.jetbrains.annotations.NotNull;

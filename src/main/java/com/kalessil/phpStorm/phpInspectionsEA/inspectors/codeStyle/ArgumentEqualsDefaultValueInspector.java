@@ -142,11 +142,8 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                     @NotNull GlobalSearchScope searchScope
             ) {
                 String result              = null;
-                final List<String> details = projectIndex.getValues(
-                        NamedCallableParametersMetaIndexer.identity,
-                        String.format("%s.%s", function.getFQN(), parameterName),
-                        searchScope
-                );
+                final String key           = String.format("%s.%s", function.getFQN(), parameterName);
+                final List<String> details = projectIndex.getValues(NamedCallableParametersMetaIndexer.identity, key, searchScope);
                 if (details.size() == 1) {
                     final String[] meta = details.get(0).split(";", 3); // the data format "ref:%s;var:%s;def:%s"
                     if (meta.length == 3) {
@@ -196,7 +193,8 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
             if (dropFrom != null && dropTo != null && !project.isDisposed()) {
                 PsiElement previous = dropFrom.getPrevSibling();
                 while (
-                    previous instanceof PsiWhiteSpace || previous instanceof PsiComment ||
+                    previous instanceof PsiWhiteSpace ||
+                    previous instanceof PsiComment ||
                     OpenapiTypesUtil.is(previous, PhpTokenTypes.opCOMMA)
                 ) {
                     dropFrom = previous;

@@ -44,6 +44,11 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("testData/fixtures/regularExpressions/ctype-functions-usage.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testPossibleAlternativeRegexFunctionsUsages() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/alternative-regex-functions-usage.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testPossiblePlainApiUsages() {
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
         myFixture.configureByFile("testData/fixtures/regularExpressions/plain-api-usage.php");

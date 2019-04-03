@@ -5,28 +5,31 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class FunctionCallCheckStrategy {
-    private static final String strProblemQuote    = "Second parameter should be provided (implicit delimiter definition).";
-    private static final String strProblemMatchAll = "'preg_match()' can be used instead.";
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    static public void apply(final String functionName, @NotNull final FunctionReference reference, @NotNull final ProblemsHolder holder) {
-        if (!StringUtils.isEmpty(functionName)) {
-            final PsiElement[] params = reference.getParameters();
+final public class FunctionCallCheckStrategy {
+    private static final String messageQuote = "Second parameter should be provided (for proper symbols escaping).";
+    private static final String messageMatch = "'preg_match(...)' would fit more here (also performs better).";
 
-            if (1 == params.length && functionName.equals("preg_quote")) {
-                holder.registerProblem(reference, strProblemQuote);
-                return;
-            }
-
-            if (
-                2 == params.length && functionName.equals("preg_match_all") &&
-                ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)
-            ) {
-                holder.registerProblem(reference, strProblemMatchAll, ProblemHighlightType.WEAK_WARNING);
-                // return
+    static public void apply(@Nullable String functionName, @NotNull FunctionReference reference, @NotNull ProblemsHolder holder) {
+        if (functionName != null && !functionName.isEmpty()) {
+            final PsiElement[] arguments = reference.getParameters();
+            if (arguments.length == 1 && functionName.equals("preg_quote")) {
+                holder.registerProblem(reference, messageQuote);
+            } else if (arguments.length == 2 && functionName.equals("preg_match_all")) {
+                if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+                    holder.registerProblem(reference, messageMatch, ProblemHighlightType.WEAK_WARNING);
+                }
             }
         }
     }

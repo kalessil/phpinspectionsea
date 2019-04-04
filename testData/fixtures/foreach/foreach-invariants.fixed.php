@@ -11,6 +11,21 @@ namespace NS {
             }
         }
 
+        public function casesForLimits($array, $limit) {
+            foreach ($array as $iValue) {
+                echo $iValue;
+            }
+            foreach ($array as $iValue) {
+                echo $iValue;
+            }
+            foreach ($array as $iValue) {
+                echo $iValue;
+            }
+            for ($i = 0; $i < $limit; $i++, $z = 0) {
+                echo $array[$i];
+            }
+        }
+
         public function falsePositives() {
             while (list($i, $v) = each($arr)) {
                 echo $arr[$i];

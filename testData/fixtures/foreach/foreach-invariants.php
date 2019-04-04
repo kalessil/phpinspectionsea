@@ -12,6 +12,22 @@ namespace NS {
             }
         }
 
+        public function casesForLimits($array, $limit) {
+            $limitExternal = count($array);
+            <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $limitExternal; $i++, $z = 0) {
+                echo $array[$i];
+            }
+            <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $limitInitialized = count($array); $i < $limitInitialized; $i++, $z = 0) {
+                echo $array[$i];
+            }
+            <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < count($array); $i++, $z = 0) {
+                echo $array[$i];
+            }
+            for ($i = 0; $i < $limit; $i++, $z = 0) {
+                echo $array[$i];
+            }
+        }
+
         public function falsePositives() {
             while (list($i, $v) = each($arr)) {
                 echo $arr[$i];
@@ -23,7 +39,7 @@ namespace NS {
 namespace {
     function cases_holder($arr) {
         /* case: invariant */
-        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max = count($arr); $i < $max; ++$i, $z = 0) {
+        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max1 = count($arr); $i < $max1; ++$i, $z = 0) {
             echo $arr[$i], $arr[$i]->property;
             $x = $arr[$i];
             $x = !$arr[$i];
@@ -31,7 +47,7 @@ namespace {
             $x = $arr[$i] > 0;
             $x = ($arr[$i]) > 0;
         }
-        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) {
+        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max2 = count($arr); $i < $max2; $i++, $z = 0) {
             $arr[$i]->property    = '...';
             $arr[$i]->property[0] = '...';
             $arr[$i][0]           = '...';
@@ -41,8 +57,8 @@ namespace {
             $x = &$arr[$i];
             $x =& $arr[$i];
         }
-        $iMax = count($arr);
-        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $iMax; $i++, $z = 0) {
+        $max3 = count($arr);
+        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $max3; $i++, $z = 0) {
             echo $arr[$i]->property, $arr[$i]->property[0], $arr[$i][0];
             echo $arr[$i], $arr[$i] . " $arr[$i] " . " {$arr[$i]} ";
         }

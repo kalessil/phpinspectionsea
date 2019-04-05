@@ -35,10 +35,10 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
 
     private static final Map<String, Integer> argumentMapping = new HashMap<>();
     static {
-        argumentMapping.put("count", 0);    // -> "substr_count(%s%, %f%) + 1"
-        argumentMapping.put("in_array", 1);  // -> "strpos(%s%, %f%) !== false"
-        // "in_array" -> "strpos(%s%, %f%)" change behaviour
-        // "current"  -> "strstr(%s%, %f%, true)": if fragment missing, strstr changes behaviour
+        argumentMapping.put("count", 0);     // `substr_count($string, '...') + 1`, `strpos($string, '') !== false`
+        argumentMapping.put("in_array", 1);  // `strpos($string, '...') !== false`
+        // "in_array" -> `strpos($string, '...')` change behaviour
+        // "current"  -> `strstr($string, '...', true)` if fragment missing, strstr changes behaviour
     }
 
     @NotNull
@@ -70,12 +70,14 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                 if (innerFunctionName != null && innerFunctionName.equals("explode")) {
                                     final PsiElement[] innerArguments = innerCall.getParameters();
                                     if (innerArguments.length == 2 && this.isExclusiveUse(targetArgument, reference)) {
+                                        final PsiElement parent;
+                                        final boolean isRegular;
                                         final String replacement;
                                         final PsiElement target;
                                         switch (outerFunctionName) {
                                             case "in_array":
-                                                final PsiElement parent  = reference.getParent();
-                                                final boolean isRegular  = ComparisonStyle.isRegular();
+                                                parent                   = reference.getParent();
+                                                isRegular                = ComparisonStyle.isRegular();
                                                 String pattern           = isRegular ? "%sstrpos(%s, %s.%s.%s) !== false" : "false !== %sstrpos(%s, %s.%s.%s)";
                                                 final boolean isInverted = parent instanceof UnaryExpression &&
                                                                            OpenapiTypesUtil.is(parent.getFirstChild(), PhpTokenTypes.opNOT);
@@ -94,6 +96,25 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                                 target = isInverted ? parent : reference;
                                                 break;
                                             case "count":
+                                                parent    = reference.getParent();
+                                                isRegular = ComparisonStyle.isRegular();
+                                                if (parent instanceof BinaryExpression) {
+                                                    final BinaryExpression binary = (BinaryExpression) parent;
+                                                    if (binary.getOperationType() == PhpTokenTypes.opGREATER) {
+                                                        final PsiElement right = binary.getRightOperand();
+                                                        if (right != null && OpenapiTypesUtil.isNumber(right) && right.getText().equals("1")) {
+                                                            replacement = String.format(
+                                                                    isRegular ? "%sstrpos(%s, %s) !== false" : "false !== %sstrpos(%s, %s)",
+                                                                    reference.getImmediateNamespaceName(),
+                                                                    innerArguments[1].getText(),
+                                                                    innerArguments[0].getText()
+                                                            );
+                                                            target = binary;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+
                                                 replacement = String.format(
                                                         "%ssubstr_count(%s, %s) + 1",
                                                         reference.getImmediateNamespaceName(),

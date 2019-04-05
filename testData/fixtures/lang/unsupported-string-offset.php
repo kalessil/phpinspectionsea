@@ -18,6 +18,8 @@ function cases_holder(string $string, array $strings)
 
     <error descr="Could provoke a PHP Fatal error ([] operator not supported for strings).">$string[]</error> = '';
     <error descr="Could provoke a PHP Fatal error ([] operator not supported for strings).">$strings[0][]</error> = '';
+    $_POST['list'][] = '...';
+    $_POST['list']['list'][] = '...';
 }
 
 /* global context is not checked */

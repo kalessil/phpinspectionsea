@@ -22,10 +22,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -59,30 +56,36 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
                     final PsiElement indexVariable = this.getCounterVariable(forExpression);
                     if (indexVariable != null && this.isCounterVariableIncremented(forExpression, indexVariable)) {
-                        final PsiElement limit = this.isCheckedAsExpected(forExpression, indexVariable);
-                        if (limit instanceof Variable) {
+                        final PsiElement limit = this.getLoopLimit(forExpression, indexVariable);
+                        if (limit != null) {
                             final PsiElement container = this.getContainerByIndex(body, indexVariable);
-                            if (container != null && this.isIterableContainer(container)) {
-                                holder.registerProblem(
-                                        forExpression.getFirstChild(),
-                                        foreachInvariant,
-                                        new UseForeachFix(forExpression, indexVariable, null, container, limit)
-                                );
+                            if (container != null && this.isLimitFor(limit, container)) {
+                                    holder.registerProblem(
+                                            forExpression.getFirstChild(),
+                                            foreachInvariant,
+                                            new UseForeachFix(forExpression, indexVariable, null, container, limit)
+                                    );
                             }
                         }
                     }
                 }
             }
 
-            private boolean isIterableContainer(@NotNull PsiElement container) {
-                boolean result = false;
-                if (container instanceof PhpTypedElement) {
-                    final Project project       = holder.getProject();
-                    final PhpType containerType = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
-                    if (containerType != null && !containerType.hasUnknown()) {
-                        result = containerType.getTypes().stream().noneMatch(t -> Types.getType(t).equals(Types.strString));
+            private boolean isLimitFor(@NotNull PsiElement limit, @NotNull PsiElement container) {
+                boolean result               = false;
+                final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(limit);
+                if (values.size() == 1) {
+                    final PsiElement value = values.iterator().next();
+                    if (OpenapiTypesUtil.isFunctionReference(value)) {
+                        final FunctionReference reference = (FunctionReference) value;
+                        final String functionName         = reference.getName();
+                        if (functionName != null && functionName.equals("count")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            result = arguments.length == 1 && OpenapiEquivalenceUtil.areEqual(arguments[0], container);
+                        }
                     }
                 }
+                values.clear();
                 return result;
             }
 
@@ -260,7 +263,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             }
 
             @Nullable
-            private PsiElement isCheckedAsExpected(@NotNull For expression, @NotNull PsiElement variable) {
+            private PsiElement getLoopLimit(@NotNull For expression, @NotNull PsiElement variable) {
                 final PsiElement[] conditions = expression.getConditionalExpressions();
                 if (conditions.length == 1) {
                     for (final PsiElement check : conditions) {

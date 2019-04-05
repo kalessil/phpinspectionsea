@@ -10,6 +10,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -57,6 +58,18 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                         candidate instanceof FieldReference ||
                         candidate instanceof ArrayAccessExpression
                     ) {
+                        /* false-positives: pushing to pre-defined globals */
+                        PsiElement possiblyValue = candidate;
+                        while (possiblyValue instanceof ArrayAccessExpression) {
+                            possiblyValue = ((ArrayAccessExpression) possiblyValue).getValue();
+                        }
+                        if (possiblyValue instanceof Variable) {
+                            final String variableName = ((Variable) possiblyValue).getName();
+                            if (ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                                return;
+                            }
+                        }
+
                         final PsiElement parent = expression.getParent();
                         /* case 1: unsupported casting to array */
                         if (parent instanceof ArrayAccessExpression) {

@@ -4,6 +4,7 @@ function explode_misuse_count($parameter) {
     /* case: misuse */
     echo substr_count($parameter, '') + 1;
     echo strpos($parameter, '') !== false;
+    echo strpos($parameter, '') !== false;
 
     /* case: misuse, with variants lookup */
     $array = explode('', $parameter);

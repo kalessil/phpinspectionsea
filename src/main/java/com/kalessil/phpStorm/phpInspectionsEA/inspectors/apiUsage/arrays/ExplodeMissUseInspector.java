@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -100,9 +101,12 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                                 isRegular = ComparisonStyle.isRegular();
                                                 if (parent instanceof BinaryExpression) {
                                                     final BinaryExpression binary = (BinaryExpression) parent;
-                                                    if (binary.getOperationType() == PhpTokenTypes.opGREATER) {
-                                                        final PsiElement right = binary.getRightOperand();
-                                                        if (right != null && OpenapiTypesUtil.isNumber(right) && right.getText().equals("1")) {
+                                                    final PsiElement right        = binary.getRightOperand();
+                                                    if (right != null && OpenapiTypesUtil.isNumber(right)) {
+                                                        final IElementType operator = binary.getOperationType();
+                                                        final boolean isTarget      = (operator == PhpTokenTypes.opGREATER && right.getText().equals("1")) ||
+                                                                                      (operator == PhpTokenTypes.opGREATER_OR_EQUAL && right.getText().equals("2"));
+                                                        if (isTarget) {
                                                             replacement = String.format(
                                                                     isRegular ? "%sstrpos(%s, %s) !== false" : "false !== %sstrpos(%s, %s)",
                                                                     reference.getImmediateNamespaceName(),

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -34,6 +33,8 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
+            // trigger_error(..., E_USER_DEPRECATED)
+
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.isContainingFileSkipped(method)) { return; }
@@ -41,43 +42,42 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 /* do not process un-reportable classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz      = method.getContainingClass();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (null == nameNode || null == clazz) {
-                    return;
-                }
+                if (clazz != null && nameNode != null) {
+                    final String methodName    = method.getName();
+                    final boolean isDeprecated = method.isDeprecated();
 
-                final String methodName = method.getName();
-
-                /* search for deprecated parent methods */
-                final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
-                if (parent != null) {
-                    final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
-                    if (parentMethod != null) {
-                        if (!method.isDeprecated() && parentMethod.isDeprecated()) {
-                            holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
-                            return;
-                        }
-                        if (method.isDeprecated() && !parentMethod.isDeprecated()) {
-                            holder.registerProblem(nameNode, String.format(patternDeprecateParent, methodName));
-                            return;
-                        }
-                    }
-                }
-
-                if (!method.isDeprecated()) {
-                    /* search for deprecated interface methods */
-                    for (final PhpClass contract : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
-                        final Method contractMethod = OpenapiResolveUtil.resolveMethod(contract, methodName);
-                        if (contractMethod != null && contractMethod.isDeprecated()) {
-                            holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
-                            return;
+                    /* case: deprecated parent methods */
+                    final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                    if (parent != null) {
+                        final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
+                        if (parentMethod != null) {
+                            if (!isDeprecated && parentMethod.isDeprecated()) {
+                                holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
+                                return;
+                            }
+                            if (isDeprecated && !parentMethod.isDeprecated()) {
+                                holder.registerProblem(nameNode, String.format(patternDeprecateParent, methodName));
+                                return;
+                            }
                         }
                     }
-                    /* search for deprecated trait methods */
-                    for (final PhpClass trait : OpenapiResolveUtil.resolveImplementedTraits(clazz)) {
-                        final Method traitMethod = OpenapiResolveUtil.resolveMethod(trait, methodName);
-                        if (traitMethod != null && traitMethod.isDeprecated()) {
-                            holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
-                            return;
+
+                    if (!isDeprecated) {
+                        /* case: deprecated interface methods */
+                        for (final PhpClass contract : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
+                            final Method contractMethod = OpenapiResolveUtil.resolveMethod(contract, methodName);
+                            if (contractMethod != null && contractMethod.isDeprecated()) {
+                                holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
+                                return;
+                            }
+                        }
+                        /* case: deprecated trait methods */
+                        for (final PhpClass trait : OpenapiResolveUtil.resolveImplementedTraits(clazz)) {
+                            final Method traitMethod = OpenapiResolveUtil.resolveMethod(trait, methodName);
+                            if (traitMethod != null && traitMethod.isDeprecated()) {
+                                holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
+                                return;
+                            }
                         }
                     }
                 }

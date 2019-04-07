@@ -62,19 +62,6 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                         return;
                     }
                 }
-
-                /* search for deprecated interface methods */
-                if (!method.isDeprecated()) {
-                    for (final PhpClass iface : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
-                        final Method ifaceMethod = OpenapiResolveUtil.resolveMethod(iface, searchMethodName);
-                        if (ifaceMethod != null && ifaceMethod.isDeprecated()) {
-                            final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
-                            holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
-
-                            return;
-                        }
-                    }
-                }
             }
         };
     }

@@ -158,6 +158,30 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 }
             }
 
+            private void checkInline(@NotNull PhpPsiElement construct, @NotNull Variable argument) {
+                /* false-negatives: php-doc should not stop the analysis */
+                PhpPsiElement previous = construct.getPrevPsiSibling();
+                while (previous instanceof PhpDocComment) {
+                    previous = previous.getPrevPsiSibling();
+                }
+
+                if (previous != null && OpenapiTypesUtil.isAssignment(previous.getFirstChild())) {
+                    final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
+                    final PsiElement container        = assign.getVariable();
+                    final PsiElement value            = assign.getValue();
+                    if (value != null && container instanceof Variable) {
+                        final boolean canInline = OpenapiEquivalenceUtil.areEqual(container, argument);
+                        if (canInline) {
+                            holder.registerProblem(
+                                    container,
+                                    String.format(messagePattern, ((Variable) container).getName()),
+                                    new InlineValueFix(assign.getParent(), argument, value)
+                            );
+                        }
+                    }
+                }
+            }
+
             @Override
             public void visitPhpReturn(@NotNull PhpReturn expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
@@ -223,9 +247,39 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         final Function scope = ExpressionSemanticUtil.getScope(expression);
                         if (scope != null) {
                             final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
-                            final Variable variable = value == null ? null : this.getVariable(value);
-                            if (variable != null) {
-                                this.checkOneTimeUse((PhpPsiElement) parent, variable, scope);
+                            if (value instanceof BinaryExpression) {
+                                // $variable = ...; $variable = $variable ?? ...;
+                                final BinaryExpression binary = (BinaryExpression) value;
+                                if (binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
+                                    final PsiElement left      = binary.getLeftOperand();
+                                    final PsiElement container = expression.getVariable();
+                                    if (container instanceof Variable && left instanceof Variable) {
+                                        final PsiElement alternative = binary.getRightOperand();
+                                        final Variable placeholder   = (Variable) left;
+                                        if (alternative != null && OpenapiEquivalenceUtil.areEqual(container, placeholder)) {
+                                            this.checkInline((PhpPsiElement) parent, placeholder);
+                                        }
+                                    }
+                                }
+                            } else if (value instanceof TernaryExpression) {
+                                // $variable = ...; $variable = $variable ?: ...;
+                                final TernaryExpression ternary = (TernaryExpression) value;
+                                if (ternary.isShort()) {
+                                    final PsiElement left      = ternary.getCondition();
+                                    final PsiElement container = expression.getVariable();
+                                    if (container instanceof Variable && left instanceof Variable) {
+                                        final PsiElement alternative = ternary.getFalseVariant();
+                                        final Variable placeholder   = (Variable) left;
+                                        if (alternative != null && OpenapiEquivalenceUtil.areEqual(container, placeholder)) {
+                                            this.checkInline((PhpPsiElement) parent, placeholder);
+                                        }
+                                    }
+                                }
+                            } else if (value != null) {
+                                final Variable variable = this.getVariable(value);
+                                if (variable != null) {
+                                    this.checkOneTimeUse((PhpPsiElement) parent, variable, scope);
+                                }
                             }
                         }
                     }

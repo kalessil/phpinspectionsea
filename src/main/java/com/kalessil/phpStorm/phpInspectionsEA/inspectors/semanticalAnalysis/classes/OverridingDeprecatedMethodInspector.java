@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
-    private static final String patternNeedsDeprecation = "'%m%' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
-    private static final String patternDeprecateParent  = "Parent '%m%' probably needs to be deprecated as well.";
+    private static final String patternNeedsDeprecation = "'%s' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
+    private static final String patternDeprecateParent  = "Parent '%s' probably needs to be deprecated as well.";
 
     @NotNull
     public String getShortName() {
@@ -41,7 +41,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 /* do not process un-reportable classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz      = method.getContainingClass();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (null == nameNode || null == clazz || method.isDeprecated()) {
+                if (null == nameNode || null == clazz) {
                     return;
                 }
 
@@ -53,19 +53,11 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
                     if (parentMethod != null) {
                         if (!method.isDeprecated() && parentMethod.isDeprecated()) {
-                            holder.registerProblem(
-                                    nameNode,
-                                    patternNeedsDeprecation.replace("%m%", methodName),
-                                    ProblemHighlightType.LIKE_DEPRECATED
-                            );
+                            holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
                             return;
                         }
                         if (method.isDeprecated() && !parentMethod.isDeprecated()) {
-                            holder.registerProblem(
-                                    nameNode,
-                                    patternDeprecateParent.replace("%m%", methodName),
-                                    ProblemHighlightType.WEAK_WARNING
-                            );
+                            holder.registerProblem(nameNode, String.format(patternDeprecateParent, methodName));
                             return;
                         }
                     }
@@ -76,11 +68,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     for (final PhpClass contract : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
                         final Method contractMethod = OpenapiResolveUtil.resolveMethod(contract, methodName);
                         if (contractMethod != null && contractMethod.isDeprecated()) {
-                            holder.registerProblem(
-                                    nameNode,
-                                    patternNeedsDeprecation.replace("%m%", methodName),
-                                    ProblemHighlightType.LIKE_DEPRECATED
-                            );
+                            holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
                             return;
                         }
                     }
@@ -88,11 +76,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     for (final PhpClass trait : OpenapiResolveUtil.resolveImplementedTraits(clazz)) {
                         final Method traitMethod = OpenapiResolveUtil.resolveMethod(trait, methodName);
                         if (traitMethod != null && traitMethod.isDeprecated()) {
-                            holder.registerProblem(
-                                    nameNode,
-                                    patternNeedsDeprecation.replace("%m%", methodName),
-                                    ProblemHighlightType.LIKE_DEPRECATED
-                            );
+                            holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
                             return;
                         }
                     }

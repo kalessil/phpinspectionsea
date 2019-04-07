@@ -34,32 +34,25 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 /* do not process un-reportable classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz        = method.getContainingClass();
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                if (null == methodName || null == clazz) {
-                    return;
-                }
-
-                final String searchMethodName = method.getName();
-
-                /* search for deprecated parent methods */
-                final PhpClass parent     = OpenapiResolveUtil.resolveSuperClass(clazz);
-                final Method parentMethod = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, searchMethodName);
-                if (null != parentMethod) {
-                    if (!method.isDeprecated() && parentMethod.isDeprecated()) {
-                        final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
-                        holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
-
-                        return;
-                    }
-
-                    if (method.isDeprecated() && !parentMethod.isDeprecated()) {
-                        final String message = patternDeprecateParent.replace("%m%", searchMethodName);
-                        holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
-
-                        return;
+                if (methodName != null && clazz != null) {
+                    /* search for deprecated parent methods */
+                    final String searchMethodName = method.getName();
+                    final PhpClass parent         = OpenapiResolveUtil.resolveSuperClass(clazz);
+                    final Method parentMethod     = parent == null ? null : OpenapiResolveUtil.resolveMethod(parent, searchMethodName);
+                    if (parentMethod != null) {
+                        final boolean isDeprecated = method.isDeprecated();
+                        if (!isDeprecated && parentMethod.isDeprecated()) {
+                            final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
+                            holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
+                        } else if (isDeprecated && !parentMethod.isDeprecated()) {
+                            final String message = patternDeprecateParent.replace("%m%", searchMethodName);
+                            holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
+                        }
                     }
                 }
             }

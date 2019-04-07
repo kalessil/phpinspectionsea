@@ -13,6 +13,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -24,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
     private static final String patternNeedsDeprecation      = "'%s' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
-    private static final String patternDeprecateParent       = "Parent '%s' probably needs to be deprecated as well.";
+    private static final String patternDeprecateParent       = "The overridden/implemented '%s' probably needs to be deprecated as well.";
     private static final String patternMissingDeprecationTag = "'%s' triggers a deprecation warning, but misses @deprecated annotation.";
 
     @NotNull
@@ -75,40 +80,29 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     final String methodName    = method.getName();
                     final boolean isDeprecated = method.isDeprecated();
 
-                    /* case: deprecated parent methods */
-                    final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
-                    if (parent != null) {
-                        final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
-                        if (parentMethod != null) {
-                            if (!isDeprecated && parentMethod.isDeprecated()) {
-                                holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
-                                return;
-                            }
-                            if (isDeprecated && !parentMethod.isDeprecated()) {
-                                holder.registerProblem(nameNode, String.format(patternDeprecateParent, methodName));
-                                return;
+                    final Collection<Supplier<Collection<PhpClass>>> suppliers = new ArrayList<>();
+                    suppliers.add(() -> Collections.singletonList(OpenapiResolveUtil.resolveSuperClass(clazz)));
+                    suppliers.add(() -> OpenapiResolveUtil.resolveImplementedInterfaces(clazz));
+                    suppliers.add(() -> OpenapiResolveUtil.resolveImplementedTraits(clazz));
+
+                    for (final Supplier<Collection<PhpClass>> supplier : suppliers) {
+                        for (final PhpClass contract : supplier.get()) {
+                            if (contract != null) {
+                                final Method contractMethod = OpenapiResolveUtil.resolveMethod(contract, methodName);
+                                if (contractMethod != null) {
+                                    if (!isDeprecated && contractMethod.isDeprecated()) {
+                                        holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
+                                        return;
+                                    } else if (isDeprecated && !contractMethod.isDeprecated()) {
+                                        holder.registerProblem(nameNode, String.format(patternDeprecateParent, methodName));
+                                        return;
+                                    }
+                                }
                             }
                         }
                     }
 
-                    if (!isDeprecated) {
-                        /* case: deprecated interface methods */
-                        for (final PhpClass contract : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
-                            final Method contractMethod = OpenapiResolveUtil.resolveMethod(contract, methodName);
-                            if (contractMethod != null && contractMethod.isDeprecated()) {
-                                holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
-                                return;
-                            }
-                        }
-                        /* case: deprecated trait methods */
-                        for (final PhpClass trait : OpenapiResolveUtil.resolveImplementedTraits(clazz)) {
-                            final Method traitMethod = OpenapiResolveUtil.resolveMethod(trait, methodName);
-                            if (traitMethod != null && traitMethod.isDeprecated()) {
-                                holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
-                                return;
-                            }
-                        }
-                    }
+                    suppliers.clear();
                 }
             }
         };

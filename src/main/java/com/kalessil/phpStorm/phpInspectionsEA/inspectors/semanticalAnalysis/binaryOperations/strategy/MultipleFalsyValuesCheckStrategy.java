@@ -96,7 +96,7 @@ final public class MultipleFalsyValuesCheckStrategy {
                             final UnaryExpression unary = (UnaryExpression) fragment;
                             final PsiElement argument   = unary.getValue();
                             if (argument instanceof Variable) {
-                                apply(unary, argument, operator, false, falsyStates, holder);
+                                apply(unary, argument, operator, true, falsyStates, holder);
                             }
                         }
                     }

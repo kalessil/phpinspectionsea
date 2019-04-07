@@ -49,7 +49,8 @@ final public class MultipleFalsyValuesCheckStrategy {
                                 final Optional<PsiElement> matched = falsyStates.keySet().stream()
                                         .filter(key -> OpenapiEquivalenceUtil.areEqual(key, subject))
                                         .findFirst();
-                                if (result = matched.isPresent()) {
+                                if (matched.isPresent()) {
+                                    result                    = true;
                                     final boolean isFalsySame = isFalsyExpected == falsyStates.get(matched.get());
                                     if (operator == PhpTokenTypes.opAND) {
                                         holder.registerProblem(
@@ -64,7 +65,6 @@ final public class MultipleFalsyValuesCheckStrategy {
                                                 isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                         );
                                     }
-                                    break;
                                 } else {
                                     falsyStates.put(subject, isFalsyExpected);
                                 }

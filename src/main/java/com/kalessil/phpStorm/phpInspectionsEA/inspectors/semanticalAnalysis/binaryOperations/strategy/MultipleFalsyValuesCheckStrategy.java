@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,40 @@ final public class MultipleFalsyValuesCheckStrategy {
     private static final String messageAlwaysTrue  = "'%s' seems to be always true when reached.";
     private static final String messageAlwaysFalse = "'%s' seems to be always false when reached.";
 
+    private static boolean apply(
+            @NotNull PsiElement target,
+            @NotNull PsiElement subject,
+            @NotNull IElementType operator,
+            boolean isFalsyExpected,
+            @NotNull Map<PsiElement, Boolean> falsyStates,
+            @NotNull ProblemsHolder holder
+    ) {
+        boolean result = false;
+        final Optional<PsiElement> matched = falsyStates.keySet().stream()
+                .filter(key -> OpenapiEquivalenceUtil.areEqual(key, subject))
+                .findFirst();
+        if (matched.isPresent()) {
+            result = true;
+            final boolean isFalsySame = isFalsyExpected == falsyStates.get(matched.get());
+            if (operator == PhpTokenTypes.opAND) {
+                holder.registerProblem(
+                        target,
+                        String.format(isFalsySame ? messageAlwaysTrue : messageAlwaysFalse, target.getText()),
+                        isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                );
+            } else {
+                holder.registerProblem(
+                        target,
+                        String.format(isFalsySame ? messageAlwaysFalse : messageAlwaysTrue, target.getText()),
+                        isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                );
+            }
+        } else {
+            falsyStates.put(subject, isFalsyExpected);
+        }
+        return result;
+    }
+
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result              = false;
         final IElementType operator = expression.getOperationType();
@@ -36,37 +71,32 @@ final public class MultipleFalsyValuesCheckStrategy {
             final PsiElement parent  = expression.getParent();
             final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
             if (!(context instanceof BinaryExpression) || ((BinaryExpression) context).getOperationType() != operator) {
-                final List<BinaryExpression> fragments = extractFragments(expression, operator);
+                final List<PsiElement> fragments = extractFragments(expression, operator);
                 if (fragments.size() > 1) {
                     final Map<PsiElement, Boolean> falsyStates = new HashMap<>();
-                    for (final BinaryExpression binary : fragments) {
-                        final PsiElement right = binary.getRightOperand();
-                        if (right != null) {
-                            final PsiElement subject = PhpLanguageUtil.isFalsyValue(right) ? binary.getLeftOperand() : right;
-                            if (subject != null) {
-                                final boolean isFalsyExpected      = binary.getOperationType() == PhpTokenTypes.opEQUAL;
-                                final Optional<PsiElement> matched = falsyStates.keySet().stream()
-                                        .filter(key -> OpenapiEquivalenceUtil.areEqual(key, subject))
-                                        .findFirst();
-                                if (matched.isPresent()) {
-                                    result                    = true;
-                                    final boolean isFalsySame = isFalsyExpected == falsyStates.get(matched.get());
-                                    if (operator == PhpTokenTypes.opAND) {
-                                        holder.registerProblem(
-                                                binary,
-                                                String.format(isFalsySame ? messageAlwaysTrue : messageAlwaysFalse, binary.getText()),
-                                                isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                        );
-                                    } else {
-                                        holder.registerProblem(
-                                                binary,
-                                                String.format(isFalsySame ? messageAlwaysFalse : messageAlwaysTrue, binary.getText()),
-                                                isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                        );
+                    for (final PsiElement fragment : fragments) {
+                        if (fragment instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) fragment;
+                            final PsiElement right        = binary.getRightOperand();
+                            if (right != null) {
+                                final PsiElement subject = PhpLanguageUtil.isFalsyValue(right) ? binary.getLeftOperand() : right;
+                                if (subject != null) {
+                                    final boolean isFalsyExpected = binary.getOperationType() == PhpTokenTypes.opEQUAL;
+                                    if (apply(binary, subject, operator, isFalsyExpected, falsyStates, holder)) {
+                                        result = true;
                                     }
-                                } else {
-                                    falsyStates.put(subject, isFalsyExpected);
                                 }
+                            }
+                        } else if (fragment instanceof Variable) {
+                            final Variable variable = (Variable) fragment;
+                            if (apply(variable, variable, operator, false, falsyStates, holder)) {
+                                result = true;
+                            }
+                        } else if (fragment instanceof UnaryExpression) {
+                            final UnaryExpression unary = (UnaryExpression) fragment;
+                            final PsiElement argument   = unary.getValue();
+                            if (argument instanceof Variable) {
+                                apply(unary, argument, operator, false, falsyStates, holder);
                             }
                         }
                     }
@@ -79,15 +109,25 @@ final public class MultipleFalsyValuesCheckStrategy {
     }
 
     @NotNull
-    private static List<BinaryExpression> extractFragments(@NotNull BinaryExpression binary, @Nullable IElementType operator) {
-        final List<BinaryExpression> result = new ArrayList<>();
-        final IElementType binaryOperator   = binary.getOperationType();
+    private static List<PsiElement> extractFragments(@NotNull BinaryExpression binary, @Nullable IElementType operator) {
+        final List<PsiElement> result     = new ArrayList<>();
+        final IElementType binaryOperator = binary.getOperationType();
         if (binaryOperator == operator) {
             Stream.of(binary.getLeftOperand(), binary.getRightOperand())
                     .filter(Objects::nonNull).map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
                     .forEach(expression -> {
                         if (expression instanceof BinaryExpression) {
                             result.addAll(extractFragments((BinaryExpression) expression, operator));
+                        } else if (expression instanceof Variable) {
+                            result.add(expression);
+                        } else if (expression instanceof UnaryExpression) {
+                            final UnaryExpression unary = (UnaryExpression) expression;
+                            if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                                final PsiElement argument = unary.getValue();
+                                if (argument instanceof Variable) {
+                                    result.add(unary);
+                                }
+                            }
                         }
                     });
         } else if (binaryOperator == PhpTokenTypes.opEQUAL || binaryOperator == PhpTokenTypes.opNOT_EQUAL) {

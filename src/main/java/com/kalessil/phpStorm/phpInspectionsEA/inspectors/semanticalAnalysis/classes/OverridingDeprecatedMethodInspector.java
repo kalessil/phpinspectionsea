@@ -51,7 +51,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2 && arguments[1].getText().equals("E_USER_DEPRECATED")) {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
-                        if (scope != null) {
+                        if (scope instanceof Method) {
                             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
                             if (body != null) {
                                 PsiElement parent = reference.getParent();

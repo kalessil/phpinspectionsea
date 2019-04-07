@@ -289,6 +289,21 @@ final public class OpenapiResolveUtil {
         }
     }
 
+    @NotNull
+    static public List<PhpClass> resolveImplementedTraits(@NotNull PhpClass clazz) {
+        try {
+            final PhpClass[] traits = clazz.getTraits();
+            return traits == null
+                    ? new ArrayList<>()
+                    : new ArrayList<>(Arrays.asList(traits));
+        } catch (final Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return new ArrayList<>();
+        }
+    }
+
     @Nullable
     static public Method resolveMethod(@NotNull PhpClass clazz, @NotNull String methodName) {
         try {

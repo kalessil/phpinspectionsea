@@ -34,45 +34,65 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 if (this.isContainingFileSkipped(method)) { return; }
 
                 /* do not process un-reportable classes and interfaces - we are searching real tech. debt here */
-                final PhpClass clazz        = method.getContainingClass();
-                final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                if (null == methodName || null == clazz) {
+                final PhpClass clazz      = method.getContainingClass();
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                if (null == nameNode || null == clazz || method.isDeprecated()) {
                     return;
                 }
 
-                final String searchMethodName = method.getName();
+                final String methodName = method.getName();
 
                 /* search for deprecated parent methods */
-                final PhpClass parent     = OpenapiResolveUtil.resolveSuperClass(clazz);
-                final Method parentMethod = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, searchMethodName);
-                if (null != parentMethod) {
-                    if (!method.isDeprecated() && parentMethod.isDeprecated()) {
-                        final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
-                        holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
-
-                        return;
-                    }
-
-                    if (method.isDeprecated() && !parentMethod.isDeprecated()) {
-                        final String message = patternDeprecateParent.replace("%m%", searchMethodName);
-                        holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
-
-                        return;
+                final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                if (parent != null) {
+                    final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
+                    if (parentMethod != null) {
+                        if (!method.isDeprecated() && parentMethod.isDeprecated()) {
+                            holder.registerProblem(
+                                    nameNode,
+                                    patternNeedsDeprecation.replace("%m%", methodName),
+                                    ProblemHighlightType.LIKE_DEPRECATED
+                            );
+                            return;
+                        }
+                        if (method.isDeprecated() && !parentMethod.isDeprecated()) {
+                            holder.registerProblem(
+                                    nameNode,
+                                    patternDeprecateParent.replace("%m%", methodName),
+                                    ProblemHighlightType.WEAK_WARNING
+                            );
+                            return;
+                        }
                     }
                 }
 
-                /* search for deprecated interface methods */
                 if (!method.isDeprecated()) {
-                    for (final PhpClass iface : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
-                        final Method ifaceMethod = OpenapiResolveUtil.resolveMethod(iface, searchMethodName);
-                        if (ifaceMethod != null && ifaceMethod.isDeprecated()) {
-                            final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
-                            holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
-
+                    /* search for deprecated interface methods */
+                    for (final PhpClass contract : OpenapiResolveUtil.resolveImplementedInterfaces(clazz)) {
+                        final Method contractMethod = OpenapiResolveUtil.resolveMethod(contract, methodName);
+                        if (contractMethod != null && contractMethod.isDeprecated()) {
+                            holder.registerProblem(
+                                    nameNode,
+                                    patternNeedsDeprecation.replace("%m%", methodName),
+                                    ProblemHighlightType.LIKE_DEPRECATED
+                            );
+                            return;
+                        }
+                    }
+                    /* search for deprecated trait methods */
+                    for (final PhpClass trait : OpenapiResolveUtil.resolveImplementedTraits(clazz)) {
+                        final Method traitMethod = OpenapiResolveUtil.resolveMethod(trait, methodName);
+                        if (traitMethod != null && traitMethod.isDeprecated()) {
+                            holder.registerProblem(
+                                    nameNode,
+                                    patternNeedsDeprecation.replace("%m%", methodName),
+                                    ProblemHighlightType.LIKE_DEPRECATED
+                            );
                             return;
                         }
                     }

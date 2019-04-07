@@ -21,6 +21,16 @@
         public function <warning descr="'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning>();
     }
 
+    /* pattern: overriding trait deprecation */
+    trait TraitWithDeprecations {
+        /** @deprecated */
+        public function deprecatedInTrait(){}
+    }
+    class ClassWithTrait {
+        use TraitWithDeprecations;
+        public function <warning descr="'deprecatedInTrait' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInTrait</warning>(){}
+    }
+
     /* pattern: child deprecation instead of parent */
     abstract class DeprecationHolderParent {
         abstract public function abstractToDeprecate();

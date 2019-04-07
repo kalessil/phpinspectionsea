@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -22,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
-    private static final String patternNeedsDeprecation = "'%m%' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
-    private static final String patternDeprecateParent  = "Parent '%m%' probably needs to be deprecated as well.";
+    private static final String patternNeedsDeprecation = "'%s' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
+    private static final String patternDeprecateParent  = "Parent '%s' probably needs to be deprecated as well.";
 
     @NotNull
     public String getShortName() {
@@ -36,7 +35,6 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                /* do not process un-reportable classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz        = method.getContainingClass();
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
                 if (methodName != null && clazz != null) {
@@ -47,11 +45,9 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     if (parentMethod != null) {
                         final boolean isDeprecated = method.isDeprecated();
                         if (!isDeprecated && parentMethod.isDeprecated()) {
-                            final String message = patternNeedsDeprecation.replace("%m%", searchMethodName);
-                            holder.registerProblem(methodName, message, ProblemHighlightType.LIKE_DEPRECATED);
+                            holder.registerProblem(methodName, String.format(patternNeedsDeprecation, searchMethodName));
                         } else if (isDeprecated && !parentMethod.isDeprecated()) {
-                            final String message = patternDeprecateParent.replace("%m%", searchMethodName);
-                            holder.registerProblem(methodName, message, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(methodName, String.format(patternDeprecateParent, searchMethodName));
                         }
                     }
                 }

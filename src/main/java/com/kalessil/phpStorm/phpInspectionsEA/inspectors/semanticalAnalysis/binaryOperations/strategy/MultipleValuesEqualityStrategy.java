@@ -98,8 +98,8 @@ final public class MultipleValuesEqualityStrategy {
                                 if (source != null && !isValueType(source) && isValueType(firstValue) && isValueType(secondValue)) {
                                     final boolean shouldReport = operator == PhpTokenTypes.opIDENTICAL ||
                                                                  operator == PhpTokenTypes.opNOT_IDENTICAL ||
-                                                                 !isFalsyValue(firstValue) ||
-                                                                 !isFalsyValue(secondValue);
+                                                                 !PhpLanguageUtil.isFalsyValue(firstValue) ||
+                                                                 !PhpLanguageUtil.isFalsyValue(secondValue);
                                     if (shouldReport) {
                                         final boolean isAndOperator = operator == PhpTokenTypes.opAND;
                                         final String fragment       = String.format(
@@ -132,19 +132,6 @@ final public class MultipleValuesEqualityStrategy {
                 element instanceof ClassConstantReference ||
                 element instanceof ArrayCreationExpression ||
                 OpenapiTypesUtil.isNumber(element);
-    }
-
-    private static boolean isFalsyValue(@NotNull PsiElement element) {
-        if (element instanceof StringLiteralExpression) {
-            return ((StringLiteralExpression) element).getContents().isEmpty();
-        } else if (element instanceof ConstantReference) {
-            return PhpLanguageUtil.isFalse(element) || PhpLanguageUtil.isNull(element);
-        } else if (element instanceof ArrayCreationExpression) {
-            return element.getChildren().length == 0;
-        } else if (OpenapiTypesUtil.isNumber(element)) {
-            return element.getText().equals("0");
-        }
-        return false;
     }
 
     @NotNull

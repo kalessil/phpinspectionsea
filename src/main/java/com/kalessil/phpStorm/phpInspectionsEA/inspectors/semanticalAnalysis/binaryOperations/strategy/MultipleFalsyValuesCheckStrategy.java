@@ -8,7 +8,6 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +42,7 @@ final public class MultipleFalsyValuesCheckStrategy {
                     for (final BinaryExpression binary : fragments) {
                         final PsiElement right = binary.getRightOperand();
                         if (right != null) {
-                            final PsiElement subject = isFalsyValue(right) ? binary.getLeftOperand() : right;
+                            final PsiElement subject = PhpLanguageUtil.isFalsyValue(right) ? binary.getLeftOperand() : right;
                             if (subject != null) {
                                 final boolean isFalsyExpected      = binary.getOperationType() == PhpTokenTypes.opEQUAL;
                                 final Optional<PsiElement> matched = falsyStates.keySet().stream()
@@ -93,24 +92,11 @@ final public class MultipleFalsyValuesCheckStrategy {
                     });
         } else if (binaryOperator == PhpTokenTypes.opEQUAL || binaryOperator == PhpTokenTypes.opNOT_EQUAL) {
             final boolean isFalsyCheck = Stream.of(binary.getRightOperand(), binary.getLeftOperand())
-                    .filter(Objects::nonNull).anyMatch(MultipleFalsyValuesCheckStrategy::isFalsyValue);
+                    .filter(Objects::nonNull).anyMatch(PhpLanguageUtil::isFalsyValue);
             if (isFalsyCheck) {
                 result.add(binary);
             }
         }
         return result;
-    }
-
-    private static boolean isFalsyValue(@NotNull PsiElement element) {
-        if (element instanceof StringLiteralExpression) {
-            return ((StringLiteralExpression) element).getContents().isEmpty();
-        } else if (element instanceof ConstantReference) {
-            return PhpLanguageUtil.isFalse(element) || PhpLanguageUtil.isNull(element);
-        } else if (element instanceof ArrayCreationExpression) {
-            return element.getChildren().length == 0;
-        } else if (OpenapiTypesUtil.isNumber(element)) {
-            return element.getText().equals("0");
-        }
-        return false;
     }
 }

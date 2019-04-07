@@ -147,7 +147,7 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                         if (isTarget) {
                             final IElementType operation = binary.getOperationType();
                             final boolean isSafe = (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) ||
-                                                   (!this.isFalsyValue(trueVariant) && !this.isFalsyValue(falseVariant));
+                                                   (!PhpLanguageUtil.isFalsyValue(trueVariant) && !PhpLanguageUtil.isFalsyValue(falseVariant));
                             if (isSafe) {
                                 final boolean isInverted    = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
                                 final PsiElement falseValue = isInverted ? trueVariant : falseVariant;
@@ -162,19 +162,6 @@ public class IllusionOfChoiceInspector extends BasePhpInspection {
                         }
                     }
                 }
-            }
-
-            private boolean isFalsyValue(@NotNull PsiElement element) {
-                if (element instanceof StringLiteralExpression) {
-                    return ((StringLiteralExpression) element).getContents().isEmpty();
-                } else if (element instanceof ConstantReference) {
-                    return PhpLanguageUtil.isFalse(element) || PhpLanguageUtil.isNull(element);
-                } else if (element instanceof ArrayCreationExpression) {
-                    return element.getChildren().length == 0;
-                } else if (OpenapiTypesUtil.isNumber(element)) {
-                    return element.getText().equals("0");
-                }
-                return false;
             }
         };
     }

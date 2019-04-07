@@ -53,3 +53,12 @@
         /** @deprecated */
         public function deprecatedInClass(){}
     }
+
+    class MissingDeprecationTags {
+        public function <warning descr="'regular' triggers a deprecation warning, but misses @deprecated annotation.">regular</warning>()  { trigger_error('...', E_USER_DEPRECATED); }
+        public function <warning descr="'suppressed' triggers a deprecation warning, but misses @deprecated annotation.">suppressed</warning>() { @trigger_error('...', E_USER_DEPRECATED); }
+
+        /** @deprecated  */
+        public function deprecated()  { trigger_error('...', E_USER_DEPRECATED); }
+        public function conditional() { if(true) { trigger_error('...', E_USER_DEPRECATED); } }
+    }

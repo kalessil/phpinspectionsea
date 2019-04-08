@@ -9,6 +9,16 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("testData/fixtures/regularExpressions/greedy-character-sets.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testFindShortCharacterClasses() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/short-character-classes.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testDelimiters() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/delimeters.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testProblematicModifiers() {
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
         myFixture.configureByFile("testData/fixtures/regularExpressions/problematic-modifiers.php");

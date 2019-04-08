@@ -141,7 +141,6 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  */
                 DeprecatedModifiersCheckStrategy.apply(modifiers, target, holder);
                 AllowedModifierCheckStrategy.apply(modifiers, target, holder);
-                // UselessMultiLineModifierStrategy.apply(modifiers, regex, target, holder); -- we can not analyse if string has new lines
                 UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);

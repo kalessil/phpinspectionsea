@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -30,7 +29,6 @@ import java.util.*;
 
 public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
     private static final String patternIndirectDuplication = "'%s' is already announced in '%s'.";
-    private static final String messageImplicitDuplication = "Class cannot implement previously implemented interface";
 
     @NotNull
     public String getShortName() {
@@ -56,45 +54,27 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                     implemented.clear();
 
                     if (!ownInterfaces.isEmpty()) {
-                        final Set<PsiElement> processed = new HashSet<>();
-
-                        /* Case 1: own duplicate declaration (runtime error gets raised) */
-                        if (ownInterfaces.size() > 1) {
-                            for (final Map.Entry<PsiElement, PhpClass> entry : ownInterfaces.entrySet()) {
-                                if (!processed.add(entry.getValue()) && processed.add(entry.getKey())) {
-                                    holder.registerProblem(
-                                            entry.getKey(),
-                                            messageImplicitDuplication,
-                                            ProblemHighlightType.GENERIC_ERROR,
-                                            new TheLocalFix()
-                                    );
-                                    break;
-                                }
-                            }
-                        }
-
-                        /* Case 2: indirect declaration duplication (parent already implements) */
+                        /* Case: indirect declaration duplication (parent already implements) */
                         final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                         if (parent != null) {
                             final Set<PhpClass> inherited = InterfacesExtractUtil.getCrawlInheritanceTree(parent, false);
                             if (!inherited.isEmpty()) {
+                                final Set<PsiElement> processed = new HashSet<>();
                                 for (final Map.Entry<PsiElement, PhpClass> entry : ownInterfaces.entrySet()) {
                                     final PhpClass ownInterface = entry.getValue();
                                     if (inherited.contains(ownInterface) && processed.add(entry.getKey())) {
                                         holder.registerProblem(
                                                 entry.getKey(),
                                                 String.format(patternIndirectDuplication, ownInterface.getFQN(), parent.getFQN()),
-                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                 new TheLocalFix()
                                         );
                                     }
                                 }
+                                processed.clear();
                                 inherited.clear();
                             }
                         }
                         ownInterfaces.clear();
-
-                        processed.clear();
                     }
                 }
             }

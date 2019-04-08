@@ -11,20 +11,10 @@ namespace BasicCasesHolder {
 
     class ClassTwo extends AbstractTwo
     {}
-
-    class ClassImplementsSameInterfaceTwice
-        implements
-            ChildInterface
-    {}
 }
 
 namespace AliasingCasesHolder {
     use \Traversable as ForeachSupport;
-
-    class ClassImplementsSameInterfaceTwice
-        implements
-            \Traversable
-    {}
 
     abstract class AbstractClass implements \Traversable {}
     class RegularClass extends AbstractClass

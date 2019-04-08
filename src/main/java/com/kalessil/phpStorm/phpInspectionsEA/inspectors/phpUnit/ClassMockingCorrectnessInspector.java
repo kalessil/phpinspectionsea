@@ -93,6 +93,7 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                 } else if (referencedClass.isFinal()) {
                                     holder.registerProblem(arguments[0], messageFinal);
                                 }
+                                return;
                             } if (methodName.equals("getMockBuilder")) {
                                 /* classes might need different mocking methods usage */
                                 if (referencedClass.isAbstract() && !referencedClass.isInterface()) {
@@ -117,10 +118,14 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                         }
                                     }
                                 }
-                            } else if (methodName.equals("getMockForTrait") && !referencedClass.isTrait()) {
-                                holder.registerProblem(arguments[0], messageNeedsTrait);
-                            } else if (methodName.equals("getMockForAbstractClass") && !referencedClass.isAbstract()) {
-                                holder.registerProblem(arguments[0], messageNeedsAbstract);
+                            } else if (methodName.equals("getMockForTrait")) {
+                                if (!referencedClass.isTrait()) {
+                                    holder.registerProblem(arguments[0], messageNeedsTrait);
+                                }
+                            } else if (methodName.equals("getMockForAbstractClass")) {
+                                if (!referencedClass.isAbstract()) {
+                                    holder.registerProblem(arguments[0], messageNeedsAbstract);
+                                }
                             } else {
                                 if (referencedClass.isFinal()) {
                                     holder.registerProblem(arguments[0], messageFinal);

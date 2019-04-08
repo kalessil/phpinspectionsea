@@ -11,7 +11,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -104,7 +103,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                 if (storage instanceof FieldReference) {
                     /* fields processing is too complex, just report it when naming matches */
                     final String storageName = ((FieldReference) storage).getName();
-                    if (!StringUtils.isEmpty(storageName)) {
+                    if (storageName != null && !storageName.isEmpty()) {
                         final Matcher matcher = regexTargetNames.matcher(storageName);
                         if (matcher.matches() && !this.isChecked(substitutedExpression)) {
                             holder.registerProblem(substitutedExpression, messageNaming);

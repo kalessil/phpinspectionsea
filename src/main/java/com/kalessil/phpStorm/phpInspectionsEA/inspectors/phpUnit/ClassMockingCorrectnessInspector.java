@@ -93,8 +93,7 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                 } else if (referencedClass.isFinal()) {
                                     holder.registerProblem(arguments[0], messageFinal);
                                 }
-                                return;
-                            } if (methodName.equals("getMockBuilder")) {
+                            } else if (methodName.equals("getMockBuilder")) {
                                 /* classes might need different mocking methods usage */
                                 if (referencedClass.isAbstract() && !referencedClass.isInterface()) {
                                     holder.registerProblem(arguments[0], messageMockAbstract);

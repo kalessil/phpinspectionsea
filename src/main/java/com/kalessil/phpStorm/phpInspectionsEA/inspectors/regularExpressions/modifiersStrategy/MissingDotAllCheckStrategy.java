@@ -3,8 +3,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,15 +19,20 @@ import java.util.regex.Pattern;
  */
 
 final public class MissingDotAllCheckStrategy {
-    private static final String message = "/s modifier is probably missing (nested tags are not recognized).";
+    private static final String message = "/s modifier is probably missing (not matching multiline tag content).";
 
     final static private Pattern regexTagContentPattern;
     static {
-        regexTagContentPattern = Pattern.compile(".*>\\.([*+])\\?<.*");
+        regexTagContentPattern = Pattern.compile(".*>\\.[*+](\\?)?<.*");
     }
 
-    static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if ((modifiers == null || modifiers.indexOf('s') == -1) && pattern != null && pattern.indexOf('?') != -1) {
+    static public void apply(
+            @Nullable String modifiers,
+            @Nullable String pattern,
+            @NotNull StringLiteralExpression target,
+            @NotNull final ProblemsHolder holder
+    ) {
+        if ((modifiers == null || modifiers.indexOf('s') == -1) && pattern != null && pattern.indexOf('>') != -1) {
             final Matcher matcher = regexTagContentPattern.matcher(pattern);
             if (matcher.matches()) {
                 holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);

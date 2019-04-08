@@ -82,7 +82,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
             private boolean isTargetAssignment(@NotNull AssignmentExpression context, @NotNull FunctionReference reference) {
                 final PsiElement container = context.getVariable();
                 if (container != null) {
-                    return Stream.of(reference.getParameters()).anyMatch(a -> OpenapiEquivalenceUtil.areEqual(container, a));
+                    return Stream.of(reference.getParameters()).anyMatch(argument -> OpenapiEquivalenceUtil.areEqual(container, argument));
                 }
                 return false;
             }

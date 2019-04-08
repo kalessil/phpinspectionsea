@@ -14,6 +14,11 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("testData/fixtures/regularExpressions/short-character-classes.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testFindBuggyNestedTagsDetection() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/nested-tags.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testDelimiters() {
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
         myFixture.configureByFile("testData/fixtures/regularExpressions/delimeters.php");

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 
 public class HostnameSubstitutionInspector extends BasePhpInspection {
-    private static final String messageGeneral = "The email generation can be compromised, consider introducing whitelists.";
+    private static final String patternGeneral = "The email generation can be compromised via '$_SERVER['%s']', consider introducing whitelists.";
     private static final String messageNaming  = "The domain here can be compromised, consider introducing whitelists.";
 
     private static final Pattern regexTargetNames;
@@ -53,23 +53,23 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                     if (key instanceof StringLiteralExpression) {
                         final String attribute = ((StringLiteralExpression) key).getContents();
                         if (attribute.equals("SERVER_NAME") || attribute.equals("HTTP_HOST")) {
-                            this.identifyContextAndDelegateInspection(expression);
+                            this.identifyContextAndDelegateInspection(expression, attribute);
                         }
                     }
                 }
             }
 
-            private void identifyContextAndDelegateInspection(@NotNull ArrayAccessExpression expression) {
+            private void identifyContextAndDelegateInspection(@NotNull ArrayAccessExpression expression, @NotNull String attribute) {
                 PsiElement parent = expression.getParent();
                 while (parent != null && !(parent instanceof PsiFile)) {
                     if (parent instanceof Function || parent instanceof PhpClass) {
                         /* at function/method/class level we can stop */
                         break;
                     } else if (parent instanceof ConcatenationExpression){
-                        this.inspectConcatenationContext(expression, (ConcatenationExpression) parent);
+                        this.inspectConcatenationContext(expression, (ConcatenationExpression) parent, attribute);
                         break;
                     } else if (OpenapiTypesUtil.isAssignment(parent)) {
-                        this.inspectAssignmentContext(expression, (AssignmentExpression) parent);
+                        this.inspectAssignmentContext(expression, (AssignmentExpression) parent, attribute);
                         break;
                     }
                     parent = parent.getParent();
@@ -79,7 +79,8 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
             /* direct/decorated concatenation with "...@" */
             private void inspectConcatenationContext(
                     @NotNull ArrayAccessExpression substitutedExpression,
-                    @NotNull ConcatenationExpression context
+                    @NotNull ConcatenationExpression context,
+                    @NotNull String attribute
             ) {
                 PsiElement left = context.getLeftOperand();
                 if (left instanceof ConcatenationExpression) {
@@ -89,14 +90,15 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                 if (right != null && left instanceof StringLiteralExpression) {
                     final boolean containsAt = ((StringLiteralExpression) left).getContents().endsWith("@");
                     if (containsAt && !this.isChecked(substitutedExpression)) {
-                        holder.registerProblem(right, messageGeneral);
+                        holder.registerProblem(right, String.format(patternGeneral, attribute));
                     }
                 }
             }
 
             private void inspectAssignmentContext(
                 @NotNull ArrayAccessExpression substitutedExpression,
-                @NotNull AssignmentExpression context
+                @NotNull AssignmentExpression context,
+                @NotNull String attribute
             ) {
                 final PsiElement storage = context.getVariable();
                 if (storage instanceof FieldReference) {
@@ -120,7 +122,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
                             } else if (candidate.getName().equals(variableName)) {
                                 final PsiElement parent = candidate.getParent();
                                 if (parent instanceof ConcatenationExpression) {
-                                    this.inspectConcatenationContext(substitutedExpression, (ConcatenationExpression) parent);
+                                    this.inspectConcatenationContext(substitutedExpression, (ConcatenationExpression) parent, attribute);
                                 }
                             }
                         }

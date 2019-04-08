@@ -1,8 +1,8 @@
 <?php
 
-    echo '' . '@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$_SERVER['SERVER_NAME']</error>;
-    echo '@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>;
-    echo '@' . <error descr="The email generation can be compromised, consider introducing whitelists.">strtolower($_SERVER['HTTP_HOST'])</error>;
+    echo '' . '@' . <error descr="The email generation can be compromised via '$_SERVER['SERVER_NAME']', consider introducing whitelists.">$_SERVER['SERVER_NAME']</error>;
+    echo '@' . <error descr="The email generation can be compromised via '$_SERVER['HTTP_HOST']', consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>;
+    echo '@' . <error descr="The email generation can be compromised via '$_SERVER['HTTP_HOST']', consider introducing whitelists.">strtolower($_SERVER['HTTP_HOST'])</error>;
 
     /* false-positives: there are no email-alike criterion matched */
     echo $_SERVER['HTTP_HOST'];
@@ -16,10 +16,13 @@
     function cases_holder_second() {
         if (isset($_SERVER['HTTP_HOST'])) {
             $domain = $_SERVER['HTTP_HOST'];
-        } else {
-            $domain = $_SERVER['SERVER_NAME'];
         }
-        echo '' . '@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$domain</error>;
+        echo '' . '@' . <error descr="The email generation can be compromised via '$_SERVER['HTTP_HOST']', consider introducing whitelists.">$domain</error>;
+
+        if (isset($_SERVER['SERVER_NAME'])) {
+            $host = $_SERVER['SERVER_NAME'];
+        }
+        echo '' . '@' . <error descr="The email generation can be compromised via '$_SERVER['SERVER_NAME']', consider introducing whitelists.">$host</error>;
     }
 
     function valid_cases() {
@@ -35,7 +38,7 @@
         if (strpos($server,'www.') === 0) {
             $server = substr($server, 4);
         }
-        return 'me@' . <error descr="The email generation can be compromised, consider introducing whitelists.">$server</error>;
+        return 'me@' . <error descr="The email generation can be compromised via '$_SERVER['SERVER_NAME']', consider introducing whitelists.">$server</error>;
     }
 
     function whitelisted_case() {

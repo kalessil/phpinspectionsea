@@ -40,6 +40,8 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
         functionsSet.add("array_merge_recursive");
         functionsSet.add("array_replace");
         functionsSet.add("array_replace_recursive");
+        functionsSet.add("count");
+        functionsSet.add("array_unique");
     }
 
     @Override

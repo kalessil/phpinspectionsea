@@ -68,18 +68,20 @@ final public class NullableVariablesStrategy {
             }
 
             /* check if the variable has been written only once, inspect when null/void values are possible */
-            final Project project = holder.getProject();
+            final Project project           = holder.getProject();
+            final Set<PsiElement> processed = new HashSet<>();
             for (final Map.Entry<String, List<AssignmentExpression>> pair : assignments.entrySet()) {
                 final List<AssignmentExpression> variableAssignments = pair.getValue();
                 if (!variableAssignments.isEmpty()) {
                     final AssignmentExpression assignment = variableAssignments.get(0);
                     if (isNullableResult(assignment, project)) {
                         /* find first nullable assignments, invoke analyzing statements after it */
-                        apply(pair.getKey(), assignment, body, holder);
+                        apply(pair.getKey(), assignment, body, holder, processed);
                     }
                     variableAssignments.clear();
                 }
             }
+            processed.clear();
             assignments.clear();
         }
     }
@@ -127,6 +129,7 @@ final public class NullableVariablesStrategy {
     public static void applyToParameters(@NotNull Function function, @NotNull ProblemsHolder holder) {
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
         if (body != null) {
+            final Set<PsiElement> processed = new HashSet<>();
             for (final Parameter parameter : function.getParameters()) {
                 final Set<String> declaredTypes = new HashSet<>();
                 parameter.getDeclaredType().getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
@@ -142,11 +145,12 @@ final public class NullableVariablesStrategy {
                     }
 
                     if (isObject) {
-                        apply(parameter.getName(), null, body, holder);
+                        apply(parameter.getName(), null, body, holder, processed);
                     }
                 }
                 declaredTypes.clear();
             }
+            processed.clear();
         }
     }
 
@@ -154,7 +158,8 @@ final public class NullableVariablesStrategy {
         @NotNull String variableName,
         @Nullable AssignmentExpression variableDeclaration,
         @NotNull GroupStatement body,
-        @NotNull ProblemsHolder holder
+        @NotNull ProblemsHolder holder,
+        @NotNull Set<PsiElement> processed
     ) {
         /* find variable usages, control flow is not our friend here */
         final Function function        = (Function) body.getParent();
@@ -186,15 +191,16 @@ final public class NullableVariablesStrategy {
         final Project project                 = holder.getProject();
         boolean skipPerformed                 = false;
         final boolean skipToDeclarationNeeded = variableDeclaration != null;
-        for (final Variable variable : variables){
-            final PsiElement parent      = variable.getParent();
-            final PsiElement grandParent = parent.getParent();
+        for (final Variable variable : variables) {
+            final PsiElement parent = variable.getParent();
 
             /* for local variables we need to skip usages until assignment performed */
             if (skipToDeclarationNeeded && !skipPerformed) {
                 skipPerformed = variableDeclaration == parent;
                 continue;
             }
+
+            final PsiElement grandParent = parent.getParent();
 
             /* instanceof, implicit null comparisons */
             if (parent instanceof BinaryExpression) {
@@ -242,7 +248,7 @@ final public class NullableVariablesStrategy {
             /* cases when NPE can be introduced: array access */
             else if (parent instanceof ArrayAccessExpression) {
                 final PsiElement container = ((ArrayAccessExpression) parent).getValue();
-                if (variable == container) {
+                if (variable == container && processed.add(variable)) {
                     holder.registerProblem(variable, message);
                 }
             }
@@ -275,16 +281,20 @@ final public class NullableVariablesStrategy {
                         continue;
                     }
 
-                    holder.registerProblem(subject, message);
+                    if (processed.add(subject)) {
+                        holder.registerProblem(subject, message);
+                    }
                 }
             }
             /* cases when NPE can be introduced: __invoke calls */
             else if (OpenapiTypesUtil.isFunctionReference(parent) && variable == parent.getFirstChild()) {
-                holder.registerProblem(variable, message);
+                if (processed.add(variable)) {
+                    holder.registerProblem(variable, message);
+                }
             }
             /* cases when NPE can be introduced: clone operator */
             else if (parent instanceof UnaryExpression) {
-                if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.kwCLONE)) {
+                if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.kwCLONE) && processed.add(variable)) {
                     holder.registerProblem(variable, message);
                 }
             }
@@ -314,7 +324,7 @@ final public class NullableVariablesStrategy {
                                 break;
                             }
                         }
-                        if (isObject) {
+                        if (isObject && processed.add(variable)) {
                             holder.registerProblem(variable, message);
                         }
                     }

@@ -1,25 +1,21 @@
 <html>
 New features release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Binary-unsafe 'fopen(...)' usage: new settings<br/>
-- Encryption initialization vector randomness: resolved a false-positive<br/>
-- Foreach usage possible: QF bug-fixes<br/>
-- Foreach usage possible: resoled a false-positive<br/>
-- Isset operations variables existence: new settings<br/>
-- Hostname substitution: resolved a false-positive (whitelist checked expressions)<br/>
-- One-time use variables: resolved a false-positive<br/>
-- Return type hint can be used: QF bug-fix<br/>
-- Unknown inspection suppression: resolved a false-positive<br/>
-- 'compact(...)' variables existence: reworked reporting<br/>
+- Foreach usage possible: resolved a false-positive (lacking limit analysis)<br/>
+- Forgotten debug statements: resolved a false-positive (imports)<br/>
+- Proper null-coalescing operator usage: resolved false positives<br/>
+- Traits properties conflicts resolution: resolved a false-positive (annotations)<br/>
+- Unnecessary call arguments specification: resolved a false-positive<br/>
+- Unknown inspection suppression: resolved a false-positive (sql data source)<br/>
+- Unsupported string offset operations: resolved a false-positive (super-globals)<br/>
+- Unused constructor dependencies: resolved a false-positive (closure)<br/>
+- 'gmmktime(...)'/'mktime(...)' usage: resolved a false-positive (imports)<br/>
+- 'ob_get_clean()' can be used: resolved a false-positive (no-root ns functions)<br/>
+- 'yield from' can be used: resolved a false-positive (yield from in a loop)<br/>
 <br/>
-- Callable name case mismatched in a call: dropped (IDE offers a native inspection)<br/>
-- Dynamic methods invocation via '::': new patterns<br/>
-- Proper null-coalescing operator usage: implemented<br/>
-- Short echo tag can be used: implemented (needs activation)<br/>
-- Static closure can be used: implemented<br/>
-- Unnecessary semicolon: new patterns<br/>
-- 'ob_get_clean()' can be used: implemented<br/>
-- 'implode(...)' arguments order: implemented<br/>
+- PHP short open tag usage: new patterns<br/>
+- Unnecessary closures: new patterns<br/>
+- 'json_decode(...)' result type: implemented<br/>
 <br/>
 <hr/>
 </html>

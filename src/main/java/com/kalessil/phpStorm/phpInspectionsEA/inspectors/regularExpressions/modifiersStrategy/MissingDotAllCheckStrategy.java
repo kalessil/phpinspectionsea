@@ -9,12 +9,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class MissingDotAllCheckStrategy {
-    private static final String message = "/s modifier is probably missing (nested tags are not recognized).";
+    private static final String message = "/s modifier is probably missing (not matching multiline tag content).";
 
     final static private Pattern regexTagContentPattern;
     static {
-        regexTagContentPattern = Pattern.compile(".*>\\.([*+])\\?<.*");
+        regexTagContentPattern = Pattern.compile(".*>\\.[*+](\\?)?<.*");
     }
 
     static public boolean apply(
@@ -24,7 +33,7 @@ final public class MissingDotAllCheckStrategy {
             @NotNull ProblemsHolder holder
     ) {
         boolean result = false;
-        if (pattern != null && pattern.indexOf('?') != -1) {
+        if (pattern != null && pattern.indexOf('>') != -1) {
             final boolean hasModifier = modifiers != null && modifiers.indexOf('s') != -1;
             if (!hasModifier) {
                 final Matcher regexMatcher = regexTagContentPattern.matcher(pattern);

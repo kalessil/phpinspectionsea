@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 
 public class AutoloadingIssuesInspector extends BasePhpInspection {
     private static final String messageName = "Class autoloading might be broken: file and class names are not matching.";
-    private static final String messagePath = "Class autoloading might be broken: file path and namespace are not matching.";
+    private static final String messagePath = "Class autoloading might be broken: directory path and namespace are not matching.";
 
     final static private Pattern laravelMigration        = Pattern.compile("\\d{4}_\\d{2}_\\d{2}_\\d{6}_(\\w+)\\.php");
     private static final Collection<String> ignoredFiles = new HashSet<>();
@@ -87,7 +87,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                                 if (path.contains("/src/")) {
                                     final String[] fragments = path.split("/src/");
                                     if (fragments.length == 2) {
-                                        final String normalizedFragment = fragments[1].replaceAll("/", "\\").replaceAll(fileName, "");
+                                        final String normalizedFragment = fragments[1].replaceAll("/", "\\\\").replaceAll(fileName, "");
                                         final String expectedFqnEnding  = "\\" + normalizedFragment + extractedClassName;
                                         if (!clazz.getFQN().endsWith(expectedFqnEnding)) {
                                             final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);

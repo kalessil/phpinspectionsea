@@ -2,21 +2,20 @@
 <!-- git log ultimate ^master --no-merges > changelog.log -->
 New features release<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/59883">v3.0.12</a><br/>
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/60678">v3.0.13</a><br/>
 <br/>
-- Insecure 'htmlspecialchars(...)' usage: resolved a false-positive (ENT_NOQUOTES)<br/>
-- Insecure 'htmlentities(...)' usage: resolved a false-positive (ENT_NOQUOTES)<br/>
-- Suspicious binary operations: resolved a false-positive<br/>
-- get/set methods correctness: resolved a false-positive (phpdoc properties)<br/>
+- Declaration access can be weaker: resolved a false (child classes exists)<br/>
+- Unused function result: resolved a false-positive (fluent interfaces)<br/>
+- 'yield from' can be used: resolved a false-positive (yield from in a loop)<br/>
 <br/>
-- Foreach usage possible: new patterns<br/>
-- Static lambdas binding: implemented<br/>
+- Class autoloading correctness: new patterns<br/>
+- Badly organized exception handling: new patterns<br/>
+- Low performing directory operations: implemented<br/>
+- One-time use variables: new patterns<br/>
+- Overriding deprecated methods: new patterns<br/>
+- Slow array function used in loop: new patterns<br/>
 - Suspicious binary operations: new patterns<br/>
-- Suspicious loop: new patterns<br/>
-- 'array_merge(...)' misused: new patterns<br/>
-- 'basename(...)' usage correctness: implemented<br/>
 - 'explode(...)' misused: new patterns<br/>
-- 'implode(...)' misused: implemented<br/>
 <br/>
 <hr/>
 </html>

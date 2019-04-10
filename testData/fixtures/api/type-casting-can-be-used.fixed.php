@@ -26,4 +26,6 @@ function cases_holder() {
     $x = " $y";
     $x = "$y ";
     $x = "{$y}{$y}";
+
+    $x = (string)$x;
 }

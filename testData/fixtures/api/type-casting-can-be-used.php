@@ -26,4 +26,6 @@ function cases_holder() {
     $x = " $y";
     $x = "$y ";
     $x = "{$y}{$y}";
+
+    $x = <weak_warning descr="'(string) $x' would express the intention here better.">$x->__toString()</weak_warning>;
 }

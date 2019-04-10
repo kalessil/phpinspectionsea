@@ -1,19 +1,23 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /*
@@ -28,7 +32,7 @@ import java.util.regex.Pattern;
 public class AutoloadingIssuesInspector extends BasePhpInspection {
     private static final String message = "Class autoloading might be broken: file and class names are not identical.";
 
-    final static private Pattern laravelMigration        = Pattern.compile("\\d{4}_\\d{2}_\\d{2}_\\d{6}_.+\\.php");
+    final static private Pattern laravelMigration        = Pattern.compile("\\d{4}_\\d{2}_\\d{2}_\\d{6}_(\\w+)\\.php");
     private static final Collection<String> ignoredFiles = new HashSet<>();
     static {
         ignoredFiles.add("index.php");
@@ -46,33 +50,59 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFile(@NotNull PhpFile file) {
-                if (this.isContainingFileSkipped(file)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(file))                   { return; }
 
                 final String fileName = file.getName();
-                if (fileName.endsWith(".php") && !ignoredFiles.contains(fileName) && !laravelMigration.matcher(fileName).matches()) {
-                    final List<PhpClass> classes = new ArrayList<>();
-                    file.getTopLevelDefs().values().stream()
-                            .filter(definition  -> definition instanceof PhpClass)
-                            .forEach(definition -> classes.add((PhpClass) definition));
-                    /* multiple classes defined, do nothing - this doesn't comply to PSRs */
-                    if (classes.size() == 1) {
-                        final PhpClass clazz = classes.get(0);
-                        /* support older PSR classloading (Package_Subpackage_Class) naming */
-                        String extractedClassName = clazz.getName();
-                        if (clazz.getFQN().lastIndexOf('\\') == 0 && extractedClassName.indexOf('_') != -1) {
-                            extractedClassName = extractedClassName.substring(1 + extractedClassName.lastIndexOf('_'));
-                        }
-                        /* now check if names are identical */
-                        final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
-                        if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
-                            final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
-                            if (classNameNode != null) {
-                                holder.registerProblem(classNameNode, message);
+                if (fileName.endsWith(".php") && !ignoredFiles.contains(fileName)) {
+                    final PhpClass clazz = this.getClass(file);
+                    if (clazz != null) {
+                        final Matcher matcher = laravelMigration.matcher(fileName);
+                        if (matcher.matches()) {
+                            String expectedClassName = StringUtil.capitalizeWords(matcher.group(1).replaceAll("_", " "), true);
+                            expectedClassName        = expectedClassName.replaceAll(" ", "");
+                            /* match names and report issues */
+                            if (!expectedClassName.equals(clazz.getName())) {
+                                final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
+                                if (classNameNode != null) {
+                                    holder.registerProblem(classNameNode, message);
+                                }
+                            }
+                        } else {
+                            final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
+                            /* case: older PSR classloading naming (Package_Subpackage_Class) */
+                            String extractedClassName      = clazz.getName();
+                            if (clazz.getFQN().lastIndexOf('\\') == 0 && extractedClassName.indexOf('_') != -1) {
+                                extractedClassName = extractedClassName.substring(extractedClassName.lastIndexOf('_') + 1);
+                            }
+                            /* match names and report issues */
+                            if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
+                                final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
+                                if (classNameNode != null) {
+                                    holder.registerProblem(classNameNode, message);
+                                }
                             }
                         }
                     }
-                    classes.clear();
                 }
+            }
+
+            @Nullable
+            private PhpClass getClass(@NotNull PhpFile file) {
+                /* according to PSRs file can contain only one class */
+                final List<PhpClass> classes = new ArrayList<>();
+                for (final PsiElement definition : file.getTopLevelDefs().values()) {
+                    if (definition instanceof PhpClass) {
+                        classes.add((PhpClass) definition);
+                        if (classes.size() > 1) {
+                            break;
+                        }
+                    }
+                }
+                final PhpClass clazz = classes.size() == 1 ? classes.get(0) : null;
+                classes.clear();
+
+                return clazz;
             }
         };
     }

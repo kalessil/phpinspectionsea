@@ -22,3 +22,6 @@
     preg_match('/[1-5]/', '');
     preg_match('/[A-Za-z]/', '');
     preg_match('/[a-zA-Z]/', '');
+    
+    preg_match('/[а-я]/u', '');
+    preg_match('/[А-Я]/u', '');

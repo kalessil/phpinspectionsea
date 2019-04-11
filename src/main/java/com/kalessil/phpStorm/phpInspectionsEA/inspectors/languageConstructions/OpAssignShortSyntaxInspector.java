@@ -15,16 +15,28 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class OpAssignShortSyntaxInspector extends BasePhpInspection {
-    private static final String messagePattern = "Can be safely refactored as '%r%'.";
+    private static final String messagePattern = "Can be safely refactored as '%s'.";
 
     @NotNull
     public String getShortName() {
         return "OpAssignShortSyntaxInspection";
     }
 
-    private static final HashMap<IElementType, IElementType> mapping = new HashMap<>();
+    private static final Map<IElementType, IElementType> mapping = new HashMap<>();
     static {
         mapping.put(PhpTokenTypes.opPLUS,        PhpTokenTypes.opPLUS_ASGN);
         mapping.put(PhpTokenTypes.opMINUS,       PhpTokenTypes.opMINUS_ASGN);
@@ -43,29 +55,48 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
-                PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignmentExpression.getValue());
-                /* try reaching operator in binary expression, expected as value */
+            @Override
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignment) {
+                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
                 if (value instanceof BinaryExpression) {
-                    final BinaryExpression valueExpression = (BinaryExpression) value;
-                    final PsiElement operator              = valueExpression.getOperation();
-                    if (null != operator) {
-                        final IElementType operation  = operator.getNode().getElementType();
-                        final PsiElement leftOperand  = valueExpression.getLeftOperand();
-                        final PsiElement rightOperand = valueExpression.getRightOperand();
-                        final PsiElement variable     = assignmentExpression.getVariable();
-                        /* ensure that's an operation we are looking for and pattern recognized */
-                        if (
-                            null != variable && null != leftOperand && null != rightOperand &&
-                            mapping.containsKey(operation) &&
-                            OpenapiEquivalenceUtil.areEqual(variable, leftOperand)
-                        ) {
-                            final String replacement = "%v% %o%= %e%"
-                                .replace("%e%", rightOperand.getText())
-                                .replace("%o%", operator.getText())
-                                .replace("%v%", leftOperand.getText());
-                            final String message = messagePattern.replace("%r%", replacement);
-                            holder.registerProblem(assignmentExpression, message, new UseShorthandOperatorFix(replacement));
+                    final BinaryExpression binary = (BinaryExpression) value;
+                    final PsiElement operator     = binary.getOperation();
+                    if (operator != null) {
+                        final PsiElement left     = binary.getLeftOperand();
+                        final PsiElement right    = binary.getRightOperand();
+                        final PsiElement variable = assignment.getVariable();
+                        if (variable != null && left != null && right != null) {
+                            final IElementType operation = operator.getNode().getElementType();
+                            if (mapping.containsKey(operation)) {
+                                final LinkedList<PsiElement> fragments = new LinkedList<>();
+                                fragments.addLast(right);
+                                PsiElement candidate = left;
+                                while (candidate instanceof BinaryExpression) {
+                                    final BinaryExpression current = (BinaryExpression) candidate;
+                                    final PsiElement rightPart     = current.getRightOperand();
+                                    if (rightPart != null) {
+                                        fragments.addLast(rightPart);
+                                    }
+                                    if (current.getOperationType() != operation) {
+                                        break;
+                                    }
+                                    candidate = current.getLeftOperand();
+                                }
+                                if (candidate != null && OpenapiEquivalenceUtil.areEqual(variable, candidate)) {
+                                    final String replacement = String.format(
+                                            "%s %s= %s",
+                                            candidate.getText(),
+                                            operator.getText(),
+                                            fragments.stream().map(PsiElement::getText).collect(Collectors.joining(" " + operator.getText() + " "))
+                                    );
+                                    holder.registerProblem(
+                                            assignment,
+                                            String.format(messagePattern, replacement),
+                                            new UseShorthandOperatorFix(replacement)
+                                    );
+                                }
+                                fragments.clear();
+                            }
                         }
                     }
                 }

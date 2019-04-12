@@ -7,7 +7,10 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -36,7 +39,13 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                     }
                 }
             } if (left instanceof FunctionReference) {
-                holder.registerProblem(left, String.format(messagePatternCall, left.getText()));
+                final PhpType resolved = OpenapiResolveUtil.resolveType((FunctionReference) left, holder.getProject());
+                if (resolved != null && !resolved.hasUnknown()) {
+                    final boolean isTarget = resolved.getTypes().stream().noneMatch(t -> Types.getType(t).equals(Types.strString));
+                    if (isTarget) {
+                        holder.registerProblem(left, String.format(messagePatternCall, left.getText()));
+                    }
+                }
             }
         }
         return result;

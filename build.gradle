@@ -56,3 +56,4 @@ jar {
 }
 
 test.testLogging.exceptionFormat = TestExceptionFormat.FULL
+compileJava.options.encoding     = 'UTF-8'

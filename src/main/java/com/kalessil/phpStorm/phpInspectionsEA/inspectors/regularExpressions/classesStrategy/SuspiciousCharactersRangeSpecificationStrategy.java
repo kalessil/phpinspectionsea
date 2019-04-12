@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +19,8 @@ import java.util.regex.Pattern;
  */
 
 public class SuspiciousCharactersRangeSpecificationStrategy {
-    private static final String messagePattern = "'%s' range in '%s' is looking rather suspicious, please check.";
+    private static final String messagePattern         = "'%s' range in '%s' is looking rather suspicious, please check.";
+    private static final String messageMissingCyrillic = "'%s' does not match all cyrillic characters, consider using '%s' instead.";
 
     final static private Pattern matchGroups;
     final static private Pattern matchRanges;
@@ -29,7 +31,12 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
         matchRanges = Pattern.compile("[^\\\\]-(?:[^\\\\]|\\\\[^xpu])");
     }
 
-    static public void apply(final String pattern, @NotNull final PsiElement target, @NotNull final ProblemsHolder holder) {
+    static public void apply(
+            @Nullable String modifiers,
+            @Nullable String pattern,
+            @NotNull PsiElement target,
+            @NotNull ProblemsHolder holder
+    ) {
         if (pattern != null && !pattern.isEmpty() && pattern.indexOf('[') != -1) {
             final Matcher groupsMatcher = matchGroups.matcher(pattern);
             while (groupsMatcher.find()) {
@@ -49,19 +56,23 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
                             try {
                                 final String[] fragments = range.split("-");
                                 if (Integer.parseInt(fragments[0]) < Integer.parseInt(fragments[1])) {
-                                    return;
+                                    continue;
                                 }
                             } catch (final NumberFormatException expected) {
-                                // return;
+                                // continue;
                             }
                         }
 
-                        holder.registerProblem(
-                                target,
-                                String.format(messagePattern, range, match),
-                                ProblemHighlightType.GENERIC_ERROR
-                        );
+                        holder.registerProblem(target, String.format(messagePattern, range, match), ProblemHighlightType.GENERIC_ERROR);
                     }
+                }
+            }
+
+            if (modifiers != null && modifiers.contains("u")) {
+                if (pattern.contains("а-я") && !pattern.contains("ё")) {
+                    holder.registerProblem(target, String.format(messageMissingCyrillic, "а-я", "ёа-я"), ProblemHighlightType.GENERIC_ERROR);
+                } else if (pattern.contains("А-Я") && !pattern.contains("Ё")) {
+                    holder.registerProblem(target, String.format(messageMissingCyrillic, "А-Я", "ЁА-Я"), ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         }

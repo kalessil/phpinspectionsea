@@ -23,5 +23,7 @@
     preg_match('/[A-Za-z]/', '');
     preg_match('/[a-zA-Z]/', '');
     
-    preg_match('/[а-я]/u', '');
-    preg_match('/[А-Я]/u', '');
+    preg_match(<error descr="'а-я' does not match all cyrillic characters, consider using 'ёа-я' instead.">'/[а-я]/u'</error>, '');
+    preg_match(<error descr="'А-Я' does not match all cyrillic characters, consider using 'ЁА-Я' instead.">'/[А-Я]/u'</error>, '');
+    preg_match('/[ёа-я]/u', '');
+    preg_match('/[ЁА-Я]/u', '');

@@ -183,7 +183,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                 missingModifiers         = MissingUnicodeModifierStrategy.apply(modifiers, regex, target, holder) || missingModifiers;
                 if (!missingModifiers) {
                     /* suspicious characters specification:  [...A-z...]/[...a-Z...] */
-                    SuspiciousCharactersRangeSpecificationStrategy.apply(regex, target, holder);
+                    SuspiciousCharactersRangeSpecificationStrategy.apply(modifiers, regex, target, holder);
                 }
             }
 

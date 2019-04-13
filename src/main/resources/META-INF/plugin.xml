@@ -137,7 +137,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformingDirectoryOperationsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ArrayMapMissUseInspection"    displayName="'array_map(...)' misused"
-        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayMapMissUseInspector"/>
 
 

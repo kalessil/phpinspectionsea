@@ -306,3 +306,4 @@ Inspections Lists (Performance)
 | Performance          | ArrayMergeMissUseInspection                     | 'array_merge(...)' misused                                                                        | yes | yes | yes  | no  |
 | Performance          | IteratorToArrayMissUseInspection                | 'iterator_to_array(...)' misused                                                                  | yes | yes | yes  | no  |
 | Performance          | ImplodeMissUseInspection                        | 'implode(...)' misused                                                                            | yes | yes | yes  | no  |
+| Performance          | ArrayMapMissUseInspection                       | 'array_map(...)' misused                                                                          | yes | yes | yes  | no  |

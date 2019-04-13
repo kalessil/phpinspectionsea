@@ -65,7 +65,7 @@ public class ArrayMapMissUseInspector extends BasePhpInspection {
                                                 String.join(", ", arguments)
                                         );
                                         arguments.clear();
-                                        holder.registerProblem(reference, message, new ReplaceFix(replacement));
+                                        holder.registerProblem(outerCall, message, new ReplaceFix(replacement));
                                     }
                                 }
                             }

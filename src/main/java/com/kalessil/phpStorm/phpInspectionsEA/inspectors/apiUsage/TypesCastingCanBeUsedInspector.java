@@ -5,8 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -30,6 +30,7 @@ import java.util.HashMap;
 public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern     = "'%s' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).";
     private static final String messageInlining    = "'%s' would express the intention here better (less types coercion magic).";
+    private static final String messageMagic       = "'%s' would express the intention here better.";
     private static final String messageMultiplyOne = "Casting to int or float would be more performant here (up to 6x times faster).";
 
     // Inspection options.
@@ -152,6 +153,22 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
                             holder.registerProblem(expression, messageMultiplyOne);
                         }
                     }
+                }
+            }
+
+            @Override
+            public void visitPhpMethodReference(@NotNull MethodReference reference) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
+
+                final String methodName = reference.getName();
+                if (methodName != null && methodName.equals("__toString")) {
+                    final String replacement = String.format("(string) %s", reference.getFirstChild().getText());
+                    holder.registerProblem(
+                            reference,
+                            String.format(messageMagic, replacement),
+                            new UseTypeCastingFix(replacement)
+                    );
                 }
             }
         };

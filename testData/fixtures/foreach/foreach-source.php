@@ -38,9 +38,10 @@
         is_int($value);
     }
 
-    /* @var $stdClass stdClass */
+    class Clazz {}
+    /* @var $clazz \Clazz */
     foreach (
-         <warning descr="Iterates over '\stdClass' properties (probably should implement one of Iterator interfaces).">$stdClass</warning> as $value
+         <warning descr="Iterates over '\Clazz' properties (probably should implement one of Iterator interfaces).">$clazz</warning> as $value
     ) {
         is_int($value);
     }

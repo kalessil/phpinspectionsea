@@ -35,7 +35,8 @@ import java.util.stream.Collectors;
 
 public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean ANALYZE_TYPES = true;
+    public boolean ANALYZE_TYPES           = true;
+    public boolean ALLOW_OVERLAPPING_TYPES = true;
 
     private static final String messageSimplify = "It possible to use '%s' instead (reduces cognitive load).";
     private static final String messageMismatch = "Resolved operands types are not complimentary, while they should be (%s vs %s).";
@@ -76,12 +77,11 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                                 if (leftTypes != null && !leftTypes.isEmpty()) {
                                     final Set<String> rightTypes = this.resolve((PhpTypedElement) right);
                                     if (rightTypes != null && !rightTypes.isEmpty()) {
-                                        final boolean skip = rightTypes.containsAll(leftTypes) || this.areRelated(rightTypes, leftTypes);
-                                        if (!skip) {
-                                            holder.registerProblem(
-                                                    binary,
-                                                    String.format(messageMismatch, leftTypes.toString(), rightTypes.toString())
-                                            );
+                                        final boolean complimentary = ALLOW_OVERLAPPING_TYPES
+                                                ? rightTypes.stream().anyMatch(leftTypes::contains)
+                                                : rightTypes.containsAll(leftTypes);
+                                        if (!complimentary && !this.areRelated(rightTypes, leftTypes)) {
+                                            holder.registerProblem(binary, String.format(messageMismatch, leftTypes.toString(), rightTypes.toString()));
                                         }
                                         rightTypes.clear();
                                     }
@@ -135,9 +135,10 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) ->
-            component.addCheckbox("Verify complimentary operands types", ANALYZE_TYPES, (isSelected) -> ANALYZE_TYPES = isSelected)
-        );
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Verify complimentary operands types", ANALYZE_TYPES, (isSelected) -> ANALYZE_TYPES = isSelected);
+            component.addCheckbox("Consider overlapping types complimentary", ALLOW_OVERLAPPING_TYPES, (isSelected) -> ALLOW_OVERLAPPING_TYPES = isSelected);
+        });
     }
 
     private static final class UseLeftOperandFix extends UseSuggestedReplacementFixer {

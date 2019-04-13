@@ -27,6 +27,8 @@ function cases_holder() {
     $x = "$y ";
     $x = "{$y}{$y}";
 
+    $x = <weak_warning descr="'(string) $x' would express the intention here better.">$x->__toString()</weak_warning>;
+
     $x = <weak_warning descr="Casting to int or float would be more performant here (up to 6x times faster).">$x * 1</weak_warning>;
     $x = <weak_warning descr="Casting to int or float would be more performant here (up to 6x times faster).">1 * $x</weak_warning>;
 

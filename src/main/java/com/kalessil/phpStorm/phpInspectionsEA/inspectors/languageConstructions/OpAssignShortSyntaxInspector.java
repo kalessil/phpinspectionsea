@@ -15,6 +15,18 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -33,7 +45,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         return "OpAssignShortSyntaxInspection";
     }
 
-    private static final HashMap<IElementType, IElementType> mapping = new HashMap<>();
+    private static final Map<IElementType, IElementType> mapping = new HashMap<>();
     static {
         mapping.put(PhpTokenTypes.opPLUS,        PhpTokenTypes.opPLUS_ASGN);
         mapping.put(PhpTokenTypes.opMINUS,       PhpTokenTypes.opMINUS_ASGN);
@@ -57,29 +69,45 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(assignment)) { return; }
 
                 final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
-                /* try reaching operator in binary expression, expected as value */
                 if (value instanceof BinaryExpression) {
                     final BinaryExpression binary = (BinaryExpression) value;
                     final PsiElement operator     = binary.getOperation();
                     if (operator != null) {
-                        final PsiElement leftOperand  = binary.getLeftOperand();
-                        final PsiElement rightOperand = binary.getRightOperand();
-                        final PsiElement variable     = assignment.getVariable();
-                        /* ensure that's an operation we are looking for and pattern recognized */
-                        if (
-                            variable != null && leftOperand != null && rightOperand != null &&
-                            mapping.containsKey(operator.getNode().getElementType()) &&
-                            OpenapiEquivalenceUtil.areEqual(variable, leftOperand)
-                        ) {
-                            final String replacement = "%v% %o%= %e%"
-                                .replace("%e%", rightOperand.getText())
-                                .replace("%o%", operator.getText())
-                                .replace("%v%", leftOperand.getText());
-                            holder.registerProblem(
-                                    assignment,
-                                    String.format(messagePattern, replacement),
-                                    new UseShorthandOperatorFix(replacement)
-                            );
+                        final PsiElement left     = binary.getLeftOperand();
+                        final PsiElement right    = binary.getRightOperand();
+                        final PsiElement variable = assignment.getVariable();
+                        if (variable != null && left != null && right != null) {
+                            final IElementType operation = operator.getNode().getElementType();
+                            if (mapping.containsKey(operation)) {
+                                final LinkedList<PsiElement> fragments = new LinkedList<>();
+                                fragments.addLast(right);
+                                PsiElement candidate = left;
+                                while (candidate instanceof BinaryExpression) {
+                                    final BinaryExpression current = (BinaryExpression) candidate;
+                                    final PsiElement rightPart     = current.getRightOperand();
+                                    if (rightPart != null) {
+                                        fragments.addLast(rightPart);
+                                    }
+                                    if (current.getOperationType() != operation) {
+                                        break;
+                                    }
+                                    candidate = current.getLeftOperand();
+                                }
+                                if (candidate != null && OpenapiEquivalenceUtil.areEqual(variable, candidate)) {
+                                    final String replacement = String.format(
+                                            "%s %s= %s",
+                                            candidate.getText(),
+                                            operator.getText(),
+                                            fragments.stream().map(PsiElement::getText).collect(Collectors.joining(" " + operator.getText() + " "))
+                                    );
+                                    holder.registerProblem(
+                                            assignment,
+                                            String.format(messagePattern, replacement),
+                                            new UseShorthandOperatorFix(replacement)
+                                    );
+                                }
+                                fragments.clear();
+                            }
                         }
                     }
                 }

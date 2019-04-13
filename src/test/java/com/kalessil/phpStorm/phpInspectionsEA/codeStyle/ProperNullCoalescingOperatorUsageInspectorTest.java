@@ -10,6 +10,7 @@ final public class ProperNullCoalescingOperatorUsageInspectorTest extends PhpCod
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
         final ProperNullCoalescingOperatorUsageInspector inspector = new ProperNullCoalescingOperatorUsageInspector();
         inspector.ANALYZE_TYPES                                    = true;
+        inspector.ALLOW_OVERLAPPING_TYPES                          = false;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/codeStyle/proper-null-coalescing-usage.php");
         myFixture.testHighlighting(true, false, true);

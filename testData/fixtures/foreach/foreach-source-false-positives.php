@@ -38,6 +38,10 @@
         /* @var $iterable \iterable */
         foreach ($iterable as $value) {}
 
+        /* general pattern: stdClass */
+        /* @var $stdclass \stdClass */
+        foreach ($stdclass as $value) {}
+
         /* ensures not reporting stub-functions */
         foreach (array_rand([]) as $random) {}
 

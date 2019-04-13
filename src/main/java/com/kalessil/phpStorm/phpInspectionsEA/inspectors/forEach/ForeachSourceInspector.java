@@ -208,6 +208,7 @@ public class ForeachSourceInspector extends BasePhpInspection {
                 types.remove("\\Traversable");
                 types.remove("\\Iterator");
                 types.remove("\\IteratorAggregate");
+                types.remove("\\stdClass");
                 /* don't process mysterious empty set type */
                 types.remove(Types.strEmptySet);
 

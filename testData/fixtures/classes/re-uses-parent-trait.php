@@ -15,5 +15,8 @@ namespace Classes {
         use TargetTrait, ProxyTrait;
     }
 
-    // ClassWithDuplicateTraitsViaParentClass: TargetTrait in the class,  ProxyTrait in parent
+    class ParentClassWithProxyTrait { use ProxyTrait; }
+    class <warning descr="'\Traits\TargetTrait' is already used in '\Traits\ProxyTrait'.">ClassWithDuplicateTraitsViaParentClass</warning> extends ParentClassWithProxyTrait {
+        use TargetTraitAlias;
+    }
 }

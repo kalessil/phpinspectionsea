@@ -1,13 +1,17 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpUse;
+import com.jetbrains.php.lang.psi.elements.PhpUseList;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -89,10 +93,37 @@ public class ClassReusesParentTraitInspector extends BasePhpInspection {
             private void collectTraits(@NotNull PhpClass clazz, @NotNull Map<PhpClass, List<String>> storage) {
                 if (!clazz.isInterface() && !storage.containsKey(clazz) && clazz.hasTraitUses()) {
                     storage.computeIfAbsent(clazz, (key) -> new ArrayList<>());
-                    for (final PhpClass trait : OpenapiResolveUtil.resolveImplementedTraits(clazz)) {
+                    for (final PhpClass trait : this.resolveImplementedTraits(clazz)) {
                         storage.get(clazz).add(trait.getFQN());
                         this.collectTraits(trait, storage);
                     }
+                }
+            }
+
+            @NotNull
+            private List<PhpClass> resolveImplementedTraits(@NotNull PhpClass clazz) {
+                try {
+                    /* precise alternative to OpenapiResolveUtil.resolveImplementedTraits: clazz.getTraits() skips duplicates */
+                    final List<PhpClass> traits = new ArrayList<>();
+                    for (final PsiElement candidate : clazz.getChildren()) {
+                        if (candidate instanceof PhpUseList) {
+                            for (final PhpUse use : ((PhpUseList) candidate).getDeclarations()) {
+                                final PsiElement reference = use.getFirstChild();
+                                if (reference instanceof ClassReference) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) reference);
+                                    if (resolved instanceof PhpClass) {
+                                        traits.add((PhpClass) resolved);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return traits;
+                } catch (final Throwable error) {
+                    if (error instanceof ProcessCanceledException) {
+                        throw error;
+                    }
+                    return new ArrayList<>();
                 }
             }
         };

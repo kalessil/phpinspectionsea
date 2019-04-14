@@ -7,7 +7,10 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +25,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UnnecessaryUseAliasInspector extends BasePhpInspection {
-    private static final String messagePattern = "' as %s' is redundant here.";
+    private static final String messageAlias  = "' as %s' is redundant here.";
+    private static final String messageImport = "The symbol is imported twice, consider dropping this import.";
 
     @NotNull
     public String getShortName() {
@@ -35,17 +39,33 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpUse(@NotNull PhpUse expression) {
-                if (this.isContainingFileSkipped(expression)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 if (!expression.isTraitImport()) {
                     final String alias = expression.getAliasName();
-                    if (alias != null && !alias.isEmpty() && expression.getFQN().endsWith('\\' + alias)) {
-                        holder.registerProblem(
-                                expression.getLastChild(),
-                                String.format(messagePattern, alias),
-                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                new TheLocalFix()
-                        );
+                    if (alias != null && !alias.isEmpty()) {
+                        final String symbol = expression.getFQN();
+                        if (symbol.endsWith('\\' + alias)) {
+                            holder.registerProblem(
+                                    expression.getLastChild(),
+                                    String.format(messageAlias, alias),
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                    new TheLocalFix()
+                            );
+                        } else {
+                            final PsiFile file = expression.getContainingFile();
+                            if (file instanceof PhpFile) {
+                                for (final PsiElement definition : ((PhpFile) file).getTopLevelDefs().values()) {
+                                    if (definition instanceof PhpUse && ((PhpUse) definition).getFQN().equals(symbol)) {
+                                        if (definition != expression) {
+                                            holder.registerProblem(expression.getFirstChild(), messageImport);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -20,3 +20,7 @@ class NonNullParamsDefaultsChild extends NonNullParamsDefaultsParent {
 }
 
 function a(<weak_warning descr="Null should be used as the default value (nullable types are the goal, right?)">$a = ''</weak_warning>) {}
+function b(<weak_warning descr="Null should be used as the default value (nullable types are the goal, right?)">?string $a = ''</weak_warning>) {}
+/** @param string|null $a */
+function c(<weak_warning descr="Null should be used as the default value (nullable types are the goal, right?)">$a = ''</weak_warning>) {}
+function d(string $a = '') {}

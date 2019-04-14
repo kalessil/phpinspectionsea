@@ -179,6 +179,7 @@ Inspections Lists (Architecture)
 | Architecture         | TestingUnfriendlyApisInspection                 | Testing unfriendly APIs                             | n/a | yes | n/a  | no  |
 | Architecture         | InterfacesAsConstructorDependenciesInspection   | Interfaces as constructor dependencies              | n/a | yes | n/a  | no  |
 | Architecture         | SenselessPropertyInspection                     | Senseless property                                  | n/a | yes | n/a  | no  |
+| Architecture         | ClassReusesParentTraitInspection                | Class reuses traits multiple times                  | n/a | yes | n/a  | no  |
 
 Inspections Lists (Probable bugs)
 ---

@@ -8,15 +8,17 @@ namespace Traits {
 namespace Classes {
     use Traits\ProxyTrait, Traits\TargetTrait, Traits\TargetTrait as TargetTraitAlias;
 
-    class <warning descr="'\Traits\TargetTrait' is already used.">ClassWithDirectlyDuplicateTraits</warning> {
-        use TargetTrait, TargetTraitAlias;
+    class ClassWithDirectlyDuplicateTraits {
+        use TargetTrait,
+            <warning descr="'\Traits\TargetTrait' is already used in this same class.">TargetTraitAlias</warning>;
     }
-    class <warning descr="'\Traits\TargetTrait' is already used in '\Traits\ProxyTrait'.">ClassWithDuplicateTraitsViaProxyTraits</warning> {
-        use TargetTrait, ProxyTrait;
+    class ClassWithDuplicateTraitsViaProxyTraits {
+        use <warning descr="'\Traits\TargetTrait' is already used in '\Traits\ProxyTrait'.">TargetTrait</warning>,
+            ProxyTrait;
     }
 
     class ParentClassWithProxyTrait { use ProxyTrait; }
-    class <warning descr="'\Traits\TargetTrait' is already used in '\Traits\ProxyTrait'.">ClassWithDuplicateTraitsViaParentClass</warning> extends ParentClassWithProxyTrait {
-        use TargetTraitAlias;
+    class ClassWithDuplicateTraitsViaParentClass extends ParentClassWithProxyTrait {
+        use <warning descr="'\Traits\TargetTrait' is already used in '\Traits\ProxyTrait'.">TargetTraitAlias</warning>;
     }
 }

@@ -11,10 +11,10 @@ import com.jetbrains.php.lang.psi.elements.PhpUseList;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ import java.util.*;
  */
 
 public class ClassReusesParentTraitInspector extends BasePhpInspection {
-    private static final String patternDirectDuplication   = "'%s' is already used.";
+    private static final String patternDirectDuplication   = "'%s' is already used in this same class.";
     private static final String patternIndirectDuplication = "'%s' is already used in '%s'.";
 
     @NotNull
@@ -61,10 +61,13 @@ public class ClassReusesParentTraitInspector extends BasePhpInspection {
                                         .forEach(candidate -> {
                                             final boolean hasDuplicates = traits.stream().filter(trait -> trait.equals(candidate)).count() > 1L;
                                             if (hasDuplicates && processed.add(candidate)) {
-                                                holder.registerProblem(
-                                                        NamedElementUtil.getNameIdentifier(clazz),
-                                                        String.format(patternDirectDuplication, candidate)
-                                                );
+                                                final PsiElement target = this.resolveReportingTarget(clazz, candidate);
+                                                if (target != null) {
+                                                    holder.registerProblem(
+                                                            target,
+                                                            String.format(patternDirectDuplication, candidate)
+                                                    );
+                                                }
                                             }
                                         });
                             } else {
@@ -73,10 +76,13 @@ public class ClassReusesParentTraitInspector extends BasePhpInspection {
                                         .forEach(candidate -> {
                                             final boolean hasDuplicates = traits.stream().anyMatch(trait -> trait.equals(candidate));
                                             if (hasDuplicates && processed.add(candidate)) {
-                                                holder.registerProblem(
-                                                        NamedElementUtil.getNameIdentifier(clazz),
-                                                        String.format(patternIndirectDuplication, candidate, subject.getFQN())
-                                                );
+                                                final PsiElement target = this.resolveReportingTarget(clazz, candidate);
+                                                if (target != null) {
+                                                    holder.registerProblem(
+                                                            target,
+                                                            String.format(patternIndirectDuplication, candidate, subject.getFQN())
+                                                    );
+                                                }
                                             }
                                         });
                             }
@@ -88,6 +94,26 @@ public class ClassReusesParentTraitInspector extends BasePhpInspection {
                         classes.clear();
                     }
                 }
+            }
+
+            @Nullable
+            private PsiElement resolveReportingTarget(@NotNull PhpClass clazz, @NotNull String trait) {
+                final List<PsiElement> candidates = new ArrayList<>();
+                for (final PsiElement candidate : clazz.getChildren()) {
+                    if (candidate instanceof PhpUseList) {
+                        for (final PhpUse use : ((PhpUseList) candidate).getDeclarations()) {
+                            final PsiElement reference = use.getFirstChild();
+                            if (reference instanceof ClassReference) {
+                                if (trait.equals(((ClassReference) reference).getFQN())) {
+                                    candidates.add(reference);
+                                }
+                            }
+                        }
+                    }
+                }
+                final PsiElement target = !candidates.isEmpty() ? candidates.get(candidates.size() - 1): null;
+                candidates.clear();
+                return target;
             }
 
             private void collectTraits(@NotNull PhpClass clazz, @NotNull Map<PhpClass, List<String>> storage) {

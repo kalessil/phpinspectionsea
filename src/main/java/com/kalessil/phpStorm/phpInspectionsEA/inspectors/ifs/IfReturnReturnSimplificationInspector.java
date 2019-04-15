@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
@@ -17,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -46,68 +48,97 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
                 final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
                 if (condition != null && this.isTargetCondition(condition) && statement.getElseIfBranches().length == 0) {
-                    final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(statement);
-                    if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
-                        final PsiElement ifLast = ExpressionSemanticUtil.getLastStatement(ifBody);
-                        if (ifLast instanceof PhpReturn) {
-                            /* find first and second returns */
-                            final PhpReturn first = (PhpReturn) ifLast;
-                            PhpReturn second      = null;
-                            final Else elseBranch = statement.getElseBranch();
-                            if (elseBranch != null) {
-                                final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(elseBranch);
-                                if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
-                                    final PsiElement elseLast = ExpressionSemanticUtil.getLastStatement(elseBody);
-                                    if (elseLast instanceof PhpReturn) {
-                                        second = (PhpReturn) elseLast;
+                    final Couple<Couple<PsiElement>> fragments = this.extract(statement);
+                    final PsiElement firstValue                = fragments.second.first;
+                    final PsiElement secondValue               = fragments.second.second;
+
+                    /* if 2nd return found, check more pattern matches */
+                    if (secondValue != null) {
+                        final boolean isDirect  = PhpLanguageUtil.isTrue(firstValue) && PhpLanguageUtil.isFalse(secondValue);
+                        final boolean isReverse = PhpLanguageUtil.isTrue(secondValue) && PhpLanguageUtil.isFalse(firstValue);
+                        if (isDirect || isReverse) {
+                            /* false-positives: if-return if-return return - code style */
+                            if (statement.getElseBranch() == null) {
+                                final PsiElement before = statement.getPrevPsiSibling();
+                                if (before instanceof If && !ExpressionSemanticUtil.hasAlternativeBranches((If) before)) {
+                                    final GroupStatement prevBody = ExpressionSemanticUtil.getGroupStatement(before);
+                                    if (prevBody != null && ExpressionSemanticUtil.getLastStatement(prevBody) instanceof PhpReturn) {
+                                        return;
                                     }
-                                }
-                            } else {
-                                final PsiElement next = statement.getNextPsiSibling();
-                                if (next instanceof PhpReturn) {
-                                    second = (PhpReturn) next;
                                 }
                             }
 
-                            /* if 2nd return found, check more pattern matches */
-                            if (second != null) {
-                                final boolean isDirect  = PhpLanguageUtil.isTrue(first.getArgument()) && PhpLanguageUtil.isFalse(second.getArgument());
-                                final boolean isReverse = PhpLanguageUtil.isTrue(second.getArgument()) && PhpLanguageUtil.isFalse(first.getArgument());
-                                if (isDirect || isReverse) {
-                                    /* false-positives: if-return if-return return - code style */
-                                    if (elseBranch == null) {
-                                        final PsiElement before = statement.getPrevPsiSibling();
-                                        if (before instanceof If && !ExpressionSemanticUtil.hasAlternativeBranches((If) before)) {
-                                            final GroupStatement prevBody = ExpressionSemanticUtil.getGroupStatement(before);
-                                            if (prevBody != null && ExpressionSemanticUtil.getLastStatement(prevBody) instanceof PhpReturn) {
-                                                return;
-                                            }
-                                        }
-                                    }
-
-                                    /* final reporting step */
-                                    final String replacement;
-                                    if (isReverse) {
-                                        if (condition instanceof UnaryExpression) {
-                                            PsiElement extracted = ((UnaryExpression) condition).getValue();
-                                            extracted            = ExpressionSemanticUtil.getExpressionTroughParenthesis(extracted);
-                                            replacement          = String.format("return %s", extracted == null ? "" : extracted.getText());
-                                        } else {
-                                            replacement = String.format("return !(%s)", condition.getText());
-                                        }
-                                    } else {
-                                        replacement = String.format("return %s", condition.getText());
-                                    }
-                                    holder.registerProblem(
-                                            statement.getFirstChild(),
-                                            String.format(messagePattern, replacement),
-                                            new SimplifyFix(statement, elseBranch == null ? second : statement, replacement)
-                                    );
+                            /* final reporting step */
+                            final String replacement;
+                            if (isReverse) {
+                                if (condition instanceof UnaryExpression) {
+                                    PsiElement extracted = ((UnaryExpression) condition).getValue();
+                                    extracted            = ExpressionSemanticUtil.getExpressionTroughParenthesis(extracted);
+                                    replacement          = String.format("return %s", extracted == null ? "" : extracted.getText());
+                                } else {
+                                    replacement = String.format("return !(%s)", condition.getText());
                                 }
+                            } else {
+                                replacement = String.format("return %s", condition.getText());
+                            }
+                            holder.registerProblem(
+                                    statement.getFirstChild(),
+                                    String.format(messagePattern, replacement),
+                                    new SimplifyFix(fragments.first.first, fragments.first.second, replacement)
+                            );
+                        }
+                    }
+                }
+            }
+
+            /* first pair: what to drop, second positive and negative branching values */
+            private Couple<Couple<PsiElement>> extract(@NotNull If statement) {
+                Couple<Couple<PsiElement>> result = new Couple<>(new Couple<>(null, null), new Couple<>(null, null));
+
+                final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(statement);
+                if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
+                    final PsiElement ifLast = this.extractCandidate(ExpressionSemanticUtil.getLastStatement(ifBody));
+                    if (ifLast != null) {
+                        /* extract all related constructs */
+                        final PsiElement ifNext     = this.extractCandidate(statement.getNextPsiSibling());
+                        final PsiElement ifPrevious = this.extractCandidate(statement.getPrevPsiSibling());
+                        PsiElement elseLast         = null;
+                        if (statement.getElseBranch() != null) {
+                            final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(statement.getElseBranch());
+                            if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
+                                elseLast = this.extractCandidate(ExpressionSemanticUtil.getLastStatement(elseBody));
+                            }
+                        }
+
+                        /* if - return-bool - return bool*/
+                        if (ifLast instanceof PhpReturn && elseLast instanceof PhpReturn) {
+                            final PhpReturn first  = (PhpReturn) ifLast;
+                            final PhpReturn second = (PhpReturn) elseLast;
+                            result = new Couple<>(new Couple<>(statement, statement), new Couple<>(first.getArgument(), second.getArgument()));
+                        }
+                    }
+                }
+                return result;
+            }
+
+            @Nullable
+            private PsiElement extractCandidate(@Nullable PsiElement statement) {
+                if (statement instanceof PhpReturn) {
+                    return statement;
+                } else if (OpenapiTypesUtil.isStatementImpl(statement)) {
+                    final PsiElement possiblyAssignment = statement.getFirstChild();
+                    if (OpenapiTypesUtil.isAssignment(possiblyAssignment)) {
+                        final AssignmentExpression assignment = (AssignmentExpression) possiblyAssignment;
+                        final PsiElement container             = assignment.getVariable();
+                        if (container instanceof Variable) {
+                            final PsiElement value = assignment.getValue();
+                            if (PhpLanguageUtil.isBoolean(value)) {
+                                return assignment;
                             }
                         }
                     }
                 }
+                return null;
             }
 
             private boolean isTargetCondition(@NotNull PsiElement condition) {

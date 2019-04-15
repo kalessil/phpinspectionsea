@@ -102,41 +102,61 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                         /* extract all related constructs */
                         final PsiElement ifNext     = this.extractCandidate(statement.getNextPsiSibling());
                         final PsiElement ifPrevious = this.extractCandidate(statement.getPrevPsiSibling());
-                        PsiElement elseLast         = null;
+
                         if (statement.getElseBranch() != null) {
+                            PsiElement elseLast         = null;
                             final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(statement.getElseBranch());
                             if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
                                 elseLast = this.extractCandidate(ExpressionSemanticUtil.getLastStatement(elseBody));
                             }
-                        }
 
-                        /* if - return-bool - else - return bool */
-                        if (ifLast instanceof PhpReturn && elseLast instanceof PhpReturn) {
-                            final PhpReturn first  = (PhpReturn) ifLast;
-                            final PhpReturn second = (PhpReturn) elseLast;
-                            result = new Couple<>(new Couple<>(statement, statement), new Couple<>(first.getArgument(), second.getArgument()));
-                        }
-                        /* if - return-bool - return bool */
-                        else if (ifLast instanceof PhpReturn && elseLast == null && ifNext instanceof PhpReturn) {
-                            final PhpReturn first  = (PhpReturn) ifLast;
-                            final PhpReturn second = (PhpReturn) ifNext;
-                            result = new Couple<>(new Couple<>(statement, ifNext), new Couple<>(first.getArgument(), second.getArgument()));
-                        }
-                        /* if - assign - else - assign - return */
-                        else if (ifLast instanceof AssignmentExpression && elseLast instanceof AssignmentExpression && ifNext instanceof PhpReturn) {
-                            final AssignmentExpression ifAssignment   = (AssignmentExpression) ifLast;
-                            final AssignmentExpression elseAssignment = (AssignmentExpression) elseLast;
-                            final PsiElement ifContaner               = ifAssignment.getVariable();
-                            final PsiElement elseContaner             = elseAssignment.getVariable();
-                            final PsiElement returnedValue            = ((PhpReturn) ifNext).getArgument();
-                            if (ifContaner != null && elseContaner != null && returnedValue != null) {
-                                final boolean isTarget = OpenapiEquivalenceUtil.areEqual(ifContaner, elseContaner) &&
-                                                         OpenapiEquivalenceUtil.areEqual(elseContaner, returnedValue);
-                                if (isTarget) {
-                                    result = new Couple<>(
-                                            new Couple<>(statement, ifNext),
-                                            new Couple<>(ifAssignment.getValue(), elseAssignment.getValue())
-                                    );
+                            /* if - return-bool - else - return bool */
+                            if (ifLast instanceof PhpReturn && elseLast instanceof PhpReturn) {
+                                final PhpReturn first  = (PhpReturn) ifLast;
+                                final PhpReturn second = (PhpReturn) elseLast;
+                                result = new Couple<>(new Couple<>(statement, statement), new Couple<>(first.getArgument(), second.getArgument()));
+                            }
+                            /* if - assign - else - assign - return */
+                            else if (ifLast instanceof AssignmentExpression && elseLast instanceof AssignmentExpression && ifNext instanceof PhpReturn) {
+                                final AssignmentExpression ifAssignment   = (AssignmentExpression) ifLast;
+                                final AssignmentExpression elseAssignment = (AssignmentExpression) elseLast;
+                                final PsiElement ifContainer              = ifAssignment.getVariable();
+                                final PsiElement elseContainer            = elseAssignment.getVariable();
+                                final PsiElement returnedValue            = ((PhpReturn) ifNext).getArgument();
+                                if (ifContainer instanceof Variable && elseContainer instanceof Variable && returnedValue instanceof Variable) {
+                                    final boolean isTarget = OpenapiEquivalenceUtil.areEqual(ifContainer, elseContainer) &&
+                                                             OpenapiEquivalenceUtil.areEqual(elseContainer, returnedValue);
+                                    if (isTarget) {
+                                        result = new Couple<>(
+                                                new Couple<>(statement, ifNext),
+                                                new Couple<>(ifAssignment.getValue(), elseAssignment.getValue())
+                                        );
+                                    }
+                                }
+                            }
+                        } else {
+                            /* if - return-bool - return bool */
+                            if (ifLast instanceof PhpReturn && ifNext instanceof PhpReturn) {
+                                final PhpReturn first  = (PhpReturn) ifLast;
+                                final PhpReturn second = (PhpReturn) ifNext;
+                                result = new Couple<>(new Couple<>(statement, ifNext), new Couple<>(first.getArgument(), second.getArgument()));
+                            }
+                            /* assign - if - assign - return */
+                            else if (ifPrevious instanceof AssignmentExpression && ifLast instanceof AssignmentExpression && ifNext instanceof PhpReturn) {
+                                final AssignmentExpression previousAssignment = (AssignmentExpression) ifPrevious;
+                                final AssignmentExpression ifAssignment       = (AssignmentExpression) ifLast;
+                                final PsiElement previousContainer            = previousAssignment.getVariable();
+                                final PsiElement ifContainer                  = ifAssignment.getVariable();
+                                final PsiElement returnedValue                = ((PhpReturn) ifNext).getArgument();
+                                if (previousContainer instanceof Variable && ifContainer instanceof Variable && returnedValue instanceof Variable) {
+                                    final boolean isTarget = OpenapiEquivalenceUtil.areEqual(previousContainer, ifContainer) &&
+                                                             OpenapiEquivalenceUtil.areEqual(ifContainer, returnedValue);
+                                    if (isTarget) {
+                                        result = new Couple<>(
+                                                new Couple<>(ifPrevious.getParent(), ifNext),
+                                                new Couple<>(ifAssignment.getValue(), previousAssignment.getValue())
+                                        );
+                                    }
                                 }
                             }
                         }

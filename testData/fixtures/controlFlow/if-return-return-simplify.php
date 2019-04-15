@@ -59,4 +59,12 @@ class CasesHolder {
         }
         return $result;
     }
+
+    function assignIfAssignReturn($x) {
+        $result = false;
+        <warning descr="The construct can be replaced with 'return $x === 0'.">if</warning> ($x === 0) {
+            $result = true;
+        }
+        return $result;
+    }
 }

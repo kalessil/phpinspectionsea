@@ -49,4 +49,8 @@ class CasesHolder {
     function assignIfAssignReturn($x) {
         return $x === 0;
     }
+
+    function assignIfReturnReturn($x) {
+        return $x === 0;
+    }
 }

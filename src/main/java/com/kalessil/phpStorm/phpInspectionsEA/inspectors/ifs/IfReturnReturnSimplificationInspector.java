@@ -110,11 +110,17 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                             }
                         }
 
-                        /* if - return-bool - return bool*/
+                        /* if - return-bool - else - return bool */
                         if (ifLast instanceof PhpReturn && elseLast instanceof PhpReturn) {
                             final PhpReturn first  = (PhpReturn) ifLast;
                             final PhpReturn second = (PhpReturn) elseLast;
                             result = new Couple<>(new Couple<>(statement, statement), new Couple<>(first.getArgument(), second.getArgument()));
+                        }
+                        /* if - return-bool - return bool */
+                        else if (ifLast instanceof PhpReturn && elseLast == null && ifNext instanceof PhpReturn) {
+                            final PhpReturn first  = (PhpReturn) ifLast;
+                            final PhpReturn second = (PhpReturn) ifNext;
+                            result = new Couple<>(new Couple<>(statement, ifNext), new Couple<>(first.getArgument(), second.getArgument()));
                         }
                     }
                 }

@@ -41,4 +41,8 @@ class CasesHolder {
         return $this->ifNotReturnElseReturn();
         return !($this->ifNotReturnElseReturn());
     }
+
+    function ifAssignElseAssignReturn($x) {
+        return $x === 0;
+    }
 }

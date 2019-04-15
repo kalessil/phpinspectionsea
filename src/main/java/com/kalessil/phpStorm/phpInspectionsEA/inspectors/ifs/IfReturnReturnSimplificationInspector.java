@@ -122,6 +122,24 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                             final PhpReturn second = (PhpReturn) ifNext;
                             result = new Couple<>(new Couple<>(statement, ifNext), new Couple<>(first.getArgument(), second.getArgument()));
                         }
+                        /* if - assign - else - assign - return */
+                        else if (ifLast instanceof AssignmentExpression && elseLast instanceof AssignmentExpression && ifNext instanceof PhpReturn) {
+                            final AssignmentExpression ifAssignment   = (AssignmentExpression) ifLast;
+                            final AssignmentExpression elseAssignment = (AssignmentExpression) elseLast;
+                            final PsiElement ifContaner               = ifAssignment.getVariable();
+                            final PsiElement elseContaner             = elseAssignment.getVariable();
+                            final PsiElement returnedValue            = ((PhpReturn) ifNext).getArgument();
+                            if (ifContaner != null && elseContaner != null && returnedValue != null) {
+                                final boolean isTarget = OpenapiEquivalenceUtil.areEqual(ifContaner, elseContaner) &&
+                                                         OpenapiEquivalenceUtil.areEqual(elseContaner, returnedValue);
+                                if (isTarget) {
+                                    result = new Couple<>(
+                                            new Couple<>(statement, ifNext),
+                                            new Couple<>(ifAssignment.getValue(), elseAssignment.getValue())
+                                    );
+                                }
+                            }
+                        }
                     }
                 }
                 return result;

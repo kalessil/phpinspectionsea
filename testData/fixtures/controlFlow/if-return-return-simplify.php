@@ -50,4 +50,13 @@ class CasesHolder {
         <warning descr="The construct can be replaced with 'return !($this->ifNotReturnElseReturn())'.">if</warning> ($this->ifNotReturnElseReturn()) { return false; }
         else { return true; }
     }
+
+    function ifAssignElseAssignReturn($x) {
+        <warning descr="The construct can be replaced with 'return $x === 0'.">if</warning> ($x === 0) {
+            $result = true;
+        } else {
+            $result = false;
+        }
+        return $result;
+    }
 }

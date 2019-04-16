@@ -48,15 +48,12 @@ public class ParameterDefaultValueIsNotNullInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                if (this.isContainingFileSkipped(method)) { return; }
+                if (this.isContainingFileSkipped(function)) { return; }
 
                 this.analyze(function);
             }
 
             private void analyze(@NotNull Function function) {
-                if (this.isContainingFileSkipped(method)) { return; }
-
-                this.analyzeFunction(method);
                 final Parameter[] arguments = function.getParameters();
                 if (arguments.length > 0) {
                     /* collect violations */

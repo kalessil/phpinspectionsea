@@ -7,10 +7,12 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -41,43 +43,53 @@ public class ParameterDefaultValueIsNotNullInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.isContainingFileSkipped(method)) { return; }
 
-                this.analyzeFunction(method);
+                this.analyze(method);
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                if (this.isContainingFileSkipped(function)) { return; }
+                if (this.isContainingFileSkipped(method)) { return; }
 
-                this.analyzeFunction(function);
+                this.analyze(function);
             }
 
-            private void analyzeFunction(@NotNull Function function) {
-                final Parameter[] params = function.getParameters();
-                if (params.length > 0) {
+            private void analyze(@NotNull Function function) {
+                if (this.isContainingFileSkipped(method)) { return; }
+
+                this.analyzeFunction(method);
+                final Parameter[] arguments = function.getParameters();
+                if (arguments.length > 0) {
                     /* collect violations */
                     final List<Parameter> violations = new ArrayList<>();
-                    for (final Parameter param : params) {
-                        final PsiElement defaultValue = param.getDefaultValue();
+                    for (final Parameter argument : arguments) {
+                        final PsiElement defaultValue = argument.getDefaultValue();
                         if (defaultValue != null && !PhpLanguageUtil.isNull(defaultValue)) {
-                            violations.add(param);
+                            /* false-positives: null can not be used due to implicit type hints */
+                            final PhpType declared = argument.getDeclaredType();
+                            if (declared.isEmpty() || declared.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull))) {
+                                violations.add(argument);
+                            }
                         }
                     }
 
                     if (!violations.isEmpty()) {
+                        /* false-positives: methods overrides, so violation should be addressed in the parent */
                         if (function instanceof Method) {
-                            final PhpClass clazz      = ((Method) function).getContainingClass();
-                            final PhpClass parent     = null == clazz ? null : OpenapiResolveUtil.resolveSuperClass(clazz);
-                            final Method parentMethod = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, function.getName());
-                            if (parentMethod != null && !parentMethod.getAccess().isPrivate()) {
-                                violations.clear();
-                                return;
+                            final PhpClass clazz = ((Method) function).getContainingClass();
+                            if (clazz != null) {
+                                final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                                if (parent != null) {
+                                    final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, function.getName());
+                                    if (parentMethod != null && !parentMethod.getAccess().isPrivate()) {
+                                        violations.clear();
+                                        return;
+                                    }
+                                }
                             }
                         }
 
                         /* report violations */
-                        for (final Parameter param : violations) {
-                            holder.registerProblem(param, message);
-                        }
+                        violations.forEach(param -> holder.registerProblem(param, message));
                         violations.clear();
                     }
                 }

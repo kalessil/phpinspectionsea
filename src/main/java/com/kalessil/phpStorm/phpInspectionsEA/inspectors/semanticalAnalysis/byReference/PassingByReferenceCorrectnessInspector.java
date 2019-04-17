@@ -3,18 +3,16 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byR
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -94,11 +92,11 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                     for (int index = 0, max = Math.min(parameters.length, arguments.length); index < max; ++index) {
                         if (parameters[index].isPassByRef()) {
                             final PsiElement argument = arguments[index];
-                            if (argument instanceof FunctionReference && !this.isByReference(argument)) {
+                            if (argument instanceof FunctionReference && !ExpressionSemanticUtil.isByReference(argument)) {
                                 final PsiElement inner = OpenapiResolveUtil.resolveReference((FunctionReference) argument);
                                 if (inner instanceof Function) {
                                     final PsiElement name = NamedElementUtil.getNameIdentifier((Function) inner);
-                                    if (!this.isByReference(name)) {
+                                    if (!ExpressionSemanticUtil.isByReference(name)) {
                                         holder.registerProblem(argument, message);
                                     }
                                 }
@@ -119,18 +117,6 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                         }
                     }
                 }
-            }
-
-            private boolean isByReference(@Nullable PsiElement element) {
-                boolean result = false;
-                if (element != null) {
-                    PsiElement ampersandCandidate = element.getPrevSibling();
-                    if (ampersandCandidate instanceof PsiWhiteSpace) {
-                        ampersandCandidate = ampersandCandidate.getPrevSibling();
-                    }
-                    result = OpenapiTypesUtil.is(ampersandCandidate, PhpTokenTypes.opBIT_AND);
-                }
-                return result;
             }
         };
     }

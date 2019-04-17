@@ -323,7 +323,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 if (this.isContainingFileSkipped(expression))             { return; }
 
                 final PsiElement source = expression.getArray();
-                if (source != null) {
+                if (source != null && !ExpressionSemanticUtil.isByReference(expression.getValue())) {
                     final Function scope = ExpressionSemanticUtil.getScope(expression);
                     if (scope != null) {
                         final Variable extractedSource = this.getVariable(source);

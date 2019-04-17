@@ -3,7 +3,8 @@
 function cases_holder() {
     foreach ([] as $value) {}
 
-    foreach ([] as & $value) {}
+    $two = [];
+    foreach ($two as & $value) {}
 
     foreach ([] as $value) {}
 

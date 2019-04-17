@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
@@ -284,6 +285,18 @@ final public class ExpressionSemanticUtil {
                 }
                 variants.clear();
             }
+        }
+        return result;
+    }
+
+    public static boolean isByReference(@Nullable PsiElement element) {
+        boolean result = false;
+        if (element != null) {
+            PsiElement ampersandCandidate = element.getPrevSibling();
+            if (ampersandCandidate instanceof PsiWhiteSpace) {
+                ampersandCandidate = ampersandCandidate.getPrevSibling();
+            }
+            result = OpenapiTypesUtil.is(ampersandCandidate, PhpTokenTypes.opBIT_AND);
         }
         return result;
     }

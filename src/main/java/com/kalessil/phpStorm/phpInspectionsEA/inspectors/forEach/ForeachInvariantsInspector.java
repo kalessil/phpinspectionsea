@@ -45,20 +45,22 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpFor(@NotNull For forExpression) {
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forExpression);
-                if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
-                    final PsiElement indexVariable = this.getCounterVariable(forExpression);
-                    if (indexVariable != null && this.isCounterVariableIncremented(forExpression, indexVariable)) {
-                        final PsiElement limit = this.getLoopLimit(forExpression, indexVariable);
-                        if (limit != null) {
-                            final PsiElement container = this.getContainerByIndex(body, indexVariable);
-                            if (container != null && this.isLimitFor(limit, container)) {
-                                    holder.registerProblem(
-                                            forExpression.getFirstChild(),
-                                            foreachInvariant,
-                                            new UseForeachFix(forExpression, indexVariable, null, container, limit)
-                                    );
+            public void visitPhpFor(@NotNull For expression) {
+                if (expression.getRepeatedExpressions().length == 1) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
+                    if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                        final PsiElement indexVariable = this.getCounterVariable(expression);
+                        if (indexVariable != null && this.isCounterVariableIncremented(expression, indexVariable)) {
+                            final PsiElement limit = this.getLoopLimit(expression, indexVariable);
+                            if (limit != null) {
+                                final PsiElement container = this.getContainerByIndex(body, indexVariable);
+                                if (container != null && this.isLimitFor(limit, container)) {
+                                        holder.registerProblem(
+                                                expression.getFirstChild(),
+                                                foreachInvariant,
+                                                new UseForeachFix(expression, indexVariable, null, container, limit)
+                                        );
+                                }
                             }
                         }
                     }

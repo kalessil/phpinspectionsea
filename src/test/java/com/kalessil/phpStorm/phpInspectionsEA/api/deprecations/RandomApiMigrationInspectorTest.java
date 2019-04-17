@@ -10,7 +10,6 @@ final public class RandomApiMigrationInspectorTest extends PhpCodeInsightFixture
         RandomApiMigrationInspector inspector = new RandomApiMigrationInspector();
         inspector.SUGGEST_USING_RANDOM_INT    = false;
         myFixture.enableInspections(inspector);
-
         myFixture.configureByFile("testData/fixtures/api/deprecations/random-api-mt.php");
         myFixture.testHighlighting(true, false, true);
 

@@ -46,7 +46,7 @@ namespace {
             $x = ($iValue) > 0;
 
             switch ($iValue) { case $iValue: break; }
-            for ($iValue;$iValue;$iValue) {}
+            for ($iValue; $iValue; $iValue) {}
             while ($iValue) {}
             do {} while ($iValue);
             if ($iValue) {} elseif ($iValue) {}

@@ -46,6 +46,12 @@ namespace {
             $x = trim($arr[$i]);
             $x = $arr[$i] > 0;
             $x = ($arr[$i]) > 0;
+
+            switch ($arr[$i]) { case $arr[$i]: break; }
+            for ($arr[$i];$arr[$i];$arr[$i]) {}
+            while ($arr[$i]) {}
+            do {} while ($arr[$i]);
+            if ($arr[$i]) {} elseif ($arr[$i]) {}
         }
         <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max2 = count($arr); $i < $max2; $i++) {
             $arr[$i]->property    = '...';

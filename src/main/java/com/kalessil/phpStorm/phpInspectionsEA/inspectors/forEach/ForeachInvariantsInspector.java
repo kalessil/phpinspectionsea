@@ -332,6 +332,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         parent instanceof MemberReference || parent instanceof BinaryExpression ||
                         parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression ||
                         parent instanceof ArrayIndex      || parent instanceof PhpEchoStatement ||
+                        parent instanceof If              || parent instanceof ElseIf ||
+                        parent instanceof PhpSwitch       || parent instanceof PhpCase ||
                         (parent instanceof Variable && parent.getParent() instanceof StringLiteralExpression)
                     ) {
                         return true;
@@ -358,6 +360,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                             }
                             return !(context instanceof AssignmentExpression);
                         }
+                    } else if (OpenapiTypesUtil.isLoop(parent)) {
+                        return true;
                     }
 
                     return false;

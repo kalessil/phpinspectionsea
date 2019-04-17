@@ -44,6 +44,12 @@ namespace {
             $x = trim($iValue);
             $x = $iValue > 0;
             $x = ($iValue) > 0;
+
+            switch ($iValue) { case $iValue: break; }
+            for ($iValue;$iValue;$iValue) {}
+            while ($iValue) {}
+            do {} while ($iValue);
+            if ($iValue) {} elseif ($iValue) {}
         }
         foreach ($arr as $i => $iValue) {
             $iValue->property    = '...';

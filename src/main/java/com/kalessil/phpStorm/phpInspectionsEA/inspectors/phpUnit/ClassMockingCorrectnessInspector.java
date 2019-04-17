@@ -101,11 +101,11 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                 }
                                 /* classes might need different mocking methods usage */
                                 if (referencedClass.isAbstract() && !referencedClass.isInterface()) {
-                                    if (parentName == null || !parentName.equals("getMockForAbstractClass")) {
+                                    if (parentName == null) {
                                         holder.registerProblem(arguments[0], messageMockAbstract);
                                     }
                                 } else if (referencedClass.isTrait()) {
-                                    if (parentName == null || !parentName.equals("getMockForTrait")) {
+                                    if (parentName == null) {
                                         holder.registerProblem(arguments[0], messageMockTrait);
                                     }
                                 } else if (referencedClass.isFinal()) {

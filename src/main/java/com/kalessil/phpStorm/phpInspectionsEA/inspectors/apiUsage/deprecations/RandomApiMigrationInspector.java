@@ -32,7 +32,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     // Inspection options.
     public boolean SUGGEST_USING_RANDOM_INT = true;
 
-    private static final String messagePattern = "'%o%(...)' has recommended replacement '%n%(...)', consider migrating.";
+    private static final String messagePattern = "'%s(...)' has recommended replacement '%s(...)', consider migrating.";
 
     @NotNull
     public String getShortName() {
@@ -57,7 +57,6 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
         if (SUGGEST_USING_RANDOM_INT && php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
             return mappingEdge;
         }
-
         return mappingMt;
     }
 
@@ -73,7 +72,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
                 if (functionName != null) {
                     final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                     String suggestion          = getMapping(php).get(functionName);
-                    if (suggestion != null) {
+                    if (suggestion != null && this.isFromRootNamespace(reference)) {
                         /* random_int needs 2 parameters always, so check if mt_rand can be suggested */
                         if (reference.getParameters().length != 2 && suggestion.equals("random_int")) {
                             if (functionName.equals("rand")) {
@@ -83,8 +82,11 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
                             }
                         }
 
-                        final String message = messagePattern.replace("%o%", functionName).replace("%n%", suggestion);
-                        holder.registerProblem(reference, message, new ModernizeCallFixer(suggestion));
+                        holder.registerProblem(
+                                reference,
+                                String.format(messagePattern, functionName, suggestion),
+                                new ModernizeCallFixer(suggestion)
+                        );
                     }
                 }
             }

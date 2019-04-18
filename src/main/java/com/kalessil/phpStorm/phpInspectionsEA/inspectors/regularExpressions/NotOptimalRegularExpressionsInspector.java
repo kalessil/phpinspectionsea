@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
  */
 
 public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
+    private static final String messageNoDelimiters = "The regular expression delimiters are missing (it should be e.g. '/<regex-here>/').";
 
     @NotNull
     public String getShortName() {
@@ -93,8 +94,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                                         if (checkCall) {
                                             this.checkCall(functionName, reference, phpRegexPattern, phpRegexModifiers);
                                         }
-                                        // continue;
+                                        continue;
                                     }
+
+                                    holder.registerProblem(pattern, messageNoDelimiters);
                                 }
                             }
                             patterns.clear();

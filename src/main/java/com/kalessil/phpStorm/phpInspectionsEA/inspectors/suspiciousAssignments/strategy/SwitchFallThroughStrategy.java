@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -25,9 +26,9 @@ final public class SwitchFallThroughStrategy {
 
     static public void apply(@NotNull PhpSwitch switchStatement, @NotNull ProblemsHolder holder) {
         final List<PsiElement> written = new ArrayList<>();
-        for (PhpCase oneCase : switchStatement.getAllCases()) {
+        for (final PhpCase oneCase : switchStatement.getAllCases()) {
             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(oneCase);
-            if (null == body || 0 == ExpressionSemanticUtil.countExpressionsInGroup(body)) {
+            if (body == null || ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
                 continue;
             }
 
@@ -39,7 +40,7 @@ final public class SwitchFallThroughStrategy {
                 }
 
                 if (expression instanceof MultiassignmentExpression) {
-                    for (PsiElement variable : ((MultiassignmentExpression) expression).getVariables()) {
+                    for (final PsiElement variable : ((MultiassignmentExpression) expression).getVariables()) {
                         /* HashSet is not working here, hence manual checks */
                         boolean isOverridden = false;
                         for (final PsiElement writtenVariable : written) {
@@ -58,12 +59,22 @@ final public class SwitchFallThroughStrategy {
                 }
 
                 if (OpenapiTypesUtil.isAssignment(expression)) {
-                    final PsiElement variable = ((AssignmentExpression) expression).getVariable();
-                    if (null != variable) {
-                        /* do not process []= operations */
+                    final AssignmentExpression assignment = (AssignmentExpression) expression;
+                    final PsiElement variable             = assignment.getVariable();
+                    if (variable != null) {
+                        /* false-positives: `... []= ...` */
                         if (variable instanceof ArrayAccessExpression) {
                             final ArrayIndex index = ((ArrayAccessExpression) variable).getIndex();
-                            if (null == index || null == index.getValue()) {
+                            if (index == null || index.getValue() == null) {
+                                continue;
+                            }
+                        }
+                        /* false-positives: $variable = ... $variable ... */
+                        final PsiElement value = assignment.getValue();
+                        if (value != null) {
+                            final boolean isSelfDependent = PsiTreeUtil.findChildrenOfType(value, variable.getClass()).stream()
+                                    .anyMatch(v -> OpenapiEquivalenceUtil.areEqual(v, variable));
+                            if (isSelfDependent) {
                                 continue;
                             }
                         }
@@ -88,7 +99,7 @@ final public class SwitchFallThroughStrategy {
 
 
             /* now flush local writes into shared one; manually as HashSet is not working */
-            for (PsiElement localVariable : writtenLocally) {
+            for (final PsiElement localVariable : writtenLocally) {
                 boolean isAddedAlready = false;
                 for (final PsiElement sharedVariable : written) {
                     if (OpenapiEquivalenceUtil.areEqual(localVariable, sharedVariable)) {

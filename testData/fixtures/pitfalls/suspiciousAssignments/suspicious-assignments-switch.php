@@ -25,3 +25,23 @@
             $format = sprintf($format, $format);
             break;
     }
+
+    switch ($x) {
+        case 'a':
+            $y = 0;
+        case 'b':
+            $y .= 0;
+            break;
+
+        case 'c':
+            $y .= 0;
+        case 'd':
+            $y = 0;
+            break;
+
+        case 'e':
+            $y = 0;
+        case 'f':
+            $y = trim($y);
+            break;
+    }

@@ -52,7 +52,9 @@ namespace {
     $phpUnitNew->getMockForTrait(<error descr="Needs a trait here.">FinalClazz::class</error>);
 
     $phpUnitOld->getMockBuilder(<error descr="Perhaps it was intended to mock it with getMockForAbstractClass method.">AbstractClazz::class</error>);
+    $phpUnitOld->getMockBuilder(AbstractClazz::class)->getMockForAbstractClass();
     $phpUnitOld->getMockBuilder(<error descr="Perhaps it was intended to mock it with getMockForTrait method.">TraitClazz::class</error>);
+    $phpUnitOld->getMockBuilder(TraitClazz::class)->getMockForTrait();
     $phpUnitOld->getMockBuilder(InterfaceClazz::class);
 
     class ClazzSpec extends \PhpSpec\ObjectBehavior

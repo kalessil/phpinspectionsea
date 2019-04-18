@@ -98,26 +98,31 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                     holder.registerProblem(arguments[0], messageFinal);
                                 }
                             } else if (methodName.equals("getMockBuilder")) {
+                                final PsiElement parent = reference.getParent();
+                                String parentName       = null;
+                                if (parent instanceof MethodReference) {
+                                    parentName = ((MethodReference) parent).getName();
+                                }
                                 /* classes might need different mocking methods usage */
                                 if (referencedClass.isAbstract() && !referencedClass.isInterface()) {
-                                    holder.registerProblem(arguments[0], messageMockAbstract);
+                                    if (parentName == null) {
+                                        holder.registerProblem(arguments[0], messageMockAbstract);
+                                    }
                                 } else if (referencedClass.isTrait()) {
-                                    holder.registerProblem(arguments[0], messageMockTrait);
+                                    if (parentName == null) {
+                                        holder.registerProblem(arguments[0], messageMockTrait);
+                                    }
                                 } else if (referencedClass.isFinal()) {
                                     holder.registerProblem(arguments[0], messageFinal);
                                 }
                                 /* constructor might require arguments */
-                                final PsiElement parent = reference.getParent();
-                                if (parent instanceof MethodReference) {
-                                    final String parentName = ((MethodReference) parent).getName();
-                                    if (parentName != null && parentName.equals("getMock")) {
-                                        final Method constructor  = referencedClass.getConstructor();
-                                        if (constructor != null) {
-                                            final boolean needsArguments = Arrays.stream(constructor.getParameters())
-                                                    .anyMatch(parameter -> parameter.getDefaultValue() == null);
-                                            if (needsArguments) {
-                                                holder.registerProblem(arguments[0], messageMockConstructor);
-                                            }
+                                if (parentName != null && parentName.equals("getMock")) {
+                                    final Method constructor  = referencedClass.getConstructor();
+                                    if (constructor != null) {
+                                        final boolean needsArguments = Arrays.stream(constructor.getParameters())
+                                                .anyMatch(parameter -> parameter.getDefaultValue() == null);
+                                        if (needsArguments) {
+                                            holder.registerProblem(arguments[0], messageMockConstructor);
                                         }
                                     }
                                 }

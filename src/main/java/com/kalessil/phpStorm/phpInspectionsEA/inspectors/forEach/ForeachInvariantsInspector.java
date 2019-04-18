@@ -47,23 +47,25 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpFor(@NotNull For forExpression) {
+            public void visitPhpFor(@NotNull For expression) {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(forExpression))          { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(forExpression);
-                if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
-                    final PsiElement indexVariable = this.getCounterVariable(forExpression);
-                    if (indexVariable != null && this.isCounterVariableIncremented(forExpression, indexVariable)) {
-                        final PsiElement limit = this.getLoopLimit(forExpression, indexVariable);
-                        if (limit != null) {
-                            final PsiElement container = this.getContainerByIndex(body, indexVariable);
-                            if (container != null && this.isLimitFor(limit, container)) {
-                                    holder.registerProblem(
-                                            forExpression.getFirstChild(),
-                                            foreachInvariant,
-                                            new UseForeachFix(forExpression, indexVariable, null, container, limit)
-                                    );
+                if (expression.getRepeatedExpressions().length == 1) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
+                    if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                        final PsiElement indexVariable = this.getCounterVariable(expression);
+                        if (indexVariable != null && this.isCounterVariableIncremented(expression, indexVariable)) {
+                            final PsiElement limit = this.getLoopLimit(expression, indexVariable);
+                            if (limit != null) {
+                                final PsiElement container = this.getContainerByIndex(body, indexVariable);
+                                if (container != null && this.isLimitFor(limit, container)) {
+                                        holder.registerProblem(
+                                                expression.getFirstChild(),
+                                                foreachInvariant,
+                                                new UseForeachFix(expression, indexVariable, null, container, limit)
+                                        );
+                                }
                             }
                         }
                     }
@@ -415,6 +417,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         parent instanceof MemberReference || parent instanceof BinaryExpression ||
                         parent instanceof UnaryExpression || parent instanceof ParenthesizedExpression ||
                         parent instanceof ArrayIndex      || parent instanceof PhpEchoStatement ||
+                        parent instanceof If              || parent instanceof ElseIf ||
+                        parent instanceof PhpSwitch       || parent instanceof PhpCase ||
                         (parent instanceof Variable && parent.getParent() instanceof StringLiteralExpression)
                     ) {
                         return true;
@@ -441,6 +445,8 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                             }
                             return !(context instanceof AssignmentExpression);
                         }
+                    } else if (OpenapiTypesUtil.isLoop(parent)) {
+                        return true;
                     }
 
                     return false;

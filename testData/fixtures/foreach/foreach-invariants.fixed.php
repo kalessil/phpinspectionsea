@@ -31,7 +31,7 @@ namespace NS {
             foreach ($array as $iValue) {
                 echo $iValue;
             }
-            for ($i = 0; $i < $limit; $i++, $z = 0) {
+            for ($i = 0; $i < $limit; $i++) {
                 echo $array[$i];
             }
         }
@@ -57,6 +57,12 @@ namespace {
             $x = trim($iValue);
             $x = $iValue > 0;
             $x = ($iValue) > 0;
+
+            switch ($iValue) { case $iValue: break; }
+            for ($iValue; $iValue; $iValue) {}
+            while ($iValue) {}
+            do {} while ($iValue);
+            if ($iValue) {} elseif ($iValue) {}
         }
         foreach ($arr as $i => $iValue) {
             $iValue->property    = '...';
@@ -81,24 +87,29 @@ namespace {
 
     function false_positives_holder($arr) {
         /* false-positives: complex repetitive checks */
-        for ($i = 0, $max = count($arr); $i < $max || $condition; ++$i, $z = 0) {
+        for ($i = 0, $max = count($arr); $i < $max || $condition; ++$i) {
             $condition = $arr[$i] % 0;
         }
 
+        /* false-positives: multiple repetitive statements */
+        for ($i = 0, $max = count($arr); $i < $max; ++$i) {
+            echo $arr[$i];
+        }
+
         /* false-positives: no subject index based access */
-        for ($i = 0, $max = count($arr); $i < $max; ++$i, $z = 0) {
+        for ($i = 0, $max = count($arr); $i < $max; ++$i) {
             echo $i;
         }
-        for ($max = count($arr), $i = 0; $i < $max; $i++, $z = 0) {
+        for ($max = count($arr), $i = 0; $i < $max; $i++) {
             echo $i;
         }
-        for ($i = 0; $i < 10; $i++, $z = 0) {
+        for ($i = 0; $i < 10; $i++) {
             echo $arr[$i];
         }
 
         /* false-positives: multiple containers */
         $col = array();
-        for ($i = 0, $max = count($arr); $i < $max; $i++, $z = 0) {
+        for ($i = 0, $max = count($arr); $i < $max; $i++) {
             echo $arr[$i], $col[$i];
         }
 

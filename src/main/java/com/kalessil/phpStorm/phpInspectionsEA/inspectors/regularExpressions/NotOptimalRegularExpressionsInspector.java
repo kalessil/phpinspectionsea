@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
  */
 
 public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
+    private static final String messageNoDelimiters = "The regular expression delimiters are missing (it should be e.g. '/<regex-here>/').";
 
     @NotNull
     public String getShortName() {
@@ -87,9 +88,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                         final Set<String> patterns = this.extractPatterns(arguments[0]);
                         for (final String pattern : patterns) {
                             if (pattern != null && !pattern.isEmpty()) {
+                                boolean hasDelimiters = false;
                                 for (final Pattern regex : matchers) {
                                     final Matcher matcher = regex.matcher(pattern);
-                                    if (matcher.find()) {
+                                    if (hasDelimiters = matcher.find()) {
                                         final String phpRegexPattern   = matcher.group(2);
                                         final String phpRegexModifiers = matcher.group(4);
                                         this.checkRegex(functionName, reference, arguments[0], phpRegexPattern, phpRegexModifiers);
@@ -98,6 +100,9 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                                         }
                                         break;
                                     }
+                                }
+                                if (!hasDelimiters) {
+                                    holder.registerProblem(arguments[0], messageNoDelimiters);
                                 }
                             }
                         }

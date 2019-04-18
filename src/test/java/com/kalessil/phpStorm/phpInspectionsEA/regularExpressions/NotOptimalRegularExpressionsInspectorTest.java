@@ -112,4 +112,9 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/regularExpressions/preg-match.fixed.php");
     }
+    public void testFindMissingDelimiters() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/missing-delimiters.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

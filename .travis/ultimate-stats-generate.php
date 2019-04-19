@@ -47,6 +47,11 @@
             if (!isset($statistics[$definition->groupName])) {
                 $statistics[$definition->groupName] = ['new' => 0, 'enhanced' => 0];
             }
+            if ($status === 'new' && !$definition->toggle) {
+                echo sprintf('%s misses ultimate toggles: ', $className), PHP_EOL;
+                exit(-1);
+            }
+
             ++$statistics[$definition->groupName][$status];
             echo sprintf('%s: %s (%s)', $definition->groupName, $className, $status), PHP_EOL;
         }

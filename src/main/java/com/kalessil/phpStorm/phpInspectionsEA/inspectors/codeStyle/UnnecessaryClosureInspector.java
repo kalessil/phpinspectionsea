@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -57,7 +58,8 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (this.isContainingFileSkipped(reference)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(reference))              { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null && closurePositions.containsKey(functionName)) {
@@ -156,7 +158,7 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
     }
 
     private static final class UseCallbackFix extends UseSuggestedReplacementFixer {
-        private static final String title = "Inline the callable";
+        private static final String title = "Inline the closure";
 
         @NotNull
         @Override

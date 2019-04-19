@@ -20,6 +20,7 @@
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer"/>
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIndexer"/>
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer"/>
+    <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.InternalAnnotatedClassesIndexer"/>
 
     <!-- inspections -->
 

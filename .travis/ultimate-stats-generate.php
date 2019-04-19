@@ -25,7 +25,6 @@
         $className = substr($attributes->implementationClass, strrpos($attributes->implementationClass, '.') + 1);
         $ultimateDefinitions[$className] = $container;
     }
-
     $extendedDefinitions = [];
     foreach ($manifestExtended->xpath('//localInspection') as $definition) {
         $attributes                        = $definition->attributes();
@@ -39,6 +38,7 @@
         $extendedDefinitions[$className] = $container;
     }
 
+    /* gather statistics */
     $statistics = [];
     foreach ($ultimateDefinitions as $className => $definition) {
         $extendedDefinition = isset($extendedDefinitions[$className]) ? $extendedDefinitions[$className] : [];
@@ -51,6 +51,8 @@
             echo sprintf('%s: %s (%s)', $definition->groupName, $className, $status), PHP_EOL;
         }
     }
+
+    /* do summary reporting and ensure plugin information is up to date */
     echo PHP_EOL, PHP_EOL;
     $totalNew = $totalEnhanced = 0;
     foreach ($statistics as $group => $statistic) {
@@ -58,4 +60,14 @@
         $totalEnhanced += $statistic['enhanced'];
         echo sprintf('%s: %s new, %s enhanced', $group, $statistic['new'], $statistic['enhanced']), PHP_EOL;
     }
-    echo PHP_EOL, sprintf('Total: %s new, %s enhanced', $totalNew, $totalEnhanced), PHP_EOL;
+    $statsInDescription = sprintf('%s new and %s enhanced', $totalNew, $totalEnhanced);
+    echo PHP_EOL, sprintf('Total: %s', $statsInDescription), PHP_EOL, PHP_EOL;
+
+    $descriptionFile = $basePath . '/src/main/resources/META-INF/description.html';
+    if (($descriptionContent = file_get_contents($descriptionFile)) === false) {
+        throw new \RuntimeException('Could not load plugin description');
+    }
+    if (strpos($descriptionContent, $statsInDescription) === false) {
+        echo sprintf('description.html is outdated (%s is missing)', $statsInDescription), PHP_EOL;
+        exit(-1);
+    }

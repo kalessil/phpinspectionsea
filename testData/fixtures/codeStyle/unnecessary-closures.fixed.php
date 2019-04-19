@@ -10,5 +10,9 @@ function cases_holder($array) {
 
     array_map('\trim', $array);
 
+    /* false-positives: argument type if verified */
     array_map(function (string $value) { return trim($value); }, []);
+
+    array_map('strval', []);
+    array_map(function ($value) { return (array) $value; }, []);
 }

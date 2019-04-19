@@ -92,7 +92,7 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                                         if (operation != null) {
                                             final IElementType operator = operation.getNode().getElementType();
                                             if (castingsMapping.containsKey(operator)) {
-                                                final String replacement = castingsMapping.get(operator);
+                                                final String replacement = String.format("'%s'", castingsMapping.get(operator));
                                                 holder.registerProblem(
                                                         expression,
                                                         String.format(messagePattern, replacement),

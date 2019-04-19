@@ -118,7 +118,6 @@ Inspections Lists (Code style)
 | Code Style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | n/a | yes | n/a  | no  |
 | Code Style           | UnnecessaryCastingInspection                    | Unnecessary type casting                            | yes | yes | yes  | no  |
 | Code Style           | SelfClassReferencingInspection                  | Self class referencing                              | yes | yes | yes  | no  |
-| Code Style           | UnnecessaryClosureInspection                    | Unnecessary closures                                | yes | yes | yes  | no  |
 | Code Style           | MissUsingParentKeywordInspection                | 'parent' keyword misused                            | yes | yes | yes  | no  |
 | Code Style           | NestedAssignmentsUsageInspection                | Nested assignments usage                            | yes | yes | yes  | no  |
 | Code Style           | ProperNullCoalescingOperatorUsageInspection     | Proper null-coalescing operator usage               | yes | yes | yes  | no  |

@@ -41,7 +41,7 @@
 
     foreach ($ultimateDefinitions as $className => $definition) {
         $extendedDefinition = isset($extendedDefinitions[$className]) ? $extendedDefinitions[$className] : [];
-        if ((array)$definition !=== (array)$extendedDefinition) {
+        if ((array)$definition !== (array)$extendedDefinition) {
             echo $definition->groupName .': '. $className . PHP_EOL;
         }
     }

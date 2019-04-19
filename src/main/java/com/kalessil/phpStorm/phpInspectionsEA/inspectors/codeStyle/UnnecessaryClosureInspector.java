@@ -4,6 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -30,12 +32,18 @@ import java.util.Map;
 public class UnnecessaryClosureInspector extends BasePhpInspection {
     private static final String messagePattern = "The closure can be replaced with %s (reduces cognitive load).";
 
-    final private static Map<String, Integer> closurePositions = new HashMap<>();
+    final private static Map<String, Integer> closurePositions     = new HashMap<>();
+    final private static Map<IElementType, String> castingsMapping = new HashMap<>();
     static {
         closurePositions.put("array_filter", 1);
         closurePositions.put("array_map", 0);
         closurePositions.put("array_walk", 1);
         closurePositions.put("array_walk_recursive", 1);
+
+        castingsMapping.put(PhpTokenTypes.opINTEGER_CAST, "intval");
+        castingsMapping.put(PhpTokenTypes.opFLOAT_CAST, "floatval");
+        castingsMapping.put(PhpTokenTypes.opSTRING_CAST, "strval");
+        castingsMapping.put(PhpTokenTypes.opBOOLEAN_CAST, "boolval");
     }
 
     @NotNull
@@ -63,19 +71,36 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
                             if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                                 final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
                                 if (last != null) {
-                                    final FunctionReference callback = this.getCandidate(last);
-                                    if (callback != null && this.canInline(callback, closure)) {
-                                        final String replacement = String.format(
-                                                "'%s%s'",
-                                                callback.getImmediateNamespaceName(),
-                                                callback.getName()
-                                        );
-                                        holder.registerProblem(
-                                                expression,
-                                                String.format(messagePattern, replacement),
-                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                new UseCallbackFix(replacement)
-                                        );
+                                    final PsiElement candidate = this.getCandidate(last);
+                                    if (candidate instanceof FunctionReference) {
+                                        final FunctionReference callback = (FunctionReference) candidate;
+                                        if (this.canInline(callback, closure)) {
+                                            final String replacement = String.format(
+                                                    "'%s%s'",
+                                                    callback.getImmediateNamespaceName(),
+                                                    callback.getName()
+                                            );
+                                            holder.registerProblem(
+                                                    expression,
+                                                    String.format(messagePattern, replacement),
+                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                    new UseCallbackFix(replacement)
+                                            );
+                                        }
+                                    } else if (candidate instanceof UnaryExpression) {
+                                        final PsiElement operation = ((UnaryExpression) candidate).getOperation();
+                                        if (operation != null) {
+                                            final IElementType operator = operation.getNode().getElementType();
+                                            if (castingsMapping.containsKey(operator)) {
+                                                final String replacement = castingsMapping.get(operator);
+                                                holder.registerProblem(
+                                                        expression,
+                                                        String.format(messagePattern, replacement),
+                                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                        new UseCallbackFix(replacement)
+                                                );
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -85,11 +110,11 @@ public class UnnecessaryClosureInspector extends BasePhpInspection {
             }
 
             @Nullable
-            private FunctionReference getCandidate(@NotNull PsiElement last) {
+            private PsiElement getCandidate(@NotNull PsiElement last) {
                 if (last instanceof PhpReturn) {
                     final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
-                    if (OpenapiTypesUtil.isFunctionReference(candidate)) {
-                        return (FunctionReference) candidate;
+                    if (candidate instanceof UnaryExpression || OpenapiTypesUtil.isFunctionReference(candidate)) {
+                        return candidate;
                     }
                 } else if (OpenapiTypesUtil.isStatementImpl(last) && OpenapiTypesUtil.isAssignment(last.getFirstChild())) {
                     final AssignmentExpression assignment = (AssignmentExpression) last.getFirstChild();

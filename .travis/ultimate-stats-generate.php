@@ -44,12 +44,18 @@
         $extendedDefinition = isset($extendedDefinitions[$className]) ? $extendedDefinitions[$className] : [];
         if ((array)$definition != (array)$extendedDefinition) {
             $status = ($extendedDefinition === []) ? 'new' : 'enhanced';
+            if (!isset($statistics[$definition->groupName])) {
+                $statistics[$definition->groupName] = ['new' => 0, 'enhanced' => 0];
+            }
             ++$statistics[$definition->groupName][$status];
-            echo sprintf('%s: %s (%s)', $definition->groupName, $className, $status). PHP_EOL;
+            echo sprintf('%s: %s (%s)', $definition->groupName, $className, $status), PHP_EOL;
         }
     }
+    echo PHP_EOL, PHP_EOL;
+    $totalNew = $totalEnhanced = 0;
     foreach ($statistics as $group => $statistic) {
-        $new      = isset($statistic['new']) ? $statistic['new'] : 0;
-        $enhanced = isset($statistic['enhanced']) ? $statistic['enhanced'] : 0;
-        echo sprintf('%s: %s new, %s enhanced', $group, $new, $enhanced) .PHP_EOL;
+        $totalNew      += $statistic['new'];
+        $totalEnhanced += $statistic['enhanced'];
+        echo sprintf('%s: %s new, %s enhanced', $group, $statistic['new'], $statistic['enhanced']), PHP_EOL;
     }
+    echo PHP_EOL, sprintf('Total: %s new, %s enhanced', $totalNew, $totalEnhanced), PHP_EOL;

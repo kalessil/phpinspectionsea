@@ -20,7 +20,7 @@
         if (($inspectionContent = file_get_contents($inspectionPath)) === false) {
             throw new \RuntimeException('Could not load inspection code: ' . $attributes->implementationClass);
         }
-        $container->toggle = strpos($inspectionContent, '.areFeaturesEnabled') !== false;
+        $container->toggle = (strpos($inspectionContent, '.areFeaturesEnabled') !== false);
 
         $className = substr($attributes->implementationClass, strrpos($attributes->implementationClass, '.') + 1);
         $ultimateDefinitions[$className] = $container;
@@ -41,7 +41,7 @@
 
     foreach ($ultimateDefinitions as $className => $definition) {
         $extendedDefinition = isset($extendedDefinitions[$className]) ? $extendedDefinitions[$className] : [];
-        if ((array)$definition !== (array)$extendedDefinition) {
+        if ((array)$definition != (array)$extendedDefinition) {
             echo $definition->groupName .': '. $className . PHP_EOL;
         }
     }

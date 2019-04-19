@@ -56,9 +56,9 @@ before_install:
   - chmod +x gradlew
 
 script:
-  - php .travis/rules-list-check.php
-  - php .travis/orphaned-fixtures-check.php
-  - php .travis/missing-toggles-check.php
-  - ./gradlew check buildPlugin
+#  - php .travis/rules-list-check.php
+#  - php .travis/orphaned-fixtures-check.php
+#  - php .travis/missing-toggles-check.php
+#  - ./gradlew check buildPlugin
   - git show master:src/main/resources/META-INF/plugin.xml > src/main/resources/META-INF/plugin.master.xml
   - php .travis/ultimate-stats-generate.php

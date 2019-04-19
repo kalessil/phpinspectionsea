@@ -56,6 +56,7 @@
             echo sprintf('%s: %s (%s)', $definition->groupName, $className, $status), PHP_EOL;
         }
     }
+    ksort($statistics);
 
     /* do summary reporting and ensure plugin information is up to date */
     echo PHP_EOL, PHP_EOL;

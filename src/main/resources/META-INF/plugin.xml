@@ -995,6 +995,10 @@
         shortName="ClassReusesParentTraitInspection"                displayName="Class reuses traits multiple times"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassReusesParentTraitInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ExposingInternalClassesInspection"               displayName="Exposed @internal classes"
+        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ExposingInternalClassesInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

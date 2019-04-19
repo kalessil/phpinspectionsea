@@ -68,6 +68,6 @@
         throw new \RuntimeException('Could not load plugin description');
     }
     if (strpos($descriptionContent, $statsInDescription) === false) {
-        echo sprintf('description.html is outdated (%s is missing)', $statsInDescription), PHP_EOL;
+        echo sprintf('description.html is outdated ("%s" is missing)', $statsInDescription), PHP_EOL;
         exit(-1);
     }

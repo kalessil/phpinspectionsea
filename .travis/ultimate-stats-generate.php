@@ -64,7 +64,7 @@
     foreach ($statistics as $group => $statistic) {
         $totalNew      += $statistic['new'];
         $totalEnhanced += $statistic['enhanced'];
-        echo sprintf('%s: %s new, %s enhanced', $group, $statistic['new'], $statistic['enhanced']), PHP_EOL;
+        echo sprintf('%s: %s new and %s enhanced inspections', $group, $statistic['new'], $statistic['enhanced']), PHP_EOL;
     }
     $statsInDescription = sprintf('%s new and %s enhanced', $totalNew, $totalEnhanced);
     echo PHP_EOL, sprintf('Total: %s', $statsInDescription), PHP_EOL, PHP_EOL;

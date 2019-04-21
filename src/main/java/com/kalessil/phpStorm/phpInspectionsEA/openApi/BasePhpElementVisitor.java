@@ -97,7 +97,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
             /* if identified, check its' FQN */
             final String clazzFqn = clazz == null ? null : clazz.getFQN();
             if (clazzFqn != null) {
-                result = clazzFqn.endsWith("Test") || clazzFqn.contains("\\Tests\\") || clazzFqn.contains("\\Test\\") || clazzFqn.contains("\\Fixturess\\");
+                result = clazzFqn.endsWith("Test") || clazzFqn.contains("\\Tests\\") || clazzFqn.contains("\\Test\\");
             }
         }
         return result;

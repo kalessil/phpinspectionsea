@@ -53,7 +53,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
                         if (scope instanceof Method) {
                             final PhpClass clazz = ((Method) scope).getContainingClass();
-                            if (clazz != null && !clazz.isDeprecated()) {
+                            if (clazz != null && !clazz.isDeprecated() && !this.isTestContext(reference)) {
                                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
                                 if (body != null) {
                                     PsiElement parent = reference.getParent();
@@ -79,7 +79,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 /* do not process un-reportable classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz      = method.getContainingClass();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (clazz != null && nameNode != null && !clazz.isDeprecated()) {
+                if (clazz != null && nameNode != null && !clazz.isDeprecated() && !this.isTestContext(method)) {
                     final String methodName          = method.getName();
                     final boolean isMethodDeprecated = method.isDeprecated();
 

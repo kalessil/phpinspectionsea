@@ -53,7 +53,7 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
                         if (scope instanceof Method) {
                             final PhpClass clazz = ((Method) scope).getContainingClass();
-                                if (clazz != null && !clazz.isDeprecated()) {
+                            if (clazz != null && !clazz.isDeprecated()) {
                                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
                                 if (body != null) {
                                     PsiElement parent = reference.getParent();

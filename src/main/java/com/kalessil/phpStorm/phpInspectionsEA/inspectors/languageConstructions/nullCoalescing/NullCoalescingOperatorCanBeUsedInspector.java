@@ -5,10 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Couple;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
@@ -106,7 +103,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 if (extracted instanceof PhpIsset) {
                                     coalescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, firstValue, secondValue);
                                 } else if (extracted instanceof FunctionReference) {
-                                    //replacement = this.generateReplacementForExists(condition, extracted, firstValue, secondValue);
+                                    coalescing = this.generateReplacementForExists(condition, (FunctionReference) extracted, firstValue, secondValue);
                                 } else if (extracted instanceof BinaryExpression) {
                                     coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, firstValue, secondValue);
                                 }
@@ -134,6 +131,35 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         }
                     }
                 }
+            }
+
+            @Nullable
+            private String generateReplacementForExists(
+                    @NotNull PsiElement condition,
+                    @NotNull FunctionReference extracted,
+                    @NotNull PsiElement first,
+                    @NotNull PsiElement second
+            ) {
+                final PsiElement[] arguments = extracted.getParameters();
+                if (arguments.length == 2) {
+                    final boolean expectsToBeSet = condition == extracted;
+                    final PsiElement candidate   = expectsToBeSet ? first : second;
+                    final PsiElement alternative = expectsToBeSet ? second : first;
+                    if (candidate instanceof ArrayAccessExpression && PhpLanguageUtil.isNull(alternative)) {
+                        final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
+                        final PsiElement container         = access.getValue();
+                        if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[1])) {
+                            final ArrayIndex index = access.getIndex();
+                            if (index != null) {
+                                final PsiElement key = index.getValue();
+                                if (key != null && OpenapiEquivalenceUtil.areEqual(key, arguments[0])) {
+                                    return String.format("%s ?? %s", candidate.getText(), alternative.getText());
+                                }
+                            }
+                        }
+                    }
+                }
+                return null;
             }
 
             @Nullable

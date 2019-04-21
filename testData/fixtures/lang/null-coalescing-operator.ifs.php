@@ -70,8 +70,9 @@ function cases_holder() {
     }
     return 'default';
 
+    /* false-positives: multi-assignments, refactoring changes semantics */
     $one = $two = 'default';
-    <weak_warning descr="'$one = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    if (isset($value)) {
         $one = $value;
     }
 }

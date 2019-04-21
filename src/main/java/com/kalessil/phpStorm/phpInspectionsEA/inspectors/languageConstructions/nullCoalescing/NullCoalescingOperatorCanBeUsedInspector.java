@@ -195,7 +195,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         final PsiElement ifPrevious = this.extractCandidate(statement.getPrevPsiSibling());
 
                         if (statement.getElseBranch() != null) {
-                            PsiElement elseLast         = null;
+                            PsiElement elseLast           = null;
                             final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(statement.getElseBranch());
                             if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
                                 elseLast = this.extractCandidate(ExpressionSemanticUtil.getLastStatement(elseBody));
@@ -209,7 +209,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 );
                             }
                             /* if - assign - else - assign */
-                            else if (ifLast instanceof AssignmentExpression && elseLast instanceof AssignmentExpression && ifNext instanceof PhpReturn) {
+                            else if (ifLast instanceof AssignmentExpression && elseLast instanceof AssignmentExpression) {
                                 final AssignmentExpression ifAssignment   = (AssignmentExpression) ifLast;
                                 final AssignmentExpression elseAssignment = (AssignmentExpression) elseLast;
                                 final PsiElement ifContainer              = ifAssignment.getVariable();

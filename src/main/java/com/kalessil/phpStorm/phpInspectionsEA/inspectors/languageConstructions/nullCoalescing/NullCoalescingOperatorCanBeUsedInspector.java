@@ -15,9 +15,6 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromArrayKeyExistsStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromIssetStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -26,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -46,13 +40,6 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
     private static final String messagePattern = "'%s' can be used instead (reduces cognitive load).";
 
-    private static final List<Function<TernaryExpression, String>> ternaryStrategies = new ArrayList<>();
-    static {
-        ternaryStrategies.add(GenerateAlternativeFromIssetStrategy::generate);
-        ternaryStrategies.add(GenerateAlternativeFromNullComparisonStrategy::generate);
-        ternaryStrategies.add(GenerateAlternativeFromArrayKeyExistsStrategy::generate);
-    }
-
     @NotNull
     public String getShortName() {
         return "NullCoalescingOperatorCanBeUsedInspection";
@@ -68,16 +55,32 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 if (this.isContainingFileSkipped(expression))             { return; }
 
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (SUGGEST_SIMPLIFYING_TERNARIES && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
-                    for (final Function<TernaryExpression, String> strategy : ternaryStrategies) {
-                        final String replacement = strategy.apply(expression);
-                        if (replacement != null) {
-                            holder.registerProblem(
-                                    expression,
-                                    String.format(messagePattern, replacement),
-                                    new ReplaceSingleConstructFix(replacement)
-                            );
-                            break;
+                if (SUGGEST_SIMPLIFYING_TERNARIES && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR) && !expression.isShort()) {
+                    final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                    if (condition != null) {
+                        final PsiElement extracted = this.getTargetCondition(condition);
+                        if (extracted != null) {
+                            final PsiElement firstValue  = expression.getTrueVariant();
+                            final PsiElement secondValue = expression.getFalseVariant();
+                            if (firstValue != null && secondValue != null) {
+                                /* generate replacement */
+                                String coalescing = null;
+                                if (extracted instanceof PhpIsset) {
+                                    coalescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, firstValue, secondValue);
+                                } else if (extracted instanceof FunctionReference) {
+                                    coalescing = this.generateReplacementForExists(condition, (FunctionReference) extracted, firstValue, secondValue);
+                                } else if (extracted instanceof BinaryExpression) {
+                                    coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, firstValue, secondValue);
+                                }
+                                /* emit violation if can offer replacement */
+                                if (coalescing != null) {
+                                    holder.registerProblem(
+                                            expression,
+                                            String.format(messagePattern, coalescing),
+                                            new ReplaceSingleConstructFix(coalescing)
+                                    );
+                                }
+                            }
                         }
                     }
                 }

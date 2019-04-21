@@ -51,9 +51,9 @@
     }
     abstract class DeprecationHolderChild extends DeprecationHolderParent {
         /** @deprecated */
-        public function <warning descr="The overridden/implemented 'abstractToDeprecate' probably needs to be deprecated as well.">abstractToDeprecate</warning> () {}
+        public function <warning descr="The parents' overridden/implemented 'abstractToDeprecate' probably needs to be deprecated as well.">abstractToDeprecate</warning> () {}
         /** @deprecated */
-        public function <warning descr="The overridden/implemented 'implementationToDeprecate' probably needs to be deprecated as well.">implementationToDeprecate</warning> () {}
+        public function <warning descr="The parents' overridden/implemented 'implementationToDeprecate' probably needs to be deprecated as well.">implementationToDeprecate</warning> () {}
     }
 
     /* false-positives: implemented deprecation and deprecated */

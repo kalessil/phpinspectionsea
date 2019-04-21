@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 
 public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
     private static final String patternNeedsDeprecation      = "'%s' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
-    private static final String patternDeprecateParent       = "The overridden/implemented '%s' probably needs to be deprecated as well.";
+    private static final String patternDeprecateParent       = "The parents' overridden/implemented '%s' probably needs to be deprecated as well.";
     private static final String patternMissingDeprecationTag = "'%s' triggers a deprecation warning, but misses @deprecated annotation.";
 
     @NotNull
@@ -51,10 +51,10 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2 && arguments[1].getText().equals("E_USER_DEPRECATED")) {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
-                        if (scope instanceof Method) {
+                        if (scope instanceof Method && !scope.isDeprecated()) {
                             final Method method  = (Method) scope;
                             final PhpClass clazz = method.getContainingClass();
-                            if (clazz != null && !clazz.isDeprecated() && !method.isDeprecated() && !this.isTestContext(reference)) {
+                            if (clazz != null && !clazz.isDeprecated() && !this.isTestContext(reference)) {
                                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                                 if (body != null) {
                                     PsiElement parent = reference.getParent();

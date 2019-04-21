@@ -1,27 +1,36 @@
 <?php
 
     /* pattern: implementing deprecation */
-    interface DeprecatedInterface {
+    interface InterfaceWithDeprecatedMethod {
         /** @deprecated */
         public function deprecatedInInterface();
     }
-    class DeprecatedClass implements DeprecatedInterface {
+    class ClassImplementsDeprecatedMethod implements InterfaceWithDeprecatedMethod {
         public function <warning descr="'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning> () {}
+    }
+    /** @deprecated  */
+    class DeprecatedClassImplementsDeprecatedMethod implements InterfaceWithDeprecatedMethod {
+        public function deprecatedInInterface () {}
     }
 
     /* pattern: overriding deprecation */
-    class DeprecatedMethod extends DeprecatedClass {
+    class DeprecatedMethod extends ClassImplementsDeprecatedMethod {
         /** @deprecated */
         public function deprecatedInClassFirst(){}
         /** @deprecated */
         public function deprecatedInClassSecond(){}
     }
-    class MyClass extends DeprecatedMethod {
+    class ClassOverridesDeprecatedMethods extends DeprecatedMethod {
         public function <warning descr="'deprecatedInClassFirst' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInClassFirst</warning> () {}
         /** @deprecated */
         public function deprecatedInClassSecond(){}
     }
-    interface MyInterface extends DeprecatedInterface {
+    /** @deprecated  */
+    class DeprecatedClassOverridesDeprecatedMethods extends DeprecatedMethod {
+        public function deprecatedInClassFirst () {}
+        public function deprecatedInClassSecond(){}
+    }
+    interface InterfaceOverridesDeprecatedMethods extends InterfaceWithDeprecatedMethod {
         public function <warning descr="'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning>();
     }
 
@@ -48,7 +57,7 @@
     }
 
     /* false-positives: implemented deprecation and deprecated */
-    class DeprecatedClassFixed implements DeprecatedInterface {
+    class DeprecatedClassFixed implements InterfaceWithDeprecatedMethod {
         /** @deprecated */
         public function deprecatedInInterface() {}
     }

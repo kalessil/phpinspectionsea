@@ -76,9 +76,9 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                 /* do not process un-reportable classes and interfaces - we are searching real tech. debt here */
                 final PhpClass clazz      = method.getContainingClass();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (clazz != null && nameNode != null) {
-                    final String methodName    = method.getName();
-                    final boolean isDeprecated = method.isDeprecated();
+                if (clazz != null && nameNode != null && !clazz.isDeprecated()) {
+                    final String methodName          = method.getName();
+                    final boolean isMethodDeprecated = method.isDeprecated();
 
                     final Collection<Supplier<Collection<PhpClass>>> suppliers = new ArrayList<>();
                     suppliers.add(() -> Collections.singletonList(OpenapiResolveUtil.resolveSuperClass(clazz)));
@@ -90,10 +90,10 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                             if (contract != null) {
                                 final Method contractMethod = OpenapiResolveUtil.resolveMethod(contract, methodName);
                                 if (contractMethod != null) {
-                                    if (!isDeprecated && contractMethod.isDeprecated()) {
+                                    if (!isMethodDeprecated && contractMethod.isDeprecated()) {
                                         holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
                                         return;
-                                    } else if (isDeprecated && !contractMethod.isDeprecated()) {
+                                    } else if (isMethodDeprecated && !contractMethod.isDeprecated()) {
                                         holder.registerProblem(nameNode, String.format(patternDeprecateParent, methodName));
                                         return;
                                     }

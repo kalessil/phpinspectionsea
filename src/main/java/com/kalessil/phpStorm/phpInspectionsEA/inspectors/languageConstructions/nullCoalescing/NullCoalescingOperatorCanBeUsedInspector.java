@@ -63,21 +63,12 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             final PsiElement firstValue  = expression.getTrueVariant();
                             final PsiElement secondValue = expression.getFalseVariant();
                             if (firstValue != null && secondValue != null) {
-                                /* generate replacement */
-                                String coalescing = null;
-                                if (extracted instanceof PhpIsset) {
-                                    coalescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, firstValue, secondValue);
-                                } else if (extracted instanceof FunctionReference) {
-                                    coalescing = this.generateReplacementForExists(condition, (FunctionReference) extracted, firstValue, secondValue);
-                                } else if (extracted instanceof BinaryExpression) {
-                                    coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, firstValue, secondValue);
-                                }
-                                /* emit violation if can offer replacement */
-                                if (coalescing != null) {
+                                final String replacement = this.generateReplacement(condition, extracted, firstValue, secondValue);
+                                if (replacement != null) {
                                     holder.registerProblem(
                                             expression,
-                                            String.format(messagePattern, coalescing),
-                                            new ReplaceSingleConstructFix(coalescing)
+                                            String.format(messagePattern, replacement),
+                                            new ReplaceSingleConstructFix(replacement)
                                     );
                                 }
                             }
@@ -101,16 +92,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             final PsiElement firstValue                = fragments.second.first;
                             final PsiElement secondValue               = fragments.second.second;
                             if (firstValue != null && secondValue != null) {
-                                /* generate replacement */
-                                String coalescing = null;
-                                if (extracted instanceof PhpIsset) {
-                                    coalescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, firstValue, secondValue);
-                                } else if (extracted instanceof FunctionReference) {
-                                    coalescing = this.generateReplacementForExists(condition, (FunctionReference) extracted, firstValue, secondValue);
-                                } else if (extracted instanceof BinaryExpression) {
-                                    coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, firstValue, secondValue);
-                                }
-                                /* emit violation if can offer replacement */
+                                final String coalescing = this.generateReplacement(condition, extracted, firstValue, secondValue);
                                 if (coalescing != null) {
                                     final PsiElement context = firstValue.getParent();
                                     if (context instanceof PhpReturn) {
@@ -134,6 +116,24 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         }
                     }
                 }
+            }
+
+            @Nullable
+            private String generateReplacement(
+                    @NotNull PsiElement condition,
+                    @NotNull PsiElement extracted,
+                    @NotNull PsiElement first,
+                    @NotNull PsiElement second
+            ) {
+                String coalescing = null;
+                if (extracted instanceof PhpIsset) {
+                    coalescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, first, second);
+                } else if (extracted instanceof FunctionReference) {
+                    coalescing = this.generateReplacementForExists(condition, (FunctionReference) extracted, first, second);
+                } else if (extracted instanceof BinaryExpression) {
+                    coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, first, second);
+                }
+                return coalescing;
             }
 
             @Nullable

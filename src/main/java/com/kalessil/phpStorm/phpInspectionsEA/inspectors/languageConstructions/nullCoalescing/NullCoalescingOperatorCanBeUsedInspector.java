@@ -243,7 +243,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 final PsiElement ifContainer                  = ifAssignment.getVariable();
                                 if (previousContainer instanceof Variable && ifContainer instanceof Variable) {
                                     final boolean isTarget = OpenapiEquivalenceUtil.areEqual(previousContainer, ifContainer);
-                                    if (isTarget) {
+                                    if (isTarget && !OpenapiTypesUtil.isAssignmentByReference(previousAssignment)) {
                                         final PsiElement previousValue = previousAssignment.getValue();
                                         if (!(previousValue instanceof AssignmentExpression)) {
                                             result = new Couple<>(

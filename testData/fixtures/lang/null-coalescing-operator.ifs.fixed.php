@@ -31,3 +31,26 @@ function cases_holder_isset() {
     if (isset($value)) { return trim($value); } return 'default';
     $one = $two = 'default'; if (isset($value)) { $one = $value; }
 }
+
+function cases_holder_identity() {
+    $container = $value ?? 'default';
+    $container = $value ?? 'default';
+
+    /* false-positive: inverted logic */
+    $container = 'default'; if ($value === null) { $container = $value; }
+
+    $container = $value ?? 'default';
+
+    /* false-positive: mismatched value */
+    if ($value !== null) { $container = trim($value); } else { $container = 'default'; }
+
+    return $value ?? 'default';
+
+    /* false-positive: mismatched value */
+    if ($value !== null) { return trim($value); } else { return 'default'; }
+
+    return $value ?? 'default';
+
+    /* false-positive: mismatched value */
+    if ($value !== null) { return trim($value); } return 'default';
+}

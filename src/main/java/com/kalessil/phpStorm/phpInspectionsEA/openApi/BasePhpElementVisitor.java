@@ -107,7 +107,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
                     : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, (Class) PsiFile.class);
             if (containingClass != null) {
                 final String fqn = containingClass.getFQN();
-                result = fqn.endsWith("Test") || fqn.contains("\\Tests\\") || fqn.contains("\\Test\\");
+                result = fqn.endsWith("Test") || fqn.contains("\\Tests\\") || fqn.contains("\\Test\\") || fqn.contains("\\Fixtures\\");
             }
         }
         return result;

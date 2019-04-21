@@ -12,10 +12,14 @@
     /* pattern: overriding deprecation */
     class DeprecatedMethod extends DeprecatedClass {
         /** @deprecated */
-        public function deprecatedInClass(){}
+        public function deprecatedInClassFirst(){}
+        /** @deprecated */
+        public function deprecatedInClassSecond(){}
     }
     class MyClass extends DeprecatedMethod {
-        public function <warning descr="'deprecatedInClass' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInClass</warning> () {}
+        public function <warning descr="'deprecatedInClassFirst' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInClassFirst</warning> () {}
+        /** @deprecated */
+        public function deprecatedInClassSecond(){}
     }
     interface MyInterface extends DeprecatedInterface {
         public function <warning descr="'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning>();
@@ -51,7 +55,7 @@
     /* false-positives: overrides a deprecation and deprecated */
     class MyClassFixed extends DeprecatedMethod {
         /** @deprecated */
-        public function deprecatedInClass(){}
+        public function deprecatedInClassFirst(){}
     }
 
     class MissingDeprecationTags {

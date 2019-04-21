@@ -19,6 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -145,11 +146,52 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             }
 
                             /* if - return - else - return */
-                            /* if - assign - else - assign - return */
+                            if (ifLast instanceof PhpReturn && elseLast instanceof PhpReturn) {
+                                result = new Couple<>(
+                                        new Couple<>(statement, statement),
+                                        new Couple<>(((PhpReturn) ifLast).getArgument(), ((PhpReturn) elseLast).getArgument())
+                                );
+                            }
+                            /* if - assign - else - assign */
+                            else if (ifLast instanceof AssignmentExpression && elseLast instanceof AssignmentExpression && ifNext instanceof PhpReturn) {
+                                final AssignmentExpression ifAssignment   = (AssignmentExpression) ifLast;
+                                final AssignmentExpression elseAssignment = (AssignmentExpression) elseLast;
+                                final PsiElement ifContainer              = ifAssignment.getVariable();
+                                final PsiElement elseContainer            = elseAssignment.getVariable();
+                                if (ifContainer instanceof Variable && elseContainer instanceof Variable) {
+                                    final boolean isTarget = OpenapiEquivalenceUtil.areEqual(ifContainer, elseContainer);
+                                    if (isTarget) {
+                                        result = new Couple<>(
+                                                new Couple<>(statement, ifNext),
+                                                new Couple<>(ifAssignment.getValue(), elseAssignment.getValue())
+                                        );
+                                    }
+                                }
+                            }
                         } else {
-                            /* assign - if - assign - return */
-                            /* assign - if - return - return */
+                            /* assign - if - assign */
+                            if (ifPrevious instanceof AssignmentExpression && ifLast instanceof AssignmentExpression) {
+                                final AssignmentExpression previousAssignment = (AssignmentExpression) ifPrevious;
+                                final AssignmentExpression ifAssignment       = (AssignmentExpression) ifLast;
+                                final PsiElement previousContainer            = previousAssignment.getVariable();
+                                final PsiElement ifContainer                  = ifAssignment.getVariable();
+                                if (previousContainer instanceof Variable && ifContainer instanceof Variable) {
+                                    final boolean isTarget = OpenapiEquivalenceUtil.areEqual(previousContainer, ifContainer);
+                                    if (isTarget) {
+                                        result = new Couple<>(
+                                                new Couple<>(ifPrevious.getParent(), ifNext),
+                                                new Couple<>(ifAssignment.getValue(), previousAssignment.getValue())
+                                        );
+                                    }
+                                }
+                            }
                             /* if - return - return */
+                            else if (ifLast instanceof PhpReturn && ifNext instanceof PhpReturn) {
+                                result = new Couple<>(
+                                        new Couple<>(statement, ifNext),
+                                        new Couple<>(((PhpReturn) ifLast).getArgument(), ((PhpReturn) ifNext).getArgument())
+                                );
+                            }
                         }
                     }
                 }

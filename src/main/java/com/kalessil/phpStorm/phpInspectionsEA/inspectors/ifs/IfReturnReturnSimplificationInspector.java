@@ -112,9 +112,10 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
                             /* if - return - else - return */
                             if (ifLast instanceof PhpReturn && elseLast instanceof PhpReturn) {
-                                final PhpReturn first  = (PhpReturn) ifLast;
-                                final PhpReturn second = (PhpReturn) elseLast;
-                                result = new Couple<>(new Couple<>(statement, statement), new Couple<>(first.getArgument(), second.getArgument()));
+                                result = new Couple<>(
+                                        new Couple<>(statement, statement),
+                                        new Couple<>(((PhpReturn) ifLast).getArgument(), ((PhpReturn) elseLast).getArgument())
+                                );
                             }
                             /* if - assign - else - assign - return */
                             else if (ifLast instanceof AssignmentExpression && elseLast instanceof AssignmentExpression && ifNext instanceof PhpReturn) {

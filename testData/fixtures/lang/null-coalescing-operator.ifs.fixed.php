@@ -54,3 +54,25 @@ function cases_holder_identity() {
     /* false-positive: mismatched value */
     if ($value !== null) { return trim($value); } return 'default';
 }
+
+function cases_holder_array_key_exists() {
+    $container = $array[$key] ?? null;
+
+    /* false-positive: no-null alternative */
+    $container = 'default'; if (array_key_exists($key, $array)) { $container = $array[$key]; }
+
+    $container = $array[$key] ?? null;
+
+    /* false-positive: mismatched value */
+    if (array_key_exists($key, $array)) { $container = trim($array[$key]); } else { $container = null; }
+
+    return $array[$key] ?? null;
+
+    /* false-positive: mismatched value */
+    if (array_key_exists($key, $array)) { return trim($array[$key]); } else { return null; }
+
+    return $array[$key] ?? null;
+
+    /* false-positive: mismatched value */
+    if (array_key_exists($key, $array)) { return trim($array[$key]); } return null;
+}

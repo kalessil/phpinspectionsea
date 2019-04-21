@@ -87,3 +87,39 @@ function cases_holder_identity() {
     /* false-positive: mismatched value */
     if ($value !== null) { return trim($value); } return 'default';
 }
+
+function cases_holder_array_key_exists() {
+    $container = null;
+    <weak_warning descr="'$container = $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
+        $container = $array[$key];
+    }
+
+    /* false-positive: no-null alternative */
+    $container = 'default'; if (array_key_exists($key, $array)) { $container = $array[$key]; }
+
+    <weak_warning descr="'$container = $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
+        $container = $array[$key];
+    } else {
+        $container = null;
+    }
+
+    /* false-positive: mismatched value */
+    if (array_key_exists($key, $array)) { $container = trim($array[$key]); } else { $container = null; }
+
+    <weak_warning descr="'return $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
+        return $array[$key];
+    } else {
+        return null;
+    }
+
+    /* false-positive: mismatched value */
+    if (array_key_exists($key, $array)) { return trim($array[$key]); } else { return null; }
+
+    <weak_warning descr="'return $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
+        return $array[$key];
+    }
+    return null;
+
+    /* false-positive: mismatched value */
+    if (array_key_exists($key, $array)) { return trim($array[$key]); } return null;
+}

@@ -24,10 +24,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.n
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,7 +108,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 } else if (extracted instanceof FunctionReference) {
                                     //replacement = this.generateReplacementForExists(condition, extracted, firstValue, secondValue);
                                 } else if (extracted instanceof BinaryExpression) {
-                                    //replacement = this.generateReplacementForIdentity(condition, extracted, firstValue, secondValue);
+                                    coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, firstValue, secondValue);
                                 }
                                 /* emit violation if can offer replacement */
                                 if (coalescing != null) {
@@ -137,6 +134,30 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         }
                     }
                 }
+            }
+
+            @Nullable
+            private String generateReplacementForIdentity(
+                    @NotNull PsiElement condition,
+                    @NotNull BinaryExpression extracted,
+                    @NotNull PsiElement first,
+                    @NotNull PsiElement second
+            ) {
+                PsiElement subject = extracted.getLeftOperand();
+                if (PhpLanguageUtil.isNull(subject)) {
+                    subject = extracted.getRightOperand();
+                }
+                if (subject != null) {
+                    final IElementType operator  = extracted.getOperationType();
+                    final boolean expectsToBeSet = (operator == PhpTokenTypes.opNOT_IDENTICAL && condition == extracted) ||
+                                                   (operator == PhpTokenTypes.opIDENTICAL && condition != extracted);
+                    final PsiElement candidate   = expectsToBeSet ? first : second;
+                    if (OpenapiEquivalenceUtil.areEqual(candidate, subject)) {
+                        final PsiElement alternative = expectsToBeSet ? second : first;
+                        return String.format("%s ?? %s", candidate.getText(), alternative.getText());
+                    }
+                }
+                return null;
             }
 
             @Nullable

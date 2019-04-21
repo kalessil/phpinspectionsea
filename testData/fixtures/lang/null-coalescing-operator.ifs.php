@@ -47,3 +47,43 @@ function cases_holder_isset() {
     if (isset($value)) { return trim($value); } return 'default';
     $one = $two = 'default'; if (isset($value)) { $one = $value; }
 }
+
+function cases_holder_identity() {
+    $container = 'default';
+    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
+        $container = $value;
+    }
+    $container = 'default';
+    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (!($value === null)) {
+        $container = $value;
+    }
+
+    /* false-positive: inverted logic */
+    $container = 'default'; if ($value === null) { $container = $value; }
+
+    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
+        $container = $value;
+    } else {
+        $container = 'default';
+    }
+
+    /* false-positive: mismatched value */
+    if ($value !== null) { $container = trim($value); } else { $container = 'default'; }
+
+    <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
+        return $value;
+    } else {
+        return 'default';
+    }
+
+    /* false-positive: mismatched value */
+    if ($value !== null) { return trim($value); } else { return 'default'; }
+
+    <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
+        return $value;
+    }
+    return 'default';
+
+    /* false-positive: mismatched value */
+    if ($value !== null) { return trim($value); } return 'default';
+}

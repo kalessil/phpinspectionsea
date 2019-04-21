@@ -144,9 +144,12 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 elseLast = this.extractCandidate(ExpressionSemanticUtil.getLastStatement(elseBody));
                             }
 
-                            /* TODO: check cases with else-branch */
+                            /* if - return - else - return */
+                            /* if - assign - else - assign - return */
                         } else {
-                            /* TODO: check cases without else-branch */
+                            /* assign - if - assign - return */
+                            /* assign - if - return - return */
+                            /* if - return - return */
                         }
                     }
                 }

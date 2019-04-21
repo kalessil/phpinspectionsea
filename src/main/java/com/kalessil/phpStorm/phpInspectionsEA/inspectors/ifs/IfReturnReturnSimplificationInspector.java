@@ -110,7 +110,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                                 elseLast = this.extractCandidate(ExpressionSemanticUtil.getLastStatement(elseBody));
                             }
 
-                            /* if - return-bool - else - return bool */
+                            /* if - return - else - return */
                             if (ifLast instanceof PhpReturn && elseLast instanceof PhpReturn) {
                                 final PhpReturn first  = (PhpReturn) ifLast;
                                 final PhpReturn second = (PhpReturn) elseLast;

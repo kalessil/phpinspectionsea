@@ -52,16 +52,17 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     if (arguments.length == 2 && arguments[1].getText().equals("E_USER_DEPRECATED")) {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
                         if (scope instanceof Method) {
-                            final PhpClass clazz = ((Method) scope).getContainingClass();
-                            if (clazz != null && !clazz.isDeprecated() && !this.isTestContext(reference)) {
-                                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                            final Method method  = (Method) scope;
+                            final PhpClass clazz = method.getContainingClass();
+                            if (clazz != null && !clazz.isDeprecated() && !method.isDeprecated() && !this.isTestContext(reference)) {
+                                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                                 if (body != null) {
                                     PsiElement parent = reference.getParent();
                                     parent            = parent instanceof UnaryExpression ? parent.getParent() : parent;
-                                    if (OpenapiTypesUtil.isStatementImpl(parent) && parent.getParent() == body && !scope.isDeprecated()) {
-                                        final PsiElement nameNode = NamedElementUtil.getNameIdentifier(scope);
+                                    if (OpenapiTypesUtil.isStatementImpl(parent) && parent.getParent() == body) {
+                                        final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                                         if (nameNode != null ) {
-                                            holder.registerProblem(nameNode, String.format(patternMissingDeprecationTag, scope.getName()));
+                                            holder.registerProblem(nameNode, String.format(patternMissingDeprecationTag, method.getName()));
                                         }
                                     }
                                 }

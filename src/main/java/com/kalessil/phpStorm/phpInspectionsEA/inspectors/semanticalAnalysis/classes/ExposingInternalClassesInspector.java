@@ -43,7 +43,7 @@ public class ExposingInternalClassesInspector extends BasePhpInspection {
                 if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
                 if (this.isContainingFileSkipped(clazz))                  { return; }
 
-                if (!clazz.isInterface() && !clazz.isTrait() && !clazz.isInternal()) {
+                if (!clazz.isInterface() && !clazz.isTrait() && !clazz.isInternal() && !this.isTestContext(clazz)) {
                     final FileBasedIndex index    = FileBasedIndex.getInstance();
                     final GlobalSearchScope scope = GlobalSearchScope.allScope(holder.getProject());
                     methods: for (final Method method : clazz.getOwnMethods()) {

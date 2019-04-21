@@ -1,19 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromArrayKeyExistsStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromIssetStrategy;
@@ -22,8 +19,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +63,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                if (this.isContainingFileSkipped(expression)) { return; }
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(expression))             { return; }
 
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (SUGGEST_SIMPLIFYING_TERNARIES && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
@@ -85,237 +83,93 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             }
 
             @Override
-            public void visitPhpIf(@NotNull If expression) {
-                if (this.isContainingFileSkipped(expression)) { return; }
+            public void visitPhpIf(@NotNull If statement) {
+                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
+                if (this.isContainingFileSkipped(statement))              { return; }
 
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (SUGGEST_SIMPLIFYING_IFS && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
-                    final PsiElement condition = expression.getCondition();
-                    if (condition instanceof PhpIsset) {
-                        final PhpIsset isset         = (PhpIsset) condition;
-                        final PsiElement[] arguments = isset.getVariables();
-                        if (arguments.length == 1 && expression.getElseIfBranches().length == 0) {
-                            final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(expression);
-                            if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
-                                if (expression.getElseBranch() == null) {
-                                    this.analyzeIfWithPrecedingStatement(expression, arguments[0], ifBody);
-                                    this.analyzeIfWithFollowingStatement(expression, arguments[0], ifBody);
-                                } else {
-                                    this.analyzeIfElseStatement(expression, arguments[0], ifBody);
-                                }
+                    final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
+                    if (condition != null && this.isTargetCondition(condition) && statement.getElseIfBranches().length == 0) {
+                        final Couple<Couple<PsiElement>> fragments = this.extract(statement);
+                        final PsiElement firstValue                = fragments.second.first;
+                        final PsiElement secondValue               = fragments.second.second;
+                        if (firstValue != null && secondValue != null) {
+                            // code generation here
+                        }
+                    }
+                }
+            }
+
+            private boolean isTargetCondition(@NotNull PsiElement condition) {
+                /* un-wrap inverted conditions */
+                if (condition instanceof UnaryExpression) {
+                    final UnaryExpression unary = (UnaryExpression) condition;
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                        condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
+                    }
+                }
+                /* do check */
+                if (condition instanceof PhpIsset) {
+                    return true;
+                } else if (condition instanceof BinaryExpression) {
+                    final BinaryExpression binary = (BinaryExpression) condition;
+                    final IElementType operator   = binary.getOperationType();
+                    if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
+                        return PhpLanguageUtil.isNull(binary.getRightOperand()) || PhpLanguageUtil.isNull(binary.getLeftOperand());
+                    }
+                } else if (condition instanceof FunctionReference) {
+                    final String functionName = ((FunctionReference) condition).getName();
+                    return functionName != null && functionName.equals("array_key_exists");
+                }
+                return false;
+            }
+
+            /* first pair: what to drop, second positive and negative branching values */
+            private Couple<Couple<PsiElement>> extract(@NotNull If statement) {
+                Couple<Couple<PsiElement>> result = new Couple<>(new Couple<>(null, null), new Couple<>(null, null));
+
+                final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(statement);
+                if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
+                    final PsiElement ifLast = this.extractCandidate(ExpressionSemanticUtil.getLastStatement(ifBody));
+                    if (ifLast != null) {
+                        /* extract all related constructs */
+                        final PsiElement ifNext     = this.extractCandidate(statement.getNextPsiSibling());
+                        final PsiElement ifPrevious = this.extractCandidate(statement.getPrevPsiSibling());
+
+                        if (statement.getElseBranch() != null) {
+                            PsiElement elseLast         = null;
+                            final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(statement.getElseBranch());
+                            if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
+                                elseLast = this.extractCandidate(ExpressionSemanticUtil.getLastStatement(elseBody));
                             }
+
+                            /* TODO: check cases with else-branch */
+                        } else {
+                            /* TODO: check cases without else-branch */
                         }
                     }
                 }
-            }
-
-            private void analyzeIfWithPrecedingStatement(
-                    @NotNull If expression,
-                    @NotNull PsiElement argument,
-                    @NotNull GroupStatement ifBody
-            ) {
-                PsiElement previous = expression.getPrevPsiSibling();
-                PsiElement own      = ExpressionSemanticUtil.getLastStatement(ifBody);
-                if (previous != null && own != null) {
-                    previous = previous.getFirstChild();
-                    own      = own.getFirstChild();
-                    if (OpenapiTypesUtil.isAssignment(previous) && OpenapiTypesUtil.isAssignment(own)) {
-                        final String replacement = this.generateReplacement(
-                                argument,
-                                (AssignmentExpression) own,
-                                (AssignmentExpression) previous
-                        );
-                        if (replacement != null) {
-                            holder.registerProblem(
-                                    expression.getFirstChild(),
-                                    String.format(messagePattern, replacement),
-                                    new ReplaceMultipleConstructsFix(previous.getParent(), expression, replacement)
-                            );
-                        }
-                    }
-                }
-            }
-
-            private void analyzeIfWithFollowingStatement(
-                    @NotNull If expression,
-                    @NotNull PsiElement argument,
-                    @NotNull GroupStatement ifBody
-            ) {
-                final PsiElement next = expression.getNextPsiSibling();
-                final PsiElement own  = ExpressionSemanticUtil.getLastStatement(ifBody);
-                if (next instanceof PhpReturn && own instanceof PhpReturn) {
-                    final String replacement = this.generateReplacement(argument, (PhpReturn) own, (PhpReturn) next);
-                    if (replacement != null) {
-                        holder.registerProblem(
-                                expression.getFirstChild(),
-                                String.format(messagePattern, replacement),
-                                new ReplaceMultipleConstructsFix(expression, next, replacement)
-                        );
-                    }
-                }
-            }
-
-            private void analyzeIfElseStatement(
-                    @NotNull If expression,
-                    @NotNull PsiElement argument,
-                    @NotNull GroupStatement ifBody
-            ) {
-                final Else alternative = expression.getElseBranch();
-                if (alternative != null) {
-                    final GroupStatement elseBody = ExpressionSemanticUtil.getGroupStatement(alternative);
-                    if (elseBody != null && ExpressionSemanticUtil.countExpressionsInGroup(elseBody) == 1) {
-                        PsiElement ownFromIf   = ExpressionSemanticUtil.getLastStatement(ifBody);
-                        PsiElement ownFromElse = ExpressionSemanticUtil.getLastStatement(elseBody);
-                        if (ownFromIf != null && ownFromElse != null) {
-                            if (ownFromIf instanceof PhpReturn && ownFromElse instanceof PhpReturn) {
-                                final String replacement = this.generateReplacement(argument, (PhpReturn) ownFromIf, (PhpReturn) ownFromElse);
-                                if (replacement != null) {
-                                    holder.registerProblem(
-                                            expression.getFirstChild(),
-                                            String.format(messagePattern, replacement),
-                                            new ReplaceMultipleConstructsFix(expression, expression, replacement)
-                                    );
-                                }
-                            } else {
-                                ownFromIf   = ownFromIf.getFirstChild();
-                                ownFromElse = ownFromElse.getFirstChild();
-                                if (OpenapiTypesUtil.isAssignment(ownFromIf) && OpenapiTypesUtil.isAssignment(ownFromElse)) {
-                                    final String replacement = this.generateReplacement(argument, (AssignmentExpression) ownFromIf, (AssignmentExpression) ownFromElse);
-                                    if (replacement != null) {
-                                        holder.registerProblem(
-                                                expression.getFirstChild(),
-                                                String.format(messagePattern, replacement),
-                                                new ReplaceMultipleConstructsFix(expression, expression, replacement)
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                return result;
             }
 
             @Nullable
-            private String generateReplacement(
-                    @NotNull PsiElement argument,
-                    @NotNull PhpReturn positive,
-                    @NotNull PhpReturn negative
-            ) {
-                final PsiElement negativeValue = ExpressionSemanticUtil.getReturnValue(negative);
-                if (negativeValue != null) {
-                    final PsiElement positiveValue = ExpressionSemanticUtil.getReturnValue(positive);
-                    if (positiveValue != null && OpenapiEquivalenceUtil.areEqual(argument, positiveValue)) {
-                        final boolean isAnyAssignment = OpenapiTypesUtil.isAssignment(positiveValue) ||
-                                                        OpenapiTypesUtil.isAssignment(negativeValue);
-                        if (!isAnyAssignment) {
-                            return String.format("return %s ?? %s", positiveValue.getText(), negativeValue.getText());
+            private PsiElement extractCandidate(@Nullable PsiElement statement) {
+                if (statement instanceof PhpReturn) {
+                    return statement;
+                } else if (OpenapiTypesUtil.isStatementImpl(statement)) {
+                    final PsiElement possiblyAssignment = statement.getFirstChild();
+                    if (OpenapiTypesUtil.isAssignment(possiblyAssignment)) {
+                        final AssignmentExpression assignment = (AssignmentExpression) possiblyAssignment;
+                        final PsiElement container             = assignment.getVariable();
+                        if (container instanceof Variable) {
+                            return assignment;
                         }
                     }
                 }
                 return null;
             }
-
-            @Nullable
-            private String generateReplacement(
-                    @NotNull PsiElement argument,
-                    @NotNull AssignmentExpression positive,
-                    @NotNull AssignmentExpression negative
-            ) {
-                final PsiElement negativeContainer = negative.getVariable();
-                final PsiElement negativeValue     = negative.getValue();
-                if (negativeContainer != null && negativeValue != null) {
-                    final PsiElement positiveContainer = positive.getVariable();
-                    final PsiElement positiveValue     = positive.getValue();
-                    if (positiveContainer != null && positiveValue != null) {
-                        final boolean matching = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer) &&
-                                                 OpenapiEquivalenceUtil.areEqual(argument, positiveValue);
-                        if (matching) {
-                            /* false-positives: array push */
-                            final boolean isPush = PsiTreeUtil.findChildrenOfType(positiveContainer, ArrayIndex.class).stream()
-                                    .anyMatch(index -> index.getValue() == null);
-                            if (!isPush) {
-                                final boolean isAnyByReference = OpenapiTypesUtil.isAssignmentByReference(positive) ||
-                                                                 OpenapiTypesUtil.isAssignmentByReference(negative);
-                                if (!isAnyByReference) {
-                                    PsiElement extractedNegative = negativeValue;
-                                    while (extractedNegative != null && OpenapiTypesUtil.isAssignment(extractedNegative)) {
-                                        extractedNegative = ((AssignmentExpression) extractedNegative).getValue();
-                                    }
-                                    if (extractedNegative != null) {
-                                        return String.format(
-                                                "%s = %s ?? %s",
-                                                positiveContainer.getText(),
-                                                positiveValue.getText(),
-                                                extractedNegative.getText()
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                return null;
-            }
-
         };
-    }
-
-    private static final class ReplaceMultipleConstructsFix implements LocalQuickFix {
-        private static final String title = "Replace with null coalescing operator";
-
-        private final SmartPsiElementPointer<PsiElement> from;
-        private final SmartPsiElementPointer<PsiElement> to;
-        private final String replacement;
-
-        @NotNull
-        @Override
-        public String getName() {
-            return title;
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return title;
-        }
-
-        ReplaceMultipleConstructsFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
-            super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
-
-            this.from        = factory.createSmartPsiElementPointer(from);
-            this.to          = factory.createSmartPsiElementPointer(to);
-            this.replacement = replacement;
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            if (expression != null && !project.isDisposed()) {
-                final PsiElement from = this.from.getElement();
-                final PsiElement to   = this.to.getElement();
-                if (from != null && to != null) {
-                    if (from == to) {
-                        final boolean wrap       = from instanceof If && from.getParent() instanceof Else;
-                        final String replacement = wrap ? "{ " + this.replacement + "; }" : this.replacement + ";";
-                        from.replace(PhpPsiElementFactory.createStatement(project, replacement));
-                    } else {
-                        final PsiElement scope = from.getParent();
-                        /* inject the new construct */
-                        scope.addBefore(PhpPsiElementFactory.createStatement(project, this.replacement + ";"), from);
-                        /* deal with remaining multi-assignments if any */
-                        if (OpenapiTypesUtil.isAssignment(from.getFirstChild())) {
-                            final PsiElement value = ((AssignmentExpression) from.getFirstChild()).getValue();
-                            if (OpenapiTypesUtil.isAssignment(value)) {
-                                scope.addBefore(PhpPsiElementFactory.createStatement(project, value.getText() + ";"), from);
-                            }
-                        }
-                        /* drop original constructs */
-                        scope.deleteChildRange(from, to);
-                    }
-                }
-            }
-        }
     }
 
     public JComponent createOptionsPanel() {

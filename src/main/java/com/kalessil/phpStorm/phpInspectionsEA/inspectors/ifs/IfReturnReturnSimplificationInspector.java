@@ -53,7 +53,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                     final PsiElement secondValue               = fragments.second.second;
 
                     /* if 2nd return found, check more pattern matches */
-                    if (secondValue != null) {
+                    if (firstValue != null && secondValue != null) {
                         final boolean isDirect  = PhpLanguageUtil.isTrue(firstValue) && PhpLanguageUtil.isFalse(secondValue);
                         final boolean isReverse = PhpLanguageUtil.isTrue(secondValue) && PhpLanguageUtil.isFalse(firstValue);
                         if (isDirect || isReverse) {

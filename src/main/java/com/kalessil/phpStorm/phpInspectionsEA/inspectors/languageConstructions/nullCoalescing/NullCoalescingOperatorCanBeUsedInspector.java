@@ -91,18 +91,34 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                 if (SUGGEST_SIMPLIFYING_IFS && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
                     final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
-                    if (condition != null && this.isTargetCondition(condition) && statement.getElseIfBranches().length == 0) {
-                        final Couple<Couple<PsiElement>> fragments = this.extract(statement);
-                        final PsiElement firstValue                = fragments.second.first;
-                        final PsiElement secondValue               = fragments.second.second;
-                        if (firstValue != null && secondValue != null) {
-                            // code generation here
+                    if (condition != null && statement.getElseIfBranches().length == 0) {
+                        final PsiElement extracted = this.getTargetCondition(condition);
+                        if (extracted != null) {
+                            final Couple<Couple<PsiElement>> fragments = this.extract(statement);
+                            final PsiElement firstValue                = fragments.second.first;
+                            final PsiElement secondValue               = fragments.second.second;
+                            if (firstValue != null && secondValue != null) {
+                                /* generate replacement */
+                                String replacement = null;
+                                if (extracted instanceof PhpIsset) {
+                                    replacement = this.generateReplacementForIsset(condition, extracted, firstValue, secondValue);
+                                } else if (extracted instanceof FunctionReference) {
+                                    replacement = this.generateReplacementForExists(condition, extracted, firstValue, secondValue);
+                                } else if (extracted instanceof BinaryExpression) {
+                                    replacement = this.generateReplacementForIdentity(condition, extracted, firstValue, secondValue);
+                                }
+                                /* emit violation if can offer replacement */
+                                if (replacement != null) {
+                                    holder.registerProblem(statement.getFirstChild(), String.format(messagePattern, replacement));
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            private boolean isTargetCondition(@NotNull PsiElement condition) {
+            @Nullable
+            private PsiElement getTargetCondition(@NotNull PsiElement condition) {
                 /* un-wrap inverted conditions */
                 if (condition instanceof UnaryExpression) {
                     final UnaryExpression unary = (UnaryExpression) condition;
@@ -112,18 +128,27 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 }
                 /* do check */
                 if (condition instanceof PhpIsset) {
-                    return true;
+                    final PhpIsset isset = (PhpIsset) condition;
+                    if (isset.getVariables().length == 1) {
+                        return condition;
+                    }
                 } else if (condition instanceof BinaryExpression) {
                     final BinaryExpression binary = (BinaryExpression) condition;
                     final IElementType operator   = binary.getOperationType();
                     if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
-                        return PhpLanguageUtil.isNull(binary.getRightOperand()) || PhpLanguageUtil.isNull(binary.getLeftOperand());
+                        if (PhpLanguageUtil.isNull(binary.getRightOperand())) {
+                            return condition;
+                        } else if (PhpLanguageUtil.isNull(binary.getLeftOperand())) {
+                            return condition;
+                        }
                     }
-                } else if (condition instanceof FunctionReference) {
+                } else if (OpenapiTypesUtil.isFunctionReference(condition)) {
                     final String functionName = ((FunctionReference) condition).getName();
-                    return functionName != null && functionName.equals("array_key_exists");
+                    if (functionName != null && functionName.equals("array_key_exists")) {
+                        return condition;
+                    }
                 }
-                return false;
+                return null;
             }
 
             /* first pair: what to drop, second positive and negative branching values */

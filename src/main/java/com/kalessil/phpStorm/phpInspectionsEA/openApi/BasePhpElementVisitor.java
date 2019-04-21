@@ -98,8 +98,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     protected boolean isTestContext(@NotNull PsiElement expression) {
         boolean result        = false;
-        final String fileName = expression.getContainingFile().getName();
-        if (fileName.endsWith("Test.php") || fileName.endsWith("Spec.php") || fileName.endsWith(".phpt")) {
+        final String filePath = expression.getContainingFile().getVirtualFile().getPath();
+        if (filePath.endsWith("Test.php") || filePath.endsWith("Spec.php") || filePath.endsWith(".phpt") || filePath.contains("/Fixtures/")) {
             result = true;
         } else {
             final PhpClass containingClass = expression instanceof PhpClass
@@ -107,7 +107,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
                     : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, (Class) PsiFile.class);
             if (containingClass != null) {
                 final String fqn = containingClass.getFQN();
-                result = fqn.endsWith("Test") || fqn.contains("\\Tests\\") || fqn.contains("\\Test\\") || fqn.contains("\\Fixtures\\");
+                result = fqn.endsWith("Test") || fqn.contains("\\Tests\\") || fqn.contains("\\Test\\");
             }
         }
         return result;

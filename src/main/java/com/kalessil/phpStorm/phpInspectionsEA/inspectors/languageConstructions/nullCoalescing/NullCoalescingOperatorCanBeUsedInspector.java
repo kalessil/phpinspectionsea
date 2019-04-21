@@ -99,22 +99,53 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             final PsiElement secondValue               = fragments.second.second;
                             if (firstValue != null && secondValue != null) {
                                 /* generate replacement */
-                                String replacement = null;
+                                String coallescing = null;
                                 if (extracted instanceof PhpIsset) {
-                                    replacement = this.generateReplacementForIsset(condition, extracted, firstValue, secondValue);
+                                    coallescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, firstValue, secondValue);
                                 } else if (extracted instanceof FunctionReference) {
-                                    replacement = this.generateReplacementForExists(condition, extracted, firstValue, secondValue);
+                                    //replacement = this.generateReplacementForExists(condition, extracted, firstValue, secondValue);
                                 } else if (extracted instanceof BinaryExpression) {
-                                    replacement = this.generateReplacementForIdentity(condition, extracted, firstValue, secondValue);
+                                    //replacement = this.generateReplacementForIdentity(condition, extracted, firstValue, secondValue);
                                 }
                                 /* emit violation if can offer replacement */
-                                if (replacement != null) {
-                                    holder.registerProblem(statement.getFirstChild(), String.format(messagePattern, replacement));
+                                if (coallescing != null) {
+                                    final PsiElement context = firstValue.getParent();
+                                    if (context instanceof PhpReturn) {
+                                        holder.registerProblem(
+                                                statement.getFirstChild(),
+                                                String.format(messagePattern, String.format("return %s", coallescing))
+                                        );
+                                    } else if (context instanceof AssignmentExpression) {
+                                        final PsiElement container = ((AssignmentExpression) context).getVariable();
+                                        holder.registerProblem(
+                                                statement.getFirstChild(),
+                                                String.format(messagePattern, String.format("%s = %s", container.getText(), coallescing))
+                                        );
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            @Nullable
+            private String generateReplacementForIsset(
+                    @NotNull PsiElement condition,
+                    @NotNull PhpIsset extracted,
+                    @NotNull PsiElement first,
+                    @NotNull PsiElement second
+            ) {
+                final PsiElement subject = extracted.getVariables()[0];
+                if (subject != null) {
+                    final boolean expectsToBeSet = condition == extracted;
+                    final PsiElement candidate   = expectsToBeSet ? first : second;
+                    if (OpenapiEquivalenceUtil.areEqual(candidate, subject)) {
+                        final PsiElement alternative = expectsToBeSet ? second : first;
+                        return String.format("%s ?? %s", candidate.getText(), alternative.getText());
+                    }
+                }
+                return null;
             }
 
             @Nullable
@@ -203,10 +234,13 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 if (previousContainer instanceof Variable && ifContainer instanceof Variable) {
                                     final boolean isTarget = OpenapiEquivalenceUtil.areEqual(previousContainer, ifContainer);
                                     if (isTarget) {
-                                        result = new Couple<>(
-                                                new Couple<>(ifPrevious.getParent(), ifNext),
-                                                new Couple<>(ifAssignment.getValue(), previousAssignment.getValue())
-                                        );
+                                        final PsiElement previousValue = previousAssignment.getValue();
+                                        if (!(previousValue instanceof AssignmentExpression)) {
+                                            result = new Couple<>(
+                                                    new Couple<>(ifPrevious.getParent(), ifNext),
+                                                    new Couple<>(ifAssignment.getValue(), previousValue)
+                                            );
+                                        }
                                     }
                                 }
                             }

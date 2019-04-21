@@ -1,14 +1,20 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
@@ -99,27 +105,31 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             final PsiElement secondValue               = fragments.second.second;
                             if (firstValue != null && secondValue != null) {
                                 /* generate replacement */
-                                String coallescing = null;
+                                String coalescing = null;
                                 if (extracted instanceof PhpIsset) {
-                                    coallescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, firstValue, secondValue);
+                                    coalescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, firstValue, secondValue);
                                 } else if (extracted instanceof FunctionReference) {
                                     //replacement = this.generateReplacementForExists(condition, extracted, firstValue, secondValue);
                                 } else if (extracted instanceof BinaryExpression) {
                                     //replacement = this.generateReplacementForIdentity(condition, extracted, firstValue, secondValue);
                                 }
                                 /* emit violation if can offer replacement */
-                                if (coallescing != null) {
+                                if (coalescing != null) {
                                     final PsiElement context = firstValue.getParent();
                                     if (context instanceof PhpReturn) {
+                                        final String replacement = String.format("return %s", coalescing);
                                         holder.registerProblem(
                                                 statement.getFirstChild(),
-                                                String.format(messagePattern, String.format("return %s", coallescing))
+                                                String.format(messagePattern, replacement),
+                                                new ReplaceMultipleConstructFix(fragments.first.first, fragments.first.second, replacement)
                                         );
                                     } else if (context instanceof AssignmentExpression) {
                                         final PsiElement container = ((AssignmentExpression) context).getVariable();
+                                        final String replacement   = String.format("%s = %s", container.getText(), coalescing);
                                         holder.registerProblem(
                                                 statement.getFirstChild(),
-                                                String.format(messagePattern, String.format("%s = %s", container.getText(), coallescing))
+                                                String.format(messagePattern, replacement),
+                                                new ReplaceMultipleConstructFix(fragments.first.first, fragments.first.second, replacement)
                                         );
                                     }
                                 }
@@ -218,7 +228,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                     final boolean isTarget = OpenapiEquivalenceUtil.areEqual(ifContainer, elseContainer);
                                     if (isTarget) {
                                         result = new Couple<>(
-                                                new Couple<>(statement, ifNext),
+                                                new Couple<>(statement, statement),
                                                 new Couple<>(ifAssignment.getValue(), elseAssignment.getValue())
                                         );
                                     }
@@ -237,7 +247,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                         final PsiElement previousValue = previousAssignment.getValue();
                                         if (!(previousValue instanceof AssignmentExpression)) {
                                             result = new Couple<>(
-                                                    new Couple<>(ifPrevious.getParent(), ifNext),
+                                                    new Couple<>(ifPrevious.getParent(), statement),
                                                     new Couple<>(ifAssignment.getValue(), previousValue)
                                             );
                                         }
@@ -294,6 +304,51 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
         ReplaceSingleConstructFix(@NotNull String expression) {
             super(expression);
+        }
+    }
+
+    private static final class ReplaceMultipleConstructFix implements LocalQuickFix {
+        private static final String title = "Use return instead";
+
+        final private SmartPsiElementPointer<PsiElement> from;
+        final private SmartPsiElementPointer<PsiElement> to;
+        final String replacement;
+
+        ReplaceMultipleConstructFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+
+            this.from        = factory.createSmartPsiElementPointer(from);
+            this.to          = factory.createSmartPsiElementPointer(to);
+            this.replacement = replacement;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement from = this.from.getElement();
+            final PsiElement to   = this.to.getElement();
+            if (from != null && to != null && !project.isDisposed()) {
+                final String code = this.replacement + ';';
+                if (from == to) {
+                    from.replace(PhpPsiElementFactory.createPhpPsiFromText(project, PhpPsiElement.class, code));
+                } else {
+                    final PsiElement parent = from.getParent();
+                    parent.addBefore(PhpPsiElementFactory.createPhpPsiFromText(project, PhpPsiElement.class, code), from);
+                    parent.deleteChildRange(from, to);
+                }
+            }
         }
     }
 }

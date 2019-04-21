@@ -54,6 +54,9 @@ function cases_holder() {
     }
     return 'default';
 
-    $one = $value ?? 'default';
-    $two = 'default';
+    /* false-positives: multi-assignments, refactoring changes semantics */
+    $one = $two = 'default';
+    if (isset($value)) {
+        $one = $value;
+    }
 }

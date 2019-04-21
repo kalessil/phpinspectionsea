@@ -52,14 +52,17 @@ public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
                     if (arguments.length == 2 && arguments[1].getText().equals("E_USER_DEPRECATED")) {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
                         if (scope instanceof Method) {
-                            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
-                            if (body != null) {
-                                PsiElement parent = reference.getParent();
-                                parent            = parent instanceof UnaryExpression ? parent.getParent() : parent;
-                                if (OpenapiTypesUtil.isStatementImpl(parent) && parent.getParent() == body && !scope.isDeprecated()) {
-                                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(scope);
-                                    if (nameNode != null ) {
-                                        holder.registerProblem(nameNode, String.format(patternMissingDeprecationTag, scope.getName()));
+                            final PhpClass clazz = ((Method) scope).getContainingClass();
+                                if (clazz != null && !clazz.isDeprecated()) {
+                                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                                if (body != null) {
+                                    PsiElement parent = reference.getParent();
+                                    parent            = parent instanceof UnaryExpression ? parent.getParent() : parent;
+                                    if (OpenapiTypesUtil.isStatementImpl(parent) && parent.getParent() == body && !scope.isDeprecated()) {
+                                        final PsiElement nameNode = NamedElementUtil.getNameIdentifier(scope);
+                                        if (nameNode != null ) {
+                                            holder.registerProblem(nameNode, String.format(patternMissingDeprecationTag, scope.getName()));
+                                        }
                                     }
                                 }
                             }

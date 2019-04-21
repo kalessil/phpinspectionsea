@@ -1,6 +1,6 @@
 <?php
 
-function cases_holder() {
+function cases_holder_isset() {
     $container = $value ?? 'default';
 
     /* false-positives: value or container mismatches, assignment by reference */
@@ -17,37 +17,17 @@ function cases_holder() {
     }
 
     /* false-positives: value or container mismatches */
-    if (isset($value)) {
-        $container = trim($value);
-    } else {
-        $container = 'default';
-    }
-    if (isset($value)) {
-        $value = $value;
-    } else {
-        $container = 'default';
-    }
+    if (isset($value)) { $container = trim($value); } else { $container = 'default'; }
+    if (isset($value)) { $value = $value; } else { $container = 'default'; }
 
     return $value ?? 'default';
 
     /* false-positives: value mismatches */
-    if (isset($value)) {
-        return trim($value);
-    } else {
-        return 'default';
-    }
+    if (isset($value)) { return trim($value); } else { return 'default'; }
 
     return $value ?? 'default';
 
-    /* false-positives: value mismatches */
-    if (isset($value)) {
-        return trim($value);
-    }
-    return 'default';
-
-    /* false-positives: multi-assignments, refactoring changes semantics */
-    $one = $two = 'default';
-    if (isset($value)) {
-        $one = $value;
-    }
+    /* false-positives: value mismatches, multi-assignments (refactoring changes semantics) */
+    if (isset($value)) { return trim($value); } return 'default';
+    $one = $two = 'default'; if (isset($value)) { $one = $value; }
 }

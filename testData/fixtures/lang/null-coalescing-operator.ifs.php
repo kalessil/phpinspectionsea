@@ -1,6 +1,6 @@
 <?php
 
-function cases_holder() {
+function cases_holder_isset() {
     $container = 'default';
     <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
@@ -26,16 +26,8 @@ function cases_holder() {
     }
 
     /* false-positives: value or container mismatches */
-    if (isset($value)) {
-        $container = trim($value);
-    } else {
-        $container = 'default';
-    }
-    if (isset($value)) {
-        $value = $value;
-    } else {
-        $container = 'default';
-    }
+    if (isset($value)) { $container = trim($value); } else { $container = 'default'; }
+    if (isset($value)) { $value = $value; } else { $container = 'default'; }
 
     <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         return $value;
@@ -44,26 +36,14 @@ function cases_holder() {
     }
 
     /* false-positives: value mismatches */
-    if (isset($value)) {
-        return trim($value);
-    } else {
-        return 'default';
-    }
+    if (isset($value)) { return trim($value); } else { return 'default'; }
 
     <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         return $value;
     }
     return 'default';
 
-    /* false-positives: value mismatches */
-    if (isset($value)) {
-        return trim($value);
-    }
-    return 'default';
-
-    /* false-positives: multi-assignments, refactoring changes semantics */
-    $one = $two = 'default';
-    if (isset($value)) {
-        $one = $value;
-    }
+    /* false-positives: value mismatches, multi-assignments (refactoring changes semantics) */
+    if (isset($value)) { return trim($value); } return 'default';
+    $one = $two = 'default'; if (isset($value)) { $one = $value; }
 }

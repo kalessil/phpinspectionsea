@@ -358,7 +358,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
     }
 
     private static final class ReplaceMultipleConstructFix implements LocalQuickFix {
-        private static final String title = "Use return instead";
+        private static final String title = "Replace with null coalescing operator";
 
         final private SmartPsiElementPointer<PsiElement> from;
         final private SmartPsiElementPointer<PsiElement> to;

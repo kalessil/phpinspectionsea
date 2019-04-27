@@ -7,8 +7,9 @@ import com.jetbrains.php.lang.psi.elements.Else;
 import com.jetbrains.php.lang.psi.elements.ElseIf;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.Statement;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,10 +33,10 @@ public class SuspiciousSemicolonInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpStatement(@NotNull Statement statement) {
-                if (this.isContainingFileSkipped(statement)) { return; }
+                if (this.shouldSkipAnalysis(statement, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 if (statement.getChildren().length == 0) {
                     final PsiElement parent = statement.getParent();

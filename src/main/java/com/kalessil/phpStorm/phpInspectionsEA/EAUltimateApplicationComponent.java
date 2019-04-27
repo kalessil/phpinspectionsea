@@ -18,6 +18,15 @@ import org.apache.log4j.spi.ThrowableInformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class EAUltimateApplicationComponent implements ApplicationComponent {
     private boolean updated;
     private boolean updateNotificationShown;
@@ -100,7 +109,7 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
             return;
         }
 
-        final EAUltimateSettings settings = EAUltimateSettings.getInstance();
+        final EAUltimateApplicationSettings settings = EAUltimateApplicationSettings.getInstance();
 
         /* dump plugin version information */
         if (this.updated = !plugin.getVersion().equals(settings.getVersion())) {
@@ -114,6 +123,7 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
                 public void append(@NotNull LoggingEvent event) {
                     final ThrowableInformation exceptionDetails = event.getThrowableInformation();
                     if (exceptionDetails != null) {
+
                         AnalyticsUtil.registerLoggedException(
                             settings.getVersion(),
                             settings.getUuid(),

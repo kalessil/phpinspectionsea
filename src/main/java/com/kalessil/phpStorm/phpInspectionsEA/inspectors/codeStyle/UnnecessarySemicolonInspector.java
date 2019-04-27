@@ -9,8 +9,9 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,10 +35,10 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpStatement(@NotNull Statement statement) {
-                if (this.isContainingFileSkipped(statement)) { return; }
+                if (this.shouldSkipAnalysis(statement, StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE)) { return; }
 
                 final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
                 if (!isBlade && statement.getChildren().length == 0) {
@@ -56,7 +57,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpEchoStatement(PhpEchoStatement echo) {
-                if (this.isContainingFileSkipped(echo)) { return; }
+                if (this.shouldSkipAnalysis(echo, StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE)) { return; }
 
                 if (!OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {
                     final PsiElement last = echo.getLastChild();

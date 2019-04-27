@@ -16,10 +16,10 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -57,7 +57,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
 
             private void checkOneTimeUse(
                     @NotNull PhpPsiElement construct,
@@ -184,8 +184,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpReturn(@NotNull PhpReturn expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(expression))             { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 /* if function returning reference, do not inspect returns */
                 final Function scope = ExpressionSemanticUtil.getScope(expression);
@@ -215,8 +214,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(expression))             { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final PsiElement parent = expression.getParent();
                 if (OpenapiTypesUtil.isStatementImpl(parent)) {
@@ -238,8 +236,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpAssignmentExpression(@NotNull AssignmentExpression expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(expression))             { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (OpenapiTypesUtil.isAssignment(expression)) {
                     final PsiElement parent = expression.getParent();
@@ -288,8 +285,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpThrow(@NotNull PhpThrow expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(expression))             { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                 if (argument instanceof PhpPsiElement) {
@@ -302,8 +298,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpEchoStatement(@NotNull PhpEchoStatement expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(expression))             { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final PsiElement[] arguments = expression.getArguments();
                 if (arguments.length == 1) {
@@ -319,8 +314,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(expression))             { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final PsiElement source = expression.getArray();
                 if (source != null && !ExpressionSemanticUtil.isByReference(expression.getValue())) {

@@ -10,15 +10,12 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationConfiguration;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -40,11 +37,11 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
+        return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                if (this.isContainingFileSkipped(expression)) { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE)) { return; }
 
                 final IElementType operator = expression.getOperationType();
                 if (operator != null && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
@@ -58,24 +55,18 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                                                         right instanceof ConstantReference ||
                                                         OpenapiTypesUtil.isNumber(right);
                         if (isLeftConstant != isRightConstant) {
-                            final boolean isRegular = ComparisonStyle.isRegular();
+                            final boolean isRegular = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
                             if (isRightConstant && !isRegular) {
-                                problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
+                                holder.registerProblem(expression, messageUseYoda, new TheLocalFix());
                             }
                             if (isLeftConstant && isRegular) {
-                                problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
+                                holder.registerProblem(expression, messageUseRegular, new TheLocalFix());
                             }
                         }
                     }
                 }
             }
         };
-    }
-
-    public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) ->
-            component.addHyperlink("Setup Yoda or Regular style...", EAUltimateApplicationConfiguration.class)
-        );
     }
 
     private static final class TheLocalFix implements LocalQuickFix {

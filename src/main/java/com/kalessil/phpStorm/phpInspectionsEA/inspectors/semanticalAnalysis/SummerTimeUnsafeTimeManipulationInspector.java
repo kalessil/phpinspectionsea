@@ -10,8 +10,9 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,10 +55,10 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
-                if (this.isContainingFileSkipped(expression)) { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 if (targetOperations.contains(expression.getOperationType())) {
                     final PsiElement left  = expression.getLeftOperand();
@@ -76,7 +77,7 @@ public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection
 
             @Override
             public void visitPhpSelfAssignmentExpression(@NotNull SelfAssignmentExpression expression) {
-                if (this.isContainingFileSkipped(expression)) { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 if (targetAssignments.contains(expression.getOperationType())) {
                     final PsiElement value = expression.getValue();

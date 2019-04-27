@@ -1,11 +1,15 @@
 <?php
 
-    $basePath    = __DIR__ . '/..';
-    $sourcesPath = $basePath . '/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors';
+    $basePath         = __DIR__ . '/..';
+    $sourcesPath      = $basePath . '/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/inspectors';
+    $manifestUltimate = simplexml_load_string(file_get_contents($basePath . '/src/main/resources/META-INF/plugin.xml'));
+    if ($manifestUltimate === false) {
+        throw new \RuntimeException('Could not load the manifest');
+    }
 
     $missingDistractionTogglesFiles = [];
     $partialDistractionTogglesFiles = [];
-    $missingUltimateTogglesFiles    = [];
+    $inconsistentStrictnessToggles  = [];
 
     /* @var \SplFileInfo $file */
     foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($sourcesPath)) as $file) {
@@ -23,7 +27,7 @@
             /* distraction toggles */
             $distractionToggles = 0;
             $lastPosition       = 0;
-            $searchFragment     = '.isContainingFileSkipped';
+            $searchFragment     = '.shouldSkipAnalysis';
             while (($lastPosition = strpos($content, $searchFragment, $lastPosition)) !== false) {
                 ++$distractionToggles;
                 $lastPosition += strlen($searchFragment);
@@ -37,23 +41,24 @@
                 }
             }
 
-            /* ultimate toggles */
-            $ultimateToggles = 0;
-            $lastPosition    = 0;
-            $searchFragment  = '.areFeaturesEnabled';
-            while (($lastPosition = strpos($content, $searchFragment, $lastPosition)) !== false) {
-                ++$ultimateToggles;
-                $lastPosition += strlen($searchFragment);
-            }
-
-            if ($ultimateToggles > 0 && $visitors != $ultimateToggles) {
-                $missingUltimateTogglesFiles[] = $file->getFilename();
+            if ($visitors > 0) {
+                preg_match_all('/StrictnessCategory\.STRICTNESS_CATEGORY_\w+/', $content, $strictnessToggles);
+                $strictnessTypes = (array) $strictnessToggles[0];
+                if (count(array_unique($strictnessTypes)) !== 1 || count($strictnessTypes) !== $visitors) {
+                    $inconsistentStrictnessToggles[] = $file->getFilename();
+                } else {
+                    $xpath    = sprintf('//localInspection[contains(@implementationClass, "%s")]', str_replace('.java', '', $file->getFilename()));
+                    $category = str_replace(' ', '_', strtoupper($manifestUltimate->xpath($xpath)[0]->attributes()->groupName));
+                    if ($strictnessTypes[0] !== 'StrictnessCategory.STRICTNESS_CATEGORY_' . $category) {
+                        $inconsistentStrictnessToggles[] = $file->getFilename();
+                    }
+                }
             }
         }
     }
 
-    if (count($missingUltimateTogglesFiles) > 0) {
-        echo 'Following files has inconsistent ultimate toggles: ' . PHP_EOL . implode(PHP_EOL, $missingUltimateTogglesFiles) . PHP_EOL;
+    if (count($inconsistentStrictnessToggles) > 0) {
+        echo 'Following files has inconsistent strictness toggles: ' . PHP_EOL . implode(PHP_EOL, $inconsistentStrictnessToggles) . PHP_EOL;
         exit(-1);
     }
     if (count($partialDistractionTogglesFiles) > 0) {

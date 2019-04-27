@@ -1,12 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ComparisonOperandsOrderInspector;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 
 final public class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsYodaPatterns() {
-        ComparisonStyle.force(ComparisonStyle.YODA);
+        myFixture.getProject().getComponent(EAUltimateProjectSettings.class).setPreferringYodaComparisonStyle(true);
 
         myFixture.enableInspections(new ComparisonOperandsOrderInspector());
         myFixture.configureByFile("testData/fixtures/codeStyle/comparison-order-yoda.php");
@@ -16,7 +16,7 @@ final public class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFi
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/codeStyle/comparison-order-yoda.fixed.php");
 
-        ComparisonStyle.force(ComparisonStyle.REGULAR);
+        myFixture.getProject().getComponent(EAUltimateProjectSettings.class).setPreferringYodaComparisonStyle(false);
     }
     public void testIfFindsRegularPatterns() {
         myFixture.enableInspections(new ComparisonOperandsOrderInspector());

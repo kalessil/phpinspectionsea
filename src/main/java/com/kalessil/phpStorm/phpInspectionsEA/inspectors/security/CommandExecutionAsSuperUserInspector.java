@@ -6,8 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpShellCommandExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -30,11 +30,10 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression literal) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(literal))                { return; }
+                if (this.shouldSkipAnalysis(literal, StrictnessCategory.STRICTNESS_CATEGORY_SECURITY)) { return; }
 
                 final String content = literal.getContents();
                 if (content.length() >= 3) {
@@ -47,8 +46,7 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
 
             @Override
             public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(expression))             { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_SECURITY)) { return; }
 
                 final String content = expression.getText();
                 if (content.length() >= 5) {

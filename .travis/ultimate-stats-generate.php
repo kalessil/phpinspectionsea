@@ -20,7 +20,7 @@
         if (($inspectionContent = file_get_contents($inspectionPath)) === false) {
             throw new \RuntimeException('Could not load inspection code: ' . $attributes->implementationClass);
         }
-        $container->toggle = (strpos($inspectionContent, '.areFeaturesEnabled') !== false);
+        $container->toggle = (strpos($inspectionContent, 'return new FeaturedPhpElementVisitor()') !== false);
 
         $className = substr($attributes->implementationClass, strrpos($attributes->implementationClass, '.') + 1);
         $ultimateDefinitions[$className] = $container;
@@ -43,9 +43,9 @@
     foreach ($ultimateDefinitions as $className => $definition) {
         $extendedDefinition = isset($extendedDefinitions[$className]) ? $extendedDefinitions[$className] : [];
         if ((array)$definition != (array)$extendedDefinition) {
-            $status = ($extendedDefinition === []) ? 'new' : 'enhanced';
+            $status = ($extendedDefinition === []) ? 'new' : ($definition->toggle ? 'enhanced' : 'relocated');
             if (!isset($statistics[$definition->groupName])) {
-                $statistics[$definition->groupName] = ['new' => 0, 'enhanced' => 0];
+                $statistics[$definition->groupName] = ['new' => 0, 'enhanced' => 0, 'relocated' => 0];
             }
             if ($status === 'new' && !$definition->toggle) {
                 echo sprintf('%s misses ultimate toggles: ', $className), PHP_EOL;

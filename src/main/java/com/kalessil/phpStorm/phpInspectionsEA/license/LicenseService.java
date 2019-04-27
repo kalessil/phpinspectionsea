@@ -119,7 +119,7 @@ final public class LicenseService {
         return client.IsActivated();
     }
 
-    private boolean isTrialLicense() {
+    public boolean isTrialLicense() {
         boolean result = true;
         try {
             client.SetCustomProxy(this.getProxy());

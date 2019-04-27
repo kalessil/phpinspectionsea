@@ -1,11 +1,11 @@
-package com.kalessil.phpStorm.phpInspectionsEA.options;
+package com.kalessil.phpStorm.phpInspectionsEA.settings;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ex.Settings;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.SeparatorFactory;
-import com.kalessil.phpStorm.phpInspectionsEA.gui.PrettyListControl;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -98,29 +98,32 @@ public final class OptionsComponent {
         }).getComponent(), "pushx, growx");
     }
 
-    private void addHyperlink(
-        @NotNull final String label,
-        @NotNull final Consumer<HyperlinkEvent> consumer
-    ) {
-        final HyperlinkLabel createdHyperlink = new HyperlinkLabel(label);
-        createdHyperlink.addHyperlinkListener(consumer::accept);
-
-        optionsPanel.add(createdHyperlink);
+    public void addText(@NotNull String label) {
+        optionsPanel.add(new JLabel(label), "wrap, growx");
     }
 
-    public void addHyperlink(
-        @NotNull final String label,
-        @NotNull final Class configurableClass
-    ) {
-        addHyperlink(label, hyperlinkEvent ->
-            DataManager.getInstance().getDataContextFromFocus().doWhenDone((com.intellij.util.Consumer<DataContext>) context -> {
-                if (context != null) {
-                    final Settings settings = Settings.KEY.getData(context);
-                    if (settings != null) {
-                        settings.select(settings.find(configurableClass));
+    public void addText(@NotNull String label, int fontSize) {
+        final JLabel component = new JLabel(label);
+        component.setFont(new Font(component.getFont().getFamily(), Font.PLAIN, fontSize));
+        optionsPanel.add(component, "wrap, growx");
+    }
+
+    public void addHyperlink(@NotNull String label, @NotNull Consumer<HyperlinkEvent> consumer) {
+        final HyperlinkLabel createdHyperlink = new HyperlinkLabel(label);
+        createdHyperlink.addHyperlinkListener(consumer::accept);
+        optionsPanel.add(createdHyperlink, "wrap");
+    }
+
+    public void addHyperlink(@NotNull String label, @NotNull Class<?extends Configurable> component) {
+        addHyperlink(label, event ->
+                DataManager.getInstance().getDataContextFromFocus().doWhenDone((com.intellij.util.Consumer<DataContext>) context -> {
+                    if (context != null) {
+                        final Settings settings = Settings.KEY.getData(context);
+                        if (settings != null) {
+                            settings.select(settings.find(component));
+                        }
                     }
-                }
-            })
+                })
         );
     }
 

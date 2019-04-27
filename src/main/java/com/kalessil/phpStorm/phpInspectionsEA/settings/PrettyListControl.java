@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.phpInspectionsEA.gui;
+package com.kalessil.phpStorm.phpInspectionsEA.settings;
 
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ToolbarDecorator;
@@ -11,9 +11,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class PrettyListControl {
     private final           PrettyListModel              model;

@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -8,7 +9,8 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateChangesTrackerComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public abstract class BasePhpElementVisitor extends PhpElementVisitor {
+public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
     @Override
     final public void visitPhpElement(@NotNull PhpPsiElement element) {
         if (element instanceof PhpDocTag) {
@@ -123,17 +125,29 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         return result && !(reference.getParent() instanceof PhpUse);
     }
 
-    protected boolean isContainingFileSkipped(@NotNull PsiElement target) {
-        /* skip blade-files */
-        if (target.getContainingFile().getName().endsWith(".blade.php")) {
+    protected boolean shouldSkipAnalysis(@NotNull PsiElement target, @NotNull StrictnessCategory category) {
+        /* skip blade-files, as language injection there causes endless support requests */
+        final PsiFile file = target.getContainingFile();
+        if (file.getName().endsWith(".blade.php")) {
             return true;
         }
-        /* skip unchanged files if the plugin configured so */
-        if (EAUltimateSettings.getInstance().getCheckOnlyChangedFiles()) {
-            return !target.getProject()
-                    .getComponent(EAUltimateChangesTrackerComponent.class)
-                    .isChanged(target.getContainingFile().getVirtualFile());
+
+        final Project project                    = target.getProject();
+        final EAUltimateProjectSettings settings = project.getComponent(EAUltimateProjectSettings.class);
+        if (settings != null) {
+            /* skip inactive categories */
+            if (!settings.isCategoryActive(category)) {
+                return true;
+            }
+            /* skip un-changed files is we analyze only modified once */
+            if (settings.isAnalyzingOnlyModifiedFiles()) {
+                final EAUltimateChangesTrackerComponent tracker = project.getComponent(EAUltimateChangesTrackerComponent.class);
+                if (tracker != null) {
+                    return !tracker.isChanged(file.getVirtualFile());
+                }
+            }
         }
+
         return false;
     }
 }

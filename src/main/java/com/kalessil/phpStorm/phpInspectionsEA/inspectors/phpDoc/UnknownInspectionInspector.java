@@ -10,8 +10,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -61,10 +62,10 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpDocTag(@NotNull PhpDocTag tag) {
-                if (this.isContainingFileSkipped(tag)) { return; }
+                if (this.shouldSkipAnalysis(tag, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
 
                 if (!tag.getName().equals("@noinspection")) {
                     return;

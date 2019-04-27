@@ -14,9 +14,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,11 +45,10 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFor(@NotNull For expression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(expression))             { return; }
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (expression.getRepeatedExpressions().length == 1) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
@@ -92,8 +91,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpWhile(@NotNull While whileStatement) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(whileStatement))         { return; }
+                if (this.shouldSkipAnalysis(whileStatement, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(whileStatement);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
@@ -166,8 +164,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignmentExpression) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(assignmentExpression))   { return; }
+                if (this.shouldSkipAnalysis(assignmentExpression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 PsiElement value = assignmentExpression.getValue();
                 if (OpenapiTypesUtil.isPhpExpressionImpl(value)) {

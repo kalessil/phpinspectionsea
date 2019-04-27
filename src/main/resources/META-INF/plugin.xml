@@ -143,27 +143,6 @@
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="TypeUnsafeComparisonInspection"                displayName="Type unsafe comparison"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="TypeUnsafeArraySearchInspection"               displayName="'in_array(...)', 'array_search(...)' type unsafe usage"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.TypeUnsafeArraySearchInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
-        groupName="Type compatibility"                            enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="JsonDecodeUsageInspection"                     displayName="'json_decode(...)' result type"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.JsonDecodeUsageInspector"/>
-
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnSafeIsSetOverArrayInspection"                displayName="'isset(...)' usage"
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnSafeIsSetOverArrayInspector"/>
@@ -533,6 +512,14 @@
         shortName="StaticLambdaBindingInspection"                 displayName="Static lambdas binding"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticLambdaBindingInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
+        groupName="Probable bugs"                                 enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="JsonDecodeUsageInspection"                     displayName="'json_decode(...)' result type"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.JsonDecodeUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
@@ -660,24 +647,6 @@
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="ClassMethodNameMatchesFieldNameInspection"     displayName="Method name matches existing field name"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassMethodNameMatchesFieldNameInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="NestedTernaryOperatorInspection"               displayName="Nested ternary operator"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NestedTernaryOperatorInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="UselessReturnInspection"                       displayName="Useless return"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UselessReturnInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="ReferencingObjectsInspection"                  displayName="Referencing objects"
-        groupName="Confusing constructs"                          enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ReferencingObjectsInspector"/>
-
-
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="OnlyWritesOnParameterInspection"               displayName="Parameter/variable is not used"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OnlyWritesOnParameterInspector"/>
@@ -717,6 +686,10 @@
         shortName="DateUsageInspection"                           displayName="Unnecessary 'date(...)' arguments specification"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UnknownInspectionInspection"                   displayName="Unknown inspection suppression"
+        groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.UnknownInspectionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
@@ -780,10 +753,6 @@
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryFinalModifierInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="UnknownInspectionInspection"                   displayName="Unknown inspection suppression"
-        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.UnknownInspectionInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ShortOpenTagUsageInspection"                   displayName="PHP short open tag usage"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ShortOpenTagUsageInspector"/>
@@ -839,6 +808,38 @@
         shortName="ShortEchoTagCanBeUsedInspection"               displayName="Short echo tag can be used"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ShortEchoTagCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ClassMethodNameMatchesFieldNameInspection"     displayName="Method name matches existing field name"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ClassMethodNameMatchesFieldNameInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="NestedTernaryOperatorInspection"               displayName="Nested ternary operator"
+        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalTransformations.NestedTernaryOperatorInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UselessReturnInspection"                       displayName="Useless return"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UselessReturnInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ReferencingObjectsInspection"                  displayName="Referencing objects"
+        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ReferencingObjectsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="FopenBinaryUnsafeUsageInspection"              displayName="Binary-unsafe 'fopen(...)' usage"
+        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"
+        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="TypeUnsafeComparisonInspection"                displayName="Type unsafe comparison"
+        groupName="Code Style"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="TypeUnsafeArraySearchInspection"               displayName="'in_array(...)', 'array_search(...)' type unsafe usage"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.TypeUnsafeArraySearchInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
@@ -921,6 +922,18 @@
         shortName="YieldFromCanBeUsedInspection"                  displayName="'yield from' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.YieldFromCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="DeprecatedIniOptionsInspection"                displayName="Deprecated configuration options"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DeprecatedIniOptionsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="RandomApiMigrationInspection"                  displayName="Random API migration"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.RandomApiMigrationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="MktimeUsageInspection"                         displayName="'gmmktime(...)'/'mktime(...)' usage"
+        groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.MktimeUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
@@ -1001,27 +1014,8 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ExposingInternalClassesInspector"/>
 
 
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="DeprecatedIniOptionsInspection"                  displayName="Deprecated configuration options"
-        groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.DeprecatedIniOptionsInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="RandomApiMigrationInspection"                    displayName="Random API migration"
-        groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.RandomApiMigrationInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="MktimeUsageInspection"                           displayName="'gmmktime(...)'/'mktime(...)' usage"
-        groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.MktimeUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="FopenBinaryUnsafeUsageInspection"                displayName="Binary-unsafe 'fopen(...)' usage"
-        groupName="Compatibility"                                   enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
-
-
-    <applicationService      serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings"
-                             serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSettings"   />
-    <applicationConfigurable instance="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationConfiguration"/>
+    <applicationService      serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationSettings"
+                             serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationSettings"   />
   </extensions>
 
   <application-components>
@@ -1032,10 +1026,16 @@
 
   <project-components>
       <component>
-          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateUpdateComponent</implementation-class>
+          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateReleaseNotesAnnouncerComponent</implementation-class>
       </component>
       <component>
           <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateChangesTrackerComponent</implementation-class>
+      </component>
+      <component>
+          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings</implementation-class>
+      </component>
+      <component>
+          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUltimateSidebarComponent</implementation-class>
       </component>
   </project-components>
 

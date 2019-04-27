@@ -8,9 +8,10 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpExitPointInstru
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpReturnInstruction;
 import com.jetbrains.php.lang.psi.elements.Method;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import org.jetbrains.annotations.NotNull;
@@ -42,10 +43,10 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
 
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                if (this.isContainingFileSkipped(method)) { return; }
+                if (this.shouldSkipAnalysis(method, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
 
                 final PsiElement nameIdentifier = NamedElementUtil.getNameIdentifier(method);
                 if (nameIdentifier != null && !method.isAbstract()) {

@@ -7,8 +7,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -45,10 +46,10 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement loop) {
-                if (this.isContainingFileSkipped(loop)) { return; }
+                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
                     /* false-positive: return first element from generator, iterable and co */
@@ -72,7 +73,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFor(@NotNull For loop) {
-                if (this.isContainingFileSkipped(loop)) { return; }
+                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
                     holder.registerProblem(loop.getFirstChild(), message);
@@ -81,7 +82,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpWhile(@NotNull While loop) {
-                if (this.isContainingFileSkipped(loop)) { return; }
+                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
                     holder.registerProblem(loop.getFirstChild(), message);
@@ -90,7 +91,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpDoWhile(@NotNull DoWhile loop) {
-                if (this.isContainingFileSkipped(loop)) { return; }
+                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
                     holder.registerProblem(loop.getFirstChild(), message);

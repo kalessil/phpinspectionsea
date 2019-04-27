@@ -7,11 +7,11 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -50,11 +50,10 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (!EAUltimateApplicationComponent.areFeaturesEnabled()) { return; }
-                if (this.isContainingFileSkipped(reference))              { return; }
+                if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
 
                 final String outerFunctionName = reference.getName();
                 if (outerFunctionName != null && argumentMapping.containsKey(outerFunctionName)) {
@@ -78,7 +77,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                         switch (outerFunctionName) {
                                             case "in_array":
                                                 parent                   = reference.getParent();
-                                                isRegular                = ComparisonStyle.isRegular();
+                                                isRegular                = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
                                                 String pattern           = isRegular ? "%sstrpos(%s, %s.%s.%s) !== false" : "false !== %sstrpos(%s, %s.%s.%s)";
                                                 final boolean isInverted = parent instanceof UnaryExpression &&
                                                                            OpenapiTypesUtil.is(parent.getFirstChild(), PhpTokenTypes.opNOT);
@@ -98,7 +97,7 @@ public class ExplodeMissUseInspector extends BasePhpInspection {
                                                 break;
                                             case "count":
                                                 parent    = reference.getParent();
-                                                isRegular = ComparisonStyle.isRegular();
+                                                isRegular = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
                                                 if (parent instanceof BinaryExpression) {
                                                     final BinaryExpression binary = (BinaryExpression) parent;
                                                     final PsiElement right        = binary.getRightOperand();

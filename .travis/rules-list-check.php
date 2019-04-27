@@ -66,13 +66,13 @@
 
     /* step 1: report un-documented inspections */
     $undocumented = array_diff(array_keys($definedRules), array_keys($documentedRules));
-    if (count($undocumented) > 0) {
+    if ($undocumented !== []) {
         echo 'Following inspections are not documented: ' . PHP_EOL . implode(',' . PHP_EOL, $undocumented) . PHP_EOL;
         exit(-1);
     }
     /* step 2: report non-existing inspections */
     $unknown = array_diff(array_keys($documentedRules), array_keys($definedRules));
-    if (count($unknown) > 0) {
+    if ($unknown !== []) {
         echo 'Following inspections are not registered: ' . PHP_EOL . implode(',' . PHP_EOL, $unknown) . PHP_EOL;
         exit(-1);
     }
@@ -84,7 +84,7 @@
             $outdated []= $shortName;
         }
     }
-    if (count($outdated) > 0) {
+    if ($outdated !== []) {
         echo 'Following inspections info is outdated: ' . PHP_EOL . implode(',' . PHP_EOL, $outdated) . PHP_EOL;
         exit(-1);
     }
@@ -96,7 +96,7 @@
             $untested []= $shortName;
         }
     }
-    if (count($untested) > 0) {
+    if ($untested !== []) {
         echo 'Following inspections are not tested: ' . PHP_EOL . implode(',' . PHP_EOL, $untested) . PHP_EOL;
         exit(-1);
     }
@@ -109,7 +109,7 @@
             $orphanedDescriptions []= basename($file);
         }
     }
-    if (count($orphanedDescriptions) > 0) {
+    if ($orphanedDescriptions !== []) {
         echo 'Following descriptions are orphaned: ' . PHP_EOL . implode(',' . PHP_EOL, $orphanedDescriptions) . PHP_EOL;
         exit(-1);
     }

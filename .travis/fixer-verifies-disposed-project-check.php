@@ -26,7 +26,7 @@
                     $lastPosition += strlen($searchFragment);
                 }
 
-                if ($checksCount !== $fixersCount) {
+                if ($checksCount < $fixersCount) {
                     $missingChecks []= $file->getFilename();
                 }
             }

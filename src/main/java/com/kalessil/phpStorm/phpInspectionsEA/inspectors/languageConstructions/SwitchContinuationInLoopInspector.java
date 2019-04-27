@@ -81,7 +81,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof PhpContinue) {
+            if (expression instanceof PhpContinue && !project.isDisposed()) {
                 expression.replace(PhpPsiElementFactory.createFromText(project, PhpContinue.class, "continue 2;"));
             }
         }

@@ -63,7 +63,7 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement reportingTarget = descriptor.getPsiElement();
             final PsiElement expression      = reportingTarget.getParent();
-            if (expression instanceof Method) {
+            if (expression instanceof Method && !project.isDisposed()) {
                 PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "__construct");
                 reportingTarget.replace(replacement);
             }

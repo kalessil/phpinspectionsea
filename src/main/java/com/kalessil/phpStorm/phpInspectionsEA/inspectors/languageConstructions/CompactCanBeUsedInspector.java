@@ -87,7 +87,7 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target     = descriptor.getPsiElement();
             final PsiElement expression = target == null ? null : target.getParent();
-            if (expression != null) {
+            if (expression != null && !project.isDisposed()) {
                 expression.replace(PhpPsiElementFactory.createPhpPsiFromText(project, FunctionReference.class, replacement));
             }
         }

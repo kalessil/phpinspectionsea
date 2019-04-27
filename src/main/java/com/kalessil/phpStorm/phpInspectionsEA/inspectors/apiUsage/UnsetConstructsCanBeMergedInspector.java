@@ -80,7 +80,7 @@ public class UnsetConstructsCanBeMergedInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PhpUnset unset = this.unset.getElement();
-            if (unset != null) {
+            if (unset != null && !project.isDisposed()) {
                 synchronized (unset.getContainingFile()) {
                     /* find preceding unset-statement */
                     PsiElement previous = unset.getPrevPsiSibling();

@@ -69,7 +69,7 @@ public class DirectoryConstantCanBeUsedInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             PsiElement target = descriptor.getPsiElement();
-            if (target instanceof FunctionReference) {
+            if (target instanceof FunctionReference && !project.isDisposed()) {
                 target.replace(PhpPsiElementFactory.createConstantReference(project, "__DIR__"));
             }
         }

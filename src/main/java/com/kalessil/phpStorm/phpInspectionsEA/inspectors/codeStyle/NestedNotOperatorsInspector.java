@@ -144,7 +144,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement value = this.value.getElement();
-            if (value != null) {
+            if (value != null && !project.isDisposed()) {
                 final UnaryExpression replacement = PhpPsiElementFactory.createFromText(
                         project,
                         UnaryExpression.class,

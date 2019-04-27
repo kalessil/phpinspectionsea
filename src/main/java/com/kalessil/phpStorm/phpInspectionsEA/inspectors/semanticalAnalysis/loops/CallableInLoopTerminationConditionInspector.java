@@ -86,7 +86,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final For forStatement           = this.forStatement.getElement();
             final BinaryExpression condition = this.condition.getElement();
-            if (forStatement == null || condition == null) {
+            if (forStatement == null || condition == null || project.isDisposed()) {
                 return;
             }
 

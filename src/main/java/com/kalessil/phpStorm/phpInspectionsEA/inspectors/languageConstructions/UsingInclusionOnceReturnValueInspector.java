@@ -66,7 +66,7 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof Include) {
+            if (target instanceof Include && !project.isDisposed()) {
                 final boolean isInclude   = OpenapiTypesUtil.is(target.getFirstChild(), PhpTokenTypes.kwINCLUDE_ONCE);
                 final String pattern      = isInclude ? "include ''" : "require ''";
                 final Include replacement = PhpPsiElementFactory.createPhpPsiFromText(project, Include.class, pattern);

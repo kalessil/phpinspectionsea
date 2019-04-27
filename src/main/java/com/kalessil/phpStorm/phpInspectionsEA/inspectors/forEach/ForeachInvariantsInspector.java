@@ -257,7 +257,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             final PsiElement loop      = this.loop.getElement();
             final PsiElement index     = this.index.getElement();
             final PsiElement container = this.container.getElement();
-            if (loop != null && index != null && container != null) {
+            if (loop != null && index != null && container != null && !project.isDisposed()) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (body != null) {
                     final PsiElement value = this.value == null ? null : this.value.getElement();

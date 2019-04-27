@@ -107,7 +107,7 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target != null) {
+            if (target != null && !project.isDisposed()) {
                 target.replace(PhpPsiElementFactory.createMethod(project, modifiers + " function x();").getFirstChild());
             }
         }

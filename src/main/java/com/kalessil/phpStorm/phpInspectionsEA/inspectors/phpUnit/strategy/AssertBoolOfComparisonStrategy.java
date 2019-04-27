@@ -94,7 +94,7 @@ final public class AssertBoolOfComparisonStrategy {
             final PsiElement expression = descriptor.getPsiElement();
             final PsiElement first      = this.first.getElement();
             final PsiElement second     = this.second.getElement();
-            if (first != null && second != null && expression instanceof FunctionReference) {
+            if (first != null && second != null && expression instanceof FunctionReference && !project.isDisposed()) {
                 final PsiElement[] params      = ((FunctionReference) expression).getParameters();
                 final boolean hasCustomMessage = 2 == params.length;
 

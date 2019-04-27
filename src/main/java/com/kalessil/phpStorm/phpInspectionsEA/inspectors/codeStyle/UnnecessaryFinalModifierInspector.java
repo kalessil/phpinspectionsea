@@ -71,7 +71,7 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (null != expression && expression.getParent() instanceof Method) {
+            if (expression != null && expression.getParent() instanceof Method && !project.isDisposed()) {
                 final Method target    = (Method) expression.getParent();
                 final String modifiers = target.getModifier().toString().replace("final", "").replace("  ", "").trim();
                 final Method donor     = PhpPsiElementFactory.createMethod(project, modifiers + " function x(){}");

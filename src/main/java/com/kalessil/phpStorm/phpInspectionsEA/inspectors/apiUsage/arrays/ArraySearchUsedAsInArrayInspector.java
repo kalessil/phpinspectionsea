@@ -100,28 +100,29 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
-                ((FunctionReference) expression).handleElementRename("in_array");
-            }
-
-            if (expression instanceof BinaryExpression) {
-                final BinaryExpression comparingFalse = (BinaryExpression) expression;
-                final PsiElement operation            = comparingFalse.getOperation();
-                if (null != operation) {
-                    PsiElement call = comparingFalse.getLeftOperand();
-                    if (call instanceof ConstantReference) {
-                        call = comparingFalse.getRightOperand();
-                    }
-                    if (call instanceof FunctionReference) {
-                        /* rename the call */
-                        ((FunctionReference) call).handleElementRename("in_array");
-                        if (PhpTokenTypes.opIDENTICAL == operation.getNode().getElementType()) {
-                            /* we want false, hence need invert the call */
-                            UnaryExpression inverted = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "!$x");
-                            inverted.getValue().replace(call);
-                            expression.replace(inverted);
-                        } else {
-                            expression.replace(call);
+            if (expression != null && !project.isDisposed()) {
+                if (expression instanceof FunctionReference) {
+                    ((FunctionReference) expression).handleElementRename("in_array");
+                }
+                if (expression instanceof BinaryExpression) {
+                    final BinaryExpression comparingFalse = (BinaryExpression) expression;
+                    final PsiElement operation            = comparingFalse.getOperation();
+                    if (null != operation) {
+                        PsiElement call = comparingFalse.getLeftOperand();
+                        if (call instanceof ConstantReference) {
+                            call = comparingFalse.getRightOperand();
+                        }
+                        if (call instanceof FunctionReference) {
+                            /* rename the call */
+                            ((FunctionReference) call).handleElementRename("in_array");
+                            if (PhpTokenTypes.opIDENTICAL == operation.getNode().getElementType()) {
+                                /* we want false, hence need invert the call */
+                                UnaryExpression inverted = PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "!$x");
+                                inverted.getValue().replace(call);
+                                expression.replace(inverted);
+                            } else {
+                                expression.replace(call);
+                            }
                         }
                     }
                 }

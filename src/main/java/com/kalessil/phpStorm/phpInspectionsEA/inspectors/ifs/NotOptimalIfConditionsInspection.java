@@ -14,7 +14,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCouplingCheckUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class NotOptimalIfConditionsInspection extends BasePhpInspection {
+public class NotOptimalIfConditionsInspection extends PhpInspection {
     // Inspection options.
     public boolean REPORT_LITERAL_OPERATORS      = true;
     public boolean REPORT_DUPLICATE_CONDITIONS   = true;

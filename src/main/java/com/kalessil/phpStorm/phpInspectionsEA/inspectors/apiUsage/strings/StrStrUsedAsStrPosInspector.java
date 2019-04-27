@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -27,7 +27,7 @@ import java.util.HashMap;
  * file that was distributed with this source code.
  */
 
-public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
+public class StrStrUsedAsStrPosInspector extends PhpInspection {
     private static final String messagePattern = "'%s' should be used instead (saves memory).";
 
     @NotNull

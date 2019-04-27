@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -23,7 +23,7 @@ import java.util.Collection;
  * file that was distributed with this source code.
  */
 
-public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspection {
+public class AmbiguousMethodsCallsInArrayMappingInspector extends PhpInspection {
     private static final String message = "Duplicated method calls should be moved to a local variable.";
 
     @NotNull

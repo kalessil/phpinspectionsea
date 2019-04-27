@@ -9,7 +9,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
+public class NestedPositiveIfStatementsInspector extends PhpInspection {
     private static final String message = "If construct can be merged with parent one.";
 
     @NotNull

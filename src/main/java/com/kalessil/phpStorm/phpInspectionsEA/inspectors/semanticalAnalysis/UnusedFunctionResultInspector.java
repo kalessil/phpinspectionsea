@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class UnusedFunctionResultInspector extends BasePhpInspection {
+public class UnusedFunctionResultInspector extends PhpInspection {
     // Inspection options.
     public boolean REPORT_ONLY_SCALARS      = false;
     public boolean REPORT_MIXED_TYPE        = false;

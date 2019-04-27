@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class ArrayValuesMissUseInspector extends BasePhpInspection {
+public class ArrayValuesMissUseInspector extends PhpInspection {
     private static final String messageGeneric  = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageInArray  = "'array_values(...)' is not making any sense here (just search in it's argument).";
     private static final String messageCount    = "'array_values(...)' is not making any sense here (just count it's argument).";

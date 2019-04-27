@@ -14,7 +14,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.parameters.strategy.InstanceOfCorrectnessStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInspection {
+public class CallableParameterUseCaseInTypeContextInspection extends PhpInspection {
     private static final String messageNoSense               = "Makes no sense, because it's always true according to annotations.";
     private static final String messageTypeHint              = "Makes no sense, because of parameter type declaration.";
     private static final String messageViolationInCheck      = "Makes no sense, because this type is not defined in annotations.";

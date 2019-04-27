@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -29,7 +29,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class ImplodeMissUseInspector extends BasePhpInspection {
+public class ImplodeMissUseInspector extends PhpInspection {
     private static final String messagePattern = "Consider using '%s' instead (consumes less cpu and memory resources).";
 
     @NotNull

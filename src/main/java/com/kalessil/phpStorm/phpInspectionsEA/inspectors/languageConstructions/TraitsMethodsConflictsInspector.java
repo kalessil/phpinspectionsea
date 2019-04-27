@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class TraitsMethodsConflictsInspector extends BasePhpInspection {
+public class TraitsMethodsConflictsInspector extends PhpInspection {
     private static final String messagePattern = "Provokes a fatal error ('%s' method collision, see '%s').";
 
     @NotNull

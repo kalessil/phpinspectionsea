@@ -9,7 +9,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -29,7 +29,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class MissingIssetImplementationInspector extends BasePhpInspection {
+public class MissingIssetImplementationInspector extends PhpInspection {
     private static final String messagePattern = "%c% needs to implement __isset to properly work here.";
 
     private static final Set<String> magicClasses = new HashSet<>();

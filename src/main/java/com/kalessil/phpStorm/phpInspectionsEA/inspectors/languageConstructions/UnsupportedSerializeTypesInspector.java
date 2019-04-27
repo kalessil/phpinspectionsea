@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class UnsupportedSerializeTypesInspector extends BasePhpInspection {
+public class UnsupportedSerializeTypesInspector extends PhpInspection {
     private static final String messagePattern = "'%s' doesn't support serialization (causes serialization is not allowed error).";
 
     private static final Set<String> targetClasses = new HashSet<>();

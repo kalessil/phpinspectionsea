@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Declare;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class DeclareDirectiveCorrectnessInspector extends BasePhpInspection {
+public class DeclareDirectiveCorrectnessInspector extends PhpInspection {
     private static final String messagePattern = "Unknown directive '%d%'.";
 
     private static final Set<String> directives = new HashSet<>();

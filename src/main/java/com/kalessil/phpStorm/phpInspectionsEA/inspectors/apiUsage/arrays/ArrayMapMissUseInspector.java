@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class ArrayMapMissUseInspector extends BasePhpInspection {
+public class ArrayMapMissUseInspector extends PhpInspection {
     private static final String message = "'array_map(..., array_slice(...))' would make more sense here (it also faster).";
 
     @NotNull

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -26,7 +26,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class CoreInterfacesUsageInspector extends BasePhpInspection {
+public class CoreInterfacesUsageInspector extends PhpInspection {
     private static final String patternsNoAlternatives   = "Provokes fatal error: '%s' can not be implemented by user classes.";
     private static final String patternsWithAlternatives = "Provokes fatal error: '%s' should be replaced with one of %s instead.";
 

@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpEchoStatement;
 import com.jetbrains.php.lang.psi.elements.PhpPrintExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class ShortEchoTagCanBeUsedInspector extends BasePhpInspection {
+public class ShortEchoTagCanBeUsedInspector extends PhpInspection {
     private static final String message = "'<?= ... ?>' could be used instead (but ensure that short_open_tag is enabled).";
 
     @NotNull

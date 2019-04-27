@@ -16,7 +16,7 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpModifierList;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -34,7 +34,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class AccessModifierPresentedInspector extends BasePhpInspection {
+public class AccessModifierPresentedInspector extends PhpInspection {
     private static final String messagePattern = "'%s' should be declared with access modifier.";
 
     // Inspection options.

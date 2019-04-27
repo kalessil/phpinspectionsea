@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -25,7 +25,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class KeysFragmentationWithArrayFunctionsInspector extends BasePhpInspection {
+public class KeysFragmentationWithArrayFunctionsInspector extends PhpInspection {
     private static final String message = "Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.";
 
     final private static Set<String> targetFunctions = new HashSet<>();

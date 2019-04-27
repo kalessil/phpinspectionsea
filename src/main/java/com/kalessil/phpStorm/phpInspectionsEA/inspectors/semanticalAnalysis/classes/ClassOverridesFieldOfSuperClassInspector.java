@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -29,7 +29,7 @@ import java.util.Arrays;
  * file that was distributed with this source code.
  */
 
-public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection {
+public class ClassOverridesFieldOfSuperClassInspector extends PhpInspection {
     // Inspection options.
     public boolean REPORT_PRIVATE_REDEFINITION = true;
 

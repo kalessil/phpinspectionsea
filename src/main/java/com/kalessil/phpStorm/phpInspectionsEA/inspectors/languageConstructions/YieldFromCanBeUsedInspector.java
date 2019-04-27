@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.PhpYield;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -31,7 +31,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class YieldFromCanBeUsedInspector extends BasePhpInspection {
+public class YieldFromCanBeUsedInspector extends PhpInspection {
     private static final String message = "'yield from ...' can be used instead (generator delegation).";
 
     // Inspection options.

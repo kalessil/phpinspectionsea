@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class SuspiciousLoopInspector extends BasePhpInspection {
+public class SuspiciousLoopInspector extends PhpInspection {
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
     private static final String patternOverridesLoopVars  = "Variable '$%s' is introduced in a outer loop and overridden here.";

@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class IllusionOfChoiceInspector extends BasePhpInspection {
+public class IllusionOfChoiceInspector extends PhpInspection {
     private static final String messageSameValueConditional = "Same value gets returned by the alternative return. It's possible to simplify the construct.";
     private static final String messageDegradedConditional  = "Actually the same value gets returned by the alternative return. It's possible to simplify the construct.";
     private static final String messageDegradedTernary      = "Actually the same value is in the alternative variant. It's possible to simplify the construct.";

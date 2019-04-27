@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
+public class DisconnectedForeachInstructionInspector extends PhpInspection {
     // Inspection options.
     public boolean SUGGEST_USING_CLONE = false;
 

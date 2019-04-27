@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class PropertyCanBeStaticInspector extends BasePhpInspection {
+public class PropertyCanBeStaticInspector extends PhpInspection {
     private static final String messageNoConstants   = "This property initialization seems to be quite 'heavy', consider using static property instead.";
     private static final String messageWithConstants = "This property initialization seems to be quite 'heavy', consider using static property or constant instead.";
 

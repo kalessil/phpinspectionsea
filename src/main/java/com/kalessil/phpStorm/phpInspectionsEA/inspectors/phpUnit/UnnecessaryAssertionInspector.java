@@ -13,7 +13,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
@@ -35,7 +35,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class UnnecessaryAssertionInspector extends BasePhpInspection {
+public class UnnecessaryAssertionInspector extends PhpInspection {
     private final static String messageReturnType = "This assertion can probably be skipped (argument implicitly declares return type).";
     private final static String messageExpectsAny = "This assertion can probably be omitted ('->expects(...->any())' to be more specific).";
 

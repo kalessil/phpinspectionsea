@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class HostnameSubstitutionInspector extends BasePhpInspection {
+public class HostnameSubstitutionInspector extends PhpInspection {
     private static final String patternGeneral = "The email generation can be compromised via '$_SERVER['%s']', consider introducing whitelists.";
     private static final String messageNaming  = "The domain here can be compromised, consider introducing whitelists.";
 

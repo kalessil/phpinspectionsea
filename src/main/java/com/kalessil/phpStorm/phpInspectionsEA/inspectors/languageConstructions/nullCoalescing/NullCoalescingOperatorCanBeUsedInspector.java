@@ -17,7 +17,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -39,7 +39,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection {
+public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
     // Inspection options.
     public boolean SUGGEST_SIMPLIFYING_TERNARIES = true;
     public boolean SUGGEST_SIMPLIFYING_IFS       = true;

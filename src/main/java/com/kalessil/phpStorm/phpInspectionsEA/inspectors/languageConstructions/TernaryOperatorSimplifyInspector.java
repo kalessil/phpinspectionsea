@@ -7,7 +7,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -28,7 +28,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
+public class TernaryOperatorSimplifyInspector extends PhpInspection {
     private static final String messagePattern = "'%s' would make more sense here (simplification).";
 
     private final static Map<IElementType, String> oppositeOperators = new HashMap<>();

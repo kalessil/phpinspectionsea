@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class SenselessPropertyInspector extends BasePhpInspection {
+public class SenselessPropertyInspector extends PhpInspection {
     private static final String messagePattern = "'%s' property seems to be used as a local variable in '%s' method.";
 
     @NotNull

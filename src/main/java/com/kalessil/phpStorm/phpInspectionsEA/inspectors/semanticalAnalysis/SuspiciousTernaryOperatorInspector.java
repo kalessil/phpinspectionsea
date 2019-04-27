@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -28,7 +28,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class SuspiciousTernaryOperatorInspector extends BasePhpInspection {
+public class SuspiciousTernaryOperatorInspector extends PhpInspection {
     private static final String messagePriorities        = "This may not work as expected (wrap condition into '()' to specify intention).";
     private static final String messageVariantsIdentical = "True and false variants are identical, most probably this is a bug.";
 

@@ -11,7 +11,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class GetClassUsageInspector extends BasePhpInspection {
+public class GetClassUsageInspector extends PhpInspection {
 
     private static final String message = "'get_class(...)' does not accept null as argument in PHP 7.2+ versions.";
 

@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -26,7 +26,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
+public class ClassConstantUsageCorrectnessInspector extends PhpInspection {
     private static final String message = "::class result and the class qualified name are not identical (case mismatch).";
 
     final private static Set<String> validReferences = new HashSet<>();

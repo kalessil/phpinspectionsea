@@ -8,7 +8,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpExitPointInstru
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpReturnInstruction;
 import com.jetbrains.php.lang.psi.elements.Method;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -29,7 +29,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class MultipleReturnStatementsInspector extends BasePhpInspection {
+public class MultipleReturnStatementsInspector extends PhpInspection {
     // Inspection options.
     public int COMPLAIN_THRESHOLD = 3;
     public int SCREAM_THRESHOLD   = 5;

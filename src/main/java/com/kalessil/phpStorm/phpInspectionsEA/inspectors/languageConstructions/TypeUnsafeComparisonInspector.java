@@ -17,7 +17,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -39,7 +39,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class TypeUnsafeComparisonInspector extends BasePhpInspection {
+public class TypeUnsafeComparisonInspector extends PhpInspection {
     private static final String patternHarden                = "Please consider using more strict '%s' here (hidden types casting will not be applied anymore).";
     private static final String patternCompareStrict         = "Safely use '%s' here.";
     private static final String messageToStringMethodMissing = "%class% miss __toString() implementation.";

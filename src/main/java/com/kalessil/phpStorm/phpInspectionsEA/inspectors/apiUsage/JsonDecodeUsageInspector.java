@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -22,7 +22,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class JsonDecodeUsageInspector extends BasePhpInspection {
+public class JsonDecodeUsageInspector extends PhpInspection {
     // Inspection options.
     public boolean DECODE_AS_ARRAY  = true;
     public boolean DECODE_AS_OBJECT = false;

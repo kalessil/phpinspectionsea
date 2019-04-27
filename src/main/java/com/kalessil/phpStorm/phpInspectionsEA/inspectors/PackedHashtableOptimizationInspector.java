@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -27,7 +27,7 @@ import java.util.List;
  * file that was distributed with this source code.
  */
 
-final public class PackedHashtableOptimizationInspector extends BasePhpInspection {
+final public class PackedHashtableOptimizationInspector extends PhpInspection {
     private static final String messageReorder        = "Reordering keys in natural ascending order would enable array optimizations here.";
     private static final String messageUseNumericKeys = "Using integer keys would enable array optimizations here.";
 

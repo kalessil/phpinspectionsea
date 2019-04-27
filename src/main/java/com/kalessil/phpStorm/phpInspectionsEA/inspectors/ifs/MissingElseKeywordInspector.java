@@ -7,7 +7,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.psi.elements.Else;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.If;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class MissingElseKeywordInspector extends BasePhpInspection {
+public class MissingElseKeywordInspector extends PhpInspection {
     private static final String message = "It's probably was intended to use 'else if' or 'elseif' here.";
 
     @NotNull

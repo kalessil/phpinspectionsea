@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class BadExceptionsProcessingInspector extends BasePhpInspection {
+public class BadExceptionsProcessingInspector extends PhpInspection {
     private static final String messagePattern          = "Consider moving non-related statements (%s in total) outside the try-block or refactoring the try-body into a function/method.";
     private static final String messageFailSilently     = "The exception being ignored, please don't fail silently and at least log it.";
     private static final String messageChainedException = "The exception being ignored, please log it or use chained exceptions.";

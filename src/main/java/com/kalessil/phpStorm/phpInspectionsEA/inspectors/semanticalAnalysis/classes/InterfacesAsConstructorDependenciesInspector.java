@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class InterfacesAsConstructorDependenciesInspector extends BasePhpInspection {
+public class InterfacesAsConstructorDependenciesInspector extends PhpInspection {
     private static final String messageMissingContract = "The parameters' class doesn't implement any interfaces (contracts), consider introducing one (extensibility concerns).";
     private static final String messageUseContract     = "The parameters' type should be replaced with an interface (contract) (extensibility concerns).";
 

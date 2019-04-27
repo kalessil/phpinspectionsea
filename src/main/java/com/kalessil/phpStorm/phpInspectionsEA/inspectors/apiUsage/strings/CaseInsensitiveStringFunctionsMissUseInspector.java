@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -28,7 +28,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class CaseInsensitiveStringFunctionsMissUseInspector extends BasePhpInspection {
+public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspection {
     private static final String messagePattern = "'%f%(...)' should be used instead (the pattern does not contain alphabet characters).";
 
     @NotNull

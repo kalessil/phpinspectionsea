@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class ArrayMergeMissUseInspector extends BasePhpInspection {
+public class ArrayMergeMissUseInspector extends PhpInspection {
     private static final String messageUseArray     = "'[...]' would fit more here (it also much faster).";
     private static final String messageArrayUnshift = "'array_unshift(...)' would fit more here (it also faster).";
     private static final String messageArrayPush    = "'array_push(...)' would fit more here (it also faster).";

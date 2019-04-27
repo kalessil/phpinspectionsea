@@ -16,7 +16,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class OneTimeUseVariablesInspector extends BasePhpInspection {
+public class OneTimeUseVariablesInspector extends PhpInspection {
     // Inspection options.
     public boolean ALLOW_LONG_STATEMENTS = false;
 

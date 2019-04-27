@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -29,7 +29,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class SenselessMethodDuplicationInspector extends BasePhpInspection {
+public class SenselessMethodDuplicationInspector extends PhpInspection {
     // configuration flags automatically saved by IDE
     public int MAX_METHOD_SIZE = 20;
     /* TODO: configurable via drop-down; clean code: 20 lines/method; PMD: 50; Checkstyle: 100 */

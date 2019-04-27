@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class PropertyInitializationFlawsInspector extends BasePhpInspection {
+public class PropertyInitializationFlawsInspector extends PhpInspection {
     // Inspection options.
     public boolean REPORT_DEFAULTS_FLAWS = true;
     public boolean REPORT_INIT_FLAWS     = true;

@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -23,7 +23,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class InsufficientTypesControlInspector extends BasePhpInspection {
+public class InsufficientTypesControlInspector extends PhpInspection {
     private static final String message = "In multiple cases the result can be evaluated as false, consider hardening the check (e.g. '... !== false').";
 
     private static final Set<String> functions  = new HashSet<>();

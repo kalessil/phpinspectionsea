@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -29,7 +29,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class ForgottenDebugOutputInspector extends BasePhpInspection {
+public class ForgottenDebugOutputInspector extends PhpInspection {
     // Inspection options.
     public final List<String> configuration = new ArrayList<>();
     public boolean migratedIntoUserSpace    = false;

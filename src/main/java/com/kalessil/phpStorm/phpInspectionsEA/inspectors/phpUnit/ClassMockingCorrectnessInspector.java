@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -25,7 +25,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class ClassMockingCorrectnessInspector extends BasePhpInspection {
+public class ClassMockingCorrectnessInspector extends PhpInspection {
     private final static String messageFinal           = "Causes reflection errors as the referenced class is final.";
     private final static String messageTrait           = "Causes reflection errors as the referenced class is a trait.";
     private final static String messageNeedsAbstract   = "Needs an abstract class here.";

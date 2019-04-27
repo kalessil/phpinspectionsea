@@ -11,7 +11,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -28,7 +28,7 @@ import java.util.List;
  * file that was distributed with this source code.
  */
 
-public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
+public class ShortListSyntaxCanBeUsedInspector extends PhpInspection {
     private static final String messageForeach = "'foreach (... as [...])' can be used here.";
     private static final String messageAssign  = "'[...] = ...' can be used here.";
 

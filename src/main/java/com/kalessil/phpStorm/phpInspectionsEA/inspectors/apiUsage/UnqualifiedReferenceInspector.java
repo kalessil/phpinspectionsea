@@ -17,7 +17,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -38,7 +38,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class UnqualifiedReferenceInspector extends BasePhpInspection {
+public class UnqualifiedReferenceInspector extends PhpInspection {
     private static final String messagePattern = "Using '\\%s' would enable some of opcode optimizations.";
 
     // Inspection options.

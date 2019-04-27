@@ -11,7 +11,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class CryptographicallySecureRandomnessInspector extends BasePhpInspection {
+public class CryptographicallySecureRandomnessInspector extends PhpInspection {
     private static final String messageUseRandomBytes                = "Consider using cryptographically secure random_bytes() instead.";
     private static final String messageVerifyBytes                   = "The IV generated can be false, please add necessary checks.";
     private static final String messageOpenssl2ndArgumentNotDefined  = "Use 2nd parameter for determining if the algorithm used was cryptographically strong.";

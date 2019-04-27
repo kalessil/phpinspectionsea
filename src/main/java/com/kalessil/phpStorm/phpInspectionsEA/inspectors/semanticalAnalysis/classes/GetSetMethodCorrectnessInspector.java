@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class GetSetMethodCorrectnessInspector extends BasePhpInspection {
+public class GetSetMethodCorrectnessInspector extends PhpInspection {
     private static final String messagePattern = "It's probably a wrong field was used here ('%s' could fit).";
 
     private static final Pattern regexTargetName;

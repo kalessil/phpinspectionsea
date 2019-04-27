@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ControlStatement;
 import com.jetbrains.php.lang.psi.elements.Include;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
+public class UsingInclusionOnceReturnValueInspector extends PhpInspection {
     private static final String message = "Only the first call returns the proper/expected result. Subsequent calls will return 'true'.";
 
     @NotNull

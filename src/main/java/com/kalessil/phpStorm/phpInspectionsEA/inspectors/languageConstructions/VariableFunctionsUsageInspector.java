@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class VariableFunctionsUsageInspector extends BasePhpInspection {
+public class VariableFunctionsUsageInspector extends PhpInspection {
     private static final String patternInlineArgs = "'%s' would make possible to perform better code analysis here.";
     private static final String patternReplace    = "'%s' would make more sense here (it also faster).";
 

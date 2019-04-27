@@ -7,7 +7,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class InArrayCanBeUsedInspector extends BasePhpInspection {
+public class InArrayCanBeUsedInspector extends PhpInspection {
     private static final String messagePattern = "It's possible to use '%s' here (reduces cognitive load).";
 
     @NotNull

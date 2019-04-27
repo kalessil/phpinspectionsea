@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class CascadeStringReplacementInspector extends BasePhpInspection {
+public class CascadeStringReplacementInspector extends PhpInspection {
     // Inspection options.
     public boolean USE_SHORT_ARRAYS_SYNTAX = false;
 

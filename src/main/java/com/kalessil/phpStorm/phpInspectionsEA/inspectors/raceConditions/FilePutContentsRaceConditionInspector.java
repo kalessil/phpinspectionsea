@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -28,7 +28,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class FilePutContentsRaceConditionInspector extends BasePhpInspection {
+public class FilePutContentsRaceConditionInspector extends PhpInspection {
     // Inspection options.
     public boolean REDUCED_SCOPE = true;
 

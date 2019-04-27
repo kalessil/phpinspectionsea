@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.FieldReference;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -33,7 +33,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
+public class UnnecessaryIssetArgumentsInspector extends PhpInspection {
     private static final String message = "This argument can be skipped (handled by its' nested element access).";
 
     @NotNull

@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.PhpGoto;
 import com.jetbrains.php.lang.psi.elements.PhpGotoLabel;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -29,7 +29,7 @@ import java.util.Collection;
  * file that was distributed with this source code.
  */
 
-public class UnusedGotoLabelInspector extends BasePhpInspection {
+public class UnusedGotoLabelInspector extends PhpInspection {
     private static final String message = "The label is not used.";
 
     @NotNull

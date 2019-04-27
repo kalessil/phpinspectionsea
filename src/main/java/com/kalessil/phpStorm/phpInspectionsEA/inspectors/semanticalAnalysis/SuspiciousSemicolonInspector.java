@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Else;
 import com.jetbrains.php.lang.psi.elements.ElseIf;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.Statement;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class SuspiciousSemicolonInspector extends BasePhpInspection {
+public class SuspiciousSemicolonInspector extends PhpInspection {
     private static final String message = "Probably a bug, because ';' treated as body.";
 
     @NotNull

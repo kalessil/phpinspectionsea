@@ -8,7 +8,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class DeprecatedIniOptionsInspector extends BasePhpInspection {
+public class DeprecatedIniOptionsInspector extends PhpInspection {
     private static final String patternDeprecated                = "'%s' is a deprecated since PHP %s.";
     private static final String patternDeprecatedWithAlternative = "'%s' is a deprecated since PHP %s. Use %s instead.";
     private static final String patternRemoved                   = "'%s' was removed in PHP %s.";

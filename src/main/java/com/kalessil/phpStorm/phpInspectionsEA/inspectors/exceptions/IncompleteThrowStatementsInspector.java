@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -28,7 +28,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class IncompleteThrowStatementsInspector extends BasePhpInspection {
+public class IncompleteThrowStatementsInspector extends PhpInspection {
     private static final String messageThrow   = "It's probably intended to throw an exception here.";
     private static final String messageNew     = "It's probably intended to instantiate the exception here.";
     private static final String messageSprintf = "It's probably intended to use 'sprintf(...)' here.";

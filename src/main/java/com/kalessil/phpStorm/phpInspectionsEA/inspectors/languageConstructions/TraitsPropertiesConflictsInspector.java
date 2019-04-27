@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -29,7 +29,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
+public class TraitsPropertiesConflictsInspector extends PhpInspection {
     private static final String messagePattern = "'%c%' and '%t%' define the same property ($%p%).";
 
     @NotNull

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class CompactArgumentsInspector extends BasePhpInspection {
+public class CompactArgumentsInspector extends PhpInspection {
     private static final String patternUnknownVariable = "'$%s' might not be defined in the scope.";
     private static final String patternStringExpected  = "There is chance that it should be '%s' here.";
 

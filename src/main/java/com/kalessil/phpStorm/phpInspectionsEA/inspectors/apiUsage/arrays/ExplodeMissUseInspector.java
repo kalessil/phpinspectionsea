@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -31,7 +31,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class ExplodeMissUseInspector extends BasePhpInspection {
+public class ExplodeMissUseInspector extends PhpInspection {
     private static final String messagePattern = "Consider using '%s' instead (consumes less cpu and memory resources).";
 
     private static final Map<String, Integer> argumentMapping = new HashMap<>();

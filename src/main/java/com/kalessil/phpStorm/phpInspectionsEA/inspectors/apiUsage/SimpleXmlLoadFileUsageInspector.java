@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class SimpleXmlLoadFileUsageInspector extends BasePhpInspection {
+public class SimpleXmlLoadFileUsageInspector extends PhpInspection {
     private static final String message = "This can be affected by a PHP bug #62577 (https://bugs.php.net/bug.php?id=62577)";
 
     @NotNull

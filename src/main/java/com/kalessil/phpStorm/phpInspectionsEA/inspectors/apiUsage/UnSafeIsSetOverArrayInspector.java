@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -31,7 +31,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
+public class UnSafeIsSetOverArrayInspector extends PhpInspection {
     // Inspection options.
     public boolean SUGGEST_TO_USE_ARRAY_KEY_EXISTS = false;
     public boolean SUGGEST_TO_USE_NULL_COMPARISON  = false;

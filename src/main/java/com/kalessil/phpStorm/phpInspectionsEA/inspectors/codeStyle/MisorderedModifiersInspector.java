@@ -13,7 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpModifierList;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class MisorderedModifiersInspector extends BasePhpInspection {
+public class MisorderedModifiersInspector extends PhpInspection {
     private static final String message = "Modifiers are misordered (according to PSRs)";
 
     private static final List<String> standardOrder = new ArrayList<>();

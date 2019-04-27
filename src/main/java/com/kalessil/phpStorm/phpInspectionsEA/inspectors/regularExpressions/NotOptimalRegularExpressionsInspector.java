@@ -19,7 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opti
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SequentialClassesCollapseCheckStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.SingleCharactersAlternationStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.optimizeStrategy.UnnecessaryCaseManipulationCheckStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
+public class NotOptimalRegularExpressionsInspector extends PhpInspection {
     private static final String messageNoDelimiters = "The regular expression delimiters are missing (it should be e.g. '/<regex-here>/').";
 
     @NotNull

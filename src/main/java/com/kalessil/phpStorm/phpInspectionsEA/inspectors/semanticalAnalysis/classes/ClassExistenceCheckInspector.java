@@ -9,7 +9,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -29,7 +29,7 @@ import java.util.function.Function;
  * file that was distributed with this source code.
  */
 
-public class ClassExistenceCheckInspector extends BasePhpInspection {
+public class ClassExistenceCheckInspector extends PhpInspection {
     private static final String messageMismatch = "This call seems to always return false, please inspect the ::class expression.";
     private static final String messageString   = "This call might work not as expected, please specify the third argument.";
 

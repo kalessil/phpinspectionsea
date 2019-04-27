@@ -20,7 +20,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
+public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
     private static final String messagePattern = "': %t%' can be declared as return type hint%n%.";
 
     // Inspection options.

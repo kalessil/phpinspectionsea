@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -25,7 +25,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class HardcodedCredentialsInspector extends BasePhpInspection {
+public class HardcodedCredentialsInspector extends PhpInspection {
     private static final String message = "It would be better idea to not hard-code credentials but to use a managed environment instead.";
 
     private static final Map<String, Integer> targetFunctions = new HashMap<>();

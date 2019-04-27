@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -30,7 +30,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class SelfClassReferencingInspector extends BasePhpInspection {
+public class SelfClassReferencingInspector extends PhpInspection {
     private static final String messagePattern = "Class reference '%s' could be replaced by '%s'";
 
     // Inspection options.

@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.PhpCallbackFunctionUtil;
 import com.jetbrains.php.lang.PhpCallbackReferenceBase;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -31,7 +31,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class CallableMethodValidityInspector extends BasePhpInspection {
+public class CallableMethodValidityInspector extends PhpInspection {
     private static final String patternNotPublic    = "'%s' should be public (e.g. $this usage in static context provokes fatal errors).";
     private static final String patternNotStatic    = "'%s' should be static (e.g. $this usage in static context provokes fatal errors).";
     private static final String messageUseThrowable = "\\Throwable instead of \\Exception should be used in the handler (BC break introduced in PHP 7).";

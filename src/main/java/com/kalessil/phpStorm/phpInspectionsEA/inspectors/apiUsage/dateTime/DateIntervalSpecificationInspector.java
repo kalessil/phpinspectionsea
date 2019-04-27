@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.NewExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class DateIntervalSpecificationInspector extends BasePhpInspection {
+public class DateIntervalSpecificationInspector extends PhpInspection {
     private static final String message = "Date interval specification seems to be invalid.";
 
     private static final Pattern regexDateTimeAlike;

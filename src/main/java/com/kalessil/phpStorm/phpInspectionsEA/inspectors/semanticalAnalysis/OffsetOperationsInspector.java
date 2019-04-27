@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class OffsetOperationsInspector extends BasePhpInspection {
+public class OffsetOperationsInspector extends PhpInspection {
     private static final String patternNoOffsetSupport = "'%s' may not support offset operations (or its type not annotated properly: %s).";
     private static final String patternInvalidIndex    = "Resolved index type (%s) is incompatible with possible %s. Probably just proper type hinting needed.";
 

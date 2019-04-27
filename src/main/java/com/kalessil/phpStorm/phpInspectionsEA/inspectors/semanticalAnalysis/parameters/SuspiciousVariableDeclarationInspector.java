@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.par
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -21,7 +21,7 @@ import java.util.List;
  * file that was distributed with this source code.
  */
 
-public class SuspiciousVariableDeclarationInspector extends BasePhpInspection {
+public class SuspiciousVariableDeclarationInspector extends PhpInspection {
     private static final String messageSameParameter = "There is a parameter named '%s' already.";
     private static final String messageSameUse       = "There is a use-argument named '%s' already.";
 

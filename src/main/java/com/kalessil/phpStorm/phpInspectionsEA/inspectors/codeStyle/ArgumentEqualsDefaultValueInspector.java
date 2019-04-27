@@ -15,7 +15,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -37,7 +37,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
+public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
     private static final String message = "The argument can be safely dropped, as it's identical to the default value.";
 
     private static final Set<String> specialFunctions = new HashSet<>();

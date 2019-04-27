@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class UnnecessaryContinueInspector extends BasePhpInspection {
+public class UnnecessaryContinueInspector extends PhpInspection {
     private static final String message = "It's not really makes sense placing continue here as loop will continue from here anyway.";
 
     @NotNull

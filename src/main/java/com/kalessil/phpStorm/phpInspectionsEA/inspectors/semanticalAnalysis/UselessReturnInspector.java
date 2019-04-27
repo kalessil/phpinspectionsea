@@ -12,7 +12,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -31,7 +31,7 @@ import java.util.Optional;
  * file that was distributed with this source code.
  */
 
-public class UselessReturnInspector extends BasePhpInspection {
+public class UselessReturnInspector extends PhpInspection {
     private static final String messageSenseless = "Senseless statement: return null implicitly or safely remove it.";
     private static final String messageConfusing = "Assignment here is not making much sense.";
 

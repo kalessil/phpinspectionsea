@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class PrintfScanfArgumentsInspector extends BasePhpInspection {
+public class PrintfScanfArgumentsInspector extends PhpInspection {
     private static final String messagePattern    = "Pattern seems to be not valid.";
     private static final String messageParameters = "Amount of expected parameters is %c%.";
 

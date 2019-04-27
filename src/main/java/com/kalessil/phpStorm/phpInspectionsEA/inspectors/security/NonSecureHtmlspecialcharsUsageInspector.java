@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class NonSecureHtmlspecialcharsUsageInspector extends BasePhpInspection {
+public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
     private static final String messageHarden   = "Single quotes handling is not specified, please use ENT_QUOTES or ENT_COMPAT as second argument.";
     private static final String messageCallback = "Single quotes are not handled, please make use of ENT_QUOTES or ENT_COMPAT flags.";
 

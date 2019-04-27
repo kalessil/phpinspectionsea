@@ -15,7 +15,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
+public class IssetConstructsCanBeMergedInspector extends PhpInspection {
     private static final String messageIsset        = "This can be merged into the previous 'isset(..., ...[, ...])'.";
     private static final String messageIvertedIsset = "This can be merged into the previous '!isset(..., ...[, ...])'.";
 

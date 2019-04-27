@@ -8,7 +8,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.util.PhpStringUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -26,7 +26,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection {
+public class DynamicCallsToScopeIntrospectionInspector extends PhpInspection {
     private static final String messagePattern = "Emits a runtime warning (cannot call %s() dynamically).";
 
     final private static Map<String, Integer> targetCalls        = new HashMap<>();

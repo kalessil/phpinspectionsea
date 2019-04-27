@@ -10,7 +10,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.ImplementsList;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -28,7 +28,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection {
+public class ClassReImplementsParentInterfaceInspector extends PhpInspection {
     private static final String patternIndirectDuplication = "'%s' is already announced in '%s'.";
 
     @NotNull

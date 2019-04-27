@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ import java.util.function.BooleanSupplier;
  * file that was distributed with this source code.
  */
 
-public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
+public class SuspiciousBinaryOperationInspector extends PhpInspection {
     @NotNull
     public String getShortName() {
         return "SuspiciousBinaryOperationInspection";

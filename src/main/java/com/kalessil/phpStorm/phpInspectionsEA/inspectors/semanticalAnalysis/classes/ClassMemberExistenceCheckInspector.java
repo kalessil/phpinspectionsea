@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-final public class ClassMemberExistenceCheckInspector extends BasePhpInspection {
+final public class ClassMemberExistenceCheckInspector extends PhpInspection {
     private static final String messageTrue  = "This call seems to always return true, please check the workflow.";
     private static final String messageFalse = "This call seems to always return false, perhaps a wrong function being used.";
 

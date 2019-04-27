@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -29,7 +29,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class AlterInForeachInspector extends BasePhpInspection {
+public class AlterInForeachInspector extends PhpInspection {
     // Inspection options.
     public boolean SUGGEST_USING_VALUE_BY_REF = false;
 

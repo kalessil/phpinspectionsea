@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.NewExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -30,7 +30,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class TestingUnfriendlyApisInspector extends BasePhpInspection {
+public class TestingUnfriendlyApisInspector extends PhpInspection {
     // Inspection options.
     public int COMPLAIN_THRESHOLD = 5;
     public int SCREAM_THRESHOLD   = 7;

@@ -18,7 +18,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -43,7 +43,7 @@ import java.util.function.BooleanSupplier;
  * file that was distributed with this source code.
  */
 
-public class PhpUnitTestsInspector extends BasePhpInspection {
+public class PhpUnitTestsInspector extends PhpInspection {
     // Inspection options.
     public boolean SUGGEST_TO_USE_ASSERTSAME     = false;
     public boolean SUGGEST_TO_USE_NAMED_DATASETS = false;

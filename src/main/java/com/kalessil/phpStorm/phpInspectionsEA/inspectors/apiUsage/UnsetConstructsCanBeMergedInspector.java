@@ -11,7 +11,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpUnset;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class UnsetConstructsCanBeMergedInspector extends BasePhpInspection {
+public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
     private static final String message = "Can be safely replaced with 'unset(..., ...[, ...])' construction.";
 
     @NotNull

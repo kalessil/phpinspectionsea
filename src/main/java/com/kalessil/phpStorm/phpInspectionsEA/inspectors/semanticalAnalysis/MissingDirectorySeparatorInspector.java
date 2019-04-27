@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.ConcatenationExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -25,7 +25,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class MissingDirectorySeparatorInspector extends BasePhpInspection {
+public class MissingDirectorySeparatorInspector extends PhpInspection {
     private static final String message = "Looks like a directory separator is missing here.";
 
     final private static Set<String> targetFunctions = new HashSet<>();

@@ -10,7 +10,7 @@ import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class UnnecessaryEmptinessCheckInspector extends BasePhpInspection {
+public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
     private static final String messageControversialIsset    = "Doesn't match to previous isset-alike handling (perhaps always false when reached).";
     private static final String messageControversialFalsy    = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
     private static final String messageControversialNull     = "Doesn't match to previous null value handling (perhaps always false when reached).";

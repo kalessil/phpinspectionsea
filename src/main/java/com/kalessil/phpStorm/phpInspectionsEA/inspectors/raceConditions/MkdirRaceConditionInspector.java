@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * file that was distributed with this source code.
  */
 
-public class MkdirRaceConditionInspector extends BasePhpInspection {
+public class MkdirRaceConditionInspector extends PhpInspection {
     private static final String patternDirectCall       = "Following construct should be used: 'if (!mkdir(%s) && !is_dir(...)) { ... }'.";
     private static final String patternFailAndCondition = "Some check are missing: '!mkdir(%s) && !is_dir(...)'.";
     private static final String patternFailOrCondition  = "Some check are missing: 'mkdir(%s) || is_dir(...)'.";

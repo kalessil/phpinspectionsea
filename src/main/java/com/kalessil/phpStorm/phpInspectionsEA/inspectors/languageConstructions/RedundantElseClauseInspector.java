@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UnnecessaryElseFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -27,7 +27,7 @@ import java.util.List;
  * file that was distributed with this source code.
  */
 
-public class RedundantElseClauseInspector extends BasePhpInspection {
+public class RedundantElseClauseInspector extends PhpInspection {
     private static final String messageElse   = "Child instructions can be extracted here (clearer intention, lower complexity numbers).";
     private static final String messageElseif = "Can be converted into if-branch (clearer intention, lower complexity numbers).";
 

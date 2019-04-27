@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -26,7 +26,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class ThrowRawExceptionInspector extends BasePhpInspection {
+public class ThrowRawExceptionInspector extends PhpInspection {
     // Inspection options.
     public boolean REPORT_MISSING_ARGUMENTS = true;
 

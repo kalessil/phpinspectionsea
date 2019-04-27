@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -29,7 +29,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class EncryptionInitializationVectorRandomnessInspector extends BasePhpInspection {
+public class EncryptionInitializationVectorRandomnessInspector extends PhpInspection {
     private static final String messagePattern = "%s() should be used for IV, but found: %s.";
 
     private static final Set<String> secureFunctions = new HashSet<>();

@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.strategy.ExecUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.strategy.QueryUsageStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class PdoApiUsageInspector extends BasePhpInspection {
+public class PdoApiUsageInspector extends PhpInspection {
     @NotNull
     public String getShortName() {
         return "PdoApiUsageInspection";

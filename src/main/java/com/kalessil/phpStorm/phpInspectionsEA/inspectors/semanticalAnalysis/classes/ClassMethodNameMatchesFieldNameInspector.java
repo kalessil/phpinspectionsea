@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection {
+public class ClassMethodNameMatchesFieldNameInspector extends PhpInspection {
     private static final String messageMatches   = "There is a field with the same name, please give the method another name like is*, get*, set* and etc.";
     private static final String messageFieldType = "There is a field with the same name, but its type can not be resolved.";
 

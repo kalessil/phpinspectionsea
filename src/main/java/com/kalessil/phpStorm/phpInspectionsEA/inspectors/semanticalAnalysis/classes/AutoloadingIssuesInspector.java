@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class AutoloadingIssuesInspector extends BasePhpInspection {
+public class AutoloadingIssuesInspector extends PhpInspection {
     private static final String messageName = "Class autoloading might be broken: file and class names are not matching.";
     private static final String messagePath = "Class autoloading might be broken: directory path and namespace are not matching.";
 

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -25,7 +25,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
+public class UnusedConstructorDependenciesInspector extends PhpInspection {
     private static final String message = "Property is used only in constructor, perhaps we are dealing with dead code here.";
 
     @NotNull

@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -28,7 +28,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class SummerTimeUnsafeTimeManipulationInspector extends BasePhpInspection {
+public class SummerTimeUnsafeTimeManipulationInspector extends PhpInspection {
     private static final String message = "Consider using \\DateTime for DST safe date/time manipulation.";
 
     private static final Set<IElementType> targetOperations  = new HashSet<>();

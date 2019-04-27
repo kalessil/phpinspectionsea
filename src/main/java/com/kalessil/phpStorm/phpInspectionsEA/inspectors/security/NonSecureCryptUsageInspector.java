@@ -18,7 +18,7 @@ import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.ConcatenationExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class NonSecureCryptUsageInspector extends BasePhpInspection {
+public class NonSecureCryptUsageInspector extends PhpInspection {
     private static final String messageWeakSalt     = "A weak hash generated, consider providing '$2y$<cost and salt>' (Blowfish) as the second argument.";
     private static final String messageInsecureSalt = "'$2y$<cost and salt>' should be used in preference to insecure '$2a$<cost and salt>'.";
     private static final String messagePasswordHash = "Use of password_hash(..., PASSWORD_BCRYPT) is encouraged in this case (uses $2y$ with cost of 10).";

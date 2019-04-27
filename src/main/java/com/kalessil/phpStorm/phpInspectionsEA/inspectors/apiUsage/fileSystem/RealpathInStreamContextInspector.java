@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * file that was distributed with this source code.
  */
 
-public class RealpathInStreamContextInspector extends BasePhpInspection {
+public class RealpathInStreamContextInspector extends PhpInspection {
     private static final String messageUseDirname = "'realpath(...)' works differently in a stream context (e.g., for phar://...). Consider using 'dirname(...)' instead.";
     private static final String patternUseDirname = "'%s' should be used instead (due to how realpath handles streams).";
 

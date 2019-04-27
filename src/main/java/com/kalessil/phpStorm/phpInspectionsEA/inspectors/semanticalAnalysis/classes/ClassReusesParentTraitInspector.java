@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.jetbrains.php.lang.psi.elements.PhpUseList;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -27,7 +27,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class ClassReusesParentTraitInspector extends BasePhpInspection {
+public class ClassReusesParentTraitInspector extends PhpInspection {
     private static final String patternDirectDuplication   = "'%s' is already used in this same class.";
     private static final String patternIndirectDuplication = "'%s' is already used in '%s'.";
 

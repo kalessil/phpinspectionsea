@@ -11,7 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -30,7 +30,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class UnnecessaryCastingInspector extends BasePhpInspection {
+public class UnnecessaryCastingInspector extends PhpInspection {
     private static final String messageGeneric     = "This type casting is not necessary, as the argument is of needed type.";
     private static final String messageConcatenate = "This type casting is not necessary, as concatenation casts the argument.";
 

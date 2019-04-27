@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -27,7 +27,7 @@ import java.util.function.Supplier;
  * file that was distributed with this source code.
  */
 
-public class OverridingDeprecatedMethodInspector extends BasePhpInspection {
+public class OverridingDeprecatedMethodInspector extends PhpInspection {
     private static final String patternNeedsDeprecation      = "'%s' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.";
     private static final String patternDeprecateParent       = "The parents' overridden/implemented '%s' probably needs to be deprecated as well.";
     private static final String patternMissingDeprecationTag = "'%s' triggers a deprecation warning, but misses @deprecated annotation.";

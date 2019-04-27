@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -26,7 +26,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class DuplicateArrayKeysInspector extends BasePhpInspection {
+public class DuplicateArrayKeysInspector extends PhpInspection {
     private static final String messageDuplicateKey  = "The key is duplicated (and you should remove the outdated one).";
     private static final String messageDuplicatePair = "The key-value pair is duplicated (and you can safely remove it).";
 

@@ -16,7 +16,7 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
+public class ClassConstantCanBeUsedInspector extends PhpInspection {
     // Inspection options.
     public boolean IMPORT_CLASSES_ON_QF = true;
     public boolean USE_RELATIVE_QF      = false;

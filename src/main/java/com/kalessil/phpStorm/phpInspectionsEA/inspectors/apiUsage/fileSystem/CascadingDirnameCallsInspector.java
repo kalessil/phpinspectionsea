@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ import java.util.List;
  * file that was distributed with this source code.
  */
 
-public class CascadingDirnameCallsInspector extends BasePhpInspection {
+public class CascadingDirnameCallsInspector extends PhpInspection {
     private static final String messagePattern = "'%e%' can be used instead (reduces amount of calls).";
 
     @NotNull

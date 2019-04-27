@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
+public class SlowArrayOperationsInLoopInspector extends PhpInspection {
     private static final String messagePattern = "'%s(...)' is used in a loop and is a resources greedy construction.";
 
     @NotNull

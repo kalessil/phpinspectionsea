@@ -19,7 +19,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -40,7 +40,7 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-public class TransitiveDependenciesUsageInspector extends BasePhpInspection {
+public class TransitiveDependenciesUsageInspector extends PhpInspection {
     private static final String message = "The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json";
 
     final static private Set<String> references = new HashSet<>();

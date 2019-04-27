@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.MultiMap;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.apache.commons.lang.ArrayUtils;
@@ -32,7 +32,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class UnknownInspectionInspector extends BasePhpInspection {
+public class UnknownInspectionInspector extends PhpInspection {
     private static final String message = "Unknown inspection: %i%.";
 
     final private static Set<String> inspectionsNames;

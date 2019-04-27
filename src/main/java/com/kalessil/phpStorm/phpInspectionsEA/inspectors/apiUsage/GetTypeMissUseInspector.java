@@ -16,7 +16,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -36,7 +36,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class GetTypeMissUseInspector extends BasePhpInspection {
+public class GetTypeMissUseInspector extends PhpInspection {
     private static final String messagePattern     = "'%i%%f%(%p%)' construction is more compact and easier to read.";
     private static final String messageInvalidType = "'%t%' is not a value returned by 'gettype(...)'.";
 

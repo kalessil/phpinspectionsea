@@ -8,7 +8,7 @@ import com.intellij.psi.PsiReference;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -26,7 +26,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class SenselessProxyMethodInspector extends BasePhpInspection {
+public class SenselessProxyMethodInspector extends PhpInspection {
     private static final String messagePattern = "'%s%' method can be dropped, as it only calls parent's one.";
 
     final private static Set<String> constants = new HashSet<>();

@@ -9,13 +9,11 @@
             $content      = file_get_contents($file->getPathname());
             $fixersCount  = 0;
 
-            $fragments = ['implements LocalQuickFix', 'extends UseSuggestedReplacementFixer'];
-            foreach ($fragments as $searchFragment) {
-                $lastPosition = 0;
-                while (($lastPosition = strpos($content, $searchFragment, $lastPosition)) !== false) {
-                    ++$fixersCount;
-                    $lastPosition += strlen($searchFragment);
-                }
+            $lastPosition   = 0;
+            $searchFragment = 'public void applyFix';
+            while (($lastPosition = strpos($content, $searchFragment, $lastPosition)) !== false) {
+                ++$fixersCount;
+                $lastPosition += strlen($searchFragment);
             }
 
             if ($fixersCount > 0) {

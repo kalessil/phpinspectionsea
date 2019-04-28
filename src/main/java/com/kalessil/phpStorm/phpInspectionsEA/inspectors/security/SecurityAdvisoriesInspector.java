@@ -73,6 +73,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("satooshi/php-coveralls");
         developmentPackages.add("mikey179/vfsStream");
         developmentPackages.add("filp/whoops");
+        developmentPackages.add("fzaninotto/faker");
 
         /* SCA tools */
         developmentPackages.add("friendsofphp/php-cs-fixer");
@@ -83,6 +84,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("slevomat/coding-standard");
         developmentPackages.add("doctrine/coding-standard");
         developmentPackages.add("phpcompatibility/php-compatibility");
+        developmentPackages.add("zendframework/zend-coding-standard");
+        developmentPackages.add("yiisoft/yii2-coding-standards");
+        developmentPackages.add("wp-coding-standards/wpcs");
         developmentPackages.add("phpmd/phpmd");
         developmentPackages.add("pdepend/pdepend");
         developmentPackages.add("sebastian/phpcpd");
@@ -96,6 +100,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phing/phing");
         developmentPackages.add("composer/composer");
         developmentPackages.add("roave/security-advisories");
+        developmentPackages.add("kalessil/production-dependencies-guard");
 
         return developmentPackages;
     }

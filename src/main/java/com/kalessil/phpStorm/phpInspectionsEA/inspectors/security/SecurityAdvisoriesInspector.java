@@ -44,12 +44,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* PhpUnit */
         developmentPackages.add("phpunit/phpunit");
-        developmentPackages.add("phpunit/dbunit");
         developmentPackages.add("johnkary/phpunit-speedtrap");
         developmentPackages.add("brianium/paratest");
-        developmentPackages.add("phpunit/phpcov");
         developmentPackages.add("mybuilder/phpunit-accelerator");
-        developmentPackages.add("phpunit/phpunit-selenium");
         developmentPackages.add("codedungeon/phpunit-result-printer");
         developmentPackages.add("spatie/phpunit-watcher");
 
@@ -67,9 +64,6 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* more dev-packages  */
         developmentPackages.add("codeception/codeception");
-        developmentPackages.add("codeception/mockery-module");
-        developmentPackages.add("codeception/specify");
-        developmentPackages.add("codeception/verify");
         developmentPackages.add("behat/behat");
         developmentPackages.add("phpspec/prophecy");
         developmentPackages.add("phpspec/phpspec");

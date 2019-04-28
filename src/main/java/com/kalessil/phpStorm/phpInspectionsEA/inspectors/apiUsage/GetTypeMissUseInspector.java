@@ -148,7 +148,7 @@ public class GetTypeMissUseInspector extends PhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             final PsiElement param      = this.param.getElement();
-            if (param != null && expression instanceof BinaryExpression) {
+            if (param != null && expression instanceof BinaryExpression && !project.isDisposed()) {
                 final String pattern =
                         (isInverted ? "!" : "") +
                         (suggestedName + "(%p%)".replace("%p%", param.getText()));

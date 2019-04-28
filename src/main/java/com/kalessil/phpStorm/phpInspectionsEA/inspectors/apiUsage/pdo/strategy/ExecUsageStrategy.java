@@ -55,7 +55,7 @@ final public class ExecUsageStrategy {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof MethodReference) {
+            if (expression instanceof MethodReference && !project.isDisposed()) {
                 ((MethodReference) expression).handleElementRename("exec");
             }
         }

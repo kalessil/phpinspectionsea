@@ -58,6 +58,7 @@ before_install:
 script:
   - php .travis/rules-list-check.php
   - php .travis/orphaned-fixtures-check.php
+  - php .travis/fixer-verifies-disposed-project-check.php
   - php .travis/missing-toggles-check.php
   - ./gradlew check buildPlugin
   - wget -O src/main/resources/META-INF/plugin.master.xml https://raw.githubusercontent.com/kalessil/phpinspectionsea/master/src/main/resources/META-INF/plugin.xml

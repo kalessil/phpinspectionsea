@@ -96,7 +96,7 @@ final public class QueryUsageStrategy {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression   = descriptor.getPsiElement();
             final MethodReference prepare = this.prepare.getElement();
-            if (null != prepare && expression instanceof MethodReference) {
+            if (prepare != null && expression instanceof MethodReference && !project.isDisposed()) {
                 final PsiElement execute = expression.getParent();
                 if (execute.getPrevSibling() instanceof PsiWhiteSpace) {
                     execute.getPrevSibling().delete();

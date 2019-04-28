@@ -101,7 +101,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspectio
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof FunctionReference && !project.isDisposed()) {
                 ((FunctionReference) expression).handleElementRename(this.suggestedName);
             }
         }

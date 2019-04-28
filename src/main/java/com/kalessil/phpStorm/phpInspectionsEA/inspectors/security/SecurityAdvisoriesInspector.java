@@ -63,9 +63,13 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("yiisoft/yii2-gii");
         developmentPackages.add("yiisoft/yii2-debug");
         developmentPackages.add("orchestra/testbench");
+        developmentPackages.add("barryvdh/laravel-debugbar");
 
         /* more dev-packages  */
         developmentPackages.add("codeception/codeception");
+        developmentPackages.add("codeception/mockery-module");
+        developmentPackages.add("codeception/specify");
+        developmentPackages.add("codeception/verify");
         developmentPackages.add("behat/behat");
         developmentPackages.add("phpspec/prophecy");
         developmentPackages.add("phpspec/phpspec");
@@ -78,11 +82,13 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* SCA tools */
         developmentPackages.add("friendsofphp/php-cs-fixer");
-        developmentPackages.add("squizlabs/php_codesniffer");
         developmentPackages.add("phpstan/phpstan");
         developmentPackages.add("vimeo/psalm");
         developmentPackages.add("jakub-onderka/php-parallel-lint");
+        developmentPackages.add("squizlabs/php_codesniffer");
         developmentPackages.add("slevomat/coding-standard");
+        developmentPackages.add("doctrine/coding-standard");
+        developmentPackages.add("phpcompatibility/php-compatibility");
         developmentPackages.add("phpmd/phpmd");
         developmentPackages.add("pdepend/pdepend");
         developmentPackages.add("sebastian/phpcpd");

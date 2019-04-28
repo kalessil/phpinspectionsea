@@ -335,7 +335,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement loop      = this.loop.getElement();
             final PsiElement container = this.container.getElement();
-            if (loop != null && container != null) {
+            if (loop != null && container != null && !project.isDisposed()) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (body != null) {
                     final PsiElement index = this.index == null ? null : this.index.getElement();

@@ -87,7 +87,7 @@ public class UnusedGotoLabelInspector extends PhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof PhpGotoLabel) {
+            if (target instanceof PhpGotoLabel && !project.isDisposed()) {
                 target.delete();
             }
         }

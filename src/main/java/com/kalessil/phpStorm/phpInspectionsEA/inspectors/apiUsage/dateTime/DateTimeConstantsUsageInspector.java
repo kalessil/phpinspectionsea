@@ -92,10 +92,12 @@ public class DateTimeConstantsUsageInspector extends PhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof ConstantReference && !project.isDisposed()) {
-                ((ConstantReference) target).handleElementRename("DATE_ATOM");
-            } else if (target instanceof ClassConstantReference && !project.isDisposed()){
-                ((ClassConstantReference) target).handleElementRename("ATOM");
+            if (target != null && !project.isDisposed()) {
+                if (target instanceof ConstantReference) {
+                    ((ConstantReference) target).handleElementRename("DATE_ATOM");
+                } else if (target instanceof ClassConstantReference){
+                    ((ClassConstantReference) target).handleElementRename("ATOM");
+                }
             }
         }
     }

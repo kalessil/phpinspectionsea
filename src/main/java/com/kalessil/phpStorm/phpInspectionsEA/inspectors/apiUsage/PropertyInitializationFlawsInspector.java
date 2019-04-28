@@ -217,10 +217,12 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement defaultValue = descriptor.getPsiElement();
-            final Field field             = (Field) defaultValue.getParent();
-            final PsiElement nameNode     = NamedElementUtil.getNameIdentifier(field);
-            if (null != nameNode) {
-                field.deleteChildRange(nameNode.getNextSibling(), defaultValue);
+            if (defaultValue != null && !project.isDisposed()) {
+                final Field field         = (Field) defaultValue.getParent();
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(field);
+                if (nameNode != null) {
+                    field.deleteChildRange(nameNode.getNextSibling(), defaultValue);
+                }
             }
         }
     }

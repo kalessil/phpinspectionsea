@@ -75,20 +75,21 @@ public class ElvisOperatorCanBeUsedInspector extends PhpInspection {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            PsiElement target = descriptor.getPsiElement();
+            final PsiElement target = descriptor.getPsiElement();
+            if (target != null && !project.isDisposed()) {
+                /* cleanup spaces around */
+                PsiElement before = target.getPrevSibling();
+                if (before instanceof PsiWhiteSpace) {
+                    before.delete();
+                }
+                PsiElement after = target.getNextSibling();
+                if (after instanceof PsiWhiteSpace) {
+                    after.delete();
+                }
 
-            /* cleanup spaces around */
-            PsiElement before = target.getPrevSibling();
-            if (before instanceof PsiWhiteSpace) {
-                before.delete();
+                /* drop true expression */
+                target.delete();
             }
-            PsiElement after = target.getNextSibling();
-            if (after instanceof PsiWhiteSpace) {
-                after.delete();
-            }
-
-            /* drop true expression */
-            target.delete();
         }
     }
 }

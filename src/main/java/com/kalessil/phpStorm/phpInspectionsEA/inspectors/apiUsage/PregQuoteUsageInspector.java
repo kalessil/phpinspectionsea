@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
@@ -44,11 +45,25 @@ public class PregQuoteUsageInspector extends PhpInspection {
                     } else if (arguments.length == 2) {
                         final PsiElement escaped = arguments[1];
                         if (escaped instanceof ConstantReference && escaped.getText().equals("DIRECTORY_SEPARATOR")) {
-                            holder.registerProblem(escaped, messageSeparator);
+                            holder.registerProblem(escaped, messageSeparator, new UseSlashSeparatorFix("'/'"));
                         }
                     }
                 }
             }
         };
+    }
+
+    private static final class UseSlashSeparatorFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use '/' instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        UseSlashSeparatorFix(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

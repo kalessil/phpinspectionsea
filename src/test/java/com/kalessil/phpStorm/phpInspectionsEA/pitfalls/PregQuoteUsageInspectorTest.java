@@ -8,5 +8,9 @@ final public class PregQuoteUsageInspectorTest extends PhpCodeInsightFixtureTest
         myFixture.configureByFile("testData/fixtures/pitfalls/preg-quote.php");
         myFixture.enableInspections(new PregQuoteUsageInspector());
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/pitfalls/preg-quote.fixed.php");
     }
 }

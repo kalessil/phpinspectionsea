@@ -67,6 +67,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* more dev-packages  */
         developmentPackages.add("codeception/codeception");
+        developmentPackages.add("codeception/mockery-module");
+        developmentPackages.add("codeception/specify");
+        developmentPackages.add("codeception/verify");
         developmentPackages.add("behat/behat");
         developmentPackages.add("phpspec/prophecy");
         developmentPackages.add("phpspec/phpspec");

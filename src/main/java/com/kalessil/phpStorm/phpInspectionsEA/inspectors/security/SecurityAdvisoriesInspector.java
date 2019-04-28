@@ -63,6 +63,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("yiisoft/yii2-gii");
         developmentPackages.add("yiisoft/yii2-debug");
         developmentPackages.add("orchestra/testbench");
+        developmentPackages.add("barryvdh/laravel-debugbar");
 
         /* more dev-packages  */
         developmentPackages.add("codeception/codeception");

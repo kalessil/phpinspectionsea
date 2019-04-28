@@ -44,10 +44,12 @@ final public class MakePrivateFixer implements LocalQuickFix {
 
     @Override
     public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-        final PsiElement element     = modifier.getElement();
-        final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "private");
-        if (element != null && replacement != null) {
-            element.replace(replacement);
+        final PsiElement element = modifier.getElement();
+        if (element != null && !project.isDisposed()) {
+            final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "private");
+            if (replacement != null) {
+                element.replace(replacement);
+            }
         }
     }
 }

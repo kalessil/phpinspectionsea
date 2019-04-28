@@ -78,11 +78,13 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* SCA tools */
         developmentPackages.add("friendsofphp/php-cs-fixer");
-        developmentPackages.add("squizlabs/php_codesniffer");
         developmentPackages.add("phpstan/phpstan");
         developmentPackages.add("vimeo/psalm");
         developmentPackages.add("jakub-onderka/php-parallel-lint");
+        developmentPackages.add("squizlabs/php_codesniffer");
         developmentPackages.add("slevomat/coding-standard");
+        developmentPackages.add("doctrine/coding-standard");
+        developmentPackages.add("phpcompatibility/php-compatibility");
         developmentPackages.add("phpmd/phpmd");
         developmentPackages.add("pdepend/pdepend");
         developmentPackages.add("sebastian/phpcpd");

@@ -1,9 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
-import com.intellij.codeInspection.InspectionManager;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.php.lang.psi.PhpFile;
@@ -20,8 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -51,18 +51,21 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
     }
 
     private void refresh() {
-        //final FileDocumentManager manager = FileDocumentManager.getInstance();
+        final Application application      = ApplicationManager.getApplication();
+        final PsiDocumentManager documents = PsiDocumentManager.getInstance(myProject);
+        final PsiManager files             = PsiManager.getInstance(myProject);
         for (final VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
-            final PsiFile psi = PsiManager.getInstance(myProject).findFile(file);
+            final PsiFile psi = files.findFile(file);
             if (psi instanceof PhpFile) {
-                psi.subtreeChanged();
+                application.runWriteAction(() -> {
+                    /* psi.subtreeChanged hangs and does nothing, hence hammer-scenario */
+                    final Document document = documents.getDocument(psi);
+                    if (document != null) {
+                        documents.doPostponedOperationsAndUnblockDocument(document);
+                        documents.reparseFiles(Collections.singletonList(file), false);
+                    }
+                });
             }
-//            final Document document = manager.getDocument(file);
-//            if (document != null && file.exists()) {
-//                manager.saveDocumentAsIs(document);
-//                (new File(file.getPath())).setLastModified(System.currentTimeMillis() + 1L);
-//                manager.reloadFromDisk(document);
-//            }
         }
     }
 

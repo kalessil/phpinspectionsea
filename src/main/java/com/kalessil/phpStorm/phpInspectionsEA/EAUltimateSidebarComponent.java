@@ -1,17 +1,27 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
+import com.intellij.codeInspection.InspectionManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.kalessil.phpStorm.phpInspectionsEA.license.LicenseService;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.File;
+import java.util.Arrays;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -40,6 +50,22 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
         }
     }
 
+    private void refresh() {
+        //final FileDocumentManager manager = FileDocumentManager.getInstance();
+        for (final VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
+            final PsiFile psi = PsiManager.getInstance(myProject).findFile(file);
+            if (psi instanceof PhpFile) {
+                psi.subtreeChanged();
+            }
+//            final Document document = manager.getDocument(file);
+//            if (document != null && file.exists()) {
+//                manager.saveDocumentAsIs(document);
+//                (new File(file.getPath())).setLastModified(System.currentTimeMillis() + 1L);
+//                manager.reloadFromDisk(document);
+//            }
+        }
+    }
+
     @NotNull
     private JPanel buildPanel() {
         return OptionsComponent.create(component -> {
@@ -64,8 +90,8 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
             component.addPanel("Settings management",                            panel -> {
                 panel.addText("", 12);
                 panel.addHyperlink("File / Settings / Editor / Inspections", (event) -> ShowSettingsUtil.getInstance().showSettingsDialog(myProject, "Inspections"));
-                panel.addCheckbox("Prefer Yoda comparison style",            s.isPreferringYodaComparisonStyle(), s::setPreferringYodaComparisonStyle);
-                panel.addCheckbox("Analyze only modified files",             s.isAnalyzingOnlyModifiedFiles(),    s::setAnalyzingOnlyModifiedFiles);
+                panel.addCheckbox("Prefer Yoda comparison style",            s.isPreferringYodaComparisonStyle(), (is) -> { s.setPreferringYodaComparisonStyle(is); this.refresh(); });
+                panel.addCheckbox("Analyze only modified files",             s.isAnalyzingOnlyModifiedFiles(),    (is) -> { s.setAnalyzingOnlyModifiedFiles(is);    this.refresh(); });
             });
             component.addPanel("Strictness categories * (loosest to strictest)", panel -> {
                 panel.addText("", 12);

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Document;
@@ -51,22 +50,21 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
     }
 
     private void refresh() {
-        final Application application      = ApplicationManager.getApplication();
-        final PsiDocumentManager documents = PsiDocumentManager.getInstance(myProject);
-        final PsiManager files             = PsiManager.getInstance(myProject);
-        for (final VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
-            final PsiFile psi = files.findFile(file);
-            if (psi instanceof PhpFile) {
-                application.runWriteAction(() -> {
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            final PsiDocumentManager documents = PsiDocumentManager.getInstance(myProject);
+            final PsiManager files             = PsiManager.getInstance(myProject);
+            for (final VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
+                final PsiFile psi = files.findFile(file);
+                if (psi instanceof PhpFile) {
                     /* psi.subtreeChanged hangs and does nothing, hence hammer-scenario */
                     final Document document = documents.getDocument(psi);
                     if (document != null) {
                         documents.doPostponedOperationsAndUnblockDocument(document);
                         documents.reparseFiles(Collections.singletonList(file), false);
                     }
-                });
+                }
             }
-        }
+        });
     }
 
     @NotNull

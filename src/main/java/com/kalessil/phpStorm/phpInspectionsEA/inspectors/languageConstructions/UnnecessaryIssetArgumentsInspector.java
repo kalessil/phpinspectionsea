@@ -32,7 +32,7 @@ import java.util.Set;
  */
 
 public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
-    private static final String message = "This argument can be skipped (handled by its' array access).";
+    private static final String message = "This argument can be skipped (handled by its array access).";
 
     @NotNull
     public String getShortName() {

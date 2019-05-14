@@ -1,9 +1,20 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 
+import com.intellij.openapi.project.Project;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public enum PhpLanguageLevel {
     PHP530("5.3.0"),
@@ -31,12 +42,13 @@ public enum PhpLanguageLevel {
         return this.version;
     }
 
-    static public void force(@Nullable PhpLanguageLevel level) {
+    static public void set(@Nullable PhpLanguageLevel level) {
         current = level;
     }
 
-    static public PhpLanguageLevel fromString(@NotNull String version) {
+    static public PhpLanguageLevel get(@NotNull Project project) {
         if (current == null) {
+            final String version = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel().getVersionString();
             return Arrays.stream(values())
                     .filter(level -> level.getVersion().equals(version))
                     .findFirst()

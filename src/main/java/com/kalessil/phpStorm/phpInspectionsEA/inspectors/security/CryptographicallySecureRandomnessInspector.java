@@ -6,13 +6,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -60,8 +58,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
 
                 /* Case 1: use random_bytes in PHP7 */
-                PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) { // PHP7 and newer
+                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0) { // PHP7 and newer
                     holder.registerProblem(reference, messageUseRandomBytes, ProblemHighlightType.WEAK_WARNING);
                 }
 

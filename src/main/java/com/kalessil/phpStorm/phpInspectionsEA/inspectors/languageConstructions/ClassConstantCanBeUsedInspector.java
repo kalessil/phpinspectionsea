@@ -9,15 +9,13 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -65,8 +63,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFunctionCall(FunctionReference reference) {
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
+                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP550) >= 0) {
                     final String functionName = reference.getName();
                     if (functionName != null && functionName.equals("get_called_class")) {
                         final PsiElement[] arguments = reference.getParameters();
@@ -79,9 +76,8 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
                 /* ensure selected language level supports the ::class feature*/
-                final Project project      = holder.getProject();
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                if (!php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
+                final Project project = holder.getProject();
+                if (PhpLanguageLevel.get(project).compareTo(PhpLanguageLevel.PHP550) < 0) {
                     return;
                 }
 

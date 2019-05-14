@@ -8,13 +8,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
@@ -91,9 +89,8 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
             }
 
             private void analyzeTypeHintCase(@NotNull MethodReference reference, @NotNull String methodName) {
-                final Project project      = holder.getProject();
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && targetPositions.containsKey(methodName)) {
+                final Project project = holder.getProject();
+                if (PhpLanguageLevel.get(project).compareTo(PhpLanguageLevel.PHP700) >= 0 && targetPositions.containsKey(methodName)) {
                     final int position           = targetPositions.get(methodName);
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= position + 1) {

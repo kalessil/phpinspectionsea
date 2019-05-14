@@ -6,13 +6,12 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,8 +42,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignment) {
                 /* ensure php version is at least PHP 7.1 */
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP710) >= 0) {
                     /* verify if it's dedicated statement and it's the list(...) construction */
                     final PsiElement parent = assignment.getParent();
                     if (OpenapiTypesUtil.isStatementImpl(parent)) {
@@ -59,8 +57,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 /* ensure php version is at least PHP 7.1 */
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP710) >= 0) {
                     final List<Variable> variables = foreach.getVariables();
                     if (!variables.isEmpty()) {
                         PsiElement childNode = foreach.getFirstChild();

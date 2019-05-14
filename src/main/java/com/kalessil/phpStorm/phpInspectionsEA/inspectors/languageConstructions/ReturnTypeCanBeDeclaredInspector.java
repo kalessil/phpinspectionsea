@@ -10,9 +10,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag;
@@ -22,6 +19,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
@@ -92,13 +90,13 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.hasFeature(PhpLanguageFeature.RETURN_TYPES) && !magicMethods.contains(method.getName())) {
+                final PhpLanguageLevel php = PhpLanguageLevel.get(holder.getProject());
+                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0 && !magicMethods.contains(method.getName())) {
                     final boolean isTarget = OpenapiElementsUtil.getReturnType(method) == null;
                     if (isTarget) {
                         final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
                         if (methodNameNode != null) {
-                            final boolean supportNullableTypes = php.hasFeature(PhpLanguageFeature.NULLABLES);
+                            final boolean supportNullableTypes = php.compareTo(PhpLanguageLevel.PHP710) >= 0;
                             if (method.isAbstract()) {
                                 this.handleAbstractMethod(method, methodNameNode, supportNullableTypes);
                             } else {

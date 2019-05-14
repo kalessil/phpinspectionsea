@@ -9,9 +9,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
@@ -20,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.n
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.nullCoalescing.strategy.GenerateAlternativeFromNullComparisonStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -66,8 +64,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (SUGGEST_SIMPLIFYING_TERNARIES && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                if (SUGGEST_SIMPLIFYING_TERNARIES && PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0) {
                     for (final Function<TernaryExpression, String> strategy : ternaryStrategies) {
                         final String replacement = strategy.apply(expression);
                         if (replacement != null) {
@@ -84,8 +81,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
             @Override
             public void visitPhpIf(@NotNull If expression) {
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (SUGGEST_SIMPLIFYING_IFS && php.hasFeature(PhpLanguageFeature.COALESCE_OPERATOR)) {
+                if (SUGGEST_SIMPLIFYING_IFS && PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0) {
                     final PsiElement condition = expression.getCondition();
                     if (condition instanceof PhpIsset) {
                         final PhpIsset isset         = (PhpIsset) condition;

@@ -5,8 +5,6 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -14,6 +12,7 @@ import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
@@ -105,11 +104,8 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 }
                             } else {
                                 /* false-positive: $func(...) is not working for arrays in PHP below 5.4 */
-                                if (arguments[0] instanceof Variable) {
-                                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                                    if (php == PhpLanguageLevel.PHP530) {
-                                        return;
-                                    }
+                                if (arguments[0] instanceof Variable && PhpLanguageLevel.get(holder.getProject()) == PhpLanguageLevel.PHP530) {
+                                    return;
                                 }
                                 /* regular behaviour */
                                 callable.add(arguments[0]);

@@ -9,8 +9,6 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.extensions.PluginId;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 public class EAUpdateComponent implements ProjectComponent {
     private EAApplicationComponent applicationComponent;
 

@@ -4,14 +4,13 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,8 +37,7 @@ public class UnsupportedEmptyListAssignmentsInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement expression) {
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0 && expression.getVariables().isEmpty()) {
+                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0 && expression.getVariables().isEmpty()) {
                     final PsiElement first = expression.getFirstChild();
                     if (first != null) {
                         boolean reachedAsKeyword = false;
@@ -66,8 +64,7 @@ public class UnsupportedEmptyListAssignmentsInspector extends BasePhpInspection 
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
-                final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0 && expression.getVariables().isEmpty()) {
+                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0 && expression.getVariables().isEmpty()) {
                     final PsiElement first = expression.getFirstChild();
                     if (first != null) {
                         final boolean isTarget =

@@ -19,7 +19,7 @@ final public class RandomApiMigrationInspectorTest extends PhpCodeInsightFixture
     }
 
     public void testIfFindsEdgePatterns() {
-        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
         myFixture.enableInspections(new RandomApiMigrationInspector());
         myFixture.configureByFile("testData/fixtures/api/deprecations/random-api-edge.php");
         myFixture.testHighlighting(true, false, true);

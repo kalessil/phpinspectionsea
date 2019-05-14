@@ -13,13 +13,12 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.ConcatenationExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -72,11 +71,8 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
 
                 /* Case 3: -> password_hash(PASSWORD_BCRYPT) in PHP 5.5+ */
                 final boolean isBlowfish = saltValue.startsWith("$2y$") || saltValue.startsWith("$2x$");
-                if (isBlowfish) {
-                    PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                    if (php.compareTo(PhpLanguageLevel.PHP550) >= 0) {
-                        holder.registerProblem(reference, messagePasswordHash, ProblemHighlightType.WEAK_WARNING);
-                    }
+                if (isBlowfish && PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP550) >= 0) {
+                    holder.registerProblem(reference, messagePasswordHash, ProblemHighlightType.WEAK_WARNING);
                 }
             }
 

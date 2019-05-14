@@ -4,12 +4,11 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -105,8 +104,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                     if (arguments.length > 0 && arguments[0] instanceof StringLiteralExpression) {
                         final String directive = ((StringLiteralExpression) arguments[0]).getContents();
                         if (options.containsKey(directive)) {
-                            final PhpLanguageLevel php
-                                    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
+                            final PhpLanguageLevel php                                       = PhpLanguageLevel.get(holder.getProject());
                             final Triple<PhpLanguageLevel, PhpLanguageLevel, String> details = options.get(directive);
                             final PhpLanguageLevel removalVersion                            = details.getMiddle();
                             final PhpLanguageLevel deprecationVersion                        = details.getLeft();
@@ -117,7 +115,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                                         String.format(
                                                 alternative == null ? patternRemoved : patternRemovedWithAlternative,
                                                 directive,
-                                                removalVersion.getVersionString(),
+                                                removalVersion.getVersion(),
                                                 alternative
                                         )
                                 );
@@ -128,7 +126,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                                         String.format(
                                                 alternative == null ? patternDeprecated : patternDeprecatedWithAlternative,
                                                 directive,
-                                                deprecationVersion.getVersionString(),
+                                                deprecationVersion.getVersion(),
                                                 alternative
                                         ),
                                         ProblemHighlightType.LIKE_DEPRECATED

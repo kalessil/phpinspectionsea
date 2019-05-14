@@ -43,7 +43,7 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
             @Override
             public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
                 final Project project = holder.getProject();
-                if (PhpLanguageLevel.get(project).compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                if (PhpLanguageLevel.get(project).atLeast(PhpLanguageLevel.PHP710)) {
                     PsiElement target          = null;
                     String message             = null;
                     boolean isTargetContext    = false;

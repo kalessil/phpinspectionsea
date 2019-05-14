@@ -131,7 +131,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && !functionName.isEmpty()) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                    if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                    if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                         if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
                             this.analyzeReference(reference, functionName);
                         }
@@ -147,7 +147,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 final String constantName = reference.getName();
                 if (constantName != null && !constantName.isEmpty() && REPORT_CONSTANTS) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                    if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                    if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                         this.analyzeReference(reference, constantName);
                     }
                 }

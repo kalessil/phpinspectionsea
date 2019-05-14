@@ -58,7 +58,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
 
                 /* Case 1: use random_bytes in PHP7 */
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0) { // PHP7 and newer
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) { // PHP7 and newer
                     holder.registerProblem(reference, messageUseRandomBytes, ProblemHighlightType.WEAK_WARNING);
                 }
 

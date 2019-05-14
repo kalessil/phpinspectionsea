@@ -34,7 +34,7 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP560) >= 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560)) {
                     final String functionName = reference.getName();
                     if (functionName != null && functionName.equals("call_user_func_array")) {
                         final PsiElement[] arguments = reference.getParameters();

@@ -71,7 +71,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
 
                 /* Case 3: -> password_hash(PASSWORD_BCRYPT) in PHP 5.5+ */
                 final boolean isBlowfish = saltValue.startsWith("$2y$") || saltValue.startsWith("$2x$");
-                if (isBlowfish && PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP550) >= 0) {
+                if (isBlowfish && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
                     holder.registerProblem(reference, messagePasswordHash, ProblemHighlightType.WEAK_WARNING);
                 }
             }

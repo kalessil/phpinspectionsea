@@ -68,7 +68,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                 }
 
                 /* inspect fields */
-                final boolean checkConstantVisibility = PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP710) >= 0;
+                final boolean checkConstantVisibility = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP710);
                 for (final Field field : clazz.getOwnFields()) {
                     final PsiElement fieldName = NamedElementUtil.getNameIdentifier(field);
                     if (fieldName != null && field.getModifier().isPublic()) {

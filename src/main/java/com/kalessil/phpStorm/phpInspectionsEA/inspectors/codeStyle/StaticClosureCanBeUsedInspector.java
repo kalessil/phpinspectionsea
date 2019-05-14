@@ -43,7 +43,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP540) >= 0 && OpenapiTypesUtil.isLambda(function)) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
                     final boolean isTarget = !OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
                     if (isTarget) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);

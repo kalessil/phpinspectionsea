@@ -37,7 +37,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
             public void visitPhpClass(@NotNull PhpClass clazz) {
                 if (holder.getFile() != clazz.getContainingFile()) { return; }
 
-                final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP560) >= 0;
+                final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
 
                 /* parent class might already introduce fields */
                 final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);

@@ -64,7 +64,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                if (SUGGEST_SIMPLIFYING_TERNARIES && PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                if (SUGGEST_SIMPLIFYING_TERNARIES && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                     for (final Function<TernaryExpression, String> strategy : ternaryStrategies) {
                         final String replacement = strategy.apply(expression);
                         if (replacement != null) {
@@ -81,7 +81,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
 
             @Override
             public void visitPhpIf(@NotNull If expression) {
-                if (SUGGEST_SIMPLIFYING_IFS && PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                if (SUGGEST_SIMPLIFYING_IFS && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                     final PsiElement condition = expression.getCondition();
                     if (condition instanceof PhpIsset) {
                         final PhpIsset isset         = (PhpIsset) condition;

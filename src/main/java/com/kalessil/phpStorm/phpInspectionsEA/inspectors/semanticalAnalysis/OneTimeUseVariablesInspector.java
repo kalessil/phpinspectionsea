@@ -133,7 +133,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             }
                         }
 
-                        if (!(assignValue instanceof NewExpression) || PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP530) > 0) {
+                        if (!(assignValue instanceof NewExpression) || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540)) {
                             holder.registerProblem(
                                     assignVariable,
                                     messagePattern.replace("%v%", variableName),

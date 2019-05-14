@@ -108,7 +108,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                             final Triple<PhpLanguageLevel, PhpLanguageLevel, String> details = options.get(directive);
                             final PhpLanguageLevel removalVersion                            = details.getMiddle();
                             final PhpLanguageLevel deprecationVersion                        = details.getLeft();
-                            if (removalVersion != null && php.compareTo(removalVersion) >= 0) {
+                            if (removalVersion != null && php.atLeast(removalVersion)) {
                                 final String alternative = details.getRight();
                                 holder.registerProblem(
                                         arguments[0],
@@ -119,7 +119,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                                                 alternative
                                         )
                                 );
-                            } else if (deprecationVersion != null && php.compareTo(deprecationVersion) >= 0) {
+                            } else if (deprecationVersion != null && php.atLeast(deprecationVersion)) {
                                 final String alternative = details.getRight();
                                 holder.registerProblem(
                                         arguments[0],

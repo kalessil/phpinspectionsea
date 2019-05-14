@@ -91,12 +91,12 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 final PhpLanguageLevel php = PhpLanguageLevel.get(holder.getProject());
-                if (php.compareTo(PhpLanguageLevel.PHP700) >= 0 && !magicMethods.contains(method.getName())) {
+                if (php.atLeast(PhpLanguageLevel.PHP700) && !magicMethods.contains(method.getName())) {
                     final boolean isTarget = OpenapiElementsUtil.getReturnType(method) == null;
                     if (isTarget) {
                         final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
                         if (methodNameNode != null) {
-                            final boolean supportNullableTypes = php.compareTo(PhpLanguageLevel.PHP710) >= 0;
+                            final boolean supportNullableTypes = php.atLeast(PhpLanguageLevel.PHP710);
                             if (method.isAbstract()) {
                                 this.handleAbstractMethod(method, methodNameNode, supportNullableTypes);
                             } else {

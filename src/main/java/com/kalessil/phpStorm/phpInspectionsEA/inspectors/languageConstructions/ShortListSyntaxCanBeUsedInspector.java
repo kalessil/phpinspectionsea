@@ -42,7 +42,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignment) {
                 /* ensure php version is at least PHP 7.1 */
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP710)) {
                     /* verify if it's dedicated statement and it's the list(...) construction */
                     final PsiElement parent = assignment.getParent();
                     if (OpenapiTypesUtil.isStatementImpl(parent)) {
@@ -57,7 +57,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement foreach) {
                 /* ensure php version is at least PHP 7.1 */
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP710)) {
                     final List<Variable> variables = foreach.getVariables();
                     if (!variables.isEmpty()) {
                         PsiElement childNode = foreach.getFirstChild();

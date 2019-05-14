@@ -34,7 +34,7 @@ public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP710)) {
                     final String functionName = reference.getName();
                     if (functionName != null && functionName.equals("array_count_values")) {
                         final PsiElement[] arguments = reference.getParameters();

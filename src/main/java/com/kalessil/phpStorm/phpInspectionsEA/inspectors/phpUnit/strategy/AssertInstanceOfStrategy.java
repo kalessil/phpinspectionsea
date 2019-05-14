@@ -51,7 +51,7 @@ final public class AssertInstanceOfStrategy {
                         /* prepare class definition which can be used for QF-ing */
                         String classDefinition = clazz.getText();
                         if (clazz instanceof ClassReference) {
-                            if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP550) >= 0) {
+                            if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
                                 classDefinition = clazz.getText() + "::class";
                             } else {
                                 final String fqn = ((ClassReference) clazz).getFQN();
@@ -95,7 +95,7 @@ final public class AssertInstanceOfStrategy {
                                     /* prepare class definition which can be used for QF-ing */
                                     final String fqn = '\\' + contents.replaceAll("\\\\\\\\", "\\\\");
                                     final String classDefinition;
-                                    if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP550) >= 0) {
+                                    if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
                                         classDefinition = fqn + "::class";
                                     } else {
                                         classDefinition = '\'' + fqn.replaceAll("\\\\", "\\\\\\\\") + '\'';

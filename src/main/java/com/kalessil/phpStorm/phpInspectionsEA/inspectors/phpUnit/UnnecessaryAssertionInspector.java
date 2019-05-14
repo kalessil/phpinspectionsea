@@ -90,7 +90,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
 
             private void analyzeTypeHintCase(@NotNull MethodReference reference, @NotNull String methodName) {
                 final Project project = holder.getProject();
-                if (PhpLanguageLevel.get(project).compareTo(PhpLanguageLevel.PHP700) >= 0 && targetPositions.containsKey(methodName)) {
+                if (PhpLanguageLevel.get(project).atLeast(PhpLanguageLevel.PHP700) && targetPositions.containsKey(methodName)) {
                     final int position           = targetPositions.get(methodName);
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= position + 1) {

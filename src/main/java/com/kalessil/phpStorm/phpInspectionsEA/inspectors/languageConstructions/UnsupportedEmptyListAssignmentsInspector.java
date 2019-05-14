@@ -37,7 +37,7 @@ public class UnsupportedEmptyListAssignmentsInspector extends BasePhpInspection 
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement expression) {
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0 && expression.getVariables().isEmpty()) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700) && expression.getVariables().isEmpty()) {
                     final PsiElement first = expression.getFirstChild();
                     if (first != null) {
                         boolean reachedAsKeyword = false;
@@ -64,7 +64,7 @@ public class UnsupportedEmptyListAssignmentsInspector extends BasePhpInspection 
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) >= 0 && expression.getVariables().isEmpty()) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700) && expression.getVariables().isEmpty()) {
                     final PsiElement first = expression.getFirstChild();
                     if (first != null) {
                         final boolean isTarget =

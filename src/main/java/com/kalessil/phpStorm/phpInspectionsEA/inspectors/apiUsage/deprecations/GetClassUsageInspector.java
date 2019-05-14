@@ -44,7 +44,7 @@ public class GetClassUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final Project project = holder.getProject();
-                if (PhpLanguageLevel.get(project).compareTo(PhpLanguageLevel.PHP710) >= 0) {
+                if (PhpLanguageLevel.get(project).atLeast(PhpLanguageLevel.PHP710)) {
                     final String functionName = reference.getName();
                     if (functionName != null && functionName.equals("get_class")) {
                         final PsiElement[] arguments = reference.getParameters();

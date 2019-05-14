@@ -36,7 +36,7 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP710) < 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP710)) {
                     final String methodName = reference.getName();
                     if (methodName != null && methodName.equals("setTime")) {
                         final PsiElement[] arguments = reference.getParameters();
@@ -52,7 +52,7 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP710) < 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP710)) {
                     final String functionName = reference.getName();
                     if (functionName != null && functionName.equals("date_time_set")) {
                         final PsiElement[] arguments = reference.getParameters();

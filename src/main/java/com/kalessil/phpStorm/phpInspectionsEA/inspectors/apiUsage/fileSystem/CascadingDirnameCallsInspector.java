@@ -51,7 +51,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                 }
 
                 /* require PHP7+, where 2nd parameter has been added */
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) < 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP700)) {
                     return;
                 }
 

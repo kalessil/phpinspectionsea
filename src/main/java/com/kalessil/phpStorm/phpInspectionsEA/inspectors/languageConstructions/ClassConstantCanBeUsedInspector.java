@@ -77,7 +77,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
             public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {
                 /* ensure selected language level supports the ::class feature*/
                 final Project project = holder.getProject();
-                if (PhpLanguageLevel.get(project).compareTo(PhpLanguageLevel.PHP550) < 0) {
+                if (PhpLanguageLevel.get(project).below(PhpLanguageLevel.PHP550)) {
                     return;
                 }
 

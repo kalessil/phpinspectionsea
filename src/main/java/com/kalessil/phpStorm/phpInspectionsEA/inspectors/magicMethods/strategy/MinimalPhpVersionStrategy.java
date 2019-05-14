@@ -12,7 +12,7 @@ public class MinimalPhpVersionStrategy {
 
     static public void apply(final Method method, final ProblemsHolder holder, final PhpLanguageLevel neededVersion) {
         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-        if (nameNode != null && PhpLanguageLevel.get(holder.getProject()).compareTo(neededVersion) < 0) {
+        if (nameNode != null && PhpLanguageLevel.get(holder.getProject()).below(neededVersion)) {
             final String message = strProblemDescription
                     .replace("%m%", method.getName())
                     .replace("%v%", neededVersion.getVersion());

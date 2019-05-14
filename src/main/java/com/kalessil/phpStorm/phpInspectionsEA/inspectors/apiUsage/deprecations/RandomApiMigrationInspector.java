@@ -52,7 +52,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
 
     @NotNull
     private Map<String, String> getMapping(@NotNull PhpLanguageLevel php) {
-        if (SUGGEST_USING_RANDOM_INT && php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
+        if (SUGGEST_USING_RANDOM_INT && php.atLeast(PhpLanguageLevel.PHP700)) {
             return mappingEdge;
         }
         return mappingMt;

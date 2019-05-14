@@ -104,7 +104,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 }
                             } else {
                                 /* false-positive: $func(...) is not working for arrays in PHP below 5.4 */
-                                if (arguments[0] instanceof Variable && PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP540) < 0) {
+                                if (arguments[0] instanceof Variable && PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP540)) {
                                     return;
                                 }
                                 /* regular behaviour */

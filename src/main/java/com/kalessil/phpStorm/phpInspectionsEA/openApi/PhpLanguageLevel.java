@@ -46,6 +46,10 @@ public enum PhpLanguageLevel {
         return this.compareTo(version) >= 0;
     }
 
+    public boolean below(@NotNull PhpLanguageLevel version) {
+        return this.compareTo(version) < 0;
+    }
+
     static public void set(@Nullable PhpLanguageLevel level) {
         current = level;
     }

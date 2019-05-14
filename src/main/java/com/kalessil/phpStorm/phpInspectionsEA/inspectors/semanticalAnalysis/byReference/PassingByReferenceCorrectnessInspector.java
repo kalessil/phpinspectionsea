@@ -72,7 +72,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
             private boolean hasIncompatibleArguments(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
                 if (arguments.length > 0) {
-                    final boolean supportsNew = PhpLanguageLevel.get(reference.getProject()).compareTo(PhpLanguageLevel.PHP700) < 0;
+                    final boolean supportsNew = PhpLanguageLevel.get(reference.getProject()).below(PhpLanguageLevel.PHP700);
                     return !Arrays.stream(arguments).allMatch(a -> a instanceof Variable || (supportsNew && a instanceof NewExpression));
                 }
                 return false;

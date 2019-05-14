@@ -42,7 +42,7 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
 
             public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {
                 /* requires PHP7 */
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP700) < 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP700)) {
                     return;
                 }
                 /* requires at least 3 children - let array to grow enough */

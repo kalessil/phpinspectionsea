@@ -33,7 +33,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
                 /* ensure php version is at least PHP 5.5 */
-                if (PhpLanguageLevel.get(holder.getProject()).compareTo(PhpLanguageLevel.PHP550) < 0) {
+                if (PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP550)) {
                     return;
                 }
 

@@ -11,12 +11,11 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +29,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StaticLambdaBindingInspector extends PhpInspection {
-    private static final String message = "'$this' can not be used in static closures.";
+    private static final String messageThis   = "'$this' can not be used in static closures.";
+    private static final String messageParent = "Non-static method should not be called statically.";
 
     @NotNull
     public String getShortName() {
@@ -48,10 +48,23 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                 if (OpenapiTypesUtil.isLambda(function) && OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC)) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
                     if (body != null) {
-                        for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
-                            if (variable.getName().equals("this")) {
-                                holder.registerProblem(variable, message, new HardenConditionFix(function.getFirstChild()));
-                                return;
+                        for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
+                            if (element instanceof Variable) {
+                                final Variable variable = (Variable) element;
+                                if (variable.getName().equals("this")) {
+                                    holder.registerProblem(variable, messageThis, new TurnClosureIntoNonStaticFix(function.getFirstChild()));
+                                    return;
+                                }
+                            } else {
+                                final MethodReference reference = (MethodReference) element;
+                                final PsiElement base           = reference.getFirstChild();
+                                if (base instanceof ClassReference && base.getText().equals("parent")) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof Method && !((Method) resolved).isStatic()) {
+                                        holder.registerProblem(reference, messageParent, new TurnClosureIntoNonStaticFix(function.getFirstChild()));
+                                        return;
+                                    }
+                                }
                             }
                         }
                     }
@@ -60,7 +73,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
         };
     }
 
-    private static final class HardenConditionFix implements LocalQuickFix {
+    private static final class TurnClosureIntoNonStaticFix implements LocalQuickFix {
         private static final String title = "Make the closure non-static";
 
         private final SmartPsiElementPointer<PsiElement> staticKeyword;
@@ -77,7 +90,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
             return title;
         }
 
-        HardenConditionFix(@NotNull PsiElement staticKeyword) {
+        TurnClosureIntoNonStaticFix(@NotNull PsiElement staticKeyword) {
             super();
             final SmartPointerManager factory = SmartPointerManager.getInstance(staticKeyword.getProject());
             this.staticKeyword                = factory.createSmartPsiElementPointer(staticKeyword);

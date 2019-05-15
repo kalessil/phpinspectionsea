@@ -6,6 +6,9 @@ function cases_holder($source)
     foreach ($source as $value) {}
     foreach ($source as $key => $value) {}
 
+    (new $source())->current();
+    ($source ?? $source)->current();
+
     /* false-positives: multiple cases */
     iterator_to_array($source, false)[1];
 }

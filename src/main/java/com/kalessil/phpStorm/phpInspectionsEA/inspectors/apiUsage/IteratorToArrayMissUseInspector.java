@@ -4,10 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.ArrayIndex;
-import com.jetbrains.php.lang.psi.elements.ForeachStatement;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -51,7 +48,13 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
                                 if (index != null) {
                                     final boolean isTarget = OpenapiTypesUtil.isNumber(index) && index.getText().equals("0");
                                     if (isTarget) {
-                                        final String replacement = String.format("%s->current()", arguments[0].getText());
+                                        final boolean wrap       = !(arguments[0] instanceof Variable) &&
+                                                                   !(arguments[0] instanceof MemberReference) &&
+                                                                   !(arguments[0] instanceof ArrayAccessExpression);;
+                                        final String replacement = String.format(
+                                                wrap ? "(%s)->current()" : "%s->current()",
+                                                arguments[0].getText()
+                                        );
                                         holder.registerProblem(
                                                 parent,
                                                 String.format(messagePattern, replacement),

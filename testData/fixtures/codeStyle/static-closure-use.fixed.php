@@ -1,6 +1,11 @@
 <?php
 
-class CasesHolder {
+class ParentClass {
+    public function dynamicMethod()      {}
+    static public function staticMethod(){}
+}
+
+class CasesHolder extends ParentClass {
     private $property;
 
     public function method() {
@@ -8,6 +13,9 @@ class CasesHolder {
             function() { return $this->property; },
             static function() { return null; },
             static function() { return null; },
+
+            static function() { parent::staticMethod(); },
+            function() { parent::dynamicMethod(); },
         ];
     }
 }

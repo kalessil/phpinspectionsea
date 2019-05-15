@@ -11,13 +11,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,17 +47,34 @@ public class StaticClosureCanBeUsedInspector extends PhpInspection {
 
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
                     final boolean isTarget = !OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
-                    if (isTarget) {
-                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
-                        if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
-                            final boolean usesThis = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
-                                    .anyMatch(variable -> variable.getName().equals("this"));
-                            if (!usesThis) {
-                                holder.registerProblem(function.getFirstChild(), message, new MakeClosureStaticFix());
+                    if (isTarget && this.canBeStatic(function)) {
+                        holder.registerProblem(function.getFirstChild(), message, new MakeClosureStaticFix());
+                    }
+                }
+            }
+
+            private boolean canBeStatic(@NotNull Function function) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                    for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
+                        if (element instanceof Variable) {
+                            final Variable variable = (Variable) element;
+                            if (variable.getName().equals("this")) {
+                                return false;
+                            }
+                        } else {
+                            final MethodReference reference = (MethodReference) element;
+                            final PsiElement base           = reference.getFirstChild();
+                            if (base instanceof ClassReference && base.getText().equals("parent")) {
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                if (resolved instanceof Method && !((Method) resolved).isStatic()) {
+                                    return false;
+                                }
                             }
                         }
                     }
                 }
+                return body != null;
             }
         };
     }

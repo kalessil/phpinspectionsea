@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -45,24 +46,27 @@ public class StaticLambdaBindingInspector extends PhpInspection {
             public void visitPhpFunction(@NotNull Function function) {
                 if (this.shouldSkipAnalysis(function, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
-                if (OpenapiTypesUtil.isLambda(function) && OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC)) {
-                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
-                    if (body != null) {
-                        for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
-                            if (element instanceof Variable) {
-                                final Variable variable = (Variable) element;
-                                if (variable.getName().equals("this")) {
-                                    holder.registerProblem(variable, messageThis, new TurnClosureIntoNonStaticFix(function.getFirstChild()));
-                                    return;
-                                }
-                            } else {
-                                final MethodReference reference = (MethodReference) element;
-                                final PsiElement base           = reference.getFirstChild();
-                                if (base instanceof ClassReference && base.getText().equals("parent")) {
-                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                    if (resolved instanceof Method && !((Method) resolved).isStatic()) {
-                                        holder.registerProblem(reference, messageParent, new TurnClosureIntoNonStaticFix(function.getFirstChild()));
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
+                    final boolean isTarget = OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
+                    if (isTarget) {
+                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                        if (body != null) {
+                            for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
+                                if (element instanceof Variable) {
+                                    final Variable variable = (Variable) element;
+                                    if (variable.getName().equals("this")) {
+                                        holder.registerProblem(variable, messageThis, new TurnClosureIntoNonStaticFix(function.getFirstChild()));
                                         return;
+                                    }
+                                } else {
+                                    final MethodReference reference = (MethodReference) element;
+                                    final PsiElement base           = reference.getFirstChild();
+                                    if (base instanceof ClassReference && base.getText().equals("parent")) {
+                                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                        if (resolved instanceof Method && !((Method) resolved).isStatic()) {
+                                            holder.registerProblem(reference, messageParent, new TurnClosureIntoNonStaticFix(function.getFirstChild()));
+                                            return;
+                                        }
                                     }
                                 }
                             }

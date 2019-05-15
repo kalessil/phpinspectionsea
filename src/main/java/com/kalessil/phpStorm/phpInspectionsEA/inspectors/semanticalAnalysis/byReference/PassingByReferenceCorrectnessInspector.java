@@ -3,13 +3,12 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.byR
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.intellij.psi.PsiWhiteSpace;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -76,8 +75,7 @@ public class PassingByReferenceCorrectnessInspector extends PhpInspection {
             private boolean hasIncompatibleArguments(@NotNull FunctionReference reference) {
                 final PsiElement[] arguments = reference.getParameters();
                 if (arguments.length > 0) {
-                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                    final boolean supportsNew  = php.compareTo(PhpLanguageLevel.PHP560) <= 0;
+                    final boolean supportsNew = PhpLanguageLevel.get(reference.getProject()).below(PhpLanguageLevel.PHP700);
                     return !Arrays.stream(arguments).allMatch(a -> a instanceof Variable || (supportsNew && a instanceof NewExpression));
                 }
                 return false;

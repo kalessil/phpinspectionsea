@@ -2,12 +2,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,9 +51,7 @@ final public class AssertInstanceOfStrategy {
                         /* prepare class definition which can be used for QF-ing */
                         String classDefinition = clazz.getText();
                         if (clazz instanceof ClassReference) {
-                            final PhpLanguageLevel php
-                                    = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                            if (php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
+                            if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
                                 classDefinition = clazz.getText() + "::class";
                             } else {
                                 final String fqn = ((ClassReference) clazz).getFQN();
@@ -98,10 +94,8 @@ final public class AssertInstanceOfStrategy {
                                 if (innerArguments.length == 1) {
                                     /* prepare class definition which can be used for QF-ing */
                                     final String fqn = '\\' + contents.replaceAll("\\\\\\\\", "\\\\");
-                                    final PhpLanguageLevel php
-                                            = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
                                     final String classDefinition;
-                                    if (php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST)) {
+                                    if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
                                         classDefinition = fqn + "::class";
                                     } else {
                                         classDefinition = '\'' + fqn.replaceAll("\\\\", "\\\\\\\\") + '\'';

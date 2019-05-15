@@ -10,17 +10,16 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -135,8 +134,7 @@ public class UnqualifiedReferenceInspector extends PhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && !functionName.isEmpty()) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                    if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                    if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                         if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
                             this.analyzeReference(reference, functionName);
                         }
@@ -154,8 +152,7 @@ public class UnqualifiedReferenceInspector extends PhpInspection {
                 final String constantName = reference.getName();
                 if (constantName != null && !constantName.isEmpty() && REPORT_CONSTANTS) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
-                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(reference.getProject()).getLanguageLevel();
-                    if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
+                    if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                         this.analyzeReference(reference, constantName);
                     }
                 }

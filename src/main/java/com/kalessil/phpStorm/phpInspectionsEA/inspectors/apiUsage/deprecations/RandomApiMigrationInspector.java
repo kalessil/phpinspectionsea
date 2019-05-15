@@ -6,14 +6,11 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -55,7 +52,7 @@ public class RandomApiMigrationInspector extends PhpInspection {
 
     @NotNull
     private Map<String, String> getMapping(@NotNull PhpLanguageLevel php) {
-        if (SUGGEST_USING_RANDOM_INT && php.hasFeature(PhpLanguageFeature.SCALAR_TYPE_HINTS)) {
+        if (SUGGEST_USING_RANDOM_INT && php.atLeast(PhpLanguageLevel.PHP700)) {
             return mappingEdge;
         }
         return mappingMt;
@@ -71,8 +68,7 @@ public class RandomApiMigrationInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null) {
-                    final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                    String suggestion          = getMapping(php).get(functionName);
+                    String suggestion = getMapping(PhpLanguageLevel.get(holder.getProject())).get(functionName);
                     if (suggestion != null && this.isFromRootNamespace(reference)) {
                         /* random_int needs 2 parameters always, so check if mt_rand can be suggested */
                         if (reference.getParameters().length != 2 && suggestion.equals("random_int")) {

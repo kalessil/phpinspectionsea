@@ -6,18 +6,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
-import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCouplingCheckUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -191,8 +189,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                 // release references in the raw list
                 instanceOfExpressions.clear();
 
-                final PhpLanguageLevel php                 = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                final boolean isDateTimeInterfaceAvaialble = php.compareTo(PhpLanguageLevel.PHP550) >= 0;
+                final boolean isDateTimeInterfaceAvailable = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550);
 
                 // process entries, perform subject container clean up on each iteration
                 final Map<PhpClass, Set<PhpClass>> resolvedInheritanceChains = new HashMap<>();
@@ -220,7 +217,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                                 final PhpClass secondClass = instanceOf2classInner.getValue();
                                 if (clazzParents.contains(secondClass)) {
                                     /* false-positive: the interface in stubs but accessible in php 5.5+ only */
-                                    if (secondClass.getFQN().equals("\\DateTimeInterface") && !isDateTimeInterfaceAvaialble) {
+                                    if (secondClass.getFQN().equals("\\DateTimeInterface") && !isDateTimeInterfaceAvailable) {
                                         continue;
                                     }
 

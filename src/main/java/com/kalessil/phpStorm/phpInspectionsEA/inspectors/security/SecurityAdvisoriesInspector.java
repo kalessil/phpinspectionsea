@@ -44,12 +44,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* PhpUnit */
         developmentPackages.add("phpunit/phpunit");
-        developmentPackages.add("phpunit/dbunit");
         developmentPackages.add("johnkary/phpunit-speedtrap");
         developmentPackages.add("brianium/paratest");
-        developmentPackages.add("phpunit/phpcov");
         developmentPackages.add("mybuilder/phpunit-accelerator");
-        developmentPackages.add("phpunit/phpunit-selenium");
         developmentPackages.add("codedungeon/phpunit-result-printer");
         developmentPackages.add("spatie/phpunit-watcher");
 
@@ -67,9 +64,6 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* more dev-packages  */
         developmentPackages.add("codeception/codeception");
-        developmentPackages.add("codeception/mockery-module");
-        developmentPackages.add("codeception/specify");
-        developmentPackages.add("codeception/verify");
         developmentPackages.add("behat/behat");
         developmentPackages.add("phpspec/prophecy");
         developmentPackages.add("phpspec/phpspec");
@@ -79,6 +73,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("satooshi/php-coveralls");
         developmentPackages.add("mikey179/vfsStream");
         developmentPackages.add("filp/whoops");
+        developmentPackages.add("fzaninotto/faker");
 
         /* SCA tools */
         developmentPackages.add("friendsofphp/php-cs-fixer");
@@ -89,6 +84,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("slevomat/coding-standard");
         developmentPackages.add("doctrine/coding-standard");
         developmentPackages.add("phpcompatibility/php-compatibility");
+        developmentPackages.add("zendframework/zend-coding-standard");
+        developmentPackages.add("yiisoft/yii2-coding-standards");
+        developmentPackages.add("wp-coding-standards/wpcs");
         developmentPackages.add("phpmd/phpmd");
         developmentPackages.add("pdepend/pdepend");
         developmentPackages.add("sebastian/phpcpd");
@@ -102,6 +100,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         developmentPackages.add("phing/phing");
         developmentPackages.add("composer/composer");
         developmentPackages.add("roave/security-advisories");
+        developmentPackages.add("kalessil/production-dependencies-guard");
 
         return developmentPackages;
     }

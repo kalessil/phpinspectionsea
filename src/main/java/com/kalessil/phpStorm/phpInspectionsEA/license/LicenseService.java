@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.license;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.ui.LicensingFacade;
 import com.intellij.util.net.HttpConfigurable;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
@@ -20,12 +21,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /* Based on https://wyday.com/limelm/help/using-turboactivate-with-java/ */
 final public class LicenseService {
-    final private String taVersioning = "201905151055";
-
     private int trialDaysRemaining = 0;
     private int licenseDaysRemaining = 0;
 
@@ -76,7 +76,8 @@ final public class LicenseService {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), "ea-ultimate-" + taVersioning)).toPath();
+        final String latest = "ea-ultimate-201905151055";
+        final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath();
         final Path absolute = location.toAbsolutePath();
         final String path   = absolute.toString();
         if (!Files.exists(location)) {
@@ -91,11 +92,30 @@ final public class LicenseService {
                             absolute.resolve(path + File.separator + sourceFile.toString()),
                             StandardCopyOption.COPY_ATTRIBUTES
                     );
-                } catch (Throwable copyFailure) {
+                } catch (final Throwable copyFailure) {
                     throw new RuntimeException(copyFailure);
                 }
             });
             pluginJarFs.close();
+
+            /* cleanup older extractions */
+            final Path cleanupDirectory = location.getParent();
+            final String cleanupPath    = cleanupDirectory.toAbsolutePath().toString();
+            final String[] directories  = cleanupDirectory.toFile().list();
+            if (directories != null) {
+                Arrays.stream(directories).forEach(name -> {
+                    if (!name.equals(latest) && name.startsWith("ea-ultimate-")) {
+                        try {
+                            Files.walk(Paths.get(cleanupPath + File.separator + name))
+                                    .map(Path::toFile)
+                                    .sorted((first, second) -> -FileUtil.compareFiles(first, second))
+                                    .forEach(File::delete);
+                        } catch (final Throwable deleteFailure) {
+                            throw new RuntimeException(deleteFailure);
+                        }
+                    }
+                });
+            }
         }
         this.client = new TurboActivate("2d65930359df9afb6f9a54.36732074", path + "/TurboActivate/");
     }

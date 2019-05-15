@@ -42,7 +42,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
                     final PsiElement parent      = reference.getParent();
                     if (arguments.length > 0) {
                         if (parent instanceof ArrayAccessExpression) {
-                        final ArrayIndex indexWrapper = ((ArrayAccessExpression) parent).getIndex();
+                            final ArrayIndex indexWrapper = ((ArrayAccessExpression) parent).getIndex();
                             if (indexWrapper != null) {
                                 final PsiElement index = indexWrapper.getValue();
                                 if (index != null) {
@@ -50,7 +50,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
                                     if (isTarget) {
                                         final boolean wrap       = !(arguments[0] instanceof Variable) &&
                                                                    !(arguments[0] instanceof MemberReference) &&
-                                                                   !(arguments[0] instanceof ArrayAccessExpression);;
+                                                                   !(arguments[0] instanceof ArrayAccessExpression);
                                         final String replacement = String.format(
                                                 wrap ? "(%s)->current()" : "%s->current()",
                                                 arguments[0].getText()

@@ -9,6 +9,6 @@ function cases_holder($source)
     <warning descr="Consider using '(new $source())->current()' instead (consumes less cpu and memory resources).">iterator_to_array(new $source(), false)[0]</warning>;
     <warning descr="Consider using '($source ?? $source)->current()' instead (consumes less cpu and memory resources).">iterator_to_array($source ?? $source, false)[0]</warning>;
 
-    /* false-positives: multiple cases */
+    /* false-positives: not the first element */
     iterator_to_array($source, false)[1];
 }

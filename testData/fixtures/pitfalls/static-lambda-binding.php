@@ -13,7 +13,7 @@ class CasesHolder extends ParentClass {
             function() { return $this->property; },
             static function() { return <error descr="'$this' can not be used in static closures.">$this</error>->property; },
 
-            static function() { <error descr="Non-static method should not be called statically.">parent::dynamicMethod()</error>; },
+            static function() { <error descr="Non-static method should not be used in static closures.">parent::dynamicMethod()</error>; },
             static function() { parent::staticMethod(); },
         ];
     }

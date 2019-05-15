@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StaticLambdaBindingInspector extends PhpInspection {
     private static final String messageThis   = "'$this' can not be used in static closures.";
-    private static final String messageParent = "Non-static method should not be called statically.";
+    private static final String messageParent = "Non-static method should not be used in static closures.";
 
     @NotNull
     public String getShortName() {

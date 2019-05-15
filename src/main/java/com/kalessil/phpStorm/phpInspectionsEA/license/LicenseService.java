@@ -76,10 +76,9 @@ final public class LicenseService {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final String latest = "ea-ultimate-201905151055";
-        final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath();
-        final Path absolute = location.toAbsolutePath();
-        final String path   = absolute.toString();
+        final String latest = "ea-ultimate-20190515-1255";
+        final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath().toAbsolutePath();
+        final String path   = location.toString();
         if (!Files.exists(location)) {
             /* create location, copy TA resources */
             Files.createDirectory(location);
@@ -89,7 +88,7 @@ final public class LicenseService {
                 try {
                     Files.copy(
                             sourceFile,
-                            absolute.resolve(path + File.separator + sourceFile.toString()),
+                            location.resolve(path + File.separator + sourceFile.toString()),
                             StandardCopyOption.COPY_ATTRIBUTES
                     );
                 } catch (final Throwable copyFailure) {
@@ -100,21 +99,21 @@ final public class LicenseService {
 
             /* cleanup older extractions */
             final Path cleanupDirectory = location.getParent();
-            final String cleanupPath    = cleanupDirectory.toAbsolutePath().toString();
             final String[] directories  = cleanupDirectory.toFile().list();
             if (directories != null) {
-                Arrays.stream(directories).forEach(name -> {
-                    if (!name.equals(latest) && name.startsWith("ea-ultimate-")) {
-                        try {
-                            Files.walk(Paths.get(cleanupPath + File.separator + name))
-                                    .map(Path::toFile)
-                                    .sorted((first, second) -> -FileUtil.compareFiles(first, second))
-                                    .forEach(File::delete);
-                        } catch (final Throwable deleteFailure) {
-                            throw new RuntimeException(deleteFailure);
-                        }
-                    }
-                });
+                final String cleanupPath = cleanupDirectory.toString();
+                Arrays.stream(directories)
+                        .filter(name  -> !name.equals(latest) && name.startsWith("ea-ultimate-"))
+                        .forEach(name -> {
+                            try {
+                                Files.walk(Paths.get(cleanupPath + File.separator + name))
+                                        .map(Path::toFile)
+                                        .sorted((first, second) -> -FileUtil.compareFiles(first, second))
+                                        .forEach(File::delete);
+                            } catch (final Throwable deleteFailure) {
+                                throw new RuntimeException(deleteFailure);
+                            }
+                        });
             }
         }
         this.client = new TurboActivate("2d65930359df9afb6f9a54.36732074", path + "/TurboActivate/");

@@ -48,50 +48,56 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("array_merge")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length >= 2) {
-                        if (arguments.length == 2) {
-                            if (arguments[0] instanceof ArrayCreationExpression && arguments[1] instanceof ArrayCreationExpression) {
-                                /* case 1: `array_merge([], [])` */
-                                final List<String> fragments = new ArrayList<>();
-                                Stream.of(arguments[0].getChildren()).forEach(c -> fragments.add(c.getText()));
-                                Stream.of(arguments[1].getChildren()).forEach(c -> fragments.add(c.getText()));
+                    if (arguments.length > 0) {
+                        /* case 1: `array_merge([], ...)` - all arguments are arrays  */
+                        if (Arrays.stream(arguments).allMatch(a -> a instanceof ArrayCreationExpression)) {
+                            final List<String> fragments = new ArrayList<>();
+                            Arrays.stream(arguments).forEach(a -> Stream.of(a.getChildren()).forEach(c -> fragments.add(c.getText())));
+                            holder.registerProblem(
+                                    reference,
+                                    messageUseArray,
+                                    new UseArrayFixer(String.format("[%s]", String.join(", ", fragments)))
+                            );
+                            fragments.clear();
+                        }
 
-                                final String replacement = String.format("[%s]", String.join(", ", fragments));
-                                holder.registerProblem(reference, messageUseArray, new UseArrayFixer(replacement));
-
-                                fragments.clear();
-                            } else if (arguments[0] instanceof ArrayCreationExpression || arguments[1] instanceof ArrayCreationExpression) {
-                                /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` */
-                                final PsiElement array       = arguments[0] instanceof ArrayCreationExpression ? arguments[0] : arguments[1];
-                                final PsiElement destination = arguments[0] instanceof ArrayCreationExpression ? arguments[1] : arguments[0];
-                                final PsiElement[] elements  = array.getChildren();
-                                if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
-                                    final PsiElement parent = reference.getParent();
-                                    if (OpenapiTypesUtil.isAssignment(parent)) {
-                                        final PsiElement container = ((AssignmentExpression) parent).getVariable();
-                                        if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
-                                            final List<String> fragments = new ArrayList<>();
-                                            if (arguments[0] instanceof ArrayCreationExpression) {
-                                                if (destination instanceof Variable) {
-                                                    fragments.add(destination.getText());
-                                                    Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
-                                                    final String replacement = String.format("array_unshift(%s)", String.join(", ", fragments));
-                                                    holder.registerProblem(parent, messageArrayUnshift, new UseArrayUnshiftFixer(replacement));
-                                                }
-                                            } else {
+                        /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` - pushing items at front/back */
+                        if (arguments.length == 2 && arguments[0] instanceof ArrayCreationExpression || arguments[1] instanceof ArrayCreationExpression) {
+                            final PsiElement array       = arguments[0] instanceof ArrayCreationExpression ? arguments[0] : arguments[1];
+                            final PsiElement destination = arguments[0] instanceof ArrayCreationExpression ? arguments[1] : arguments[0];
+                            final PsiElement[] elements  = array.getChildren();
+                            if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
+                                final PsiElement parent = reference.getParent();
+                                if (OpenapiTypesUtil.isAssignment(parent)) {
+                                    final PsiElement container = ((AssignmentExpression) parent).getVariable();
+                                    if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
+                                        final List<String> fragments = new ArrayList<>();
+                                        if (arguments[0] instanceof ArrayCreationExpression) {
+                                            if (destination instanceof Variable) {
                                                 fragments.add(destination.getText());
                                                 Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
-                                                final String replacement = String.format("array_push(%s)", String.join(", ", fragments));
-                                                holder.registerProblem(parent, messageArrayPush, new UseArrayPushFixer(replacement));
+                                                holder.registerProblem(
+                                                        parent,
+                                                        messageArrayUnshift,
+                                                        new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
+                                                );
                                             }
-                                            fragments.clear();
+                                        } else {
+                                            fragments.add(destination.getText());
+                                            Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                            holder.registerProblem(
+                                                    parent,
+                                                    messageArrayPush,
+                                                    new UseArrayPushFixer(String.format("array_push(%s)", String.join(", ", fragments)))
+                                            );
                                         }
+                                        fragments.clear();
                                     }
                                 }
                             }
                         }
 
-                        /* case 3: `array_merge(..., array_merge(), ...)` */
+                        /* case 3: `array_merge(..., array_merge(), ...)` - nested calls can be inlined */
                         for (final PsiElement argument : arguments) {
                             if (OpenapiTypesUtil.isFunctionReference(argument)) {
                                 final String innerFunctionName = ((FunctionReference) argument).getName();
@@ -107,10 +113,11 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                         }
                                         fragments.add(fragment.getText());
                                     }
-
-                                    final String replacement = String.format("array_merge(%s)", String.join(", ", fragments));
-                                    holder.registerProblem(reference, messageNestedMerge, new InlineNestedCallsFixer(replacement));
-
+                                    holder.registerProblem(
+                                            reference,
+                                            messageNestedMerge,
+                                            new InlineNestedCallsFixer(String.format("array_merge(%s)", String.join(", ", fragments)))
+                                    );
                                     fragments.clear();
                                     break;
                                 }

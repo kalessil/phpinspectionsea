@@ -4,13 +4,11 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.config.PhpLanguageFeature;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
@@ -56,8 +54,7 @@ public class ClassExistenceCheckInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 final Project project          = holder.getProject();
-                final PhpLanguageLevel php     = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel();
-                final boolean hasClassConstant = php.hasFeature(PhpLanguageFeature.CLASS_NAME_CONST);
+                final boolean hasClassConstant = PhpLanguageLevel.get(project).atLeast(PhpLanguageLevel.PHP550);
                 final String functionName      = reference.getName();
                 if (hasClassConstant && functionName != null && callbacks.containsKey(functionName)) {
                     final PsiElement candidate;

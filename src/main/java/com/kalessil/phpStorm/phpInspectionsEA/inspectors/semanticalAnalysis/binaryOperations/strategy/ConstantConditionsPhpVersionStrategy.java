@@ -3,11 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,8 +46,8 @@ public class ConstantConditionsPhpVersionStrategy {
                 final String checkedVersion = right.getText();
                 if (versionsMapping.containsKey(checkedVersion)) {
                     final PhpLanguageLevel checked = versionsMapping.get(checkedVersion);
-                    final PhpLanguageLevel current = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                    if (checked.compareTo(current) < 0) {
+                    final PhpLanguageLevel current = PhpLanguageLevel.get(holder.getProject());
+                    if (checked.below(current)) {
                         final IElementType operator = expression.getOperationType();
                         /* the checked version is below current, inspect constant conditions */
                         if (result = (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL)) {
@@ -60,7 +59,7 @@ public class ConstantConditionsPhpVersionStrategy {
                         } else if (result = (operator == PhpTokenTypes.opLESS || operator == PhpTokenTypes.opLESS_OR_EQUAL)) {
                             holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
                         }
-                    } else if (checked.compareTo(current) == 0) {
+                    } else if (checked == current) {
                         final IElementType operator = expression.getOperationType();
                         if (result = (operator == PhpTokenTypes.opGREATER_OR_EQUAL)) {
                             holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));

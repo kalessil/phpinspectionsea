@@ -6,12 +6,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.config.PhpLanguageLevel;
-import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -95,16 +94,13 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                             }
                         }
                         /* since alternative is known, we did hit the pattern */
-                        if (alternative != null) {
-                            final PhpLanguageLevel php = PhpProjectConfigurationFacade.getInstance(holder.getProject()).getLanguageLevel();
-                            if (php.compareTo(PhpLanguageLevel.PHP700) >= 0) {
-                                final String replacement = String.format("%s ?? %s", arguments[0].getText(), alternative.getText());
-                                holder.registerProblem(
-                                        parent,
-                                        String.format(messageUseCoalescing, replacement),
-                                        ProblemHighlightType.WEAK_WARNING
-                                );
-                            }
+                        if (alternative != null && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
+                            final String replacement = String.format("%s ?? %s", arguments[0].getText(), alternative.getText());
+                            holder.registerProblem(
+                                    parent,
+                                    String.format(messageUseCoalescing, replacement),
+                                    ProblemHighlightType.WEAK_WARNING
+                            );
                         }
                     }
                 }

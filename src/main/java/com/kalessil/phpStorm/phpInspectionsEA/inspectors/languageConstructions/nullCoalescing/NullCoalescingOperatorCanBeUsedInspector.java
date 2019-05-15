@@ -57,7 +57,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
-                if (SUGGEST_SIMPLIFYING_TERNARIES && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
+                if (SUGGEST_SIMPLIFYING_TERNARIES && !expression.isShort() && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                     final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                     if (condition != null) {
                         final PsiElement extracted = this.getTargetCondition(condition);

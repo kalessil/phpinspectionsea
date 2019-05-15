@@ -62,7 +62,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                         }
 
                         /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` - pushing items at front/back */
-                        if (arguments.length == 2 && arguments[0] instanceof ArrayCreationExpression || arguments[1] instanceof ArrayCreationExpression) {
+                        if (arguments.length == 2 && (arguments[0] instanceof ArrayCreationExpression || arguments[1] instanceof ArrayCreationExpression)) {
                             final PsiElement array       = arguments[0] instanceof ArrayCreationExpression ? arguments[0] : arguments[1];
                             final PsiElement destination = arguments[0] instanceof ArrayCreationExpression ? arguments[1] : arguments[0];
                             final PsiElement[] elements  = array.getChildren();

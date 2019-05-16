@@ -265,8 +265,11 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                     }
                 }
                 if (!isSecured && hasThirdPartyPackages) {
-                    final JsonProperty target = developmentRequire == null ? productionRequire : developmentRequire;
-                    holder.registerProblem(target.getFirstChild(), message, new AddAdvisoriesFix(target));
+                    holder.registerProblem(
+                            productionRequire.getFirstChild(),
+                            message,
+                            new AddAdvisoriesFix(productionRequire, developmentRequire)
+                    );
                 }
             }
         }
@@ -275,12 +278,14 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     }
 
     private static final class AddAdvisoriesFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<JsonProperty> require;
+        private final SmartPsiElementPointer<JsonProperty> productionRequire;
+        private final SmartPsiElementPointer<JsonProperty> developmentRequire;
 
-        AddAdvisoriesFix(@NotNull JsonProperty require) {
+        AddAdvisoriesFix(@NotNull JsonProperty productionRequire, @Nullable JsonProperty developmentRequire) {
             super();
-
-            this.require = SmartPointerManager.getInstance(require.getProject()).createSmartPsiElementPointer(require);
+            final SmartPointerManager manager = SmartPointerManager.getInstance(productionRequire.getProject());
+            this.productionRequire  = manager.createSmartPsiElementPointer(productionRequire);
+            this.developmentRequire = developmentRequire == null ? null : manager.createSmartPsiElementPointer(developmentRequire);
         }
 
         @NotNull
@@ -297,16 +302,25 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
-            final JsonProperty require = this.require.getElement();
-            if (require != null && !project.isDisposed()) {
-                final PsiElement packages = require.getValue();
-                if (packages instanceof JsonObject) {
-                    final PsiElement marker    = packages.getFirstChild();
+            final JsonProperty productionRequire = this.productionRequire.getElement();
+            if (productionRequire != null && !project.isDisposed()) {
+                String fragment                       = null;
+                PsiElement marker                     = null;
+                final JsonProperty developmentRequire = this.developmentRequire == null ? null : this.developmentRequire.getElement();
+                if (developmentRequire == null) {
+                    marker   = productionRequire.getLastChild();
+                    fragment = "\"require-dev\": {\"roave/security-advisories\": \"dev-master\"}";
+                } else {
+                    final PsiElement packages = developmentRequire.getValue();
+                    if (packages instanceof JsonObject) {
+                        marker   = packages.getFirstChild();
+                        fragment = "\"roave/security-advisories\": \"dev-master\"";
+                    }
+                }
+                if (marker != null) {
                     final LeafPsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    if (marker != null && comma != null) {
-                        final PsiElement advisories = new JsonElementGenerator(project)
-                                .createObject("\"roave/security-advisories\": \"dev-master\"")
-                                .getPropertyList().get(0);
+                    if (comma != null) {
+                        final PsiElement advisories = new JsonElementGenerator(project).createObject(fragment).getPropertyList().get(0);
                         marker.getParent().addAfter(comma, marker);
                         marker.getParent().addAfter(advisories, marker);
                     }

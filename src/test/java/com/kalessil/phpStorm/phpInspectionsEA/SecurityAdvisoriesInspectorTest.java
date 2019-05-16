@@ -18,17 +18,29 @@ public final class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixture
         myFixture.configureByFile("testData/fixtures/securityAdvisories/needsNoAdvisories/composer.json");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testMissingAdvisory() {
+    public void testMissingAdvisoryAndNewSection() {
         final SecurityAdvisoriesInspector inspector = new SecurityAdvisoriesInspector();
-        inspector.REPORT_MISPLACED_DEPENDENCIES     = true;
         inspector.REPORT_MISSING_ROAVE_ADVISORIES   = true;
+        inspector.REPORT_MISPLACED_DEPENDENCIES     = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("testData/fixtures/securityAdvisories/needsAdvisories/composer.json");
+        myFixture.configureByFile("testData/fixtures/securityAdvisories/needsAdvisoriesCreatesNewSection/composer.json");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("testData/fixtures/securityAdvisories/needsAdvisories/composer.fixed.json");
+        myFixture.checkResultByFile("testData/fixtures/securityAdvisories/needsAdvisoriesCreatesNewSection/composer.fixed.json");
+    }
+    public void testMissingAdvisoryAndExistingSection() {
+        final SecurityAdvisoriesInspector inspector = new SecurityAdvisoriesInspector();
+        inspector.REPORT_MISSING_ROAVE_ADVISORIES   = true;
+        inspector.REPORT_MISPLACED_DEPENDENCIES     = true;
+        myFixture.enableInspections(inspector);
+        myFixture.configureByFile("testData/fixtures/securityAdvisories/needsAdvisoriesCreatesNewSection/composer.json");
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/securityAdvisories/needsAdvisoriesCreatesNewSection/composer.fixed.json");
     }
     public void testLibraryType() {
         myFixture.enableInspections(new SecurityAdvisoriesInspector());

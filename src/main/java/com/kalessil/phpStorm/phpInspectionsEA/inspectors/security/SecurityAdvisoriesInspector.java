@@ -219,6 +219,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         final ProblemsHolder holder          = new ProblemsHolder(manager, file, isOnTheFly);
         final JsonProperty productionRequire = this.getPackagesGroup(manifest, "require");
         if (productionRequire != null) {
+            boolean isSecured                                             = false;
             boolean hasThirdPartyPackages                                 = false;
             final Map<JsonProperty, JsonStringLiteral> productionPackages = this.getPackages(productionRequire);
             if (!productionPackages.isEmpty()) {
@@ -234,13 +235,14 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                         if (!hasThirdPartyPackages && packageName.indexOf('/') != -1) {
                             hasThirdPartyPackages = vendorName == null || !packageName.startsWith(vendorName);
                         }
+                        /* check if already secured */
+                        isSecured = isSecured || packageName.equals("sensiolabs/security-checker");
                     }
                 }
                 productionPackages.clear();
             }
 
             if (REPORT_MISSING_ROAVE_ADVISORIES) {
-                boolean hasAdvisories                 = false;
                 final JsonProperty developmentRequire = this.getPackagesGroup(manifest, "require-dev");
                 if (developmentRequire != null) {
                     final Map<JsonProperty, JsonStringLiteral> developmentPackages = this.getPackages(developmentRequire);
@@ -253,15 +255,16 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                                     if (!packageVersion.equals("dev-master")) {
                                         holder.registerProblem(pair.getValue(), useMaster);
                                     }
-                                    hasAdvisories = true;
+                                    isSecured = true;
                                     break;
                                 }
+                                isSecured = isSecured || packageName.equals("sensiolabs/security-checker");
                             }
                         }
                         developmentPackages.clear();
                     }
                 }
-                if (!hasAdvisories && hasThirdPartyPackages) {
+                if (!isSecured && hasThirdPartyPackages) {
                     final JsonProperty target = developmentRequire == null ? productionRequire : developmentRequire;
                     holder.registerProblem(target.getFirstChild(), message, new AddAdvisoriesFix(target));
                 }

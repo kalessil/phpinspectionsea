@@ -307,16 +307,15 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
             if (productionRequire != null && comma != null && !project.isDisposed()) {
                 final JsonProperty developmentRequire = this.developmentRequire == null ? null : this.developmentRequire.getElement();
                 if (developmentRequire == null) {
-                    final PsiElement marker     = productionRequire.getLastChild();
                     final PsiElement advisories = new JsonElementGenerator(project)
                             .createObject("\"require-dev\": {\"roave/security-advisories\": \"dev-master\"}")
                             .getPropertyList().get(0);
-                    marker.getParent().addAfter(advisories, marker);
-                    marker.getParent().addAfter(comma, marker);
+                    productionRequire.getParent().addAfter(advisories, productionRequire);
+                    productionRequire.getParent().addAfter(comma, productionRequire);
                 } else {
                     final PsiElement packages = developmentRequire.getValue();
                     if (packages instanceof JsonObject) {
-                        final PsiElement marker = packages.getFirstChild();
+                        final PsiElement marker     = packages.getFirstChild();
                         final PsiElement advisories = new JsonElementGenerator(project)
                                 .createObject("\"roave/security-advisories\": \"dev-master\"")
                                 .getPropertyList().get(0);

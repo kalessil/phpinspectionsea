@@ -303,24 +303,23 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
             final JsonProperty productionRequire = this.productionRequire.getElement();
-            if (productionRequire != null && !project.isDisposed()) {
-                String fragment                       = null;
-                PsiElement marker                     = null;
+            final LeafPsiElement comma           = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+            if (productionRequire != null && comma != null && !project.isDisposed()) {
                 final JsonProperty developmentRequire = this.developmentRequire == null ? null : this.developmentRequire.getElement();
                 if (developmentRequire == null) {
-                    marker   = productionRequire.getLastChild();
-                    fragment = "\"require-dev\": {\"roave/security-advisories\": \"dev-master\"}";
+                    final PsiElement marker     = productionRequire.getLastChild();
+                    final PsiElement advisories = new JsonElementGenerator(project)
+                            .createObject("\"require-dev\": {\"roave/security-advisories\": \"dev-master\"}")
+                            .getPropertyList().get(0);
+                    marker.getParent().addAfter(advisories, marker);
+                    marker.getParent().addAfter(comma, marker);
                 } else {
                     final PsiElement packages = developmentRequire.getValue();
                     if (packages instanceof JsonObject) {
-                        marker   = packages.getFirstChild();
-                        fragment = "\"roave/security-advisories\": \"dev-master\"";
-                    }
-                }
-                if (marker != null) {
-                    final LeafPsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    if (comma != null) {
-                        final PsiElement advisories = new JsonElementGenerator(project).createObject(fragment).getPropertyList().get(0);
+                        final PsiElement marker = packages.getFirstChild();
+                        final PsiElement advisories = new JsonElementGenerator(project)
+                                .createObject("\"roave/security-advisories\": \"dev-master\"")
+                                .getPropertyList().get(0);
                         marker.getParent().addAfter(comma, marker);
                         marker.getParent().addAfter(advisories, marker);
                     }

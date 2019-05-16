@@ -35,12 +35,12 @@ public final class SecurityAdvisoriesInspectorTest extends PhpCodeInsightFixture
         inspector.REPORT_MISSING_ROAVE_ADVISORIES   = true;
         inspector.REPORT_MISPLACED_DEPENDENCIES     = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("testData/fixtures/securityAdvisories/needsAdvisoriesCreatesNewSection/composer.json");
+        myFixture.configureByFile("testData/fixtures/securityAdvisories/needsAdvisoriesUsesExistingSection/composer.json");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("testData/fixtures/securityAdvisories/needsAdvisoriesCreatesNewSection/composer.fixed.json");
+        myFixture.checkResultByFile("testData/fixtures/securityAdvisories/needsAdvisoriesUsesExistingSection/composer.fixed.json");
     }
     public void testLibraryType() {
         myFixture.enableInspections(new SecurityAdvisoriesInspector());

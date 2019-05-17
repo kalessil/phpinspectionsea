@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
@@ -187,6 +188,15 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 }
             }
 
+            private boolean wrap(@NotNull PsiElement expression) {
+                if (expression instanceof TernaryExpression || expression instanceof AssignmentExpression) {
+                    return true;
+                } else if (expression instanceof BinaryExpression) {
+                    return ((BinaryExpression) expression).getOperationType() != PhpTokenTypes.opCOALESCE;
+                }
+                return false;
+            }
+
             @Nullable
             private String generateReplacement(
                     @NotNull PsiElement argument,
@@ -200,7 +210,11 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         final boolean isAnyAssignment = OpenapiTypesUtil.isAssignment(positiveValue) ||
                                                         OpenapiTypesUtil.isAssignment(negativeValue);
                         if (!isAnyAssignment) {
-                            return String.format("return %s ?? %s", positiveValue.getText(), negativeValue.getText());
+                            return String.format(
+                                    "return %s ?? %s",
+                                    String.format(this.wrap(positiveValue) ? "(%s)" : "%s", positiveValue.getText()),
+                                    String.format(this.wrap(negativeValue) ? "(%s)" : "%s", negativeValue.getText())
+                            );
                         }
                     }
                 }
@@ -237,8 +251,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                         return String.format(
                                                 "%s = %s ?? %s",
                                                 positiveContainer.getText(),
-                                                positiveValue.getText(),
-                                                extractedNegative.getText()
+                                                String.format(this.wrap(positiveValue) ? "(%s)" : "%s", positiveValue.getText()),
+                                                String.format(this.wrap(extractedNegative) ? "(%s)" : "%s", extractedNegative.getText())
                                         );
                                     }
                                 }

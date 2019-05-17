@@ -118,6 +118,15 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                 }
             }
 
+            private boolean wrap(@NotNull PsiElement expression) {
+                if (expression instanceof TernaryExpression || expression instanceof AssignmentExpression) {
+                    return true;
+                } else if (expression instanceof BinaryExpression) {
+                    return ((BinaryExpression) expression).getOperationType() != PhpTokenTypes.opCOALESCE;
+                }
+                return false;
+            }
+
             @Nullable
             private String generateReplacement(
                     @NotNull PsiElement condition,
@@ -156,7 +165,11 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                             if (index != null) {
                                 final PsiElement key = index.getValue();
                                 if (key != null && OpenapiEquivalenceUtil.areEqual(key, arguments[0])) {
-                                    return String.format("%s ?? %s", candidate.getText(), alternative.getText());
+                                    return String.format(
+                                            "%s ?? %s",
+                                            String.format(this.wrap(candidate) ? "(%s)" : "%s", candidate.getText()),
+                                            String.format(this.wrap(alternative) ? "(%s)" : "%s", alternative.getText())
+                                    );
                                 }
                             }
                         }
@@ -183,7 +196,11 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                     final PsiElement candidate   = expectsToBeSet ? first : second;
                     if (OpenapiEquivalenceUtil.areEqual(candidate, subject)) {
                         final PsiElement alternative = expectsToBeSet ? second : first;
-                        return String.format("%s ?? %s", candidate.getText(), alternative.getText());
+                        return String.format(
+                                "%s ?? %s",
+                                String.format(this.wrap(candidate) ? "(%s)" : "%s", candidate.getText()),
+                                String.format(this.wrap(alternative) ? "(%s)" : "%s", alternative.getText())
+                        );
                     }
                 }
                 return null;
@@ -202,7 +219,11 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                     final PsiElement candidate   = expectsToBeSet ? first : second;
                     if (OpenapiEquivalenceUtil.areEqual(candidate, subject)) {
                         final PsiElement alternative = expectsToBeSet ? second : first;
-                        return String.format("%s ?? %s", candidate.getText(), alternative.getText());
+                        return String.format(
+                                "%s ?? %s",
+                                String.format(this.wrap(candidate) ? "(%s)" : "%s", candidate.getText()),
+                                String.format(this.wrap(alternative) ? "(%s)" : "%s", alternative.getText())
+                        );
                     }
                 }
                 return null;

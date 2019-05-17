@@ -65,9 +65,10 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                     final int targetPosition     = closurePositions.get(functionName);
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > targetPosition && OpenapiTypesUtil.isLambda(arguments[targetPosition])) {
-                        final PsiElement expression = arguments[targetPosition];
-                        final Function closure      = (Function) (expression instanceof Function ? expression : expression.getFirstChild());
-                        if (closure.getParameters().length > 0) {
+                        final PsiElement expression  = arguments[targetPosition];
+                        final Function closure       = (Function) (expression instanceof Function ? expression : expression.getFirstChild());
+                        final Parameter[] parameters = closure.getParameters();
+                        if (parameters.length > 0 && Arrays.stream(parameters).noneMatch(Parameter::isPassByRef)) {
                             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(closure);
                             if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                                 final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);

@@ -50,6 +50,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
                                     if (isTarget) {
                                         final boolean wrap       = !(arguments[0] instanceof Variable) &&
                                                                    !(arguments[0] instanceof MemberReference) &&
+                                                                   !(arguments[0] instanceof FunctionReference) &&
                                                                    !(arguments[0] instanceof ArrayAccessExpression);
                                         final String replacement = String.format(
                                                 wrap ? "(%s)->current()" : "%s->current()",

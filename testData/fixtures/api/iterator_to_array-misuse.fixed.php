@@ -9,6 +9,6 @@ function cases_holder($source)
     (new $source())->current();
     ($source ?? $source)->current();
 
-    /* false-positives: multiple cases */
+    /* false-positives: not the first element */
     iterator_to_array($source, false)[1];
 }

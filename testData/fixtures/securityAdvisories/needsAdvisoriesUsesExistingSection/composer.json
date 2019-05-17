@@ -1,0 +1,11 @@
+{
+  "name":        "kalessil/whatever",
+  "description": "",
+  "license":     "",
+  <warning descr="Please add roave/security-advisories:dev-master into require-dev as a firewall for vulnerable components.">"require"</warning>: {
+    "kalessil-team/something-else": "*"
+  },
+  "require-dev": {
+    "kalessil-team/something-else": "*"
+  }
+}

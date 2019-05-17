@@ -216,6 +216,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         final ProblemsHolder holder          = new ProblemsHolder(manager, file, isOnTheFly);
         final JsonProperty productionRequire = this.getPackagesGroup(manifest, "require");
         if (productionRequire != null) {
+            boolean isSecured                                             = false;
             boolean hasThirdPartyPackages                                 = false;
             final Map<JsonProperty, JsonStringLiteral> productionPackages = this.getPackages(productionRequire);
             if (!productionPackages.isEmpty()) {
@@ -231,13 +232,14 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                         if (!hasThirdPartyPackages && packageName.indexOf('/') != -1) {
                             hasThirdPartyPackages = vendorName == null || !packageName.startsWith(vendorName);
                         }
+                        /* check if already secured */
+                        isSecured = isSecured || packageName.equals("sensiolabs/security-checker");
                     }
                 }
                 productionPackages.clear();
             }
 
             if (REPORT_MISSING_ROAVE_ADVISORIES) {
-                boolean hasAdvisories                 = false;
                 final JsonProperty developmentRequire = this.getPackagesGroup(manifest, "require-dev");
                 if (developmentRequire != null) {
                     final Map<JsonProperty, JsonStringLiteral> developmentPackages = this.getPackages(developmentRequire);
@@ -250,17 +252,21 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                                     if (!packageVersion.equals("dev-master")) {
                                         holder.registerProblem(pair.getValue(), useMaster);
                                     }
-                                    hasAdvisories = true;
+                                    isSecured = true;
                                     break;
                                 }
+                                isSecured = isSecured || packageName.equals("sensiolabs/security-checker");
                             }
                         }
                         developmentPackages.clear();
                     }
                 }
-                if (!hasAdvisories && hasThirdPartyPackages) {
-                    final JsonProperty target = developmentRequire == null ? productionRequire : developmentRequire;
-                    holder.registerProblem(target.getFirstChild(), message, new AddAdvisoriesFix(target));
+                if (!isSecured && hasThirdPartyPackages) {
+                    holder.registerProblem(
+                            productionRequire.getFirstChild(),
+                            message,
+                            new AddAdvisoriesFix(productionRequire, developmentRequire)
+                    );
                 }
             }
         }
@@ -269,12 +275,14 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     }
 
     private static final class AddAdvisoriesFix implements LocalQuickFix {
-        private final SmartPsiElementPointer<JsonProperty> require;
+        private final SmartPsiElementPointer<JsonProperty> productionRequire;
+        private final SmartPsiElementPointer<JsonProperty> developmentRequire;
 
-        AddAdvisoriesFix(@NotNull JsonProperty require) {
+        AddAdvisoriesFix(@NotNull JsonProperty productionRequire, @Nullable JsonProperty developmentRequire) {
             super();
-
-            this.require = SmartPointerManager.getInstance(require.getProject()).createSmartPsiElementPointer(require);
+            final SmartPointerManager manager = SmartPointerManager.getInstance(productionRequire.getProject());
+            this.productionRequire  = manager.createSmartPsiElementPointer(productionRequire);
+            this.developmentRequire = developmentRequire == null ? null : manager.createSmartPsiElementPointer(developmentRequire);
         }
 
         @NotNull
@@ -291,13 +299,20 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
-            final JsonProperty require = this.require.getElement();
-            if (require != null && !project.isDisposed()) {
-                final PsiElement packages = require.getValue();
-                if (packages instanceof JsonObject) {
-                    final PsiElement marker    = packages.getFirstChild();
-                    final LeafPsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    if (marker != null && comma != null) {
+            final JsonProperty productionRequire = this.productionRequire.getElement();
+            final LeafPsiElement comma           = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
+            if (productionRequire != null && comma != null && !project.isDisposed()) {
+                final JsonProperty developmentRequire = this.developmentRequire == null ? null : this.developmentRequire.getElement();
+                if (developmentRequire == null) {
+                    final PsiElement advisories = new JsonElementGenerator(project)
+                            .createObject("\"require-dev\": {\"roave/security-advisories\": \"dev-master\"}")
+                            .getPropertyList().get(0);
+                    productionRequire.getParent().addAfter(advisories, productionRequire);
+                    productionRequire.getParent().addAfter(comma, productionRequire);
+                } else {
+                    final PsiElement packages = developmentRequire.getValue();
+                    if (packages instanceof JsonObject) {
+                        final PsiElement marker     = packages.getFirstChild();
                         final PsiElement advisories = new JsonElementGenerator(project)
                                 .createObject("\"roave/security-advisories\": \"dev-master\"")
                                 .getPropertyList().get(0);

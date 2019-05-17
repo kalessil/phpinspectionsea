@@ -1,0 +1,12 @@
+{
+  "name":        "kalessil/whatever",
+  "description": "",
+  "license":     "",
+  "require": {
+    "vendor/one":   "*",
+    "vendor/two":   "*",
+    "vendor/three": "*",
+    "vendor/four":  "*",
+    "sensiolabs/security-checker": "*"
+  }
+}

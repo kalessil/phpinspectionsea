@@ -59,7 +59,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.shouldSkipAnalysis(method, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
 
-                if (!method.isAbstract()) {
+                if (!method.isAbstract() && !this.isTestContext(method)) {
                     this.inspectUsages(method.getParameters(), method);
                 }
             }
@@ -68,7 +68,9 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
             public void visitPhpFunction(@NotNull Function function) {
                 if (this.shouldSkipAnalysis(function, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
 
-                this.inspectUsages(function.getParameters(), function);
+                if (!this.isTestContext(function)) {
+                    this.inspectUsages(function.getParameters(), function);
+                }
             }
 
             private void inspectUsages(@NotNull Parameter[] parameters, @NotNull PhpScopeHolder scopeHolder) {

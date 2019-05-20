@@ -87,7 +87,7 @@
         /** @return static */
         public function returnStatic();
     }
-    abstract class IndirectClassReferenceTest implements IndirectClassReference {
+    abstract class IndirectClassReferenceCasesHolder implements IndirectClassReference {
         /** @return static */
         public abstract function ownStatic();
         

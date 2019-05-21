@@ -45,3 +45,6 @@ if (!true) {}
 
 if (!true && !false) {}
 else {}
+
+if (!empty([])) {}
+else {}

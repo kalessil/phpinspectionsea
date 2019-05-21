@@ -61,7 +61,7 @@ public class InvertedIfElseConstructsInspector extends PhpInspection {
                             final UnaryExpression unary = (UnaryExpression) condition;
                             if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
                                 final PsiElement extractedCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
-                                if (extractedCondition != null) {
+                                if (extractedCondition != null && !(extractedCondition instanceof PhpEmpty)) {
                                     final String newCondition = extractedCondition.getText();
                                     problemsHolder.registerProblem(
                                             elseStatement.getFirstChild(),

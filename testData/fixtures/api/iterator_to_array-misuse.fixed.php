@@ -1,14 +1,18 @@
 <?php
 
-function cases_holder($source)
-{
-    $source->current();
-    foreach ($source as $value) {}
-    foreach ($source as $key => $value) {}
+abstract class Clazz implements \Iterator {}
 
-    (new $source())->current();
-    ($source ?? $source)->current();
+function cases_holder(\Iterator $iterator, \IteratorAggregate $aggregate)
+{
+    $iterator->current();
+    foreach ($iterator as $value) {}
+    foreach ($iterator as $key => $value) {}
+
+    (new Clazz())->current();
+    ($iterator ?? $iterator)->current();
 
     /* false-positives: not the first element */
-    iterator_to_array($source, false)[1];
+    iterator_to_array($iterator, false)[1];
+    /* false-positives: missing method */
+    iterator_to_array($aggregate, false)[0];
 }

@@ -1,14 +1,20 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -47,7 +53,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
                                 final PsiElement index = indexWrapper.getValue();
                                 if (index != null) {
                                     final boolean isTarget = OpenapiTypesUtil.isNumber(index) && index.getText().equals("0");
-                                    if (isTarget) {
+                                    if (isTarget && this.implementsIterator(arguments[0])) {
                                         final boolean wrap       = !(arguments[0] instanceof Variable) &&
                                                                    !(arguments[0] instanceof MemberReference) &&
                                                                    !(arguments[0] instanceof FunctionReference) &&
@@ -77,6 +83,27 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean implementsIterator(@NotNull PsiElement subject) {
+                if (subject instanceof PhpTypedElement) {
+                    final Project project  = holder.getProject();
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) subject, project);
+                    if (resolved != null) {
+                        final PhpIndex index = PhpIndex.getInstance(project);
+                        return resolved.filterUnknown().getTypes().stream()
+                                .map(Types::getType)
+                                .filter(type   -> type.startsWith("\\"))
+                                .anyMatch(type ->
+                                        OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(type, index).stream()
+                                                .anyMatch(clazz ->
+                                                        InterfacesExtractUtil.getCrawlInheritanceTree(clazz, false).stream()
+                                                                .anyMatch(parent -> parent.getFQN().equals("\\Iterator"))
+                                                )
+                                );
+                    }
+                }
+                return false;
             }
         };
     }

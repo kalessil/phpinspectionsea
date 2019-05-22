@@ -2,7 +2,7 @@
 
     function overridesParameter($param1, $param2) {
         $param1 = trim($param1);
-        <error descr="The parameter is overridden immediately (original value is lost).">$param2</error> = trim($param1);
+        <error descr="This variable name has already been declared previously without being used.">$param2</error> = trim($param1);
 
         echo $param1, $param2;
     }

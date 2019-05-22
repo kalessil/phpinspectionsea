@@ -3,11 +3,12 @@
     /* @var object      $object */
     /* @var string|null $mixed */
 
-    /* @var string  $string */
-    /* @var array   $array */
-    /* @var boolean $boolean */
-    /* @var float   $float */
-    /* @var integer $integer */
+    $string  = '...';
+    $array   = [];
+    $boolean = true;
+    $float   = 0.0;
+    $integer = 0;
+
     return [
         (object) $object,
         (string) $mixed,
@@ -25,6 +26,7 @@
         (1 * 0.99),
         (int)(1 * 0.99),
         (int)(0.99 * 1),
+        (int)(1 * $unknown),
         (int)(1 * 0.99 * 1)
     ];
 

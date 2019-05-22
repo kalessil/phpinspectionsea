@@ -3,11 +3,12 @@
     /* @var object      $object */
     /* @var string|null $mixed */
 
-    /* @var string  $string */
-    /* @var array   $array */
-    /* @var boolean $boolean */
-    /* @var float   $float */
-    /* @var integer $integer */
+    $string  = '...';
+    $array   = [];
+    $boolean = true;
+    $float   = 0.0;
+    $integer = 0;
+
     return [
         (object) $object,
         (string) $mixed,
@@ -16,15 +17,16 @@
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(array)</weak_warning> $array,
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(boolean)</weak_warning> $boolean,
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> $float,
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(integer)</weak_warning> $integer,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(int)</weak_warning> $integer,
 
-        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(integer)</weak_warning> ($integer + 1),
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(int)</weak_warning> ($integer + 1),
 
         /* workaround for WI-37466 */
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> (0.99 * 1),
         <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> (1 * 0.99),
         (int)(1 * 0.99),
         (int)(0.99 * 1),
+        (int)(1 * $unknown),
         (int)(1 * 0.99 * 1)
     ];
 

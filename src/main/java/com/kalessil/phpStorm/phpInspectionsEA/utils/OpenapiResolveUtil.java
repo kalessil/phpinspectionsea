@@ -113,18 +113,17 @@ final public class OpenapiResolveUtil {
                         final PhpType leftType = resolveType((PhpTypedElement) left, project);
                         if (leftType != null) {
                             final Set<String> leftTypes = new HashSet<>();
-                            leftType.getTypes().forEach(type -> leftTypes.add(Types.getType(type)));
+                            leftType.filterUnknown().getTypes().forEach(type -> leftTypes.add(Types.getType(type)));
                             hasFloat = leftTypes.isEmpty() || leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                             hasArray = leftTypes.contains(Types.strArray);
                             leftTypes.clear();
                             if (!hasFloat || (!hasArray && operator == PhpTokenTypes.opPLUS)) {
-                                final PsiElement right
-                                        = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
+                                final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
                                 if (right instanceof PhpTypedElement) {
                                     final PhpType rightType = resolveType((PhpTypedElement) right, project);
                                     if (rightType != null) {
                                         final Set<String> rightTypes = new HashSet<>();
-                                        rightType.getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
+                                        rightType.filterUnknown().getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
                                         hasFloat = hasFloat ||
                                                    rightTypes.isEmpty() || rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                                         hasArray = (hasArray && !OpenapiTypesUtil.isNumber(right)) ||

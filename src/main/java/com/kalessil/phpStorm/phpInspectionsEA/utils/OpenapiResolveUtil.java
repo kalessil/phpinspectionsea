@@ -126,7 +126,7 @@ final public class OpenapiResolveUtil {
                                         final Set<String> rightTypes = new HashSet<>();
                                         rightType.getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
                                         hasFloat = hasFloat ||
-                                                   leftTypes.isEmpty() || rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                                                   rightTypes.isEmpty() || rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                                         hasArray = (hasArray && !OpenapiTypesUtil.isNumber(right)) ||
                                                    rightTypes.contains(Types.strArray);
                                         rightTypes.clear();

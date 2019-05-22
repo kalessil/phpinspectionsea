@@ -114,7 +114,7 @@ final public class OpenapiResolveUtil {
                         if (leftType != null) {
                             final Set<String> leftTypes = new HashSet<>();
                             leftType.getTypes().forEach(type -> leftTypes.add(Types.getType(type)));
-                            hasFloat = leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                            hasFloat = leftTypes.isEmpty() || leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                             hasArray = leftTypes.contains(Types.strArray);
                             leftTypes.clear();
                             if (!hasFloat || (!hasArray && operator == PhpTokenTypes.opPLUS)) {
@@ -126,7 +126,7 @@ final public class OpenapiResolveUtil {
                                         final Set<String> rightTypes = new HashSet<>();
                                         rightType.getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
                                         hasFloat = hasFloat ||
-                                                   rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                                                   leftTypes.isEmpty() || rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                                         hasArray = (hasArray && !OpenapiTypesUtil.isNumber(right)) ||
                                                    rightTypes.contains(Types.strArray);
                                         rightTypes.clear();

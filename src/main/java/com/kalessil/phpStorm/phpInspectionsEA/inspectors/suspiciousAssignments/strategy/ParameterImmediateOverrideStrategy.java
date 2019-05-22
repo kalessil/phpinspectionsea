@@ -11,8 +11,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -23,13 +21,13 @@ import java.util.Collection;
  */
 
 final public class ParameterImmediateOverrideStrategy {
-    private static final String message = "The parameter is overridden immediately (original value is lost).";
+    private static final String message = "This variable name has already been declared previously without being used.";
 
     static public void apply(@NotNull Function function, @NotNull ProblemsHolder holder) {
         /* general requirements for a function */
         final Parameter[] params  = function.getParameters();
         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
-        if (null == body || 0 == params.length || 0 == ExpressionSemanticUtil.countExpressionsInGroup(body)) {
+        if (body == null || params.length == 0 || ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
             return;
         }
 
@@ -53,24 +51,18 @@ final public class ParameterImmediateOverrideStrategy {
             if (OpenapiTypesUtil.isAssignment(parent) && expression == ((AssignmentExpression) parent).getVariable()) {
                 /* the assignment must be directly in the body, no conditional/in-loop overrides are checked */
                 final PsiElement grandParent = parent.getParent();
-                if (null != grandParent && body != grandParent.getParent()) {
+                if (grandParent != null && body != grandParent.getParent()) {
                     continue;
                 }
 
-                int nameHits = 0;
-
                 /* count name hits, to identify if original value was considered */
-                final Collection<Variable> vars = PsiTreeUtil.findChildrenOfType(parent, Variable.class);
-                for (Variable variable : vars){
-                    nameHits += parameterName.equals(variable.getName()) ? 1 : 0;
-                    if (nameHits > 1) {
+                int nameHits = 0;
+                for (final Variable variable : PsiTreeUtil.findChildrenOfType(parent, Variable.class)) {
+                    if (parameterName.equals(variable.getName()) && ++nameHits > 1) {
                         break;
                     }
                 }
-                vars.clear();
-
-                /* okay, original value 100% lost */
-                if (1 == nameHits) {
+                if (nameHits == 1) {
                     holder.registerProblem(expression, message);
                 }
             }

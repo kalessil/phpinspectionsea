@@ -40,7 +40,7 @@ class ClassUpdComplex
         $this->p1 = $p1;
         $this->p2 = $p2;
         <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->p3</weak_warning> =
-            ++<weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->p3</weak_warning>
+            ++$this->p3
             +
             $p3;
 

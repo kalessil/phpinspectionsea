@@ -6,22 +6,32 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class AmbiguousAnythingTrimCheckStrategy {
     private static final String strProblemLeading  = "Leading .* can be removed.";
     private static final String strProblemTrailing = "Trailing .* can be removed.";
 
     static public void apply(
-            final String functionName,
-            @NotNull final FunctionReference reference,
-            final String pattern,
-            @NotNull final StringLiteralExpression target,
-            @NotNull final ProblemsHolder holder
+            @NotNull String functionName,
+            @NotNull FunctionReference reference,
+            @Nullable String pattern,
+            @NotNull StringLiteralExpression target,
+            @NotNull ProblemsHolder holder
     ) {
         if (
-            2 == reference.getParameters().length &&
-            !StringUtils.isEmpty(pattern) &&
-            !StringUtils.isEmpty(functionName) && functionName.startsWith("preg_match")
+            pattern != null && !pattern.isEmpty() &&
+            !functionName.isEmpty() && functionName.startsWith("preg_match") &&
+            reference.getParameters().length == 2
         ) {
             int countBackRefs = StringUtils.countMatches(pattern, "\\0") - StringUtils.countMatches(pattern, "\\\\0");
             if (countBackRefs > 0) {

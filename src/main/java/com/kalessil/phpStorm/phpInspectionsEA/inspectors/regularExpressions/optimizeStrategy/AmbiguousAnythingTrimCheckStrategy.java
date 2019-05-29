@@ -28,11 +28,7 @@ final public class AmbiguousAnythingTrimCheckStrategy {
             @NotNull StringLiteralExpression target,
             @NotNull ProblemsHolder holder
     ) {
-        if (
-            pattern != null && !pattern.isEmpty() &&
-            !functionName.isEmpty() && functionName.startsWith("preg_match") &&
-            reference.getParameters().length == 2
-        ) {
+        if (pattern != null && !pattern.isEmpty() && functionName.startsWith("preg_match") && reference.getParameters().length == 2) {
             int countBackRefs = StringUtils.countMatches(pattern, "\\0") - StringUtils.countMatches(pattern, "\\\\0");
             if (countBackRefs <= 0) {
                 if (pattern.startsWith(".*")) {

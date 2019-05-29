@@ -3,18 +3,26 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class AllowedModifierCheckStrategy {
-    private static final String strProblemDescription = "Unknown modifier '%m%'.";
+    private static final String message = "Unknown modifier '%s'.";
 
-    static public void apply(final String modifiers, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
-        if (!StringUtils.isEmpty(modifiers)) {
+    static public void apply(@Nullable String modifiers, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+        if (modifiers != null && !modifiers.isEmpty() && !modifiers.equals("preg_quote")) {
             for (char modifier : modifiers.toCharArray()) {
-                if (-1 == "eimsuxADJSUX".indexOf(modifier)) {
-                    String strError = strProblemDescription.replace("%m%", String.valueOf(modifier));
-                    holder.registerProblem(target, strError, ProblemHighlightType.GENERIC_ERROR);
+                if ("eimsuxADJSUX".indexOf(modifier) == -1) {
+                    holder.registerProblem(target, String.format(message, String.valueOf(modifier)), ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         }

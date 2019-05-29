@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
  */
 
 final public class AmbiguousAnythingTrimCheckStrategy {
-    private static final String strProblemLeading  = "Leading .* can be removed.";
-    private static final String strProblemTrailing = "Trailing .* can be removed.";
+    private static final String messageLeading  = "Leading .* can be removed.";
+    private static final String messageTrailing = "Trailing .* can be removed.";
 
     static public void apply(
             @NotNull String functionName,
@@ -34,15 +34,13 @@ final public class AmbiguousAnythingTrimCheckStrategy {
             reference.getParameters().length == 2
         ) {
             int countBackRefs = StringUtils.countMatches(pattern, "\\0") - StringUtils.countMatches(pattern, "\\\\0");
-            if (countBackRefs > 0) {
-                return;
-            }
-
-            if (pattern.startsWith(".*")) {
-                holder.registerProblem(target, strProblemLeading, ProblemHighlightType.WEAK_WARNING);
-            }
-            if (pattern.endsWith(".*")) {
-                holder.registerProblem(target, strProblemTrailing, ProblemHighlightType.WEAK_WARNING);
+            if (countBackRefs <= 0) {
+                if (pattern.startsWith(".*")) {
+                    holder.registerProblem(target, messageLeading, ProblemHighlightType.WEAK_WARNING);
+                }
+                if (pattern.endsWith(".*")) {
+                    holder.registerProblem(target, messageTrailing, ProblemHighlightType.WEAK_WARNING);
+                }
             }
         }
     }

@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +74,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                     if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
                                         final List<String> fragments = new ArrayList<>();
                                         if (arguments[0] instanceof ArrayCreationExpression) {
-                                            if (destination instanceof Variable) {
+                                            if (destination instanceof Variable && !ExpressionSemanticUtil.isByReference(arguments[0])) {
                                                 fragments.add(destination.getText());
                                                 Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
                                                 holder.registerProblem(

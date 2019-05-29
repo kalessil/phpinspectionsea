@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 public class AllowedModifierCheckStrategy {
     private static final String message = "Unknown modifier '%s'.";
 
-    static public void apply(@Nullable String modifiers, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
-        if (modifiers != null && !modifiers.isEmpty() && !modifiers.equals("preg_quote")) {
+    static public void apply(@NotNull String functionName, @Nullable String modifiers, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+        if (modifiers != null && !modifiers.isEmpty() && !functionName.equals("preg_quote")) {
             for (char modifier : modifiers.toCharArray()) {
                 if ("eimsuxADJSUX".indexOf(modifier) == -1) {
                     holder.registerProblem(target, String.format(message, String.valueOf(modifier)), ProblemHighlightType.GENERIC_ERROR);

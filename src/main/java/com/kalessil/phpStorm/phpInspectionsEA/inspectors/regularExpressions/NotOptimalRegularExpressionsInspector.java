@@ -145,7 +145,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * + Check allowed PHP modifiers: eimsuxADJSUX
                  */
                 DeprecatedModifiersCheckStrategy.apply(modifiers, target, holder);
-                AllowedModifierCheckStrategy.apply(modifiers, target, holder);
+                AllowedModifierCheckStrategy.apply(functionName, modifiers, target, holder);
                 UselessDollarEndOnlyModifierStrategy.apply(modifiers, regex, target, holder);
                 UselessDotAllModifierCheckStrategy.apply(modifiers, regex, target, holder);
                 UselessIgnoreCaseModifierCheckStrategy.apply(modifiers, regex, target, holder);

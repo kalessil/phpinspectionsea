@@ -74,7 +74,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                     if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
                                         final List<String> fragments = new ArrayList<>();
                                         if (arguments[0] instanceof ArrayCreationExpression) {
-                                            if (destination instanceof Variable && !ExpressionSemanticUtil.isByReference(arguments[0])) {
+                                            if (destination instanceof Variable && Arrays.stream(elements).noneMatch(ExpressionSemanticUtil::isByReference)) {
                                                 fragments.add(destination.getText());
                                                 Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
                                                 holder.registerProblem(

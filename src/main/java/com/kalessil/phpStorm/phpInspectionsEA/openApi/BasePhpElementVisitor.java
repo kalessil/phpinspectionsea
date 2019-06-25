@@ -87,17 +87,16 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
 
     protected boolean isTestContext(@NotNull PsiElement expression) {
         boolean result        = false;
-        final String fileName = expression.getContainingFile().getName();
-        if (fileName.endsWith("Test.php") || fileName.endsWith("Spec.php") || fileName.endsWith(".phpt")) {
+        final String filePath = expression.getContainingFile().getVirtualFile().getPath();
+        if (filePath.endsWith("Test.php") || filePath.endsWith("Spec.php") || filePath.endsWith(".phpt") || filePath.contains("/Fixtures/")) {
             result = true;
         } else {
-            /* identify class */
-            final PhpClass clazz = expression instanceof PhpClass ?
-                (PhpClass) expression : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, (Class) PsiFile.class);
-            /* if identified, check its FQN */
-            final String clazzFqn = clazz == null ? null : clazz.getFQN();
-            if (clazzFqn != null) {
-                result = clazzFqn.endsWith("Test") || clazzFqn.contains("\\Tests\\") || clazzFqn.contains("\\Test\\");
+            final PhpClass containingClass = expression instanceof PhpClass
+                    ? (PhpClass) expression
+                    : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, (Class) PsiFile.class);
+            if (containingClass != null) {
+                final String fqn = containingClass.getFQN();
+                result = fqn.endsWith("Test") || fqn.contains("\\Tests\\") || fqn.contains("\\Test\\");
             }
         }
         return result;

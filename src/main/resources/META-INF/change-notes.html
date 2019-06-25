@@ -1,22 +1,27 @@
 <html>
 Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Foreach usage possible: resolved a false-positive (lacking limit analysis)<br/>
-- Forgotten debug statements: resolved a false-positive (imports)<br/>
-- Proper null-coalescing operator usage: resolved false positives<br/>
-- Traits properties conflicts resolution: resolved a false-positive (annotations)<br/>
-- Unnecessary call arguments specification: resolved a false-positive<br/>
-- Unknown inspection suppression: resolved a false-positive (sql data source)<br/>
-- Unsupported string offset operations: resolved a false-positive (super-globals)<br/>
-- Unused constructor dependencies: resolved a false-positive (closure)<br/>
-- 'gmmktime(...)'/'mktime(...)' usage: resolved a false-positive (imports)<br/>
-- 'ob_get_clean()' can be used: resolved a false-positive (no-root ns functions)<br/>
-- 'yield from' can be used: resolved a false-positive (yield from in a loop)<br/>
+- Class mocking correctness: resolved false-positives (multiple cases)<br/>
+- Foreach source to iterate over: resolved a false-positive (stdClass)<br/>
+- Foreach usage possible: QF bug-fixes<br/>
+- Foreach usage possible: resolved a false-positive (multiple repetitive statements)<br/>
+- Inverted 'if-else' constructs: resolved a false-positive (empty-statements)<br/>
+- Non-null parameters default value: resolved false-positives (implicit type-hints)<br/>
+- Non-optimal regular expression: resolved a false-positive (modifiers in preq_quote)<br/>
+- Null coalescing operator can be used: QF bug-fix<br/>
+- One-time use variables: resolved a false-positive (foreach value by reference)<br/>
+- Random API migration: resolved a false-positive (imports)<br/>
+- Security advisories for Composer packages: QF bug-fixes<br/>
+- Security advisories for Composer packages: resolved a false-positive<br/>
+- Static closure can be used: resolved a false-positive (dynamic parent methods calls)<br/>
+- Suspicious assignments: resolved a false-positive (self-dependent assignments)<br/>
+- Unnecessary type casting: resolved a false-positive (unresolved types)<br/>
 <br/>
-- PhpStorm 2019.1 compatibility fixes<br/>
-- PHP short open tag usage: new patterns<br/>
-- Unnecessary closures: new patterns<br/>
-- 'json_decode(...)' result type: implemented<br/>
+- Non-optimal regular expression: new patterns<br/>
+- Proper null-coalescing operator usage: new settings<br/>
+- Security advisories for Composer packages: new patterns<br/>
+- Short syntax for applied operation: new patterns<br/>
+- Type casting can be used: new patterns<br/>
 <br/>
 <hr/>
 </html>

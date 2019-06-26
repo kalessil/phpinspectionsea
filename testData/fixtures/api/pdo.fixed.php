@@ -9,7 +9,7 @@ function cases_holder(\PDO $x)
 
     $x->exec('...');
 
-   /* false-positives: parameters */
+    /* false-positives: parameters */
     $z = $x->prepare('');
     $z->execute([]);
 }

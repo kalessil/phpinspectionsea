@@ -1,18 +1,9 @@
-sudo:     false
-
 notifications:
   email:  false
 
-language: java
-jdk:
-  - oraclejdk11
-addons:
-  apt_packages:
-    - php-cli
-
 matrix:
   include:
-    - env: IDEA_VERSION="IU-2019.1" PHP_PLUGIN_VERSION="191.6183.95" PSI_VIEWER_PLUGIN_VERSION="191.4212"
+    - env: IDEA_VERSION="IU-2019.1"   PHP_PLUGIN_VERSION="191.6183.95" PSI_VIEWER_PLUGIN_VERSION="191.4212"
     - env: IDEA_VERSION="IU-2018.3.4" PHP_PLUGIN_VERSION="183.5429.47" PSI_VIEWER_PLUGIN_VERSION="183.2153"
     - env: IDEA_VERSION="IU-2018.2.2" PHP_PLUGIN_VERSION="182.4129.45" PSI_VIEWER_PLUGIN_VERSION="182.2757.2"
     - env: IDEA_VERSION="IU-2018.1.5" PHP_PLUGIN_VERSION="181.5281.35" PSI_VIEWER_PLUGIN_VERSION="2018.1.2"
@@ -34,11 +25,13 @@ cache:
   - $HOME/.gradle/wrapper/
 
 before_install:
+  - sudo add-apt-repository ppa:linuxuprising/java && sudo apt update
+  - sudo apt install -y oracle-java11-set-default php-cli
+  - java -version && php -v
+  - chmod +x gradlew
   - "export ORG_GRADLE_PROJECT_ideaVersion=${IDEA_VERSION}"
   - "export ORG_GRADLE_PROJECT_phpPluginVersion=${PHP_PLUGIN_VERSION}"
   - "export ORG_GRADLE_PROJECT_psiViewerPluginVersion=${PSI_VIEWER_PLUGIN_VERSION}"
-  - java -version
-  - chmod +x gradlew
 
 script:
   - php .travis/rules-list-check.php

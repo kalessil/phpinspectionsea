@@ -96,4 +96,28 @@ The inspection finds loop-constructs that are terminated with continue, break, t
 this approach applicable to generators and iterable classes, in general it points to refactoring leftovers, bad merges 
 and bugs.
 
-> Note: while terminating statements can be preceded by other statements, the inspection still reports the pattern 
+> Note: while terminating statements can be preceded by other statements, the inspection still reports the pattern
+
+## Switch-case could be simplified
+
+The inspection finds switch-constructs which can be refactored into more suitable constructs (e.g. if-constructs), 
+reducing cognitive load and clearer expressing code intention. 
+
+```php
+    /* sample code fragment reported by the the inspection */
+    switch ($variable) {
+        case 'value':
+            /* operations: 1st batch */
+            break;
+        default:
+            /* operations: 2nd batch */
+            break;
+    }
+
+    /* sample code fragment after refactoring */
+    if ($variable === 'value') {
+        /* operations: 1st batch */
+    } else {
+        /* operations: 2nd batch */
+    }
+```

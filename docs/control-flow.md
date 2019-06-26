@@ -24,8 +24,6 @@ details. Following example should give you a common idea about side-effects:
 
 ## PDO API usage
 
-> Note: this chapter describes not yet released behaviour and quick-fixes 
-
 The inspection reports following cases:
 
 ```php
@@ -74,4 +72,20 @@ Php Inspections (EA Extended) friendly way:
     
     /* custom constructor */
     throw new UserNotFoundException($userId);
+```
+
+## If-return-return could be simplified
+
+The inspection finds places where conditional return-statements can be simplified, reducing code complexity metrics and 
+amount of maintainable codebase. 
+
+```php
+    /* sample code fragment before applying Quick-Fix */
+    if ($variable === 'value') {
+        return true;
+    }
+    return false;
+    
+    /* sample code fragment after applying Quick-Fix */
+    return $variable === 'value';
 ```

@@ -76,8 +76,8 @@ Php Inspections (EA Extended) friendly way:
 
 ## If-return-return could be simplified
 
-The inspection finds places where conditional return-statements can be simplified, reducing code complexity metrics and 
-amount of maintainable codebase. 
+The inspection finds places where conditional return-statements can be simplified (by Quick-Fixing), reducing code 
+complexity metrics and amount of maintainable codebase. 
 
 ```php
     /* sample code fragment before applying Quick-Fix */
@@ -121,3 +121,10 @@ reducing cognitive load and clearer expressing code intention.
         /* operations: 2nd batch */
     }
 ```
+
+## Foreach usage possible
+
+The inspection finds for-constructs which can be refactored (by Quick-Fixing) into foreach-constructs, reducing 
+cognitive load, improving maintainability and enabling the analyzer to apply more checks.
+
+> Note: foreach-statements are also well optimized for working with <a href="https://secure.php.net/manual/en/class.iterator.php">iterators</a>. 

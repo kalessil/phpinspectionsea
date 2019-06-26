@@ -2,6 +2,10 @@ dist:     trusty
 language: java
 jdk:      oraclejdk8
 
+addons:
+  apt_packages:
+    - php-cli
+
 notifications:
   email:  false
 
@@ -29,7 +33,6 @@ cache:
   - $HOME/.gradle/wrapper/
 
 before_install:
-  - sudo apt-install -y php-cli
   - java -version && php -v
   - chmod +x gradlew
   - "export ORG_GRADLE_PROJECT_ideaVersion=${IDEA_VERSION}"

@@ -8,7 +8,7 @@ jdk:
   - openjdk9
 addons:
   apt_packages:
-    - php7-cli
+    - php-cli
 
 matrix:
   include:

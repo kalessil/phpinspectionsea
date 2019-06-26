@@ -1,6 +1,8 @@
 notifications:
   email:  false
 
+language: php
+
 matrix:
   include:
     - env: IDEA_VERSION="IU-2019.1"   PHP_PLUGIN_VERSION="191.6183.95" PSI_VIEWER_PLUGIN_VERSION="191.4212"

@@ -55,6 +55,6 @@ jar {
     baseName = "PhpInspectionsEA"
 }
 
-test.testLogging.exceptionFormat      = TestExceptionFormat.FULL
-compileJava.options.encoding          = 'UTF-8'
-compileTestJava.options.compilerArgs += ["--add-modules", "java.xml.bind"]
+test.testLogging.exceptionFormat = TestExceptionFormat.FULL
+test.jvmArgs                     += ["--add-modules", "java.xml.bind"]
+compileJava.options.encoding     = 'UTF-8'

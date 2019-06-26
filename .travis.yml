@@ -25,9 +25,9 @@ cache:
   - $HOME/.gradle/wrapper/
 
 before_install:
-  - sudo add-apt-repository ppa:linuxuprising/java && sudo apt update
+  - sudo add-apt-repository ppa:linuxuprising/java && sudo apt-get update
   - echo oracle-java11-installer shared/accepted-oracle-license-v1-2 select true | sudo /usr/bin/debconf-set-selections
-  - sudo apt install -y oracle-java11-set-default php-cli
+  - sudo apt-install -y oracle-java11-set-default php-cli
   - java -version && php -v
   - chmod +x gradlew
   - "export ORG_GRADLE_PROJECT_ideaVersion=${IDEA_VERSION}"

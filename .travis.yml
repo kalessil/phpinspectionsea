@@ -4,7 +4,7 @@ jdk:      oraclejdk8
 
 addons:
   apt_packages:
-    - php-cli
+    - php5-cli
 
 notifications:
   email:  false

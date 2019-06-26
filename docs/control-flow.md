@@ -89,3 +89,11 @@ amount of maintainable codebase.
     /* sample code fragment after applying Quick-Fix */
     return $variable === 'value';
 ```
+
+## Loop which does not loop
+
+The inspection finds loop-constructs that are terminated with continue, break, throw or return in the first iteration. While 
+this approach applicable to generators and iterable classes, in general it points to refactoring leftovers, bad merges 
+and bugs.
+
+> Note: while terminating statements can be preceded by other statements, the inspection still reports the pattern 

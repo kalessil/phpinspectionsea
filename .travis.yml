@@ -5,7 +5,7 @@ notifications:
 
 language: java
 jdk:
-  - oraclejdk8
+  - oraclejdk9
 addons:
   apt_packages:
     - php5-cli

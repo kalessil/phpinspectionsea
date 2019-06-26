@@ -127,18 +127,4 @@ reducing cognitive load and clearer expressing code intention.
 The inspection finds for-constructs which can be refactored (by Quick-Fixing) into foreach-constructs, reducing 
 cognitive load, improving maintainability and enabling the analyzer to apply more checks.
 
-> Note: foreach-statements are also well optimized for working with <a href="https://secure.php.net/manual/en/class.iterator.php">iterators</a>. 
-
-## PDO API usage
-
-The inspection finds PDO API calls which can be replaced (by Quick-Fixing) by less resources consuming API calls, also
-reducing cognitive load and clearer expressing code intention.
-
-```php
-    /* sample code fragment before applying Quick-Fix */
-    $statement = $pdo->prepare('...');
-    $statement->execute();
-    
-    /* sample code fragment after applying Quick-Fix */
-    $statement = $pdo->query('...');
-```
+> Note: foreach-statements are also well optimized for working with <a href="https://secure.php.net/manual/en/class.iterator.php">iterators</a>.

@@ -56,5 +56,4 @@ jar {
 }
 
 test.testLogging.exceptionFormat = TestExceptionFormat.FULL
-test.jvmArgs                     += ["--add-modules", "java.xml.bind"]
 compileJava.options.encoding     = 'UTF-8'

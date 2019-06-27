@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -83,6 +84,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                                     candidate = current.getLeftOperand();
                                 }
                                 if (candidate != null && OpenapiEquivalenceUtil.areEqual(variable, candidate)) {
+                                    Collections.reverse(fragments);
                                     final String replacement = String.format(
                                             "%s %s= %s",
                                             candidate.getText(),

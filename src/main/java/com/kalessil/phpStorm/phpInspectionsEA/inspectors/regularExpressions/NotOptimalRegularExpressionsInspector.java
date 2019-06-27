@@ -18,7 +18,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,11 +54,13 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         functions.add("preg_quote");
     }
 
-    final static private Pattern regexWithModifiers;
-    final static private Pattern regexWithModifiersCurvy;
+    final static private List<Pattern> matchers = new ArrayList<>();
     static {
-        regexWithModifiers      = Pattern.compile("^([^{])(.*)\\1([a-zA-Z]+)?$");
-        regexWithModifiersCurvy = Pattern.compile("^\\{(.*)\\}([a-zA-Z]+)?$");
+        matchers.add(Pattern.compile("^([^{<(\\[])(.*)(\\1)([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\{)(.*)(\\})([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(<)(.*)(>)([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\()(.*)(\\))([a-zA-Z]+)?$"));
+        matchers.add(Pattern.compile("^(\\[)(.*)(\\])([a-zA-Z]+)?$"));
     }
 
     @Override
@@ -75,31 +79,22 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                             if (pattern.getContainingFile() == params[0].getContainingFile()) {
                                 final String regex = pattern.getContents();
                                 if (!regex.isEmpty() && pattern.getFirstPsiChild() == null) {
-                                    final Matcher matcher = regexWithModifiers.matcher(regex);
-                                    if (matcher.find()) {
-                                        final String phpRegexPattern   = matcher.group(2);
-                                        final String phpRegexModifiers = matcher.group(3);
-                                        this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                                        if (checkCall) {
-                                            this.checkCall(functionName, reference, phpRegexPattern, phpRegexModifiers);
+                                    boolean hasDelimiters = false;
+                                    for (final Pattern matchPattern : matchers) {
+                                        final Matcher matcher = matchPattern.matcher(regex);
+                                        if (hasDelimiters = matcher.find()) {
+                                            final String phpRegexPattern   = matcher.group(2);
+                                            final String phpRegexModifiers = matcher.group(4);
+                                            this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
+                                            if (checkCall) {
+                                                this.checkCall(functionName, reference, phpRegexPattern, phpRegexModifiers);
+                                            }
+                                            break;
                                         }
-                                        continue;
                                     }
-
-                                    final Matcher alternativeMatcher = regexWithModifiersCurvy.matcher(regex);
-                                    if (alternativeMatcher.find()) {
-                                        final String phpRegexPattern   = alternativeMatcher.group(1);
-                                        final String phpRegexModifiers = alternativeMatcher.group(2);
-                                        this.checkRegex(functionName, reference, pattern, phpRegexPattern, phpRegexModifiers);
-                                        if (checkCall) {
-                                            this.checkCall(functionName, reference, phpRegexPattern, phpRegexModifiers);
-                                        }
-                                        continue;
-                                    }
-
-                                    if (!functionName.equals("preg_quote")) {
+                                    if (!hasDelimiters && !functionName.equals("preg_quote")) {
                                         holder.registerProblem(pattern, messageNoDelimiters);
-                                    }
+                                    }                           
                                 }
                             }
                             patterns.clear();

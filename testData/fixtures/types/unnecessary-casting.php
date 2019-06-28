@@ -29,10 +29,10 @@
         (int)(1 * $unknown),
         (int)(1 * 0.99 * 1),
 
-        (float).0,
-        (float)0.0,
-        (float)-.0,
-        (float)-0.0,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning>.0,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning>0.0,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning>-.0,
+        <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning>-0.0,
     ];
 
     /** @var string $string */

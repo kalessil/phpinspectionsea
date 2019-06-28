@@ -27,7 +27,12 @@
         (int)(1 * 0.99),
         (int)(0.99 * 1),
         (int)(1 * $unknown),
-        (int)(1 * 0.99 * 1)
+        (int)(1 * 0.99 * 1),
+
+        (float).0,
+        (float)0.0,
+        (float)-.0,
+        (float)-0.0,
     ];
 
     /** @var string $string */

@@ -1,20 +1,5 @@
 <?php
 
-class aClass {
-    const REGEX1          = '/regex1$/Z';
-    static public $regex2 = '/regex2$/Z';
-    protected $regex3     = '/regex3$/Z';
-
-    public function check($arg) {
-        $regex4 = '/regex4$/Z';
-
-        preg_match($regex4, $arg);
-        preg_match(self::REGEX1, $arg);
-        preg_match(self::$regex2, $arg);
-        preg_match($this->regex3, $arg);
-    }
-}
-
     preg_match_all('/regex/', '');                    //ok
     if (preg_match_all('/regex/', '')) {}             //report
     if (preg_match_all("/regex$x/", '')) {}           //ok, due to inline var
@@ -31,10 +16,6 @@ class aClass {
     preg_match('/no-[^]-or-[\\$]-occurrences/m', ''); //reported
     preg_match('/^-no-[\\$]-occurrence/m', '');       //reported
     preg_match('/no-[^]-occurrence$/m', '');          //reported
-
-    preg_match('/$-presented/D',           '');       //ok
-    preg_match('/^-no-[\\$]-occurrence/D', '');       //reported
-    preg_match('/^-ignored-$/mD',          '');       //reported
 
     preg_match('/.-provided/s',            '');       //ok
     preg_match('/no-dot-char/s',           '');       //reported

@@ -97,4 +97,9 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("testData/fixtures/regularExpressions/ambiguous-anything-leading-trailing.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testAmbiguousDollarEndOnlyModifier() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/ambiguous-d-modifier.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

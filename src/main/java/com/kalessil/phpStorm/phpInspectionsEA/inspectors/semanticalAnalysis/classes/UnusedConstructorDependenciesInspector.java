@@ -144,7 +144,7 @@ public class UnusedConstructorDependenciesInspector extends PhpInspection {
                         if (!otherReferences.containsKey(fieldName)) {
                             /* ensure the field reference in constructor is not bound to closures only */
                             if (references.stream().anyMatch(r -> ExpressionSemanticUtil.getScope(r) == constructor)) {
-                                this.doSmartReport(holder, references);
+                                this.doReport(holder, references);
                             }
                         }
                         references.clear();
@@ -157,39 +157,16 @@ public class UnusedConstructorDependenciesInspector extends PhpInspection {
                 }
             }
 
-            private void doSmartReport(@NotNull ProblemsHolder holder, @NotNull List<FieldReference> fields) {
-                int assignmentsCount  = 0;
-                int methodCallsCount  = 0;
-                FieldReference target = null;
-                for (final FieldReference reference : fields) {
-                    final PsiElement parent = reference.getParent();
-                    if (parent instanceof MethodReference) {
-                        /* calls performed on the field */
-                        final MethodReference parentCall = (MethodReference) parent;
-                        if (parentCall.getFirstPsiChild() == reference) {
-                            ++methodCallsCount;
-                        }
-                    } else if (OpenapiTypesUtil.isAssignment(parent)) {
-                        /* field value overwrites */
-                        final AssignmentExpression parentAssignment = (AssignmentExpression) parent;
-                        if (parentAssignment.getVariable() == reference) {
-                            target = reference;
-                            if (++assignmentsCount > 1) {
-                                break;
+            private void doReport(@NotNull ProblemsHolder holder, @NotNull List<FieldReference> fields) {
+                fields.stream()
+                        .filter(reference -> {
+                            final PsiElement parent = reference.getParent();
+                            if (OpenapiTypesUtil.isAssignment(parent)) {
+                                return reference == ((AssignmentExpression) parent).getVariable();
                             }
-                        }
-                    } else {
-                        /* another expression, break the loop */
-                        break;
-                    }
-                }
-                if (target != null && assignmentsCount == 1 && fields.size() == assignmentsCount + methodCallsCount) {
-                    /* report only assignment, when single write + multiple invocations are performed */
-                    holder.registerProblem(target, message);
-                } else {
-                    /* report all entries, general behaviour */
-                    fields.forEach(reference -> holder.registerProblem(reference, message));
-                }
+                            return false;
+                        })
+                        .forEach(reference -> holder.registerProblem(reference, message));
             }
         };
     }

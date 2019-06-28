@@ -24,8 +24,6 @@ details. Following example should give you a common idea about side-effects:
 
 ## PDO API usage
 
-> Note: this chapter describes not yet released behaviour and quick-fixes 
-
 The inspection reports following cases:
 
 ```php
@@ -75,3 +73,58 @@ Php Inspections (EA Extended) friendly way:
     /* custom constructor */
     throw new UserNotFoundException($userId);
 ```
+
+## If-return-return could be simplified
+
+The inspection finds places where conditional return-statements can be simplified (by Quick-Fixing), reducing code 
+complexity metrics and amount of maintainable codebase. 
+
+```php
+    /* sample code fragment before applying Quick-Fix */
+    if ($variable === 'value') {
+        return true;
+    }
+    return false;
+    
+    /* sample code fragment after applying Quick-Fix */
+    return $variable === 'value';
+```
+
+## Loop which does not loop
+
+The inspection finds loop-constructs that are terminated with continue, break, throw or return in the first iteration. While 
+this approach applicable to generators and iterable classes, in general it points to refactoring leftovers, bad merges 
+and bugs.
+
+> Note: while terminating statements can be preceded by other statements, the inspection still reports the pattern
+
+## Switch-case could be simplified
+
+The inspection finds switch-constructs which can be refactored into more suitable constructs (e.g. if-constructs), 
+reducing cognitive load and clearer expressing code intention. 
+
+```php
+    /* sample code fragment reported by the the inspection */
+    switch ($variable) {
+        case 'value':
+            /* operations: 1st batch */
+            break;
+        default:
+            /* operations: 2nd batch */
+            break;
+    }
+
+    /* sample code fragment after refactoring */
+    if ($variable === 'value') {
+        /* operations: 1st batch */
+    } else {
+        /* operations: 2nd batch */
+    }
+```
+
+## Foreach usage possible
+
+The inspection finds for-constructs which can be refactored (by Quick-Fixing) into foreach-constructs, reducing 
+cognitive load, improving maintainability and enabling the analyzer to apply more checks.
+
+> Note: foreach-statements are also well optimized for working with <a href="https://secure.php.net/manual/en/class.iterator.php">iterators</a>.

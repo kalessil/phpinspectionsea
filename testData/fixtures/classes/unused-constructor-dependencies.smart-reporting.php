@@ -14,7 +14,7 @@ class ReportingCasesHolder {
 
         <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->three</weak_warning> = new Clazz();
         <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->three</weak_warning> = new Clazz();
-        <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->three</weak_warning>->method();
+        $this->three->method();
     }
 
     public function method() {

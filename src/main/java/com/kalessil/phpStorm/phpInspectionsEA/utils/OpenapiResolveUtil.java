@@ -174,7 +174,7 @@ final public class OpenapiResolveUtil {
                 final UnaryExpression unary = (UnaryExpression) expression;
                 final PsiElement operation  = unary.getOperation();
                 if (operation != null) {
-                    if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opBIT_NOT)) {
+                    if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opBIT_NOT) || OpenapiTypesUtil.is(operation, PhpTokenTypes.opMINUS)) {
                         final PsiElement argument = unary.getValue();
                         if (argument instanceof PhpTypedElement) {
                             result = resolveType((PhpTypedElement) argument, project);

@@ -1,6 +1,6 @@
 <?php
 
-function casesHolder(\PDO $x)
+function cases_holder(\PDO $x)
 {
     $y = $x->query('');
     /** DocBlock should not break inspection */
@@ -8,11 +8,8 @@ function casesHolder(\PDO $x)
     /** multiple DocBlocks should not break inspection */
 
     $x->exec('...');
-}
 
-function falsePositivesHolder(\PDO $x)
-{
     /* false-positives: parameters */
-    $y = $x->prepare('');
-    $y->execute([]);
+    $z = $x->prepare('');
+    $z->execute([]);
 }

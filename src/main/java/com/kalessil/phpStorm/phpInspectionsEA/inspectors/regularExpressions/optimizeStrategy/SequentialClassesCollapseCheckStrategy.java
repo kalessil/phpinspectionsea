@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opt
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +26,7 @@ final public class SequentialClassesCollapseCheckStrategy {
         regexRepeatedClasses = Pattern.compile("((\\[([^\\]]+)\\])(\\*|\\+|\\?|\\{[^\\}]+\\})?\\2(\\*|\\+|\\?|\\{[^\\}]+\\})?)+");
     }
 
-    static public void apply(@Nullable String pattern, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
+    static public void apply(@Nullable String pattern, @NotNull PsiElement target, @NotNull ProblemsHolder holder) {
         if (pattern != null && !pattern.isEmpty() && pattern.indexOf('[') >= 0) {
             final Matcher matcher = regexRepeatedClasses.matcher(pattern);
             if (matcher.find()) {

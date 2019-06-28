@@ -2,7 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +23,7 @@ public class UselessDollarEndOnlyModifierStrategy {
     static public void apply(
             @Nullable String modifiers,
             @Nullable String pattern,
-            @NotNull StringLiteralExpression target,
+            @NotNull PsiElement target,
             @NotNull ProblemsHolder holder
     ) {
         if (modifiers != null && !modifiers.isEmpty() && modifiers.indexOf('D') != -1) {

@@ -52,13 +52,6 @@ class aClass {
     preg_match('/a-z-provided/i',          '');       //ok
     preg_match('/.{2}-.{2}/i',             '');       //reported
 
-    preg_match('/[seq].../',                    '');  //ok
-    preg_match('/[seq][seq].../',               '');  //reported
-    preg_match('/[seq][seq]+/',                 '');  //reported
-    preg_match('/[seq][seq]*/',                 '');  //reported
-    preg_match('/[seq][seq]?/',                 '');  //reported
-    preg_match('/[seq]+[seq]*[seq]?[seq]{1,}/', '');  //reported
-
     preg_match('/[0-9]/',       '');              //reported
     preg_match('/[^0-9]/',      '');              //reported
     preg_match('/[:digit:]/',   '');              //reported

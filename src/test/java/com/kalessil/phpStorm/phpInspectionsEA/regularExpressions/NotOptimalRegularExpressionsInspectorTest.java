@@ -87,4 +87,9 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("testData/fixtures/regularExpressions/missing-delimiters.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testSerialClassesCompacting() {
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/serial-classes-compacting.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

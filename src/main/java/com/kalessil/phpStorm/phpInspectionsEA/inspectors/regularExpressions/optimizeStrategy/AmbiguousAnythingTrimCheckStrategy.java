@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
  */
 
 final public class AmbiguousAnythingTrimCheckStrategy {
-    private static final String messageLeading  = "Leading .* can be removed.";
-    private static final String messageTrailing = "Trailing .* can be removed.";
+    private static final String messageLeading  = "Leading .* can be probably removed.";
+    private static final String messageTrailing = "Trailing .* can be probably removed.";
 
     static public void apply(
             @NotNull String functionName,

@@ -74,14 +74,20 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                     if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
                                         final List<String> fragments = new ArrayList<>();
                                         if (arguments[0] instanceof ArrayCreationExpression) {
-                                            if (destination instanceof Variable && Arrays.stream(elements).noneMatch(ExpressionSemanticUtil::isByReference)) {
-                                                fragments.add(destination.getText());
-                                                Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
-                                                holder.registerProblem(
-                                                        parent,
-                                                        messageArrayUnshift,
-                                                        new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
-                                                );
+                                            if (destination instanceof Variable) {
+                                                final boolean hasByReference = Arrays.stream(elements)
+                                                        .filter(e -> e instanceof PhpPsiElement)
+                                                        .map(e -> ((PhpPsiElement) e).getFirstPsiChild())
+                                                        .anyMatch(ExpressionSemanticUtil::isByReference);
+                                                if (!hasByReference) {
+                                                    fragments.add(destination.getText());
+                                                    Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                                    holder.registerProblem(
+                                                            parent,
+                                                            messageArrayUnshift,
+                                                            new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
+                                                    );
+                                                }
                                             }
                                         } else {
                                             fragments.add(destination.getText());

@@ -60,3 +60,4 @@
     <warning descr="'explode(\",\", '', 2)' can be used instead.">preg_split('/,/', '', 2)</warning>;
     /* false-positives */
     preg_split('/.+/', '');
+    preg_split('/\b/', '');

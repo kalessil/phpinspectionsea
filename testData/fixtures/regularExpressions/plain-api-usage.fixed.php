@@ -60,3 +60,4 @@
     explode(",", '', 2);
     /* false-positives */
     preg_split('/.+/', '');
+    preg_split('/\b/', '');

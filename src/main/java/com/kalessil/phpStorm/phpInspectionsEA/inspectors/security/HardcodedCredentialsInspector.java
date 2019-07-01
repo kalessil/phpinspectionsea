@@ -55,6 +55,8 @@ public class HardcodedCredentialsInspector extends PhpInspection {
         targetFunctions.put("\\hash_hmac_file", 2);
         targetFunctions.put("\\hash_pbkdf2", 1);
         targetFunctions.put("\\password_hash", 0);
+        targetFunctions.put("\\hash_equals", 0);
+        targetFunctions.put("\\crypt", 0);
         targetFunctions.put("\\kadm5_create_principal", 2);
         targetFunctions.put("\\kadm5_chpass_principal", 2);
         targetFunctions.put("\\kadm5_init_with_password", 3);

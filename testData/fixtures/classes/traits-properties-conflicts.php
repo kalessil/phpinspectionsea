@@ -33,7 +33,7 @@ class PropertiesExample extends BasePropertiesExample {
     ;
 
     use PropertiesTrait;
-        /** @Id */
+    /** @Id */
     public $sameAnnotated = true;
     public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning> = true;
     private $different = true;

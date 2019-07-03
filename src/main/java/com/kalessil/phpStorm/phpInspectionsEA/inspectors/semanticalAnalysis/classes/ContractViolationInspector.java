@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ContractViolationInspector extends PhpInspection {
-    private static final String messagePattern = "The public methods %s are not part of the class contracts. The contract might be incomplete.";
+    private static final String messagePattern = "Some of public methods (%s) are not part of the class contracts. Perhaps a contract is incomplete.";
 
     @NotNull
     public String getShortName() {

@@ -1012,6 +1012,10 @@
         shortName="ExposingInternalClassesInspection"               displayName="Exposed @internal classes"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ExposingInternalClassesInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ContractViolationInspection"                     displayName="Contracts (interfaces) violations"
+        groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ContractViolationInspector"/>
 
 
     <applicationService      serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationSettings"

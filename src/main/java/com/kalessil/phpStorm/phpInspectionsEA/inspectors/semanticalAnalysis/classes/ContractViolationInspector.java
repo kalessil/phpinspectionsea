@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
@@ -35,6 +36,7 @@ public class ContractViolationInspector extends PhpInspection {
                 if (!clazz.isInterface() && !clazz.isTrait()) {
                     final List<String> ownMethods = Arrays.stream(clazz.getOwnMethods())
                             .filter(method -> method.getAccess().isPublic())
+                            .filter(method -> ExpressionSemanticUtil.getBlockScope(method) == clazz)
                             .map(PhpNamedElement::getName)
                             .collect(Collectors.toList());
                     if (!ownMethods.isEmpty()) {

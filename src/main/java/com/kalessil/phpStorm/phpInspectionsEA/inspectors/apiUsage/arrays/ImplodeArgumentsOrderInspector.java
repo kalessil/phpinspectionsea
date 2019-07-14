@@ -54,7 +54,7 @@ public class ImplodeArgumentsOrderInspector extends PhpInspection {
     }
 
     private static final class ReorderArgumentsFixer extends UseSuggestedReplacementFixer {
-        private static final String title = "Reorder arguments";
+        private static final String title = "Reorder 'implode(...)' arguments";
 
         @NotNull
         @Override

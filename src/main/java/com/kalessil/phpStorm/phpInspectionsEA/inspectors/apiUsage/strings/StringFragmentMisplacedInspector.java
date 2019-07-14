@@ -1,6 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
@@ -59,12 +62,46 @@ public class StringFragmentMisplacedInspector extends PhpInspection {
                         if (fragment.getFirstPsiChild() == null) {
                             final boolean isTarget = arguments[1] != null && !(arguments[1] instanceof StringLiteralExpression);
                             if (isTarget) {
-                                holder.registerProblem(fragment, String.format(messagePattern, fragment.getText()));
+                                holder.registerProblem(
+                                        fragment,
+                                        String.format(messagePattern, fragment.getText()),
+                                        new ReorderArgumentsFix()
+                                );
                             }
                         }
                     }
                 }
             }
         };
+    }
+
+    private static final class ReorderArgumentsFix implements LocalQuickFix {
+        private static final String title = "Fix the fragment position";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression != null && !project.isDisposed()) {
+                final PsiElement grandParent = expression.getParent().getParent();
+                if (grandParent instanceof FunctionReference) {
+                    final PsiElement[] arguments = ((FunctionReference) grandParent).getParameters();
+                    final PsiElement fragment    = arguments[0].copy();
+                    arguments[0].replace(arguments[1]);
+                    arguments[1].replace(fragment);
+                }
+            }
+        }
     }
 }

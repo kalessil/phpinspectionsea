@@ -48,7 +48,7 @@ public class ContractViolationInspector extends PhpInspection {
                                     /* method is missing in contracts */
                                     .filter(own -> !contractsMethods.contains(own))
                                     /* method is missing in parent class */
-                                    .filter(own -> parent == null || parent.findOwnMethodByName(own) == null)
+                                    .filter(own -> parent == null || parent.findMethodByName(own) == null)
                                     .collect(Collectors.toList());
                             if (!violations.isEmpty()) {
                                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);

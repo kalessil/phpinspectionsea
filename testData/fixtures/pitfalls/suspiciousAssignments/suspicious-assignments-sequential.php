@@ -112,3 +112,9 @@ function assign_line_constant()
     $array[__LINE__] = __LINE__;
     $array[__LINE__] = __LINE__;
 }
+
+function reassign_in_foreach()
+{
+    $array = [];
+    foreach ($array as $key => <error descr="$array is immediately overridden, please check this code fragment.">$array</error>) {}
+}

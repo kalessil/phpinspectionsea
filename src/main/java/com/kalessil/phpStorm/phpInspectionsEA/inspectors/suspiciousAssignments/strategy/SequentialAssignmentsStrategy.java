@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /*
@@ -34,7 +35,8 @@ final public class SequentialAssignmentsStrategy {
         if (container != null && OpenapiTypesUtil.isStatementImpl(parent)) {
             final boolean isTargetExpression = !isValidArrayWrite(container) && !isContainerUsed(container, expression);
             if (isTargetExpression) {
-                final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
+                final PhpPsiElement scope    = (PhpPsiElement) parent;
+                final PhpPsiElement previous = scope.getPrevPsiSibling();
                 if (previous != null) {
                     if (previous instanceof If) {
                         handlePrecedingIf(container, (If) previous, holder);
@@ -42,6 +44,14 @@ final public class SequentialAssignmentsStrategy {
                         final PsiElement candidate = previous.getFirstChild();
                         if (OpenapiTypesUtil.isAssignment(candidate)) {
                             handlePrecedingAssignment(container, (AssignmentExpression) candidate, holder);
+                        }
+                    }
+                }
+                final PhpPsiElement next = scope.getNextPsiSibling();
+                if (next instanceof ForeachStatement && container instanceof Variable) {
+                    for (final Variable variable : ((ForeachStatement) next).getVariables()) {
+                        if (OpenapiEquivalenceUtil.areEqual(variable, container)) {
+                            holder.registerProblem(variable, String.format(patternGeneral, variable.getText()));
                         }
                     }
                 }

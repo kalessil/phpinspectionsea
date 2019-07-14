@@ -67,9 +67,11 @@ public class StringCaseManipulationInspector extends PhpInspection {
                             .replace("%a1%", (first == null ? arguments[0] : first).getText())
                             .replace("%f%", functions.get(functionName));
                         holder.registerProblem(
-                                    reference, String .format( messagePattern, replacement),
-                         new SimplifyFix(replacement));
-                        }
+                                reference,
+                                String.format(messagePattern, replacement),
+                                new SimplifyFix(replacement)
+                        );
+                    }
                     }
                 }
             }

@@ -48,7 +48,7 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
                                 int code;
                                 try {
                                     code     = Integer.parseInt(value.getText());
-                                    isTarget = code < 0 || code > 254;
+                                    isTarget = code < 0 || code > 255;
                                 } catch (final NumberFormatException wrongFormat) {
                                     code     = -1;
                                     isTarget = false;

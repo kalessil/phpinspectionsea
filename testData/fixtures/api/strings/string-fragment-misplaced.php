@@ -2,7 +2,7 @@
 
 function cases_holder($where) {
     return [
-        strpos(<error descr="''fragment'' should be the second argument.">'fragment'</error>, $where),
+        strpos(<error descr="''fragment'' should probably be the second argument (replace with a constant if intended).">'fragment'</error>, $where),
 
         strpos("...$where...", $where),
         strpos($where, 'fragment'),

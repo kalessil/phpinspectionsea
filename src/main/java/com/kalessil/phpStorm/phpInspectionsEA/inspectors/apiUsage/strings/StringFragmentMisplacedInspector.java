@@ -26,7 +26,7 @@ import java.util.Set;
  */
 
 public class StringFragmentMisplacedInspector extends PhpInspection {
-    private static final String messagePattern  = "'%s' should be the second argument.";
+    private static final String messagePattern  = "'%s' should probably be the second argument (replace with a constant if intended).";
 
     private static final Set<String> functions = new HashSet<>();
 

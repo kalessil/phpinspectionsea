@@ -2,20 +2,20 @@
 <!-- git log ultimate ^master --no-merges > changelog.log -->
 New features release<br/>
 <br/>
-- Changes from upcoming Php Inspections (EA Extended) v4.0.1 release<br/>
+- Changes from Php Inspections (EA Extended) v3.0.14 release<br/>
 <br/>
-- One-time use variables: resolved a false-positive<br/>
-- Suspicious binary operations: resolved a false-positive<br/>
+- Overriding deprecated methods: resolved a false-positive (deprecations in constructor)<br/>
+- 'array_merge(...)' misused: resolved a false-positive (array elements by reference)<br/>
+- 'iterator_to_array(...)' misused: QF bug-fix<br/>
+- 'iterator_to_array(...)' misused: resolved a false-positive (reporting non-iterator classes)<br/>
 <br/>
-- Implemented right-side panel, check it out!<br/>
-- Class reuses traits multiple times: implemented<br/>
-- Exposed @internal classes: implemented<br/>
-- If-return-return could be simplified: new patterns<br/>
-- Null coalescing operator can be used: new patterns<br/>
-- Proper preg_quote(...) usage: new patterns<br/>
-- Unnecessary closures: new patterns<br/>
-- Unnecessary use aliases: new patterns<br/>
-- 'array_map(...)' misused: implemented<br/>
+- Contracts (interfaces) violations: implemented (experimental feature)<br/>
+- Hardcoded credentials: new patterns<br/>
+- Incorrectly placed string fragment: implemented<br/>
+- Static lambdas binding: new patterns<br/>
+- Suspicious assignments: new patterns<br/>
+- 'array_merge(...)' misused: new pattern<br/>
+- 'exit' usage correctness: implemented<br/>
 <br/>
 <hr/>
 </html>

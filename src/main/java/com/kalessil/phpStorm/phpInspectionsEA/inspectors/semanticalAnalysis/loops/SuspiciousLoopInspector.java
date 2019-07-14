@@ -65,7 +65,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
 
                 this.inspectVariables(statement);
                 this.inspectParentConditions(statement, statement.getArray());
-                this.inspectSource(statement, statement.getArray());
+                // this.inspectSource(statement, statement.getArray());
             }
 
             @Override

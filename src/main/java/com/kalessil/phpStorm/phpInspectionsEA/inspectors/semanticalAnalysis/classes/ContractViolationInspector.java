@@ -33,7 +33,7 @@ public class ContractViolationInspector extends PhpInspection {
             public void visitPhpClass(@NotNull PhpClass clazz) {
                 if (this.shouldSkipAnalysis(clazz, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
 
-                if (!clazz.isInterface() && !clazz.isTrait()) {
+                if (!clazz.isInterface() && !clazz.isTrait() && !this.isTestContext(clazz)) {
                     final List<String> ownMethods = Arrays.stream(clazz.getOwnMethods())
                             .filter(method -> method.getAccess().isPublic())
                             .filter(method -> ExpressionSemanticUtil.getBlockScope(method) == clazz)

@@ -77,8 +77,9 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpEchoStatement(PhpEchoStatement echoStatement)       {}
     @Override public void visitPhpStaticStatement(PhpStaticStatement staticStatement) {}
     @Override public void visitPhpNewExpression(NewExpression expression)             {}
-    @Override public void visitPhpPrint(PhpPrintExpression print)               {}
-    @Override public void visitPhpGroupStatement(GroupStatement groupStatement) {}
+    @Override public void visitPhpPrint(PhpPrintExpression print)                     {}
+    @Override public void visitPhpGroupStatement(GroupStatement groupStatement)       {}
+    @Override public void visitPhpExit(PhpExit exitExpression)                        {}
 
     @Override public void visitPhpClass(PhpClass clazz)                                            {}
     @Override public void visitPhpConstantReference(ConstantReference reference)                   {}

@@ -520,6 +520,10 @@
         shortName="JsonDecodeUsageInspection"                     displayName="'json_decode(...)' result type"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.JsonDecodeUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ExitUsageCorrectnessInspection"                displayName="'exit' usage correctness"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ExitUsageCorrectnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

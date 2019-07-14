@@ -230,6 +230,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | StaticLambdaBindingInspection                   | Static lambdas binding                                    | yes | yes | yes  | no  |
 | Probable bugs        | ForeachSourceInspection                         | Foreach source to iterate over                            | n/a | yes | n/a  | yes |
 | Probable bugs        | JsonDecodeUsageInspection                       | 'json_decode(...)' result type                            | yes | yes | yes  | no  |
+| Probable bugs        | ExitUsageCorrectnessInspection                  | 'exit' usage correctness                                  | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

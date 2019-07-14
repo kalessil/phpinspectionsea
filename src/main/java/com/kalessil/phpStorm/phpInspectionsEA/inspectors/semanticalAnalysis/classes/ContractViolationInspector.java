@@ -51,12 +51,15 @@ public class ContractViolationInspector extends PhpInspection {
                                     .filter(own -> parent == null || parent.findMethodByName(own) == null)
                                     .collect(Collectors.toList());
                             if (!violations.isEmpty()) {
-                                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
-                                if (nameNode != null) {
-                                    Collections.sort(violations);
-                                    holder.registerProblem(nameNode, String.format(messagePattern, String.join(", ", violations)));
+                                violations.removeAll(this.getTraitsMethods(clazz));
+                                if (!violations.isEmpty()) {
+                                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
+                                    if (nameNode != null) {
+                                        Collections.sort(violations);
+                                        holder.registerProblem(nameNode, String.format(messagePattern, String.join(", ", violations)));
+                                    }
+                                    violations.clear();
                                 }
-                                violations.clear();
                             }
                             contractsMethods.clear();
                         }
@@ -66,12 +69,22 @@ public class ContractViolationInspector extends PhpInspection {
             }
 
             Set<String> getContractsMethods(@NotNull PhpClass clazz) {
-                final Set<String> contractsMethods = new HashSet<>();
+                final Set<String> methods = new HashSet<>();
                 InterfacesExtractUtil.getCrawlInheritanceTree(clazz, false).forEach(contract ->
                         Arrays.stream(contract.getOwnMethods())
                                 .filter(method -> method.getAccess().isPublic())
-                                .forEach(method -> contractsMethods.add(method.getName())));
-                return contractsMethods;
+                                .forEach(method -> methods.add(method.getName())));
+                return methods;
+            }
+
+            Set<String> getTraitsMethods(@NotNull PhpClass clazz) {
+                final Set<String> methods = new HashSet<>();
+                for (final PhpClass trait : clazz.getTraits()) {
+                    trait.getMethods().stream()
+                            .filter(method -> method.getAccess().isPublic())
+                            .forEach(method -> methods.add(method.getName()));
+                }
+                return methods;
             }
         };
     }

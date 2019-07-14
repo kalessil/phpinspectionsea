@@ -41,27 +41,30 @@ public class ContractViolationInspector extends PhpInspection {
                             .filter(name -> !name.startsWith("__"))
                             .collect(Collectors.toList());
                     if (!ownMethods.isEmpty()) {
-                        final Set<String> contractsMethods = this.getContractsMethods(clazz);
-                        if (!contractsMethods.isEmpty()) {
-                            final PhpClass parent         = OpenapiResolveUtil.resolveSuperClass(clazz);
-                            final List<String> violations = ownMethods.stream()
-                                    /* method is missing in contracts */
-                                    .filter(own -> !contractsMethods.contains(own))
-                                    /* method is missing in parent class */
-                                    .filter(own -> parent == null || parent.findMethodByName(own) == null)
-                                    .collect(Collectors.toList());
-                            if (!violations.isEmpty()) {
-                                violations.removeAll(this.getTraitsMethods(clazz));
+                        final PhpClass parent     = OpenapiResolveUtil.resolveSuperClass(clazz);
+                        final boolean isException = parent != null && parent.findMethodByName("getTraceAsString") != null;
+                        if (!isException) {
+                            final Set<String> contractsMethods = this.getContractsMethods(clazz);
+                            if (!contractsMethods.isEmpty()) {
+                                final List<String> violations = ownMethods.stream()
+                                        /* method is missing in contracts */
+                                        .filter(own -> !contractsMethods.contains(own))
+                                        /* method is missing in parent class */
+                                        .filter(own -> parent == null || parent.findMethodByName(own) == null)
+                                        .collect(Collectors.toList());
                                 if (!violations.isEmpty()) {
-                                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
-                                    if (nameNode != null) {
-                                        Collections.sort(violations);
-                                        holder.registerProblem(nameNode, String.format(messagePattern, String.join(", ", violations)));
+                                    violations.removeAll(this.getTraitsMethods(clazz));
+                                    if (!violations.isEmpty()) {
+                                        final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
+                                        if (nameNode != null) {
+                                            Collections.sort(violations);
+                                            holder.registerProblem(nameNode, String.format(messagePattern, String.join(", ", violations)));
+                                        }
+                                        violations.clear();
                                     }
-                                    violations.clear();
                                 }
+                                contractsMethods.clear();
                             }
-                            contractsMethods.clear();
                         }
                         ownMethods.clear();
                     }

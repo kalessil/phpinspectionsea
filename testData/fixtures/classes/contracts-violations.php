@@ -29,3 +29,7 @@ class <warning descr="Some of public methods (ownPublicMethod) are not part of t
     protected function ownProtectedMethod() {}
     private function ownPrivateMethod()     {}
 }
+
+class DetailedException extends \DomainException {
+    public function withMoreDetails() {}
+}

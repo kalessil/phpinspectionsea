@@ -9,6 +9,8 @@ abstract class AbstractClass {
 
 /** @method annotatedMethod() */
 class <warning descr="Some of public methods (ownPublicMethod) are not part of the class contracts. Perhaps a contract is incomplete.">ImplementationClass</warning> extends AbstractClass implements Contract {
+    public function __construct() {}
+
     public function contractMethod() {}
     public function classMethod()    {}
 

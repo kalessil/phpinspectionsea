@@ -38,6 +38,7 @@ public class ContractViolationInspector extends PhpInspection {
                             .filter(method -> method.getAccess().isPublic())
                             .filter(method -> ExpressionSemanticUtil.getBlockScope(method) == clazz)
                             .map(PhpNamedElement::getName)
+                            .filter(name -> !name.startsWith("__"))
                             .collect(Collectors.toList());
                     if (!ownMethods.isEmpty()) {
                         final Set<String> contractsMethods = this.getContractsMethods(clazz);

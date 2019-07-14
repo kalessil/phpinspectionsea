@@ -28,5 +28,5 @@
 
     if ($orphanedFiles !== []) {
         echo 'Following fixtures are not used: ' . PHP_EOL . implode(',' . PHP_EOL, $orphanedFiles) . PHP_EOL;
-        exit(-1);
+        exit(1);
     }

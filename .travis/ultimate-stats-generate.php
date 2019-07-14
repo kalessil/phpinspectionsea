@@ -49,7 +49,7 @@
             }
             if ($status === 'new' && !$definition->toggle) {
                 echo sprintf('%s misses ultimate toggles: ', $className), PHP_EOL;
-                exit(-1);
+                exit(1);
             }
 
             ++$statistics[$definition->groupName][$status];
@@ -75,5 +75,5 @@
     }
     if (strpos($descriptionContent, $statsInDescription) === false) {
         echo sprintf('description.html is outdated ("%s" is missing)', $statsInDescription), PHP_EOL;
-        exit(-1);
+        exit(1);
     }

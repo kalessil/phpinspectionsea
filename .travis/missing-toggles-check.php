@@ -59,13 +59,13 @@
 
     if (count($inconsistentStrictnessToggles) > 0) {
         echo 'Following files has inconsistent strictness toggles: ' . PHP_EOL . implode(PHP_EOL, $inconsistentStrictnessToggles) . PHP_EOL;
-        exit(-1);
+        exit(1);
     }
     if (count($partialDistractionTogglesFiles) > 0) {
         echo 'Following files has inconsistent distraction toggles: ' . PHP_EOL . implode(PHP_EOL, $partialDistractionTogglesFiles) . PHP_EOL;
-        exit(-1);
+        exit(1);
     }
     if (count($missingDistractionTogglesFiles) > 0) {
         echo 'Following files are missing distraction toggles: ' . PHP_EOL . implode(PHP_EOL, $missingDistractionTogglesFiles) . PHP_EOL;
-        exit(-1);
+        exit(1);
     }

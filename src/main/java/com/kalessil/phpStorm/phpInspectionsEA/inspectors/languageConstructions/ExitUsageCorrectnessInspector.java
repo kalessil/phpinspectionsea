@@ -45,7 +45,7 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
                         for (final PsiElement value : values) {
                             if (OpenapiTypesUtil.isNumber(value)) {
                                 boolean isTarget;
-                                Integer code;
+                                int code;
                                 try {
                                     code     = Integer.parseInt(value.getText());
                                     isTarget = code < 0 || code > 254;

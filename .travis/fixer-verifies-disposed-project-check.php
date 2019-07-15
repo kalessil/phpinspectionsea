@@ -35,5 +35,5 @@
 
     if ($missingChecks !== []) {
         echo 'Some fixers are not checking disposal state: ' . PHP_EOL . implode(',' . PHP_EOL, $missingChecks) . PHP_EOL;
-        exit(-1);
+        exit(1);
     }

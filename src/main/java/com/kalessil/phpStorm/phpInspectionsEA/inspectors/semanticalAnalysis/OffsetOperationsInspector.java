@@ -69,7 +69,7 @@ public class OffsetOperationsInspector extends PhpInspection {
                 if (!allowedIndexTypes.isEmpty() && expression.getIndex() != null) {
                     final PhpPsiElement indexValue = expression.getIndex().getValue();
                     if (indexValue instanceof PhpTypedElement) {
-                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) indexValue, indexValue.getProject());
+                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) indexValue, holder.getProject());
                         if (resolved != null) {
                             final Set<String> indexTypes = new HashSet<>();
                             resolved.filterUnknown().getTypes().forEach(t -> indexTypes.add(Types.getType(t)));

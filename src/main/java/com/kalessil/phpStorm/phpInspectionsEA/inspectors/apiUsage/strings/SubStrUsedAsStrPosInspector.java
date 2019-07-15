@@ -73,7 +73,7 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
                                 final ArrayIndex index  = expression.getIndex();
                                 final PsiElement offset = index == null ? null : index.getValue();
                                 if (offset != null && offset.getText().equals("0")) {
-                                    final Project project  = expression.getProject();
+                                    final Project project  = holder.getProject();
                                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
                                     if (resolved != null) {
                                         /* false-positives: container should be a string */

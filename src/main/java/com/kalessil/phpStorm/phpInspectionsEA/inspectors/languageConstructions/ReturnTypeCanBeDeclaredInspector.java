@@ -193,7 +193,7 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                     result =
                         InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).stream()
                                 .anyMatch(c -> c != clazz && c.findOwnMethodByName(methodName) != null) ||
-                        OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), PhpIndex.getInstance(method.getProject())).stream()
+                        OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), PhpIndex.getInstance(holder.getProject())).stream()
                                 .anyMatch(c -> c.findOwnMethodByName(methodName) != null);
                 }
                 return result;

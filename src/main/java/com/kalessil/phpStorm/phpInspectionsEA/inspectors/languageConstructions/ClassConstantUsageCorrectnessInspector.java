@@ -76,7 +76,7 @@ public class ClassConstantUsageCorrectnessInspector extends PhpInspection {
                 final String referenceText = reference.getText();
                 if (referenceText.startsWith("\\")) {
                     /* FQN specified, resolve as we might have case issues there */
-                    final Project project               = reference.getProject();
+                    final Project project               = holder.getProject();
                     final Collection<PhpClass> resolved = PhpIndex.getInstance(project).getClassesByFQN(referenceText);
                     if (!resolved.isEmpty()) {
                         result.add(resolved.iterator().next().getFQN());

@@ -51,7 +51,7 @@ final public class NullableArgumentComparisonStrategy {
             if (parent instanceof UnaryExpression && argument instanceof PhpTypedElement && value != null) {
                 final UnaryExpression target = (UnaryExpression) parent;
                 if (OpenapiTypesUtil.is(target.getOperation(), PhpTokenTypes.opNOT)) {
-                    final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) argument, expression.getProject());
+                    final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) argument, holder.getProject());
                     if (type != null && !type.hasUnknown()) {
                         final Set<String> types = new HashSet<>();
                         type.getTypes().forEach(t -> types.add(Types.getType(t)));

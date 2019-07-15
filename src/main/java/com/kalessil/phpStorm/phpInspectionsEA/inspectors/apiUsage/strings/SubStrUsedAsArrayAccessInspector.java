@@ -48,7 +48,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                                                           arguments[0] instanceof FieldReference;
                             if (isValidSource) {
                                 final PhpTypedElement container = (PhpTypedElement) arguments[0];
-                                final PhpType resolvedType      = OpenapiResolveUtil.resolveType(container, reference.getProject());
+                                final PhpType resolvedType      = OpenapiResolveUtil.resolveType(container, holder.getProject());
                                 if (resolvedType != null) {
                                     final boolean isValidType = resolvedType.filterUnknown().getTypes().stream()
                                             .anyMatch(t -> Types.getType(t).equals(Types.strString));

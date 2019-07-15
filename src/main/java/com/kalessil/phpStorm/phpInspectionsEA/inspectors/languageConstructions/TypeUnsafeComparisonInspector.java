@@ -121,9 +121,10 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
 
             private boolean isComparableObject(@NotNull PsiElement operand) {
                 if (operand instanceof PhpTypedElement) {
-                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
+                    final Project project  = holder.getProject();
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, project);
                     if (resolved != null) {
-                        final PhpIndex index        = PhpIndex.getInstance(operand.getProject());
+                        final PhpIndex index        = PhpIndex.getInstance(project);
                         final Set<PhpClass> classes = new HashSet<>();
                         resolved.filterUnknown().getTypes().stream()
                                 .filter(t  -> t.charAt(0) == '\\')

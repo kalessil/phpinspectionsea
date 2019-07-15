@@ -159,7 +159,7 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                     if (string.getFirstPsiChild() == null && contents.length() > 3) {
                         String fqn           = contents.replaceAll("\\\\\\\\", "\\\\");
                         fqn                  = fqn.charAt(0) == '\\' ? fqn : '\\' + fqn;
-                        final PhpIndex index = PhpIndex.getInstance(expression.getProject());
+                        final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                         for (final PhpClass clazz : OpenapiResolveUtil.resolveClassesByFQN(fqn, index)) {
                             if (clazz.isFinal()) {
                                 result = clazz;

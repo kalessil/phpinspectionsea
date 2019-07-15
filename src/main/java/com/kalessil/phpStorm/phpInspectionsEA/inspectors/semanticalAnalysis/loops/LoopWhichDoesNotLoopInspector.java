@@ -55,7 +55,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                     if (last != null && !(last instanceof PhpThrow)) {
                         final PsiElement source = loop.getArray();
                         if (source instanceof PhpTypedElement) {
-                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) source, source.getProject());
+                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) source, holder.getProject());
                             final boolean isValid  = resolved != null && resolved.filterUnknown().getTypes().stream()
                                     .anyMatch(type -> foreachExceptions.contains(Types.getType(type)));
                             if (isValid) {

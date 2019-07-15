@@ -98,7 +98,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                         /* try resolving the expression */
                         if (classCandidate instanceof PhpTypedElement) {
                             final PhpTypedElement candidate = (PhpTypedElement) classCandidate;
-                            final Project project           = classCandidate.getProject();
+                            final Project project           = holder.getProject();
                             for (final String type : candidate.getType().global(project).filterUnknown().getTypes()) {
                                 final String resolvedType = Types.getType(type);
                                 if (resolvedType.equals(Types.strString) || resolvedType.equals(Types.strCallable)) {

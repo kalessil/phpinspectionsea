@@ -137,7 +137,7 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
 
             private boolean isNotString(@NotNull PsiElement subject) {
                 if (subject instanceof PhpTypedElement && !(subject instanceof StringLiteralExpression)) {
-                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) subject, subject.getProject());
+                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) subject, holder.getProject());
                     if (resolved != null && !resolved.hasUnknown()) {
                         return resolved.getTypes().stream().noneMatch(type -> Types.getType(type).equals(Types.strString));
                     }

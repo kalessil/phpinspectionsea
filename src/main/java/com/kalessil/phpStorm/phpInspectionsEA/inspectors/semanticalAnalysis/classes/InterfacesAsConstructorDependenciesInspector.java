@@ -52,7 +52,7 @@ public class InterfacesAsConstructorDependenciesInspector extends PhpInspection 
                 if (methodName.equals("__construct")) {
                     final Parameter[] parameters = method.getParameters();
                     if (parameters.length > 0) {
-                        final PhpIndex index = PhpIndex.getInstance(method.getProject());
+                        final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                         for (final Parameter parameter : parameters) {
                             final PhpType type = parameter.getDeclaredType().filterPrimitives().filterUnknown();
                             if (type.size() == 1) {

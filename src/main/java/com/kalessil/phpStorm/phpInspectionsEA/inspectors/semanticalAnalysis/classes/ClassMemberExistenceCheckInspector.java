@@ -88,7 +88,7 @@ final public class ClassMemberExistenceCheckInspector extends PhpInspection {
             private PhpClass extractClass(@NotNull PsiElement expression) {
                 PhpClass result = null;
                 if (expression instanceof PhpTypedElement) {
-                    final Project project = expression.getProject();
+                    final Project project = holder.getProject();
                     final PhpType type    = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, project);
                     if (type != null && !type.hasUnknown()) {
                         final Set<String> resolved = type.filterNull().getTypes().stream()

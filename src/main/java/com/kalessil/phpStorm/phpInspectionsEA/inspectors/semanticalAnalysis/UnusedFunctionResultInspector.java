@@ -103,7 +103,7 @@ public class UnusedFunctionResultInspector extends PhpInspection {
             private void analyze(@NotNull FunctionReference reference) {
                 final boolean isTargetContext = OpenapiTypesUtil.isStatementImpl(reference.getParent());
                 if (isTargetContext) {
-                    final Project project  = reference.getProject();
+                    final Project project  = holder.getProject();
                     final PhpType resolved = OpenapiResolveUtil.resolveType(reference, project);
                     if (resolved != null) {
                         final Set<String> types = resolved.filterUnknown().getTypes().stream()

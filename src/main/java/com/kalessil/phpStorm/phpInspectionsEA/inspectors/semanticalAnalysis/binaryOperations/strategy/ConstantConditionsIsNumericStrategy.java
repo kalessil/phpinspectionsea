@@ -41,7 +41,7 @@ final public class ConstantConditionsIsNumericStrategy {
                 } else if (argument instanceof FunctionReference) {
                     final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) argument);
                     if (resolved instanceof Function && OpenapiElementsUtil.getReturnType((Function) resolved) != null) {
-                        final PhpType type = OpenapiResolveUtil.resolveType((FunctionReference) argument, argument.getProject());
+                        final PhpType type = OpenapiResolveUtil.resolveType((FunctionReference) argument, holder.getProject());
                         if (type != null && type.size() == 1) {
                             final boolean isTarget = type.equals(PhpType.INT) || type.equals(PhpType.FLOAT);
                             if (isTarget) {

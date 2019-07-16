@@ -63,16 +63,16 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                                             arguments[1],
                                             messageMisplacedBinaryMode,
                                             ProblemHighlightType.GENERIC_ERROR,
-                                            new TheLocalFix(mode)
+                                            new TheLocalFix(holder.getProject(), mode)
                                     );
                                 }
                             } else if (modeText.indexOf('t') != -1) {
                                 if (ENFORCE_BINARY_MODIFIER_USAGE) {
-                                    holder.registerProblem(arguments[1], messageReplaceWithBinaryMode, new TheLocalFix(mode));
+                                    holder.registerProblem(arguments[1], messageReplaceWithBinaryMode, new TheLocalFix(holder.getProject(), mode));
                                 }
                             } else {
                                 if (ENFORCE_BINARY_MODIFIER_USAGE) {
-                                    holder.registerProblem(arguments[1], messageUseBinaryMode, new TheLocalFix(mode));
+                                    holder.registerProblem(arguments[1], messageUseBinaryMode, new TheLocalFix(holder.getProject(), mode));
                                 }
                             }
                         }
@@ -105,9 +105,9 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
             return title;
         }
 
-        TheLocalFix(@NotNull StringLiteralExpression mode) {
+        TheLocalFix(@NotNull Project project, @NotNull StringLiteralExpression mode) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(mode.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.mode = factory.createSmartPsiElementPointer(mode);
         }

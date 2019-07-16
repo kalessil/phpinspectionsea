@@ -164,7 +164,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 }
 
                 final Set<String> containerTypes = new HashSet<>();
-                final PhpType resolved           = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
+                final PhpType resolved           = OpenapiResolveUtil.resolveType((PhpTypedElement) container, holder.getProject());
                 if (resolved != null) {
                     resolved.filterUnknown().getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
                 }

@@ -51,7 +51,7 @@ public class DateUsageInspector extends BasePhpInspection {
                                     inner,
                                     messageDropTime,
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                    new DropTimeFunctionCallLocalFix(arguments[0], arguments[1])
+                                    new DropTimeFunctionCallLocalFix(holder.getProject(), arguments[0], arguments[1])
                                 );
                             }
                         }
@@ -79,9 +79,9 @@ public class DateUsageInspector extends BasePhpInspection {
             return title;
         }
 
-        DropTimeFunctionCallLocalFix(@NotNull PsiElement from, @NotNull PsiElement to) {
+        DropTimeFunctionCallLocalFix(@NotNull Project project, @NotNull PsiElement from, @NotNull PsiElement to) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.from = factory.createSmartPsiElementPointer(from);
             this.to   = factory.createSmartPsiElementPointer(to);

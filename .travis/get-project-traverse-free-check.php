@@ -11,7 +11,7 @@
             if ($matched) {
                 $violations = array_filter(
                     $candidates[0],
-                    static function (string $call): bool { return $call !== 'holder.getProject()'; }
+                    static function ($call) { return $call !== 'holder.getProject()'; }
                 );
                 if ($violations !== []) {
                     $foundViolations[] = $file->getFilename() . ': ' . implode(', ', $violations);

@@ -63,7 +63,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                                     problemsHolder.registerProblem(
                                             elseStatement.getFirstChild(),
                                             message,
-                                            new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
+                                            new NormalizeWorkflowFix(problemsHolder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                     );
                                 }
                             }
@@ -88,7 +88,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                                         problemsHolder.registerProblem(
                                                 elseStatement.getFirstChild(),
                                                 message,
-                                                new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
+                                                new NormalizeWorkflowFix(problemsHolder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                         );
                                     }
                                 }
@@ -106,9 +106,9 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
         private final SmartPsiElementPointer<PsiElement> condition;
         private final String newCondition;
 
-        NormalizeWorkflowFix(@NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull PsiElement condition, @NotNull String newCondition) {
+        NormalizeWorkflowFix(@NotNull Project project, @NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull PsiElement condition, @NotNull String newCondition) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(condition.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.ifBody       = factory.createSmartPsiElementPointer(ifBody);
             this.elseBody     = factory.createSmartPsiElementPointer(elseBody);

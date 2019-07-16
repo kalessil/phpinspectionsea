@@ -50,7 +50,7 @@ public class ObGetCleanCanBeUsedInspector extends BasePhpInspection {
                                     final String callName = call.getName();
                                     if (callName != null && callName.equals("ob_get_contents")) {
                                         if (this.isFromRootNamespace(reference) && this.isFromRootNamespace(call)) {
-                                            holder.registerProblem(call, message, new SimplifyFixer(parent));
+                                            holder.registerProblem(call, message, new SimplifyFixer(holder.getProject(), parent));
                                         }
                                         return;
                                     }
@@ -80,9 +80,9 @@ public class ObGetCleanCanBeUsedInspector extends BasePhpInspection {
             return title;
         }
 
-        SimplifyFixer(@NotNull PsiElement drop) {
+        SimplifyFixer(@NotNull Project project, @NotNull PsiElement drop) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(drop.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
             this.drop                         = factory.createSmartPsiElementPointer(drop);
         }
 

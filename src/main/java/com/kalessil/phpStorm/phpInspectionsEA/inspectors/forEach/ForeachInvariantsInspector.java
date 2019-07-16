@@ -58,7 +58,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                         holder.registerProblem(
                                                 expression.getFirstChild(),
                                                 foreachInvariant,
-                                                new UseForeachFix(expression, indexVariable, null, container, limit)
+                                                new UseForeachFix(holder.getProject(), expression, indexVariable, null, container, limit)
                                         );
                                 }
                             }
@@ -105,7 +105,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                 if (parent instanceof While) {
                                     final List<PhpPsiElement> variables = assignmentExpression.getVariables();
                                     if (variables.size() == 2) {
-                                        fixer = new UseForeachFix(parent, variables.get(0), variables.get(1), arguments[0], null);
+                                        fixer = new UseForeachFix(holder.getProject(), parent, variables.get(0), variables.get(1), arguments[0], null);
                                     }
                                 }
 
@@ -236,6 +236,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         }
 
         UseForeachFix(
+            @NotNull Project project,
             @NotNull PsiElement loop,
             @NotNull PsiElement index,
             @Nullable PsiElement value,
@@ -243,7 +244,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
             @Nullable PsiElement limit
         ) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(loop.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.loop      = factory.createSmartPsiElementPointer(loop);
             this.index     = factory.createSmartPsiElementPointer(index);

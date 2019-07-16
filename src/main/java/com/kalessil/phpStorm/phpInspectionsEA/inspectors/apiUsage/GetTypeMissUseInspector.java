@@ -109,7 +109,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                         .replace("%p%", arguments[0].getText())
                         .replace("%f%", suggestedName)
                         .replace("%i%", isInverted ? "!" : "");
-                holder.registerProblem(parent, message, new TheLocalFix(suggestedName, arguments[0], isInverted));
+                holder.registerProblem(parent, message, new TheLocalFix(holder.getProject(), suggestedName, arguments[0], isInverted));
             }
         };
     }
@@ -121,11 +121,11 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         final private boolean isInverted;
         final private SmartPsiElementPointer<PsiElement> param;
 
-        TheLocalFix(@NotNull String suggestedName, @NotNull PsiElement param, boolean isInverted) {
+        TheLocalFix(@NotNull Project project, @NotNull String suggestedName, @NotNull PsiElement param, boolean isInverted) {
             super();
 
             this.suggestedName = suggestedName;
-            this.param         = SmartPointerManager.getInstance(param.getProject()).createSmartPsiElementPointer(param);
+            this.param         = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(param);
             this.isInverted    = isInverted;
         }
 

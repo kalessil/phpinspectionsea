@@ -119,7 +119,11 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                         }
                     }
                 }
-                holder.registerProblem(base, String.format(messageThisUsed, method.getName()), new TheLocalFix(base, operator));
+                holder.registerProblem(
+                        base,
+                        String.format(messageThisUsed, method.getName()),
+                        new TheLocalFix(holder.getProject(), base, operator)
+                );
             }
         };
     }
@@ -130,9 +134,9 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         private final SmartPsiElementPointer<PsiElement> variable;
         private final SmartPsiElementPointer<PsiElement> operator;
 
-        TheLocalFix(@NotNull PsiElement variable, @NotNull PsiElement operator) {
+        TheLocalFix(@NotNull Project project, @NotNull PsiElement variable, @NotNull PsiElement operator) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(variable.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.variable = factory.createSmartPsiElementPointer(variable);
             this.operator = factory.createSmartPsiElementPointer(operator);

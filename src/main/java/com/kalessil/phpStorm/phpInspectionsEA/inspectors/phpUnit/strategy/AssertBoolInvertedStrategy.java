@@ -38,7 +38,7 @@ final public class AssertBoolInvertedStrategy {
                 holder.registerProblem(
                         reference,
                         String.format(messagePattern, replacementMethod),
-                        new TheLocalFix(replacementMethod, invertedParam)
+                        new TheLocalFix(holder.getProject(), replacementMethod, invertedParam)
                 );
                 return true;
             }
@@ -53,11 +53,11 @@ final public class AssertBoolInvertedStrategy {
         final private String replacementFunction;
         final private SmartPsiElementPointer<PsiElement> argument;
 
-        TheLocalFix(@NotNull String replacementFunction, @NotNull PsiElement argument) {
+        TheLocalFix(@NotNull Project project, @NotNull String replacementFunction, @NotNull PsiElement argument) {
             super();
 
             this.replacementFunction = replacementFunction;
-            this.argument            = SmartPointerManager.getInstance(argument.getProject()).createSmartPsiElementPointer(argument);
+            this.argument            = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(argument);
         }
 
         @NotNull

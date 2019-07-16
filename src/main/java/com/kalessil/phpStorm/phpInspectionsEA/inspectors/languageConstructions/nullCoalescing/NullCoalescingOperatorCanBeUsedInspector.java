@@ -122,7 +122,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             holder.registerProblem(
                                     expression.getFirstChild(),
                                     String.format(messagePattern, replacement),
-                                    new ReplaceMultipleConstructsFix(previous.getParent(), expression, replacement)
+                                    new ReplaceMultipleConstructsFix(holder.getProject(), previous.getParent(), expression, replacement)
                             );
                         }
                     }
@@ -142,7 +142,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         holder.registerProblem(
                                 expression.getFirstChild(),
                                 String.format(messagePattern, replacement),
-                                new ReplaceMultipleConstructsFix(expression, next, replacement)
+                                new ReplaceMultipleConstructsFix(holder.getProject(), expression, next, replacement)
                         );
                     }
                 }
@@ -166,7 +166,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                     holder.registerProblem(
                                             expression.getFirstChild(),
                                             String.format(messagePattern, replacement),
-                                            new ReplaceMultipleConstructsFix(expression, expression, replacement)
+                                            new ReplaceMultipleConstructsFix(holder.getProject(), expression, expression, replacement)
                                     );
                                 }
                             } else {
@@ -178,7 +178,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                         holder.registerProblem(
                                                 expression.getFirstChild(),
                                                 String.format(messagePattern, replacement),
-                                                new ReplaceMultipleConstructsFix(expression, expression, replacement)
+                                                new ReplaceMultipleConstructsFix(holder.getProject(), expression, expression, replacement)
                                         );
                                     }
                                 }
@@ -285,9 +285,9 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
             return title;
         }
 
-        ReplaceMultipleConstructsFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
+        ReplaceMultipleConstructsFix(@NotNull Project project, @NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.from        = factory.createSmartPsiElementPointer(from);
             this.to          = factory.createSmartPsiElementPointer(to);

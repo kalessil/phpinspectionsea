@@ -62,7 +62,7 @@ final public class QueryUsageStrategy {
                     variableAssigned != null && variableUsed != null &&
                     OpenapiEquivalenceUtil.areEqual(variableAssigned, variableUsed)
                 ) {
-                    holder.registerProblem(reference, message, new UseQueryFix(precedingReference));
+                    holder.registerProblem(reference, message, new UseQueryFix(holder.getProject(), precedingReference));
                 }
 
             }
@@ -74,10 +74,10 @@ final public class QueryUsageStrategy {
 
         private final SmartPsiElementPointer<MethodReference> prepare;
 
-        UseQueryFix(@NotNull MethodReference prepare) {
+        UseQueryFix(@NotNull Project project, @NotNull MethodReference prepare) {
             super();
 
-            this.prepare = SmartPointerManager.getInstance(prepare.getProject()).createSmartPsiElementPointer(prepare);
+            this.prepare = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(prepare);
         }
 
         @NotNull

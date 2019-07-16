@@ -51,7 +51,7 @@ public class ShortListSyntaxCanBeUsedInspector extends PhpInspection {
                     if (OpenapiTypesUtil.isStatementImpl(parent)) {
                         final PsiElement listKeyword = assignment.getFirstChild();
                         if (OpenapiTypesUtil.is(listKeyword, PhpTokenTypes.kwLIST)) {
-                            holder.registerProblem(listKeyword, messageAssign, new TheLocalFix(assignment));
+                            holder.registerProblem(listKeyword, messageAssign, new TheLocalFix(holder.getProject(), assignment));
                         }
                     }
                 }
@@ -68,7 +68,7 @@ public class ShortListSyntaxCanBeUsedInspector extends PhpInspection {
                         PsiElement childNode = foreach.getFirstChild();
                         while (childNode != null && !(childNode instanceof GroupStatement)) {
                             if (OpenapiTypesUtil.is(childNode, PhpTokenTypes.kwLIST)) {
-                                holder.registerProblem(childNode, messageForeach, new TheLocalFix(foreach));
+                                holder.registerProblem(childNode, messageForeach, new TheLocalFix(holder.getProject(), foreach));
                                 break;
                             }
                             childNode = childNode.getNextSibling();
@@ -96,9 +96,9 @@ public class ShortListSyntaxCanBeUsedInspector extends PhpInspection {
             return title;
         }
 
-        TheLocalFix(@NotNull PsiElement context) {
+        TheLocalFix(@NotNull Project project, @NotNull PsiElement context) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(context.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
             this.context = factory.createSmartPsiElementPointer(context);
         }
 

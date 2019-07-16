@@ -78,7 +78,7 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
                                         holder.registerProblem(
                                             fragment,
                                             messageIsset,
-                                            new MergeConstructsFix(expression, fragments, (PhpIsset)firstHit, (PhpIsset)fragment, operator)
+                                            new MergeConstructsFix(holder.getProject(), expression, fragments, (PhpIsset)firstHit, (PhpIsset)fragment, operator)
                                         );
                                         break;
                                     }
@@ -99,7 +99,7 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
                                             holder.registerProblem(
                                                 candidate,
                                                 messageIvertedIsset,
-                                                new MergeConstructsFix(expression, fragments, (PhpIsset)firstHit, (PhpIsset)candidate, operator)
+                                                new MergeConstructsFix(holder.getProject(), expression, fragments, (PhpIsset)firstHit, (PhpIsset)candidate, operator)
                                             );
                                             break;
                                         }
@@ -157,6 +157,7 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
         }
 
         MergeConstructsFix(
+            @NotNull Project project,
             @NotNull BinaryExpression binary,
             @NotNull List<PsiElement> fragments,
             @NotNull PhpIsset first,
@@ -164,7 +165,7 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
             @NotNull IElementType operator
         ) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(binary.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.operator = operator;
             this.binary   = factory.createSmartPsiElementPointer(binary);

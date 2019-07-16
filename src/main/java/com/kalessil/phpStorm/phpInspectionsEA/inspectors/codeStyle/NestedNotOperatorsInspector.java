@@ -81,7 +81,7 @@ public class NestedNotOperatorsInspector extends PhpInspection {
                     final String message =
                             (nestingLevel % 2 == 0 ? messageUseBoolCasting : messageUseSingleNot).replace("%e%", value.getText());
                     final LocalQuickFix fixer =
-                            nestingLevel % 2 == 0 ? new UseCastingLocalFix(value) : new UseSingleNotLocalFix(value);
+                            nestingLevel % 2 == 0 ? new UseCastingLocalFix(holder.getProject(), value) : new UseSingleNotLocalFix(holder.getProject(), value);
                     holder.registerProblem(target, message, fixer);
                 }
             }
@@ -93,10 +93,10 @@ public class NestedNotOperatorsInspector extends PhpInspection {
 
         final SmartPsiElementPointer<PsiElement> value;
 
-        UseSingleNotLocalFix(@NotNull PsiElement value) {
+        UseSingleNotLocalFix(@NotNull Project project, @NotNull PsiElement value) {
             super();
 
-            this.value = SmartPointerManager.getInstance(value.getProject()).createSmartPsiElementPointer(value);
+            this.value = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(value);
         }
 
         @NotNull
@@ -126,10 +126,10 @@ public class NestedNotOperatorsInspector extends PhpInspection {
 
         final SmartPsiElementPointer<PsiElement> value;
 
-        UseCastingLocalFix(@NotNull PsiElement value) {
+        UseCastingLocalFix(@NotNull Project project, @NotNull PsiElement value) {
             super();
 
-            this.value = SmartPointerManager.getInstance(value.getProject()).createSmartPsiElementPointer(value);
+            this.value = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(value);
         }
 
         @NotNull

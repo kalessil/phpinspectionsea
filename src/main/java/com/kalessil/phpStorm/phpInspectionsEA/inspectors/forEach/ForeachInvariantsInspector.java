@@ -62,7 +62,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                                         holder.registerProblem(
                                                 expression.getFirstChild(),
                                                 foreachInvariant,
-                                                new UseForeachFix(expression, indexVariable, null, container, limit)
+                                                new UseForeachFix(holder.getProject(), expression, indexVariable, null, container, limit)
                                         );
                                 }
                             }
@@ -106,7 +106,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                                 holder.registerProblem(
                                         whileStatement.getFirstChild(),
                                         foreachInvariant,
-                                        new UseForeachFix(whileStatement, null, assignment.getVariable(), container, null)
+                                        new UseForeachFix(holder.getProject(), whileStatement, null, assignment.getVariable(), container, null)
                                 );
                             }
                         }
@@ -184,7 +184,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                                 if (parent instanceof While) {
                                     final List<PhpPsiElement> variables = assignmentExpression.getVariables();
                                     if (variables.size() == 2) {
-                                        fixer = new UseForeachFix(parent, variables.get(0), variables.get(1), arguments[0], null);
+                                        fixer = new UseForeachFix(holder.getProject(), parent, variables.get(0), variables.get(1), arguments[0], null);
                                     }
                                 }
 
@@ -315,6 +315,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
         }
 
         UseForeachFix(
+            @NotNull Project project,
             @NotNull PsiElement loop,
             @Nullable PsiElement index,
             @Nullable PsiElement value,
@@ -322,7 +323,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
             @Nullable PsiElement limit
         ) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(loop.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.loop      = factory.createSmartPsiElementPointer(loop);
             this.index     = index == null ? null : factory.createSmartPsiElementPointer(index);

@@ -51,7 +51,7 @@ public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
                     previous = ((PhpDocComment) previous).getPrevPsiSibling();
                 }
                 if (previous instanceof PhpUnset) {
-                    holder.registerProblem(unsetStatement, message, new TheLocalFix(unsetStatement));
+                    holder.registerProblem(unsetStatement, message, new TheLocalFix(holder.getProject(), unsetStatement));
                 }
             }
         };
@@ -74,10 +74,10 @@ public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
             return title;
         }
 
-        TheLocalFix(@NotNull PhpUnset unset) {
+        TheLocalFix(@NotNull Project project, @NotNull PhpUnset unset) {
             super();
 
-            this.unset = SmartPointerManager.getInstance(unset.getProject()).createSmartPsiElementPointer(unset);
+            this.unset = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(unset);
         }
 
         @Override

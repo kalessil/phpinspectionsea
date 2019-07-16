@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.strategy;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
@@ -37,7 +38,7 @@ final public class AssertSameStrategy {
         boolean result = false;
         if (targetMapping.containsKey(methodName)) {
             final PsiElement[] arguments = reference.getParameters();
-            if (arguments.length > 1 && isPrimitiveScalar(arguments[1]) && isPrimitiveScalar(arguments[0])) {
+            if (arguments.length > 1 && isPrimitiveScalar(holder.getProject(), arguments[1]) && isPrimitiveScalar(holder.getProject(), arguments[0])) {
                 final String suggestedAssertion   = targetMapping.get(methodName);
                 final String[] suggestedArguments = new String[arguments.length];
                 Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList()).toArray(suggestedArguments);
@@ -52,10 +53,10 @@ final public class AssertSameStrategy {
         return result;
     }
 
-    static private boolean isPrimitiveScalar(@NotNull PsiElement expression) {
+    static private boolean isPrimitiveScalar(@NotNull Project project, @NotNull PsiElement expression) {
         boolean result = false;
         if (expression instanceof PhpTypedElement) {
-            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, expression.getProject());
+            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, project);
             if (resolved != null && !resolved.hasUnknown()) {
                 result = resolved.getTypes().stream().noneMatch(type -> {
                     final String normalizedType = Types.getType(type);

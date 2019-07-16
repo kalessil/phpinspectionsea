@@ -73,7 +73,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends PhpInspection 
                                         holder.registerProblem(
                                                 reference,
                                                 String.format(patternScopeResolutionUsed, methodName),
-                                                new TheLocalFix(operator, staticCandidate)
+                                                new TheLocalFix(holder.getProject(), operator, staticCandidate)
                                         );
                                     }
                                 }
@@ -86,7 +86,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends PhpInspection 
                                 holder.registerProblem(
                                         reference,
                                         String.format(patternExpressionUsed, reference.getName()),
-                                        new TheLocalFix(operator, null)
+                                        new TheLocalFix(holder.getProject(), operator, null)
                                 );
                             }
                         }
@@ -102,9 +102,9 @@ public class DynamicInvocationViaScopeResolutionInspector extends PhpInspection 
         private final SmartPsiElementPointer<PsiElement> base;
         private final SmartPsiElementPointer<PsiElement> operator;
 
-        TheLocalFix(@NotNull PsiElement operator, @Nullable PsiElement base) {
+        TheLocalFix(@NotNull Project project, @NotNull PsiElement operator, @Nullable PsiElement base) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(operator.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.base     = base == null ? null : factory.createSmartPsiElementPointer(base);
             this.operator = factory.createSmartPsiElementPointer(operator);

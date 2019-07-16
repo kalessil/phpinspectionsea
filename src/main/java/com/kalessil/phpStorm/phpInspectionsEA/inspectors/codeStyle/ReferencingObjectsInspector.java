@@ -101,7 +101,7 @@ public class ReferencingObjectsInspector extends PhpInspection {
                                 holder.registerProblem(
                                         parameter,
                                         String.format(messageParameter, parameter.getName()),
-                                        new ParameterLocalFix(parameter)
+                                        new ParameterLocalFix(holder.getProject(), parameter)
                                 )
                         );
                 }
@@ -161,10 +161,10 @@ public class ReferencingObjectsInspector extends PhpInspection {
 
         final private SmartPsiElementPointer<Parameter> parameter;
 
-        ParameterLocalFix(@NotNull Parameter parameter) {
+        ParameterLocalFix(@NotNull Project project, @NotNull Parameter parameter) {
             super();
 
-            this.parameter = SmartPointerManager.getInstance(parameter.getProject()).createSmartPsiElementPointer(parameter);
+            this.parameter = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(parameter);
         }
 
         @NotNull

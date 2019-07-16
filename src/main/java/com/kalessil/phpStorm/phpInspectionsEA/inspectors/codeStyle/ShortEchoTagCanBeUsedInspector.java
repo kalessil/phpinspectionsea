@@ -65,7 +65,11 @@ public class ShortEchoTagCanBeUsedInspector extends PhpInspection {
                         closingTag = closingTag.getNextSibling();
                     }
                     if (OpenapiTypesUtil.is(closingTag, PhpTokenTypes.PHP_CLOSING_TAG)) {
-                        holder.registerProblem(target.getFirstChild(), message, new UseShortEchoTagInspector(openingTag, context));
+                        holder.registerProblem(
+                                target.getFirstChild(),
+                                message,
+                                new UseShortEchoTagInspector(holder.getProject(), openingTag, context)
+                        );
                     }
                 }
             }
@@ -78,9 +82,9 @@ public class ShortEchoTagCanBeUsedInspector extends PhpInspection {
         private final SmartPsiElementPointer<PsiElement> expression;
         private final SmartPsiElementPointer<PsiElement> tag;
 
-        private UseShortEchoTagInspector(@NotNull PsiElement tag, @NotNull PsiElement expression) {
+        private UseShortEchoTagInspector(@NotNull Project project, @NotNull PsiElement tag, @NotNull PsiElement expression) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(tag.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
             this.tag        = factory.createSmartPsiElementPointer(tag);
             this.expression = factory.createSmartPsiElementPointer(expression);
         }

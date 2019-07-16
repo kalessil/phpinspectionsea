@@ -51,7 +51,7 @@ final public class AssertBoolOfComparisonStrategy {
                     final String replacementMethod = "assert" +
                         (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
                     final String message = messagePattern.replace("%m%", replacementMethod);
-                    holder.registerProblem(reference, message, new TheLocalFix(replacementMethod, left, right));
+                    holder.registerProblem(reference, message, new TheLocalFix(holder.getProject(), replacementMethod, left, right));
 
                     return true;
                 }
@@ -68,9 +68,9 @@ final public class AssertBoolOfComparisonStrategy {
         private final SmartPsiElementPointer<PsiElement> first;
         private final SmartPsiElementPointer<PsiElement> second;
 
-        TheLocalFix(@NotNull String replacementFunction, @NotNull PsiElement first, @NotNull PsiElement second) {
+        TheLocalFix(@NotNull Project project, @NotNull String replacementFunction, @NotNull PsiElement first, @NotNull PsiElement second) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(first.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.replacementFunction = replacementFunction;
             this.first               = factory.createSmartPsiElementPointer(first);

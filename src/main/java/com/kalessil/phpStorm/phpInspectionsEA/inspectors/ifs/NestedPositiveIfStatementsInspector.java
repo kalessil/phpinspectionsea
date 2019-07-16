@@ -60,7 +60,7 @@ public class NestedPositiveIfStatementsInspector extends PhpInspection {
                                 holder.registerProblem(
                                         expression.getFirstChild(),
                                         message,
-                                        new MergeIntoParentIfFix(expression, parentIf)
+                                        new MergeIntoParentIfFix(holder.getProject(), expression, parentIf)
                                 );
                             }
                         }
@@ -70,7 +70,7 @@ public class NestedPositiveIfStatementsInspector extends PhpInspection {
                             holder.registerProblem(
                                     expression.getFirstChild(),
                                     message,
-                                    new MergeIntoParentElseFix(expression, (Else) parentConstruct)
+                                    new MergeIntoParentElseFix(holder.getProject(), expression, (Else) parentConstruct)
                             );
                         }
                     }
@@ -132,9 +132,9 @@ public class NestedPositiveIfStatementsInspector extends PhpInspection {
             return title + " (else)";
         }
 
-        MergeIntoParentElseFix(@NotNull If target, @NotNull Else parent) {
+        MergeIntoParentElseFix(@NotNull Project project, @NotNull If target, @NotNull Else parent) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.target = factory.createSmartPsiElementPointer(target);
             this.parent = factory.createSmartPsiElementPointer(parent);
@@ -171,9 +171,9 @@ public class NestedPositiveIfStatementsInspector extends PhpInspection {
             return title + " (if)";
         }
 
-        MergeIntoParentIfFix(@NotNull If target, @NotNull If parent) {
+        MergeIntoParentIfFix(@NotNull Project project, @NotNull If target, @NotNull If parent) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.target = factory.createSmartPsiElementPointer(target);
             this.parent = factory.createSmartPsiElementPointer(parent);

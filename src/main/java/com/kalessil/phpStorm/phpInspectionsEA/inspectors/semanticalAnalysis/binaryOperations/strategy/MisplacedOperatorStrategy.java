@@ -76,7 +76,7 @@ final public class MisplacedOperatorStrategy {
                                             .replace("%o%", operator.getText())
                                             .replace("%c%", call.getText())
                                             .replace(expression.getText(), leftOperand.getText());
-                                    holder.registerProblem(operator, message, new MisplacedOperatorFix(replacement, call));
+                                    holder.registerProblem(operator, message, new MisplacedOperatorFix(holder.getProject(), replacement, call));
                                     return true;
                                 }
                             }
@@ -108,11 +108,11 @@ final public class MisplacedOperatorStrategy {
             return title;
         }
 
-        MisplacedOperatorFix(@NotNull String expression, @NotNull PsiElement call) {
+        MisplacedOperatorFix(@NotNull Project project, @NotNull String expression, @NotNull PsiElement call) {
             super();
 
             this.expression = expression;
-            this.call       = SmartPointerManager.getInstance(call.getProject()).createSmartPsiElementPointer(call);
+            this.call       = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(call);
         }
 
         @Override

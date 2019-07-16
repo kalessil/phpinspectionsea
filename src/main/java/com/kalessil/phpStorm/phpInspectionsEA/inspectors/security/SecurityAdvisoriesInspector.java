@@ -264,7 +264,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                     holder.registerProblem(
                             productionRequire.getFirstChild(),
                             message,
-                            new AddAdvisoriesFix(productionRequire, developmentRequire)
+                            new AddAdvisoriesFix(holder.getProject(), productionRequire, developmentRequire)
                     );
                 }
             }
@@ -277,9 +277,9 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         private final SmartPsiElementPointer<JsonProperty> productionRequire;
         private final SmartPsiElementPointer<JsonProperty> developmentRequire;
 
-        AddAdvisoriesFix(@NotNull JsonProperty productionRequire, @Nullable JsonProperty developmentRequire) {
+        AddAdvisoriesFix(@NotNull Project project, @NotNull JsonProperty productionRequire, @Nullable JsonProperty developmentRequire) {
             super();
-            final SmartPointerManager manager = SmartPointerManager.getInstance(productionRequire.getProject());
+            final SmartPointerManager manager = SmartPointerManager.getInstance(project);
             this.productionRequire  = manager.createSmartPsiElementPointer(productionRequire);
             this.developmentRequire = developmentRequire == null ? null : manager.createSmartPsiElementPointer(developmentRequire);
         }

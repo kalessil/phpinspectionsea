@@ -54,7 +54,7 @@ public class OffsetOperationsInspector extends PhpInspection {
 
                 // ensure offsets operations are supported, do nothing if no types were resolved
                 final Set<String> allowedIndexTypes = new HashSet<>();
-                if (!isContainerSupportsArrayAccess(expression, allowedIndexTypes) && !allowedIndexTypes.isEmpty()) {
+                if (!isContainerSupportsArrayAccess(holder.getProject(), expression, allowedIndexTypes) && !allowedIndexTypes.isEmpty()) {
                     holder.registerProblem(
                             expression,
                             String.format(patternNoOffsetSupport, expression.getValue().getText(), allowedIndexTypes.toString())
@@ -93,7 +93,7 @@ public class OffsetOperationsInspector extends PhpInspection {
         };
     }
 
-    private boolean isContainerSupportsArrayAccess(@NotNull ArrayAccessExpression expression, @NotNull Set<String> indexTypesSupported) {
+    private boolean isContainerSupportsArrayAccess(@NotNull Project project, @NotNull ArrayAccessExpression expression, @NotNull Set<String> indexTypesSupported) {
 
         // ok JB parses `$var[]= ...` always as array, lets make it working properly and report them later
         final PsiElement container = expression.getValue();
@@ -103,7 +103,7 @@ public class OffsetOperationsInspector extends PhpInspection {
 
         final Set<String> containerTypes = new HashSet<>();
         if (container instanceof PhpTypedElement) {
-            final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
+            final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
             if (type != null && !type.hasUnknown()) {
                 type.getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
                 Stream.of(Types.strSelf, Types.strStatic).forEach(containerTypes::remove);
@@ -137,7 +137,6 @@ public class OffsetOperationsInspector extends PhpInspection {
             return true;
         }
 
-        final Project project   = container.getProject();
         final PhpIndex index    = PhpIndex.getInstance(project);
         boolean supportsOffsets = false;
         for (final String typeToCheck : containerTypes) {

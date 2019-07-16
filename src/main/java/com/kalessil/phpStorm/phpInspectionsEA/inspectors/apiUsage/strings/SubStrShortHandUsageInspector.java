@@ -82,7 +82,7 @@ public class SubStrShortHandUsageInspector extends PhpInspection {
                                                     arguments[2],
                                                     String.format(patternDropLength, arguments[2].getText()),
                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                    new DropThirdParameterFix(reference)
+                                                    new DropThirdParameterFix(holder.getProject(), reference)
                                             );
                                         } else if (OpenapiTypesUtil.isNumber(startOffset) && OpenapiTypesUtil.isNumber(right)) {
                                             try {
@@ -100,7 +100,7 @@ public class SubStrShortHandUsageInspector extends PhpInspection {
                                                             arguments[2],
                                                             String.format(patternDropLength, arguments[2].getText()),
                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                            new DropThirdParameterFix(reference)
+                                                            new DropThirdParameterFix(holder.getProject(), reference)
                                                     );
                                                 }
                                             } catch (final NumberFormatException expected) {
@@ -122,9 +122,9 @@ public class SubStrShortHandUsageInspector extends PhpInspection {
 
         final private SmartPsiElementPointer<FunctionReference> call;
 
-        DropThirdParameterFix(@NotNull FunctionReference call){
+        DropThirdParameterFix(@NotNull Project project, @NotNull FunctionReference call){
             super();
-            this.call = SmartPointerManager.getInstance(call.getProject()).createSmartPsiElementPointer(call);
+            this.call = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(call);
         }
 
         @NotNull

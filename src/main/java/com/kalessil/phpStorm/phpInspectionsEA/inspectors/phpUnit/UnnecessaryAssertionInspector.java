@@ -84,7 +84,7 @@ public class UnnecessaryAssertionInspector extends PhpInspection {
                             holder.registerProblem(
                                     innerReference,
                                     messageExpectsAny,
-                                    new RemoveExpectsAssertionFixer(reference, reference.getFirstChild())
+                                    new RemoveExpectsAssertionFixer(holder.getProject(), reference, reference.getFirstChild())
                             );
                         }
                     }
@@ -159,9 +159,9 @@ public class UnnecessaryAssertionInspector extends PhpInspection {
             return title;
         }
 
-        RemoveExpectsAssertionFixer(@NotNull PsiElement assertion, @NotNull PsiElement base) {
+        RemoveExpectsAssertionFixer(@NotNull Project project, @NotNull PsiElement assertion, @NotNull PsiElement base) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(assertion.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
             this.assertion                    = factory.createSmartPsiElementPointer(assertion);
             this.base                         = factory.createSmartPsiElementPointer(base);
         }

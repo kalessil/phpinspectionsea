@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -64,7 +65,7 @@ public class ForeachSourceInspector extends PhpInspection {
                 if (source instanceof PhpTypedElement) {
                     final boolean skip = this.isEnsuredByPyParentIf(foreach, source) || this.isValueAnnotated(foreach);
                     if (!skip) {
-                        this.analyseContainer(source);
+                        this.analyseContainer(source, holder.getProject());
                     }
                 }
             }
@@ -117,8 +118,8 @@ public class ForeachSourceInspector extends PhpInspection {
                 return result;
             }
 
-            private void analyseContainer(@NotNull PsiElement container) {
-                final PhpType resolvedType = OpenapiResolveUtil.resolveType((PhpTypedElement) container, container.getProject());
+            private void analyseContainer(@NotNull PsiElement container, @NotNull Project project) {
+                final PhpType resolvedType = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
                 if (resolvedType == null) {
                     return;
                 }

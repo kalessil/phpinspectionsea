@@ -4,6 +4,7 @@
     $sourcesPath = $basePath . '/src/main/java';
 
     $missingChecks = [];
+    /** @var \SplFileInfo $file */
     foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($sourcesPath)) as $file) {
         if ($file->getExtension() === 'java') {
             $content      = file_get_contents($file->getPathname());

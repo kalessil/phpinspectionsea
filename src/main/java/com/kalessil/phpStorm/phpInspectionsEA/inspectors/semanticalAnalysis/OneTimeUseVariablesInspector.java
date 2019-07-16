@@ -137,7 +137,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             holder.registerProblem(
                                     assignVariable,
                                     messagePattern.replace("%v%", variableName),
-                                    new TheLocalFix(assign.getParent(), argument, assignValue)
+                                    new TheLocalFix(holder.getProject(), assign.getParent(), argument, assignValue)
                             );
                         }
                     }
@@ -249,9 +249,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
         private final SmartPsiElementPointer<PsiElement> value;
         private final SmartPsiElementPointer<Variable> variable;
 
-        TheLocalFix(@NotNull PsiElement assignment, @NotNull Variable variable, @NotNull PsiElement value) {
+        TheLocalFix(@NotNull Project project, @NotNull PsiElement assignment, @NotNull Variable variable, @NotNull PsiElement value) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.assignment = factory.createSmartPsiElementPointer(assignment);
             this.variable   = factory.createSmartPsiElementPointer(variable);

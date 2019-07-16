@@ -62,7 +62,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                         final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
                         if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
                             final String message = String.format(messagePattern, method.getName());
-                            holder.registerProblem(methodName, message, new MemberVisibilityFix(modifiers));
+                            holder.registerProblem(methodName, message, new MemberVisibilityFix(holder.getProject(), modifiers));
                         }
                     }
                 }
@@ -77,13 +77,13 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             /* {const}.isPublic() always returns true, even if visibility is not declared */
                             if (ANALYZE_CONSTANTS && checkConstantVisibility && field.getPrevPsiSibling() == null) {
                                 final String message = String.format(messagePattern, field.getName());
-                                holder.registerProblem(fieldName, message, new ConstantVisibilityFix(field));
+                                holder.registerProblem(fieldName, message, new ConstantVisibilityFix(holder.getProject(), field));
                             }
                         } else {
                             final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
                             if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
                                 final String message = String.format(messagePattern, field.getName());
-                                holder.registerProblem(fieldName, message, new MemberVisibilityFix(modifiers));
+                                holder.registerProblem(fieldName, message, new MemberVisibilityFix(holder.getProject(), modifiers));
                             }
                         }
                     }
@@ -116,10 +116,10 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
             return title;
         }
 
-        MemberVisibilityFix(@NotNull PhpModifierList modifiers) {
+        MemberVisibilityFix(@NotNull Project project, @NotNull PhpModifierList modifiers) {
             super();
 
-            this.modifiersReference = SmartPointerManager.getInstance(modifiers.getProject()).createSmartPsiElementPointer(modifiers);
+            this.modifiersReference = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(modifiers);
         }
 
         @Override
@@ -157,10 +157,10 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
             return title;
         }
 
-        ConstantVisibilityFix(@NotNull Field constField) {
+        ConstantVisibilityFix(@NotNull Project project, @NotNull Field constField) {
             super();
 
-            this.constFieldReference = SmartPointerManager.getInstance(constField.getProject()).createSmartPsiElementPointer(constField);
+            this.constFieldReference = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(constField);
         }
 
         @Override

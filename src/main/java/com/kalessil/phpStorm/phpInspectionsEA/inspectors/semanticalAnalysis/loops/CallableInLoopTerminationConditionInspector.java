@@ -39,7 +39,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             public void visitPhpFor(final For forStatement) {
                 final PhpPsiElement[] conditions = forStatement.getConditionalExpressions();
@@ -49,7 +49,12 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
                         OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
                         OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())
                     ) {
-                        problemsHolder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(forStatement, condition));
+                        holder.registerProblem(
+                                condition,
+                                message,
+                                ProblemHighlightType.GENERIC_ERROR,
+                                new TheLocalFix(holder.getProject(), forStatement, condition)
+                        );
                     }
                 }
             }
@@ -62,9 +67,9 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
         private final SmartPsiElementPointer<For> forStatement;
         private final SmartPsiElementPointer<BinaryExpression> condition;
 
-        TheLocalFix(@NotNull For forStatement, @NotNull BinaryExpression condition) {
+        TheLocalFix(@NotNull Project project, @NotNull For forStatement, @NotNull BinaryExpression condition) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(forStatement.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.forStatement = factory.createSmartPsiElementPointer(forStatement);
             this.condition    = factory.createSmartPsiElementPointer(condition);

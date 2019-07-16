@@ -86,7 +86,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                                     holder.registerProblem(
                                             statement.getFirstChild(),
                                             message,
-                                            new SimplifyFix(statement, elseBranch == null ? second : statement, replacement)
+                                            new SimplifyFix(holder.getProject(), statement, elseBranch == null ? second : statement, replacement)
                                     );
                                 }
                             }
@@ -104,9 +104,9 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         final private SmartPsiElementPointer<PsiElement> to;
         final String replacement;
 
-        SimplifyFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
+        SimplifyFix(@NotNull Project project, @NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.from        = factory.createSmartPsiElementPointer(from);
             this.to          = factory.createSmartPsiElementPointer(to);

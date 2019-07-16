@@ -38,7 +38,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
 
     @NotNull
     @Override
-    public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+    public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpElse(@NotNull Else elseStatement) {
@@ -60,10 +60,10 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                                 final PsiElement extractedCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
                                 if (extractedCondition != null && !(extractedCondition instanceof PhpEmpty)) {
                                     final String newCondition = extractedCondition.getText();
-                                    problemsHolder.registerProblem(
+                                    holder.registerProblem(
                                             elseStatement.getFirstChild(),
                                             message,
-                                            new NormalizeWorkflowFix(problemsHolder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
+                                            new NormalizeWorkflowFix(holder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                     );
                                 }
                             }
@@ -85,10 +85,10 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                                     /* if managed to extract condition, then proceed with reporting */
                                     if (extractedCondition != null) {
                                         final String newCondition = String.format("%s !== %s", left.getText(), right.getText());
-                                        problemsHolder.registerProblem(
+                                        holder.registerProblem(
                                                 elseStatement.getFirstChild(),
                                                 message,
-                                                new NormalizeWorkflowFix(problemsHolder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
+                                                new NormalizeWorkflowFix(holder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                         );
                                     }
                                 }

@@ -89,14 +89,14 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                                 holder.registerProblem(
                                     functionCall,
                                     messageCascading,
-                                    new MergeStringReplaceCallsFix(functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
+                                    new MergeStringReplaceCallsFix(holder.getProject(), functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
                                 );
                             }
                         }
                     }
 
                     /* case: nested replacements */
-                    this.checkNestedCalls(arguments[2], functionCall);
+                    this.checkNestedCalls(holder.getProject(), arguments[2], functionCall);
 
                     /* case: search/replace simplification */
                     final PsiElement replace = arguments[1];
@@ -134,7 +134,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 replacements.clear();
             }
 
-            private void checkNestedCalls(@NotNull PsiElement callCandidate, @NotNull FunctionReference parentCall) {
+            private void checkNestedCalls(@NotNull Project project, @NotNull PsiElement callCandidate, @NotNull FunctionReference parentCall) {
                 if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
                     final FunctionReference call = (FunctionReference) callCandidate;
                     final String functionName    = call.getName();
@@ -142,7 +142,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         holder.registerProblem(
                             callCandidate,
                             messageNesting,
-                            new MergeStringReplaceCallsFix(parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
+                            new MergeStringReplaceCallsFix(project, parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
                         );
                     }
                 }
@@ -229,9 +229,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         final private SmartPsiElementPointer<FunctionReference> eliminate;
         final private boolean useShortSyntax;
 
-        MergeStringReplaceCallsFix(@NotNull FunctionReference patch, @NotNull FunctionReference eliminate, boolean useShortSyntax) {
+        MergeStringReplaceCallsFix(@NotNull Project project, @NotNull FunctionReference patch, @NotNull FunctionReference eliminate, boolean useShortSyntax) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(patch.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.patch          = factory.createSmartPsiElementPointer(patch);
             this.eliminate      = factory.createSmartPsiElementPointer(eliminate);
@@ -256,16 +256,15 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             final FunctionReference eliminate = this.eliminate.getElement();
             if (patch != null && eliminate != null && !project.isDisposed()) {
                 synchronized (eliminate.getContainingFile()) {
-                    this.mergeReplaces(patch, eliminate);
-                    this.mergeArguments(patch.getParameters()[0], eliminate.getParameters()[0]);
+                    this.mergeReplaces(project, patch, eliminate);
+                    this.mergeArguments(project, patch.getParameters()[0], eliminate.getParameters()[0]);
                     this.mergeSources(patch, eliminate);
-                    this.applyArraySyntax(patch, this.useShortSyntax);
+                    this.applyArraySyntax(project, patch, this.useShortSyntax);
                 }
             }
         }
 
-        private void mergeArguments(@NotNull PsiElement to, @NotNull PsiElement from) {
-            final Project project = to.getProject();
+        private void mergeArguments(@NotNull Project project, @NotNull PsiElement to, @NotNull PsiElement from) {
             if (to instanceof ArrayCreationExpression) {
                 final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
                 final PsiElement firstValue = ((ArrayCreationExpression) to).getFirstPsiChild();
@@ -320,7 +319,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             return what;
         }
 
-        private void mergeReplaces(@NotNull FunctionReference to, @NotNull FunctionReference from) {
+        private void mergeReplaces(@NotNull Project project, @NotNull FunctionReference to, @NotNull FunctionReference from) {
             /* normalization here */
             final PsiElement fromNormalized = this.unbox(from.getParameters()[1]);
             final PsiElement toRaw          = to.getParameters()[1];
@@ -340,13 +339,13 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
             if (needsFurtherFixing) {
                 /* in order to perform the proper merging we'll need to expand short-hand replacement definitions */
-                this.expandReplacement(to);
-                this.expandReplacement(from);
-                this.mergeArguments(to.getParameters()[1], from.getParameters()[1]);
+                this.expandReplacement(project, to);
+                this.expandReplacement(project, from);
+                this.mergeArguments(project, to.getParameters()[1], from.getParameters()[1]);
             }
         }
 
-        private void expandReplacement(@NotNull FunctionReference call) {
+        private void expandReplacement(@NotNull Project project, @NotNull FunctionReference call) {
             final PsiElement[] arguments = call.getParameters();
             final PsiElement search      = arguments[0];
             final PsiElement replace     = arguments[1];
@@ -356,7 +355,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     final List<String> replaces = Collections.nCopies(searchesCount, replace.getText());
                     replace.replace(
                         PhpPsiElementFactory.createPhpPsiFromText(
-                            call.getProject(),
+                            project,
                             ArrayCreationExpression.class,
                             String.format("array(%s)", String.join(", ", replaces))
                         )
@@ -377,7 +376,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             }
         }
 
-        private void applyArraySyntax(@NotNull FunctionReference patch, boolean useShortSyntax) {
+        private void applyArraySyntax(@NotNull Project project, @NotNull FunctionReference patch, boolean useShortSyntax) {
             final List<String> arguments = new ArrayList<>();
             for (final PsiElement argument : patch.getParameters()) {
                 if (argument instanceof ArrayCreationExpression) {
@@ -395,7 +394,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             }
 
             final String replacement = String.format("%s%s(%s)", patch.getImmediateNamespaceName(), patch.getName(), String.join(", ", arguments));
-            patch.replace(PhpPsiElementFactory.createPhpPsiFromText(patch.getProject(), FunctionReference.class, replacement));
+            patch.replace(PhpPsiElementFactory.createPhpPsiFromText(project, FunctionReference.class, replacement));
             arguments.clear();
         }
     }

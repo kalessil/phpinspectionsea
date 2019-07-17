@@ -456,6 +456,10 @@
         shortName="PhpUnitDeprecationsInspection"                 displayName="PhpUnit: API deprecations"
         groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitDeprecationsInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="UnusedMockInspection"                          displayName="PhpUnit: unused mocks"
+        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.UnusedMockInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

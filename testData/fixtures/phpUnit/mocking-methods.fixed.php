@@ -6,7 +6,9 @@ class CasesHolderTest
         $mock->method('method')->will($this->returnCallback(function () {}));
         $mock->method('method')->will($this->returnValue('...'));
 
-        $mock = $this->getMockBuilder(CasesHolderTest::class)->getMock();
+        $mock = $this->getMockBuilder(CasesHolderTest::class)
+            ->setMethods(['injectedMethod'])
+            ->getMock();
 
         $mock->method('finalMethod')->willReturn(null);
         $mock->method('missingMethod')->willReturn(null);
@@ -15,6 +17,7 @@ class CasesHolderTest
         $mock->expects()->method('missingMethod')->willReturn(null);
 
         $mock->method('method')->willReturn(null);
+        $mock->method('injectedMethod')->willReturn(null);
     }
 
     final public function finalMethod() {}

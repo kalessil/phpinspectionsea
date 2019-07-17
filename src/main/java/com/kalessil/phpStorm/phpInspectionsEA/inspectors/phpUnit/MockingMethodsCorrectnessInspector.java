@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -83,11 +84,25 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
                     /* Handle following construct ->getMockBuilder(::class)->getMock() +  */
                     final PsiElement source = variants.iterator().next();
                     if (source instanceof MethodReference && "getMock".equals(((MethodReference) source).getName())) {
-                        final Optional<MethodReference> builder
-                                = PsiTreeUtil.findChildrenOfType(source, MethodReference.class).stream()
-                                    .filter(reference -> "getMockBuilder".equals(reference.getName()))
-                                    .findFirst();
+                        final Optional<MethodReference> builder = PsiTreeUtil.findChildrenOfType(source, MethodReference.class).stream()
+                                .filter(reference -> "getMockBuilder".equals(reference.getName()))
+                                .findFirst();
                         if (builder.isPresent()) {
+                            /* find out if the method has been set with setMethods() method */
+                            final Optional<MethodReference> methodsSetter = PsiTreeUtil.findChildrenOfType(source, MethodReference.class).stream()
+                                    .filter(reference -> "setMethods".equals(reference.getName()))
+                                    .findFirst();
+                            if (methodsSetter.isPresent()) {
+                                final PsiElement[] methodSetterArguments = methodsSetter.get().getParameters();
+                                if (methodSetterArguments.length > 0 && methodSetterArguments[0] instanceof ArrayCreationExpression) {
+                                    final boolean isSet = PsiTreeUtil.findChildrenOfType(methodSetterArguments[0], StringLiteralExpression.class).stream()
+                                            .anyMatch(l -> OpenapiEquivalenceUtil.areEqual(l, methodName));
+                                    if (isSet) {
+                                        return;
+                                    }
+                                }
+                            }
+                            /* find out which class it was and check if it has the method */
                             final PsiElement[] builderArguments = builder.get().getParameters();
                             if (builderArguments.length == 1 && builderArguments[0] instanceof ClassConstantReference) {
                                 final ClassConstantReference clazz = (ClassConstantReference) builderArguments[0];

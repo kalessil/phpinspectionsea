@@ -1,8 +1,11 @@
 <?php
 
-    class ClassMethodDefinedHere {
+    trait TraitWithSameMethods {
+        protected function traitMethodDuplicate() { return $this->classMethodDuplicate(); }
+    }
 
-        protected function method()
+    class ClassWithSameMethods {
+        protected function classMethodDuplicate()
         {
             // single-line comment here
             $x = [];
@@ -12,40 +15,18 @@
             return $x;
         }
 
-        protected function methodProxy($x)
-        {
-            return $this->method();
-        }
-
-        private function methodDuplicate($x)
-        {
-            return $this->method();
-        }
-
-        protected function abc()
-        {
-            echo 1;
-        }
-
+        protected function protectedMethodProxy($x) { return $this->classMethodDuplicate(); }
+        private function privateMethodProxy($x) { return $this->classMethodDuplicate(); }
+        protected function abc() { echo 1; }
     }
 
-    class ClassTransitive extends ClassMethodDefinedHere {}
+    class ClassDuplicates extends ClassWithSameMethods {
+        use TraitWithSameMethods;
 
-    class ClassDuplicates extends ClassTransitive {
-
-        public function methodProxy($x)
+        public function protectedMethodProxy($x)
         {
-            return parent::methodProxy($x);
+            return parent::protectedMethodProxy($x);
         }
-
-        public function methodDuplicate($x)
-        {
-            return $this->method();
-        }
-
-        protected function abc()
-        {
-            echo 2;
-        }
-
+        public function privateMethodProxy($x) { return $this->classMethodDuplicate(); }
+        protected function abc() { echo 2; }
     }

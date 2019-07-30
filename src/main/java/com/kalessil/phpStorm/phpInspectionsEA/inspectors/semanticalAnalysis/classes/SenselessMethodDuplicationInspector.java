@@ -53,15 +53,22 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                 if (!method.isAbstract() && !method.isDeprecated() && !this.isTestContext(method)) {
                     final PhpClass clazz = method.getContainingClass();
                     if (clazz != null && !clazz.isTrait() && !clazz.isInterface()) {
+                        final String methodName = method.getName();
                         /* pattern: parent method duplication */
                         final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                         if (parent != null) {
-                            final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, method.getName());
-                            if (parentMethod != null) {
-                                final boolean matching = !parentMethod.isAbstract() && !parentMethod.isDeprecated() && this.areMatching(method, parentMethod);
-                                if (matching) {
-                                    this.doReporting(method, parentMethod);
-                                }
+                            final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
+                            final boolean matching    = parentMethod != null && !parentMethod.isAbstract() && !parentMethod.isDeprecated() && this.areMatching(method, parentMethod);
+                            if (matching) {
+                                this.doReporting(method, parentMethod, true);
+                            }
+                        }
+                        /* pattern: used trait method duplication */
+                        for (final PhpClass trait : clazz.getTraits()) {
+                            final Method traitMethod = OpenapiResolveUtil.resolveMethod(trait, methodName);
+                            final boolean matching   = traitMethod != null && !traitMethod.isAbstract() && !traitMethod.isDeprecated() && this.areMatching(method, traitMethod);
+                            if (matching) {
+                                this.doReporting(method, traitMethod, false);
                             }
                         }
                     }
@@ -109,7 +116,7 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                 return false;
             }
 
-            private void doReporting(@NotNull Method ownMethod, @NotNull Method overriddenMethod) {
+            private void doReporting(@NotNull Method ownMethod, @NotNull Method overriddenMethod, boolean canUseProxy) {
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(ownMethod);
                 if (methodName != null) {
                     final boolean canFix = !overriddenMethod.getAccess().isPrivate();
@@ -119,7 +126,7 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                                 String.format(messagePatternIdentical, ownMethod.getName(), ownMethod.getFQN().replace(".", "::")),
                                 canFix ? new DropMethodFix() : null
                         );
-                    } else {
+                    } else if (canUseProxy) {
                         holder.registerProblem(
                                 methodName,
                                 String.format(messagePatternProxy, ownMethod.getName()),

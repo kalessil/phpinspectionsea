@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
     public int MAX_METHOD_SIZE = 20;
     /* TODO: configurable via drop-down; clean code: 20 lines/method; PMD: 50; Checkstyle: 100 */
 
-    private static final String messagePatternIdentical = "'%s' method can be dropped, as it identical to parent's one.";
+    private static final String messagePatternIdentical = "'%s' method can be dropped, as it identical to '%s'.";
     private static final String messagePatternProxy     = "'%s' method should call parent's one instead of duplicating code.";
 
     @NotNull
@@ -45,7 +45,7 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new GenericPhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.shouldSkipAnalysis(method, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
@@ -115,7 +115,7 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                     if (method.getAccess().equals(parentMethod.getAccess())) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(messagePatternIdentical, method.getName()),
+                                String.format(messagePatternIdentical, method.getName(), method.getFQN().replace(".", "::")),
                                 canFix ? new DropMethodFix() : null
                         );
                     } else {

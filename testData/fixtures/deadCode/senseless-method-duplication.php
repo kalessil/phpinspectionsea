@@ -33,7 +33,7 @@
 
     class ClassDuplicates extends ClassTransitive {
 
-        protected function <weak_warning descr="'method' method can be dropped, as it identical to parent's one.">method</weak_warning> ()
+        protected function <weak_warning descr="'method' method can be dropped, as it identical to '\ClassDuplicates::method'.">method</weak_warning> ()
         {
             // single-line comment here
             $x = [];

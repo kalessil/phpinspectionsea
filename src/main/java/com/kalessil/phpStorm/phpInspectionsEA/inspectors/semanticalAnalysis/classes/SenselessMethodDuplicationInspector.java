@@ -46,7 +46,6 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new FeaturedPhpElementVisitor() {
-
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.shouldSkipAnalysis(method, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
@@ -86,10 +85,13 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                             while (overriddenExpression instanceof PhpDocComment) {
                                 overriddenExpression = overriddenExpression.getNextPsiSibling();
                             }
-                            if (ownExpression == null || overriddenExpression == null || !OpenapiEquivalenceUtil.areEqual(ownExpression, overriddenExpression)) {
+                            if (ownExpression == null || overriddenExpression == null) {
+                                break;
+                            }
+                            if (!OpenapiEquivalenceUtil.areEqual(ownExpression, overriddenExpression)) {
                                 return false;
                             }
-                            ownExpression    = ownExpression.getNextPsiSibling();
+                            ownExpression        = ownExpression.getNextPsiSibling();
                             overriddenExpression = overriddenExpression.getNextPsiSibling();
                         }
 

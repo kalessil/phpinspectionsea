@@ -32,7 +32,7 @@ final public class MistypedLogicalOperatorsStrategy {
             final PsiElement right  = expression.getRightOperand();
             if (left != null && right != null) {
                 final boolean hasNumber = OpenapiTypesUtil.isNumber(right) || OpenapiTypesUtil.isNumber(left);
-                final boolean isTarget  = !hasNumber && (!isIntegerType(left) || !isIntegerType(right));
+                final boolean isTarget  = !hasNumber && (!isIntegerType(left, holder) || !isIntegerType(right, holder));
                 if (isTarget) {
                     final PsiElement targetExpression = expression.getOperation();
                     if (targetExpression != null) {
@@ -48,10 +48,10 @@ final public class MistypedLogicalOperatorsStrategy {
         return result;
     }
 
-    private static boolean isIntegerType(@NotNull PsiElement operand) {
+    private static boolean isIntegerType(@NotNull PsiElement operand, @NotNull ProblemsHolder holder) {
         boolean result = true;
         if (operand instanceof PhpTypedElement) {
-            final PhpType type     = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, operand.getProject());
+            final PhpType type     = OpenapiResolveUtil.resolveType((PhpTypedElement) operand, holder.getProject());
             final PhpType filtered = type == null ? null : type.filterUnknown();
             if (filtered != null && !filtered.isEmpty()) {
                 result = filtered.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strInteger));

@@ -90,7 +90,7 @@ public class UnnecessaryVariableOverridesInspector extends PhpInspection {
                                                 candidate,
                                                 message,
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                new MergeCallsFix(value, candidateValue, previous.getParent())
+                                                new MergeCallsFix(holder.getProject(), value, candidateValue, previous.getParent())
                                             );
                                         }
                                     }
@@ -122,9 +122,9 @@ public class UnnecessaryVariableOverridesInspector extends PhpInspection {
             return title;
         }
 
-        MergeCallsFix(@NotNull PsiElement target, @NotNull PsiElement value, @NotNull PsiElement absolete) {
+        MergeCallsFix(@NotNull Project project, @NotNull PsiElement target, @NotNull PsiElement value, @NotNull PsiElement absolete) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(target.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.target   = factory.createSmartPsiElementPointer(target);
             this.value    = factory.createSmartPsiElementPointer(value);

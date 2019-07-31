@@ -40,7 +40,7 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             public void visitPhpFor(final For forStatement) {
                 if (this.shouldSkipAnalysis(forStatement, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
@@ -52,7 +52,7 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
                         OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
                         OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())
                     ) {
-                        problemsHolder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(forStatement, condition));
+                        holder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(holder.getProject(), forStatement, condition));
                     }
                 }
             }
@@ -65,9 +65,9 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
         private final SmartPsiElementPointer<For> forStatement;
         private final SmartPsiElementPointer<BinaryExpression> condition;
 
-        TheLocalFix(@NotNull For forStatement, @NotNull BinaryExpression condition) {
+        TheLocalFix(@NotNull Project project, @NotNull For forStatement, @NotNull BinaryExpression condition) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(forStatement.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.forStatement = factory.createSmartPsiElementPointer(forStatement);
             this.condition    = factory.createSmartPsiElementPointer(condition);

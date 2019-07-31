@@ -110,7 +110,7 @@ final public class PropertyUsedInPrivateContextStrategy {
                         if (usages.size() == 1 && usages.contains("private")) {
                             final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(list);
                             if (modifier != null) {
-                                holder.registerProblem(modifier, message, new MakePrivateFixer(modifier));
+                                holder.registerProblem(modifier, message, new MakePrivateFixer(holder.getProject(), modifier));
                             }
                         }
                     }

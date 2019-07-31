@@ -31,9 +31,9 @@ final public class TypesIntersectionStrategy {
         boolean result               = false;
         final IElementType operation = expression.getOperationType();
         if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-            final PhpType left = extract(expression.getLeftOperand());
+            final PhpType left = extract(expression.getLeftOperand(), holder);
             if (!left.isEmpty() && !left.hasUnknown()) {
-                final PhpType right = extract(expression.getRightOperand());
+                final PhpType right = extract(expression.getRightOperand(), holder);
                 if (!right.isEmpty() && !right.hasUnknown()) {
                     final Set<String> leftTypes  = left.getTypes();
                     final boolean isIntersecting = right.getTypes().stream().anyMatch(leftTypes::contains);
@@ -50,12 +50,12 @@ final public class TypesIntersectionStrategy {
         return result;
     }
 
-    private static PhpType extract(@Nullable PsiElement expression) {
+    private static PhpType extract(@Nullable PsiElement expression, @NotNull ProblemsHolder holder) {
         if (expression instanceof PhpTypedElement) {
             if (expression instanceof FunctionReference) {
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) expression);
                 if (resolved instanceof Function && OpenapiElementsUtil.getReturnType((Function) resolved) != null) {
-                    final PhpType type = OpenapiResolveUtil.resolveType((FunctionReference) expression, expression.getProject());
+                    final PhpType type = OpenapiResolveUtil.resolveType((FunctionReference) expression, holder.getProject());
                     if (type != null) {
                         return type;
                     }
@@ -68,7 +68,7 @@ final public class TypesIntersectionStrategy {
                 expression instanceof ClassConstantReference ||
                 OpenapiTypesUtil.isNumber(expression)
             ) {
-                final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, expression.getProject());
+                final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, holder.getProject());
                 if (type != null) {
                     return type;
                 }

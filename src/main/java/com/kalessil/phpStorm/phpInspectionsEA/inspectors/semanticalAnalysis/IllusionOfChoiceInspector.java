@@ -129,7 +129,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
                         holder.registerProblem(
                                 falseVariant,
                                  messageSameValueConditional,
-                                new SimplifyFix(replaceFrom, replaceTo, replacement)
+                                new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
                         );
                     }
                     /* ternaries covered by SuspiciousTernaryOperatorInspector in this case */
@@ -153,7 +153,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
                                 holder.registerProblem(
                                         falseValue,
                                         isConditional ? messageDegradedConditional : messageDegradedTernary,
-                                        new SimplifyFix(replaceFrom, replaceTo, replacement)
+                                        new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
                                 );
                             }
                         }
@@ -170,9 +170,9 @@ public class IllusionOfChoiceInspector extends PhpInspection {
         final private SmartPsiElementPointer<PsiElement> to;
         final String replacement;
 
-        SimplifyFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
+        SimplifyFix(@NotNull Project project, @NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.from        = factory.createSmartPsiElementPointer(from);
             this.to          = factory.createSmartPsiElementPointer(to);

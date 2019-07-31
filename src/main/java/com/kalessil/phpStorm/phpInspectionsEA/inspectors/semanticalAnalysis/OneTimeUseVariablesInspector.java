@@ -149,7 +149,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                             holder.registerProblem(
                                     assignVariable,
                                     String.format(messagePattern, variableName),
-                                    new InlineValueFix(assign.getParent(), argument, value)
+                                    new InlineValueFix(holder.getProject(), assign.getParent(), argument, value)
                             );
                         }
                     }
@@ -173,7 +173,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                             holder.registerProblem(
                                     container,
                                     String.format(messagePattern, ((Variable) container).getName()),
-                                    new InlineValueFix(assign.getParent(), argument, value)
+                                    new InlineValueFix(holder.getProject(), assign.getParent(), argument, value)
                             );
                         }
                     }
@@ -370,7 +370,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                                         holder.registerProblem(
                                                 target,
                                                 messageRename,
-                                                new RenameLoopVariableFix(targetAssignment, subject, targetVariable)
+                                                new RenameLoopVariableFix(holder.getProject(), targetAssignment, subject, targetVariable)
                                         );
                                     }
                                 }
@@ -471,9 +471,9 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
         private final SmartPsiElementPointer<Variable> variable;
         private final SmartPsiElementPointer<Variable> subject;
 
-        RenameLoopVariableFix(@NotNull PsiElement assignment, @NotNull Variable subject, @NotNull Variable variable) {
+        RenameLoopVariableFix(@NotNull Project project, @NotNull PsiElement assignment, @NotNull Variable subject, @NotNull Variable variable) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(variable.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.assignment = factory.createSmartPsiElementPointer(assignment);
             this.subject    = factory.createSmartPsiElementPointer(subject);
@@ -511,9 +511,9 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
         private final SmartPsiElementPointer<PsiElement> value;
         private final SmartPsiElementPointer<Variable> variable;
 
-        InlineValueFix(@NotNull PsiElement assignment, @NotNull Variable variable, @NotNull PsiElement value) {
+        InlineValueFix(@NotNull Project project, @NotNull PsiElement assignment, @NotNull Variable variable, @NotNull PsiElement value) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(value.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.assignment = factory.createSmartPsiElementPointer(assignment);
             this.variable   = factory.createSmartPsiElementPointer(variable);

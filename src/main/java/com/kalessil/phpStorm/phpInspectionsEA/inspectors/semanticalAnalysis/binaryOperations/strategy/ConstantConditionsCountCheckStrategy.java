@@ -56,7 +56,7 @@ final public class ConstantConditionsCountCheckStrategy {
         final IElementType operator = expression.getOperationType();
         if (targetOperations.contains(operator)) {
             final PsiElement left = expression.getLeftOperand();
-            if (left != null && isTargetCall(left)) {
+            if (left != null && isTargetCall(left, holder)) {
                 final PsiElement right = expression.getRightOperand();
                 if (right != null && OpenapiTypesUtil.isNumber(right)) {
                     Long number;
@@ -107,14 +107,14 @@ final public class ConstantConditionsCountCheckStrategy {
         return result;
     }
 
-    private static boolean isTargetCall(@NotNull PsiElement candidate) {
+    private static boolean isTargetCall(@NotNull PsiElement candidate, @NotNull ProblemsHolder holder) {
         boolean result = false;
         if (candidate instanceof FunctionReference) {
             final FunctionReference reference = (FunctionReference) candidate;
             final String functionName         = reference.getName();
             if (functionName != null) {
                 if (reference instanceof MethodReference) {
-                    result = functionName.equals("count") && isImplementingCountable((MethodReference) reference);
+                    result = functionName.equals("count") && isImplementingCountable((MethodReference) reference, holder);
                 } else {
                     result = targetFunctions.containsKey(functionName);
                 }
@@ -123,11 +123,11 @@ final public class ConstantConditionsCountCheckStrategy {
         return result;
     }
 
-    private static boolean isImplementingCountable(@NotNull MethodReference reference) {
+    private static boolean isImplementingCountable(@NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
         boolean result        = true;
         final PsiElement base = reference.getFirstChild();
         if (base instanceof PhpTypedElement) {
-            final Project project = reference.getProject();
+            final Project project = holder.getProject();
             final PhpType type    = OpenapiResolveUtil.resolveType((PhpTypedElement) base, project);
             if (type != null) {
                 final PhpIndex index = PhpIndex.getInstance(project);

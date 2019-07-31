@@ -99,7 +99,7 @@ public class CascadeStringReplacementInspector extends PhpInspection {
                                     holder.registerProblem(
                                             functionCall,
                                             messageCascading,
-                                            new MergeStringReplaceCallsFix(functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
+                                            new MergeStringReplaceCallsFix(holder.getProject(), functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
                                     );
                                 }
                             }
@@ -153,7 +153,7 @@ public class CascadeStringReplacementInspector extends PhpInspection {
                         holder.registerProblem(
                                 candidate,
                             messageNesting,
-                            new MergeStringReplaceCallsFix(parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
+                            new MergeStringReplaceCallsFix(holder.getProject(), parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
                         );
                     }
                 }
@@ -239,9 +239,9 @@ public class CascadeStringReplacementInspector extends PhpInspection {
         final private SmartPsiElementPointer<FunctionReference> eliminate;
         final private boolean useShortSyntax;
 
-        MergeStringReplaceCallsFix(@NotNull FunctionReference patch, @NotNull FunctionReference eliminate, boolean useShortSyntax) {
+        MergeStringReplaceCallsFix(@NotNull Project project, @NotNull FunctionReference patch, @NotNull FunctionReference eliminate, boolean useShortSyntax) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(patch.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.patch          = factory.createSmartPsiElementPointer(patch);
             this.eliminate      = factory.createSmartPsiElementPointer(eliminate);

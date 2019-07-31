@@ -70,7 +70,7 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
 
     @NotNull
     @Override
-    public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean onTheFly) {
+    public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean onTheFly) {
         return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
@@ -102,7 +102,7 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
                                 final Parameter[] parameters = function.getParameters();
                                 if (arguments.length <= parameters.length) {
                                     final FileBasedIndex projectIndex   = FileBasedIndex.getInstance();
-                                    final GlobalSearchScope searchScope = GlobalSearchScope.allScope(function.getProject());
+                                    final GlobalSearchScope searchScope = GlobalSearchScope.allScope(holder.getProject());
                                     for (int index = Math.min(parameters.length, arguments.length) - 1; index >= 0; --index) {
                                         final Parameter parameter = parameters[index];
                                         final PsiElement argument = arguments[index];
@@ -120,14 +120,14 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
                         }
 
                         if (reportFrom != null) {
-                            problemsHolder.registerProblem(
-                                    problemsHolder.getManager().createProblemDescriptor(
+                            holder.registerProblem(
+                                    holder.getManager().createProblemDescriptor(
                                             reportFrom,
                                             reportTo,
                                             message,
                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                             onTheFly,
-                                            new TheLocalFix(reportFrom, reportTo)
+                                            new TheLocalFix(holder.getProject(), reportFrom, reportTo)
                                     )
                             );
                         }
@@ -167,9 +167,9 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
         private final SmartPsiElementPointer<PsiElement> dropFrom;
         private final SmartPsiElementPointer<PsiElement> dropTo;
 
-        private TheLocalFix(@NotNull PsiElement dropFrom, @NotNull PsiElement dropTo) {
+        private TheLocalFix(@NotNull Project project, @NotNull PsiElement dropFrom, @NotNull PsiElement dropTo) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(dropFrom.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.dropFrom = factory.createSmartPsiElementPointer(dropFrom);
             this.dropTo   = factory.createSmartPsiElementPointer(dropTo);

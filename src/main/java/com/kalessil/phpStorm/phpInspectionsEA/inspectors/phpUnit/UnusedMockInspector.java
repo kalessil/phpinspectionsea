@@ -42,10 +42,10 @@ public class UnusedMockInspector extends PhpInspection {
                         if (OpenapiTypesUtil.isAssignment(parent) && OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                             final PsiElement container = ((AssignmentExpression) parent).getVariable();
                             if (container instanceof Variable) {
-                                // not a parameter/use variable
-
                                 final Function scope = ExpressionSemanticUtil.getScope(reference);
                                 if (scope != null) {
+                                    // not a parameter/use variable
+
                                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
                                     if (body != null) {
                                         final String variableName = ((Variable) container).getName();

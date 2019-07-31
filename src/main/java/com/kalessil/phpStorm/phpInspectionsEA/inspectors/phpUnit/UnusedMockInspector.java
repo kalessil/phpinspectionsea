@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UnusedMockInspector extends PhpInspection {
+    private final static String message = "The mock seems to be not used, consider sdeleting it.";
 
     @NotNull
     public String getShortName() {
@@ -60,7 +61,7 @@ public class UnusedMockInspector extends PhpInspection {
                                                     return true;
                                                 });
                                         if (!isUsed) {
-                                            holder.registerProblem(container, "The mock seems to be not used.", ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                            holder.registerProblem(container, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                         }
                                     }
                                 }

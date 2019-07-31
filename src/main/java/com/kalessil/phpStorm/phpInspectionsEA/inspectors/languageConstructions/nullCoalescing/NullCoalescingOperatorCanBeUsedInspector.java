@@ -83,7 +83,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
             public void visitPhpIf(@NotNull If statement) {
                 if (this.shouldSkipAnalysis(statement, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
-                if (SUGGEST_SIMPLIFYING_IFS && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
+                final Project project = holder.getProject();
+                if (SUGGEST_SIMPLIFYING_IFS && PhpLanguageLevel.get(project).atLeast(PhpLanguageLevel.PHP700)) {
                     final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(statement.getCondition());
                     if (condition != null && statement.getElseIfBranches().length == 0) {
                         final PsiElement extracted = this.getTargetCondition(condition);
@@ -100,7 +101,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                         holder.registerProblem(
                                                 statement.getFirstChild(),
                                                 String.format(messagePattern, replacement),
-                                                new ReplaceMultipleConstructFix(fragments.first.first, fragments.first.second, replacement)
+                                                new ReplaceMultipleConstructFix(project, fragments.first.first, fragments.first.second, replacement)
                                         );
                                     } else if (context instanceof AssignmentExpression) {
                                         final PsiElement container = ((AssignmentExpression) context).getVariable();
@@ -108,7 +109,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                         holder.registerProblem(
                                                 statement.getFirstChild(),
                                                 String.format(messagePattern, replacement),
-                                                new ReplaceMultipleConstructFix(fragments.first.first, fragments.first.second, replacement)
+                                                new ReplaceMultipleConstructFix(project, fragments.first.first, fragments.first.second, replacement)
                                         );
                                     }
                                 }
@@ -385,9 +386,9 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
         final private SmartPsiElementPointer<PsiElement> to;
         final String replacement;
 
-        ReplaceMultipleConstructFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
+        ReplaceMultipleConstructFix(@NotNull Project project, @NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.from        = factory.createSmartPsiElementPointer(from);
             this.to          = factory.createSmartPsiElementPointer(to);

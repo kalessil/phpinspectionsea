@@ -83,7 +83,7 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                             holder.registerProblem(
                                     statement.getFirstChild(),
                                     String.format(messagePattern, replacement),
-                                    new SimplifyFix(fragments.first.first, fragments.first.second, replacement)
+                                    new SimplifyFix(holder.getProject(), fragments.first.first, fragments.first.second, replacement)
                             );
                         }
                     }
@@ -240,9 +240,9 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
         final private SmartPsiElementPointer<PsiElement> to;
         final String replacement;
 
-        SimplifyFix(@NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
+        SimplifyFix(@NotNull Project project, @NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(from.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.from        = factory.createSmartPsiElementPointer(from);
             this.to          = factory.createSmartPsiElementPointer(to);

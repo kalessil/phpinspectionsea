@@ -46,7 +46,8 @@ public class StaticLambdaBindingInspector extends PhpInspection {
             public void visitPhpFunction(@NotNull Function function) {
                 if (this.shouldSkipAnalysis(function, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
-                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
+                final Project project = holder.getProject();
+                if (PhpLanguageLevel.get(project).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
                     final boolean isTarget = OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
                     if (isTarget) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
@@ -55,7 +56,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                                 if (element instanceof Variable) {
                                     final Variable variable = (Variable) element;
                                     if (variable.getName().equals("this")) {
-                                        holder.registerProblem(variable, messageThis, new TurnClosureIntoNonStaticFix(function.getFirstChild()));
+                                        holder.registerProblem(variable, messageThis, new TurnClosureIntoNonStaticFix(project, function.getFirstChild()));
                                         return;
                                     }
                                 } else {
@@ -64,7 +65,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                                     if (base instanceof ClassReference && base.getText().equals("parent")) {
                                         final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                                         if (resolved instanceof Method && !((Method) resolved).isStatic()) {
-                                            holder.registerProblem(reference, messageParent, new TurnClosureIntoNonStaticFix(function.getFirstChild()));
+                                            holder.registerProblem(reference, messageParent, new TurnClosureIntoNonStaticFix(project, function.getFirstChild()));
                                             return;
                                         }
                                     }
@@ -94,9 +95,9 @@ public class StaticLambdaBindingInspector extends PhpInspection {
             return title;
         }
 
-        TurnClosureIntoNonStaticFix(@NotNull PsiElement staticKeyword) {
+        TurnClosureIntoNonStaticFix(@NotNull Project project, @NotNull PsiElement staticKeyword) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(staticKeyword.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
             this.staticKeyword                = factory.createSmartPsiElementPointer(staticKeyword);
         }
 

@@ -39,7 +39,7 @@ public class InvertedIfElseConstructsInspector extends PhpInspection {
 
     @NotNull
     @Override
-    public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+    public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpElse(@NotNull Else elseStatement) {
@@ -63,10 +63,10 @@ public class InvertedIfElseConstructsInspector extends PhpInspection {
                                 final PsiElement extractedCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
                                 if (extractedCondition != null && !(extractedCondition instanceof PhpEmpty)) {
                                     final String newCondition = extractedCondition.getText();
-                                    problemsHolder.registerProblem(
+                                    holder.registerProblem(
                                             elseStatement.getFirstChild(),
                                             message,
-                                            new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
+                                            new NormalizeWorkflowFix(holder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                     );
                                 }
                             }
@@ -88,10 +88,10 @@ public class InvertedIfElseConstructsInspector extends PhpInspection {
                                     /* if managed to extract condition, then proceed with reporting */
                                     if (extractedCondition != null) {
                                         final String newCondition = String.format("%s !== %s", left.getText(), right.getText());
-                                        problemsHolder.registerProblem(
+                                        holder.registerProblem(
                                                 elseStatement.getFirstChild(),
                                                 message,
-                                                new NormalizeWorkflowFix((GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
+                                                new NormalizeWorkflowFix(holder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                         );
                                     }
                                 }
@@ -109,9 +109,9 @@ public class InvertedIfElseConstructsInspector extends PhpInspection {
         private final SmartPsiElementPointer<PsiElement> condition;
         private final String newCondition;
 
-        NormalizeWorkflowFix(@NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull PsiElement condition, @NotNull String newCondition) {
+        NormalizeWorkflowFix(@NotNull Project project, @NotNull GroupStatement ifBody, @NotNull GroupStatement elseBody, @NotNull PsiElement condition, @NotNull String newCondition) {
             super();
-            final SmartPointerManager factory = SmartPointerManager.getInstance(condition.getProject());
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
 
             this.ifBody       = factory.createSmartPsiElementPointer(ifBody);
             this.elseBody     = factory.createSmartPsiElementPointer(elseBody);

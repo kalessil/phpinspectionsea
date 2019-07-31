@@ -133,7 +133,7 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
             return true;
         }
 
-        final Project project                    = target.getProject();
+        final Project project                    = file.getProject();
         final EAUltimateProjectSettings settings = project.getComponent(EAUltimateProjectSettings.class);
         if (settings != null) {
             /* skip inactive categories */

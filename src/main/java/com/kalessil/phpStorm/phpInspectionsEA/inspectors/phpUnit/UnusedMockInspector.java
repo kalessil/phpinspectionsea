@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UnusedMockInspector extends PhpInspection {
-    private final static String message = "The mock seems to be not used, consider sdeleting it.";
+    private final static String message = "The mock seems to be not used, consider deleting it.";
 
     @NotNull
     public String getShortName() {

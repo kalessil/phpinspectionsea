@@ -11,11 +11,13 @@ class Aggregator
     public function three() {}
 }
 
+/** @method annotatedMethod() */
 trait TraitOne
 {
     public function one() {}
 }
 
+/** @method annotatedMethod() */
 trait TraitTwo
 {
     public function one() {}

@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
     public int MAX_METHOD_SIZE = 20;
     /* TODO: configurable via drop-down; clean code: 20 lines/method; PMD: 50; Checkstyle: 100 */
 
-    private static final String messagePatternIdentical = "'%s' method can be dropped, as it identical to parent's one.";
+    private static final String messagePatternIdentical = "'%s' method can be dropped, as it identical to '%s'.";
     private static final String messagePatternProxy     = "'%s' method should call parent's one instead of duplicating code.";
 
     @NotNull
@@ -45,87 +45,96 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new GenericPhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.shouldSkipAnalysis(method, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
 
-                /* process only real classes and methods */
-                if (method.isAbstract() || method.isDeprecated() || this.isTestContext(method)) {
-                    return;
-                }
-                final PhpClass clazz = method.getContainingClass();
-                if (clazz == null || clazz.isTrait() || clazz.isInterface()) {
-                    return;
-                }
-
-                /* don't take too heavy work */
-                final GroupStatement body  = ExpressionSemanticUtil.getGroupStatement(method);
-                final int countExpressions = body == null ? 0 : ExpressionSemanticUtil.countExpressionsInGroup(body);
-                if (countExpressions == 0 || countExpressions > MAX_METHOD_SIZE) {
-                    return;
-                }
-
-                /* ensure parent, parent methods are existing and contains the same amount of expressions */
-                final PhpClass parent           = OpenapiResolveUtil.resolveSuperClass(clazz);
-                final Method parentMethod       = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, method.getName());
-                if (parentMethod == null || parentMethod.isAbstract() || parentMethod.isDeprecated()) {
-                    return;
-                }
-                final GroupStatement parentBody = ExpressionSemanticUtil.getGroupStatement(parentMethod);
-                if (parentBody == null || ExpressionSemanticUtil.countExpressionsInGroup(parentBody) != countExpressions) {
-                    return;
-                }
-
-                /* iterate and compare expressions */
-                PhpPsiElement ownExpression    = body.getFirstPsiChild();
-                PhpPsiElement parentExpression = parentBody.getFirstPsiChild();
-                for (int index = 0; index <= countExpressions; ++index) {
-                    /* skip doc-blocks */
-                    while (ownExpression instanceof PhpDocComment) {
-                        ownExpression = ownExpression.getNextPsiSibling();
+                if (!method.isAbstract() && !method.isDeprecated() && !this.isTestContext(method)) {
+                    final PhpClass clazz = method.getContainingClass();
+                    if (clazz != null && !clazz.isTrait() && !clazz.isInterface()) {
+                        final String methodName = method.getName();
+                        /* pattern: parent method duplication */
+                        final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                        if (parent != null) {
+                            final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
+                            final boolean matching    = parentMethod != null && !parentMethod.isAbstract() && !parentMethod.isDeprecated() && this.areMatching(method, parentMethod);
+                            if (matching) {
+                                this.doReporting(method, parentMethod, true);
+                            }
+                        }
+                        /* pattern: used trait method duplication */
+                        for (final PhpClass trait : clazz.getTraits()) {
+                            final Method traitMethod = OpenapiResolveUtil.resolveMethod(trait, methodName);
+                            final boolean matching   = traitMethod != null && !traitMethod.isAbstract() && !traitMethod.isDeprecated() && this.areMatching(method, traitMethod);
+                            if (matching) {
+                                this.doReporting(method, traitMethod, false);
+                            }
+                        }
                     }
-                    while (parentExpression instanceof PhpDocComment) {
-                        parentExpression = parentExpression.getNextPsiSibling();
-                    }
-                    if (null == ownExpression || null == parentExpression) {
-                        break;
-                    }
+                }
+            }
 
-                    /* process comparing 2 nodes */
-                    if (!OpenapiEquivalenceUtil.areEqual(ownExpression, parentExpression)) {
-                            return;
+            private boolean areMatching(@NotNull Method ownMethod, @NotNull Method overriddenMethod) {
+                final GroupStatement ownBody = ExpressionSemanticUtil.getGroupStatement(ownMethod);
+                final int countExpressions   = ownBody == null ? 0 : ExpressionSemanticUtil.countExpressionsInGroup(ownBody);
+                if (countExpressions > 0 && countExpressions <= MAX_METHOD_SIZE) {
+                    final GroupStatement overriddenBody = ExpressionSemanticUtil.getGroupStatement(overriddenMethod);
+                    if (overriddenBody != null && ExpressionSemanticUtil.countExpressionsInGroup(overriddenBody) == countExpressions) {
+                        /* match body expressions */
+                        PhpPsiElement ownExpression        = ownBody.getFirstPsiChild();
+                        PhpPsiElement overriddenExpression = overriddenBody.getFirstPsiChild();
+                        for (int index = 0; index <= countExpressions; ++index) {
+                            /* skip doc-blocks */
+                            while (ownExpression instanceof PhpDocComment) {
+                                ownExpression = ownExpression.getNextPsiSibling();
+                            }
+                            while (overriddenExpression instanceof PhpDocComment) {
+                                overriddenExpression = overriddenExpression.getNextPsiSibling();
+                            }
+                            if (ownExpression == null || overriddenExpression == null) {
+                                break;
+                            }
+                            if (!OpenapiEquivalenceUtil.areEqual(ownExpression, overriddenExpression)) {
+                                return false;
+                            }
+                            ownExpression        = ownExpression.getNextPsiSibling();
+                            overriddenExpression = overriddenExpression.getNextPsiSibling();
+                        }
+
+                        /* match imported symbols */
+                        final Collection<String> ownSymbols        = this.getUsedReferences(ownBody);
+                        final Collection<String> overriddenSymbols = this.getUsedReferences(overriddenBody);
+                        final boolean matched                      = ownSymbols.containsAll(overriddenSymbols);
+                        ownSymbols.clear();
+                        overriddenSymbols.clear();
+
+                        return matched;
                     }
-                    ownExpression    = ownExpression.getNextPsiSibling();
-                    parentExpression = parentExpression.getNextPsiSibling();
                 }
 
+                return false;
+            }
 
-                /* methods seems to be identical: resolve used classes to avoid ns/imports magic */
-                final Collection<String> collection = this.getUsedReferences(body);
-                if (!collection.isEmpty() && !collection.containsAll(this.getUsedReferences(parentBody))) {
-                    collection.clear();
-                    return;
-                }
-                collection.clear();
-
-                final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
+            private void doReporting(@NotNull Method ownMethod, @NotNull Method overriddenMethod, boolean canUseProxy) {
+                final PsiElement methodName = NamedElementUtil.getNameIdentifier(ownMethod);
                 if (methodName != null) {
-                    final boolean canFix = !parentMethod.getAccess().isPrivate();
-                    if (method.getAccess().equals(parentMethod.getAccess())) {
+                    final boolean canFix = !overriddenMethod.getAccess().isPrivate();
+                    if (ownMethod.getAccess().equals(overriddenMethod.getAccess())) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(messagePatternIdentical, method.getName()),
+                                String.format(messagePatternIdentical, ownMethod.getName(), overriddenMethod.getFQN().replace(".", "::")),
                                 canFix ? new DropMethodFix() : null
                         );
-                    } else {
+                    } else if (canUseProxy) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(messagePatternProxy, method.getName()),
+                                String.format(messagePatternProxy, ownMethod.getName()),
                                 canFix ? new ProxyCallFix() : null
                         );
                     }
                 }
+
             }
 
             private Collection<String> getUsedReferences(@NotNull GroupStatement body) {

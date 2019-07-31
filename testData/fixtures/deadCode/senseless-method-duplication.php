@@ -1,8 +1,11 @@
 <?php
 
-    class ClassMethodDefinedHere {
+    trait TraitWithSameMethods {
+        protected function traitMethodDuplicate() { return $this->classMethodDuplicate(); }
+    }
 
-        protected function method()
+    class ClassWithSameMethods {
+        protected function classMethodDuplicate()
         {
             // single-line comment here
             $x = [];
@@ -12,28 +15,19 @@
             return $x;
         }
 
-        protected function methodProxy($x)
-        {
-            return $this->method();
-        }
-
-        private function methodDuplicate($x)
-        {
-            return $this->method();
-        }
-
-        protected function abc()
-        {
-            echo 1;
-        }
-
+        protected function protectedMethodProxy($x) { return $this->classMethodDuplicate(); }
+        private function privateMethodProxy($x) { return $this->classMethodDuplicate(); }
+        protected function abc() { echo 1; }
     }
 
-    class ClassTransitive extends ClassMethodDefinedHere {}
+    class ClassDuplicates extends ClassWithSameMethods {
+        use TraitWithSameMethods;
 
-    class ClassDuplicates extends ClassTransitive {
-
-        protected function <weak_warning descr="'method' method can be dropped, as it identical to parent's one.">method</weak_warning> ()
+        protected function <weak_warning descr="'traitMethodDuplicate' method can be dropped, as it identical to '\TraitWithSameMethods::traitMethodDuplicate'.">traitMethodDuplicate</weak_warning>()
+        {
+            return $this->classMethodDuplicate();
+        }
+        protected function <weak_warning descr="'classMethodDuplicate' method can be dropped, as it identical to '\ClassWithSameMethods::classMethodDuplicate'.">classMethodDuplicate</weak_warning> ()
         {
             // single-line comment here
             $x = [];
@@ -47,19 +41,7 @@
             return $x;
         }
 
-        public function <weak_warning descr="'methodProxy' method should call parent's one instead of duplicating code.">methodProxy</weak_warning>($x)
-        {
-            return $this->method();
-        }
-
-        public function <weak_warning descr="'methodDuplicate' method should call parent's one instead of duplicating code.">methodDuplicate</weak_warning>($x)
-        {
-            return $this->method();
-        }
-
-        protected function abc()
-        {
-            echo 2;
-        }
-
+        public function <weak_warning descr="'protectedMethodProxy' method should call parent's one instead of duplicating code.">protectedMethodProxy</weak_warning>($x) { return $this->classMethodDuplicate(); }
+        public function <weak_warning descr="'privateMethodProxy' method should call parent's one instead of duplicating code.">privateMethodProxy</weak_warning>($x) { return $this->classMethodDuplicate(); }
+        protected function abc() { echo 2; }
     }

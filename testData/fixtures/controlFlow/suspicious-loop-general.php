@@ -39,6 +39,8 @@
         foreach ($overridden as $value) {}
 
         $local = [];
-        foreach (<error descr="'$local' is probably an empty array.">$local</error> as $value) {}
-        foreach (<error descr="'[]' is probably an empty array.">[]</error> as $value) {}
+        // '$local' is probably an empty array.
+        foreach ($local as $value) {}
+        // '[]' is probably an empty array.
+        foreach ([] as $value) {}
     };

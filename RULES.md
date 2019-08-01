@@ -70,7 +70,7 @@ Inspections Lists (Unused)
 | Unused               | UnnecessaryIssetArgumentsInspection             | Unnecessary isset arguments specification           | yes | yes | yes  | no  |
 | Unused               | DateUsageInspection                             | Unnecessary 'date(...)' arguments specification     | yes | yes | yes  | no  |
 | Unused               | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
-| Unused               | UnusedMockInspection                            | PhpUnit: unused mocks                               | n/a | yes | n/a  | no  |
+| Unused               | UnusedMockInspection                            | Unused mocks                                        | n/a | yes | n/a  | no  |
 
 Inspections Lists (Code style)
 ---

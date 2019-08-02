@@ -49,6 +49,7 @@ public class ForeachSourceInspector extends PhpInspection {
     private static final String patternObject        = "Iterates over '%s' properties (probably should implement one of Iterator interfaces).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ForeachSourceInspection";
     }

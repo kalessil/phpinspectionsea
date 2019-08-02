@@ -33,6 +33,7 @@ public class OverridingDeprecatedMethodInspector extends PhpInspection {
     private static final String patternMissingDeprecationTag = "'%s' triggers a deprecation warning, but misses @deprecated annotation.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "OverridingDeprecatedMethodInspection";
     }

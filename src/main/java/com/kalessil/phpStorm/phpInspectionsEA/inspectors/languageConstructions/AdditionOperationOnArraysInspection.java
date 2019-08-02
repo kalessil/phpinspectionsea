@@ -31,6 +31,7 @@ public class AdditionOperationOnArraysInspection extends PhpInspection {
     private static final String message = "Perhaps array_merge/array_replace can be used instead. Feel free to disable the inspection if '+' is intended.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "AdditionOperationOnArraysInspection";
     }

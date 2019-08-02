@@ -17,6 +17,7 @@ public class StreamSelectUsageInspector extends PhpInspection {
     private static final String message = "Might cause high CPU usage and connectivity issues (documentation advices using 200000 here, 200 ms).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StreamSelectUsageInspection";
     }

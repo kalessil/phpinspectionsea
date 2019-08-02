@@ -25,6 +25,7 @@ public class ArrayFlipCanBeUsedInspector extends PhpInspection {
     private static final String messagePattern = "'%s' would fit more here (it also faster).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArrayFlipCanBeUsedInspection";
     }

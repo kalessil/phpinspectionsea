@@ -55,6 +55,7 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ClassConstantCanBeUsedInspection";
     }

@@ -41,6 +41,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "AutoloadingIssuesInspection";
     }

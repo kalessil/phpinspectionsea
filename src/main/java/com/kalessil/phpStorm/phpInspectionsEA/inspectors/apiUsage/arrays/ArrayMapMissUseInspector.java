@@ -29,6 +29,7 @@ public class ArrayMapMissUseInspector extends PhpInspection {
     private static final String message = "'array_map(..., array_slice(...))' would make more sense here (it also faster).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArrayMapMissUseInspection";
     }

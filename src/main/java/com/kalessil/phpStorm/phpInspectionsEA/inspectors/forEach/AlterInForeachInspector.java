@@ -39,6 +39,7 @@ public class AlterInForeachInspector extends PhpInspection {
     private static final String patternAmbiguousUnset   = "Unsetting $%v% is not needed because it's not a reference.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "AlterInForeachInspection";
     }

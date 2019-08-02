@@ -40,6 +40,7 @@ public class UnsupportedSerializeTypesInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnsupportedSerializeTypesInspection";
     }

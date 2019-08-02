@@ -28,6 +28,7 @@ public class DirectoryConstantCanBeUsedInspector extends PhpInspection {
     private static final String message = "'__DIR__' should be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DirectoryConstantCanBeUsedInspection";
     }

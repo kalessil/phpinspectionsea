@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PdoApiUsageInspector extends PhpInspection {
     @NotNull
+    @Override
     public String getShortName() {
         return "PdoApiUsageInspection";
     }

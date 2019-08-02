@@ -65,6 +65,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
     private static int STATE_CONFLICTING_IS_SET   = STATE_IS_SET   | STATE_NOT_SET;
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryEmptinessCheckInspection";
     }

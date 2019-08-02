@@ -31,6 +31,7 @@ public class StrlenInEmptyStringCheckContextInspection extends PhpInspection {
     private static final String messagePattern = "'%s' would make more sense here (it also slightly faster).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StrlenInEmptyStringCheckContextInspection";
     }

@@ -86,6 +86,7 @@ public class HardcodedCredentialsInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "HardcodedCredentialsInspection";
     }

@@ -44,6 +44,7 @@ public class StringCaseManipulationInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StringCaseManipulationInspection";
     }

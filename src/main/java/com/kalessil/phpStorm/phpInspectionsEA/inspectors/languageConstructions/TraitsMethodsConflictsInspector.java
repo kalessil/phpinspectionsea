@@ -28,6 +28,7 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
     private static final String messagePattern = "Provokes a fatal error ('%s' method collision, see '%s').";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TraitsMethodsConflictsInspection";
     }

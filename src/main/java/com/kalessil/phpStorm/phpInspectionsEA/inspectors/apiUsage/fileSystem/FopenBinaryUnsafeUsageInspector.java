@@ -39,6 +39,7 @@ public class FopenBinaryUnsafeUsageInspector extends PhpInspection {
     private static final String messageReplaceWithBinaryMode = "The mode is not binary-safe (replace 't' with 'b', as documentation recommends).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "FopenBinaryUnsafeUsageInspection";
     }

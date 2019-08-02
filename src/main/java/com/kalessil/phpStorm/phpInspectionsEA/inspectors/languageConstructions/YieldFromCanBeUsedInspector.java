@@ -37,6 +37,7 @@ public class YieldFromCanBeUsedInspector extends PhpInspection {
     public boolean ONLY_KEY_VALUE_YIELDS = false;
 
     @NotNull
+    @Override
     public String getShortName() {
         return "YieldFromCanBeUsedInspection";
     }

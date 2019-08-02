@@ -29,6 +29,7 @@ public class MissingArrayInitializationInspector extends PhpInspection {
     private static final String message = "The array initialization is missing, please place it at a proper place.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MissingArrayInitializationInspection";
     }

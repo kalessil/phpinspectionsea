@@ -34,6 +34,7 @@ public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
     private static final String message = "Can be safely replaced with 'unset(..., ...[, ...])' construction.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnsetConstructsCanBeMergedInspection";
     }

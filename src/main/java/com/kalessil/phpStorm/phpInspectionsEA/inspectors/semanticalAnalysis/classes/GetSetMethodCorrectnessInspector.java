@@ -36,6 +36,7 @@ public class GetSetMethodCorrectnessInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "GetSetMethodCorrectnessInspection";
     }

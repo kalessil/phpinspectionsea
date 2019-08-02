@@ -44,6 +44,7 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TernaryOperatorSimplifyInspection";
     }

@@ -31,6 +31,7 @@ final public class PackedHashtableOptimizationInspector extends PhpInspection {
     private static final String messageUseNumericKeys = "Using integer keys would enable array optimizations here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PackedHashtableOptimizationInspection";
     }

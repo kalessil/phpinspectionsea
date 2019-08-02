@@ -26,6 +26,7 @@ public class ArrayKeysMissUseInspector extends PhpInspection {
     private static final String messageCount       = "'array_keys(...)' is not making any sense here (just count it's argument).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArrayKeysMissUseInspection";
     }

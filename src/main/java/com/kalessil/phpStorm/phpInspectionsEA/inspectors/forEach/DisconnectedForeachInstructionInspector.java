@@ -45,6 +45,7 @@ public class DisconnectedForeachInstructionInspector extends PhpInspection {
     private static final String messageUseClone     = "Objects should be created outside of a loop and cloned instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DisconnectedForeachInstructionInspection";
     }

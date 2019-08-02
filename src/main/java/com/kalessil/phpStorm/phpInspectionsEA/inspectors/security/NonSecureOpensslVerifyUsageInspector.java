@@ -31,6 +31,7 @@ public class NonSecureOpensslVerifyUsageInspector extends PhpInspection {
     private static final String messageHarden = "Please compare with 1 instead (see openssl_verify(...) return codes).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NonSecureOpensslVerifyUsageInspection";
     }

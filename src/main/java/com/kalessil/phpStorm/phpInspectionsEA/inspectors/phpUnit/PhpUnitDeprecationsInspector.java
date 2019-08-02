@@ -24,6 +24,7 @@ public class PhpUnitDeprecationsInspector extends PhpInspection {
     private final static String messageRemoved    = "%s is deprecated since PhpUnit 8.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PhpUnitDeprecationsInspection";
     }

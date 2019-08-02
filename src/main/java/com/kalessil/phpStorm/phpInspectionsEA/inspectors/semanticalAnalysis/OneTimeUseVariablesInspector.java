@@ -49,6 +49,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
     private static final String messageRename  = "The local variable introduction doesn't make much sense here, consider renaming a loop variable instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "OneTimeUseVariablesInspection";
     }

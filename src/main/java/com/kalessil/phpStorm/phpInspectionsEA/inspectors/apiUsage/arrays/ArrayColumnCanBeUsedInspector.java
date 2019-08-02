@@ -26,6 +26,7 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
     private static final String messagePattern = "'%s' would fit more here (it also faster, but loses original keys).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArrayColumnCanBeUsedInspection";
     }

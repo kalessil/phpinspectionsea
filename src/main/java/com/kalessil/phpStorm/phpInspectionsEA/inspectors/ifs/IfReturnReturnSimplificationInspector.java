@@ -33,6 +33,7 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
     private static final String messagePattern = "The construct can be replaced with '%s'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IfReturnReturnSimplificationInspection";
     }

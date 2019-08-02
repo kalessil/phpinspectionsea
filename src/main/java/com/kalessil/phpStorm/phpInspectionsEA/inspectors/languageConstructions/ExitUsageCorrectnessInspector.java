@@ -26,6 +26,7 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
     private static final String messagePattern = "Exit statuses should be in the range 0 to 254, %s is given.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ExitUsageCorrectnessInspection";
     }

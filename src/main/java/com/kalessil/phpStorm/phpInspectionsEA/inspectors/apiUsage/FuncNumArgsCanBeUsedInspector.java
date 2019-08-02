@@ -24,6 +24,7 @@ public class FuncNumArgsCanBeUsedInspector extends PhpInspection {
     private static final String message = "'func_num_args()' can be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "FuncNumArgsCanBeUsedInspection";
     }

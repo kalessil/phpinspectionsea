@@ -34,6 +34,7 @@ public class EfferentObjectCouplingInspector extends PhpInspection {
     private static final String messagePattern = "High efferent coupling (%d).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "EfferentObjectCouplingInspection";
     }

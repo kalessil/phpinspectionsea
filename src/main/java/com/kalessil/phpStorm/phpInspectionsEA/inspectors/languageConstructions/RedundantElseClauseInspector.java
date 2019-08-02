@@ -32,6 +32,7 @@ public class RedundantElseClauseInspector extends PhpInspection {
     private static final String messageElseif = "Can be converted into if-branch (clearer intention, lower complexity numbers).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "RedundantElseClauseInspection";
     }

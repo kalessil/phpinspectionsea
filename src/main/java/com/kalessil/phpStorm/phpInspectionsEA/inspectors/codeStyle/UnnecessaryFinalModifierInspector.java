@@ -28,6 +28,7 @@ public class UnnecessaryFinalModifierInspector extends PhpInspection {
     private static final String message = "Unnecessary final modifier.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryFinalModifierInspection";
     }

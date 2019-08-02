@@ -69,6 +69,7 @@ public class UnusedFunctionResultInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnusedFunctionResultInspection";
     }

@@ -27,6 +27,7 @@ public class FilePutContentsMissUseInspector extends PhpInspection {
     private static final String messagePattern = "'%s' would consume less cpu and memory resources here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "FilePutContentsMissUseInspection";
     }

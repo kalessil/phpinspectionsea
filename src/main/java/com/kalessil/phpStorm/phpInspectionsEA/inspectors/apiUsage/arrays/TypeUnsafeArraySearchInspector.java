@@ -35,6 +35,7 @@ public class TypeUnsafeArraySearchInspector extends PhpInspection {
     private static final String message = "Third parameter should be provided to clarify if type safety is important in this context.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TypeUnsafeArraySearchInspection";
     }

@@ -52,6 +52,7 @@ public class UnnecessaryAssertionInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryAssertionInspection";
     }

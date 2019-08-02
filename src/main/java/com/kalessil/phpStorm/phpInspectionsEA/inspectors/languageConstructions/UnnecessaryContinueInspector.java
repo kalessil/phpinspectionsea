@@ -36,6 +36,7 @@ public class UnnecessaryContinueInspector extends PhpInspection {
     private static final String message = "It's not really makes sense placing continue here as loop will continue from here anyway.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryContinueInspection";
     }

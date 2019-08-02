@@ -48,6 +48,7 @@ public class VariableFunctionsUsageInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "VariableFunctionsUsageInspection";
     }

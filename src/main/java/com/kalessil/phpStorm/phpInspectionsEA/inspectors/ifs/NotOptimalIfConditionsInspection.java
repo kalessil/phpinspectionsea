@@ -49,6 +49,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
     private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NotOptimalIfConditionsInspection";
     }

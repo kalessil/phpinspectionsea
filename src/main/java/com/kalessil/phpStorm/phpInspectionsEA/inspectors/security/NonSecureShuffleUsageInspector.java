@@ -23,6 +23,7 @@ public class NonSecureShuffleUsageInspector extends PhpInspection {
     private static final String message = "Insufficient entropy, random_int/random_bytes based solution would be more secure.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NonSecureShuffleUsageInspection";
     }

@@ -34,6 +34,7 @@ public class InArrayCanBeUsedInspector extends PhpInspection {
     private static final String messagePattern = "It's possible to use '%s' here (reduces cognitive load).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "InArrayCanBeUsedInspection";
     }

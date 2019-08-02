@@ -43,6 +43,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends PhpInspection {
     private static final String messageMismatch = "Resolved operands types are not complimentary, while they should be (%s vs %s).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ProperNullCoalescingOperatorUsageInspection";
     }

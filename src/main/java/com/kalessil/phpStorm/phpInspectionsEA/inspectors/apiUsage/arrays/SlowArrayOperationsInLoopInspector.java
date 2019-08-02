@@ -30,6 +30,7 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
     private static final String messagePattern = "'%s(...)' is used in a loop and is a resources greedy construction.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SlowArrayOperationsInLoopInspection";
     }

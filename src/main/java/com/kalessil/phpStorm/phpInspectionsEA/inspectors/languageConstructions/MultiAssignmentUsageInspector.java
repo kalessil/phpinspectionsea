@@ -24,6 +24,7 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
     private static final String messageImplicitList = "foreach (... as list(...)) could be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MultiAssignmentUsageInspection";
     }

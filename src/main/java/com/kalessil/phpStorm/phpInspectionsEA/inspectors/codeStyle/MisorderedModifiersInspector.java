@@ -47,6 +47,7 @@ public class MisorderedModifiersInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MisorderedModifiersInspection";
     }

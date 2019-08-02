@@ -34,6 +34,7 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
     private static final String message = "Avoid callables in loop conditionals for better performance.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CallableInLoopTerminationConditionInspection";
     }

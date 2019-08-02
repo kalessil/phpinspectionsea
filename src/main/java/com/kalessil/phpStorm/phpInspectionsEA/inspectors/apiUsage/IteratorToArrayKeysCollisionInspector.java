@@ -23,6 +23,7 @@ public class IteratorToArrayKeysCollisionInspector extends PhpInspection {
     private static final String messagePattern = "Second parameter should be provided to clarify keys collisions handling.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IteratorToArrayKeysCollisionInspection";
     }

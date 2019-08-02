@@ -43,6 +43,7 @@ public class StaticInvocationViaThisInspector extends PhpInspection {
     private static final String messageExpressionUsed = "'...::%s(...)' should be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StaticInvocationViaThisInspection";
     }

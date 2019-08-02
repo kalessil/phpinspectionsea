@@ -41,6 +41,7 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
     private static final String messageSenselessWrite  = "Written value is same as default one, consider removing this assignment.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PropertyInitializationFlawsInspection";
     }

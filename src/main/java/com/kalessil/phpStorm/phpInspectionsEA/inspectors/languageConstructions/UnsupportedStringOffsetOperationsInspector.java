@@ -33,6 +33,7 @@ public class UnsupportedStringOffsetOperationsInspector extends PhpInspection {
     private static final String messagePush   = "Could provoke a PHP Fatal error ([] operator not supported for strings).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnsupportedStringOffsetOperationsInspection";
     }

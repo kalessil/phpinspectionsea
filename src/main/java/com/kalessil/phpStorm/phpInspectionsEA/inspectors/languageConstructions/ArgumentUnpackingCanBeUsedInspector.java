@@ -25,6 +25,7 @@ public class ArgumentUnpackingCanBeUsedInspector extends PhpInspection {
     private static final String messagePattern = "'%s' should be used instead (3x+ faster)";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArgumentUnpackingCanBeUsedInspection";
     }

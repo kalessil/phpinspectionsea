@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LowerAccessLevelInspector extends PhpInspection {
     @NotNull
+    @Override
     public String getShortName() {
         return "LowerAccessLevelInspection";
     }

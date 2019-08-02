@@ -33,6 +33,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
     private static final String messagePattern = "Consider using '%s' instead (consumes less cpu and memory resources).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ImplodeMissUseInspection";
     }

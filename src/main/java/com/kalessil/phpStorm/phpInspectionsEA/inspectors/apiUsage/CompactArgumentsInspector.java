@@ -33,6 +33,7 @@ public class CompactArgumentsInspector extends PhpInspection {
     private static final String patternStringExpected  = "There is chance that it should be '%s' here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CompactArgumentsInspection";
     }

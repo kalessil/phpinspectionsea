@@ -32,6 +32,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspectio
     private static final String messagePattern = "'%f%(...)' should be used instead (the pattern does not contain alphabet characters).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CaseInsensitiveStringFunctionsMissUseInspection";
     }

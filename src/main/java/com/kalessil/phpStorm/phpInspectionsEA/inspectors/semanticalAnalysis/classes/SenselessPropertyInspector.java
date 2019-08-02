@@ -31,6 +31,7 @@ public class SenselessPropertyInspector extends PhpInspection {
     private static final String messagePattern = "'%s' property seems to be used as a local variable in '%s' method.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SenselessPropertyInspection";
     }

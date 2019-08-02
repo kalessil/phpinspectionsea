@@ -30,6 +30,7 @@ public class ObGetCleanCanBeUsedInspector extends PhpInspection {
     private static final String message = "'ob_get_clean()' can be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ObGetCleanCanBeUsedInspection";
     }

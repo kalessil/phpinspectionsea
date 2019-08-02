@@ -36,6 +36,7 @@ public class StrTrUsageAsStrReplaceInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StrTrUsageAsStrReplaceInspection";
     }

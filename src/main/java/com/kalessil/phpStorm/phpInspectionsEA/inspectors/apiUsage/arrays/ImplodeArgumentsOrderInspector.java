@@ -24,6 +24,7 @@ public class ImplodeArgumentsOrderInspector extends PhpInspection {
     private static final String message = "The glue argument should be the first one.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ImplodeArgumentsOrderInspection";
     }

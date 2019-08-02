@@ -34,6 +34,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
     private static final String messageSprintf = "It's probably intended to use 'sprintf(...)' here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IncompleteThrowStatementsInspection";
     }

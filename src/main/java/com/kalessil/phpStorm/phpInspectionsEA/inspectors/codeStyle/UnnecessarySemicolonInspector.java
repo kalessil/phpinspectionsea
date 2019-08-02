@@ -28,6 +28,7 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
     private static final String message = "Unnecessary semicolon.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessarySemicolonInspection";
     }

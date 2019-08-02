@@ -25,6 +25,7 @@ public class MissingElseKeywordInspector extends PhpInspection {
     private static final String message = "It's probably was intended to use 'else if' or 'elseif' here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MissingElseKeywordInspection";
     }

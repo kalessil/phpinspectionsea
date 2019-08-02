@@ -35,6 +35,7 @@ public class OffsetOperationsInspector extends PhpInspection {
     private static final String patternInvalidIndex    = "Resolved index type (%s) is incompatible with possible %s. Probably just proper type hinting needed.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "OffsetOperationsInspection";
     }

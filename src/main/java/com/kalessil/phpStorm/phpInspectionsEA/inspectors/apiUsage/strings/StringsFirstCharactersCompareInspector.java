@@ -26,6 +26,7 @@ public class StringsFirstCharactersCompareInspector extends PhpInspection {
     private static final String message = "The specified length doesn't match the string length.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StringsFirstCharactersCompareInspection";
     }

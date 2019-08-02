@@ -40,6 +40,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends PhpInspec
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "EncryptionInitializationVectorRandomnessInspection";
     }

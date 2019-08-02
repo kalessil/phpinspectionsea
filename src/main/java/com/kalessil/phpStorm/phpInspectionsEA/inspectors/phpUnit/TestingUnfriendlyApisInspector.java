@@ -46,6 +46,7 @@ public class TestingUnfriendlyApisInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TestingUnfriendlyApisInspection";
     }

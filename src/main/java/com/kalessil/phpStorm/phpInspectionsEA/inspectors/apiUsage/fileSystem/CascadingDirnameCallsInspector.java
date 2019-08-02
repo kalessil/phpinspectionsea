@@ -32,6 +32,7 @@ public class CascadingDirnameCallsInspector extends PhpInspection {
     private static final String messagePattern = "'%e%' can be used instead (reduces amount of calls).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CascadingDirnameCallsInspection";
     }

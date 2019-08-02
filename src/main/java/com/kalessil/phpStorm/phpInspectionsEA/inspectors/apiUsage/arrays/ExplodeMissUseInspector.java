@@ -43,6 +43,7 @@ public class ExplodeMissUseInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ExplodeMissUseInspection";
     }

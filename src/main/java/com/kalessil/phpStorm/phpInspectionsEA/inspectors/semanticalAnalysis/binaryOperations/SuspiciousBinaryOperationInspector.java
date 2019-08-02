@@ -25,6 +25,7 @@ import java.util.function.BooleanSupplier;
 
 public class SuspiciousBinaryOperationInspector extends PhpInspection {
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousBinaryOperationInspection";
     }

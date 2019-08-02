@@ -53,6 +53,7 @@ public class ClassMockingCorrectnessInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ClassMockingCorrectnessInspection";
     }

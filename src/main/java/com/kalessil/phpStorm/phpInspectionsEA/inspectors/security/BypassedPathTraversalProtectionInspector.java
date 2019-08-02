@@ -30,6 +30,7 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
     private static final String messageFilterVar = "The call doesn't prevent path traversal, as can be bypassed with e.g. '....//'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "BypassedPathTraversalProtectionInspection";
     }

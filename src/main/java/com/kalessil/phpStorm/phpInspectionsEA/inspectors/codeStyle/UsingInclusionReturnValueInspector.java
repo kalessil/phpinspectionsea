@@ -23,6 +23,7 @@ public class UsingInclusionReturnValueInspector  extends PhpInspection {
             = "Operating on this return mechanism is considered a bad practice. OOP can be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UsingInclusionReturnValueInspection";
     }

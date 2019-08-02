@@ -27,6 +27,7 @@ public class SecureCookiesTransferInspector extends LocalInspectionTool {
     private static final String pattern = "It's not recommended to rely on $secure and $httponly defaults (apply QF to see how to harden the call).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SecureCookiesTransferInspection";
     }

@@ -24,6 +24,7 @@ public class UntrustedInclusionInspector extends PhpInspection {
     private static final String message = "This relies on include_path and not guaranteed to load the right file. Concatenate with __DIR__ or use namespaces + class loading instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UntrustedInclusionInspection";
     }

@@ -35,6 +35,7 @@ public class FilePutContentsRaceConditionInspector extends PhpInspection {
     private static final String message  = "A race condition can corrupt the file content. It would be a good idea to use LOCK_EX flag.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "FilePutContentsRaceConditionInspection";
     }

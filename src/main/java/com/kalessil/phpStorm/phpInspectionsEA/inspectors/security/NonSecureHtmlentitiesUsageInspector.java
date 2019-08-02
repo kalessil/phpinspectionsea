@@ -45,6 +45,7 @@ public class NonSecureHtmlentitiesUsageInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NonSecureHtmlentitiesUsageInspection";
     }

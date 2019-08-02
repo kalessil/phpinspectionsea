@@ -79,6 +79,7 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ReturnTypeCanBeDeclaredInspection";
     }

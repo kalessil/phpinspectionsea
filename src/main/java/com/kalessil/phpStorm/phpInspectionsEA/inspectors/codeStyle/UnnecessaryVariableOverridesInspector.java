@@ -30,6 +30,7 @@ public class UnnecessaryVariableOverridesInspector extends PhpInspection {
     private static final String message = "Unnecessary assignment, a nested call would simplify workflow.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryVariableOverridesInspection";
     }

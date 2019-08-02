@@ -26,6 +26,7 @@ public class SuspiciousSemicolonInspector extends PhpInspection {
     private static final String message = "Probably a bug, because ';' treated as body.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousSemicolonInspection";
     }

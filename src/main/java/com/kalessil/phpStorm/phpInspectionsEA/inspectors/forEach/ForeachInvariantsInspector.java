@@ -38,6 +38,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
     private static final String eachFunctionUsed = "Foreach should be used instead (8x faster, also deprecated since PHP 7.2).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ForeachInvariantsInspection";
     }

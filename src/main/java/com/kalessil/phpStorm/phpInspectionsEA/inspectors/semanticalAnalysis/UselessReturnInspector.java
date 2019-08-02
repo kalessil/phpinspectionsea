@@ -36,6 +36,7 @@ public class UselessReturnInspector extends PhpInspection {
     private static final String messageConfusing = "Assignment here is not making much sense.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UselessReturnInspection";
     }

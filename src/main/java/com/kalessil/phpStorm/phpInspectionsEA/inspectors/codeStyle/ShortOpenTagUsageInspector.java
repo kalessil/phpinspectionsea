@@ -29,6 +29,7 @@ public class ShortOpenTagUsageInspector extends PhpInspection {
     private static final String message = "Using the '<?' short tag considered to be a bad practice";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ShortOpenTagUsageInspection";
     }

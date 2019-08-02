@@ -34,6 +34,7 @@ public class ThrowRawExceptionInspector extends PhpInspection {
     private static final String messageNoArguments  = "This exception is thrown without a message. Consider adding one to help clarify or troubleshoot the exception.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ThrowRawExceptionInspection";
     }

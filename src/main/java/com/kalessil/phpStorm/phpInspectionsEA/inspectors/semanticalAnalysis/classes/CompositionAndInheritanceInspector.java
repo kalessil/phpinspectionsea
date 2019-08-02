@@ -28,6 +28,7 @@ public class CompositionAndInheritanceInspector extends PhpInspection {
     public boolean FORCE_FINAL_OR_ABSTRACT = false;
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CompositionAndInheritanceInspection";
     }

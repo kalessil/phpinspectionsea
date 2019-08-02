@@ -36,6 +36,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "HostnameSubstitutionInspection";
     }

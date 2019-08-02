@@ -41,6 +41,7 @@ public class GetTypeMissUseInspector extends PhpInspection {
     private static final String messageInvalidType = "'%t%' is not a value returned by 'gettype(...)'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "GetTypeMissUseInspection";
     }

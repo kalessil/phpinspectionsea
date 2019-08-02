@@ -26,6 +26,7 @@ public class UnusedMockInspector extends PhpInspection {
     private final static String message = "The mock seems to be not used, consider deleting it.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnusedMockInspection";
     }

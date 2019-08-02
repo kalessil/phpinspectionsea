@@ -51,6 +51,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousLoopInspection";
     }

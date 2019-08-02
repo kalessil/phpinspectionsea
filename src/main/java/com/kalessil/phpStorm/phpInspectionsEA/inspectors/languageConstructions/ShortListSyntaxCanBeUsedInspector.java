@@ -32,6 +32,7 @@ public class ShortListSyntaxCanBeUsedInspector extends PhpInspection {
     private static final String messageAssign  = "'[...] = ...' can be used here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ShortListSyntaxCanBeUsedInspection";
     }

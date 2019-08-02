@@ -38,6 +38,7 @@ public class CoreInterfacesUsageInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CoreInterfacesUsageInspection";
     }

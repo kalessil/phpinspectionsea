@@ -37,6 +37,7 @@ public class UnnecessaryIssetArgumentsInspector extends PhpInspection {
     private static final String message = "This argument can be skipped (handled by its array access).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryIssetArgumentsInspection";
     }

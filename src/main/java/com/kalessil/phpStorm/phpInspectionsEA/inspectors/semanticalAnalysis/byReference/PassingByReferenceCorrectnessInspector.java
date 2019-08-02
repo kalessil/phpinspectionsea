@@ -41,6 +41,7 @@ public class PassingByReferenceCorrectnessInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PassingByReferenceCorrectnessInspection";
     }

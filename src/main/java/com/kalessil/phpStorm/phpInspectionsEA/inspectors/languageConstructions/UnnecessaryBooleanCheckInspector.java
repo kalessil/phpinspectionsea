@@ -33,6 +33,7 @@ public class UnnecessaryBooleanCheckInspector extends PhpInspection {
     private static final String message = "'%s' would fit better here (reduces cognitive load).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryBooleanCheckInspection";
     }

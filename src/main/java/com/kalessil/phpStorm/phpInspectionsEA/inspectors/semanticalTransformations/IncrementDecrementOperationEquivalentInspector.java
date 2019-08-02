@@ -39,6 +39,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
     public boolean PREFER_SUFFIX_STYLE = false;
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IncrementDecrementOperationEquivalentInspection";
     }

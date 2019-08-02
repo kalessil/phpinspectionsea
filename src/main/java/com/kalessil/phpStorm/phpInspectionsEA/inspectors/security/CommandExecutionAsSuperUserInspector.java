@@ -23,6 +23,7 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
     private static final String message = "Applications must not require super user privileges, please find another solution.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CommandExecutionAsSuperUserInspection";
     }

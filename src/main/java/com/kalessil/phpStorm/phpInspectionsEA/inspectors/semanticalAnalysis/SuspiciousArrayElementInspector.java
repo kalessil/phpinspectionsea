@@ -26,6 +26,7 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
     private static final String messagePattern = "There is chance that it should be %s here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousArrayElementInspection";
     }

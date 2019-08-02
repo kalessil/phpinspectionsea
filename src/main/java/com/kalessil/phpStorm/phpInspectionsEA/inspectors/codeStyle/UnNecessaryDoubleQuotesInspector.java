@@ -30,6 +30,7 @@ public class UnNecessaryDoubleQuotesInspector extends PhpInspection {
     private static final String message = "Safely use single quotes instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnNecessaryDoubleQuotesInspection";
     }

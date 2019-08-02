@@ -35,6 +35,7 @@ public class PrintfScanfArgumentsInspector extends PhpInspection {
     private static final String messageParameters = "Amount of expected parameters is %c%.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PrintfScanfArgumentsInspection";
     }

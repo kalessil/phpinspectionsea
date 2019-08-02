@@ -42,6 +42,7 @@ public class SenselessProxyMethodInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SenselessProxyMethodInspection";
     }

@@ -45,6 +45,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
     private static final String messagePattern = "'%s' can be used instead (reduces cognitive load).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NullCoalescingOperatorCanBeUsedInspection";
     }

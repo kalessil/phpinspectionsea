@@ -29,6 +29,7 @@ public class UnnecessaryUseAliasInspector extends PhpInspection {
     private static final String messageImport = "The symbol is imported twice, consider dropping this import.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryUseAliasInspection";
     }

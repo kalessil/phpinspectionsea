@@ -28,6 +28,7 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
     private static final String messageRethrown         = "The exception being re-throws without any processing.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "BadExceptionsProcessingInspection";
     }

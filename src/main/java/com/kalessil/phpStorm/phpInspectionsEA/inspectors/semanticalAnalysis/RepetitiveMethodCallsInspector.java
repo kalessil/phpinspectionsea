@@ -35,6 +35,7 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
     private static final String messageLoop       = "Repetitive call, consider introducing a local variable outside of the loop.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "RepetitiveMethodCallsInspection";
     }

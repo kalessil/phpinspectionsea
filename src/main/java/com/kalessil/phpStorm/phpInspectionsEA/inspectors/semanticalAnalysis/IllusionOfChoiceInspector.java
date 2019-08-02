@@ -48,6 +48,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IllusionOfChoiceInspection";
     }

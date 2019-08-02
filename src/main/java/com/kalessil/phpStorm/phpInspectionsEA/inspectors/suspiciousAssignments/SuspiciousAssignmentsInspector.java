@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SuspiciousAssignmentsInspector extends PhpInspection {
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousAssignmentsInspection";
     }

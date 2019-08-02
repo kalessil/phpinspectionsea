@@ -89,6 +89,7 @@ public class DeprecatedIniOptionsInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DeprecatedIniOptionsInspection";
     }

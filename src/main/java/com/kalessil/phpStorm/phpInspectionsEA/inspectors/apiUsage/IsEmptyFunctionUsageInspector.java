@@ -39,6 +39,7 @@ public class IsEmptyFunctionUsageInspector extends PhpInspection {
     private static final String patternAlternative = "You should probably use '%s' instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IsEmptyFunctionUsageInspection";
     }

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspection {
     @NotNull
+    @Override
     public String getShortName() {
         return "MoreThanThreeArgumentsInspection";
     }

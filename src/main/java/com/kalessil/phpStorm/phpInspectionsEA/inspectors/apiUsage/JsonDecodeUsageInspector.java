@@ -30,6 +30,7 @@ public class JsonDecodeUsageInspector extends PhpInspection {
     private static final String message = "Please specify the second argument (clarifies decoding into array or object).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "JsonDecodeUsageInspection";
     }

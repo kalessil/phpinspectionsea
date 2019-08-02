@@ -34,6 +34,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
     private static final String messageParent = "Non-static method should not be used in static closures.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StaticLambdaBindingInspection";
     }

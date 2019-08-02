@@ -48,6 +48,7 @@ public class SubStrShortHandUsageInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SubStrShortHandUsageInspection";
     }

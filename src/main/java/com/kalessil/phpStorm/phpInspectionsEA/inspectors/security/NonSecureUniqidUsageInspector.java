@@ -45,6 +45,7 @@ public class NonSecureUniqidUsageInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NonSecureUniqidUsageInspection";
     }

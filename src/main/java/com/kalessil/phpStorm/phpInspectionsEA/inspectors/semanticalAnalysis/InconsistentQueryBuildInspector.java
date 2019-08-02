@@ -28,6 +28,7 @@ public class InconsistentQueryBuildInspector extends PhpInspection {
     private static final String messagePattern = "'%s' should be used instead, so http_build_query() produces result independent from key types.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "InconsistentQueryBuildInspection";
     }

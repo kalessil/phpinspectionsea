@@ -55,6 +55,7 @@ public class UnknownInspectionInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnknownInspectionInspection";
     }

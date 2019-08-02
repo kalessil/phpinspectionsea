@@ -25,6 +25,7 @@ public class PregQuoteUsageInspector extends PhpInspection {
     private static final String messageSeparator = "The separator value is platform-dependent, consider using '/' instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PregQuoteUsageInspection";
     }

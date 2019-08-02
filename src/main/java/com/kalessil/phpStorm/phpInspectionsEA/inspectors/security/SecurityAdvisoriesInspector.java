@@ -105,6 +105,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SecurityAdvisoriesInspection";
     }

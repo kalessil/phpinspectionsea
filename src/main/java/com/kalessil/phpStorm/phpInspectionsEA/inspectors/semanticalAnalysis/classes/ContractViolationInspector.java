@@ -21,6 +21,7 @@ public class ContractViolationInspector extends PhpInspection {
     private static final String messagePattern = "Some of public methods (%s) are not part of the class contracts. Perhaps a contract is incomplete.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ContractViolationInspection";
     }

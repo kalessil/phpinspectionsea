@@ -28,6 +28,7 @@ public class BasenameCallsContextInspector extends PhpInspection {
     private static final String messagePattern = "'%s' can be used instead (reduces amount of calls).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "BasenameCallsContextInspection";
     }

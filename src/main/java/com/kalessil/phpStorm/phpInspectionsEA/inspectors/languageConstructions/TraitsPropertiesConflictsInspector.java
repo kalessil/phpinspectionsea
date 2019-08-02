@@ -33,6 +33,7 @@ public class TraitsPropertiesConflictsInspector extends PhpInspection {
     private static final String messagePattern = "'%c%' and '%t%' define the same property ($%p%).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TraitsPropertiesConflictsInspection";
     }

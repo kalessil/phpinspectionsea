@@ -32,6 +32,7 @@ public class ClassReusesParentTraitInspector extends PhpInspection {
     private static final String patternIndirectDuplication = "'%s' is already used in '%s'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ClassReusesParentTraitInspection";
     }

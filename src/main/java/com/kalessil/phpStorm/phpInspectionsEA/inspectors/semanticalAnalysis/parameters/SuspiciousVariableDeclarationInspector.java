@@ -26,6 +26,7 @@ public class SuspiciousVariableDeclarationInspector extends PhpInspection {
     private static final String messageSameUse       = "There is a use-argument named '%s' already.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousVariableDeclarationInspection";
     }

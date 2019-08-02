@@ -28,6 +28,7 @@ public class SenselessCommaInArrayDefinitionInspector extends PhpInspection {
     private static final String message = "Can be safely dropped. The comma will be ignored by PHP.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SenselessCommaInArrayDefinitionInspection";
     }

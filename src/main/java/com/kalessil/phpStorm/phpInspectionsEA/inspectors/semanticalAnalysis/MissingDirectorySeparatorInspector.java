@@ -36,6 +36,7 @@ public class MissingDirectorySeparatorInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MissingDirectorySeparatorInspection";
     }

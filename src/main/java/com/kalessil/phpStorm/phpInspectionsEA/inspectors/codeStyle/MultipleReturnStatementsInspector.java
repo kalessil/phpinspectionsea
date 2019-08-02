@@ -37,6 +37,7 @@ public class MultipleReturnStatementsInspector extends PhpInspection {
     private static final String messagePattern = "Method has %s return points, try to introduce just one to uncover complexity behind.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MultipleReturnStatementsInspection";
     }

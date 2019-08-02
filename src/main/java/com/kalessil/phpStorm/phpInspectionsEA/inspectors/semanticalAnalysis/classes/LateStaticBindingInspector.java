@@ -28,6 +28,7 @@ public class LateStaticBindingInspector extends PhpInspection {
     private static final String messagePrivateMethod = "It's better to use 'self' here (identically named private method in child classes will cause an error).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "LateStaticBindingInspection";
     }

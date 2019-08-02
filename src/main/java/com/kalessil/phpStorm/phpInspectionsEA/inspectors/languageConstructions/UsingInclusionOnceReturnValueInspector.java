@@ -29,6 +29,7 @@ public class UsingInclusionOnceReturnValueInspector extends PhpInspection {
     private static final String message = "Only the first call returns the proper/expected result. Subsequent calls will return 'true'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UsingInclusionOnceReturnValueInspection";
     }

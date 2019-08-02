@@ -45,6 +45,7 @@ public class NotOptimalRegularExpressionsInspector extends PhpInspection {
     private static final String messageNoDelimiters = "The regular expression delimiters are missing (it should be e.g. '/<regex-here>/').";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NotOptimalRegularExpressionsInspection";
     }

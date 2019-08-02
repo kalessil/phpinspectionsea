@@ -41,6 +41,7 @@ public class LongInheritanceChainInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "LongInheritanceChainInspection";
     }

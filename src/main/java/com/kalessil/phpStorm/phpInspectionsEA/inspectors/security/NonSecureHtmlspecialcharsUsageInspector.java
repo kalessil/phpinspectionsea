@@ -46,6 +46,7 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NonSecureHtmlspecialcharsUsageInspection";
     }

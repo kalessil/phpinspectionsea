@@ -43,6 +43,7 @@ public class UnSafeIsSetOverArrayInspector extends PhpInspection {
     private static final String patternUseNullComparison    = "'%s' construction should be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnSafeIsSetOverArrayInspection";
     }

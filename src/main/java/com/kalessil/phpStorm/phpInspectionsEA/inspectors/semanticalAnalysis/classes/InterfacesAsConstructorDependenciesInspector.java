@@ -37,6 +37,7 @@ public class InterfacesAsConstructorDependenciesInspector extends PhpInspection 
     public boolean TOLERATE_MISSING_CONTRACTS = true;
 
     @NotNull
+    @Override
     public String getShortName() {
         return "InterfacesAsConstructorDependenciesInspection";
     }

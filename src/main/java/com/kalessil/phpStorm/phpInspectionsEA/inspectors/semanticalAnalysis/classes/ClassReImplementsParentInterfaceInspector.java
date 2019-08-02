@@ -32,6 +32,7 @@ public class ClassReImplementsParentInterfaceInspector extends PhpInspection {
     private static final String patternIndirectDuplication = "'%s' is already announced in '%s'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ClassReImplementsParentInterfaceInspection";
     }

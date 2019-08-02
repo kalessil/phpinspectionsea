@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class NullPointerExceptionInspector extends PhpInspection {
     @NotNull
+    @Override
     public String getShortName() {
         return "NullPointerExceptionInspection";
     }

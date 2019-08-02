@@ -23,6 +23,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
     private static final String messagePattern = "'%s(...)' sorts results by default, please provide second argument for specifying the intention.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "LowPerformingDirectoryOperationsInspection";
     }

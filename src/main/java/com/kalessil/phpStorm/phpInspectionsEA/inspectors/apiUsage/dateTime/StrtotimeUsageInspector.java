@@ -27,6 +27,7 @@ public class StrtotimeUsageInspector extends PhpInspection {
     private static final String messageDropTime = "'time()' is default valued already, it can safely be removed.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StrtotimeUsageInspection";
     }

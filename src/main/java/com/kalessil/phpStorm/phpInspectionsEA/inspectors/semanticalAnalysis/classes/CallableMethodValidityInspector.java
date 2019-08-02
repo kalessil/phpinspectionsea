@@ -36,6 +36,7 @@ public class CallableMethodValidityInspector extends PhpInspection {
     private static final String messageUseThrowable = "\\Throwable instead of \\Exception should be used in the handler (BC break introduced in PHP 7).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CallableMethodValidityInspection";
     }

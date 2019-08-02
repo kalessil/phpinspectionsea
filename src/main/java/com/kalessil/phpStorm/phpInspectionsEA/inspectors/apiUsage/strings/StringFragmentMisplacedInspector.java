@@ -42,6 +42,7 @@ public class StringFragmentMisplacedInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StringFragmentMisplacedInspection";
     }

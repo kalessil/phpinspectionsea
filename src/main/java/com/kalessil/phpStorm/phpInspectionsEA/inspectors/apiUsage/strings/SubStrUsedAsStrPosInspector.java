@@ -48,6 +48,7 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SubStrUsedAsStrPosInspection";
     }

@@ -34,6 +34,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
     private static final String messageNestedMerge  = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArrayMergeMissUseInspection";
     }

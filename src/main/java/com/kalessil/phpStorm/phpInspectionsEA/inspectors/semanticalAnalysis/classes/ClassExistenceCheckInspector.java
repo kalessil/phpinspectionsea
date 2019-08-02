@@ -41,6 +41,7 @@ public class ClassExistenceCheckInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ClassExistenceCheckInspection";
     }

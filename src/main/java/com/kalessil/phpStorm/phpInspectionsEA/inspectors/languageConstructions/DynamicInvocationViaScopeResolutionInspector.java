@@ -32,6 +32,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends PhpInspection 
     private static final String patternExpressionUsed      = "'...->%s(...)' should be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DynamicInvocationViaScopeResolutionInspection";
     }

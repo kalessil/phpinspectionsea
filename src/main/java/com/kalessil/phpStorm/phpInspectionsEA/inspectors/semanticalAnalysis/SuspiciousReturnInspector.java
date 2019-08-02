@@ -33,6 +33,7 @@ public class SuspiciousReturnInspector extends PhpInspection {
     };
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousReturnInspection";
     }

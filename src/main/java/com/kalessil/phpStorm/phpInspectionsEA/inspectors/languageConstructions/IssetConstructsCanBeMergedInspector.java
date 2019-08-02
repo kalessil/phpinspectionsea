@@ -43,6 +43,7 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
     private static final String messageIvertedIsset = "This can be merged into the previous '!isset(..., ...[, ...])'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IssetConstructsCanBeMergedInspection";
     }

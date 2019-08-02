@@ -38,6 +38,7 @@ public class DateTimeConstantsUsageInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DateTimeConstantsUsageInspection";
     }

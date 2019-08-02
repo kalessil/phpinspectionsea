@@ -34,6 +34,7 @@ public class InfinityLoopInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "InfinityLoopInspection";
     }

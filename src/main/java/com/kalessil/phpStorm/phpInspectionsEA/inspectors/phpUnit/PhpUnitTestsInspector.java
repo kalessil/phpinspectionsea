@@ -58,6 +58,7 @@ public class PhpUnitTestsInspector extends PhpInspection {
     private final static String messageTest          = "@test is ambiguous because method name starts with 'test'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PhpUnitTestsInspection";
     }

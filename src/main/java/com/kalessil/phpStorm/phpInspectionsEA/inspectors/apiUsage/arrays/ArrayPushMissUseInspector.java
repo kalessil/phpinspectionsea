@@ -38,6 +38,7 @@ public class ArrayPushMissUseInspector extends PhpInspection {
     private static final String messageUnneeded = "It seems that the index can be omitted at all.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArrayPushMissUseInspection";
     }

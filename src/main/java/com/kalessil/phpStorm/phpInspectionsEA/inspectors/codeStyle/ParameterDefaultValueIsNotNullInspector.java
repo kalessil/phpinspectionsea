@@ -32,6 +32,7 @@ public class ParameterDefaultValueIsNotNullInspector extends PhpInspection {
     private static final String message = "Null should be used as the default value (nullable types are the goal, right?)";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ParameterDefaultValueIsNotNullInspection";
     }

@@ -33,6 +33,7 @@ public class UnusedGotoLabelInspector extends PhpInspection {
     private static final String message = "The label is not used.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnusedGotoLabelInspection";
     }

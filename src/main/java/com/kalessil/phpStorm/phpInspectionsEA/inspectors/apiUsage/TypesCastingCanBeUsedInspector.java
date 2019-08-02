@@ -37,6 +37,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
     public boolean REPORT_INLINES = true;
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TypesCastingCanBeUsedInspection";
     }

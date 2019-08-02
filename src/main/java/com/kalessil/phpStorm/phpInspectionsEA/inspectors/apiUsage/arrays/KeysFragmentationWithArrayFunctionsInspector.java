@@ -35,6 +35,7 @@ public class KeysFragmentationWithArrayFunctionsInspector extends PhpInspection 
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "KeysFragmentationWithArrayFunctionsInspection";
     }

@@ -20,6 +20,7 @@ public class CompactCanBeUsedInspector extends PhpInspection {
     private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CompactCanBeUsedInspection";
     }

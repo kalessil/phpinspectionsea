@@ -30,6 +30,7 @@ public class ExposingInternalClassesInspector extends PhpInspection {
     private static final String message = "Exposes an @internal class, which should not be exposed via public methods.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ExposingInternalClassesInspection";
     }

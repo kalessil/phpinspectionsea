@@ -43,6 +43,7 @@ public class IssetArgumentExistenceInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IssetArgumentExistenceInspection";
     }

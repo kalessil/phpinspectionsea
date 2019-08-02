@@ -54,6 +54,7 @@ public class TransitiveDependenciesUsageInspector extends PhpInspection {
     public final List<String> configuration  = new ArrayList<>();
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TransitiveDependenciesUsageInspection";
     }

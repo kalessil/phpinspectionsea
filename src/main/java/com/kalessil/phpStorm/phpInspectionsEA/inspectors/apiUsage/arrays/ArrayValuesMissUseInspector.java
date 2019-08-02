@@ -29,6 +29,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
     private static final String messageCount    = "'array_values(...)' is not making any sense here (just count it's argument).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArrayValuesMissUseInspection";
     }

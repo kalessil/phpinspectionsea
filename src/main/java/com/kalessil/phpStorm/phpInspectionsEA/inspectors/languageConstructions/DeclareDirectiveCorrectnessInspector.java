@@ -32,6 +32,7 @@ public class DeclareDirectiveCorrectnessInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DeclareDirectiveCorrectnessInspection";
     }

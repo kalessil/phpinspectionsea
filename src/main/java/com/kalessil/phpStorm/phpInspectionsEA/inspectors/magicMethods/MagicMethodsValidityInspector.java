@@ -58,6 +58,7 @@ public class MagicMethodsValidityInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MagicMethodsValidityInspection";
     }

@@ -31,6 +31,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
     private static final String messageVerifyPeer = "Exposes a connection to MITM attacks. Use true (default) to stay safe.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CurlSslServerSpoofingInspection";
     }

@@ -41,6 +41,7 @@ public class SubstringCompareInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SubstringCompareInspection";
     }

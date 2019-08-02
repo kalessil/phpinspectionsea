@@ -48,6 +48,7 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "BypassedUrlValidationInspection";
     }

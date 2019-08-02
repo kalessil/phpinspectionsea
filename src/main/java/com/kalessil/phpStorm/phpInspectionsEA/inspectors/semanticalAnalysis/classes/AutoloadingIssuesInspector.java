@@ -36,6 +36,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "AutoloadingIssuesInspection";
     }

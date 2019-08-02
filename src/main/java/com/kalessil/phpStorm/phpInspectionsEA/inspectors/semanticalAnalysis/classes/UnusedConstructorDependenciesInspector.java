@@ -28,6 +28,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
     private static final String message = "Property is used only in constructor, perhaps we are dealing with dead code here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnusedConstructorDependenciesInspection";
     }

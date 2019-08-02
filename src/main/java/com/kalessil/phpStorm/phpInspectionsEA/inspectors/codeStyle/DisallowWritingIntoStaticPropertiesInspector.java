@@ -32,6 +32,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
     private static final String messageDisallowAnyWrites      = "Static properties should not be modified.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DisallowWritingIntoStaticPropertiesInspection";
     }

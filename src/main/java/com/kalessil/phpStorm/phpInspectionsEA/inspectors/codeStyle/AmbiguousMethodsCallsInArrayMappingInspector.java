@@ -26,6 +26,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
     private static final String message = "Duplicated method calls should be moved to a local variable.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "AmbiguousMethodsCallsInArrayMappingInspection";
     }

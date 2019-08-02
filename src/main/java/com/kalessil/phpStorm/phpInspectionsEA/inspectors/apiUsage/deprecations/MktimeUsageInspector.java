@@ -25,6 +25,7 @@ public class MktimeUsageInspector extends BasePhpInspection {
     private static final String messageParameterDeprecated = "Parameter 'is_dst' is deprecated and removed in PHP 7.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MktimeUsageInspection";
     }

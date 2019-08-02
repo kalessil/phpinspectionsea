@@ -31,6 +31,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' construction should be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IsNullFunctionUsageInspection";
     }

@@ -33,6 +33,7 @@ public class GetClassUsageInspector extends BasePhpInspection {
     private static final String message = "'get_class(...)' does not accept null as argument in PHP 7.2+ versions.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "GetClassUsageInspection";
     }

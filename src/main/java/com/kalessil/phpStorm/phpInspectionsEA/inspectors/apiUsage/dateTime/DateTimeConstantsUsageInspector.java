@@ -37,6 +37,7 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DateTimeConstantsUsageInspection";
     }

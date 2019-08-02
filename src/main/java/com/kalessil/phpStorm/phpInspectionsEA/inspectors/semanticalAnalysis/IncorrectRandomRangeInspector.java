@@ -32,6 +32,7 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IncorrectRandomRangeInspection";
     }

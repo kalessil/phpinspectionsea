@@ -25,6 +25,7 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
     private static final String patternUseDirname = "'%s' should be used instead (due to how realpath handles streams).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "RealpathInStreamContextInspection";
     }

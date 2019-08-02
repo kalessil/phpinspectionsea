@@ -27,6 +27,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
     private static final String message = "Unnecessary semicolon.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessarySemicolonInspection";
     }

@@ -29,6 +29,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
     private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousLoopInspection";
     }

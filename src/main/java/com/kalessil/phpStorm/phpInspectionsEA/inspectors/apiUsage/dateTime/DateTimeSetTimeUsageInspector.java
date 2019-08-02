@@ -26,6 +26,7 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
     private static final String message = "The call will return false ('microseconds' parameter is available in PHP 7.1+).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DateTimeSetTimeUsageInspection";
     }

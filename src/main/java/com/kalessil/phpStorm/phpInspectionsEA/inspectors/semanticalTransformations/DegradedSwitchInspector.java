@@ -23,6 +23,7 @@ public class DegradedSwitchInspector extends BasePhpInspection {
     private static final String messageOnlyDefault = "Switch construct has default case only, consider leaving only the default case's body.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DegradedSwitchInspection";
     }

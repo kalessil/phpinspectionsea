@@ -38,6 +38,7 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
     private static final String messagePattern  = "'%s' would be a solution not depending on the string length.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "FixedTimeStartWithInspection";
     }

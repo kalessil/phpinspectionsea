@@ -37,6 +37,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
     private static final String messagePatternProxy     = "'%s' method should call parent's one instead of duplicating code.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SenselessMethodDuplicationInspection";
     }

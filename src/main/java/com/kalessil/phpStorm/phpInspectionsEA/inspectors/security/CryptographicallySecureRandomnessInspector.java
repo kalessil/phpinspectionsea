@@ -36,6 +36,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
     private static final String messageMcrypt2ndArgumentNotSecure    = "It's better to use MCRYPT_DEV_RANDOM here (may block until more entropy is available).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CryptographicallySecureRandomnessInspection";
     }

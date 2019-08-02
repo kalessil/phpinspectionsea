@@ -118,6 +118,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     };
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnqualifiedReferenceInspection";
     }

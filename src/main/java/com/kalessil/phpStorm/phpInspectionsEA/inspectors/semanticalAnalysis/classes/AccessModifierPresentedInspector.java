@@ -40,6 +40,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     public boolean ANALYZE_CONSTANTS  = true;
 
     @NotNull
+    @Override
     public String getShortName() {
         return "AccessModifierPresentedInspection";
     }

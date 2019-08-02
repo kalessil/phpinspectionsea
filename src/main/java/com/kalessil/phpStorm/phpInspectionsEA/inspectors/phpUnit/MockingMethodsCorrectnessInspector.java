@@ -35,6 +35,7 @@ public class MockingMethodsCorrectnessInspector extends BasePhpInspection {
     private final static String messageFinalMethod      = "The method is final hence can not be mocked.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MockingMethodsCorrectnessInspection";
     }

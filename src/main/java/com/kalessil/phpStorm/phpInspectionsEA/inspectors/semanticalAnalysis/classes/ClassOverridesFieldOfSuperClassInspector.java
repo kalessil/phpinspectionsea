@@ -36,6 +36,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
     private static final String patternProtectedCandidate = "Likely needs to be renamed in sake of maintainability (private property with the same name already defined in %c%).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ClassOverridesFieldOfSuperClassInspection";
     }

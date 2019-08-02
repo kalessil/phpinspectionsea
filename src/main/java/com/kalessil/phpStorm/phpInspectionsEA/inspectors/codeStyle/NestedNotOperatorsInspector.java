@@ -32,6 +32,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
     private static final String messageUseSingleNot   = "Can be replaced with !%e%.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NestedNotOperatorsInspection";
     }

@@ -30,6 +30,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
     private static final String messagePattern = "'$%s' might not be defined in the scope.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CompactArgumentsInspection";
     }

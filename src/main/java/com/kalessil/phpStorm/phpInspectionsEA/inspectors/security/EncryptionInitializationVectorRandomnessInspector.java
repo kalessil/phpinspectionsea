@@ -40,6 +40,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "EncryptionInitializationVectorRandomnessInspection";
     }

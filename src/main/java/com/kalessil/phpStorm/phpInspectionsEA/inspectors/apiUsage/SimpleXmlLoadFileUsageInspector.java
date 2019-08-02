@@ -26,6 +26,7 @@ public class SimpleXmlLoadFileUsageInspector extends BasePhpInspection {
     private static final String message = "This can be affected by a PHP bug #62577 (https://bugs.php.net/bug.php?id=62577)";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SimpleXmlLoadFileUsageInspection";
     }

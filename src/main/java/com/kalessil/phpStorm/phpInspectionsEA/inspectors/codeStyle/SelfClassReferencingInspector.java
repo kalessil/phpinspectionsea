@@ -36,6 +36,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
     public boolean PREFER_CLASS_NAMES = false;
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SelfClassReferencingInspection";
     }

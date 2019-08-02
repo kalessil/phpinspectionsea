@@ -33,6 +33,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
     private static final String messagePattern = "Can be safely refactored as '%s'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "OpAssignShortSyntaxInspection";
     }

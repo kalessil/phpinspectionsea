@@ -48,6 +48,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DynamicCallsToScopeIntrospectionInspection";
     }

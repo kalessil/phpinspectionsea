@@ -23,6 +23,7 @@ public class BacktickOperatorUsageInspector extends BasePhpInspection {
     private static final String message = "Prefer using 'shell_exec(...)' instead (security analysis friendly).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "BacktickOperatorUsageInspection";
     }

@@ -57,6 +57,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TypeUnsafeComparisonInspection";
     }

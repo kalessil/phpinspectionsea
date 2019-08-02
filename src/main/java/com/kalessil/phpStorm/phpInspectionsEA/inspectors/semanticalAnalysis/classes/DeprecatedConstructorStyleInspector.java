@@ -20,6 +20,7 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
     private static final String messagePattern = "%s% has a deprecated constructor.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DeprecatedConstructorStyleInspection";
     }

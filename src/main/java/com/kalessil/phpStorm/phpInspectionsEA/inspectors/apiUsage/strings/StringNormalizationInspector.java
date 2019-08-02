@@ -29,6 +29,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
     private static final String patternSenselessNesting = "'%s(...)' makes no sense here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StringNormalizationInspection";
     }

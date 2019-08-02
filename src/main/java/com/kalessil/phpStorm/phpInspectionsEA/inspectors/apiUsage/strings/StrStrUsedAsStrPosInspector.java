@@ -30,6 +30,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' should be used instead (saves memory).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StrStrUsedAsStrPosInspection";
     }

@@ -24,6 +24,7 @@ import java.util.function.BooleanSupplier;
 
 public class RsaOraclePaddingAttacksInspector extends LocalInspectionTool {
     @NotNull
+    @Override
     public String getShortName() {
         return "RsaOraclePaddingAttacksInspection";
     }

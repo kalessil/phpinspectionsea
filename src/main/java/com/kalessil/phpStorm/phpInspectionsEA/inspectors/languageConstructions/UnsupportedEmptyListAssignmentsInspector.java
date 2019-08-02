@@ -27,6 +27,7 @@ public class UnsupportedEmptyListAssignmentsInspector extends BasePhpInspection 
     private static final String message = "Provokes a PHP Fatal error (Cannot use empty list).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnsupportedEmptyListAssignmentsInspection";
     }

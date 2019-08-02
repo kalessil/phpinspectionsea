@@ -25,6 +25,7 @@ public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' can be used instead";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PowerOperatorCanBeUsedInspection";
     }

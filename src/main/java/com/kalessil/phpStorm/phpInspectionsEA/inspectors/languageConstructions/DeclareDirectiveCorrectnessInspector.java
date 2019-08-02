@@ -31,6 +31,7 @@ public class DeclareDirectiveCorrectnessInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DeclareDirectiveCorrectnessInspection";
     }

@@ -37,6 +37,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
     private static final String patternFailOrCondition  = "Some check are missing: 'mkdir(%s) || is_dir(...)'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MkdirRaceConditionInspection";
     }

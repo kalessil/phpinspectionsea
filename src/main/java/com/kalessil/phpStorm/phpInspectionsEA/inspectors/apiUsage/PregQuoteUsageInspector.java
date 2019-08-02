@@ -22,6 +22,7 @@ public class PregQuoteUsageInspector extends BasePhpInspection {
     private static final String message = "Please provide regex delimiter as the second argument for proper escaping.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PregQuoteUsageInspection";
     }

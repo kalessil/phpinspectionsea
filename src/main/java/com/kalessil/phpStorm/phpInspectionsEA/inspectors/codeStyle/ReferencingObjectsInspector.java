@@ -46,6 +46,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ReferencingObjectsInspection";
     }

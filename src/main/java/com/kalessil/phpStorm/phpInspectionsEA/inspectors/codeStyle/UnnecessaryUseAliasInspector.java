@@ -25,6 +25,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
     private static final String messagePattern = "' as %s' is redundant here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryUseAliasInspection";
     }

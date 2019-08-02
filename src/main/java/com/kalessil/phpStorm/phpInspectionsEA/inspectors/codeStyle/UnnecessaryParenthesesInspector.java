@@ -27,6 +27,7 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
     private static final String message = "Unnecessary parentheses.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryParenthesesInspection";
     }

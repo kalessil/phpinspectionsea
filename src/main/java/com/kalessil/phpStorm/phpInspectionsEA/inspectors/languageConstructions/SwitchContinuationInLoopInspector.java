@@ -21,6 +21,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
     private static final String message = "In PHP, 'continue' inside a 'switch' behaves as 'break'. Use 'continue 2;' to continue the external loop.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SwitchContinuationInLoopInspection";
     }

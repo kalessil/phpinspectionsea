@@ -22,6 +22,7 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
     private static final String message = "Please provide second parameter to clearly state intended behaviour.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NonSecureExtractUsageInspection";
     }

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SuspiciousAssignmentsInspector extends BasePhpInspection {
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousAssignmentsInspection";
     }

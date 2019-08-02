@@ -36,6 +36,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ClassConstantUsageCorrectnessInspection";
     }

@@ -43,6 +43,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnnecessaryCastingInspection";
     }

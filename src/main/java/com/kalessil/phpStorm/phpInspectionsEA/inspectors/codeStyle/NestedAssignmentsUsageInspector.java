@@ -29,6 +29,7 @@ public class NestedAssignmentsUsageInspector extends BasePhpInspection {
     private static final String message = "Using dedicated assignment would be more reliable (e.g '$... = $... + 10' can be mistyped as `$... = $... = 10`).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NestedAssignmentsUsageInspection";
     }

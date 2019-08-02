@@ -46,6 +46,7 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     private static final String messagePattern = "Variable $%v% is redundant.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "OneTimeUseVariablesInspection";
     }

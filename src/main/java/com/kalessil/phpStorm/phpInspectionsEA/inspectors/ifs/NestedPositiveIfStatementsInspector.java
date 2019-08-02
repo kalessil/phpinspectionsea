@@ -34,6 +34,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     private static final String message = "If construct can be merged with parent one.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NestedPositiveIfStatementsInspection";
     }

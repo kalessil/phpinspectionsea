@@ -32,6 +32,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
     private static final String messagePasswordHash = "Use of password_hash(..., PASSWORD_BCRYPT) is encouraged in this case (uses $2y$ with cost of 10).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NonSecureCryptUsageInspection";
     }

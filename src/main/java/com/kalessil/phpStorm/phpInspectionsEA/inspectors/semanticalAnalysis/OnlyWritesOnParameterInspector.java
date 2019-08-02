@@ -46,6 +46,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
     private static final String messageUnused     = "The variable seems to be not used.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "OnlyWritesOnParameterInspection";
     }

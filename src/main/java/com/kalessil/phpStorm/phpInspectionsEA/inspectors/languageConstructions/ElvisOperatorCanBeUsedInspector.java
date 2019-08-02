@@ -28,6 +28,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
     private static final String strProblemDescription = "' ... ?: ...' construction should be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ElvisOperatorCanBeUsedInspection";
     }

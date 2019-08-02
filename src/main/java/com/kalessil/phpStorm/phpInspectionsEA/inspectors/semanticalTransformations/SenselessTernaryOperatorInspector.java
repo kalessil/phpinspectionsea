@@ -27,6 +27,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
     private static final String patternUseOperands = "Can be replaced with '%o%'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SenselessTernaryOperatorInspection";
     }

@@ -24,6 +24,7 @@ public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern = "'%e%' would be more readable here (array_unique(...) was optimized in PHP 7.2-beta3+).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArrayUniqueCanBeUsedInspection";
     }

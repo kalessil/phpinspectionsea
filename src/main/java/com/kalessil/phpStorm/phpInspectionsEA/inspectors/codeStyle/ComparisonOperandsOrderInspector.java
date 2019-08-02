@@ -34,6 +34,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     private static final String messageUseRegular = "Regular conditions style should be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ComparisonOperandsOrderInspection";
     }

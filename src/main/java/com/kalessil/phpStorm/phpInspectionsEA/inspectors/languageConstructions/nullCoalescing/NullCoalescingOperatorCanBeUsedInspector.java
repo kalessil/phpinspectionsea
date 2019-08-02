@@ -55,6 +55,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NullCoalescingOperatorCanBeUsedInspection";
     }

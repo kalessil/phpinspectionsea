@@ -27,6 +27,7 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
     private static final String messagePattern = "It was probably intended to use '%s' here.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MissUsingParentKeywordInspection";
     }

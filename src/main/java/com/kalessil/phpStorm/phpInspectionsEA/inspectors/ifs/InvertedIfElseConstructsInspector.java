@@ -32,6 +32,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
     private static final String message = "The if-else workflow is driven by inverted conditions, consider avoiding invertions.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "InvertedIfElseConstructsInspection";
     }

@@ -30,6 +30,7 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' can be used instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "InstanceofCanBeUsedInspection";
     }

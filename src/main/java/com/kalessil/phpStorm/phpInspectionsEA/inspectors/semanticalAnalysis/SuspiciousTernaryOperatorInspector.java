@@ -48,6 +48,7 @@ public class SuspiciousTernaryOperatorInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousTernaryOperatorInspection";
     }

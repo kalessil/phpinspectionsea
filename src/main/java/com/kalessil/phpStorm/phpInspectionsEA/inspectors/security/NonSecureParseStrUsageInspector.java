@@ -22,6 +22,7 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
     private static final String message = "Please provide second parameter to not influence globals.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NonSecureParseStrUsageInspection";
     }

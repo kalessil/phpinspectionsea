@@ -29,6 +29,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s(...)' is an alias function, consider using '%s(...)' instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "AliasFunctionsUsageInspection";
     }

@@ -21,6 +21,7 @@ public class UselessUnsetInspector extends BasePhpInspection {
     private static final String message = "Only local copy/reference will be unset. This unset can probably be removed.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UselessUnsetInspection";
     }

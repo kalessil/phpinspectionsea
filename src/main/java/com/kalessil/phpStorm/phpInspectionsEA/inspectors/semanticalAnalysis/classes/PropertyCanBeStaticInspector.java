@@ -25,6 +25,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
     private static final String messageWithConstants = "This property initialization seems to be quite 'heavy', consider using static property or constant instead.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PropertyCanBeStaticInspection";
     }

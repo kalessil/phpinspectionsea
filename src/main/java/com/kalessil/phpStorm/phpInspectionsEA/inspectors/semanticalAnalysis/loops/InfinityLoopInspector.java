@@ -33,6 +33,7 @@ public class InfinityLoopInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "InfinityLoopInspection";
     }

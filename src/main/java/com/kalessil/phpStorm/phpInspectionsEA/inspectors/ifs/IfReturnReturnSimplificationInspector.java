@@ -29,6 +29,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     private static final String messagePattern = "The construct can be replaced with '%s'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "IfReturnReturnSimplificationInspection";
     }
@@ -38,6 +39,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     public String getDisplayName() {
         return "If-return-return could be simplified";
     }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

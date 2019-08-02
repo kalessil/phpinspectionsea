@@ -24,6 +24,7 @@ public class EmptyClassInspector extends BasePhpInspection {
     private static final String message = "Class does not contain any properties or methods.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "EmptyClassInspection";
     }

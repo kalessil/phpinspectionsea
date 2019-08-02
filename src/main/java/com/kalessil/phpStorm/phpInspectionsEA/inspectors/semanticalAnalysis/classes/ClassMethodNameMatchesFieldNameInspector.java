@@ -28,6 +28,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
     private static final String messageFieldType = "There is a field with the same name, but its type can not be resolved.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ClassMethodNameMatchesFieldNameInspection";
     }

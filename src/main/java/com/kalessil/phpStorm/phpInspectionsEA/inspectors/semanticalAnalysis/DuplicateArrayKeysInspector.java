@@ -30,6 +30,7 @@ public class DuplicateArrayKeysInspector extends BasePhpInspection {
     private static final String messageDuplicatePair = "The key-value pair is duplicated (and you can safely remove it).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "DuplicateArrayKeysInspection";
     }

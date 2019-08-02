@@ -44,6 +44,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     private static final String messageReplacements = "Can be replaced with the string from the array.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CascadeStringReplacementInspection";
     }

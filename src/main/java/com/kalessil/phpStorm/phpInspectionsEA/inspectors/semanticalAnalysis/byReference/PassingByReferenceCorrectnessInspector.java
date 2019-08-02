@@ -42,6 +42,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "PassingByReferenceCorrectnessInspection";
     }

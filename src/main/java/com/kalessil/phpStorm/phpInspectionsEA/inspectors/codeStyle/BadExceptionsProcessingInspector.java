@@ -28,6 +28,7 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
     private static final String messageChainedException = "The exception being ignored, please log it or use chained exceptions.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "BadExceptionsProcessingInspection";
     }

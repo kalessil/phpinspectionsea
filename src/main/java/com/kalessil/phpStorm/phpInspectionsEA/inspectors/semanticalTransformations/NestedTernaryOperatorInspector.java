@@ -22,6 +22,7 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
     private static final String messageNested = "Nested ternary operator should not be used (maintainability issues).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NestedTernaryOperatorInspection";
     }

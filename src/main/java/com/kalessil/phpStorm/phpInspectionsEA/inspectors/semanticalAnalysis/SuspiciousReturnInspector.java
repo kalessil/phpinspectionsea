@@ -24,6 +24,7 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
     private static final String message = "Voids all return and throw statements from the try-block (returned values and exceptions are lost)";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SuspiciousReturnInspection";
     }

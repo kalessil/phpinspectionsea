@@ -29,6 +29,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
     private static final String patternKeyExists  = "'%s' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "InArrayMissUseInspection";
     }

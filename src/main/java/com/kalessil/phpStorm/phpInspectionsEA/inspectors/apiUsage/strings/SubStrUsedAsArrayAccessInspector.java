@@ -26,6 +26,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' might be used instead (invalid index accesses might show up).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "SubStrUsedAsArrayAccessInspection";
     }

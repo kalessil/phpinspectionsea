@@ -35,6 +35,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
     private static final String messageComparingWithTrue = "This makes no sense, as array_search(...) never returns true.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ArraySearchUsedAsInArrayInspection";
     }

@@ -32,6 +32,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
     private static final String message = "This closure can be declared as static (a micro-optimization).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "StaticClosureCanBeUsedInspection";
     }

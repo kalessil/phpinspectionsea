@@ -33,6 +33,7 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
     private static final String messageEmptyBody       = "Statement has empty block.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MissingOrEmptyGroupStatementInspection";
     }

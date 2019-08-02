@@ -63,6 +63,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "ConstantCanBeUsedInspection";
     }

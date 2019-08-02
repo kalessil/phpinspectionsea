@@ -33,6 +33,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s(...)' has recommended replacement '%s(...)', consider migrating.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "RandomApiMigrationInspection";
     }

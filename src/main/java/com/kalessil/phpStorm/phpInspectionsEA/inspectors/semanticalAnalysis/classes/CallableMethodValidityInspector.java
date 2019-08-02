@@ -31,6 +31,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
     private static final String patternNotStatic = "'%m%' should be static (e.g. $this usage in static context provokes fatal errors).";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "CallableMethodValidityInspection";
     }

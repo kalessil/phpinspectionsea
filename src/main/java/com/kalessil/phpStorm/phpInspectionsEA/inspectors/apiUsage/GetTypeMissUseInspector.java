@@ -40,6 +40,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
     private static final String messageInvalidType = "'%t%' is not a value returned by 'gettype(...)'.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "GetTypeMissUseInspection";
     }

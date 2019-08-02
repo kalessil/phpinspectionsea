@@ -33,6 +33,11 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         return "IfReturnReturnSimplificationInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "If-return-return could be simplified";
+    }
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

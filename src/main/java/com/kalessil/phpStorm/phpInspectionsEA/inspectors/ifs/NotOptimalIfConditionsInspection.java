@@ -48,8 +48,15 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "NotOptimalIfConditionsInspection";
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "Non-optimal if conditions";
     }
 
     final private static Set<String> functionsSet = new HashSet<>();

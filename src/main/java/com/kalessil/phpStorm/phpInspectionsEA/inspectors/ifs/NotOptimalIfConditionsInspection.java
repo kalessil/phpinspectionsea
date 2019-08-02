@@ -56,7 +56,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Non-optimal if conditions";
+        return "!display-name!";
     }
 
     final private static Set<String> functionsSet = new HashSet<>();

@@ -39,6 +39,12 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
     }
 
     @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override

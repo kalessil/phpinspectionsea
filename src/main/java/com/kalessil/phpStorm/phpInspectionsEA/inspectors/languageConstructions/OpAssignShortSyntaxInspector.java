@@ -38,6 +38,12 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         return "OpAssignShortSyntaxInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Map<IElementType, IElementType> mapping = new HashMap<>();
     static {
         mapping.put(PhpTokenTypes.opPLUS,        PhpTokenTypes.opPLUS_ASGN);

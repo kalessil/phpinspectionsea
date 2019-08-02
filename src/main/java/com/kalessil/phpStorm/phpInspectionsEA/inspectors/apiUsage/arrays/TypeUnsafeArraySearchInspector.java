@@ -39,6 +39,12 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         return "TypeUnsafeArraySearchInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Set<String> targetFunctions = new HashSet<>();
     static {
         targetFunctions.add("array_search");

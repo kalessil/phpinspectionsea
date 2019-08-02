@@ -26,6 +26,12 @@ public class UselessUnsetInspector extends BasePhpInspection {
         return "UselessUnsetInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {

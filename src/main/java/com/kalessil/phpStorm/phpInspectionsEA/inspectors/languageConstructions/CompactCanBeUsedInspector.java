@@ -24,6 +24,12 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         return "CompactCanBeUsedInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

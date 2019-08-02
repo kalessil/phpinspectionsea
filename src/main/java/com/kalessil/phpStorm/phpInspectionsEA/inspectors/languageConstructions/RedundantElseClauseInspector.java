@@ -36,6 +36,12 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
         return "RedundantElseClauseInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

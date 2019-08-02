@@ -39,6 +39,12 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         return "PrintfScanfArgumentsInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Map<String, Integer> functions = new HashMap<>();
     static {
         /* pairs function name -> pattern position */

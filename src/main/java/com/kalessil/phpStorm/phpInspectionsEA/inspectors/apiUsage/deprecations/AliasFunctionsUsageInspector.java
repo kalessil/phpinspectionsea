@@ -34,6 +34,12 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         return "AliasFunctionsUsageInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Map<String, String> relevantAliases   = new HashMap<>();
     private static final Map<String, String> deprecatedAliases = new HashMap<>();
     static {

@@ -39,6 +39,12 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
         return "TypesCastingCanBeUsedInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final HashMap<String, String> functionsMapping = new HashMap<>();
     private static final HashMap<String, String> typesMapping     = new HashMap<>();
     static {

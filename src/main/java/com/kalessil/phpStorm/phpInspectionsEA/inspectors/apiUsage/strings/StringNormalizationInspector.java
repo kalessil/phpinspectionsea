@@ -34,6 +34,12 @@ public class StringNormalizationInspector extends BasePhpInspection {
         return "StringNormalizationInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Set<String> lengthManipulation    = new HashSet<>();
     private static final Set<String> caseManipulation      = new HashSet<>();
     private static final Set<String> innerCaseManipulation = new HashSet<>();

@@ -43,6 +43,12 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
         return "NotOptimalRegularExpressionsInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Set<String> functions = new HashSet<>();
     static {
         functions.add("preg_filter");

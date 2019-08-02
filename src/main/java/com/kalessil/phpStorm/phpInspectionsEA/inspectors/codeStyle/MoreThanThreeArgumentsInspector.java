@@ -30,6 +30,12 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
         return "MoreThanThreeArgumentsInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     public MoreThanThreeArgumentsInspector() {
         limit = 3;
     }

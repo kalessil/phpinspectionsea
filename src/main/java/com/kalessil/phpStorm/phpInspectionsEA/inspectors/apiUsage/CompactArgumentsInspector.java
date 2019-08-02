@@ -35,6 +35,12 @@ public class CompactArgumentsInspector extends BasePhpInspection {
         return "CompactArgumentsInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

@@ -32,6 +32,12 @@ public class UnnecessaryParenthesesInspector extends BasePhpInspection {
         return "UnnecessaryParenthesesInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

@@ -54,6 +54,12 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
         return "NotOptimalIfConditionsInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "Non-optimal if conditions";
+    }
+
     final private static Set<String> functionsSet = new HashSet<>();
     static {
             functionsSet.add("array_key_exists");

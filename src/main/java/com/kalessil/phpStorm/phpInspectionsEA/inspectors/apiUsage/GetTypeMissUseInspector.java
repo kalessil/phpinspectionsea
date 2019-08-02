@@ -46,6 +46,12 @@ public class GetTypeMissUseInspector extends PhpInspection {
         return "GetTypeMissUseInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Map<String, String> mapping = new HashMap<>();
     static {
         mapping.put("boolean",  "is_bool");

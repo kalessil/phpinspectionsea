@@ -40,6 +40,12 @@ public class InvertedIfElseConstructsInspector extends PhpInspection {
 
     @NotNull
     @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
+    @NotNull
+    @Override
     public final PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             @Override

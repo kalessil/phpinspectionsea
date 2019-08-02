@@ -35,6 +35,12 @@ public class UnusedConstructorDependenciesInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
+    @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             @NotNull

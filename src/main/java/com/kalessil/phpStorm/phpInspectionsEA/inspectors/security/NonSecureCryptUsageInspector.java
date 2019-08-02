@@ -38,6 +38,12 @@ public class NonSecureCryptUsageInspector extends PhpInspection {
         return "NonSecureCryptUsageInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

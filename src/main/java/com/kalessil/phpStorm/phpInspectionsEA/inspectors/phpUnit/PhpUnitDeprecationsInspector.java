@@ -29,6 +29,12 @@ public class PhpUnitDeprecationsInspector extends PhpInspection {
         return "PhpUnitDeprecationsInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

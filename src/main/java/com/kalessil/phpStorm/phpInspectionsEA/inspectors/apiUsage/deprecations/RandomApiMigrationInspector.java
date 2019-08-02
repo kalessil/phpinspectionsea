@@ -39,6 +39,12 @@ public class RandomApiMigrationInspector extends PhpInspection {
         return "RandomApiMigrationInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Map<String, String> mappingMt   = new HashMap<>();
     private static final Map<String, String> mappingEdge = new HashMap<>();
     static {

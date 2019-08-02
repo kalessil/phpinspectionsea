@@ -37,6 +37,12 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspectio
         return "CaseInsensitiveStringFunctionsMissUseInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Map<String, String> mapping = new HashMap<>();
     static {
         mapping.put("stristr",  "strstr");

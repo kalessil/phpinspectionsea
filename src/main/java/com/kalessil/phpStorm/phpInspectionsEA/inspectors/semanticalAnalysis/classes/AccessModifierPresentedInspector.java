@@ -46,6 +46,12 @@ public class AccessModifierPresentedInspector extends PhpInspection {
         return "AccessModifierPresentedInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {

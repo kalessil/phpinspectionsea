@@ -50,6 +50,12 @@ public class NonSecureHtmlentitiesUsageInspector extends PhpInspection {
         return "NonSecureHtmlentitiesUsageInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

@@ -35,6 +35,12 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
         return "SlowArrayOperationsInLoopInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Set<String> functionsSet = new HashSet<>();
     static {
         functionsSet.add("array_merge");

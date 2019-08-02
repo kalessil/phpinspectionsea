@@ -33,6 +33,12 @@ public class LateStaticBindingInspector extends PhpInspection {
         return "LateStaticBindingInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

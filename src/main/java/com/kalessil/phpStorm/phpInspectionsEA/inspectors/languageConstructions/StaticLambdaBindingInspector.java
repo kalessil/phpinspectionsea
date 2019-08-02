@@ -39,6 +39,12 @@ public class StaticLambdaBindingInspector extends PhpInspection {
         return "StaticLambdaBindingInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

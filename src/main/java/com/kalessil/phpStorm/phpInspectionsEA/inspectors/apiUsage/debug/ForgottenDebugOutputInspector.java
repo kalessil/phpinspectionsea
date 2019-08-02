@@ -175,6 +175,12 @@ public class ForgottenDebugOutputInspector extends PhpInspection {
         return "ForgottenDebugOutputInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final Map<String, Integer> functionsRequirements = new HashMap<>();
     static {
         /* function name => amount of arguments considered legal */

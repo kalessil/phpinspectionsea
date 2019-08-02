@@ -74,6 +74,12 @@ public class UnusedFunctionResultInspector extends PhpInspection {
         return "UnusedFunctionResultInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

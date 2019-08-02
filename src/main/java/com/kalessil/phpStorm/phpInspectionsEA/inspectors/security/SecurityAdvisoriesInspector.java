@@ -110,6 +110,12 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         return "SecurityAdvisoriesInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Report missing 'roave/security-advisories'", REPORT_MISSING_ROAVE_ADVISORIES, (isSelected) -> REPORT_MISSING_ROAVE_ADVISORIES = isSelected);

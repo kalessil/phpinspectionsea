@@ -51,6 +51,12 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
         return "NonSecureHtmlspecialcharsUsageInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

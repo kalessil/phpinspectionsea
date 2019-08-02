@@ -28,6 +28,12 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
         return "CommandExecutionAsSuperUserInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

@@ -27,6 +27,12 @@ public class SwitchContinuationInLoopInspector extends PhpInspection {
         return "SwitchContinuationInLoopInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

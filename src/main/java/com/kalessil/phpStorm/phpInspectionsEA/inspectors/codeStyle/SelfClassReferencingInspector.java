@@ -44,6 +44,12 @@ public class SelfClassReferencingInspector extends PhpInspection {
 
     @NotNull
     @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
+    @NotNull
+    @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean onTheFly) {
         return new GenericPhpElementVisitor() {
             @Override

@@ -36,6 +36,12 @@ public class SenselessPropertyInspector extends PhpInspection {
         return "SenselessPropertyInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

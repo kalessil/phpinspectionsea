@@ -38,6 +38,12 @@ public class UnnecessaryBooleanCheckInspector extends PhpInspection {
         return "UnnecessaryBooleanCheckInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

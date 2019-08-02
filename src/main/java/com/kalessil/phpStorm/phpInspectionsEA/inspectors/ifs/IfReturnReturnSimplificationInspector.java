@@ -41,6 +41,12 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
+        return "!display-name!";
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
         return "If-return-return could be simplified";
     }
 

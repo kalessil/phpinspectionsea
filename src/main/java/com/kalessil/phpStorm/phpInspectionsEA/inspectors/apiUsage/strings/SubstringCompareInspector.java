@@ -46,6 +46,12 @@ public class SubstringCompareInspector extends PhpInspection {
         return "SubstringCompareInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

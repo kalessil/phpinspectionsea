@@ -50,6 +50,12 @@ public class DisconnectedForeachInstructionInspector extends PhpInspection {
         return "DisconnectedForeachInstructionInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private enum ExpressionType {
         INCREMENT, DECREMENT,
         CLONE, NEW, DOM_ELEMENT_CREATE,

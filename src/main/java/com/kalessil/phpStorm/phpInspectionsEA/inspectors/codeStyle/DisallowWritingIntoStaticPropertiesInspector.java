@@ -40,6 +40,12 @@ public class DisallowWritingIntoStaticPropertiesInspector extends PhpInspection 
 
     @NotNull
     @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
+    @NotNull
+    @Override
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean b) {
         return new GenericPhpElementVisitor() {
             @Override

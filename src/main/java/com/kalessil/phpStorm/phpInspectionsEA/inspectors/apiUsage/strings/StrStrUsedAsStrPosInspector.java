@@ -36,6 +36,12 @@ public class StrStrUsedAsStrPosInspector extends PhpInspection {
         return "StrStrUsedAsStrPosInspection";
     }
 
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "!display-name!";
+    }
+
     private static final HashMap<String, String> mapping = new HashMap<>();
     static {
         mapping.put("strstr",  "strpos");

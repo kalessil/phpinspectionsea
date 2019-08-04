@@ -45,7 +45,7 @@ public class YieldFromCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'yield from' can be used";
     }
 
     @Override

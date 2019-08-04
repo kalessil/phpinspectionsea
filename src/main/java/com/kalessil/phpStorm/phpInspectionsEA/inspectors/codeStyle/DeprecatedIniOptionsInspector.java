@@ -97,7 +97,7 @@ public class DeprecatedIniOptionsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Deprecated configuration options";
     }
 
     @Override

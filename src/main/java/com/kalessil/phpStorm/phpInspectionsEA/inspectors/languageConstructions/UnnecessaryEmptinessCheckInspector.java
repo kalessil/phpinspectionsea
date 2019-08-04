@@ -73,7 +73,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary emptiness check";
     }
 
     @Override

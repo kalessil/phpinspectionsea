@@ -29,7 +29,7 @@ public class SuspiciousAssignmentsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Suspicious assignments";
     }
 
     @Override

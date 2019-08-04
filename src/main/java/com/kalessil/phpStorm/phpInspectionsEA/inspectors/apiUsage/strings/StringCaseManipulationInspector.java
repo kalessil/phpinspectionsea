@@ -52,7 +52,7 @@ public class StringCaseManipulationInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary string case manipulation";
     }
 
     @Override

@@ -49,7 +49,7 @@ final public class ClassMemberExistenceCheckInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Class member existence check correctness";
     }
 
     @Override

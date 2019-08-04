@@ -41,7 +41,7 @@ public class OverridingDeprecatedMethodInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Overriding deprecated methods";
     }
 
     @Override

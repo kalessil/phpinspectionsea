@@ -41,7 +41,7 @@ public class CompactArgumentsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'compact(...)' variables existence";
     }
 
     @Override

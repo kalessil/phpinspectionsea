@@ -31,7 +31,7 @@ public class IteratorToArrayKeysCollisionInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'iterator_to_array(...)' keys merging correctness";
     }
 
     @Override

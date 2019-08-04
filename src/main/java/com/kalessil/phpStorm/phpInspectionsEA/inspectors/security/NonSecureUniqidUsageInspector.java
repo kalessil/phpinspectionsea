@@ -53,7 +53,7 @@ public class NonSecureUniqidUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'uniqid(...)' usage (Insufficient Entropy Vulnerability)";
     }
 
     @Override

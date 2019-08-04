@@ -39,7 +39,7 @@ public class StrStrUsedAsStrPosInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'str(i)str(...)' could be replaced with 'str(i)pos(...)'";
     }
 
     private static final HashMap<String, String> mapping = new HashMap<>();

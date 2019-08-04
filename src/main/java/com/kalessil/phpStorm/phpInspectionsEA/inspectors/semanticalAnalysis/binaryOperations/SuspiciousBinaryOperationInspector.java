@@ -33,7 +33,7 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Suspicious binary operations";
     }
 
     @Override

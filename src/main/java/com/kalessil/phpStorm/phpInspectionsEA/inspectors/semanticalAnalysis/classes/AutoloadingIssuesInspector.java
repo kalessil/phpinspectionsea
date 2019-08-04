@@ -49,7 +49,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Class autoloading correctness";
     }
 
     @Override

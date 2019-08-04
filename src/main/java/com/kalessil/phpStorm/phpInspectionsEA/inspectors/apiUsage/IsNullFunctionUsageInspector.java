@@ -40,7 +40,7 @@ public class IsNullFunctionUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'null === ...' can be used";
     }
 
     @Override

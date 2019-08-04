@@ -39,7 +39,7 @@ public class NonSecureOpensslVerifyUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'openssl_verify(...)' usage";
     }
 
     @Override

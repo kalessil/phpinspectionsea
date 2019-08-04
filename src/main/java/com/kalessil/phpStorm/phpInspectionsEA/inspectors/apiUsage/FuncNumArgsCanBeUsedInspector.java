@@ -32,7 +32,7 @@ public class FuncNumArgsCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'func_num_args(...)' can be used";
     }
 
     @Override

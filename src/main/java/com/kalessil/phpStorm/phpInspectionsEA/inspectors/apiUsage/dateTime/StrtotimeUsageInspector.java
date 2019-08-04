@@ -35,7 +35,7 @@ public class StrtotimeUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'strtotime(...)' misused";
     }
 
     @Override

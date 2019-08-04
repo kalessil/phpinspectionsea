@@ -56,7 +56,7 @@ public class SubStrShortHandUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'substr(...)' short-hand usage";
     }
 
     @Override

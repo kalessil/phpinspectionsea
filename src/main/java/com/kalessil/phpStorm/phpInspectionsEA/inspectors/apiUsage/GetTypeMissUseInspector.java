@@ -49,7 +49,7 @@ public class GetTypeMissUseInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'gettype(...)' could be replaced with 'is_*(...)'";
     }
 
     private static final Map<String, String> mapping = new HashMap<>();

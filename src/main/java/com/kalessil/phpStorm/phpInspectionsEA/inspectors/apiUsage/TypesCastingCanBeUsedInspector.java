@@ -45,7 +45,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Type casting can be used";
     }
 
     private static final HashMap<String, String> functionsMapping = new HashMap<>();

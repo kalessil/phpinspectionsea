@@ -32,7 +32,7 @@ public class BacktickOperatorUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Backtick operator usage";
     }
 
     @Override

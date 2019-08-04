@@ -46,7 +46,7 @@ public class MkdirRaceConditionInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'mkdir(...)' race condition";
     }
 
     @Override

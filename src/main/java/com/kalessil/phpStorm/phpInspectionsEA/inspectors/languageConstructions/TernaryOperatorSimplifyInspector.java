@@ -52,7 +52,7 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Ternary operator could be simplified";
     }
 
     @Override

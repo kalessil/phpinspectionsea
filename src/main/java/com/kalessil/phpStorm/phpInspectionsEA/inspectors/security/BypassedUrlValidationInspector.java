@@ -56,7 +56,7 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Bypassed URL validation";
     }
 
     @Override

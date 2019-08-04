@@ -43,7 +43,7 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Repetitive method calls";
     }
 
     @Override

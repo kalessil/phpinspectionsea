@@ -42,7 +42,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'array_merge(...)' misused";
     }
 
     @Override

@@ -33,7 +33,7 @@ public class MissingElseKeywordInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Missing else keyword";
     }
 
     @Override

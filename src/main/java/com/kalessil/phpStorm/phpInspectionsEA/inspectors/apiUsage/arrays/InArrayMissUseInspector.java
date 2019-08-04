@@ -38,7 +38,7 @@ public class InArrayMissUseInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'in_array(...)' misused";
     }
 
     @Override

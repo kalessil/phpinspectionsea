@@ -34,7 +34,7 @@ public class PowerOperatorCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Power operator can be used";
     }
 
     @Override

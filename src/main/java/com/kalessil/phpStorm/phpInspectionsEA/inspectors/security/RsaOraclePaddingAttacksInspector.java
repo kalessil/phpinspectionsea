@@ -33,7 +33,7 @@ public class RsaOraclePaddingAttacksInspector extends LocalInspectionTool {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "RSA oracle padding vulnerability";
     }
 
     @Override

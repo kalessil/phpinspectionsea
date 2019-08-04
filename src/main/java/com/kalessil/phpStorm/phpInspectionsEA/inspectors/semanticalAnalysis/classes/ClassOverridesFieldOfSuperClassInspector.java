@@ -45,7 +45,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Class overrides a field of a parent class";
     }
 
     @Override

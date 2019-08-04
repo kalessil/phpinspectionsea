@@ -43,7 +43,7 @@ public class OffsetOperationsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Array and string offset validity";
     }
 
     @Override

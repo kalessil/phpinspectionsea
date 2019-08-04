@@ -35,7 +35,7 @@ public class SecureCookiesTransferInspector extends LocalInspectionTool {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Secure cookies transfer";
     }
 
     @Override

@@ -41,7 +41,7 @@ public class NestedNotOperatorsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Nested not operators usage";
     }
 
     @Override

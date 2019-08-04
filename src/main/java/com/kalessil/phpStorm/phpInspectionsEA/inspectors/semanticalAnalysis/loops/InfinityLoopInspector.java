@@ -42,7 +42,7 @@ public class InfinityLoopInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Infinity loop detection";
     }
 
     @Override

@@ -30,7 +30,7 @@ public class SwitchContinuationInLoopInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Continue misbehaviour in switch";
     }
 
     @Override

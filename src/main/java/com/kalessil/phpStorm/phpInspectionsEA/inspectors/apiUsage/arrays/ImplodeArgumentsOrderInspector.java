@@ -32,7 +32,7 @@ public class ImplodeArgumentsOrderInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'implode(...)' arguments order";
     }
 
     @Override

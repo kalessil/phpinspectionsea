@@ -51,7 +51,7 @@ public class IssetArgumentExistenceInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Isset operations variables existence";
     }
 
     @Override

@@ -59,7 +59,7 @@ public class CascadeStringReplacementInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Cascading 'str_replace(...)' calls";
     }
 
     @Override

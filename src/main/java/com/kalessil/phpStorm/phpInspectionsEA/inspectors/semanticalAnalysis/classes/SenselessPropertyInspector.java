@@ -39,7 +39,7 @@ public class SenselessPropertyInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Senseless property";
     }
 
     @Override

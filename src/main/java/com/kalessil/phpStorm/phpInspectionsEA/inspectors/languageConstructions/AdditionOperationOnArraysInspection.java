@@ -39,7 +39,7 @@ public class AdditionOperationOnArraysInspection extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Addition operator used on arrays";
     }
 
     @Override

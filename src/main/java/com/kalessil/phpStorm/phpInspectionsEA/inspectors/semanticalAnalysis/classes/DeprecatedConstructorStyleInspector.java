@@ -29,7 +29,7 @@ public class DeprecatedConstructorStyleInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Deprecated constructor style";
     }
 
     @Override

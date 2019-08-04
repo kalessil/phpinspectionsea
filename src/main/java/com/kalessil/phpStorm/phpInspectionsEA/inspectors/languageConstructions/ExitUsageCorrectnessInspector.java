@@ -34,7 +34,7 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'exit' usage correctness";
     }
 
     @Override

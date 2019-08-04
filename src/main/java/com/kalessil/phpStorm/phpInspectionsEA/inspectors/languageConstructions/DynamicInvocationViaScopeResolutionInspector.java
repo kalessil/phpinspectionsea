@@ -40,7 +40,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends PhpInspection 
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Dynamic methods invocation via '::'";
     }
 
     @Override

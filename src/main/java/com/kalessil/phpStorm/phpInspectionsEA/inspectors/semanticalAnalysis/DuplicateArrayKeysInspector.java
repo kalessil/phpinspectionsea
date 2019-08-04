@@ -39,7 +39,7 @@ public class DuplicateArrayKeysInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Duplicate array keys";
     }
 
     @NotNull

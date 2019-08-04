@@ -45,7 +45,7 @@ public class CryptographicallySecureRandomnessInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Cryptographically secure randomness";
     }
 
     @Override

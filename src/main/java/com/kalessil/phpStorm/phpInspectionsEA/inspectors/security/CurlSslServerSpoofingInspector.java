@@ -39,7 +39,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)";
     }
 
     @Override

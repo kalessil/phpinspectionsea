@@ -56,7 +56,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Illusion of choice";
     }
 
     @Override

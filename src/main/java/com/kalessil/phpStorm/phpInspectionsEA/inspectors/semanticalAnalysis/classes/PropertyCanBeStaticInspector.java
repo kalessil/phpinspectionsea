@@ -34,7 +34,7 @@ public class PropertyCanBeStaticInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Property could be static";
     }
 
     @Override

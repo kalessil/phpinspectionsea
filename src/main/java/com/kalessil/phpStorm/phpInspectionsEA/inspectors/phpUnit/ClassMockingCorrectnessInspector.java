@@ -61,7 +61,7 @@ public class ClassMockingCorrectnessInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Class mocking correctness";
     }
 
     @Override

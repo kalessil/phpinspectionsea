@@ -53,7 +53,7 @@ public class NonSecureHtmlentitiesUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'htmlentities(...)' usage (XSS attacks)";
     }
 
     @Override

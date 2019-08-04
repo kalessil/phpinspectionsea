@@ -47,7 +47,7 @@ public class AlterInForeachInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Foreach variables reference usage correctness";
     }
 
     @Override

@@ -31,7 +31,7 @@ public class NonSecureStrShuffleUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'str_shuffle(...)' usage (Insufficient Entropy Vulnerability)";
     }
 
     @Override

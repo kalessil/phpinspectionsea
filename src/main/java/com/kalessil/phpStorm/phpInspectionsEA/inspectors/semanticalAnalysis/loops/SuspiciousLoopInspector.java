@@ -59,7 +59,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Suspicious loop";
     }
 
     @Override

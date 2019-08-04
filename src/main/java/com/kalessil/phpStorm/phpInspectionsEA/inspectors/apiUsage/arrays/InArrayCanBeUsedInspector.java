@@ -42,7 +42,7 @@ public class InArrayCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'in_array(...)' can be used";
     }
 
     @Override

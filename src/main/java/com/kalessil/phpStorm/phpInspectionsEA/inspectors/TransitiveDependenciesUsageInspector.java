@@ -62,7 +62,7 @@ public class TransitiveDependenciesUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Transitive dependencies usage";
     }
 
     @Override

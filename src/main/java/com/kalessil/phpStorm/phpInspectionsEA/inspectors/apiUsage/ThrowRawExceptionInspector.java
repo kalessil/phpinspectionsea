@@ -42,7 +42,7 @@ public class ThrowRawExceptionInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "General '\Exception' is thrown";
     }
 
     @Override

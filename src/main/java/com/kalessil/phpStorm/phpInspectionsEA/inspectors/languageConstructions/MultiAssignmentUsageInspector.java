@@ -32,7 +32,7 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'list(...) = ' usage possible";
     }
 
     @Override

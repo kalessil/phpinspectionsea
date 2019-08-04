@@ -34,7 +34,7 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'array_column(...)' can be used";
     }
 
     @Override

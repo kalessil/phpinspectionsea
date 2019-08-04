@@ -55,7 +55,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Callable parameter usage violates definition";
     }
 
     @Override

@@ -38,7 +38,7 @@ public class AliasFunctionsUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Alias functions usage";
     }
 
     private static final Map<String, String> relevantAliases   = new HashMap<>();

@@ -39,7 +39,7 @@ public class StrlenInEmptyStringCheckContextInspection extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'strlen(...)' misused";
     }
 
     @Override

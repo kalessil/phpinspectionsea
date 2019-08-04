@@ -47,7 +47,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Increment/decrement operation equivalent";
     }
 
     @Override

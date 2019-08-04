@@ -87,7 +87,7 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Return type hint can be used";
     }
 
     @Override

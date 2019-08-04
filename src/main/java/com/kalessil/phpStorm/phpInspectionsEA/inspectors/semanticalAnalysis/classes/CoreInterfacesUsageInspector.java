@@ -46,7 +46,7 @@ public class CoreInterfacesUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Core interfaces usage correctness";
     }
 
     @Override

@@ -56,7 +56,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary closures";
     }
 
     @Override

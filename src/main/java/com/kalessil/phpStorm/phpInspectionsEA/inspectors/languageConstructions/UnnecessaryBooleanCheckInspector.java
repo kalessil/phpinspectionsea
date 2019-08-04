@@ -41,7 +41,7 @@ public class UnnecessaryBooleanCheckInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary boolean check";
     }
 
     @Override

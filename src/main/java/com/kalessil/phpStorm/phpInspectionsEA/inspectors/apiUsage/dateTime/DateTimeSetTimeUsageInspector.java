@@ -35,7 +35,7 @@ public class DateTimeSetTimeUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'DateTime::setTime(...)' usage correctness";
     }
 
     @Override

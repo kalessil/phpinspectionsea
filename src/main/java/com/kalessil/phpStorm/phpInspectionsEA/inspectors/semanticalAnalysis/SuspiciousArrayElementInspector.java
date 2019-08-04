@@ -34,7 +34,7 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Suspicious array element";
     }
 
     @Override

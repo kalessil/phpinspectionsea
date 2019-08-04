@@ -38,7 +38,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'iterator_to_array(...)' misused";
     }
 
     @Override

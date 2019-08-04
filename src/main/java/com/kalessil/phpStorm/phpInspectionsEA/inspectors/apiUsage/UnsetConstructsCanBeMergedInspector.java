@@ -42,7 +42,7 @@ public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'unset(...)' constructs can be merged";
     }
 
     @Override

@@ -41,7 +41,7 @@ public class StaticClosureCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Static closure can be used";
     }
 
     @Override

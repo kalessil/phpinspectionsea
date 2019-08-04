@@ -94,7 +94,7 @@ public class HardcodedCredentialsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Hardcoded credentials";
     }
 
     @Override

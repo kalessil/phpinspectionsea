@@ -29,7 +29,7 @@ public class ContractViolationInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Contracts (interfaces) violations";
     }
 
     @Override

@@ -40,7 +40,7 @@ public class DeclareDirectiveCorrectnessInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Declare directive correctness";
     }
 
     @Override

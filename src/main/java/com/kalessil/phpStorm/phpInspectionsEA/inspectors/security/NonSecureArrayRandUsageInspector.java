@@ -34,7 +34,7 @@ public class NonSecureArrayRandUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'array_rand(...)' usage (Insufficient Entropy Vulnerability)";
     }
 
     @Override

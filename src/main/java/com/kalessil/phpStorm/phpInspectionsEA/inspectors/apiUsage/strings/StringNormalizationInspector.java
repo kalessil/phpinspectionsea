@@ -38,7 +38,7 @@ public class StringNormalizationInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Strings normalization";
     }
 
     private static final Set<String> lengthManipulation    = new HashSet<>();

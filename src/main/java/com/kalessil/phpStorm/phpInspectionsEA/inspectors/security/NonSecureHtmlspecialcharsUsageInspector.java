@@ -54,7 +54,7 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'htmlspecialchars(...)' usage (XSS attacks)";
     }
 
     @Override

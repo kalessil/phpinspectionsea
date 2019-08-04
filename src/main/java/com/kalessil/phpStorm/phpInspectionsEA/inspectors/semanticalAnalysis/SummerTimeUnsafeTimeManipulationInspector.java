@@ -56,7 +56,7 @@ public class SummerTimeUnsafeTimeManipulationInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Summer-time unsafe date manipulations";
     }
 
     @Override

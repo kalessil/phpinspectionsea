@@ -52,7 +52,7 @@ public class UnnecessaryCastingInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary type casting";
     }
 
     @Override

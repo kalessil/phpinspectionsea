@@ -41,7 +41,7 @@ public class UnusedGotoLabelInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unused goto labels";
     }
 
     @Override

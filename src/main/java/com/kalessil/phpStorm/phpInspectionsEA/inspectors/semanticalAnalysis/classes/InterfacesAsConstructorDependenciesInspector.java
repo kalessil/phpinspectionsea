@@ -45,7 +45,7 @@ public class InterfacesAsConstructorDependenciesInspector extends PhpInspection 
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Interfaces as constructor dependencies";
     }
 
     @NotNull

@@ -37,7 +37,7 @@ public class ArrayMapMissUseInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'array_map(...)' misused";
     }
 
     @Override

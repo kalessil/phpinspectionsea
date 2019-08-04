@@ -37,7 +37,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'array_values(...)' misused";
     }
 
     @Override

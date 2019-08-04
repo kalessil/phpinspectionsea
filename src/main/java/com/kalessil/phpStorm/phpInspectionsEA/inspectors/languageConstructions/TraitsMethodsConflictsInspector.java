@@ -36,7 +36,7 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Traits methods conflicts resolution";
     }
 
     @Override

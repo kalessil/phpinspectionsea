@@ -40,7 +40,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspectio
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'stristr(...)/stripos(...)/strripos(...)' could be replaced with 'strstr(...)/strpos()/strrpos()'";
     }
 
     private static final Map<String, String> mapping = new HashMap<>();

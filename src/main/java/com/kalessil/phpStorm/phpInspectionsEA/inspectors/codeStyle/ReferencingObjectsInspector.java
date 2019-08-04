@@ -55,7 +55,7 @@ public class ReferencingObjectsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Referencing objects";
     }
 
     @Override

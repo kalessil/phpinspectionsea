@@ -25,7 +25,7 @@ public class StreamSelectUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'stream_select(...)' usage correctness";
     }
 
     @Override

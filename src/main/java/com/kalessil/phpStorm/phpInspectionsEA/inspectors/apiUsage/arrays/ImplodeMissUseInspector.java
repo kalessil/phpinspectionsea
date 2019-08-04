@@ -41,7 +41,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'implode(...)' misused";
     }
 
     @Override

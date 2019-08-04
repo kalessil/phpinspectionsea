@@ -36,7 +36,7 @@ public class UnnecessaryFinalModifierInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary final modifiers";
     }
 
     @Override

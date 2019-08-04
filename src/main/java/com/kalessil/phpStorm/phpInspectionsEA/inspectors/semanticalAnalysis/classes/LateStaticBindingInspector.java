@@ -36,7 +36,7 @@ public class LateStaticBindingInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Late static binding usage correctness";
     }
 
     @Override

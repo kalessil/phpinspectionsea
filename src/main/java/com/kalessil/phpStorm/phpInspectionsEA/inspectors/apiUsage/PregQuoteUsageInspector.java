@@ -33,7 +33,7 @@ public class PregQuoteUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Proper preg_quote(...) usage";
     }
 
     @Override

@@ -48,7 +48,7 @@ public class UnsupportedSerializeTypesInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unsupported serialize types";
     }
 
     @Override

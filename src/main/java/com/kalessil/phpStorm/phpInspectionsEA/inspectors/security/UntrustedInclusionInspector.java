@@ -32,7 +32,7 @@ public class UntrustedInclusionInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Untrusted files inclusion";
     }
 
     @Override

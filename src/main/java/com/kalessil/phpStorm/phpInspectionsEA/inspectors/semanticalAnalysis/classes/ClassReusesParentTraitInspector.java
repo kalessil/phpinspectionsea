@@ -40,7 +40,7 @@ public class ClassReusesParentTraitInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Class reuses traits multiple times";
     }
 
     @Override

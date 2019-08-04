@@ -38,7 +38,7 @@ public class NestedAssignmentsUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Nested assignments usage";
     }
 
     @Override

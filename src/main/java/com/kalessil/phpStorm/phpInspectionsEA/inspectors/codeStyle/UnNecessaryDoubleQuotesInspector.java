@@ -38,7 +38,7 @@ public class UnNecessaryDoubleQuotesInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary double quotes";
     }
 
     @Override

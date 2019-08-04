@@ -57,7 +57,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Non-optimal if conditions";
     }
 
     @NotNull

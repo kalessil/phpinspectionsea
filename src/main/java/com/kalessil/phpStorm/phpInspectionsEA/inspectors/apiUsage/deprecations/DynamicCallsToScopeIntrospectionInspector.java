@@ -57,7 +57,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Deprecated dynamic calls to scope introspection";
     }
 
     @Override

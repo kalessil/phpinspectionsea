@@ -44,7 +44,7 @@ public class UnnecessaryContinueInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary continue statements";
     }
 
     @Override

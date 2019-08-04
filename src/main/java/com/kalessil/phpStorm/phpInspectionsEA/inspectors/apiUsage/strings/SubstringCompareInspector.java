@@ -49,7 +49,7 @@ public class SubstringCompareInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Substring comparison flaws";
     }
 
     @Override

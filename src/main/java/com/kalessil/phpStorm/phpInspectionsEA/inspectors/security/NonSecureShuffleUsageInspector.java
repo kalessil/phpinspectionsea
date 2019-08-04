@@ -31,7 +31,7 @@ public class NonSecureShuffleUsageInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)";
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Foreach usage possible";
     }
 
     @Override

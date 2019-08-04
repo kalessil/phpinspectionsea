@@ -31,7 +31,7 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Command execution as super user";
     }
 
     @Override

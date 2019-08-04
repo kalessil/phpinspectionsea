@@ -31,7 +31,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Low performing directory operations";
     }
 
     @Override

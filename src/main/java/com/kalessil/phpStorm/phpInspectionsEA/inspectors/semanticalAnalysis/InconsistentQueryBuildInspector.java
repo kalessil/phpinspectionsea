@@ -36,7 +36,7 @@ public class InconsistentQueryBuildInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Inconsistent 'http_build_query(...)' result";
     }
 
     @Override

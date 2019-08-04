@@ -39,7 +39,7 @@ public class InstanceofCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'instanceof' can be used";
     }
 
     @Override

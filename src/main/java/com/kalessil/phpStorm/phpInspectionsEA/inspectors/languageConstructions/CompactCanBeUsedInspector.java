@@ -28,7 +28,7 @@ public class CompactCanBeUsedInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'compact(...)' can be used";
     }
 
     @Override

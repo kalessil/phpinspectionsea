@@ -44,7 +44,7 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'array_search(...)' could be replaced by 'in_array(...)'";
     }
 
     @Override

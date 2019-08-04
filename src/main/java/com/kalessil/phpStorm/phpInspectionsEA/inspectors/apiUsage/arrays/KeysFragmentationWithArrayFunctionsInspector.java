@@ -43,7 +43,7 @@ public class KeysFragmentationWithArrayFunctionsInspector extends PhpInspection 
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Array keys set fragmentation";
     }
 
     @Override

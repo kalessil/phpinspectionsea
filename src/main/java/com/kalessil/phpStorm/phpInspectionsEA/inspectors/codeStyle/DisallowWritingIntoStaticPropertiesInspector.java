@@ -41,7 +41,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends PhpInspection 
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Disallow writing into static properties";
     }
 
     @NotNull

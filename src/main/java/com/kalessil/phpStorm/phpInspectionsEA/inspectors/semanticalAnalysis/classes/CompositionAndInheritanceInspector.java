@@ -36,7 +36,7 @@ public class CompositionAndInheritanceInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Composition and inheritance";
     }
 
     @Override

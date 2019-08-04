@@ -44,7 +44,7 @@ public class MultipleReturnStatementsInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Multiple return statements usage";
     }
 
     @NotNull

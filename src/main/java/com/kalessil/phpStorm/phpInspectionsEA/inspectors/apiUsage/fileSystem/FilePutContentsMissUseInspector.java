@@ -34,7 +34,7 @@ public class FilePutContentsMissUseInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'file_put_contents(...)' misused";
     }
 
     @Override

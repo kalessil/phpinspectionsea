@@ -45,7 +45,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Child method is exactly the same";
     }
 
     @Override

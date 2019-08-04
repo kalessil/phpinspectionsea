@@ -46,7 +46,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Binary-unsafe 'fopen(...)' usage";
     }
 
     @Override

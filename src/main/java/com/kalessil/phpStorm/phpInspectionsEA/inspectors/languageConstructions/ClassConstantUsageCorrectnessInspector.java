@@ -44,7 +44,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "::class constant usage correctness";
     }
 
     @Override

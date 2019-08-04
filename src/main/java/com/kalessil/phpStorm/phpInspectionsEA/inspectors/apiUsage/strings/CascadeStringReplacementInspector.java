@@ -52,7 +52,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Cascading 'str_replace(...)' calls";
     }
 
     @Override

@@ -43,7 +43,7 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'strtr(...)' could be replaced with 'str_replace(...)'";
     }
 
     @Override

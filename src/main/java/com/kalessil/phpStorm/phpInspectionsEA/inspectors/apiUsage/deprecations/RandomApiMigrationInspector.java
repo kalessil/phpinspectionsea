@@ -41,7 +41,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Random API migration";
     }
 
     private static final Map<String, String> mappingMt   = new HashMap<>();

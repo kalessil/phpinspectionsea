@@ -50,7 +50,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Proper null-coalescing operator usage";
     }
 
     @Override

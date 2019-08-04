@@ -46,7 +46,7 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Fixed-time string starts with checks";
     }
 
     @Override

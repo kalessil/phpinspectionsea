@@ -34,7 +34,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Non-optimized arrays mapping";
     }
 
     @Override

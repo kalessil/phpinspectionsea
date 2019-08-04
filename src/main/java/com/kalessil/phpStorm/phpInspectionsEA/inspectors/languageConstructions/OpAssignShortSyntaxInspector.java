@@ -41,7 +41,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Short syntax for applied operation";
     }
 
     private static final Map<IElementType, IElementType> mapping = new HashMap<>();

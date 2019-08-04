@@ -50,7 +50,7 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Passing arguments by reference correctness";
     }
 
     @Override

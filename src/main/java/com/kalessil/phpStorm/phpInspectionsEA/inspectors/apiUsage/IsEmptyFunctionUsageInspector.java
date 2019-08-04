@@ -46,7 +46,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'empty(...)' usage";
     }
 
     @Override

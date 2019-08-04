@@ -55,7 +55,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'substr(...)' could be replaced with 'strpos(...)'";
     }
 
     @Override

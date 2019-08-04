@@ -36,7 +36,7 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Method name matches existing field name";
     }
 
     @Override

@@ -36,7 +36,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unused constructor dependencies";
     }
 
     @NotNull

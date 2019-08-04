@@ -50,7 +50,7 @@ public class IssetConstructsCanBeMergedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'isset(...)' constructs can be merged";
     }
 
     @Override

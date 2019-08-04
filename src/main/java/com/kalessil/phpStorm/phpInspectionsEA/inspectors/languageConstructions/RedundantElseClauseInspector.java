@@ -39,7 +39,7 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Redundant 'else' keyword";
     }
 
     @Override

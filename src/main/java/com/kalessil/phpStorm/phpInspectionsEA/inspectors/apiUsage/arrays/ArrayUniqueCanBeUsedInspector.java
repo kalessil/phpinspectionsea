@@ -32,7 +32,7 @@ public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'array_unique(...)' can be used";
     }
 
     @Override

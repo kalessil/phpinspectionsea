@@ -113,7 +113,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Security advisories for Composer packages";
     }
 
     public JComponent createOptionsPanel() {

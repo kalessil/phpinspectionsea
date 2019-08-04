@@ -29,7 +29,7 @@ public class NullPointerExceptionInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Null reference";
     }
 
     @Override

@@ -33,7 +33,7 @@ public class StringsFirstCharactersCompareInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Strings N-character comparison flaws";
     }
 
     @Override

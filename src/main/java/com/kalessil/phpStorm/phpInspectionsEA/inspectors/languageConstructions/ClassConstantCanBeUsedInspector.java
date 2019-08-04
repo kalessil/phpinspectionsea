@@ -62,7 +62,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "::class can be used";
     }
 
     @Override

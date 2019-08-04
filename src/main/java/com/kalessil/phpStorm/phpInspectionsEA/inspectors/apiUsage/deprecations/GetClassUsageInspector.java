@@ -41,7 +41,7 @@ public class GetClassUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'get_class(...)' usage correctness";
     }
 
     @Override

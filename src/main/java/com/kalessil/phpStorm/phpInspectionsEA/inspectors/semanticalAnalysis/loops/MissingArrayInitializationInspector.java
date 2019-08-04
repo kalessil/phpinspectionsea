@@ -36,7 +36,7 @@ public class MissingArrayInitializationInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Missing array initialization";
     }
 
     @Override

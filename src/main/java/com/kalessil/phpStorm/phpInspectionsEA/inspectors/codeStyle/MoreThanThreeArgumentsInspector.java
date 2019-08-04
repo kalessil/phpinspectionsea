@@ -33,7 +33,7 @@ public class MoreThanThreeArgumentsInspector extends PhpTooManyParametersInspect
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Too many parameters in a callable";
     }
 
     public MoreThanThreeArgumentsInspector() {

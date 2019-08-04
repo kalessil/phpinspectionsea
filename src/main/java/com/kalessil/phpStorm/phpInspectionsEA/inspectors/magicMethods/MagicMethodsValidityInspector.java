@@ -65,7 +65,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Magic methods validity";
     }
 
     @Override

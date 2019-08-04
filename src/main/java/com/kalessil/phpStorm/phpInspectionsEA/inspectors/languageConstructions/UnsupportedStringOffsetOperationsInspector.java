@@ -40,7 +40,7 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unsupported string offset operations";
     }
 
     @Override

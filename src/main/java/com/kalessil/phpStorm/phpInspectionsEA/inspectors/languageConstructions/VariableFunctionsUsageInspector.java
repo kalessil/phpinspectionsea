@@ -55,7 +55,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Variable functions usage";
     }
 
     @Override

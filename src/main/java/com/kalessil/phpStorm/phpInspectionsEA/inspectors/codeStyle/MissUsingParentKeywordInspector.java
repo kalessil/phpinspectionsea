@@ -35,7 +35,7 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'parent' keyword misused";
     }
 
     @Override

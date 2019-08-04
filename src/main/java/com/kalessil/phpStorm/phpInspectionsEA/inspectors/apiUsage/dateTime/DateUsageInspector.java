@@ -36,7 +36,7 @@ public class DateUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary 'date(...)' arguments specification";
     }
 
     @Override

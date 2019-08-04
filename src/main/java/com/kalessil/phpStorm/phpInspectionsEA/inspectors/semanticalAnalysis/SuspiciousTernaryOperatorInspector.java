@@ -56,7 +56,7 @@ public class SuspiciousTernaryOperatorInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Suspicious ternary operator";
     }
 
     @Override

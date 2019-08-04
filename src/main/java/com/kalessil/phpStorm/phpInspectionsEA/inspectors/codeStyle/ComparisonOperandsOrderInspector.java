@@ -42,7 +42,7 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Yoda/regular conditions style usage";
     }
 
     @Override

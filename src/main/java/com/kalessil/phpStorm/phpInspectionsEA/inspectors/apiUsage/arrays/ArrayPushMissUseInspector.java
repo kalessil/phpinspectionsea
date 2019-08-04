@@ -45,7 +45,7 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'array_push(...)' misused";
     }
 
     @Override

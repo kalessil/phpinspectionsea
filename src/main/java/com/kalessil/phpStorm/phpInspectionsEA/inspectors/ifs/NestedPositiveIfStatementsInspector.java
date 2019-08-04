@@ -42,7 +42,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Nested positive ifs";
     }
 
     @Override

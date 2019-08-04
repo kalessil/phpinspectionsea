@@ -41,7 +41,7 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Efferent coupling between objects";
     }
 
     @NotNull

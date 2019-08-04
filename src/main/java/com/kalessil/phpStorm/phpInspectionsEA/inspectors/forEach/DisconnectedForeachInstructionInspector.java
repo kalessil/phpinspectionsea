@@ -52,7 +52,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Statement could be decoupled from foreach";
     }
 
     private enum ExpressionType {

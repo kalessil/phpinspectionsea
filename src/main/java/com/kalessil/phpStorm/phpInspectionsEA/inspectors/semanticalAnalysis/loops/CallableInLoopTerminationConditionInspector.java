@@ -41,7 +41,7 @@ public class CallableInLoopTerminationConditionInspector extends BasePhpInspecti
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Callable calls in loops termination condition";
     }
 
     @Override

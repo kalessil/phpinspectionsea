@@ -51,7 +51,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Ternary operator could be simplified";
     }
 
     @Override

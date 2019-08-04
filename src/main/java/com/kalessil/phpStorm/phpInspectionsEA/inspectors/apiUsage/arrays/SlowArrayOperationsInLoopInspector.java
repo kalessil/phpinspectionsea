@@ -36,7 +36,7 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Slow array function used in loop";
     }
 
     private static final Set<String> functionsSet = new HashSet<>();

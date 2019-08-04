@@ -45,7 +45,7 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "DateTime constants usage validity";
     }
 
     @Override

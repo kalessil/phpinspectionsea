@@ -35,7 +35,7 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary last comma in array definition";
     }
 
     @Override

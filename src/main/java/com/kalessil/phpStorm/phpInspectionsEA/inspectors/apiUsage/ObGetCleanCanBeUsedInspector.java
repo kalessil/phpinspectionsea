@@ -37,7 +37,7 @@ public class ObGetCleanCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'ob_get_clean()' can be used";
     }
 
     @Override

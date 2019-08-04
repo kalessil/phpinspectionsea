@@ -39,7 +39,7 @@ public class ParameterDefaultValueIsNotNullInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Non-null parameters default value";
     }
 
     @Override

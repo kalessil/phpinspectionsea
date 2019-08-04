@@ -33,7 +33,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary use aliases";
     }
 
     @Override

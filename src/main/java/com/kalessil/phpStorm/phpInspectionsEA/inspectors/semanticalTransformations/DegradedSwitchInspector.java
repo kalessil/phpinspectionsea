@@ -31,7 +31,7 @@ public class DegradedSwitchInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Switch-case could be simplified";
     }
 
     @Override

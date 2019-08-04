@@ -66,7 +66,7 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Cryptographically secure algorithms";
     }
 
     @Override

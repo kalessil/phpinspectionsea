@@ -38,7 +38,7 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Packed hashtable optimizations";
     }
 
     @Override

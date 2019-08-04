@@ -34,7 +34,7 @@ public class SimpleXmlLoadFileUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'simplexml_load_file(...)' usage correctness";
     }
 
     @Override

@@ -30,7 +30,7 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Nested ternary operator";
     }
 
     @Override

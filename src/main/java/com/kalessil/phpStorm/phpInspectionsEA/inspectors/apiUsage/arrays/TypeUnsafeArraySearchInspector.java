@@ -42,7 +42,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'in_array(...)', 'array_search(...)' type unsafe usage";
     }
 
     private static final Set<String> targetFunctions = new HashSet<>();

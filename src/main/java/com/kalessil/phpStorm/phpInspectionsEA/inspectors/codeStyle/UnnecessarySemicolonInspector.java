@@ -35,7 +35,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unnecessary semicolon";
     }
 
     @Override

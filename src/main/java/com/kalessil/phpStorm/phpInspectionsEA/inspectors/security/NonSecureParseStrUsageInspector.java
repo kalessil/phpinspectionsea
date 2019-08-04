@@ -30,7 +30,7 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'parse_str(...)' usage (Variable extract Vulnerability)";
     }
 
     @Override

@@ -42,7 +42,7 @@ public class DateIntervalSpecificationInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Date interval specification validity";
     }
 
     @Override

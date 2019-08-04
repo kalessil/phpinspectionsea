@@ -54,7 +54,7 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "PSR-compliant modifiers order";
     }
 
     @Override

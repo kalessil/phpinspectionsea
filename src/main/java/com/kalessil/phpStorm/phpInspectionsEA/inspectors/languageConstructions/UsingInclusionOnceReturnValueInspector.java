@@ -36,7 +36,7 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Suspicious usage of include_once/require_once return value";
     }
 
     @Override

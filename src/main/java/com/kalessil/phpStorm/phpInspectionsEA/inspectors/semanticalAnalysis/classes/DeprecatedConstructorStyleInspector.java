@@ -28,7 +28,7 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Deprecated constructor style";
     }
 
     @Override

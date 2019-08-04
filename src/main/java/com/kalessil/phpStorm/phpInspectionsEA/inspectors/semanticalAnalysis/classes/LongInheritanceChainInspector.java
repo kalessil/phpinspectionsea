@@ -48,7 +48,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Long inheritance chain";
     }
 
     @Override

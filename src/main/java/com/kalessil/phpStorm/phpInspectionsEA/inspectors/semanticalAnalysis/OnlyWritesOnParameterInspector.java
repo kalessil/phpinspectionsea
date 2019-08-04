@@ -54,7 +54,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Parameter/variable is not used";
     }
 
     @Override

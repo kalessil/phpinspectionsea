@@ -126,7 +126,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unqualified function/constant reference";
     }
 
     @Override

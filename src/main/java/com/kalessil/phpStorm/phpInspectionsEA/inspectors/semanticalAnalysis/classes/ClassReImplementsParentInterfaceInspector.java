@@ -39,7 +39,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Class implements interfaces multiple times";
     }
 
     @Override

@@ -31,7 +31,7 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'list(...) = ' usage possible";
     }
 
     @Override

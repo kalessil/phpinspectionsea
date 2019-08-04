@@ -42,7 +42,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "*printf/*scanf arguments count mismatches";
     }
 
     private static final Map<String, Integer> functions = new HashMap<>();

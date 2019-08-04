@@ -38,7 +38,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Addition operator used on arrays";
     }
 
     @Override

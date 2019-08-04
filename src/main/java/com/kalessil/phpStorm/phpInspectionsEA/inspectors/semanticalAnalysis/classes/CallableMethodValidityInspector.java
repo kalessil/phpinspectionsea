@@ -39,7 +39,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Callable methods validity";
     }
 
     @Override

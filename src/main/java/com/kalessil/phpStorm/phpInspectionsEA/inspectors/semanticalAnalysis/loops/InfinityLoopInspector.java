@@ -41,7 +41,7 @@ public class InfinityLoopInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Infinity loop detection";
     }
 
     @Override

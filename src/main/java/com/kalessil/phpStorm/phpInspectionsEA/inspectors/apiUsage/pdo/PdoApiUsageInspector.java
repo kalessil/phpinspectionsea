@@ -28,7 +28,7 @@ public class PdoApiUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "PDO API usage";
     }
 
     @Override

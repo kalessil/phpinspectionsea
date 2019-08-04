@@ -32,7 +32,7 @@ public class UnusedMockInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "PhpUnit: unused mocks";
     }
 
     @Override

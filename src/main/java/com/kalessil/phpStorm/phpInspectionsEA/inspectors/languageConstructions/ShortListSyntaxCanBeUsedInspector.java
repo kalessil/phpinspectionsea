@@ -39,7 +39,7 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Short list syntax can be used";
     }
 
     @Override

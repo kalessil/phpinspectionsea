@@ -32,7 +32,7 @@ public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Argument unpacking can be used";
     }
 
     @Override

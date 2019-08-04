@@ -43,7 +43,7 @@ public class HostnameSubstitutionInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Hostname substitution";
     }
 
     @Override

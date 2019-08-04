@@ -63,7 +63,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Null coalescing operator can be used";
     }
 
     @Override

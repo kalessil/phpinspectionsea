@@ -34,7 +34,7 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'substr(...)' used as index-based access";
     }
 
     @Override

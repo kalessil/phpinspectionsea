@@ -37,7 +37,7 @@ public class JsonDecodeUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'json_decode(...)' result type";
     }
 
     @Override

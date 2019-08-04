@@ -37,7 +37,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Suspicious loop";
     }
 
     @Override

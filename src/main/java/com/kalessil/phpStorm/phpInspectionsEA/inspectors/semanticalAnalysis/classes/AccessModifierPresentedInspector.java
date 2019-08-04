@@ -48,7 +48,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Access modifiers shall be defined";
     }
 
     @Override

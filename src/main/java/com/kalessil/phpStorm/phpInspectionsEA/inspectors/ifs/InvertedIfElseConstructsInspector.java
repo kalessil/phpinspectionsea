@@ -40,7 +40,7 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Inverted 'if-else' constructs";
     }
 
     @NotNull

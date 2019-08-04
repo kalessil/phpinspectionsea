@@ -40,7 +40,7 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Unused goto labels";
     }
 
     @Override

@@ -41,7 +41,7 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Missing or empty conditionals group statement";
     }
 
     @Override

@@ -30,7 +30,7 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Insecure 'extract(...)' usage (Variable extract Vulnerability)";
     }
 
     @Override

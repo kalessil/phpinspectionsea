@@ -48,7 +48,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Encryption initialization vector randomness";
     }
 
     @Override

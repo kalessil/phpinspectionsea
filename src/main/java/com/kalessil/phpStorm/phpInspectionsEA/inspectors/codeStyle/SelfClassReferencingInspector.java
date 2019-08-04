@@ -44,7 +44,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Self class referencing";
     }
 
     @NotNull

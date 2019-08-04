@@ -43,7 +43,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "'array_search(...)' could be replaced by 'in_array(...)'";
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ShortEchoTagCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Short echo tag can be used";
     }
 
     @Override

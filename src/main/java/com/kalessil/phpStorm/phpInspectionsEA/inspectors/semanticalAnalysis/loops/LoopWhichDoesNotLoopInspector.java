@@ -46,7 +46,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Loop which does not loop";
     }
 
     @Override

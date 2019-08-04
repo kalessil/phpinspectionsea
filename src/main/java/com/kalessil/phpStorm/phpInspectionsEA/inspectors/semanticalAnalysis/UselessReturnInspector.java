@@ -43,7 +43,7 @@ public class UselessReturnInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Useless return";
     }
 
     @Override

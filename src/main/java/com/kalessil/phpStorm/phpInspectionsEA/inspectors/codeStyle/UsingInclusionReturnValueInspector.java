@@ -30,7 +30,7 @@ public class UsingInclusionReturnValueInspector  extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "Usage of inclusion return value";
     }
 
     @Override

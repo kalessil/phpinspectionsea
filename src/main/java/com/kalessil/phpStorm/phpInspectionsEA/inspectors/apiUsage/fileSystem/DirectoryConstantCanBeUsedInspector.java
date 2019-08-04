@@ -35,7 +35,7 @@ public class DirectoryConstantCanBeUsedInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "!display-name!";
+        return "__DIR__ constant can be used";
     }
 
     @Override

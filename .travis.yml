@@ -45,4 +45,5 @@ script:
   - php .travis/orphaned-fixtures-check.php
   - php .travis/fixer-verifies-disposed-project-check.php
   - php .travis/get-project-traverse-free-check.php
+  - php .travis/fix-short-and-display-names.php
   - ./gradlew check buildPlugin

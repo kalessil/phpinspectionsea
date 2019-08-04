@@ -143,7 +143,7 @@
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.LoopWhichDoesNotLoopInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="ThrowRawExceptionInspection"                   displayName="General '\Exception' is thrown"
+        shortName="ThrowRawExceptionInspection"                   displayName="General exception is thrown"
         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ThrowRawExceptionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

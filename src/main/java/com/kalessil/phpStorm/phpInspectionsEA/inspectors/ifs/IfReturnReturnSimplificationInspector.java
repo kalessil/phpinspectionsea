@@ -218,6 +218,8 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                         final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
                         if (argument instanceof FunctionReference) {
                             return this.isTargetFunction((FunctionReference) argument);
+                        } else if (argument instanceof BinaryExpression) {
+                            return true;
                         }
                     }
                 } else if (condition instanceof FunctionReference) {

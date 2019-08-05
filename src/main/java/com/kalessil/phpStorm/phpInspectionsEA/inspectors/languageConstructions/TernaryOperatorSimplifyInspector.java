@@ -76,7 +76,7 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                             }
                             if (condition != null) {
                                 final boolean invert     = (isDirect && isInverted) || (isReverse && !isInverted);
-                                final String replacement = (invert ? "!" : "") + condition.getText();
+                                final String replacement = this.generateReplacement(condition, invert);
 
                                 holder.registerProblem(
                                         expression,
@@ -90,36 +90,33 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
             }
 
             @Nullable
-            private String generateBinaryReplacement(@NotNull BinaryExpression binary, @NotNull PsiElement trueVariant) {
-                final IElementType operator = binary.getOperationType();
-                if (null == operator) {
-                    return null;
-                }
-
-                final String replacement;
-                final boolean isInverted     = PhpLanguageUtil.isFalse(trueVariant);
-                final boolean useParentheses = !oppositeOperators.containsKey(operator);
-                if (useParentheses) {
-                    final boolean isLogical  = PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator;
-                    final String boolCasting = isLogical ? "" : "(bool)";
-                    replacement              = ((isInverted ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());
-                } else {
-                    if (isInverted) {
-                        final PsiElement left  = binary.getLeftOperand();
-                        final PsiElement right = binary.getRightOperand();
-                        if (left != null && right != null) {
-                            replacement = String.format(
-                                    "%s %s %s",
-                                    left.getText(),
-                                    oppositeOperators.get(operator),
-                                    right.getText()
-                            );
+            private String generateReplacement(@NotNull PsiElement condition, boolean invert) {
+                String replacement = null;
+                if (condition instanceof BinaryExpression) {
+                    final BinaryExpression binary = (BinaryExpression) condition;
+                    final IElementType operator   = binary.getOperationType();
+                    if (operator != null) {
+                        final boolean useParentheses = !oppositeOperators.containsKey(operator);
+                        if (useParentheses) {
+                            final String boolCasting = (PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator) ? "" : "(bool)";
+                            replacement              = ((invert ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());
                         } else {
-                            replacement = null;
+                            if (invert) {
+                                final PsiElement left  = binary.getLeftOperand();
+                                final PsiElement right = binary.getRightOperand();
+                                if (left != null && right != null) {
+                                    replacement = String.format(
+                                            "%s %s %s",
+                                            left.getText(),
+                                            oppositeOperators.get(operator),
+                                            right.getText()
+                                    );
+                                }
+                            }
                         }
-                    } else {
-                        replacement = binary.getText();
                     }
+                } else {
+                    replacement = (invert ? "!" : "") + condition.getText();
                 }
 
                 return replacement;

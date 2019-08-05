@@ -15,7 +15,6 @@ final public class SenselessMethodDuplicationInspectorTest extends PhpCodeInsigh
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/deadCode/senseless-method-duplication.fixed.php");
     }
-
     public void testFalsePositives() {
         myFixture.enableInspections(new SenselessMethodDuplicationInspector());
         myFixture.configureByFile("testData/fixtures/deadCode/senseless-method-duplication-false-positives.php");

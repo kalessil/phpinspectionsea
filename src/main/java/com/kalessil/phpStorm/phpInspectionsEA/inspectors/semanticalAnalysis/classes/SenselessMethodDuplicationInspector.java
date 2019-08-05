@@ -55,7 +55,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 /* process only real classes and methods */
-                if (method.isAbstract() || method.isDeprecated() || this.isTestContext(method)) {
+                if (method.isAbstract() || method.isDeprecated() || method.getModifier().isPrivate() || this.isTestContext(method)) {
                     return;
                 }
                 final PhpClass clazz = method.getContainingClass();
@@ -73,7 +73,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 /* ensure parent, parent methods are existing and contains the same amount of expressions */
                 final PhpClass parent           = OpenapiResolveUtil.resolveSuperClass(clazz);
                 final Method parentMethod       = null == parent ? null : OpenapiResolveUtil.resolveMethod(parent, method.getName());
-                if (parentMethod == null || parentMethod.isAbstract() || parentMethod.isDeprecated()) {
+                if (parentMethod == null || parentMethod.isAbstract() || parentMethod.isDeprecated() || parentMethod.getModifier().isPrivate()) {
                     return;
                 }
                 final GroupStatement parentBody = ExpressionSemanticUtil.getGroupStatement(parentMethod);
@@ -114,7 +114,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 collection.clear();
 
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
-                if (methodName != null) {
+                if (methodName != null && !this.isOperatingOnPrivateMembers(parentMethod)) {
                     final boolean canFix = !parentMethod.getAccess().isPrivate();
                     if (method.getAccess().equals(parentMethod.getAccess())) {
                         holder.registerProblem(
@@ -143,6 +143,25 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     }
                 }
                 return fqns;
+            }
+
+            private boolean isOperatingOnPrivateMembers(@NotNull Method method) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                if (body != null) {
+                    for (final MemberReference reference : PsiTreeUtil.findChildrenOfType(body, MemberReference.class)) {
+                        final PsiElement base = reference.getFirstChild();
+                        final boolean resolve = (base instanceof Variable && ((Variable) base).getName().equals("$this")) ||
+                                                (base instanceof ClassReference && base.getText().equals("self"));
+                        if (resolve) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                            if (resolved instanceof PhpClassMember && ((PhpClassMember) resolved).getModifier().isPrivate()) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
             }
         };
     }

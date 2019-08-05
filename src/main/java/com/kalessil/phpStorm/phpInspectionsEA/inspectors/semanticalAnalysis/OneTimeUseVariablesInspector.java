@@ -300,10 +300,12 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             /* inline the value */
             boolean wrap = false;
-            if (value instanceof NewExpression) {
+            if (value instanceof NewExpression || value instanceof TernaryExpression) {
                 wrap = true;
             } else if (value instanceof UnaryExpression) {
                 wrap = OpenapiTypesUtil.is(((UnaryExpression) value).getOperation(), PhpTokenTypes.kwCLONE);
+            } else if (value instanceof BinaryExpression) {
+                wrap = ((BinaryExpression) value).getOperationType() == PhpTokenTypes.opCOALESCE;
             }
 
             if (wrap && variable.getParent() instanceof MemberReference) {

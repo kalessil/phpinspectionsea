@@ -97,10 +97,11 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                             );
                                         }
                                     } else if (candidate instanceof UnaryExpression) {
-                                        final PsiElement operation = ((UnaryExpression) candidate).getOperation();
+                                        final UnaryExpression unary = (UnaryExpression) candidate;
+                                        final PsiElement operation  = unary.getOperation();
                                         if (operation != null) {
                                             final IElementType operator = operation.getNode().getElementType();
-                                            if (castingsMapping.containsKey(operator)) {
+                                            if (castingsMapping.containsKey(operator) && unary.getValue() instanceof Variable) {
                                                 final String replacement = String.format("'%s'", castingsMapping.get(operator));
                                                 holder.registerProblem(
                                                         expression,

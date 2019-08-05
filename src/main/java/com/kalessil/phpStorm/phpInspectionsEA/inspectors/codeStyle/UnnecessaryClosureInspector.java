@@ -99,9 +99,9 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                     } else if (candidate instanceof UnaryExpression) {
                                         final UnaryExpression unary = (UnaryExpression) candidate;
                                         final PsiElement operation  = unary.getOperation();
-                                        if (operation != null) {
+                                        if (operation != null && unary.getValue() instanceof Variable) {
                                             final IElementType operator = operation.getNode().getElementType();
-                                            if (castingsMapping.containsKey(operator) && unary.getValue() instanceof Variable) {
+                                            if (castingsMapping.containsKey(operator)) {
                                                 final String replacement = String.format("'%s'", castingsMapping.get(operator));
                                                 holder.registerProblem(
                                                         expression,

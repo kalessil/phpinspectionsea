@@ -15,3 +15,6 @@
 
     <weak_warning descr="'Namespace\Clazz::method($a)' would make more sense here (it also faster).">call_user_func('Namespace\\Clazz::method', $a)</weak_warning>;
     <weak_warning descr="'Namespace\Clazz::method($a)' would make more sense here (it also faster).">forward_static_call('Namespace\\Clazz::method', $a)</weak_warning>;
+
+    /* QF correctness cases */
+    <weak_warning descr="'$callable(...$arguments)' would make more sense here (it also faster).">call_user_func($callable, ...$arguments)</weak_warning>;

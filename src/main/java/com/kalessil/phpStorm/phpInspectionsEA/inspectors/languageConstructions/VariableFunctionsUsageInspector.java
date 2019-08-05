@@ -208,15 +208,19 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
             }
 
             @NotNull
-            private String argumentAsString(@NotNull PsiElement parameter) {
-                PsiElement previous = parameter.getPrevSibling();
+            private String argumentAsString(@NotNull PsiElement argument) {
+                PsiElement previous = argument.getPrevSibling();
                 if (previous instanceof PsiWhiteSpace) {
                     previous = previous.getPrevSibling();
                 }
 
-                return OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)
-                            ? '&' + parameter.getText()
-                            : parameter.getText();
+                if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
+                    return '&' + argument.getText();
+                } else if (OpenapiTypesUtil.is(argument.getPrevSibling(), PhpTokenTypes.opVARIADIC)) {
+                    return "..." + argument.getText();
+                }
+
+                return argument.getText();
             }
         };
     }

@@ -15,5 +15,6 @@ function cases_holder($array) {
     array_walk($array, function(&$value) { $value = trim($value); });
 
     array_map('strval', []);
+    array_map(function ($value) { return (string) trim($value); }, []);
     array_map(function ($value) { return (array) $value; }, []);
 }

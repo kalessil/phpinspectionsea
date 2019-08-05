@@ -13,7 +13,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -134,7 +133,7 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                 return false;
             }
 
-            private boolean isTargetFunction(final FunctionReference reference) {
+            private boolean isTargetFunction(@NotNull FunctionReference reference) {
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof Function) {
                     final Function function = (Function) resolved;

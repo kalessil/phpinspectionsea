@@ -226,7 +226,7 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                 return false;
             }
 
-            private boolean isTargetFunction(final FunctionReference reference) {
+            private boolean isTargetFunction(@NotNull FunctionReference reference) {
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof Function) {
                     final Function function = (Function) resolved;

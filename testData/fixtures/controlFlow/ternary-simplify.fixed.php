@@ -26,3 +26,9 @@
     $x = isset($x);
 
     $x = isset($x) ? false : null;
+
+    function returns_bool(): bool { return true; }
+    $x = returns_bool();
+    $x = !returns_bool();
+    $x = !returns_bool();
+    $x = returns_bool();

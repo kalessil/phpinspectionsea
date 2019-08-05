@@ -77,7 +77,6 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                             if (condition != null) {
                                 final boolean invert     = (isDirect && isInverted) || (isReverse && !isInverted);
                                 final String replacement = this.generateReplacement(condition, invert);
-
                                 holder.registerProblem(
                                         expression,
                                         String.format(messagePattern, replacement),
@@ -89,34 +88,30 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                 }
             }
 
-            @Nullable
+            @NotNull
             private String generateReplacement(@NotNull PsiElement condition, boolean invert) {
-                String replacement = null;
+                String replacement = (invert ? "!" : "") + condition.getText();
+
                 if (condition instanceof BinaryExpression) {
                     final BinaryExpression binary = (BinaryExpression) condition;
                     final IElementType operator   = binary.getOperationType();
                     if (operator != null) {
-                        final boolean useParentheses = !oppositeOperators.containsKey(operator);
-                        if (useParentheses) {
-                            final String boolCasting = (PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator) ? "" : "(bool)";
-                            replacement              = ((invert ? "!" : boolCasting) + "(%e%)").replace("%e%", binary.getText());
-                        } else {
-                            if (invert) {
-                                final PsiElement left  = binary.getLeftOperand();
-                                final PsiElement right = binary.getRightOperand();
-                                if (left != null && right != null) {
-                                    replacement = String.format(
-                                            "%s %s %s",
-                                            left.getText(),
-                                            oppositeOperators.get(operator),
-                                            right.getText()
-                                    );
-                                }
+                        if (!oppositeOperators.containsKey(operator)) {
+                            final String casting = (PhpTokenTypes.opAND == operator || PhpTokenTypes.opOR == operator) ? "" : "(bool)";
+                            replacement          = ((invert ? "!" : casting) + "(%e%)").replace("%e%", binary.getText());
+                        } else if (invert) {
+                            final PsiElement left  = binary.getLeftOperand();
+                            final PsiElement right = binary.getRightOperand();
+                            if (left != null && right != null) {
+                                replacement = String.format(
+                                        "%s %s %s",
+                                        left.getText(),
+                                        oppositeOperators.get(operator),
+                                        right.getText()
+                                );
                             }
                         }
                     }
-                } else {
-                    replacement = (invert ? "!" : "") + condition.getText();
                 }
 
                 return replacement;

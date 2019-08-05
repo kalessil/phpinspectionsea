@@ -28,7 +28,7 @@
     $x = isset($x) ? false : null;
 
     function returns_bool(): bool { return true; }
-    $x = <weak_warning descr="'returns_bool($x)' would make more sense here (simplification).">returns_bool() ? true : false</weak_warning>;
-    $x = <weak_warning descr="'!returns_bool($x)' would make more sense here (simplification).">!returns_bool() ? true : false</weak_warning>;
-    $x = <weak_warning descr="'!returns_bool($x)' would make more sense here (simplification).">returns_bool() ? false : true</weak_warning>;
-    $x = <weak_warning descr="'returns_bool($x)' would make more sense here (simplification).">!returns_bool() ? false : true</weak_warning>;
+    $x = <weak_warning descr="'returns_bool()' would make more sense here (simplification).">returns_bool() ? true : false</weak_warning>;
+    $x = <weak_warning descr="'!returns_bool()' would make more sense here (simplification).">!returns_bool() ? true : false</weak_warning>;
+    $x = <weak_warning descr="'!returns_bool()' would make more sense here (simplification).">returns_bool() ? false : true</weak_warning>;
+    $x = <weak_warning descr="'returns_bool()' would make more sense here (simplification).">!returns_bool() ? false : true</weak_warning>;

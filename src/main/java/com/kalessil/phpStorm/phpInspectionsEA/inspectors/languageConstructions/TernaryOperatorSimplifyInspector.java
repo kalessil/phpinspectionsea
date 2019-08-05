@@ -7,12 +7,11 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,45 +62,28 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                if (condition instanceof BinaryExpression) {
-                    /* case: binary condition */
-                    final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                    final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                    /* check branches; if both variants are identical, nested ternary inspection will spot it */
-                    if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
-                        final String replacement = this.generateBinaryReplacement((BinaryExpression) condition, trueVariant);
-                        if (replacement != null) {
-                            final String message = String.format(messagePattern, replacement);
-                            holder.registerProblem(expression, message, new SimplifyFix(replacement));
-                        }
-                    }
-                } else {
-                    /* condition might be inverted, extract it */
-                    boolean isConditionInverted = false;
-                    PsiElement candidate        = condition;
-                    if (candidate instanceof UnaryExpression) {
-                        final UnaryExpression unary = (UnaryExpression) candidate;
-                        if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
-                            isConditionInverted = true;
-                            candidate           = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
-                        }
-                    }
-                    /* case: emptiness check */
-                    if (candidate instanceof PhpEmpty || candidate instanceof PhpIsset) {
-                        final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                        final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                        /* check branches; if both variants are identical, nested ternary inspection will spot it */
-                        if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
-                            final boolean areBranchesInverted = PhpLanguageUtil.isFalse(trueVariant);
-                            final boolean invert              = (isConditionInverted && !areBranchesInverted) ||
-                                                                (areBranchesInverted && !isConditionInverted);
-                            final String replacement          = (invert ? "!" : "") + candidate.getText();
-                            holder.registerProblem(
-                                    expression,
-                                    String.format(messagePattern, replacement),
-                                    new SimplifyFix(replacement)
-                            );
+                PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                if (condition != null && this.isTargetCondition(condition)) {
+                    final PsiElement firstValue  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                    final PsiElement secondValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                    if (firstValue != null && secondValue != null) {
+                        final boolean isDirect  = PhpLanguageUtil.isTrue(firstValue) && PhpLanguageUtil.isFalse(secondValue);
+                        final boolean isReverse = !isDirect && PhpLanguageUtil.isTrue(secondValue) && PhpLanguageUtil.isFalse(firstValue);
+                        if (isDirect || isReverse) {
+                            boolean isInverted = condition instanceof UnaryExpression;
+                            if (isInverted) {
+                                condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) condition).getValue());
+                            }
+                            if (condition != null) {
+                                final boolean invert     = (isDirect && isInverted) || (isReverse && !isInverted);
+                                final String replacement = (invert ? "!" : "") + condition.getText();
+
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(messagePattern, replacement),
+                                        new SimplifyFix(replacement)
+                                );
+                            }
                         }
                     }
                 }
@@ -141,6 +123,35 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                 }
 
                 return replacement;
+            }
+
+            private boolean isTargetCondition(@NotNull PsiElement condition) {
+                if (condition instanceof BinaryExpression || condition instanceof PhpIsset || condition instanceof PhpEmpty) {
+                    return true;
+                } else if (condition instanceof UnaryExpression) {
+                    final UnaryExpression unary = (UnaryExpression) condition;
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                        final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
+                        if (argument != null) {
+                            return this.isTargetCondition(argument);
+                        }
+                    }
+                } else if (condition instanceof FunctionReference) {
+                    return this.isTargetFunction((FunctionReference) condition);
+                }
+                return false;
+            }
+
+            private boolean isTargetFunction(final FunctionReference reference) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                if (resolved instanceof Function) {
+                    final Function function = (Function) resolved;
+                    if (OpenapiElementsUtil.getReturnType(function) != null) {
+                        final PhpType returnType = function.getType();
+                        return returnType.size() == 1 && returnType.equals(PhpType.BOOLEAN);
+                    }
+                }
+                return false;
             }
         };
     }

@@ -42,6 +42,6 @@
         }
 
         public function <weak_warning descr="'protectedMethodProxy' method should call parent's one instead of duplicating code.">protectedMethodProxy</weak_warning>($x) { return $this->classMethodDuplicate(); }
-        public function <weak_warning descr="'privateMethodProxy' method should call parent's one instead of duplicating code.">privateMethodProxy</weak_warning>($x) { return $this->classMethodDuplicate(); }
+        public function privateMethodProxy($x) { return $this->classMethodDuplicate(); }
         protected function abc() { echo 2; }
     }

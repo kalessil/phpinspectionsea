@@ -1,25 +1,44 @@
 <?php
 
-namespace SMD\One;
+namespace MethodsDuplication\One {
+    const SMD_CONST = 1;
+    function smd_func() {}
 
-const SMD_CONST = 1;
-function smd_func() {}
+    class FirstClass
+    {
+        public function resolve()
+        {
+            return [SMD_CONST, smd_func()];
+        }
 
-class SMDOneClass {
-    private function f() {
-        echo SMD_CONST.smd_func();
+        private function privateDuplicate() {
+            return [];
+        }
+
+        protected function protectedDuplicateUsingPrivate() {
+            return $this->privateDuplicate();
+        }
     }
 }
 
 
-namespace SMD\Two;
+namespace MethodsDuplication\Two {
+    const SMD_CONST = 1;
+    function smd_func() {}
 
-const SMD_CONST = 1;
-function smd_func() {}
+    class SecondClass extends \MethodsDuplication\One\FirstClass
+    {
+        public function resolve()
+        {
+            return [SMD_CONST, smd_func()];
+        }
 
-class SMDTwoClass extends \SMD\One\SMDOneClass
-{
-    private function f() {
-        echo SMD_CONST.smd_func();
+        private function privateDuplicate() {
+            return [];
+        }
+
+        protected function protectedDuplicateUsingPrivate() {
+            return $this->privateDuplicate();
+        }
     }
 }

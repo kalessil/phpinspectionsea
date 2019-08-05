@@ -57,7 +57,7 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.shouldSkipAnalysis(method, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
 
-                if (!method.isAbstract() && !method.isDeprecated() && !this.isTestContext(method)) {
+                if (!method.isAbstract() && !method.isDeprecated() && !method.getModifier().isPrivate() && !this.isTestContext(method)) {
                     final PhpClass clazz = method.getContainingClass();
                     if (clazz != null && !clazz.isTrait() && !clazz.isInterface()) {
                         final String methodName = method.getName();
@@ -65,8 +65,8 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                         final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                         if (parent != null) {
                             final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, methodName);
-                            final boolean matching    = parentMethod != null && !parentMethod.isAbstract() && !parentMethod.isDeprecated() && this.areMatching(method, parentMethod);
-                            if (matching) {
+                            final boolean matching    = parentMethod != null && !parentMethod.isAbstract() && !parentMethod.isDeprecated() && !parentMethod.getModifier().isPrivate() && this.areMatching(method, parentMethod);
+                            if (matching && !this.isOperatingOnPrivateMembers(parentMethod)) {
                                 this.doReporting(method, parentMethod, true);
                             }
                         }
@@ -155,6 +155,25 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                     }
                 }
                 return fqns;
+            }
+
+            private boolean isOperatingOnPrivateMembers(@NotNull Method method) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
+                if (body != null) {
+                    for (final MemberReference reference : PsiTreeUtil.findChildrenOfType(body, MemberReference.class)) {
+                        final PsiElement base = reference.getFirstChild();
+                        final boolean resolve = (base instanceof Variable && ((Variable) base).getName().equals("this")) ||
+                                (base instanceof ClassReference && base.getText().equals("self"));
+                        if (resolve) {
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                            if (resolved instanceof PhpClassMember && ((PhpClassMember) resolved).getModifier().isPrivate()) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
             }
         };
     }

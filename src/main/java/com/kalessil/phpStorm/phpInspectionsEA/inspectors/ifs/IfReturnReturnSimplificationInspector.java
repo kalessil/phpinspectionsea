@@ -61,7 +61,7 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                     /* if 2nd return found, check more pattern matches */
                     if (firstValue != null && secondValue != null) {
                         final boolean isDirect  = PhpLanguageUtil.isTrue(firstValue) && PhpLanguageUtil.isFalse(secondValue);
-                        final boolean isReverse = PhpLanguageUtil.isTrue(secondValue) && PhpLanguageUtil.isFalse(firstValue);
+                        final boolean isReverse = !isDirect && PhpLanguageUtil.isTrue(secondValue) && PhpLanguageUtil.isFalse(firstValue);
                         if (isDirect || isReverse) {
                             /* false-positives: if-return if-return return - code style */
                             if (statement.getElseBranch() == null) {

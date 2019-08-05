@@ -44,12 +44,6 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
         return "If-return-return could be simplified";
     }
 
-    @NotNull
-    @Override
-    public String getDisplayName() {
-        return "If-return-return could be simplified";
-    }
-
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

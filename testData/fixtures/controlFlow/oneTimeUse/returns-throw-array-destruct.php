@@ -45,3 +45,11 @@ function method_call_case($argument)
         return $two->method()->method($two);
     }
 }
+
+function quick_fixing($argument, $alternative) {
+    <warning descr="Variable $ternary is redundant.">$ternary</warning> = $argument ?? $alternative;
+    return $ternary->method();
+
+    <warning descr="Variable $coalescing is redundant.">$coalescing</warning> = $argument ?: $alternative;
+    return $coalescing->method();
+}

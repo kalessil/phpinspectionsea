@@ -1,10 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.controlFlow;
 
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.OneTimeUseVariablesInspector;
 
 final public class OneTimeUseVariablesInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
         final OneTimeUseVariablesInspector inspector = new OneTimeUseVariablesInspector();
         inspector.ALLOW_LONG_STATEMENTS              = true;
         myFixture.enableInspections(inspector);

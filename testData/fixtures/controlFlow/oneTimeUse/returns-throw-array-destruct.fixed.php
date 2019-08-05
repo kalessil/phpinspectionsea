@@ -37,3 +37,9 @@ function method_call_case($argument)
         return $two->method()->method($two);
     }
 }
+
+function quick_fixing($argument, $alternative) {
+    return ($argument ?? $alternative)->method();
+
+    return ($argument ?: $alternative)->method();
+}

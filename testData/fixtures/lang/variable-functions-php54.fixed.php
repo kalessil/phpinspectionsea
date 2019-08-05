@@ -15,3 +15,6 @@
 
     Namespace\Clazz::method($a);
     Namespace\Clazz::method($a);
+
+    /* QF correctness cases */
+    $callable(...$arguments);

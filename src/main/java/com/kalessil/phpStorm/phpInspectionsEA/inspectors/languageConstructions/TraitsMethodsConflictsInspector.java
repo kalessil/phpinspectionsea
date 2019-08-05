@@ -55,7 +55,7 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                     for (final Map.Entry<PhpClass, ClassReference> pair : this.extractTraits(clazz).entrySet()) {
                         for (final Method method : pair.getKey().getOwnMethods()) {
                             final String methodName = method.getName();
-                            if (!classMethods.contains(methodName) && ExpressionSemanticUtil.getBlockScope(method) instanceof PhpClass) {
+                            if (!classMethods.contains(methodName) && !method.isAbstract() && ExpressionSemanticUtil.getBlockScope(method) instanceof PhpClass) {
                                 if (traitsMethods.containsKey(methodName)) {
                                     holder.registerProblem(
                                             pair.getValue(),

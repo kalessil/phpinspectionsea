@@ -15,6 +15,7 @@ class Aggregator
 trait TraitOne
 {
     public function one() {}
+    abstract public function abstractMethod();
 }
 
 /** @method annotatedMethod() */
@@ -22,6 +23,7 @@ trait TraitTwo
 {
     public function one() {}
     public function two() {}
+    abstract public function abstractMethod();
 }
 
 trait TraitThree

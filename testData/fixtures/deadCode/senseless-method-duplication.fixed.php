@@ -17,7 +17,7 @@
             return $this->method();
         }
 
-        private function methodDuplicate($x)
+        protected function methodDuplicate($x)
         {
             return $this->method();
         }
@@ -40,7 +40,7 @@
 
         public function methodDuplicate($x)
         {
-            return $this->method();
+            return parent::methodDuplicate($x);
         }
 
         protected function abc()

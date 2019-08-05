@@ -14,6 +14,10 @@ namespace MethodsDuplication\One {
         private function privateDuplicate() {
             return [];
         }
+
+        protected function protectedDuplicateUsingPrivate() {
+            return $this->privateDuplicate();
+        }
     }
 }
 
@@ -31,6 +35,10 @@ namespace MethodsDuplication\Two {
 
         private function privateDuplicate() {
             return [];
+        }
+
+        protected function protectedDuplicateUsingPrivate() {
+            return $this->privateDuplicate();
         }
     }
 }

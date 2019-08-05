@@ -150,7 +150,7 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 if (body != null) {
                     for (final MemberReference reference : PsiTreeUtil.findChildrenOfType(body, MemberReference.class)) {
                         final PsiElement base = reference.getFirstChild();
-                        final boolean resolve = (base instanceof Variable && ((Variable) base).getName().equals("$this")) ||
+                        final boolean resolve = (base instanceof Variable && ((Variable) base).getName().equals("this")) ||
                                                 (base instanceof ClassReference && base.getText().equals("self"));
                         if (resolve) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);

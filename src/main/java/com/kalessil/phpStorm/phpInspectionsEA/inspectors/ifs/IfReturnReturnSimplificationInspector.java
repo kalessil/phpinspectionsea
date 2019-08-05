@@ -210,16 +210,14 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
             }
 
             private boolean isTargetCondition(@NotNull PsiElement condition) {
-                if (condition instanceof BinaryExpression) {
+                if (condition instanceof BinaryExpression || condition instanceof PhpIsset || condition instanceof PhpEmpty) {
                     return true;
                 } else if (condition instanceof UnaryExpression) {
                     final UnaryExpression unary = (UnaryExpression) condition;
                     if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
                         final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
-                        if (argument instanceof FunctionReference) {
-                            return this.isTargetFunction((FunctionReference) argument);
-                        } else if (argument instanceof BinaryExpression) {
-                            return true;
+                        if (argument != null) {
+                            return this.isTargetCondition(argument);
                         }
                     }
                 } else if (condition instanceof FunctionReference) {

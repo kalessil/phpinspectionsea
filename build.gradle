@@ -22,14 +22,29 @@ def htmlFixer = { htmlFile -> file(htmlFile).text.replace('<html>', '').replace(
 intellij {
     version    ideaVersion
     pluginName 'Php Inspections (EA Ultimate)'
-    plugins = [
-            "com.jetbrains.php:${phpPluginVersion}",
-            'CSS',
-            'java-i18n',
-            'properties',
-            'yaml',
-            "PsiViewer:${psiViewerPluginVersion}",
-    ]
+
+    def versionParts = ideaVersion.replace('IU-', '').split('\\.')
+    if ((Integer.parseInt(versionParts[0]) == 2019 && Integer.parseInt(versionParts[1]) >= 2) || Integer.parseInt(versionParts[0]) > 2019) {
+        /* since 2019.2 Java is a separate plugin, hence we have to specify it implicitly */
+        plugins = [
+                'java',
+                "com.jetbrains.php:${phpPluginVersion}",
+                'CSS',
+                'java-i18n',
+                'properties',
+                'yaml',
+                "PsiViewer:${psiViewerPluginVersion}",
+        ]
+    } else {
+        plugins = [
+                "com.jetbrains.php:${phpPluginVersion}",
+                'CSS',
+                'java-i18n',
+                'properties',
+                'yaml',
+                "PsiViewer:${psiViewerPluginVersion}",
+        ]
+    }
 }
 
 patchPluginXml {

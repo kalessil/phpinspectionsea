@@ -698,7 +698,7 @@
         shortName="UnknownInspectionInspection"                   displayName="Unknown inspection suppression"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc.UnknownInspectionInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnusedMockInspection"                          displayName="Unused mocks"
         groupName="Unused"                                        enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.UnusedMockInspector"/>

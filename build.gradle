@@ -24,7 +24,7 @@ intellij {
     pluginName 'Php Inspections (EA Extended)'
 
     def versionParts = ideaVersion.replace('IU-', '').split('\\.')
-    if (Integer.parseInt(versionParts[0]) >= 2019 && Integer.parseInt(versionParts[1]) >= 2) {
+    if ((Integer.parseInt(versionParts[0]) == 2019 && Integer.parseInt(versionParts[1]) >= 2) || Integer.parseInt(versionParts[0]) > 2019) {
         /* since 2019.2 Java is a separate plugin, hence we have to specify it implicitly */
         plugins = [
                 'java',

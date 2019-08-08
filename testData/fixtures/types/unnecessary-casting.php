@@ -83,6 +83,13 @@
         ];
     }
 
+    function cases_holder_assignments() {
+        return [
+            (int) ($one = (0.99 * 1)),
+            <weak_warning descr="This type casting is not necessary, as the argument is of needed type.">(float)</weak_warning> ($two = (0.99 * 1)),
+        ];
+    }
+
     /* false-positives: untyped properties in ternaries/elvis operators */
     class UntypedPropertyConsumer extends UntypedPropertyHolder {
         public function method() {

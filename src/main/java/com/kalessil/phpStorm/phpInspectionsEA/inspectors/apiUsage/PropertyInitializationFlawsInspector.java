@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -66,12 +67,16 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                     final PsiElement originDefault = originField == null ? null : OpenapiResolveUtil.resolveDefaultValue(originField);
 
                     if (PhpLanguageUtil.isNull(fieldDefault)) {
-                        holder.registerProblem(
-                                fieldDefault,
-                                messageDefaultNull,
-                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                new DropFieldDefaultValueFix()
-                        );
+                        /* false-positives: typed properties PS will take care of them */
+                        final PhpType declaredType = OpenapiElementsUtil.getDeclaredType(field);
+                        if (declaredType == null || declaredType.isEmpty()) {
+                            holder.registerProblem(
+                                    fieldDefault,
+                                    messageDefaultNull,
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                    new DropFieldDefaultValueFix()
+                            );
+                        }
                     } else if (fieldDefault instanceof PhpPsiElement && originDefault instanceof PhpPsiElement) {
                         final boolean isDefaultDuplicate = !originField.getModifier().getAccess().isPrivate() &&
                                                            OpenapiEquivalenceUtil.areEqual(fieldDefault, originDefault);

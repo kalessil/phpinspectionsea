@@ -17,15 +17,15 @@
         <warning descr="This str_replace(...) call can be merged with its parent.">str_replace(' ', '-', '...')</warning>
     );
 
-    /* parameters simplification pattern */
-    $simplify = str_replace(
-        array ('1', '1'),
-        <weak_warning descr="Can be replaced with the string from the array.">array('1', '1')</weak_warning>,
-        '...'
-    );
+    /* parameters simplification patterns */
     $simplify = str_replace(
         <weak_warning descr="Can be replaced with the string from the array.">array('1', '1')</weak_warning>,
         '1',
+        '...'
+    );
+    $simplify = str_replace(
+        array ('1', '1'),
+        array('1', '1'),
         '...'
     );
 

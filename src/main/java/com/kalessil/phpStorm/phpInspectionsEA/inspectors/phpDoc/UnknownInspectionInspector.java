@@ -71,7 +71,7 @@ public class UnknownInspectionInspector extends PhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             @Override
-            public void visitPhpDocTag(@NotNull PhpDocTag tag) {
+            protected void visitPhpDocTag(@NotNull PhpDocTag tag) {
                 if (this.shouldSkipAnalysis(tag, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
 
                 if (!tag.getName().equals("@noinspection")) {

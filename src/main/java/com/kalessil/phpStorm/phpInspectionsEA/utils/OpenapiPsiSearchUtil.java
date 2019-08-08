@@ -62,4 +62,16 @@ final public class OpenapiPsiSearchUtil {
         }
         return null;
     }
+
+    public static List<PsiElement> findEqual(@NotNull PsiElement where, @NotNull PsiElement what) {
+        final List<PsiElement> result = new ArrayList<>();
+        if (what instanceof Variable && where instanceof Function) {
+            throw new RuntimeException("Implement, use PhpControlFlowUtil.getFollowingVariableAccessInstructions");
+        } else {
+            PsiTreeUtil.findChildrenOfType(where, what.getClass()).stream()
+                .filter(expression -> OpenapiEquivalenceUtil.areEqual(what, expression))
+                .forEach(result::add);
+        }
+        return result;
+    }
 }

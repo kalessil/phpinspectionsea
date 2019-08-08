@@ -40,7 +40,7 @@ public class BacktickOperatorUsageInspector extends PhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             @Override
-            public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
+            protected void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_SECURITY)) { return; }
 
                 final String raw = expression.getText();

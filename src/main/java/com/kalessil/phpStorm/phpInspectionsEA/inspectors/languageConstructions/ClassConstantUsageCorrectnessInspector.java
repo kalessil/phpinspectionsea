@@ -102,9 +102,10 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                         final String NsFqn = namespace == null ? null : namespace.getFQN();
                         if (NsFqn != null && !NsFqn.equals("\\")) {
                             final String classFqnLowercase = classFqn.toLowerCase();
-                            if (classFqnLowercase.startsWith(NsFqn.toLowerCase())) {
-                                result.add(classFqn.substring(classFqn.length() - referenceText.length()));
-                            } else if (classFqnLowercase.endsWith('\\' + referenceText.toLowerCase())) {
+                            if (
+                                classFqnLowercase.startsWith(NsFqn.toLowerCase()) ||
+                                classFqnLowercase.endsWith('\\' + referenceText.toLowerCase())
+                            ) {
                                 result.add(classFqn.substring(classFqn.length() - referenceText.length()));
                             }
                         }

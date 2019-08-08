@@ -86,10 +86,6 @@ public class EASettings implements PersistentStateComponent<Element> {
         return this.uuid;
     }
 
-    public String getOldestVersion() {
-        return this.versionOldest;
-    }
-
     public boolean getSendCrashReports() {
         return this.sendCrashReports != null && this.sendCrashReports.equals("true");
     }

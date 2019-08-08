@@ -39,7 +39,7 @@ public class BacktickOperatorUsageInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
+            protected void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {
                 final String raw = expression.getText();
                 if (raw.length() > 2) {
                     final String command     = raw.substring(1, raw.length() - 1).replaceAll("\\\\`", "`");

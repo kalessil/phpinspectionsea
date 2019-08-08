@@ -47,7 +47,7 @@ public class DeclareDirectiveCorrectnessInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpDeclare(@NotNull Declare declare) {
+            protected void visitPhpDeclare(@NotNull Declare declare) {
                 final PsiElement declaration = declare.getFirstPsiChild();
                 final String declarationText = declaration == null ? null : declaration.getText();
                 if (declarationText != null && declarationText.indexOf('=') != -1) {

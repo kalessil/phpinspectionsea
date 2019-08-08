@@ -124,7 +124,6 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
 
                     /* do not report cases with one level extraction */
                     if (1 == directoryLevel && reported.isEmpty()){
-                        reported.clear();
                         return;
                     }
 

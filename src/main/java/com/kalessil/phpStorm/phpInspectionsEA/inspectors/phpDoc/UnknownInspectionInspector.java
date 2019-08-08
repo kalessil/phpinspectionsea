@@ -70,7 +70,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpDocTag(@NotNull PhpDocTag tag) {
+            protected void visitPhpDocTag(@NotNull PhpDocTag tag) {
                 if (!tag.getName().equals("@noinspection")) {
                     return;
                 }

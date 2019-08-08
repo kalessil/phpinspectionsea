@@ -57,7 +57,7 @@ public class OverridingDeprecatedMethodInspector extends PhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2 && arguments[1].getText().equals("E_USER_DEPRECATED")) {
                         final Function scope = ExpressionSemanticUtil.getScope(reference);
-                        if (scope instanceof Method && !scope.isDeprecated() && !scope.getName().equals("__construct")) {
+                        if (scope instanceof Method && !scope.isDeprecated() && !scope.getName().startsWith("__")) {
                             final Method method  = (Method) scope;
                             final PhpClass clazz = method.getContainingClass();
                             if (clazz != null && !clazz.isDeprecated() && !this.isTestContext(reference)) {

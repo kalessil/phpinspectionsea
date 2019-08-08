@@ -72,7 +72,7 @@ final public class OpenapiElementsUtil {
     }
 
     @NotNull
-    static public PhpType getDeclaredType(@NotNull Field field) {
+    static PhpType getDeclaredType(@NotNull Field field) {
         final PhpType result;
         try {
             /* FC: PS 2019.2 has introduced typed properties, and we need to gracefully access the types information */

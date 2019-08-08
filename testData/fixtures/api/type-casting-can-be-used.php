@@ -34,3 +34,10 @@ function cases_holder() {
 
     $x = $x * -1;
 }
+
+class CasesHolder extends \SimpleXMLElement {
+    public function __toString()
+    {
+        return parent::__toString();
+    }
+}

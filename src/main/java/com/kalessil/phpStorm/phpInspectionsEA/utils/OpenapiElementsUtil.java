@@ -3,12 +3,15 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpInstruction;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /*
@@ -21,30 +24,61 @@ import java.util.Collection;
  */
 
 final public class OpenapiElementsUtil {
-    final private static Method methodReturnType;
+    @Nullable
+    private static Method functionReturnType;
     static {
         try {
-            methodReturnType = Function.class.getDeclaredMethod("getReturnType");
+            functionReturnType = Function.class.getDeclaredMethod("getReturnType");
         } catch (final NoSuchMethodException failure) {
-            throw new RuntimeException(failure);
+            functionReturnType = null;
         }
     }
 
-    final private static Method phpInstructionGetPredecessors;
+    @Nullable
+    private static Method phpInstructionPredecessors;
     static {
         try {
-            phpInstructionGetPredecessors = PhpInstruction.class.getDeclaredMethod("getPredecessors");
+            phpInstructionPredecessors = PhpInstruction.class.getDeclaredMethod("getPredecessors");
         } catch (final NoSuchMethodException failure) {
-            throw new RuntimeException(failure);
+            phpInstructionPredecessors = null;
+        }
+    }
+
+    @Nullable
+    private static Method fieldDeclaredType;
+    static {
+        try {
+            fieldDeclaredType = Field.class.getDeclaredMethod("getDeclaredType");
+        } catch (final NoSuchMethodException failure) {
+            fieldDeclaredType = null;
         }
     }
 
     @Nullable
     static public PsiElement getReturnType(@NotNull Function function) {
-        PsiElement result;
+        final PsiElement result;
         try {
-            /* PS 2017.3 has changed return type from PsiElement to PhpReturnType, so we use reflection here */
-            result = (PsiElement) methodReturnType.invoke(function);
+            /* BC: PS 2017.3 has changed return type from PsiElement to PhpReturnType */
+            result = functionReturnType == null
+                    ? null
+                    : (PsiElement) functionReturnType.invoke(function);
+        } catch (final IllegalAccessException failure) {
+            throw new RuntimeException(failure);
+        } catch (final InvocationTargetException failure) {
+            final Throwable cause = failure.getTargetException();
+            throw (cause instanceof RuntimeException ? (RuntimeException)cause : new RuntimeException(cause));
+        }
+        return result;
+    }
+
+    @Nullable
+    static public PhpType getDeclaredType(@NotNull Field field) {
+        final PhpType result;
+        try {
+            /* FC: PS 2019.2 has introduced typed properties, and we need to gracefully access the types information */
+            result = fieldDeclaredType == null
+                    ? null
+                    : (PhpType) fieldDeclaredType.invoke(field);
         } catch (final IllegalAccessException failure) {
             throw new RuntimeException(failure);
         } catch (final InvocationTargetException failure) {
@@ -56,10 +90,12 @@ final public class OpenapiElementsUtil {
 
     @NotNull
     static public Collection<PhpInstruction> getPredecessors(@NotNull PhpInstruction instruction) {
-        Collection<PhpInstruction> result;
+        final Collection<PhpInstruction> result;
         try {
-            /* PS 2017.3 has changed return type from Collection<> to List<>, so we use reflection here */
-            result = (Collection<PhpInstruction>) phpInstructionGetPredecessors.invoke(instruction);
+            /* BC: PS 2017.3 has changed return type from Collection<...> to List<...> */
+            result = phpInstructionPredecessors == null
+                    ? new ArrayList<>()
+                    : (Collection<PhpInstruction>) phpInstructionPredecessors.invoke(instruction);
         } catch (final IllegalAccessException failure) {
             throw new RuntimeException(failure);
         } catch (final InvocationTargetException failure) {

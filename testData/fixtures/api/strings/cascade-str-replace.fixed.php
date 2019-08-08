@@ -12,15 +12,15 @@
     /* nested calls pattern */
     $nested = str_replace([' ', ' '], '-', '...');
 
-    /* parameters simplification pattern */
+    /* parameters simplification patterns */
     $simplify = str_replace(
-        array ('1', '1'),
+        '1',
         '1',
         '...'
     );
     $simplify = str_replace(
-        '1',
-        '1',
+        array ('1', '1'),
+        array('1', '1'),
         '...'
     );
 

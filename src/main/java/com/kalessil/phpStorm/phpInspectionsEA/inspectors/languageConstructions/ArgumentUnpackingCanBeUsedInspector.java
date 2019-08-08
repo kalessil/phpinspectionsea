@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArgumentUnpackingCanBeUsedInspector extends PhpInspection {
-    private static final String messagePattern = "'%s' should be used instead (3x+ faster)";
+    private static final String messagePattern = "'%s' would make more sense here (3x+ faster). Use '...array_values(...)' fo unpacking associative arrays.";
 
     @NotNull
     @Override

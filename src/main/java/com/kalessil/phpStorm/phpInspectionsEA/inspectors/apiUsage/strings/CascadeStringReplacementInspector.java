@@ -116,11 +116,8 @@ public class CascadeStringReplacementInspector extends PhpInspection {
                     /* case: nested replacements */
                     this.checkNestedCalls(arguments[2], functionCall);
 
-                    /* case: search/replace simplification */
-                    final PsiElement replace = arguments[1];
-                    if (replace instanceof ArrayCreationExpression) {
-                        this.checkForSimplification((ArrayCreationExpression) replace);
-                    } else if (replace instanceof StringLiteralExpression){
+                    /* case: search simplification */
+                    if (arguments[1] instanceof StringLiteralExpression){
                         final PsiElement search = arguments[0];
                         if (search instanceof ArrayCreationExpression) {
                             this.checkForSimplification((ArrayCreationExpression) search);

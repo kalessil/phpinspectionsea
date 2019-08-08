@@ -83,6 +83,13 @@
         ];
     }
 
+    function cases_holder_assignments() {
+        return [
+            (int) ($one = (0.99 * 1)),
+            ($two = (0.99 * 1)),
+        ];
+    }
+
     /* false-positives: untyped properties in ternaries/elvis operators */
     class UntypedPropertyConsumer extends UntypedPropertyHolder {
         public function method() {

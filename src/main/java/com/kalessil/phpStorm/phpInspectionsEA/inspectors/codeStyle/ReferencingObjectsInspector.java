@@ -12,10 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -76,7 +73,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                     Arrays.stream(callable.getParameters())
                         .filter(parameter -> {
                             if (parameter.isPassByRef()) {
-                                final PhpType declared = parameter.getDeclaredType();
+                                final PhpType declared = OpenapiResolveUtil.resolveDeclaredType(parameter);
                                 return !declared.isEmpty() && !PhpType.isSubType(declared, php7Types);
                             }
                             return false;

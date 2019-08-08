@@ -71,13 +71,13 @@ final public class OpenapiElementsUtil {
         return result;
     }
 
-    @Nullable
+    @NotNull
     static public PhpType getDeclaredType(@NotNull Field field) {
         final PhpType result;
         try {
             /* FC: PS 2019.2 has introduced typed properties, and we need to gracefully access the types information */
             result = fieldDeclaredType == null
-                    ? null
+                    ? PhpType.EMPTY
                     : (PhpType) fieldDeclaredType.invoke(field);
         } catch (final IllegalAccessException failure) {
             throw new RuntimeException(failure);

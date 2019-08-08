@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
@@ -68,8 +67,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
                     if (PhpLanguageUtil.isNull(fieldDefault)) {
                         /* false-positives: typed properties PS will take care of them */
-                        final PhpType declaredType = OpenapiElementsUtil.getDeclaredType(field);
-                        if (declaredType == null || declaredType.isEmpty()) {
+                        if (OpenapiResolveUtil.resolveDeclaredType(field).isEmpty()) {
                             holder.registerProblem(
                                     fieldDefault,
                                     messageDefaultNull,

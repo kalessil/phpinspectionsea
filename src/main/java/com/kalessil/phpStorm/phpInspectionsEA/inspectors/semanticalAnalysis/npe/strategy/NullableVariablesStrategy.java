@@ -132,7 +132,7 @@ final public class NullableVariablesStrategy {
             final Set<PsiElement> processed = new HashSet<>();
             for (final Parameter parameter : function.getParameters()) {
                 final Set<String> declaredTypes = new HashSet<>();
-                parameter.getDeclaredType().getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
+                OpenapiResolveUtil.resolveDeclaredType(parameter).getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
                 if (declaredTypes.contains(Types.strNull) || PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                     declaredTypes.remove(Types.strNull);
 
@@ -313,7 +313,7 @@ final public class NullableVariablesStrategy {
                     /* lookup types, if no null declarations - report class-only declarations */
                     final Parameter parameter       = parameters[position];
                     final Set<String> declaredTypes = new HashSet<>();
-                    parameter.getDeclaredType().getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
+                    OpenapiResolveUtil.resolveDeclaredType(parameter).getTypes().forEach(t -> declaredTypes.add(Types.getType(t)));
                     if (!declaredTypes.contains(Types.strNull) && !PhpLanguageUtil.isNull(parameter.getDefaultValue())) {
                         declaredTypes.remove(Types.strNull);
 

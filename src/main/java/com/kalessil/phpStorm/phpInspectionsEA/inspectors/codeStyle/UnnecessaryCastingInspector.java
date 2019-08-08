@@ -145,7 +145,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     final String variableName = variable.getName();
                     for (final Parameter parameter : scope.getParameters()) {
                         if (parameter.getName().equals(variableName)) {
-                            result = parameter.getDeclaredType().isEmpty();
+                            result = OpenapiResolveUtil.resolveDeclaredType(parameter).isEmpty();
                             break;
                         }
                     }

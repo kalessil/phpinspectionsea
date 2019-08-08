@@ -65,7 +65,7 @@ public class ParameterDefaultValueIsNotNullInspector extends BasePhpInspection {
                         final PsiElement defaultValue = argument.getDefaultValue();
                         if (defaultValue != null && !PhpLanguageUtil.isNull(defaultValue)) {
                             /* false-positives: null can not be used due to implicit type hints */
-                            final PhpType declared = argument.getDeclaredType();
+                            final PhpType declared = OpenapiResolveUtil.resolveDeclaredType(argument);
                             if (declared.isEmpty() || declared.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull))) {
                                 violations.add(argument);
                             }

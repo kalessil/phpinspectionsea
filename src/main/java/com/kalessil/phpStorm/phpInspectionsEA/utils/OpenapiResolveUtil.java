@@ -289,6 +289,29 @@ final public class OpenapiResolveUtil {
         }
     }
 
+    @NotNull
+    static public PhpType resolveDeclaredType(@NotNull Field field) {
+        try {
+            return OpenapiElementsUtil.getDeclaredType(field);
+        } catch (final Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return PhpType.EMPTY;
+        }
+    }
+
+    static public PhpType resolveDeclaredType(@NotNull Parameter parameter) {
+        try {
+            return parameter.getDeclaredType();
+        } catch (final Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return PhpType.EMPTY;
+        }
+    }
+
     @Nullable
     static public Method resolveMethod(@NotNull PhpClass clazz, @NotNull String methodName) {
         try {

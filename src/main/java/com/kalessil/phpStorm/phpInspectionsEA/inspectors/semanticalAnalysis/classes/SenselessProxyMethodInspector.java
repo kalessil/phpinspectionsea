@@ -157,8 +157,8 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                         }
 
                                         /* type definition changes */
-                                        final PhpType parentType = parentParameters[index].getDeclaredType();
-                                        final PhpType methodType = methodParameters[index].getDeclaredType();
+                                        final PhpType parentType = OpenapiResolveUtil.resolveDeclaredType(parentParameters[index]);
+                                        final PhpType methodType = OpenapiResolveUtil.resolveDeclaredType(methodParameters[index]);
                                         if (!parentType.equals(methodType)) {
                                             isChangingSignature = true;
                                             break;

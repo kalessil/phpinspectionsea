@@ -29,3 +29,10 @@ function cases_holder() {
 
     $x = (string)$x;
 }
+
+class CasesHolder extends \SimpleXMLElement {
+    public function __toString()
+    {
+        return parent::__toString();
+    }
+}

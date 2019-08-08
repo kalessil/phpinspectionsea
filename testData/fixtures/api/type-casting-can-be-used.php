@@ -29,3 +29,10 @@ function cases_holder() {
 
     $x = <weak_warning descr="'(string) $x' would express the intention here better.">$x->__toString()</weak_warning>;
 }
+
+class CasesHolder extends \SimpleXMLElement {
+    public function __toString()
+    {
+        return parent::__toString();
+    }
+}

@@ -141,12 +141,15 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
                 if (methodName != null && methodName.equals("__toString")) {
-                    final String replacement = String.format("(string) %s", reference.getFirstChild().getText());
-                    holder.registerProblem(
-                            reference,
-                            String.format(messageMagic, replacement),
-                            new UseTypeCastingFix(replacement)
-                    );
+                    final PsiElement base = reference.getFirstChild();
+                    if (!(base instanceof ClassReference) || !base.getText().equals("parent")) {
+                        final String replacement = String.format("(string) %s", base.getText());
+                        holder.registerProblem(
+                                reference,
+                                String.format(messageMagic, replacement),
+                                new UseTypeCastingFix(replacement)
+                        );
+                    }
                 }
             }
         };

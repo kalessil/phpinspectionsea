@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
@@ -108,7 +109,7 @@ public class CallableMethodValidityInspector extends PhpInspection {
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                     final Parameter[] parameters = resolved.getParameters();
                     if (parameters.length > 0) {
-                        final boolean isTarget = parameters[0].getDeclaredType().equals(new PhpType().add("\\Exception"));
+                        final boolean isTarget = OpenapiResolveUtil.resolveDeclaredType(parameters[0]).equals(new PhpType().add("\\Exception"));
                         if (isTarget) {
                             final PsiElement target = OpenapiTypesUtil.isLambda(argument) ? parameters[0] : argument;
                             holder.registerProblem(target, messageUseThrowable);

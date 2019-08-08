@@ -21,6 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +84,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                 Arrays.stream(function.getParameters())
                         .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
                         .filter(parameter  -> {
-                            final PhpType declaredType = parameter.getDeclaredType().filterUnknown().filterNull();
+                            final PhpType declaredType = OpenapiResolveUtil.resolveDeclaredType(parameter).filterUnknown().filterNull();
                             final boolean isObject     =
                                 !declaredType.isEmpty() &&
                                 declaredType.getTypes().stream().anyMatch(t -> {

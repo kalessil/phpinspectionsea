@@ -61,7 +61,7 @@ public class InterfacesAsConstructorDependenciesInspector extends PhpInspection 
                     if (parameters.length > 0) {
                         final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                         for (final Parameter parameter : parameters) {
-                            final PhpType type = parameter.getDeclaredType().filterPrimitives().filterUnknown();
+                            final PhpType type = OpenapiResolveUtil.resolveDeclaredType(parameter).filterPrimitives().filterUnknown();
                             if (type.size() == 1) {
                                 this.analyze(
                                         parameter,

@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -152,7 +153,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                         result = true;
                         for (int index = 0; index < arguments.length; ++index) {
                             final Variable argument       = (Variable) arguments[index];
-                            final boolean isEnforcingType = !input[index].getDeclaredType().isEmpty();
+                            final boolean isEnforcingType = !OpenapiResolveUtil.resolveDeclaredType(input[index]).isEmpty();
                             if (isEnforcingType || !argument.getName().equals(input[index].getName())) {
                                 result = false;
                                 break;

@@ -86,7 +86,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                 final PhpEntryPointInstruction entryPoint = scopeHolder.getControlFlow().getEntryPoint();
 
                 for (final Parameter parameter : parameters) {
-                    final boolean hasTypeDeclared    = !parameter.getDeclaredType().isEmpty();
+                    final boolean hasTypeDeclared    = !OpenapiResolveUtil.resolveDeclaredType(parameter).isEmpty();
                     /* normalize parameter types, skip analysis when mixed or object appears */
                     final Set<String> parameterTypes = this.getParameterType(parameter, project);
                     if (parameterTypes.isEmpty()) {
@@ -358,7 +358,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                     }
                                 }
                             } else if (operator == PhpTokenTypes.kwINSTANCEOF) {
-                                if (!parameter.getDeclaredType().isEmpty()) {
+                                if (!OpenapiResolveUtil.resolveDeclaredType(parameter).isEmpty()) {
                                     InstanceOfCorrectnessStrategy.apply(holder, parameterTypes, binary);
                                 }
                             }

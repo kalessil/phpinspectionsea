@@ -73,7 +73,7 @@ final public class NestedCallsStrategy {
                     nullableArguments.forEach((index, argument) -> {
                         if (argument != null && index < parameters.length) {
                             final Parameter parameter  = parameters[index];
-                            final PhpType declaredType = parameter.getDeclaredType();
+                            final PhpType declaredType = OpenapiResolveUtil.resolveDeclaredType(parameter);
                             final boolean canBeNull    =
                                 PhpLanguageUtil.isNull(parameter.getDefaultValue()) ||
                                 declaredType.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull)) ||

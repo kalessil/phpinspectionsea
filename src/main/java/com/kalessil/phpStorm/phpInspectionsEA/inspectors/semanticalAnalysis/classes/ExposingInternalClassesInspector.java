@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.indexers.InternalAnnotatedClassesI
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +57,7 @@ public class ExposingInternalClassesInspector extends PhpInspection {
                         if (method.getAccess().isPublic()) {
                             /* case: parameter type declaration */
                             for (final Parameter parameter: method.getParameters()) {
-                                final PhpType type = parameter.getDeclaredType();
+                                final PhpType type = OpenapiResolveUtil.resolveDeclaredType(parameter);
                                 if (!type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
                                     holder.registerProblem(parameter, message);
                                     continue methods;

@@ -4,6 +4,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -47,9 +48,44 @@ final public class OpenapiResolveUtil {
     }
 
     @Nullable
+    static public PsiElement resolveReference(@NotNull MethodReference reference) {
+        PsiElement result = null;
+        try {
+            final ResolveResult[] resolved = reference.multiResolve(false);
+            if (resolved.length > 0) {
+                if (resolved.length == 1) {
+                    /* case: one variant only */
+                    result = resolved[0].getElement();
+                } else {
+                    /* case: multiple variants */
+                    final Map<String, Method> methods = new LinkedHashMap<>();
+                    for (final ResolveResult value : resolved) {
+                        final PsiElement element = value.getElement();
+                        if (element instanceof Method) {
+                            methods.put(((Method) element).getFQN(), (Method) element);
+                        }
+                    }
+                    if (methods.size() == 1) {
+                        result = methods.values().iterator().next();
+                        methods.clear();
+                    } else {
+
+                    }
+                }
+            }
+            return result;
+        } catch (final Throwable error) {
+            if (error instanceof ProcessCanceledException) {
+                throw error;
+            }
+            return null;
+        }
+    }
+
+    @Nullable
     static public PsiElement resolveReference(@NotNull PsiReference reference) {
         try {
-            return reference.resolve();
+            return reference instanceof MethodReference ? resolveReference((MethodReference) reference) : reference.resolve();
         } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;

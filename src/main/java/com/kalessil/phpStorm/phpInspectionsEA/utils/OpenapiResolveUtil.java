@@ -301,6 +301,7 @@ final public class OpenapiResolveUtil {
         }
     }
 
+    @NotNull
     static public PhpType resolveDeclaredType(@NotNull Parameter parameter) {
         try {
             return parameter.getDeclaredType();

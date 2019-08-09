@@ -70,7 +70,7 @@ final public class OpenapiResolveUtil {
                         result = methods.values().iterator().next();
                     } else {
                         /* try narrowing down to a child class */
-                        final Set<String> remaining = methods.keySet();
+                        final Set<String> remaining = new HashSet<>(methods.keySet());
                         for (final Method method : methods.values()) {
                             if (remaining.contains(method.getFQN())) {
                                 final PhpClass clazz = method.getContainingClass();

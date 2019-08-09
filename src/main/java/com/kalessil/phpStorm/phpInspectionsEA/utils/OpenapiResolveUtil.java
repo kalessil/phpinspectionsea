@@ -190,6 +190,11 @@ final public class OpenapiResolveUtil {
                         }
                     }
                 }
+            } else if (expression instanceof AssignmentExpression && OpenapiTypesUtil.isAssignment((PsiElement) expression)) {
+                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(((AssignmentExpression) expression).getValue());
+                if (value instanceof PhpTypedElement) {
+                    result = resolveType((PhpTypedElement) value, project);
+                }
             }
             /* default behaviour */
             result = result == null

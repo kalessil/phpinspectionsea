@@ -71,8 +71,7 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
 
                     if (PhpLanguageUtil.isNull(fieldDefault)) {
                         /* false-positives: typed properties PS will take care of them */
-                        final PhpType declaredType = OpenapiResolveUtil.resolveDeclaredType(field);
-                        if (declaredType.isEmpty()) {
+                        if (OpenapiResolveUtil.resolveDeclaredType(field).isEmpty()) {
                             holder.registerProblem(
                                     fieldDefault,
                                     messageDefaultNull,

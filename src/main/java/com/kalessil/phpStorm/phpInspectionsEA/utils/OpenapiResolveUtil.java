@@ -54,10 +54,10 @@ final public class OpenapiResolveUtil {
             final ResolveResult[] resolved = reference.multiResolve(false);
             if (resolved.length > 0) {
                 if (resolved.length == 1) {
-                    /* case: one variant only */
+                    /* case: one variant only; just get it */
                     result = resolved[0].getElement();
                 } else {
-                    /* case: multiple variants */
+                    /* case: multiple variants; get rid of duplicates and narrow to the "lowest" child */
                     final Map<String, Method> methods = new LinkedHashMap<>();
                     for (final ResolveResult value : resolved) {
                         final PsiElement element = value.getElement();
@@ -66,11 +66,30 @@ final public class OpenapiResolveUtil {
                         }
                     }
                     if (methods.size() == 1) {
+                        /* doubled declarations eliminated; get the one left */
                         result = methods.values().iterator().next();
-                        methods.clear();
                     } else {
-
+                        /* try narrowing down to a child class */
+                        final Set<String> remaining = methods.keySet();
+                        for (final Method method : methods.values()) {
+                            if (remaining.contains(method.getFQN())) {
+                                final PhpClass clazz = method.getContainingClass();
+                                if (clazz != null) {
+                                    final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                                    if (parent != null) {
+                                        final Method parentMethod = OpenapiResolveUtil.resolveMethod(parent, method.getName());
+                                        if (parentMethod != null) {
+                                            remaining.remove(parentMethod.getFQN());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        /* if not narrowed, do fallback */
+                        result = remaining.size() == 1 ? methods.get(remaining.iterator().next()) : reference.resolve();
+                        remaining.clear();
                     }
+                    methods.clear();
                 }
             }
             return result;

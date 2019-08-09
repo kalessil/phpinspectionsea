@@ -12,10 +12,15 @@ final public class ForeachSourceInspectorTest extends PhpCodeInsightFixtureTestC
         myFixture.configureByFile("testData/fixtures/foreach/foreach-source.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testFalsePositives() {
+    public void testGenericFalsePositives() {
         myFixture.enableInspections(new ForeachSourceInspector());
         myFixture.configureByFile("testData/fixtures/foreach/foreach-source-false-positives.setup.php");
         myFixture.configureByFile("testData/fixtures/foreach/foreach-source-false-positives.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testMultiResolveFalsePositives() {
+        myFixture.enableInspections(new ForeachSourceInspector());
+        myFixture.configureByFile("testData/fixtures/foreach/foreach-source-multiresolve.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

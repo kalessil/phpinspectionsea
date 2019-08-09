@@ -48,7 +48,7 @@ public class DeclareDirectiveCorrectnessInspector extends PhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             @Override
-            protected void visitPhpDeclare(@NotNull Declare declare) {
+            public void visitPhpDeclare(@NotNull Declare declare) {
                 if (this.shouldSkipAnalysis(declare, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 final PsiElement declaration = declare.getFirstPsiChild();

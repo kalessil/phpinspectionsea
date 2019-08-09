@@ -39,10 +39,10 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
         }
     }
 
-    protected void visitPhpDeclare(@NotNull Declare declare)                           {}
-    protected void visitPhpEval(@NotNull PhpEval eval)                                 {}
-    protected void visitPhpDocTag(@NotNull PhpDocTag tag)                              {}
-    protected void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
+    public void visitPhpDeclare(@NotNull Declare declare)                           {}
+    public void visitPhpEval(@NotNull PhpEval eval)                                 {}
+    public void visitPhpDocTag(@NotNull PhpDocTag tag)                              {}
+    public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
     @Override public void visitPhpFile(PhpFile PhpFile)    {}
@@ -107,7 +107,7 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
         } else {
             final PhpClass containingClass = expression instanceof PhpClass
                     ? (PhpClass) expression
-                    : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, (Class) PsiFile.class);
+                    : PsiTreeUtil.getParentOfType(expression, PhpClass.class, false, PsiFile.class);
             if (containingClass != null) {
                 final String fqn = containingClass.getFQN();
                 result = fqn.endsWith("Test") || fqn.contains("\\Tests\\") || fqn.contains("\\Test\\");

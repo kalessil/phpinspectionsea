@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,10 +61,19 @@ final public class TypesIntersectionStrategy {
                         return type;
                     }
                 }
+            } else if (expression instanceof FieldReference) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference((FieldReference) expression);
+                if (resolved instanceof Field && !OpenapiResolveUtil.resolveDeclaredType((Field) resolved).isEmpty()) {
+                    final PhpType type = OpenapiResolveUtil.resolveType((FieldReference) expression, holder.getProject());
+                    if (type != null) {
+                        return type;
+                    }
+                }
             } else if (expression instanceof StringLiteralExpression) {
                 return PhpType.STRING;
+            } else if (expression instanceof ArrayCreationExpression) {
+                return PhpType.ARRAY;
             } else if (
-                expression instanceof ArrayCreationExpression ||
                 expression instanceof ConstantReference ||
                 expression instanceof ClassConstantReference ||
                 OpenapiTypesUtil.isNumber(expression)

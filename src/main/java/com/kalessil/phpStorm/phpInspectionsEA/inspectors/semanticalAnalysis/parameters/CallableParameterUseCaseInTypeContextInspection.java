@@ -322,26 +322,46 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                             if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
                                 final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, expression);
                                 if (secondOperand != null) {
-                                    final String requiredType;
+                                    final Set<String> requiredTypes = new HashSet<>();
                                     /* identify the required type */
                                     if (secondOperand instanceof StringLiteralExpression) {
-                                        requiredType = Types.strString;
+                                        requiredTypes.add(Types.strString);
                                     } else if (secondOperand instanceof ArrayCreationExpression) {
-                                        requiredType = Types.strArray;
-                                    } else if (PhpLanguageUtil.isNull(secondOperand)) {
-                                        requiredType = Types.strNull;
-                                    } else if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                                        requiredType = Types.strBoolean;
-                                    } else {
-                                        requiredType = null;
+                                        requiredTypes.add(Types.strArray);
+                                    } else if (secondOperand instanceof ConstantReference && PhpLanguageUtil.isNull(secondOperand)) {
+                                        requiredTypes.add(Types.strNull);
+                                    } else if (secondOperand instanceof ConstantReference && PhpLanguageUtil.isBoolean(secondOperand)) {
+                                        requiredTypes.add(Types.strBoolean);
+                                    } else if (secondOperand instanceof ConstantReference || secondOperand instanceof ClassConstantReference) {
+                                        final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) secondOperand, holder.getProject());
+                                        if (type != null && !type.hasUnknown()) {
+                                            type.getTypes().stream().map(Types::getType).forEach(requiredTypes::add);
+                                        }
+                                    } else if (secondOperand instanceof FunctionReference) {
+                                        final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) secondOperand);
+                                        if (resolved instanceof Function && OpenapiElementsUtil.getReturnType((Function) resolved) != null) {
+                                            final PhpType type = OpenapiResolveUtil.resolveType((FunctionReference) secondOperand, holder.getProject());
+                                            if (type != null && !type.hasUnknown()) {
+                                                type.getTypes().stream().map(Types::getType).forEach(requiredTypes::add);
+                                            }
+                                        }
+                                    } else if (secondOperand instanceof FieldReference) {
+                                        final PsiElement resolved = OpenapiResolveUtil.resolveReference((FieldReference) secondOperand);
+                                        if (resolved instanceof Field && !OpenapiResolveUtil.resolveDeclaredType((Field) resolved).isEmpty()) {
+                                            final PhpType type = OpenapiResolveUtil.resolveType((FieldReference) secondOperand, holder.getProject());
+                                            if (type != null && !type.hasUnknown()) {
+                                                type.getTypes().stream().map(Types::getType).forEach(requiredTypes::add);
+                                            }
+                                        }
                                     }
-                                    if (requiredType != null) {
+                                    if (!requiredTypes.isEmpty()) {
                                         /* ensure generic types expectations are met */
-                                        if (operator == PhpTokenTypes.opIDENTICAL && !parameterTypes.contains(requiredType)) {
+                                        if (operator == PhpTokenTypes.opIDENTICAL && parameterTypes.stream().noneMatch(requiredTypes::contains)) {
                                             holder.registerProblem(binary, messageViolationInCheck);
-                                        } else if (operator == PhpTokenTypes.opNOT_IDENTICAL && !parameterTypes.contains(requiredType)) {
+                                        } else if (operator == PhpTokenTypes.opNOT_IDENTICAL && parameterTypes.stream().noneMatch(requiredTypes::contains)) {
                                             holder.registerProblem(binary, messageNoSense);
                                         }
+                                        requiredTypes.clear();
                                     } else if (OpenapiTypesUtil.isNumber(secondOperand)) {
                                         /* ensure numeric types expectations are met */
                                         final boolean isNumber =

@@ -1,6 +1,10 @@
 <?php
 
-class CasesHolder {
+abstract class CasesHolder {
+    const BOOL_CONST = true;
+
+    abstract function returnsBool(): bool;
+
     public function method(?bool $first, bool $second = null, stdClass $third, bool $boolean) {
         return [
             /* correct usage */
@@ -12,6 +16,10 @@ class CasesHolder {
             /* target cases */
             <warning descr="Makes no sense, because this type is not defined in annotations.">$third === false</warning>,
             <warning descr="Makes no sense, because it's always true according to annotations.">$third !== false</warning>,
+            <warning descr="Makes no sense, because this type is not defined in annotations.">$third === self::BOOL_CONST</warning>,
+            <warning descr="Makes no sense, because it's always true according to annotations.">$third !== self::BOOL_CONST</warning>,
+            <warning descr="Makes no sense, because this type is not defined in annotations.">$third === $this->returnsBool()</warning>,
+            <warning descr="Makes no sense, because it's always true according to annotations.">$third !== $this->returnsBool()</warning>,
 
             /* weakly typed comparison is not handled */
             $third == false,

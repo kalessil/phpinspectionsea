@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArgumentUnpackingCanBeUsedInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' would make more sense here (3x+ faster). Use '...array_values(...)' fo unpacking associative arrays.";
+    private static final String messagePattern = "'%s' would make more sense here (3x+ faster). Use '...array_values(...)' for unpacking associative arrays.";
 
     @NotNull
     @Override

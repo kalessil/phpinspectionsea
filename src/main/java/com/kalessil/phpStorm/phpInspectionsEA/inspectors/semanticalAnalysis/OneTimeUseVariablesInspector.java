@@ -171,17 +171,21 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                 }
 
                 if (previous != null && OpenapiTypesUtil.isAssignment(previous.getFirstChild())) {
-                    final AssignmentExpression assign = (AssignmentExpression) previous.getFirstChild();
-                    final PsiElement container        = assign.getVariable();
-                    final PsiElement value            = assign.getValue();
+                    final AssignmentExpression assignment = (AssignmentExpression) previous.getFirstChild();
+                    final PsiElement container            = assignment.getVariable();
+                    final PsiElement value                = assignment.getValue();
                     if (value != null && container instanceof Variable) {
-                        final boolean canInline = OpenapiEquivalenceUtil.areEqual(container, argument);
-                        if (canInline) {
-                            holder.registerProblem(
-                                    container,
-                                    String.format(messagePattern, ((Variable) container).getName()),
-                                    new InlineValueFix(holder.getProject(), assign.getParent(), argument, value)
-                            );
+                        final boolean couldInline = OpenapiEquivalenceUtil.areEqual(container, argument);
+                        if (couldInline) {
+                            final String variableName   = ((Variable) container).getName();
+                            final boolean typeAnnotated = this.isTypeAnnotated(previous, variableName);
+                            if (!typeAnnotated) {
+                                holder.registerProblem(
+                                        container,
+                                        String.format(messagePattern, variableName),
+                                        new InlineValueFix(holder.getProject(), assignment.getParent(), argument, value)
+                                );
+                            }
                         }
                     }
                 }

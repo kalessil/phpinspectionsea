@@ -123,24 +123,29 @@ public class UnusedFunctionResultInspector extends PhpInspection {
                         if (!types.isEmpty()) {
                             final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
                             if (target != null) {
-                                if (!REPORT_FLUENT_INTERFACES && reference instanceof MethodReference) {
-                                    final PsiElement base = reference.getFirstChild();
-                                    if (base instanceof PhpTypedElement) {
-                                        final PhpType baseType = OpenapiResolveUtil.resolveType((PhpTypedElement) base, project);
-                                        if (baseType != null) {
-                                            baseType.getTypes().stream()
-                                                    .filter(type  -> type.startsWith("\\"))
-                                                    .forEach(type -> types.remove(Types.getType(type)));
-                                        }
-                                        types.remove(Types.strStatic);
+                                if (REPORT_ONLY_SCALARS) {
+                                    final boolean skip = types.removeIf(t -> t.startsWith("\\") || t.equals(Types.strStatic) || t.equals(Types.strObject)) && types.isEmpty();
+                                    if (!skip) {
+                                        holder.registerProblem(target, message);
                                     }
-                                }
-
-                                final boolean skip = (!REPORT_MIXED_TYPE && types.remove(Types.strMixed) && types.isEmpty()) ||
-                                                     (!REPORT_FLUENT_INTERFACES && types.isEmpty()) ||
-                                                     (REPORT_ONLY_SCALARS && types.removeIf(t -> t.startsWith("\\")) && types.isEmpty());
-                                if (!skip) {
-                                    holder.registerProblem(target, message);
+                                } else {
+                                    if (!REPORT_FLUENT_INTERFACES && reference instanceof MethodReference) {
+                                        final PsiElement base = reference.getFirstChild();
+                                        if (base instanceof PhpTypedElement) {
+                                            final PhpType baseType = OpenapiResolveUtil.resolveType((PhpTypedElement) base, project);
+                                            if (baseType != null) {
+                                                baseType.getTypes().stream()
+                                                        .filter(type  -> type.startsWith("\\"))
+                                                        .forEach(type -> types.remove(Types.getType(type)));
+                                            }
+                                            types.remove(Types.strStatic);
+                                        }
+                                    }
+                                    final boolean skip = (!REPORT_MIXED_TYPE && types.remove(Types.strMixed) && types.isEmpty()) ||
+                                                         (!REPORT_FLUENT_INTERFACES && types.isEmpty());
+                                    if (!skip) {
+                                        holder.registerProblem(target, message);
+                                    }
                                 }
                             }
                         } else {
@@ -162,7 +167,7 @@ public class UnusedFunctionResultInspector extends PhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create(
             (component) -> {
-                component.addCheckbox("Report only unused scalar results", REPORT_ONLY_SCALARS, (isSelected) -> REPORT_ONLY_SCALARS = isSelected);
+                component.addCheckbox("Report ONLY unused scalar results", REPORT_ONLY_SCALARS, (isSelected) -> REPORT_ONLY_SCALARS = isSelected);
                 component.addCheckbox("Report 'mixed' type", REPORT_MIXED_TYPE, (isSelected) -> REPORT_MIXED_TYPE = isSelected);
                 component.addCheckbox("Report fluent interfaces", REPORT_FLUENT_INTERFACES, (isSelected) -> REPORT_FLUENT_INTERFACES = isSelected);
             }

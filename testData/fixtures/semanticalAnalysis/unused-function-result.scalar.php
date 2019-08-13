@@ -10,14 +10,14 @@ function cases_holder() {
     /* types identification */
     ignored();
     <warning descr="Function result is not used.">reported_because_of_float</warning>();
-    reported_because_of_mixed();
+    <warning descr="Function result is not used.">reported_because_of_mixed</warning>();
 
     /* fluent interfaces */
     (new Clazz())->returnThis();
     (new Clazz())->returnSelf();
     (new Clazz())->returnStatic();
 
-    (new Clazz())-><warning descr="Function result is not used.">returnObject</warning>();
+    (new Clazz())->returnObject();
 }
 
 /** @return bool|int|void */

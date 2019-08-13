@@ -6,11 +6,20 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.Unus
 public class UnusedFunctionResultInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         final UnusedFunctionResultInspector inspector = new UnusedFunctionResultInspector();
-        inspector.REPORT_ONLY_SCALARS                 = true;
+        inspector.REPORT_ONLY_SCALARS                 = false;
         inspector.REPORT_MIXED_TYPE                   = true;
         inspector.REPORT_FLUENT_INTERFACES            = true;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/semanticalAnalysis/unused-function-result.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testIfFindsOnlyScalarPatterns() {
+        final UnusedFunctionResultInspector inspector = new UnusedFunctionResultInspector();
+        inspector.REPORT_ONLY_SCALARS                 = true;
+        inspector.REPORT_MIXED_TYPE                   = false;
+        inspector.REPORT_FLUENT_INTERFACES            = false;
+        myFixture.enableInspections(inspector);
+        myFixture.configureByFile("testData/fixtures/semanticalAnalysis/unused-function-result.scalar.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsNonFluentPatterns() {

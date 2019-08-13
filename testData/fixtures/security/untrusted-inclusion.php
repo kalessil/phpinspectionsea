@@ -16,4 +16,6 @@
     }
 
     /* false-positives */
-    include __DIR__.'/file.php';
+    include __DIR__.'file.php';
+    include '/file.php';
+    include 'c://file.php';

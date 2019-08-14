@@ -257,8 +257,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (functionName != null && functionName.equals("count")) {
                                     if (reported.add(call)) {
                                         final String message = this.isInverted(call) ? messageEmptyArrayCount : messageNotEmptyArrayCount;
-                                        final String value   = call.getParameters()[0].getText();
-                                        holder.registerProblem(call, String.format(message, value, value));
+                                        holder.registerProblem(call, String.format(message, argument.getText(), argument.getText()));
                                     }
                                     break;
                                 }

@@ -14,7 +14,9 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +82,7 @@ public class MkdirRaceConditionInspector extends PhpInspection {
                 }
 
                 final PsiElement context = target.getParent();
-                // case 1: if ([!]mkdir(...))
+                // case 1: if ([!]mkdir(...) [===|!== true|false])
                 if (context instanceof If || OpenapiTypesUtil.isStatementImpl(context)) {
                     final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
                     final String binary               = searchResult.isInverted ? patternFailAndCondition : patternFailOrCondition;
@@ -153,13 +155,18 @@ public class MkdirRaceConditionInspector extends PhpInspection {
                         }
                     }
                 } else if (parent instanceof BinaryExpression) {
-                    final IElementType operation = ((BinaryExpression) parent).getOperationType();
-                    if (
-                        PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) ||
-                        PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)
-                    ) {
+                    final BinaryExpression binary = (BinaryExpression) parent;
+                    final IElementType operation  = binary.getOperationType();
+                    if (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) || PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)) {
                         status.setReportingTarget(expression);
                     } else {
+                        if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                            final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, expression);
+                            if (PhpLanguageUtil.isBoolean(second)) {
+                                if (PhpLanguageUtil.isFalse(second))            { status.setInverted(!status.isInverted()); }
+                                if (operation == PhpTokenTypes.opNOT_IDENTICAL) { status.setInverted(!status.isInverted()); }
+                            }
+                        }
                         this.locateExpression(parent, status);
                     }
                 }

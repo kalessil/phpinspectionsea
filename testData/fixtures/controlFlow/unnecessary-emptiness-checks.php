@@ -3,13 +3,13 @@
 class CasesHolder {
     private function simplification() {
         return [
-            <warning descr="'empty(...) && ... === null' here can be replaced with '!isset($x)'.">empty($x)</warning> && $x === null,
+            <warning descr="'empty(...) && ... === null' here can be replaced with '!isset($x)' (simplification).">empty($x)</warning> && $x === null,
             empty($x) && $x !== null,
-            !<warning descr="'!empty(...) || ... !== null' here can be replaced with 'isset($x)'.">empty($x)</warning> || $x !== null,
+            !<warning descr="'!empty(...) || ... !== null' here can be replaced with 'isset($x)' (simplification).">empty($x)</warning> || $x !== null,
             !empty($x) || $x === null,
-            <warning descr="'isset(...) && ...' here can be replaced with '!empty($x)'.">isset($x)</warning> && $x,
+            <warning descr="'isset(...) && ...' here can be replaced with '!empty($x) (simplification)'.">isset($x)</warning> && $x,
             isset($x) && !$x,
-            !<warning descr="'!isset(...) || !...' here can be replaced with 'empty($x)'.">isset($x)</warning> || !$x,
+            !<warning descr="'!isset(...) || !...' here can be replaced with 'empty($x)' (simplification).">isset($x)</warning> || !$x,
             !isset($x) || $x,
         ];
     }
@@ -62,15 +62,15 @@ class CasesHolder {
 
     private function reportingTargetsSelection() {
         return [
-            isset(<warning descr="'isset(...) && ...' here can be replaced with '!empty($x)'.">$x</warning>, $y) && $x,
-            !isset(<warning descr="'!isset(...) || !...' here can be replaced with 'empty($x)'.">$x</warning>, $y) || !$x,
+            isset(<warning descr="'isset(...) && ...' here can be replaced with '!empty($x) (simplification)'.">$x</warning>, $y) && $x,
+            !isset(<warning descr="'!isset(...) || !...' here can be replaced with 'empty($x)' (simplification).">$x</warning>, $y) || !$x,
         ];
     }
 
     private function issetInNullCoallescingContext($parameter) {
         return [
-            <weak_warning descr="'$parameter ?? '...'' can be used instead (reduces cognitive load).">isset($parameter) ?? '...'</weak_warning>,
-            <weak_warning descr="'$parameter ?? '...'' can be used instead (reduces cognitive load).">isset($parameter) ?: '...'</weak_warning>,
+            <weak_warning descr="'$parameter ?? '...'' can be used instead (simplification, reduces cognitive load).">isset($parameter) ?? '...'</weak_warning>,
+            <weak_warning descr="'$parameter ?? '...'' can be used instead (simplification, reduces cognitive load).">isset($parameter) ?: '...'</weak_warning>,
         ];
     }
 
@@ -82,14 +82,14 @@ class CasesHolder {
             is_array($parameter) && $parameter,
             is_array($parameter) && !$parameter,
 
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)'.">count($parameter)</warning>,
-            is_array($parameter) && !<warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)'.">count($parameter)</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)' (simplification).">count($parameter)</warning>,
+            is_array($parameter) && !<warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)' (simplification).">count($parameter)</warning>,
 
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)'.">count($parameter) > 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)'.">count($parameter) != 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)'.">count($parameter) !== 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)'.">count($parameter) == 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)'.">count($parameter) === 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)' (simplification).">count($parameter) > 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)' (simplification).">count($parameter) != 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)' (simplification).">count($parameter) !== 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)' (simplification).">count($parameter) == 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)' (simplification).">count($parameter) === 0</warning>,
 
             is_array($parameter) && empty($more),
             is_array($parameter) && !empty($more),

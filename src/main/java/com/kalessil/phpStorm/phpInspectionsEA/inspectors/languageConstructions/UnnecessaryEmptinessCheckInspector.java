@@ -38,13 +38,13 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
     private static final String messageControversialFalsy    = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
     private static final String messageControversialNull     = "Doesn't match to previous null value handling (perhaps always false when reached).";
     private static final String messageNonContributing       = "Seems to be always true when reached.";
-    private static final String messageNotEmpty              = "'isset(...) && ...' here can be replaced with '!empty(%s)'.";
-    private static final String messageEmpty                 = "'!isset(...) || !...' here can be replaced with 'empty(%s)'.";
-    private static final String messageNotIsset              = "'empty(...) && ... === null' here can be replaced with '!isset(%s)'.";
-    private static final String messageIsset                 = "'!empty(...) || ... !== null' here can be replaced with 'isset(%s)'.";
-    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here probably can be replaced with '%s && is_array(%s)'.";
-    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here probably can be replaced with '!%s && is_array(%s)'.";
-    private static final String messageUseCoalescing         = "'%s' can be used instead (reduces cognitive load).";
+    private static final String messageNotEmpty              = "'isset(...) && ...' here can be replaced with '!empty(%s) (simplification)'.";
+    private static final String messageEmpty                 = "'!isset(...) || !...' here can be replaced with 'empty(%s)' (simplification).";
+    private static final String messageNotIsset              = "'empty(...) && ... === null' here can be replaced with '!isset(%s)' (simplification).";
+    private static final String messageIsset                 = "'!empty(...) || ... !== null' here can be replaced with 'isset(%s)' (simplification).";
+    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here probably can be replaced with '%s && is_array(%s)' (simplification).";
+    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here probably can be replaced with '!%s && is_array(%s)' (simplification).";
+    private static final String messageUseCoalescing         = "'%s' can be used instead (simplification, reduces cognitive load).";
 
     // Inspection options.
     public boolean SUGGEST_SIMPLIFICATIONS  = true;

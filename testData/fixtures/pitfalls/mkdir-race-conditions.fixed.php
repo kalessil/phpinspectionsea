@@ -22,6 +22,10 @@ function cases_holder() {
 
     /* case: incomplete conditions */
     if (mkdir('...', 0644) || is_dir('...')) {}
+    if (mkdir('...', 0644) || is_dir('...')) {}
+    if (mkdir('...', 0644) || is_dir('...')) {}
+    if (!mkdir('...', 0644) && !is_dir('...')) {}
+    if (!mkdir('...', 0644) && !is_dir('...')) {}
     if (!mkdir('...', 0644) && !is_dir('...')) {}
     if (!mkdir('...', 0644) && !is_dir('...')) {}
     if (!is_dir('...') && !mkdir('...', 0644) && !is_dir('...')) {}

@@ -3,13 +3,13 @@
 class CasesHolder {
     private function simplification() {
         return [
-            <warning descr="'empty(...) && ... === null' here can be replaced with '!isset(...)'.">empty($x)</warning> && $x === null,
+            <warning descr="'empty(...) && ... === null' here can be replaced with '!isset($x)'.">empty($x)</warning> && $x === null,
             empty($x) && $x !== null,
-            !<warning descr="'!empty(...) || ... !== null' here can be replaced with 'isset(...)'.">empty($x)</warning> || $x !== null,
+            !<warning descr="'!empty(...) || ... !== null' here can be replaced with 'isset($x)'.">empty($x)</warning> || $x !== null,
             !empty($x) || $x === null,
-            <warning descr="'isset(...) && ...' here can be replaced with '!empty(...)'.">isset($x)</warning> && $x,
+            <warning descr="'isset(...) && ...' here can be replaced with '!empty($x)'.">isset($x)</warning> && $x,
             isset($x) && !$x,
-            !<warning descr="'!isset(...) || !...' here can be replaced with 'empty(...)'.">isset($x)</warning> || !$x,
+            !<warning descr="'!isset(...) || !...' here can be replaced with 'empty($x)'.">isset($x)</warning> || !$x,
             !isset($x) || $x,
         ];
     }
@@ -62,8 +62,8 @@ class CasesHolder {
 
     private function reportingTargetsSelection() {
         return [
-            isset(<warning descr="'isset(...) && ...' here can be replaced with '!empty(...)'.">$x</warning>, $y) && $x,
-            !isset(<warning descr="'!isset(...) || !...' here can be replaced with 'empty(...)'.">$x</warning>, $y) || !$x,
+            isset(<warning descr="'isset(...) && ...' here can be replaced with '!empty($x)'.">$x</warning>, $y) && $x,
+            !isset(<warning descr="'!isset(...) || !...' here can be replaced with 'empty($x)'.">$x</warning>, $y) || !$x,
         ];
     }
 
@@ -82,14 +82,14 @@ class CasesHolder {
             is_array($parameter) && $parameter,
             is_array($parameter) && !$parameter,
 
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.">count($parameter)</warning>,
-            is_array($parameter) && !<warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!... && is_array(...)'.">count($parameter)</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)'.">count($parameter)</warning>,
+            is_array($parameter) && !<warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)'.">count($parameter)</warning>,
 
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.">count($parameter) > 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.">count($parameter) != 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.">count($parameter) !== 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!... && is_array(...)'.">count($parameter) == 0</warning>,
-            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!... && is_array(...)'.">count($parameter) === 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)'.">count($parameter) > 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)'.">count($parameter) != 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && count(...)' here probably can be replaced with '$parameter && is_array($parameter)'.">count($parameter) !== 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)'.">count($parameter) == 0</warning>,
+            is_array($parameter) && <warning descr="'is_array(...) && !count(...)' here probably can be replaced with '!$parameter && is_array($parameter)'.">count($parameter) === 0</warning>,
 
             is_array($parameter) && empty($more),
             is_array($parameter) && !empty($more),

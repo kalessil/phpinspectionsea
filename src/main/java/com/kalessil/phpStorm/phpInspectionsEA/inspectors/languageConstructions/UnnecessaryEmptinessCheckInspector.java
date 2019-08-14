@@ -38,12 +38,12 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
     private static final String messageControversialFalsy    = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
     private static final String messageControversialNull     = "Doesn't match to previous null value handling (perhaps always false when reached).";
     private static final String messageNonContributing       = "Seems to be always true when reached.";
-    private static final String messageNotEmpty              = "'isset(...) && ...' here can be replaced with '!empty(...)'.";
-    private static final String messageEmpty                 = "'!isset(...) || !...' here can be replaced with 'empty(...)'.";
-    private static final String messageNotIsset              = "'empty(...) && ... === null' here can be replaced with '!isset(...)'.";
-    private static final String messageIsset                 = "'!empty(...) || ... !== null' here can be replaced with 'isset(...)'.";
-    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here probably can be replaced with '... && is_array(...)'.";
-    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here probably can be replaced with '!... && is_array(...)'.";
+    private static final String messageNotEmpty              = "'isset(...) && ...' here can be replaced with '!empty(%s)'.";
+    private static final String messageEmpty                 = "'!isset(...) || !...' here can be replaced with 'empty(%s)'.";
+    private static final String messageNotIsset              = "'empty(...) && ... === null' here can be replaced with '!isset(%s)'.";
+    private static final String messageIsset                 = "'!empty(...) || ... !== null' here can be replaced with 'isset(%s)'.";
+    private static final String messageNotEmptyArrayCount    = "'is_array(...) && count(...)' here probably can be replaced with '%s && is_array(%s)'.";
+    private static final String messageEmptyArrayCount       = "'is_array(...) && !count(...)' here probably can be replaced with '!%s && is_array(%s)'.";
     private static final String messageUseCoalescing         = "'%s' can be used instead (reduces cognitive load).";
 
     // Inspection options.
@@ -142,7 +142,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 /* firstly suggest simplifications */
                                 if (SUGGEST_SIMPLIFICATIONS) {
                                     if (operator == PhpTokenTypes.opAND) {
-                                        this.analyzeForUsingEmptyArrayComparison(contexts, reported);
+                                        this.analyzeForUsingEmptyArrayComparison(argument, contexts, reported);
                                     }
 
                                     if (contexts.stream().noneMatch(e -> e instanceof PhpEmpty)) {
@@ -207,6 +207,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
             }
 
             private void analyzeForUsingEmptyArrayComparison(
+                    @NotNull PsiElement argument,
                     @NotNull List<PsiElement> contexts,
                     @NotNull Set<PsiElement> reported
             ) {
@@ -234,15 +235,15 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                             final IElementType operator = binary.getOperationType();
                                             if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
                                                 if (reported.add(binary)) {
-                                                    holder.registerProblem(binary, messageEmptyArrayCount);
+                                                    holder.registerProblem(binary, String.format(messageEmptyArrayCount, argument.getText(), argument.getText()));
                                                 }
                                             } else if (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
                                                 if (reported.add(binary)) {
-                                                    holder.registerProblem(binary, messageNotEmptyArrayCount);
+                                                    holder.registerProblem(binary, String.format(messageNotEmptyArrayCount, argument.getText(), argument.getText()));
                                                 }
                                             } else if (operator == PhpTokenTypes.opGREATER) {
                                                 if (reported.add(binary)) {
-                                                    holder.registerProblem(binary, messageNotEmptyArrayCount);
+                                                    holder.registerProblem(binary, String.format(messageNotEmptyArrayCount, argument.getText(), argument.getText()));
                                                 }
                                             }
                                             break;
@@ -256,7 +257,8 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (functionName != null && functionName.equals("count")) {
                                     if (reported.add(call)) {
                                         final String message = this.isInverted(call) ? messageEmptyArrayCount : messageNotEmptyArrayCount;
-                                        holder.registerProblem(call, message);
+                                        final String value   = call.getParameters()[0].getText();
+                                        holder.registerProblem(call, String.format(message, value, value));
                                     }
                                     break;
                                 }
@@ -278,10 +280,10 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                     String targetMessage        = null;
                     if (operator == PhpTokenTypes.opAND && !this.isInverted(empty.get())) {
                         targetOperator = PhpTokenTypes.opIDENTICAL;
-                        targetMessage  = messageNotIsset;
+                        targetMessage  = String.format(messageNotIsset, argument.getText());
                     } else if (operator == PhpTokenTypes.opOR && this.isInverted(empty.get())) {
                         targetOperator = PhpTokenTypes.opNOT_IDENTICAL;
-                        targetMessage  = messageIsset;
+                        targetMessage  = String.format(messageIsset, argument.getText());
                     }
                     if (targetOperator != null) {
                         for (final PsiElement target : contexts) {
@@ -315,14 +317,14 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                             if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
                                 final PsiElement node = this.target(isset.get(), argument);
                                 if (reported.add(node)) {
-                                    holder.registerProblem(node, messageNotEmpty);
+                                    holder.registerProblem(node, String.format(messageNotEmpty, argument.getText()));
                                 }
                             }
                         } else {
                             if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
                                 final PsiElement node = this.target(isset.get(), argument);
                                 if (reported.add(node)) {
-                                    holder.registerProblem(node, messageEmpty);
+                                    holder.registerProblem(node, String.format(messageEmpty, argument.getText()));
                                 }
                             }
                         }

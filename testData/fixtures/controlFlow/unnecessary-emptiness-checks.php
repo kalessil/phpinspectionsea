@@ -7,7 +7,7 @@ class CasesHolder {
             empty($x) && $x !== null,
             !<warning descr="'!empty(...) || ... !== null' here can be replaced with 'isset($x)' (simplification).">empty($x)</warning> || $x !== null,
             !empty($x) || $x === null,
-            <warning descr="'isset(...) && ...' here can be replaced with '!empty($x) (simplification)'.">isset($x)</warning> && $x,
+            <warning descr="'isset(...) && ...' here can be replaced with '!empty($x)' (simplification).">isset($x)</warning> && $x,
             isset($x) && !$x,
             !<warning descr="'!isset(...) || !...' here can be replaced with 'empty($x)' (simplification).">isset($x)</warning> || !$x,
             !isset($x) || $x,
@@ -27,13 +27,13 @@ class CasesHolder {
 
     private function issetEmptyMix() {
         return[
-            isset($x) && !empty($x),
+            <warning descr="Perhaps can be dropped, as it covered by a following 'empty(...)'.">isset($x)</warning> && !empty($x),
             isset($x) && <warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">empty($x)</warning>,
-            isset($x) || !empty($x),
+            isset($x) || !<warning descr="Seems to be always false when reached.">empty($x)</warning>,
             isset($x) || <warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">empty($x)</warning>,
-            !isset($x) || empty($x),
+            !<warning descr="Perhaps can be dropped, as it covered by a following 'empty(...)'.">isset($x)</warning> || empty($x),
             !isset($x) || !<warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">empty($x)</warning>,
-            !isset($x) && empty($x),
+            !isset($x) && <warning descr="Seems to be always true when reached.">empty($x)</warning>,
             !isset($x) && !<warning descr="Doesn't match to previous isset-alike handling (perhaps always false when reached).">empty($x)</warning>,
         ];
     }
@@ -62,7 +62,7 @@ class CasesHolder {
 
     private function reportingTargetsSelection() {
         return [
-            isset(<warning descr="'isset(...) && ...' here can be replaced with '!empty($x) (simplification)'.">$x</warning>, $y) && $x,
+            isset(<warning descr="'isset(...) && ...' here can be replaced with '!empty($x)' (simplification).">$x</warning>, $y) && $x,
             !isset(<warning descr="'!isset(...) || !...' here can be replaced with 'empty($x)' (simplification).">$x</warning>, $y) || !$x,
         ];
     }

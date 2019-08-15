@@ -37,8 +37,10 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
     private static final String messageControversialIsset    = "Doesn't match to previous isset-alike handling (perhaps always false when reached).";
     private static final String messageControversialFalsy    = "Doesn't match to previous falsy value handling (perhaps always false when reached).";
     private static final String messageControversialNull     = "Doesn't match to previous null value handling (perhaps always false when reached).";
-    private static final String messageNonContributing       = "Seems to be always true when reached.";
-    private static final String messageNotEmpty              = "'isset(...) && ...' here can be replaced with '!empty(%s) (simplification)'.";
+    private static final String messageAlwaysTrue            = "Seems to be always true when reached.";
+    private static final String messageAlwaysFalse           = "Seems to be always false when reached.";
+    private static final String messageIssetCanBeDropped     = "Perhaps can be dropped, as it covered by a following 'empty(...)'.";
+    private static final String messageNotEmpty              = "'isset(...) && ...' here can be replaced with '!empty(%s)' (simplification).";
     private static final String messageEmpty                 = "'!isset(...) || !...' here can be replaced with 'empty(%s)' (simplification).";
     private static final String messageNotIsset              = "'empty(...) && ... === null' here can be replaced with '!isset(%s)' (simplification).";
     private static final String messageIsset                 = "'!empty(...) || ... !== null' here can be replaced with 'isset(%s)' (simplification).";
@@ -149,6 +151,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                         this.analyzeForUsingEmpty(argument, contexts, operator, reported);
                                     } else {
                                         this.analyzeForUsingIsset(argument, contexts, operator, reported);
+                                        this.analyzeForDroppingIsset(argument, contexts, operator, reported);
                                     }
                                 }
 
@@ -168,7 +171,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                                 if (report) {
                                                     final PsiElement node = this.target(target, argument);
                                                     if (reported.add(node)) {
-                                                        holder.registerProblem(node, messageNonContributing);
+                                                        holder.registerProblem(node, messageAlwaysTrue);
                                                     }
                                                 }
                                             }
@@ -260,6 +263,53 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                         holder.registerProblem(call, String.format(message, argument.getText(), argument.getText()));
                                     }
                                     break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            private void analyzeForDroppingIsset(
+                    @NotNull PsiElement argument,
+                    @NotNull List<PsiElement> contexts,
+                    @NotNull IElementType operator,
+                    @NotNull Set<PsiElement> reported
+            ) {
+                final Optional<PsiElement> empty = contexts.stream().filter(e -> e instanceof PhpEmpty).findFirst();
+                if (empty.isPresent()) {
+                    final Optional<PsiElement> isset = contexts.stream().filter(e -> e instanceof PhpIsset).findFirst();
+                    if (isset.isPresent()) {
+                        if (operator == PhpTokenTypes.opAND) {
+                            final boolean isEmptyInverted = this.isInverted(empty.get());
+                            final boolean isIssetInverted = this.isInverted(isset.get());
+                            if (isIssetInverted && !isEmptyInverted) {
+                                /* !isset($request) && empty($request): empty() is always true */
+                                final PsiElement node = this.target(empty.get(), argument);
+                                if (reported.add(node)) {
+                                    holder.registerProblem(node, messageAlwaysTrue);
+                                }
+                            } else if (!isIssetInverted && isEmptyInverted) {
+                                /* isset($request) && !empty($request): isset() can be dropped  */
+                                final PsiElement node = this.target(isset.get(), argument);
+                                if (reported.add(node)) {
+                                    holder.registerProblem(node, messageIssetCanBeDropped);
+                                }
+                            }
+                        } else if (operator == PhpTokenTypes.opOR) {
+                            final boolean isEmptyInverted = this.isInverted(empty.get());
+                            final boolean isIssetInverted = this.isInverted(isset.get());
+                            if (isIssetInverted && !isEmptyInverted) {
+                                /* !isset($request) || empty($request): !isset() can be dropped */
+                                final PsiElement node = this.target(isset.get(), argument);
+                                if (reported.add(node)) {
+                                    holder.registerProblem(node, messageIssetCanBeDropped);
+                                }
+                            } else if (!isIssetInverted && isEmptyInverted) {
+                                /* isset($request) || !empty($request): !empty() is always false */
+                                final PsiElement node = this.target(empty.get(), argument);
+                                if (reported.add(node)) {
+                                    holder.registerProblem(node, messageAlwaysFalse);
                                 }
                             }
                         }

@@ -1,6 +1,6 @@
 <?php
 
-function cases_holder_isset() {
+function cases_holder_isset_implicit() {
     $container = $value ?? 'default';
 
     /* false-positives: value or container mismatches, assignment by reference */
@@ -30,6 +30,17 @@ function cases_holder_isset() {
     /* false-positives: value mismatches, multi-assignments (refactoring changes semantics) */
     if (isset($value)) { return trim($value); } return 'default';
     $one = $two = 'default'; if (isset($value)) { $one = $value; }
+}
+
+function cases_holder_isset_non_implicit() {
+    return [
+        function ($value) {
+            return $value ?? null;
+        },
+        function ($value) {
+            return $value ?? null;
+        },
+    ];
 }
 
 function cases_holder_identity() {

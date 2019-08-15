@@ -99,7 +99,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                             final Couple<Couple<PsiElement>> fragments = this.extract(statement);
                             final PsiElement firstValue                = fragments.second.first;
                             final PsiElement secondValue               = fragments.second.second;
-                            if (firstValue != null && secondValue != null) {
+                            if (firstValue != null) {
                                 final String coalescing = this.generateReplacement(condition, extracted, firstValue, secondValue);
                                 if (coalescing != null) {
                                     final PsiElement context = firstValue.getParent();
@@ -126,7 +126,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                 }
             }
 
-            private boolean wrap(@NotNull PsiElement expression) {
+            private boolean wrap(@Nullable PsiElement expression) {
                 if (expression instanceof TernaryExpression || expression instanceof AssignmentExpression) {
                     return true;
                 } else if (expression instanceof BinaryExpression) {
@@ -140,14 +140,14 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                     @NotNull PsiElement condition,
                     @NotNull PsiElement extracted,
                     @NotNull PsiElement first,
-                    @NotNull PsiElement second
+                    @Nullable PsiElement second
             ) {
                 String coalescing = null;
                 if (extracted instanceof PhpIsset) {
                     coalescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, first, second);
-                } else if (extracted instanceof FunctionReference) {
+                } else if (extracted instanceof FunctionReference && second != null) {
                     coalescing = this.generateReplacementForExists(condition, (FunctionReference) extracted, first, second);
-                } else if (extracted instanceof BinaryExpression) {
+                } else if (extracted instanceof BinaryExpression && second != null) {
                     coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, first, second);
                 }
                 return coalescing;
@@ -219,18 +219,18 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                     @NotNull PsiElement condition,
                     @NotNull PhpIsset extracted,
                     @NotNull PsiElement first,
-                    @NotNull PsiElement second
+                    @Nullable PsiElement second
             ) {
                 final PsiElement subject = extracted.getVariables()[0];
                 if (subject != null) {
                     final boolean expectsToBeSet = condition == extracted;
                     final PsiElement candidate   = expectsToBeSet ? first : second;
-                    if (OpenapiEquivalenceUtil.areEqual(candidate, subject)) {
+                    if (candidate != null && OpenapiEquivalenceUtil.areEqual(candidate, subject)) {
                         final PsiElement alternative = expectsToBeSet ? second : first;
                         return String.format(
                                 "%s ?? %s",
                                 String.format(this.wrap(candidate) ? "(%s)" : "%s", candidate.getText()),
-                                String.format(this.wrap(alternative) ? "(%s)" : "%s", alternative.getText())
+                                String.format(this.wrap(alternative) ? "(%s)" : "%s", alternative == null ? "null" : alternative.getText())
                         );
                     }
                 }
@@ -339,6 +339,16 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                         new Couple<>(statement, ifNext),
                                         new Couple<>(((PhpReturn) ifLast).getArgument(), ((PhpReturn) ifNext).getArgument())
                                 );
+                            }
+                            /* if - return - [end-of-function|return-with-no-argument] */
+                            else if (ifLast instanceof PhpReturn && ifNext == null) {
+                                final boolean isInFunction = statement.getParent().getParent() instanceof Function;
+                                if (isInFunction) {
+                                    result = new Couple<>(
+                                            new Couple<>(statement, statement),
+                                            new Couple<>(((PhpReturn) ifLast).getArgument(), null)
+                                    );
+                                }
                             }
                         }
                     }

@@ -1,6 +1,6 @@
 <?php
 
-function cases_holder_isset() {
+function cases_holder_isset_implicit() {
     $container = 'default';
     <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
@@ -46,6 +46,22 @@ function cases_holder_isset() {
     /* false-positives: value mismatches, multi-assignments (refactoring changes semantics) */
     if (isset($value)) { return trim($value); } return 'default';
     $one = $two = 'default'; if (isset($value)) { $one = $value; }
+}
+
+function cases_holder_isset_non_implicit() {
+    return [
+        function ($value) {
+            <weak_warning descr="'return $value ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+                return $value;
+            }
+        },
+        function ($value) {
+            <weak_warning descr="'return $value ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+                return $value;
+            }
+            return;
+        },
+    ];
 }
 
 function cases_holder_identity() {

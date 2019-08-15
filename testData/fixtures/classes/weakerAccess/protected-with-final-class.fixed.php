@@ -36,15 +36,15 @@ abstract class AbstractClass {
 
 /* applicable: should affect both protected methods */
 final class FinalClassWithMethods {
-              function noModifierMethod() { }
-    public    function publicMethod() { }
-    private function protectedMethod() { }
-    private   function privateMethod() { }
+              function noModifierMethod() {}
+    public    function publicMethod() {}
+    private function protectedMethod() {}
+    private   function privateMethod() {}
 
-    static           function staticNoModifierMethod() { }
-    static public    function staticPublicMethod() { }
-    static private function staticProtectedMethod() { }
-    static private   function staticPrivateMethod() { }
+    static           function staticNoModifierMethod() {}
+    static public    function staticPublicMethod() {}
+    static private function staticProtectedMethod() {}
+    static private   function staticPrivateMethod() {}
 }
 
 /* not applicable: not a final class */
@@ -72,16 +72,24 @@ final class FinalClassWithUppercaseConstant {
 abstract class AbstractClassTestingAllTypes {
     protected const PROTECTED_CONSTANT = 0;
     protected $isProtected;
-    abstract protected function abstractProtectedMethod();
+    abstract protected function abstractProtectedMethodFromParent();
              protected function protectedMethod() { }
+}
+
+trait TraitTestingAllTypes {
+    abstract protected function abstractProtectedMethodFromTrait();
 }
 
 /* not applicable: even final class should respect the parent signature */
 final class RespectAbstractClassSignatures extends AbstractClassTestingAllTypes {
+    use TraitTestingAllTypes;
+
     protected const PROTECTED_CONSTANT = 0;
     protected $isProtected;
-    protected function abstractProtectedMethod() { }
+    protected function abstractProtectedMethodFromParent() { }
     protected function protectedMethod() { }
+
+    protected function abstractProtectedMethodFromTrait() { }
 }
 
 /* applicable: protected members/references which are not presented in parent class */

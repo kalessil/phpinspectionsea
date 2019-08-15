@@ -3,9 +3,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.jetbrains.php.lang.psi.elements.PhpClassMember;
 import com.jetbrains.php.lang.psi.elements.PhpModifierList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -19,19 +21,18 @@ import org.jetbrains.annotations.Nullable;
 
 final public class ModifierExtractionUtil {
     @Nullable
-    public static PsiElement getProtectedModifier(final PhpClassMember subject) {
-        final PsiElement expression      = (subject instanceof Field) ? subject.getParent() : subject;
-        final PhpModifierList list       = PsiTreeUtil.findChildOfType(expression, PhpModifierList.class);
-        final LeafPsiElement[] modifiers = PsiTreeUtil.getChildrenOfType(list, LeafPsiElement.class);
-        PsiElement result                = null;
-        if (modifiers != null) {
+    public static PsiElement getProtectedModifier(@NotNull PhpClassMember subject) {
+        final LeafPsiElement[] modifiers = PsiTreeUtil.getChildrenOfType(
+                PsiTreeUtil.findChildOfType((subject instanceof Field) ? subject.getParent() : subject, PhpModifierList.class),
+                LeafPsiElement.class
+        );
+        if (modifiers != null && modifiers.length > 0) {
             for (final LeafPsiElement modifier : modifiers) {
-                if (modifier.getText().equalsIgnoreCase("protected")) {
-                    result = modifier;
-                    break;
+                if (modifier.getNode().getElementType() == PhpTokenTypes.kwPROTECTED) {
+                    return modifier;
                 }
             }
         }
-        return result;
+        return null;
     }
 }

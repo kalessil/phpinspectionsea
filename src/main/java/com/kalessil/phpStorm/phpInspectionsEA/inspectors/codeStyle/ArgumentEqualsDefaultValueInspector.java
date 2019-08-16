@@ -46,6 +46,7 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
         /* in exceptions die to conflict with strict types inspection, which requires argument specification */
         specialFunctions.add("array_search");
         specialFunctions.add("in_array");
+        specialFunctions.add("array_keys");
         specialFunctions.add("json_decode");
         specialFunctions.add("is_subclass_of");
         specialFunctions.add("is_a");

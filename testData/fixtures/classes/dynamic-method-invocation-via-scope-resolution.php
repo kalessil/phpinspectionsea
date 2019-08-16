@@ -1,6 +1,11 @@
 <?php
 
-class CasesHolder
+class ParentCasesHolder
+{
+    public function method() {}
+}
+
+class CasesHolder extends ParentCasesHolder
 {
     public function method() {}
 
@@ -21,7 +26,10 @@ class ChildCasesHolder extends CasesHolder
 {
     public function method()
     {
-        return CasesHolder::method();
+        return [
+            CasesHolder::method(),
+            ParentCasesHolder::method(),
+        ];
     }
 }
 

@@ -12,7 +12,6 @@ final public class PropertyCanBeStaticInspectorTest extends PhpCodeInsightFixtur
         myFixture.configureByFile("testData/fixtures/classes/property-can-be-static.php");
         myFixture.testHighlighting(true, false, true);
     }
-
     public void testFalsePositives() {
         myFixture.enableInspections(new PropertyCanBeStaticInspector());
         myFixture.configureByFile("testData/fixtures/classes/property-can-be-static-false-positives.php");

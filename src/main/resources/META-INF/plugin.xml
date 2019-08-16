@@ -970,7 +970,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.LongInheritanceChainInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="PropertyCanBeStaticInspection"                   displayName="Property could be static"
-        groupName="Architecture"                                    enabledByDefault="true" level="WEAK WARNING"
+        groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.PropertyCanBeStaticInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="EmptyClassInspection"                            displayName="Empty class"

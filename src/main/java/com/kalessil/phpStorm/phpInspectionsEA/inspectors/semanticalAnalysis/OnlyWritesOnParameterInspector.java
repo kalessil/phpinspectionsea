@@ -352,7 +352,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                             final PsiElement previous = ((PhpPsiElement) grandParent).getPrevPsiSibling();
                             if (previous instanceof PhpDocComment) {
                                 final String candidate = previous.getText();
-                                if (candidate.contains("@noinspection") && candidate.contains("OnlyWritesOnParameterInspection")) {
+                                if (candidate.contains("@noinspection") && candidate.contains(getShortName())) {
                                     return true;
                                 }
                             }

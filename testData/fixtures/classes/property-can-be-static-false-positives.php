@@ -1,15 +1,15 @@
 <?php
 
 
-class BasePCBS {
+class ParentClass {
     private $private     = [];
     protected $protected = [];
 }
 
-class MiddlewarePCBS extends BasePCBS {
+class ChildClass extends ParentClass {
 }
 
-class ImplementationPCBS extends MiddlewarePCBS {
+class CasesHolder extends ChildClass {
     private $private       = ['', '', ''];
     protected $protected   = ['', '', ''];
     public $public         = ['', '', ''];

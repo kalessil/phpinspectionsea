@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
@@ -42,60 +43,69 @@ public class PropertyCanBeStaticInspector extends PhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             @Override
-            public void visitPhpClass(@NotNull PhpClass clazz) {
-                if (this.shouldSkipAnalysis(clazz, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
-                if (holder.getFile() != clazz.getContainingFile()) { return; }
+            public void visitPhpField(@NotNull Field field) {
+                if (this.shouldSkipAnalysis(field, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
 
-                final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(field);
+                if (nameNode != null) {
+                    final PhpModifier modifier = field.getModifier();
+                    if (!field.isConstant() && !modifier.isStatic() && !modifier.isPublic()) {
+                        final PsiElement defaultValue = field.getDefaultValue();
+                        if (defaultValue instanceof ArrayCreationExpression) {
+                            final PhpClass clazz = field.getContainingClass();
+                            if (clazz != null) {
+                                final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                                if (parent == null || OpenapiResolveUtil.resolveField(parent, field.getName()) == null) {
 
-                /* parent class might already introduce fields */
-                final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
-                for (final Field field : clazz.getOwnFields()) {
-                    /* if we can report field at all */
-                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(field);
-                    if (nameNode == null) {
-                        continue;
-                    }
-                    /* skip static, public properties and all constants - they should not be changed via constructor */
-                    final PhpModifier modifier  = field.getModifier();
-                    final boolean isTargetField = !field.isConstant() && !modifier.isStatic() && !modifier.isPublic();
-                    if (!isTargetField || !(field.getDefaultValue() instanceof ArrayCreationExpression)) {
-                        continue;
-                    }
-                    /* do not process overriding, there is an inspection for this */
-                    if (parent != null && OpenapiResolveUtil.resolveField(parent, field.getName()) != null) {
-                        continue;
-                    }
-
-                    /* look into array for key-value pairs */
-                    /* TODO: merge into next loop */
-                    int intArrayOrStringCount = 0;
-                    for (final ArrayHashElement entry : ((ArrayCreationExpression) field.getDefaultValue()).getHashElements()) {
-                        final PhpPsiElement item = entry.getValue();
-                        if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
-                            ++intArrayOrStringCount;
-                            if (intArrayOrStringCount == 3) {
-                                holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
-                                break;
-                            }
-                        }
-                    }
-                    /* look into array for value only pairs */
-                    if (intArrayOrStringCount < 3) {
-                        for (final PsiElement entry : field.getDefaultValue().getChildren()) {
-                            if (entry instanceof PhpPsiElement && !(entry instanceof ArrayHashElement)) {
-                                final PhpPsiElement item = ((PhpPsiElement) entry).getFirstPsiChild();
-                                if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
-                                    ++intArrayOrStringCount;
-                                    if (intArrayOrStringCount == 3) {
-                                        holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
-                                        break;
+                                    /* look into array for key-value pairs */
+                                    /* TODO: merge into next loop */
+                                    int intArrayOrStringCount = 0;
+                                    for (final ArrayHashElement entry : ((ArrayCreationExpression) defaultValue).getHashElements()) {
+                                        final PhpPsiElement item = entry.getValue();
+                                        if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
+                                            ++intArrayOrStringCount;
+                                            if (intArrayOrStringCount == 3 && !this.isSuppressed(field)) {
+                                                final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
+                                                holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    /* look into array for value only pairs */
+                                    if (intArrayOrStringCount < 3) {
+                                        for (final PsiElement entry : defaultValue.getChildren()) {
+                                            if (entry instanceof PhpPsiElement && !(entry instanceof ArrayHashElement)) {
+                                                final PhpPsiElement item = ((PhpPsiElement) entry).getFirstPsiChild();
+                                                if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
+                                                    ++intArrayOrStringCount;
+                                                    if (intArrayOrStringCount == 3 && !this.isSuppressed(field)) {
+                                                        final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
+                                                        holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            private boolean isSuppressed(@NotNull PsiElement expression) {
+                final PsiElement parent = expression.getParent();
+                if (parent.getParent() instanceof PhpClass) {
+                    final PsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
+                    if (previous instanceof PhpDocComment) {
+                        final String candidate = previous.getText();
+                        if (candidate.contains("@noinspection") && candidate.contains(getShortName())) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
         };
     }

@@ -82,6 +82,7 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpExit(PhpExit exitExpression)                        {}
 
     @Override public void visitPhpClass(PhpClass clazz)                                            {}
+    @Override public void visitPhpField(Field field)                                               {}
     @Override public void visitPhpConstantReference(ConstantReference reference)                   {}
     @Override public void visitPhpClassConstantReference(ClassConstantReference constantReference) {}
     @Override public void visitPhpClassReference(ClassReference classReference)                    {}

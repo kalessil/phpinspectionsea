@@ -113,6 +113,15 @@ function assign_line_constant()
     $array[__LINE__] = __LINE__;
 }
 
+function assign_in_try()
+{
+    try {
+        $x = 0;
+        $x = call_throws_exception();
+    } finally {
+    }
+}
+
 function reassign_in_foreach()
 {
     $array = [];

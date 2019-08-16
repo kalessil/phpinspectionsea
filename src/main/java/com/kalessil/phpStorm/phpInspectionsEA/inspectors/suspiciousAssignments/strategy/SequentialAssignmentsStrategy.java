@@ -157,19 +157,26 @@ final public class SequentialAssignmentsStrategy {
         final PsiElement previousContainer = previous.getVariable();
         if (previousContainer != null && OpenapiEquivalenceUtil.areEqual(previousContainer, container)) {
             /* false-positives: preceding assignments by reference */
-            if (!OpenapiTypesUtil.isAssignmentByReference(previous)) {
-                /* false-positives: ++/-- are used inside the container expression */
-                for (final UnaryExpression unary : PsiTreeUtil.findChildrenOfType(container, UnaryExpression.class)) {
-                    final PsiElement unaryOperation = unary.getOperation();
-                    if (unaryOperation != null) {
-                        final IElementType unaryType = unaryOperation.getNode().getElementType();
-                        if (PhpTokenTypes.tsUNARY_POSTFIX_OPS.contains(unaryType)) {
-                            return;
-                        }
+            if (OpenapiTypesUtil.isAssignmentByReference(previous)) {
+                return;
+            }
+            /* false-positives: assignments in try-statement */
+            final PsiElement context = previous.getParent().getParent();
+            if (context instanceof GroupStatement && context.getParent() instanceof Try) {
+                return;
+            }
+            /* false-positives: ++/-- are used inside the container expression */
+            for (final UnaryExpression unary : PsiTreeUtil.findChildrenOfType(container, UnaryExpression.class)) {
+                final PsiElement operation = unary.getOperation();
+                if (operation != null) {
+                    final IElementType elementType = operation.getNode().getElementType();
+                    if (PhpTokenTypes.tsUNARY_POSTFIX_OPS.contains(elementType)) {
+                        return;
                     }
                 }
-                holder.registerProblem(container, String.format(patternGeneral, container.getText()));
             }
+
+            holder.registerProblem(container, String.format(patternGeneral, container.getText()));
         }
     }
 }

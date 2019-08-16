@@ -112,3 +112,12 @@ function assign_line_constant()
     $array[__LINE__] = __LINE__;
     $array[__LINE__] = __LINE__;
 }
+
+function assign_in_try()
+{
+    try {
+        $x = 0;
+        $x = call_throws_exception();
+    } finally {
+    }
+}

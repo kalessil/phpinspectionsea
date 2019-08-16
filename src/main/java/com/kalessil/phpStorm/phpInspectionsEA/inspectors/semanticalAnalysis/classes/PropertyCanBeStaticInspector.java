@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -60,7 +61,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                                         final PhpPsiElement item = entry.getValue();
                                         if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
                                             ++intArrayOrStringCount;
-                                            if (intArrayOrStringCount == 3) {
+                                            if (intArrayOrStringCount == 3 && !this.isSuppressed(field)) {
                                                 final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
                                                 holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
                                                 break;
@@ -74,7 +75,7 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                                                 final PhpPsiElement item = ((PhpPsiElement) entry).getFirstPsiChild();
                                                 if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
                                                     ++intArrayOrStringCount;
-                                                    if (intArrayOrStringCount == 3) {
+                                                    if (intArrayOrStringCount == 3 && !this.isSuppressed(field)) {
                                                         final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
                                                         holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
                                                         break;
@@ -88,6 +89,20 @@ public class PropertyCanBeStaticInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean isSuppressed(@NotNull PsiElement expression) {
+                final PsiElement parent = expression.getParent();
+                if (parent.getParent() instanceof PhpClass) {
+                    final PsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
+                    if (previous instanceof PhpDocComment) {
+                        final String candidate = previous.getText();
+                        if (candidate.contains("@noinspection") && candidate.contains(getShortName())) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
         };
     }

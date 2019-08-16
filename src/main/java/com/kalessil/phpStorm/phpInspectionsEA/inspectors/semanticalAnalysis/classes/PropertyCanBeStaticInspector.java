@@ -56,34 +56,19 @@ public class PropertyCanBeStaticInspector extends PhpInspection {
                             if (clazz != null) {
                                 final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                                 if (parent == null || OpenapiResolveUtil.resolveField(parent, field.getName()) == null) {
-
-                                    /* look into array for key-value pairs */
-                                    /* TODO: merge into next loop */
                                     int intArrayOrStringCount = 0;
-                                    for (final ArrayHashElement entry : ((ArrayCreationExpression) defaultValue).getHashElements()) {
-                                        final PhpPsiElement item = entry.getValue();
+                                    for (final PsiElement entry : defaultValue.getChildren()) {
+                                        PhpPsiElement item = null;
+                                        if (entry instanceof ArrayHashElement) {
+                                            item = ((ArrayHashElement) entry).getValue();
+                                        } else if (entry instanceof PhpPsiElement){
+                                            item = ((PhpPsiElement) entry).getFirstPsiChild();
+                                        }
                                         if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
-                                            ++intArrayOrStringCount;
-                                            if (intArrayOrStringCount == 3 && !this.isSuppressed(field)) {
+                                            if (++intArrayOrStringCount == 3 && !this.isSuppressed(field)) {
                                                 final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
                                                 holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
                                                 break;
-                                            }
-                                        }
-                                    }
-                                    /* look into array for value only pairs */
-                                    if (intArrayOrStringCount < 3) {
-                                        for (final PsiElement entry : defaultValue.getChildren()) {
-                                            if (entry instanceof PhpPsiElement && !(entry instanceof ArrayHashElement)) {
-                                                final PhpPsiElement item = ((PhpPsiElement) entry).getFirstPsiChild();
-                                                if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
-                                                    ++intArrayOrStringCount;
-                                                    if (intArrayOrStringCount == 3 && !this.isSuppressed(field)) {
-                                                        final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
-                                                        holder.registerProblem(nameNode, canUseConstants ? messageWithConstants : messageNoConstants);
-                                                        break;
-                                                    }
-                                                }
                                             }
                                         }
                                     }

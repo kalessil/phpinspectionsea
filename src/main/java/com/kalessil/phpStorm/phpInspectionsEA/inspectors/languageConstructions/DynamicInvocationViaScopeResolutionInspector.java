@@ -57,31 +57,34 @@ public class DynamicInvocationViaScopeResolutionInspector extends PhpInspection 
                 }
 
                 final PsiReference classReference = reference.getReference();
-                final String methodName         = reference.getName();
+                final String methodName           = reference.getName();
                 if (classReference != null && methodName != null && !methodName.isEmpty()) {
                     final PsiElement resoled = OpenapiResolveUtil.resolveReference(classReference);
-                    /* resolved method is static but called with $this */
                     if (resoled instanceof Method) {
-                        final Method method  = (Method) resoled;
-                        final PhpClass clazz = method.getContainingClass();
-                        if (clazz != null && !clazz.isInterface() && !method.isStatic() && !method.isAbstract()) {
+                        final Method resolvedMethod  = (Method) resoled;
+                        final PhpClass resolvedClass = resolvedMethod.getContainingClass();
+                        if (resolvedClass != null && !resolvedClass.isInterface() && !resolvedMethod.isStatic() && !resolvedMethod.isAbstract()) {
                             /* check first pattern [static|self|Clazz]::dynamic */
                             final PsiElement staticCandidate = reference.getFirstChild();
                             final String candidateContent    = staticCandidate.getText();
-                            if (candidateContent.equals("static") || candidateContent.equals("self") || candidateContent.equals(clazz.getName())) {
+                            if (candidateContent.equals("static") || candidateContent.equals("self") || candidateContent.equals(resolvedClass.getName())) {
                                 final Function scope = ExpressionSemanticUtil.getScope(reference);
                                 if (scope instanceof Method && !methodName.equalsIgnoreCase(scope.getName())) {
-                                    if (((Method) scope).isStatic()) {
-                                        holder.registerProblem(
-                                                reference,
-                                                String.format(patternExpressionUsed, reference.getName())
-                                        );
-                                    } else {
-                                        holder.registerProblem(
-                                                reference,
-                                                String.format(patternScopeResolutionUsed, methodName),
-                                                new TheLocalFix(holder.getProject(), operator, staticCandidate)
-                                        );
+                                    final Method currentMethod  = (Method) scope;
+                                    final PhpClass currentClass = currentMethod.getContainingClass();
+                                    if (currentClass == null || OpenapiResolveUtil.resolveMethod(currentClass, methodName) != null) {
+                                        if (currentMethod.isStatic()) {
+                                            holder.registerProblem(
+                                                    reference,
+                                                    String.format(patternExpressionUsed, reference.getName())
+                                            );
+                                        } else {
+                                            holder.registerProblem(
+                                                    reference,
+                                                    String.format(patternScopeResolutionUsed, methodName),
+                                                    new TheLocalFix(holder.getProject(), operator, staticCandidate)
+                                            );
+                                        }
                                     }
                                 }
                                 return;

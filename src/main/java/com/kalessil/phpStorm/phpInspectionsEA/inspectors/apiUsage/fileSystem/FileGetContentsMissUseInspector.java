@@ -1,15 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.execution.configurations.ParametersList;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new GenericPhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
@@ -67,7 +67,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                 parent = unary.getParent();
                             }
                         }
-                        if (parent instanceof ParametersList) {
+                        if (parent instanceof ParameterList) {
                             final PsiElement grandParent = parent.getParent();
                             if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
                                 final FunctionReference outerCall = (FunctionReference) grandParent;
@@ -75,7 +75,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                 if (outerName != null && functionsMapping.containsKey(outerName)) {
                                     if (outerName.equals("file_put_contents")) {
                                         final PsiElement[] outerArguments = outerCall.getParameters();
-                                        if (outerArguments.length == 1) {
+                                        if (outerArguments.length == 2) {
                                             final String replacement = String.format(
                                                     "%s%s(%s, %s)",
                                                     outerCall.getImmediateNamespaceName(),
@@ -84,7 +84,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                     outerArguments[0].getText()
                                             );
                                             holder.registerProblem(
-                                                    reference,
+                                                    outerCall,
                                                     String.format(messagePattern, replacement),
                                                     new UseCopyFix(replacement)
                                             );
@@ -97,7 +97,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                 arguments[0].getText()
                                         );
                                         holder.registerProblem(
-                                                reference,
+                                                outerCall,
                                                 String.format(messagePattern, replacement),
                                                 new UseFileHashFix(replacement)
                                         );

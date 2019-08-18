@@ -634,6 +634,10 @@
          shortName="BypassedPathTraversalProtectionInspection"     displayName="Bypassed pass traverse protection"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.BypassedPathTraversalProtectionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="HashTimingAttacksInspection"                   displayName="Hash timing attack"
+         groupName="Security"                                      enabledByDefault="true" level="ERROR"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HashTimingAttacksInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

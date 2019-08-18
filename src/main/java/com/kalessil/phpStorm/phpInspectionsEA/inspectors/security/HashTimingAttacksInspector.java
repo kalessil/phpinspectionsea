@@ -95,20 +95,25 @@ public class HashTimingAttacksInspector extends PhpInspection {
                         if (scope != null) {
                             final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
                             final String variableName = ((Variable) container).getName();
+
+                            boolean passedStartingPoint = false;
                             for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
-                                if (variableName.equals(variable.getName()) && container != variable) {
-                                    final PsiElement parent = variable.getParent();
-                                    if (parent instanceof BinaryExpression) {
-                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand((BinaryExpression) parent, variable);
-                                        if (second != null && this.isTarget((BinaryExpression) parent, second)) {
-                                            holder.registerProblem(parent, message);
-                                            break;
-                                        }
-                                    } else if (parent instanceof ParameterList) {
-                                        final PsiElement grandParent = parent.getParent();
-                                        if (OpenapiTypesUtil.isFunctionReference(grandParent) && this.isTarget((FunctionReference) grandParent)) {
-                                            holder.registerProblem(grandParent, message);
-                                            break;
+                                if (variableName.equals(variable.getName())) {
+                                    passedStartingPoint = passedStartingPoint || container == variable;
+                                    if (passedStartingPoint && container != variable) {
+                                        final PsiElement parent = variable.getParent();
+                                        if (parent instanceof BinaryExpression) {
+                                            final PsiElement second = OpenapiElementsUtil.getSecondOperand((BinaryExpression) parent, variable);
+                                            if (second != null && this.isTarget((BinaryExpression) parent, second)) {
+                                                holder.registerProblem(parent, message);
+                                                break;
+                                            }
+                                        } else if (parent instanceof ParameterList) {
+                                            final PsiElement grandParent = parent.getParent();
+                                            if (OpenapiTypesUtil.isFunctionReference(grandParent) && this.isTarget((FunctionReference) grandParent)) {
+                                                holder.registerProblem(grandParent, message);
+                                                break;
+                                            }
                                         }
                                     }
                                 }

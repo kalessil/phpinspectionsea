@@ -32,6 +32,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
     static {
         functionsMapping.put("md5", "md5_file");
         functionsMapping.put("sha1", "sha1_file");
+        functionsMapping.put("file_put_contents", "copy");
     }
 
     @NotNull
@@ -72,17 +73,35 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                 final FunctionReference outerCall = (FunctionReference) grandParent;
                                 final String outerName            = outerCall.getName();
                                 if (outerName != null && functionsMapping.containsKey(outerName)) {
-                                    final String replacement = String.format(
-                                            "%s%s(%s)",
-                                            outerCall.getImmediateNamespaceName(),
-                                            functionsMapping.get(outerName),
-                                            arguments[0].getText()
-                                    );
-                                    holder.registerProblem(
-                                            reference,
-                                            String.format(messagePattern, replacement),
-                                            new UseFileHashFix(replacement)
-                                    );
+                                    if (outerName.equals("file_put_contents")) {
+                                        final PsiElement[] outerArguments = outerCall.getParameters();
+                                        if (outerArguments.length == 1) {
+                                            final String replacement = String.format(
+                                                    "%s%s(%s, %s)",
+                                                    outerCall.getImmediateNamespaceName(),
+                                                    functionsMapping.get(outerName),
+                                                    arguments[0].getText(),
+                                                    outerArguments[0].getText()
+                                            );
+                                            holder.registerProblem(
+                                                    reference,
+                                                    String.format(messagePattern, replacement),
+                                                    new UseCopyFix(replacement)
+                                            );
+                                        }
+                                    } else {
+                                        final String replacement = String.format(
+                                                "%s%s(%s)",
+                                                outerCall.getImmediateNamespaceName(),
+                                                functionsMapping.get(outerName),
+                                                arguments[0].getText()
+                                        );
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(messagePattern, replacement),
+                                                new UseFileHashFix(replacement)
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -102,6 +121,20 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
         }
 
         UseFileHashFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static final class UseCopyFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use copy(...) instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        UseCopyFix(@NotNull String expression) {
             super(expression);
         }
     }

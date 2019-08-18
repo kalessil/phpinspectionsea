@@ -140,6 +140,10 @@
         shortName="ArrayMapMissUseInspection"                     displayName="'array_map(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayMapMissUseInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="FileGetContentsMissUseInspection"              displayName="'file_get_contents(...)' misused"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FileGetContentsMissUseInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -61,25 +61,28 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionsSet.contains(functionName)) {
-                    final PsiElement parent  = reference.getParent();
-                    final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
-                    if (this.isTargetContext(context)) {
-                        PsiElement current = context.getParent();
-                        while (current != null && !(current instanceof PhpFile) && !(current instanceof Function)) {
-                            if (OpenapiTypesUtil.isLoop(current)) {
-                                if (context instanceof AssignmentExpression) {
-                                    if (this.isTargetAssignment((AssignmentExpression) context, reference) && this.isFromRootNamespace(reference)) {
-                                        holder.registerProblem(reference, String.format(messagePattern, functionName));
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length > 1 && !(arguments[0] instanceof ArrayAccessExpression)) {
+                        final PsiElement parent  = reference.getParent();
+                        final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
+                        if (this.isTargetContext(context)) {
+                            PsiElement current = context.getParent();
+                            while (current != null && !(current instanceof PhpFile) && !(current instanceof Function)) {
+                                if (OpenapiTypesUtil.isLoop(current)) {
+                                    if (context instanceof AssignmentExpression) {
+                                        if (this.isTargetAssignment((AssignmentExpression) context, reference) && this.isFromRootNamespace(reference)) {
+                                            holder.registerProblem(reference, String.format(messagePattern, functionName));
+                                        }
+                                        return;
+                                    } else if (context instanceof MethodReference) {
+                                        if (this.isTargetReference((MethodReference) context, reference) && this.isFromRootNamespace(reference)) {
+                                            holder.registerProblem(reference, String.format(messagePattern, functionName));
+                                        }
+                                        return;
                                     }
-                                    return;
-                                } else if (context instanceof MethodReference) {
-                                    if (this.isTargetReference((MethodReference) context, reference) && this.isFromRootNamespace(reference)) {
-                                        holder.registerProblem(reference, String.format(messagePattern, functionName));
-                                    }
-                                    return;
                                 }
+                                current = current.getParent();
                             }
-                            current = current.getParent();
                         }
                     }
                 }

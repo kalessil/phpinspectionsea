@@ -5,6 +5,9 @@
     md5_file($from);
     sha1_file($from);
 
+    /* false-positives: php streams */
+    file_put_contents($to, file_get_contents('php://...'));
+
     /* false-positives: extra flags */
     file_put_contents($to, file_get_contents($from), $flags);
     file_put_contents($to, file_get_contents($from, $useIncludePath));

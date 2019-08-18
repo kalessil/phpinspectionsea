@@ -11,10 +11,12 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -73,34 +75,38 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                 final FunctionReference outerCall = (FunctionReference) grandParent;
                                 final String outerName            = outerCall.getName();
                                 if (outerName != null && functionsMapping.containsKey(outerName)) {
-                                    if (outerName.equals("file_put_contents")) {
-                                        final PsiElement[] outerArguments = outerCall.getParameters();
-                                        if (outerArguments.length == 2) {
+
+                                    final Set<String> sources = ExpressionSemanticUtil.resolveAsString(arguments[0]);
+                                    if (sources.stream().noneMatch(s -> s.startsWith("php://"))) {
+                                        if (outerName.equals("file_put_contents")) {
+                                            final PsiElement[] outerArguments = outerCall.getParameters();
+                                            if (outerArguments.length == 2) {
+                                                final String replacement = String.format(
+                                                        "%s%s(%s, %s)",
+                                                        outerCall.getImmediateNamespaceName(),
+                                                        functionsMapping.get(outerName),
+                                                        arguments[0].getText(),
+                                                        outerArguments[0].getText()
+                                                );
+                                                holder.registerProblem(
+                                                        outerCall,
+                                                        String.format(messagePattern, replacement),
+                                                        new UseCopyFix(replacement)
+                                                );
+                                            }
+                                        } else {
                                             final String replacement = String.format(
-                                                    "%s%s(%s, %s)",
+                                                    "%s%s(%s)",
                                                     outerCall.getImmediateNamespaceName(),
                                                     functionsMapping.get(outerName),
-                                                    arguments[0].getText(),
-                                                    outerArguments[0].getText()
+                                                    arguments[0].getText()
                                             );
                                             holder.registerProblem(
                                                     outerCall,
                                                     String.format(messagePattern, replacement),
-                                                    new UseCopyFix(replacement)
+                                                    new UseFileHashFix(replacement)
                                             );
                                         }
-                                    } else {
-                                        final String replacement = String.format(
-                                                "%s%s(%s)",
-                                                outerCall.getImmediateNamespaceName(),
-                                                functionsMapping.get(outerName),
-                                                arguments[0].getText()
-                                        );
-                                        holder.registerProblem(
-                                                outerCall,
-                                                String.format(messagePattern, replacement),
-                                                new UseFileHashFix(replacement)
-                                        );
                                     }
                                 }
                             }

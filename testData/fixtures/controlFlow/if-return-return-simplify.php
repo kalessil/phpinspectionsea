@@ -10,12 +10,17 @@ class CasesHolder {
         return false;
     }
     public function ifReturnReturnThree($x) {
+        if ($x === 0) { $x = 0; }
+        <warning descr="The construct can be replaced with 'return $x > 0'.">if</warning> ($x > 0) { return true; }
+        return false;
+    }
+    public function ifReturnReturnFour($x) {
         if ($x === 0) { return true; }
         /* a comment here */
         if ($x > 0) { return true; }
         return false;
     }
-    public function ifReturnReturnFour($x) {
+    public function ifReturnReturnFive($x) {
         if ($x > 0) { return true; }
         return true;
     }

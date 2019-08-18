@@ -8,12 +8,16 @@ class CasesHolder {
         return $x > 0;
     }
     public function ifReturnReturnThree($x) {
+        if ($x === 0) { $x = 0; }
+        return $x > 0;
+    }
+    public function ifReturnReturnFour($x) {
         if ($x === 0) { return true; }
         /* a comment here */
         if ($x > 0) { return true; }
         return false;
     }
-    public function ifReturnReturnFour($x) {
+    public function ifReturnReturnFive($x) {
         if ($x > 0) { return true; }
         return true;
     }

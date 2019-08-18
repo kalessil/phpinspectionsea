@@ -12,7 +12,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -65,20 +67,21 @@ public class HashTimingAttacksInspector extends PhpInspection {
                     if (name != null && targetFunctions.contains(name) && this.isFromRootNamespace(reference)) {
                         final PsiElement parent = reference.getParent();
                         if (parent instanceof BinaryExpression || OpenapiTypesUtil.isAssignment(parent)) {
-                            this.analyzeInContext(parent);
+                            this.analyzeInContext(parent, reference);
                         } else if (parent instanceof ParameterList) {
                             final PsiElement grandParent = parent.getParent();
                             if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
-                                this.analyzeInContext(grandParent);
+                                this.analyzeInContext(grandParent, reference);
                             }
                         }
                     }
                 }
             }
 
-            private void analyzeInContext(@NotNull PsiElement context) {
+            private void analyzeInContext(@NotNull PsiElement context, @NotNull FunctionReference reference) {
                 if (context instanceof BinaryExpression) {
-                    if (this.isTarget((BinaryExpression) context)) {
+                    final PsiElement second = OpenapiElementsUtil.getSecondOperand((BinaryExpression) context, reference);
+                    if (second != null && this.isTarget((BinaryExpression) context, second)) {
                         holder.registerProblem(context, message);
                     }
                 } else if (OpenapiTypesUtil.isFunctionReference(context)) {
@@ -95,9 +98,12 @@ public class HashTimingAttacksInspector extends PhpInspection {
                             for (final Variable variable : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
                                 if (variableName.equals(variable.getName()) && container != variable) {
                                     final PsiElement parent = variable.getParent();
-                                    if (parent instanceof BinaryExpression && this.isTarget((BinaryExpression) parent)) {
-                                        holder.registerProblem(parent, message);
-                                        break;
+                                    if (parent instanceof BinaryExpression) {
+                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand((BinaryExpression) parent, variable);
+                                        if (second != null && this.isTarget((BinaryExpression) parent, second)) {
+                                            holder.registerProblem(parent, message);
+                                            break;
+                                        }
                                     } else if (parent instanceof ParameterList) {
                                         final PsiElement grandParent = parent.getParent();
                                         if (OpenapiTypesUtil.isFunctionReference(grandParent) && this.isTarget((FunctionReference) grandParent)) {
@@ -112,9 +118,12 @@ public class HashTimingAttacksInspector extends PhpInspection {
                 }
             }
 
-            private boolean isTarget(@NotNull BinaryExpression binary) {
+            private boolean isTarget(@NotNull BinaryExpression binary, @NotNull PsiElement alternative) {
                 final IElementType operation = binary.getOperationType();
-                return operation == PhpTokenTypes.opEQUAL || operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL;
+                if (operation == PhpTokenTypes.opEQUAL || operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                    return !PhpLanguageUtil.isFalse(alternative);
+                }
+                return false;
             }
 
             private boolean isTarget(@NotNull FunctionReference call) {

@@ -8,6 +8,9 @@ function cases_holder() {
         <error descr="This construct is probably vulnerable to hash timing attacks, please use 'hash_equals(...)' or 'password_verify(...)' instead.">md5('...') !== '...'</error>,
         <error descr="This construct is probably vulnerable to hash timing attacks, please use 'hash_equals(...)' or 'password_verify(...)' instead.">strncmp(md5('...'), '...', 32)</error>,
         <error descr="This construct is probably vulnerable to hash timing attacks, please use 'hash_equals(...)' or 'password_verify(...)' instead.">strcmp(md5('...'), '...')</error>,
+
+        /* false-positives: failure test */
+        hash_hmac('...', '...', '...') === false,
     ];
 }
 

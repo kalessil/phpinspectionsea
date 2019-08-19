@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsUltimate</id>
   <name>Php Inspections (EA Ultimate)</name>
-  <version>3.0.2</version>
+  <version>3.0.3</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -16,7 +16,7 @@
 
   <change-notes><![CDATA[
   Replaced by change-notes.html ..........
-]]></change-notes>
+  ]]></change-notes>
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- indexers -->

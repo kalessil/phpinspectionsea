@@ -34,6 +34,8 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
     static {
         functionsMapping.put("md5", "md5_file");
         functionsMapping.put("sha1", "sha1_file");
+        functionsMapping.put("hash", "hash_file");
+        functionsMapping.put("hash_hmac", "hash_hmac_file");
         functionsMapping.put("file_put_contents", "copy");
     }
 
@@ -91,6 +93,39 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                         outerCall,
                                                         String.format(messagePattern, replacement),
                                                         new UseCopyFix(replacement)
+                                                );
+                                            }
+                                        } else if (outerName.equals("hash")) {
+                                            final PsiElement[] outerArguments = outerCall.getParameters();
+                                            if (outerArguments.length == 2) {
+                                                final String replacement = String.format(
+                                                        "%s%s(%s, %s)",
+                                                        outerCall.getImmediateNamespaceName(),
+                                                        functionsMapping.get(outerName),
+                                                        outerArguments[0].getText(),
+                                                        arguments[0].getText()
+                                                );
+                                                holder.registerProblem(
+                                                        outerCall,
+                                                        String.format(messagePattern, replacement),
+                                                        new UseFileHashFix(replacement)
+                                                );
+                                            }
+                                        } else if (outerName.equals("hash_hmac")) {
+                                            final PsiElement[] outerArguments = outerCall.getParameters();
+                                            if (outerArguments.length == 3) {
+                                                final String replacement = String.format(
+                                                        "%s%s(%s, %s, %s)",
+                                                        outerCall.getImmediateNamespaceName(),
+                                                        functionsMapping.get(outerName),
+                                                        outerArguments[0].getText(),
+                                                        arguments[0].getText(),
+                                                        outerArguments[2].getText()
+                                                );
+                                                holder.registerProblem(
+                                                        outerCall,
+                                                        String.format(messagePattern, replacement),
+                                                        new UseFileHashFix(replacement)
                                                 );
                                             }
                                         } else {

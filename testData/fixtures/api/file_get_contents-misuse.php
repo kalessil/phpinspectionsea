@@ -4,6 +4,8 @@
     <warning descr="'copy($from, $to)' would consume less cpu and memory resources here.">file_put_contents($to, @file_get_contents($from))</warning>;
     <warning descr="'md5_file($from)' would consume less cpu and memory resources here.">md5(file_get_contents($from))</warning>;
     <warning descr="'sha1_file($from)' would consume less cpu and memory resources here.">sha1(file_get_contents($from))</warning>;
+    <warning descr="'hash_file('...', $from)' would consume less cpu and memory resources here.">hash('...', file_get_contents($from))</warning>;
+    <warning descr="'hash_hmac_file('...', $from, 'key')' would consume less cpu and memory resources here.">hash_hmac('...', file_get_contents($from), 'key')</warning>;
 
     /* false-positives: php streams */
     file_put_contents($to, file_get_contents('php://...'));

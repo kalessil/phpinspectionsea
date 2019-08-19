@@ -4,6 +4,8 @@
     copy($from, $to);
     md5_file($from);
     sha1_file($from);
+    hash_file('...', $from);
+    hash_hmac_file('...', $from, 'key');
 
     /* false-positives: php streams */
     file_put_contents($to, file_get_contents('php://...'));

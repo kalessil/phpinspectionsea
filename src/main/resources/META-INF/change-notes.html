@@ -1,29 +1,21 @@
 <html>
 Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Class mocking correctness: resolved false-positives (multiple cases)<br/>
-- Foreach source to iterate over: resolved a false-positive (stdClass)<br/>
-- Foreach usage possible: QF bug-fixes<br/>
-- Foreach usage possible: resolved a false-positive (multiple repetitive statements)<br/>
-- Inverted 'if-else' constructs: resolved a false-positive (empty-statements)<br/>
-- Non-null parameters default value: resolved false-positives (implicit type-hints)<br/>
-- Non-optimal regular expression: resolved false-positives (multiple cases)<br/>
-- Null coalescing operator can be used: QF bug-fix<br/>
-- One-time use variables: resolved a false-positive (foreach value by reference)<br/>
-- Random API migration: resolved a false-positive (imports)<br/>
-- Security advisories for Composer packages: QF bug-fixes<br/>
-- Security advisories for Composer packages: resolved a false-positive<br/>
-- Short syntax for applied operation: QF bug-fix<br/>
-- Static closure can be used: resolved a false-positive (dynamic parent methods calls)<br/>
-- Suspicious assignments: resolved a false-positive (self-dependent assignments)<br/>
-- Unnecessary type casting: resolved a false-positive (unresolved types)<br/>
-<br/>
-- Non-optimal regular expression: new patterns<br/>
-- Proper null-coalescing operator usage: new settings<br/>
-- Security advisories for Composer packages: new patterns<br/>
-- Short syntax for applied operation: new patterns<br/>
-- Type casting can be used: new patterns<br/>
-- Unnecessary type casting: new patterns<br/>
+- Cascading 'str_replace(...)' calls: resolved a false-positive (replacement simplification)<br/>
+- Child method is exactly the same: resolved a false-positive (private members usage)<br/>
+- Class property initialization flaws: resolved a false-positive (typed properties)<br/>
+- Dynamic methods invocation via '::': resolved a false-positive (grand-parents method referencing)<br/>
+- Non-optimal regular expression: resolved a false-positive (multi-line regex-es)<br/>
+- One-time use variables: QF bug-fix<br/>
+- PhpUnit: methods mocking issues: resolved a false-positive (methods via setMethods())<br/>
+- Property could be static: enhance suppression support<br/>
+- Slow array function used in loop: resolved a false-positive (array access as target)<br/>
+- Suspicious assignments: resolved a false-positive (try-statements context)<br/>
+- Type casting can be used: resolved a false-positive (parent method calls)<br/>
+- Unnecessary call arguments specification: resolved a false-positive (array_keys)<br/>
+- Untrusted files inclusion: resolved a false-positive (absolute paths)<br/>
+- Variable functions usage: QF bug-fix<br/>
+- 'mkdir(...)' race condition: QF bug-fix<br/>
 <br/>
 <hr/>
 </html>

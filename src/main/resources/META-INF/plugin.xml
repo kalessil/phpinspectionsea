@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>3.0.14.1</version>
+  <version>3.0.15</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -445,7 +445,8 @@
         groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.UnnecessaryAssertionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="MockingMethodsCorrectnessInspection"           displayName="PhpUnit: methods mocking issues"
+        shortName="MockingMethodsCorrectnessInspection"           displayName="- PhpUnit: methods mocking issues: resolved a false-positive (methods via setMethods())<br/>
+"
         groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingMethodsCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

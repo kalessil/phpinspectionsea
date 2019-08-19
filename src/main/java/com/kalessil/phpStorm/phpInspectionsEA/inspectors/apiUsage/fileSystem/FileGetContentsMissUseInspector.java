@@ -75,9 +75,8 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                 final FunctionReference outerCall = (FunctionReference) grandParent;
                                 final String outerName            = outerCall.getName();
                                 if (outerName != null && functionsMapping.containsKey(outerName)) {
-
                                     final Set<String> sources = ExpressionSemanticUtil.resolveAsString(arguments[0]);
-                                    if (sources.stream().noneMatch(s -> s.startsWith("php://"))) {
+                                    if (sources.size() == 0 || sources.stream().noneMatch(s -> s.startsWith("php://"))) {
                                         if (outerName.equals("file_put_contents")) {
                                             final PsiElement[] outerArguments = outerCall.getParameters();
                                             if (outerArguments.length == 2) {
@@ -108,6 +107,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                             );
                                         }
                                     }
+                                    sources.clear();
                                 }
                             }
                         }

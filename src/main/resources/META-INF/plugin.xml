@@ -10,9 +10,13 @@
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
   <idea-version since-build="162.1889" />
 
-  <description><![CDATA[Replaced by description.html]]></description>
+  <description><![CDATA[
+  Replaced by description.html ...........
+  ]]></description>
 
-  <change-notes><![CDATA[Replaced by change-notes.html]]></change-notes>
+  <change-notes><![CDATA[
+  Replaced by change-notes.html ..........
+]]></change-notes>
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- indexers -->
@@ -1034,8 +1038,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.ContractViolationInspector"/>
 
 
-    <applicationService      serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationSettings"
-                             serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationSettings"   />
+    <applicationService serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationSettings"/>
   </extensions>
 
   <application-components>
@@ -1065,12 +1068,12 @@
           <action
               class="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseMenuAction"
               id="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseMenuAction"
-              text="Release the key (for reuse)"
+              text="Release the Key (for Reuse)"
           />
           <action
               class="com.kalessil.phpStorm.phpInspectionsEA.license.ActivateLicenseMenuAction"
               id="com.kalessil.phpStorm.phpInspectionsEA.license.ActivateLicenseMenuAction"
-              text="Activate with a product key"
+              text="Activate with a Product Key"
           />
       </group>
   </actions>

@@ -11,12 +11,11 @@
   <idea-version since-build="162.1889" />
 
   <description><![CDATA[
-  Replaced by description.html
+  Replaced by description.html .....................
   ]]></description>
 
   <change-notes><![CDATA[
-  Placeholder. Run prepare-release.sh to list all commits, then add notes to src/main/resources/change-notes.html,
-  commit, then tag release.
+  Replaced by change-notes.html ....................
   ]]></change-notes>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -775,8 +774,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FopenBinaryUnsafeUsageInspector"/>
 
 
-    <applicationService      serviceInterface="com.kalessil.phpStorm.phpInspectionsEA.EASettings"
-                             serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EASettings"   />
+    <applicationService serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EASettings"/>
     <applicationConfigurable instance="com.kalessil.phpStorm.phpInspectionsEA.EAApplicationConfiguration"/>
   </extensions>
 

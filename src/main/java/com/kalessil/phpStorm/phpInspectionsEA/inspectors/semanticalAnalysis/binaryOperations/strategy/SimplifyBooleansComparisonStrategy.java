@@ -46,7 +46,7 @@ final public class SimplifyBooleansComparisonStrategy {
     @Nullable
     private static PsiElement extractFalsyValue(@Nullable PsiElement expression, @NotNull ProblemsHolder holder) {
         /* NOTE: ExpressionSemanticUtil.isUsedAsLogicalOperand is not applicable due to very specific context
-            - ! ...,
+            - ! ..., but not !empty(), !isset()
             - ... === false
             - ... == false
             - ... !== true
@@ -59,7 +59,7 @@ final public class SimplifyBooleansComparisonStrategy {
     @Nullable
     private static PsiElement extractTruthyValue(@Nullable PsiElement expression, @NotNull ProblemsHolder holder) {
         /* NOTE: ExpressionSemanticUtil.isUsedAsLogicalOperand is not applicable due to very specific context
-            - ...,
+            - ..., but not isset(), empty()
             - ... === true
             - ... == true
             - ... !== false

@@ -29,4 +29,5 @@ function cases_holder() {
 
     /* false-positive: valid limit */
     for ($i = 0; $i < count([]); ++$i) {}
+    for ($i = 1; $i <= count([]); ++$i) {}
 }

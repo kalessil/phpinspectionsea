@@ -350,16 +350,28 @@ public class SuspiciousLoopInspector extends PhpInspection {
                     @NotNull BinaryExpression condition
             ) {
                 if (checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
-                    final PsiElement left  = condition.getLeftOperand();
-                    final PsiElement right = condition.getRightOperand();
-                    final PsiElement limit = left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, index) ? right : left;
-                    if (limit != null) {
-                        final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(limit);
-                        if (!variants.isEmpty()) {
-                            if (variants.stream().anyMatch(this::isTargetCall)) {
-                                holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesCheck);
+                    PsiElement startingValue = null;
+                    for (final PsiElement init : forStatement.getInitialExpressions()) {
+                        if (OpenapiTypesUtil.isAssignment(init)) {
+                            final AssignmentExpression assignment = (AssignmentExpression) init;
+                            final PsiElement container            = assignment.getVariable();
+                            if (container instanceof Variable && OpenapiEquivalenceUtil.areEqual(container, index)) {
+                                startingValue = assignment.getValue();
                             }
-                            variants.clear();
+                        }
+                    }
+                    if (startingValue != null && OpenapiTypesUtil.isNumber(startingValue) && startingValue.getText().equals("0")) {
+                        final PsiElement left  = condition.getLeftOperand();
+                        final PsiElement right = condition.getRightOperand();
+                        final PsiElement limit = left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, index) ? right : left;
+                        if (limit != null) {
+                            final Set<PsiElement> limitVariants = PossibleValuesDiscoveryUtil.discover(limit);
+                            if (!limitVariants.isEmpty()) {
+                                if (limitVariants.size() == 1 && limitVariants.stream().anyMatch(this::isTargetCall)) {
+                                    holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesCheck);
+                                }
+                                limitVariants.clear();
+                            }
                         }
                     }
                 }

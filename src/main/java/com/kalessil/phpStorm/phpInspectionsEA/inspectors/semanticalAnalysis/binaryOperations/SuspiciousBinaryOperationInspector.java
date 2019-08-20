@@ -62,6 +62,7 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> ConstantConditionsCountCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> TypesIntersectionStrategy.apply(expression, holder));
+                callbacks.add(() -> SimplifyBooleansComparisonStrategy.apply(expression, holder));
 
                 /* run through strategies until the first one fired something */
                 for (final BooleanSupplier strategy: callbacks) {

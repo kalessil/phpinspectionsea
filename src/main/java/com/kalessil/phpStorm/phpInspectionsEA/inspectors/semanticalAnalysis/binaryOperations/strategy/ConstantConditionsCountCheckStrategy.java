@@ -136,12 +136,8 @@ final public class ConstantConditionsCountCheckStrategy {
                     if (normalized.startsWith("\\")) {
                         final Collection<PhpClass> resolved = OpenapiResolveUtil.resolveClassesByFQN(normalized, index);
                         if (!resolved.isEmpty()) {
-                            final PhpClass first = resolved.iterator().next();
-                            for (final PhpClass parent : InterfacesExtractUtil.getCrawlInheritanceTree(first, false)) {
-                                if (parent.getFQN().equals("\\Countable")) {
-                                    return true;
-                                }
-                            }
+                            return InterfacesExtractUtil.getCrawlInheritanceTree(resolved.iterator().next(), false).stream()
+                                    .anyMatch(parent -> parent.getFQN().equals("\\Countable"));
                         }
                     }
                     return false;

@@ -1,18 +1,22 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,12 +33,13 @@ import java.util.stream.Stream;
  */
 
 public class SuspiciousLoopInspector extends PhpInspection {
-    private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
-    private static final String messageLoopBoundaries     = "Conditions and repeated operations are not complimentary, please check what's going on here.";
-    private static final String patternOverridesLoopVars  = "Variable '$%s' is introduced in a outer loop and overridden here.";
-    private static final String patternOverridesParameter = "Variable '$%s' is introduced as a %s parameter and overridden here.";
-    private static final String patternConditionAnomaly   = "A parent condition '%s' looks suspicious.";
-    private static final String patternEmptyArray         = "'%s' is probably an empty array.";
+    private static final String messageMultipleConditions     = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
+    private static final String messageLoopBoundariesStepping = "Conditions and repeated operations are not complimentary, please check what's going on here.";
+    private static final String messageLoopBoundariesCheck    = "Conditions doesn't seem to be correct, please check what's going on here.";
+    private static final String patternOverridesLoopVars      = "Variable '$%s' is introduced in a outer loop and overridden here.";
+    private static final String patternOverridesParameter     = "Variable '$%s' is introduced as a %s parameter and overridden here.";
+    private static final String patternConditionAnomaly       = "A parent condition '%s' looks suspicious.";
+    private static final String patternEmptyArray             = "'%s' is probably an empty array.";
 
     private static final Map<IElementType, IElementType> operationsInversion = new HashMap<>();
     private static final Set<IElementType> operationsAnomaly                 = new HashSet<>();
@@ -306,7 +311,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                 final BinaryExpression condition                  = (BinaryExpression) conditions[0];
                 IElementType checkOperator                        = condition.getOperationType();
 
-                /* false-positives: joda conditions applied, invert the operator */
+                /* false-positives: yoda conditions applied, invert the operator */
                 if (operationsInversion.containsKey(checkOperator)) {
                     final PsiElement right = condition.getRightOperand();
                     if (OpenapiTypesUtil.isNumber(condition.getLeftOperand())) {
@@ -321,8 +326,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                     expectedRepeatedOperator.add(PhpTokenTypes.opMINUS);
                     expectedRepeatedOperator.add(PhpTokenTypes.opMINUS_ASGN);
                     expectedRepeatedOperator.add(PhpTokenTypes.opDIV_ASGN);
-                }
-                else if (checkOperator == PhpTokenTypes.opLESS || checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
+                } else if (checkOperator == PhpTokenTypes.opLESS || checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
                     expectedRepeatedOperator.add(PhpTokenTypes.opINCREMENT);
                     expectedRepeatedOperator.add(PhpTokenTypes.opPLUS);
                     expectedRepeatedOperator.add(PhpTokenTypes.opPLUS_ASGN);
@@ -331,10 +335,74 @@ public class SuspiciousLoopInspector extends PhpInspection {
 
                 if (!expectedRepeatedOperator.isEmpty()) {
                     if (!expectedRepeatedOperator.contains(repeatedOperator)) {
-                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundaries);
+                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesStepping);
                     }
                     expectedRepeatedOperator.clear();
+
+                    this.inspectBoundariesCorrectness(forStatement, index, checkOperator, condition);
                 }
+            }
+
+            private void inspectBoundariesCorrectness(
+                    @NotNull For forStatement,
+                    @NotNull PsiElement index,
+                    @NotNull IElementType checkOperator,
+                    @NotNull BinaryExpression condition
+            ) {
+                if (checkOperator == PhpTokenTypes.opLESS_OR_EQUAL) {
+                    final PsiElement left  = condition.getLeftOperand();
+                    final PsiElement right = condition.getRightOperand();
+                    final PsiElement limit = left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, index) ? right : left;
+                    if (limit != null) {
+                        final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(limit);
+                        if (!variants.isEmpty()) {
+                            if (variants.stream().anyMatch(this::isTargetCall)) {
+                                holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesCheck);
+                            }
+                            variants.clear();
+                        }
+                    }
+                }
+            }
+
+            private boolean isTargetCall(@NotNull PsiElement candidate) {
+                boolean result = false;
+                if (candidate instanceof FunctionReference) {
+                    final FunctionReference reference = (FunctionReference) candidate;
+                    final String functionName         = reference.getName();
+                    if (functionName != null) {
+                        if (reference instanceof MethodReference) {
+                            result = functionName.equals("count") && isImplementingCountable((MethodReference) reference);
+                        } else {
+                            result = functionName.equals("count");
+                        }
+                    }
+                }
+                return result;
+            }
+
+            private boolean isImplementingCountable(@NotNull MethodReference reference) {
+                boolean result        = true;
+                final PsiElement base = reference.getFirstChild();
+                if (base instanceof PhpTypedElement) {
+                    final Project project = holder.getProject();
+                    final PhpType type    = OpenapiResolveUtil.resolveType((PhpTypedElement) base, project);
+                    if (type != null) {
+                        final PhpIndex index = PhpIndex.getInstance(project);
+                        result = type.filterUnknown().getTypes().stream().anyMatch(t -> {
+                            final String normalized = Types.getType(t);
+                            if (normalized.startsWith("\\")) {
+                                final Collection<PhpClass> resolved = OpenapiResolveUtil.resolveClassesByFQN(normalized, index);
+                                if (!resolved.isEmpty()) {
+                                    return InterfacesExtractUtil.getCrawlInheritanceTree(resolved.iterator().next(), false).stream()
+                                            .anyMatch(parent -> parent.getFQN().equals("\\Countable"));
+                                }
+                            }
+                            return false;
+                        });
+                    }
+                }
+                return result;
             }
 
             private void inspectVariables(@NotNull PhpPsiElement loop) {

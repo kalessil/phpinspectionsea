@@ -363,7 +363,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                             final AssignmentExpression assignment = (AssignmentExpression) init;
                             final PsiElement container            = assignment.getVariable();
                             if (container instanceof Variable && OpenapiEquivalenceUtil.areEqual(container, index)) {
-                                startingValue = assignment.getValue();
+                                startingValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
                             }
                         }
                     }
@@ -391,7 +391,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                             final AssignmentExpression assignment = (AssignmentExpression) init;
                             final PsiElement container            = assignment.getVariable();
                             if (container instanceof Variable && OpenapiEquivalenceUtil.areEqual(container, index)) {
-                                startingValue = assignment.getValue();
+                                startingValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
                             }
                         }
                     }

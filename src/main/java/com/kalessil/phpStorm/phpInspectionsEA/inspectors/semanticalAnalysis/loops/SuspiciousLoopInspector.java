@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -119,7 +120,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
 
             @NotNull
             private List<PsiElement> findUsedContainers(@NotNull For loop) {
-                final List<PsiElement> result    = new ArrayList<>();
+                final List<PsiElement> result   = new ArrayList<>();
                 final Set<String> loopVariables = this.getLoopVariables(loop);
                 if (loopVariables.size() == 1) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
@@ -421,18 +422,13 @@ public class SuspiciousLoopInspector extends PhpInspection {
                 final Set<String> loopVariables = this.getLoopVariables(loop);
 
                 final Function function = ExpressionSemanticUtil.getScope(loop);
-                if (null != function) {
-                    final HashSet<String> parameters = new HashSet<>();
-                    for (final Parameter param : function.getParameters()) {
-                        parameters.add(param.getName());
-                    }
-                    loopVariables.forEach(variable -> {
-                        if (parameters.contains(variable)) {
-                            holder.registerProblem(
-                                    loop.getFirstChild(),
-                                    String.format(patternOverridesParameter, variable, function instanceof Method ? "method" : "function")
-                            );
-                        }
+                if (function != null) {
+                    final Set<String> parameters = Arrays.stream(function.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
+                    loopVariables.stream().filter(parameters::contains).forEach(variable -> {
+                        holder.registerProblem(
+                                loop.getFirstChild(),
+                                String.format(patternOverridesParameter, variable, function instanceof Method ? "method" : "function")
+                        );
                     });
                     parameters.clear();
                 }

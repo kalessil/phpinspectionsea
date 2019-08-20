@@ -64,7 +64,7 @@ final public class SimplifyBooleansComparisonStrategy {
             - ... == true
             - ... !== false
             - ... != false
-            - (bool) ...
+            - (cast) ...
             - yoda notation
         */
         return null;

@@ -44,6 +44,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
 
     private static final Map<IElementType, IElementType> operationsInversion = new HashMap<>();
     private static final Set<IElementType> operationsAnomaly                 = new HashSet<>();
+    private static final Set<String> targetFunctions                         = new HashSet<>();
     static {
         operationsInversion.put(PhpTokenTypes.opGREATER,          PhpTokenTypes.opLESS_OR_EQUAL);
         operationsInversion.put(PhpTokenTypes.opGREATER_OR_EQUAL, PhpTokenTypes.opLESS);
@@ -54,6 +55,11 @@ public class SuspiciousLoopInspector extends PhpInspection {
         operationsAnomaly.add(PhpTokenTypes.opLESS_OR_EQUAL);
         operationsAnomaly.add(PhpTokenTypes.opEQUAL);
         operationsAnomaly.add(PhpTokenTypes.opIDENTICAL);
+
+        targetFunctions.add("count");
+        targetFunctions.add("strlen");
+        targetFunctions.add("mb_strlen");
+        targetFunctions.add("iconv_strlen");
     }
 
     @NotNull
@@ -368,8 +374,39 @@ public class SuspiciousLoopInspector extends PhpInspection {
                         if (limit != null) {
                             final Set<PsiElement> limitVariants = PossibleValuesDiscoveryUtil.discover(limit);
                             if (!limitVariants.isEmpty()) {
-                                if (limitVariants.size() == 1 && limitVariants.stream().anyMatch(this::isTargetCall)) {
-                                    holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesCheck);
+                                if (limitVariants.size() == 1) {
+                                    final PsiElement limitValue = limitVariants.iterator().next();
+                                    if (this.isTargetCall(limitValue)) {
+                                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesCheck);
+                                    }
+                                }
+                                limitVariants.clear();
+                            }
+                        }
+                    }
+                } else if (checkOperator == PhpTokenTypes.opGREATER_OR_EQUAL) {
+                    PsiElement startingValue = null;
+                    for (final PsiElement init : forStatement.getInitialExpressions()) {
+                        if (OpenapiTypesUtil.isAssignment(init)) {
+                            final AssignmentExpression assignment = (AssignmentExpression) init;
+                            final PsiElement container            = assignment.getVariable();
+                            if (container instanceof Variable && OpenapiEquivalenceUtil.areEqual(container, index)) {
+                                startingValue = assignment.getValue();
+                            }
+                        }
+                    }
+                    if (startingValue != null && this.isTargetCall(startingValue)) {
+                        final PsiElement left  = condition.getLeftOperand();
+                        final PsiElement right = condition.getRightOperand();
+                        final PsiElement limit = left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, index) ? right : left;
+                        if (limit != null) {
+                            final Set<PsiElement> limitVariants = PossibleValuesDiscoveryUtil.discover(limit);
+                            if (!limitVariants.isEmpty()) {
+                                if (limitVariants.size() == 1) {
+                                    final PsiElement limitValue = limitVariants.iterator().next();
+                                    if (OpenapiTypesUtil.isNumber(limitValue) && limitValue.getText().equals("0")) {
+                                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesCheck);
+                                    }
                                 }
                                 limitVariants.clear();
                             }
@@ -387,7 +424,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                         if (reference instanceof MethodReference) {
                             result = functionName.equals("count") && isImplementingCountable((MethodReference) reference);
                         } else {
-                            result = functionName.equals("count");
+                            result = targetFunctions.contains(functionName);
                         }
                     }
                 }

@@ -13,9 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,20 +38,27 @@ final public class SimplifyBooleansComparisonStrategy {
             if (!(context instanceof BinaryExpression) || ((BinaryExpression) context).getOperationType() != operator) {
                 final List<BinaryExpression> fragments = extractFragments(expression, operator);
                 if (fragments.size() > 1) {
-
-                    /* NOTE: 2-level loop for matching targets; inner one with reached current marker */
-
-                    final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> current = extract(fragments.get(0));
-                    final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> next    = extract(fragments.get(1));
-                    if (current != null && next != null ) {
-                        final boolean compare = Stream.of(current.first.second, current.second.second, next.first.second, next.second.second).mapToInt(isInverted -> isInverted ? -1 : 1).sum() == 0;
-                        if (compare && isCoveredAsExpected(current.first, next) && isCoveredAsExpected(current.second, next)) {
-
-                            /* NOTE: generate code based on fragments, current and next variables */
-
-                            holder.registerProblem(fragments.get(1), current.first.second == current.second.second ? messageIdentical : messageNotIdentical);
+                    final Map<BinaryExpression, Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>>> details = new HashMap<>();
+                    for (final BinaryExpression fragment : fragments) {
+                        final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> current = details.computeIfAbsent(fragment, SimplifyBooleansComparisonStrategy::extract);
+                        if (current != null) {
+                            boolean reachedStartingPoint = false;
+                            for (final BinaryExpression match : fragments) {
+                                reachedStartingPoint = reachedStartingPoint || match == fragment;
+                                if (reachedStartingPoint && match != fragment) {
+                                    final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> next = details.computeIfAbsent(match, SimplifyBooleansComparisonStrategy::extract);
+                                    if (next != null) {
+                                        final boolean compare = Stream.of(current.first.second, current.second.second, next.first.second, next.second.second).mapToInt(isInverted -> isInverted ? -1 : 1).sum() == 0;
+                                        if (compare && isCoveredAsExpected(current.first, next) && isCoveredAsExpected(current.second, next)) {
+                                            /* NOTE: generate code based on fragments, current and next variables */
+                                            holder.registerProblem(match, current.first.second == current.second.second ? messageIdentical : messageNotIdentical);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
+                    details.clear();
                 }
                 fragments.clear();
             }

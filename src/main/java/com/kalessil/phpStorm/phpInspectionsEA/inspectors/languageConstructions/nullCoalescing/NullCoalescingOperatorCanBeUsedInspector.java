@@ -19,10 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -340,8 +337,8 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                         new Couple<>(((PhpReturn) ifLast).getArgument(), ((PhpReturn) ifNext).getArgument())
                                 );
                             }
-                            /* if - return - [end-of-function|return-with-no-argument] */
-                            else if (ifLast instanceof PhpReturn && ifNext == null) {
+                            /* if - return - [end-of-function] */
+                            else if (ifLast instanceof PhpReturn && ifNext == null && statement.getNextPsiSibling() == null) {
                                 final boolean isInFunction = statement.getParent().getParent() instanceof Function;
                                 if (isInFunction) {
                                     result = new Couple<>(

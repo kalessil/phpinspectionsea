@@ -41,13 +41,16 @@ final public class SimplifyBooleansComparisonStrategy {
                 final List<BinaryExpression> fragments = extractFragments(expression, operator);
                 if (fragments.size() > 1) {
 
-                    /* NOTE: 2-level loop for matching targets */
+                    /* NOTE: 2-level loop for matching targets; inner one with reached current marker */
 
                     final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> current = extract(fragments.get(0));
                     final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> next    = extract(fragments.get(1));
                     if (current != null && next != null ) {
                         final boolean compare = Stream.of(current.first.second, current.second.second, next.first.second, next.second.second).mapToInt(isInverted -> isInverted ? -1 : 1).sum() == 0;
                         if (compare && isCoveredAsExpected(current.first, next) && isCoveredAsExpected(current.second, next)) {
+
+                            /* NOTE: generate code based on fragments, current and next variables */
+
                             holder.registerProblem(fragments.get(1), current.first.second == current.second.second ? messageIdentical : messageNotIdentical);
                         }
                     }

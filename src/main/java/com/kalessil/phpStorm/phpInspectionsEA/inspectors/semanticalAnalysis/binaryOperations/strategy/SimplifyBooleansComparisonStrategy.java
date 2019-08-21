@@ -27,10 +27,10 @@ import java.util.stream.Stream;
  */
 
 final public class SimplifyBooleansComparisonStrategy {
-    private static final String messageIdentical    = "'(X && Y) || (!X && !Y)' -> '(bool) X === (bool) Y'";
-    private static final String messageNotIdentical = "'(X && !Y) || (!X && Y)' -> '(bool) X !== (bool) Y'";
+    private static final String messagePattern = "'(%s) || (%s)' is the same as '(bool) %s %s (bool) %s', please review the conditions.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
+        boolean result              = false;
         final IElementType operator = expression.getOperationType();
         if (operator == PhpTokenTypes.opOR) {
             final PsiElement parent  = expression.getParent();
@@ -49,9 +49,19 @@ final public class SimplifyBooleansComparisonStrategy {
                                     final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> next = details.computeIfAbsent(match, SimplifyBooleansComparisonStrategy::extract);
                                     if (next != null) {
                                         final boolean compare = Stream.of(current.first.second, current.second.second, next.first.second, next.second.second).mapToInt(isInverted -> isInverted ? -1 : 1).sum() == 0;
-                                        if (compare && isCoveredAsExpected(current.first, next) && isCoveredAsExpected(current.second, next)) {
-                                            /* NOTE: generate code based on fragments, current and next variables */
-                                            holder.registerProblem(match, current.first.second == current.second.second ? messageIdentical : messageNotIdentical);
+                                        if (compare && isCoveredBy(current.first, next) && isCoveredBy(current.second, next)) {
+                                            holder.registerProblem(
+                                                    match,
+                                                    String.format(
+                                                            messagePattern,
+                                                            fragment.getText(),
+                                                            match.getText(),
+                                                            current.first.first.getText(),
+                                                            current.first.second == current.second.second ? "===" : "!==",
+                                                            current.second.first.getText()
+                                                    )
+                                            );
+                                            result = true;
                                         }
                                     }
                                 }
@@ -63,10 +73,10 @@ final public class SimplifyBooleansComparisonStrategy {
                 fragments.clear();
             }
         }
-        return false;
+        return result;
     }
 
-    private static boolean isCoveredAsExpected(@NotNull Pair<PsiElement, Boolean> what, Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> byWhat) {
+    private static boolean isCoveredBy(@NotNull Pair<PsiElement, Boolean> what, Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> byWhat) {
         return (what.second != byWhat.first.second && OpenapiEquivalenceUtil.areEqual(what.first, byWhat.first.first)) ||
                (what.second != byWhat.second.second && OpenapiEquivalenceUtil.areEqual(what.first, byWhat.second.first));
     }

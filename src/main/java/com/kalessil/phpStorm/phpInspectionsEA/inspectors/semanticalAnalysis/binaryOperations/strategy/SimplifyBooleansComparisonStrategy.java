@@ -48,7 +48,8 @@ final public class SimplifyBooleansComparisonStrategy {
                             /* ensure same amount of arguments with and without inversion */
                             final int checkSum = Stream.of(leftParts.first.second, leftParts.second.second, rightParts.first.second, rightParts.second.second).mapToInt(isInverted -> isInverted ? -1 : 1).sum();
                             if (checkSum == 0) {
-                                holder.registerProblem(expression, "Check it!message");
+                                // NOTE: match arguments
+                                holder.registerProblem(right, leftParts.first.second == leftParts.second.second ? messageIdentical : messageNotIdentical);
                             }
                         }
                     }

@@ -7,6 +7,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -39,13 +40,14 @@ final public class SimplifyBooleansComparisonStrategy {
             if (!(context instanceof BinaryExpression) || ((BinaryExpression) context).getOperationType() != operator) {
                 final List<BinaryExpression> fragments = extractFragments(expression, operator);
                 if (fragments.size() > 1) {
+
+                    /* NOTE: 2-level loop for matching targets */
+
                     final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> current = extract(fragments.get(0));
                     final Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> next    = extract(fragments.get(1));
-                    if (current != null && next != null) {
-                        /* ensure same amount of arguments with and without inversion */
-                        final int checkSum = Stream.of(current.first.second, current.second.second, next.first.second, next.second.second).mapToInt(isInverted -> isInverted ? -1 : 1).sum();
-                        if (checkSum == 0) {
-                            // NOTE: match arguments
+                    if (current != null && next != null ) {
+                        final boolean compare = Stream.of(current.first.second, current.second.second, next.first.second, next.second.second).mapToInt(isInverted -> isInverted ? -1 : 1).sum() == 0;
+                        if (compare && isCoveredAsExpected(current.first, next) && isCoveredAsExpected(current.second, next)) {
                             holder.registerProblem(fragments.get(1), current.first.second == current.second.second ? messageIdentical : messageNotIdentical);
                         }
                     }
@@ -54,6 +56,11 @@ final public class SimplifyBooleansComparisonStrategy {
             }
         }
         return false;
+    }
+
+    private static boolean isCoveredAsExpected(@NotNull Pair<PsiElement, Boolean> what, Pair<Pair<PsiElement, Boolean>, Pair<PsiElement, Boolean>> byWhat) {
+        return (what.second != byWhat.first.second && OpenapiEquivalenceUtil.areEqual(what.first, byWhat.first.first)) ||
+               (what.second != byWhat.second.second && OpenapiEquivalenceUtil.areEqual(what.first, byWhat.second.first));
     }
 
     @Nullable

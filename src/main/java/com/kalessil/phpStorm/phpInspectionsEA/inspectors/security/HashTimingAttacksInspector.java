@@ -39,7 +39,12 @@ public class HashTimingAttacksInspector extends PhpInspection {
         targetFunctions.add("crypt");
         targetFunctions.add("hash");
         targetFunctions.add("hash_hmac");
+        targetFunctions.add("hash_hkdf");
+        targetFunctions.add("hash_pbkdf2");
         targetFunctions.add("password_hash");
+        targetFunctions.add("openssl_digest");
+        targetFunctions.add("openssl_encrypt");
+        targetFunctions.add("openssl_pbkdf2");
     }
 
     @NotNull

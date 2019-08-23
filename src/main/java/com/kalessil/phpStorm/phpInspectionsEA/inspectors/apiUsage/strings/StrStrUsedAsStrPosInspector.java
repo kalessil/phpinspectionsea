@@ -66,12 +66,16 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                                 if (PhpLanguageUtil.isFalse(secondOperand)) {
                                     final PsiElement operationNode = binary.getOperation();
                                     if (operationNode != null) {
-                                        final String operation   = operationNode.getText();
-                                        final String replacement = "false %o% %f%(%s%, %p%)"
-                                                .replace("%p%", arguments[1].getText())
-                                                .replace("%s%", arguments[0].getText())
-                                                .replace("%f%", mapping.get(functionName))
-                                                .replace("%o%", operation.length() == 2 ? operation + '=' : operation);
+                                        String operation = operationNode.getText();
+                                        operation        = operation.length() == 2 ? operation + '=' : operation;
+                                        final String replacement = String.format(
+                                                "false %s %s%s(%s, %s)",
+                                                operation,
+                                                reference.getImmediateNamespaceName(),
+                                                mapping.get(functionName),
+                                                arguments[0].getText(),
+                                                arguments[1].getText()
+                                        );
                                         holder.registerProblem(
                                                 binary,
                                                 String.format(messagePattern, replacement),
@@ -84,12 +88,16 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                         }
                         /* checks non-implicit boolean comparison patternS */
                         if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                            final String replacement = "false %o% %f%(%s%, %p%)"
-                                .replace("%p%", arguments[1].getText())
-                                .replace("%s%", arguments[0].getText())
-                                .replace("%f%", mapping.get(functionName))
-                                .replace("%o%", parent instanceof UnaryExpression ? "===": "!==");
-                            holder.registerProblem(
+                            final String operation   = parent instanceof UnaryExpression ? "===": "!==";
+                            final String replacement = String.format(
+                                    "false %s %S%s(%s, %s)",
+                                    operation,
+                                    reference.getImmediateNamespaceName(),
+                                    mapping.get(functionName),
+                                    arguments[0].getText(),
+                                    arguments[1].getText()
+                            );
+                           holder.registerProblem(
                                     parent instanceof UnaryExpression ? parent : reference,
                                     String.format(messagePattern, replacement),
                                     new UseStrposFix(replacement)

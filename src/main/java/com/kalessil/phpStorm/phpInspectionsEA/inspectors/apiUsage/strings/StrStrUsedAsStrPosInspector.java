@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -69,12 +70,22 @@ public class StrStrUsedAsStrPosInspector extends PhpInspection {
                                 if (PhpLanguageUtil.isFalse(secondOperand)) {
                                     final PsiElement operationNode = binary.getOperation();
                                     if (operationNode != null) {
-                                        final String operation   = operationNode.getText();
-                                        final String replacement = "false %o% %f%(%s%, %p%)"
-                                                .replace("%p%", arguments[1].getText())
-                                                .replace("%s%", arguments[0].getText())
-                                                .replace("%f%", mapping.get(functionName))
-                                                .replace("%o%", operation.length() == 2 ? operation + '=' : operation);
+                                        String operation         = operationNode.getText();
+                                        operation                = operation.length() == 2 ? operation + '=' : operation;
+                                        final String call        = String.format(
+                                                "%s%s(%s, %s)",
+                                                reference.getImmediateNamespaceName(),
+                                                mapping.get(functionName),
+                                                arguments[0].getText(),
+                                                arguments[1].getText()
+                                        );
+                                        final boolean isRegular  = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
+                                        final String replacement = String.format(
+                                                "%s %s %s",
+                                                isRegular ? call : "false",
+                                                operation,
+                                                isRegular ? "false" : call
+                                        );
                                         holder.registerProblem(
                                                 binary,
                                                 String.format(messagePattern, replacement),
@@ -87,12 +98,22 @@ public class StrStrUsedAsStrPosInspector extends PhpInspection {
                         }
                         /* checks non-implicit boolean comparison patternS */
                         if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                            final String replacement = "false %o% %f%(%s%, %p%)"
-                                .replace("%p%", arguments[1].getText())
-                                .replace("%s%", arguments[0].getText())
-                                .replace("%f%", mapping.get(functionName))
-                                .replace("%o%", parent instanceof UnaryExpression ? "===": "!==");
-                            holder.registerProblem(
+                            final String operation   = parent instanceof UnaryExpression ? "===": "!==";
+                            final String call        = String.format(
+                                    "%s%s(%s, %s)",
+                                    reference.getImmediateNamespaceName(),
+                                    mapping.get(functionName),
+                                    arguments[0].getText(),
+                                    arguments[1].getText()
+                            );
+                            final boolean isRegular  = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
+                            final String replacement = String.format(
+                                    "%s %s %s",
+                                    isRegular ? call : "false",
+                                    operation,
+                                    isRegular ? "false" : call
+                            );
+                           holder.registerProblem(
                                     parent instanceof UnaryExpression ? parent : reference,
                                     String.format(messagePattern, replacement),
                                     new UseStrposFix(replacement)

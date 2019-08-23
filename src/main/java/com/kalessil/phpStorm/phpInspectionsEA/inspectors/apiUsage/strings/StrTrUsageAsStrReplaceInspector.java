@@ -71,7 +71,8 @@ public class StrTrUsageAsStrReplaceInspector extends PhpInspection {
                                 }
                                 if (isTarget) {
                                     final String replacement = String.format(
-                                            "str_replace(%s, %s, %s)",
+                                            "%sstr_replace(%s, %s, %s)",
+                                            reference.getImmediateNamespaceName(),
                                             arguments[1].getText(),
                                             arguments[2].getText(),
                                             arguments[0].getText()

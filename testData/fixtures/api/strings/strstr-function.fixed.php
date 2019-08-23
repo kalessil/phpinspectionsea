@@ -1,27 +1,27 @@
 <?php
 
-    if (false !== strpos('where', 'what'))  ;
-    if (false === strpos('where', 'what')) ;
+    if (strpos('where', 'what') !== false)  ;
+    if (strpos('where', 'what') === false) ;
 
-    if ('where' || false !== strpos('where', 'what')) ;
-    if ('where' && false !== strpos('where', 'what')) ;
-    if ('where' or false !== strpos('where', 'what')) ;
-    if ('where' and false !== strpos('where', 'what')) ;
+    if ('where' || strpos('where', 'what') !== false) ;
+    if ('where' && strpos('where', 'what') !== false) ;
+    if ('where' or strpos('where', 'what') !== false) ;
+    if ('where' and strpos('where', 'what') !== false) ;
 
-    if (false === strpos('where', 'what')) ;
-    if (false !== strpos('where', 'what')) ;
-    if (false === strpos('where', 'what'))  ;
-    if (false !== strpos('where', 'what'))  ;
+    if (strpos('where', 'what') === false) ;
+    if (strpos('where', 'what') !== false) ;
+    if (strpos('where', 'what') === false)  ;
+    if (strpos('where', 'what') !== false)  ;
 
-    if (false === strpos('where', 'what')) ;
-    if (false !== strpos('where', 'what')) ;
-    if (false === strpos('where', 'what')) ;
-    if (false !== strpos('where', 'what')) ;
+    if (strpos('where', 'what') === false) ;
+    if (strpos('where', 'what') !== false) ;
+    if (strpos('where', 'what') === false) ;
+    if (strpos('where', 'what') !== false) ;
 
-    if (false === stripos('where', 'what')) ;
-    if (false !== stripos('where', 'what')) ;
-    if (false === stripos('where', 'what')) ;
-    if (false !== stripos('where', 'what')) ;
+    if (stripos('where', 'what') === false) ;
+    if (stripos('where', 'what') !== false) ;
+    if (stripos('where', 'what') === false) ;
+    if (stripos('where', 'what') !== false) ;
 
     /* false-positives: weak types magic */
     if (true == strstr('where', 'what')) ;

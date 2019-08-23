@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -66,15 +67,21 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                                 if (PhpLanguageUtil.isFalse(secondOperand)) {
                                     final PsiElement operationNode = binary.getOperation();
                                     if (operationNode != null) {
-                                        String operation = operationNode.getText();
-                                        operation        = operation.length() == 2 ? operation + '=' : operation;
-                                        final String replacement = String.format(
-                                                "false %s %s%s(%s, %s)",
-                                                operation,
+                                        String operation         = operationNode.getText();
+                                        operation                = operation.length() == 2 ? operation + '=' : operation;
+                                        final String call        = String.format(
+                                                "%s%s(%s, %s)",
                                                 reference.getImmediateNamespaceName(),
                                                 mapping.get(functionName),
                                                 arguments[0].getText(),
                                                 arguments[1].getText()
+                                        );
+                                        final boolean isRegular  = ComparisonStyle.isRegular();
+                                        final String replacement = String.format(
+                                                "%s %s %s",
+                                                isRegular ? call : "false",
+                                                operation,
+                                                isRegular ? "false" : call
                                         );
                                         holder.registerProblem(
                                                 binary,
@@ -89,13 +96,19 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                         /* checks non-implicit boolean comparison patternS */
                         if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                             final String operation   = parent instanceof UnaryExpression ? "===": "!==";
-                            final String replacement = String.format(
-                                    "false %s %S%s(%s, %s)",
-                                    operation,
+                            final String call        = String.format(
+                                    "%s%s(%s, %s)",
                                     reference.getImmediateNamespaceName(),
                                     mapping.get(functionName),
                                     arguments[0].getText(),
                                     arguments[1].getText()
+                            );
+                            final boolean isRegular  = ComparisonStyle.isRegular();
+                            final String replacement = String.format(
+                                    "%s %s %s",
+                                    isRegular ? call : "false",
+                                    operation,
+                                    isRegular ? "false" : call
                             );
                            holder.registerProblem(
                                     parent instanceof UnaryExpression ? parent : reference,

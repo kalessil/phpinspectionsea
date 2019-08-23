@@ -155,7 +155,8 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                             final boolean hasEncoding  = isMbFunction && arguments.length == 4;
 
                             final String call          = String.format(
-                                    "%s(%s, %s%s)",
+                                    "%s%s(%s, %s%s)",
+                                    reference.getImmediateNamespaceName(),
                                     (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"),
                                     arguments[0].getText(),
                                     secondOperand.getText(),

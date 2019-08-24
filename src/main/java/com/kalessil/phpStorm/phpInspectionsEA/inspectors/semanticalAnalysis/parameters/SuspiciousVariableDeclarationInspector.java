@@ -79,11 +79,11 @@ public class SuspiciousVariableDeclarationInspector extends PhpInspection {
             public void visitPhpStaticStatement(@NotNull PhpStaticStatement staticStatement) {
                 if (this.shouldSkipAnalysis(staticStatement, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
-                final Function function = ExpressionSemanticUtil.getScope(staticStatement);
-                if (function != null) {
-                    final List<Parameter> parameters  = Arrays.asList(function.getParameters());
+                final Function scope = ExpressionSemanticUtil.getScope(staticStatement);
+                if (scope != null) {
+                    final List<Parameter> parameters  = Arrays.asList(scope.getParameters());
                     final boolean hasParameters       = !parameters.isEmpty();
-                    final List<Variable> useVariables = ExpressionSemanticUtil.getUseListVariables(function);
+                    final List<Variable> useVariables = ExpressionSemanticUtil.getUseListVariables(scope);
                     final boolean hasUseVariables     = useVariables != null && !useVariables.isEmpty();
 
                     staticStatement.getDeclarations().forEach(declaration -> {

@@ -101,12 +101,12 @@ public class SuspiciousLoopInspector extends PhpInspection {
                 PsiElement iterable = source;
                 /* resolve possible values for local variables */
                 if (iterable instanceof Variable) {
-                    final Function function = ExpressionSemanticUtil.getScope(loop);
-                    if (function != null) {
+                    final Function scope = ExpressionSemanticUtil.getScope(loop);
+                    if (scope != null) {
                         final String variableName = ((Variable) iterable).getName();
-                        final boolean isParameter = Stream.of(function.getParameters()).anyMatch(p -> variableName.equals(p.getName()));
+                        final boolean isParameter = Stream.of(scope.getParameters()).anyMatch(p -> variableName.equals(p.getName()));
                         if (!isParameter) {
-                            final List<Variable> used   = ExpressionSemanticUtil.getUseListVariables(function);
+                            final List<Variable> used   = ExpressionSemanticUtil.getUseListVariables(scope);
                             final boolean isUseVariable = used != null && used.stream().anyMatch(u -> variableName.equals(u.getName()));
                             if (!isUseVariable) {
                                 final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(iterable);
@@ -458,13 +458,13 @@ public class SuspiciousLoopInspector extends PhpInspection {
             private void inspectVariables(@NotNull PhpPsiElement loop) {
                 final Set<String> loopVariables = this.getLoopVariables(loop);
 
-                final Function function = ExpressionSemanticUtil.getScope(loop);
-                if (function != null) {
-                    final Set<String> parameters = Arrays.stream(function.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
+                final Function scope = ExpressionSemanticUtil.getScope(loop);
+                if (scope != null) {
+                    final Set<String> parameters = Arrays.stream(scope.getParameters()).map(Parameter::getName).collect(Collectors.toSet());
                     loopVariables.stream().filter(parameters::contains).forEach(variable -> {
                         holder.registerProblem(
                                 loop.getFirstChild(),
-                                String.format(patternOverridesParameter, variable, function instanceof Method ? "method" : "function")
+                                String.format(patternOverridesParameter, variable, scope instanceof Method ? "method" : "function")
                         );
                     });
                     parameters.clear();

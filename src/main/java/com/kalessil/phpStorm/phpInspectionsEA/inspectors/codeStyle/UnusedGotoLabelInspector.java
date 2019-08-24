@@ -52,8 +52,8 @@ public class UnusedGotoLabelInspector extends PhpInspection {
             public void visitPhpGotoLabel(@NotNull PhpGotoLabel label) {
                 if (this.shouldSkipAnalysis(label, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
 
-                final Function function   = ExpressionSemanticUtil.getScope(label);
-                final GroupStatement body = null == function ? null : ExpressionSemanticUtil.getGroupStatement(function);
+                final Function scope      = ExpressionSemanticUtil.getScope(label);
+                final GroupStatement body = null == scope ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
                     /* process goto statements and drop used from existing */
                     final Collection<PhpGoto> references = PsiTreeUtil.findChildrenOfType(body, PhpGoto.class);

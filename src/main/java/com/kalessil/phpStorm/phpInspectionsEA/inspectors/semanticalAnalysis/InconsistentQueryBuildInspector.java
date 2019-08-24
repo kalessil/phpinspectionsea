@@ -52,9 +52,9 @@ public class InconsistentQueryBuildInspector extends PhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
                         /* pre-condition satisfied, now check if http_build_query used in the scope */
-                        final Function function = ExpressionSemanticUtil.getScope(reference);
-                        if (function != null) {
-                            for (final FunctionReference candidate : PsiTreeUtil.findChildrenOfType(function, FunctionReference.class)) {
+                        final Function scope = ExpressionSemanticUtil.getScope(reference);
+                        if (scope != null) {
+                            for (final FunctionReference candidate : PsiTreeUtil.findChildrenOfType(scope, FunctionReference.class)) {
                                 if (candidate != reference && OpenapiTypesUtil.isFunctionReference(candidate)) {
                                     final String candidateName = candidate.getName();
                                     if (candidateName != null && candidateName.equals("http_build_query")) {

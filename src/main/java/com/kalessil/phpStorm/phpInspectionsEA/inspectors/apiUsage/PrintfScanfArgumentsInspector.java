@@ -148,8 +148,8 @@ public class PrintfScanfArgumentsInspector extends PhpInspection {
                         /* false-positives: variable modification */
                         final PsiElement argumentWithPattern = params[neededPosition];
                         if (argumentWithPattern instanceof Variable) {
-                            final Function function   = ExpressionSemanticUtil.getScope(argumentWithPattern);
-                            final GroupStatement body = function == null ? null : ExpressionSemanticUtil.getGroupStatement(function);
+                            final Function scope      = ExpressionSemanticUtil.getScope(argumentWithPattern);
+                            final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                             if (body != null) {
                                 for (final Variable candidate : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
                                     final PsiElement parent  = candidate.getParent();

@@ -82,17 +82,17 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                                 final Variable variable      = (Variable) container;
                                 final String variableName    = variable.getName();
                                 boolean reachedStartingPoint = false;
+                                boolean result               = false;
                                 for (final Variable match : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
                                     reachedStartingPoint = reachedStartingPoint || match == variable;
                                     if (reachedStartingPoint && match != variable && variableName.equals(match.getName())) {
                                         final PsiElement context = match.getParent();
-                                        if (!(context instanceof ArrayAccessExpression) || !this.isTargetContext(match)) {
-                                            return false;
+                                        if (!(result = context instanceof ArrayAccessExpression && this.isTargetContext(match))) {
+                                            break;
                                         }
                                     }
                                 }
-
-                                return true;
+                                return result;
                             }
                         }
                     }

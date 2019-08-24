@@ -144,6 +144,10 @@
         shortName="FileGetContentsMissUseInspection"              displayName="'file_get_contents(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FileGetContentsMissUseInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="ExplodeLimitUsageInspection"                   displayName="'explode(...)' limit can be used"
+        groupName="Performance"                                   enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ExplodeLimitUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

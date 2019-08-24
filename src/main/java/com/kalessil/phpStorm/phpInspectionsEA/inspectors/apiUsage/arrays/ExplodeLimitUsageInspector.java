@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ExplodeLimitUsageInspector extends PhpInspection {
+    private static final String messagePattern = "'%s' would fit more here (consumes less cpu and memory resources).";
 
     @NotNull
     @Override
@@ -47,7 +48,13 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                 if (functionName != null && functionName.equals("explode")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2 && this.isTargetContext(reference)) {
-                        holder.registerProblem(reference, "...");
+                        final String replacement = String.format(
+                                "%sexplode(%s, %s, 2)",
+                                reference.getImmediateNamespaceName(),
+                                arguments[0].getText(),
+                                arguments[1].getText()
+                        );
+                        holder.registerProblem(reference, String.format(messagePattern, replacement));
                     }
                 }
             }
@@ -79,12 +86,12 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                                         }
                                     }
                                 }
+
+                                return true;
                             }
                         }
                     }
                 }
-                // $parts = explode(..., $string); $parts[0] is only used, suggest adding limit
-                // experiment with -N limit
 
                 return false;
             }

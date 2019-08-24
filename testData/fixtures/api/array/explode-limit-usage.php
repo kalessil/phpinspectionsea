@@ -2,10 +2,10 @@
 
 function cases_holder() {
     $skip = explode('/', '...');
-    $target = explode('/', '...');
+    $target = <warning descr="'explode('/', '...', 2)' would fit more here (consumes less cpu and memory resources).">explode('/', '...')</warning>;
 
     return [
-        explode('/', '...')[0],
+        <warning descr="'explode('/', '...', 2)' would fit more here (consumes less cpu and memory resources).">explode('/', '...')</warning>[0],
         $target[0],
 
         explode('/', '...')[1],

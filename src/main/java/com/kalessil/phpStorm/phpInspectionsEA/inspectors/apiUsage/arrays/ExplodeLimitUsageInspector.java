@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -54,7 +55,11 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                                 arguments[0].getText(),
                                 arguments[1].getText()
                         );
-                        holder.registerProblem(reference, String.format(messagePattern, replacement));
+                        holder.registerProblem(
+                                reference,
+                                String.format(messagePattern, replacement),
+                                new AddLimitArgumentFixer(replacement)
+                        );
                     }
                 }
             }
@@ -65,10 +70,10 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                     final ArrayIndex index = ((ArrayAccessExpression) parent).getIndex();
                     if (index != null) {
                         final PsiElement indexValue = index.getValue();
-                        return indexValue != null && OpenapiTypesUtil.isNumber(index) && indexValue.getText().equals("0");
+                        return indexValue != null && OpenapiTypesUtil.isNumber(indexValue) && indexValue.getText().equals("0");
                     }
                 } else if (OpenapiTypesUtil.isAssignment(parent)) {
-                    final PsiElement container = ((AssignmentExpression) parent).getValue();
+                    final PsiElement container = ((AssignmentExpression) parent).getVariable();
                     if (container instanceof Variable) {
                         final Function scope = ExpressionSemanticUtil.getScope(expression);
                         if (scope != null) {
@@ -96,5 +101,19 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                 return false;
             }
         };
+    }
+
+    private static final class AddLimitArgumentFixer extends UseSuggestedReplacementFixer {
+        private static final String title = "Add limit to the 'explode(...)' call";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        AddLimitArgumentFixer(@NotNull String expression) {
+            super(expression);
+        }
     }
 }

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class NullCoalescingOperatorCorrectnessStrategy {
-    private static final String messagePatternUnary = "The operation results to '%s', the right operator can be omitted.";
+    private static final String messagePatternUnary = "The operation results to '%s', the right operand can be omitted.";
     private static final String messagePatternCall  = "Due to '%s' used as left operand, using '?:' instead of '??' would make more sense.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {

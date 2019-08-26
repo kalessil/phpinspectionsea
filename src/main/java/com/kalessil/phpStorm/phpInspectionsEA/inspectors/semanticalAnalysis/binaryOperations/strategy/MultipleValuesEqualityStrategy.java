@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -8,12 +9,10 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -26,39 +25,20 @@ import java.util.stream.Stream;
  */
 
 final public class MultipleValuesEqualityStrategy {
-    private static final String messageAlwaysTrue  = "'%s' seems to be always true.";
-    private static final String messageAlwaysFalse = "'%s' seems to be always false.";
-
-    private static final Map<IElementType, String> equalOperators    = new HashMap<>();
-    private static final Map<IElementType, String> notEqualOperators = new HashMap<>();
-    static {
-        equalOperators.put(PhpTokenTypes.opEQUAL, "%s == %s && %s == %s");
-        equalOperators.put(PhpTokenTypes.opIDENTICAL, "%s === %s && %s === %s");
-
-        notEqualOperators.put(PhpTokenTypes.opNOT_EQUAL, "%s != %s || %s != %s");
-        notEqualOperators.put(PhpTokenTypes.opNOT_IDENTICAL, "%s !== %s || %s !== %s");
-    }
+    private static final String messageAlwaysTrue  = "'%s || %s' seems to be always true.";
+    private static final String messageAlwaysFalse = "'%s && %s' seems to be always false.";
+    private static final String messageNoEffect    = "'%s' seems to have no effect due to '%s'.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result              = false;
         final IElementType operator = expression.getOperationType();
         if (operator != null && (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR)) {
-            /* false-positives: part of another condition */
             final PsiElement parent  = expression.getParent();
             final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
             if (!(context instanceof BinaryExpression) || ((BinaryExpression) context).getOperationType() != operator) {
-                final List<PsiElement> fragments = extractFragments(expression, operator);
+                final List<BinaryExpression> fragments = extractFragments(expression, operator);
                 if (fragments.size() > 1) {
-                    final Map<IElementType, String> operators = operator == PhpTokenTypes.opAND ? equalOperators : notEqualOperators;
-                    final List<BinaryExpression> filtered     = fragments.stream()
-                            .filter(fragment -> fragment instanceof BinaryExpression)
-                            .map(fragment    -> (BinaryExpression) fragment)
-                            .filter(fragment -> operators.containsKey(fragment.getOperationType()))
-                            .collect(Collectors.toList());
-                    if (filtered.size() > 1) {
-                        result = analyze(filtered, operator, holder);
-                    }
-                    filtered.clear();
+                    result = analyze(fragments, operator, holder);
                 }
                 fragments.clear();
             }
@@ -71,59 +51,42 @@ final public class MultipleValuesEqualityStrategy {
             @NotNull IElementType operator,
             @NotNull ProblemsHolder holder
     ) {
-        for (final BinaryExpression current : filtered) {
-            final PsiElement currentLeft  = current.getLeftOperand();
-            final PsiElement currentRight = current.getRightOperand();
-            if (currentLeft != null && currentRight != null) {
-                final IElementType operation  = current.getOperationType();
-                boolean reached               = false;
-                for (final BinaryExpression following : filtered) {
-                    if (following.getOperationType() == operation) {
-                        if (reached) {
-                            final PsiElement followingLeft  = following.getLeftOperand();
-                            final PsiElement followingRight = following.getRightOperand();
-                            if (followingLeft != null && followingRight != null) {
-                                PsiElement source      = null;
-                                PsiElement firstValue  = null;
-                                PsiElement secondValue = null;
-                                if (OpenapiEquivalenceUtil.areEqual(currentLeft, followingLeft)) {
-                                    source      = followingLeft;
-                                    firstValue  = currentRight;
-                                    secondValue = followingRight;
-                                } else if (OpenapiEquivalenceUtil.areEqual(currentRight, followingRight)) {
-                                    source      = followingRight;
-                                    firstValue  = currentLeft;
-                                    secondValue = followingLeft;
+        boolean result                                                 = false;
+        final Map<BinaryExpression, Pair<PsiElement, Boolean>> details = new HashMap<>();
+        for (final BinaryExpression fragment : filtered) {
+            final Pair<PsiElement, Boolean> current = details.computeIfAbsent(fragment, MultipleValuesEqualityStrategy::extract);
+            if (current != null) {
+                boolean reachedStartingPoint = false;
+                for (final BinaryExpression match : filtered) {
+                    reachedStartingPoint = reachedStartingPoint || match == fragment;
+                    if (reachedStartingPoint && match != fragment) {
+                        final Pair<PsiElement, Boolean> next = details.computeIfAbsent(match, MultipleValuesEqualityStrategy::extract);
+                        if (next != null) {
+                            if (operator == PhpTokenTypes.opOR) {
+                                if (isConstantCondition(current, next)) {
+                                    holder.registerProblem(match, String.format(messageAlwaysTrue, fragment.getText(), match.getText()));
+                                    result = true;
+                                } else if (isNoEffectCondition(current, next)) {
+                                    final PsiElement target = current.second ? match : fragment;
+                                    holder.registerProblem(target, String.format(messageNoEffect, target.getText(), (target == fragment ? match : fragment).getText()));
+                                    result = true;
                                 }
-                                if (source != null && !isValueType(source) && isValueType(firstValue) && isValueType(secondValue)) {
-                                    final boolean shouldReport = operator == PhpTokenTypes.opIDENTICAL ||
-                                                                 operator == PhpTokenTypes.opNOT_IDENTICAL ||
-                                                                 !PhpLanguageUtil.isFalsyValue(firstValue) ||
-                                                                 !PhpLanguageUtil.isFalsyValue(secondValue);
-                                    if (shouldReport) {
-                                        final boolean isAndOperator = operator == PhpTokenTypes.opAND;
-                                        final String fragment       = String.format(
-                                                (isAndOperator ? equalOperators : notEqualOperators).get(operation),
-                                                source.getText(),
-                                                firstValue.getText(),
-                                                source.getText(),
-                                                secondValue.getText()
-                                        );
-                                        holder.registerProblem(
-                                                following,
-                                                String.format(isAndOperator ? messageAlwaysFalse : messageAlwaysTrue, fragment)
-                                        );
-                                        return true;
-                                    }
+                            } else {
+                                if (isConstantCondition(current, next)) {
+                                    holder.registerProblem(match, String.format(messageAlwaysFalse, fragment.getText(), match.getText()));
+                                    result = true;
+                                } else if (isNoEffectCondition(current, next)) {
+                                    final PsiElement target = current.second ? fragment : match;
+                                    holder.registerProblem(target, String.format(messageNoEffect, target.getText(), (target == fragment ? match : fragment).getText()));
+                                    result = true;
                                 }
                             }
                         }
-                        reached = reached || following == current;
                     }
                 }
             }
         }
-        return false;
+        return result;
     }
 
     private static boolean isValueType(@NotNull PsiElement element) {
@@ -134,17 +97,38 @@ final public class MultipleValuesEqualityStrategy {
                 OpenapiTypesUtil.isNumber(element);
     }
 
+    private static boolean isConstantCondition(@NotNull Pair<PsiElement, Boolean> what, Pair<PsiElement, Boolean> byWhat) {
+        return what.second == byWhat.second && OpenapiEquivalenceUtil.areEqual(what.first, byWhat.first);
+    }
+
+    private static boolean isNoEffectCondition(@NotNull Pair<PsiElement, Boolean> what, Pair<PsiElement, Boolean> byWhat) {
+        return what.second != byWhat.second && OpenapiEquivalenceUtil.areEqual(what.first, byWhat.first);
+    }
+
+    @Nullable
+    private static Pair<PsiElement, Boolean> extract(@NotNull BinaryExpression source) {
+        Pair<PsiElement, Boolean> result = null;
+        final IElementType operator      = source.getOperationType();
+        if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opNOT_EQUAL) {
+            final PsiElement valueProbe = ExpressionSemanticUtil.getExpressionTroughParenthesis(source.getRightOperand());
+            final PsiElement container  = valueProbe != null && isValueType(valueProbe) ? ExpressionSemanticUtil.getExpressionTroughParenthesis(source.getLeftOperand()) : valueProbe;
+            if (container != null) {
+                result = new Pair<>(container, operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL);
+            }
+        }
+        return  result;
+    }
+
     @NotNull
-    private static List<PsiElement> extractFragments(@NotNull BinaryExpression binary, @Nullable IElementType operator) {
-        final List<PsiElement> result = new ArrayList<>();
+    private static List<BinaryExpression> extractFragments(@NotNull BinaryExpression binary, @Nullable IElementType operator) {
+        /* extract only binary expressions, ignore other condition parts */
+        final List<BinaryExpression> result = new ArrayList<>();
         if (binary.getOperationType() == operator) {
             Stream.of(binary.getLeftOperand(), binary.getRightOperand())
-                    .filter(Objects::nonNull).map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
+                    .map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
                     .forEach(expression -> {
                         if (expression instanceof BinaryExpression) {
                             result.addAll(extractFragments((BinaryExpression) expression, operator));
-                        } else {
-                            result.add(expression);
                         }
                     });
         } else {

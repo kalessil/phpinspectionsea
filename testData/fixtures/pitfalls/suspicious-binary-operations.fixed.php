@@ -70,11 +70,14 @@ if ($falsy > 5) {}
 
 /* logical operands and multi-value cases */
 if ($x == 5 && $x == 6) {}
-if (5 === $x && 6 === $x) {}
-if ($x != 'x' || $x != 'y') {}
-if ('x' !== $x || 'y' !== $x) {}
-
-/* false-positives: operators not the same, complex expressions */
 if ($x == 5 && $x === 6) {}
-if ($x != 'x' || $x !== 'y') {}
+if ($x === 5 && $x === 6) {}
+if ($x != 5 || $x != 6) {}
+if ($x != 5 || $x !== 6) {}
+if ($x !== 5 || $x !== 6) {}
+if ($x == 5 || $x != 6) {}
+if ($x == 5 && $x != 6) {}
+
+
+/* false-positives: non-constant values */
 if ($x == 5 && $x == $y) {}

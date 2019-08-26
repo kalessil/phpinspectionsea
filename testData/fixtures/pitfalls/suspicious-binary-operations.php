@@ -70,11 +70,14 @@ if (<error descr="This might work not as expected (an argument can be null/false
 
 /* logical operands and multi-value cases */
 if ($x == 5 && <error descr="'$x == 5 && $x == 6' seems to be always false.">$x == 6</error>) {}
-if (5 === $x && <error descr="'$x === 5 && $x === 6' seems to be always false.">6 === $x</error>) {}
-if ($x != 'x' || <error descr="'$x != 'x' || $x != 'y'' seems to be always true.">$x != 'y'</error>) {}
-if ('x' !== $x || <error descr="'$x !== 'x' || $x !== 'y'' seems to be always true.">'y' !== $x</error>) {}
+if ($x == 5 && <error descr="'$x == 5 && $x === 6' seems to be always false.">$x === 6</error>) {}
+if ($x === 5 && <error descr="'$x === 5 && $x === 6' seems to be always false.">$x === 6</error>) {}
+if ($x != 5 || <error descr="'$x != 5 || $x != 6' seems to be always true.">$x != 6</error>) {}
+if ($x != 5 || <error descr="'$x != 5 || $x !== 6' seems to be always true.">$x !== 6</error>) {}
+if ($x !== 5 || <error descr="'$x !== 5 || $x !== 6' seems to be always true.">$x !== 6</error>) {}
+if (<error descr="'$x == 5' seems to have no effect due to '$x != 6'.">$x == 5</error> || $x != 6) {}
+if ($x == 5 && <error descr="'$x != 6' seems to have no effect due to '$x == 5'.">$x != 6</error>) {}
 
-/* false-positives: operators not the same, complex expressions */
-if ($x == 5 && $x === 6) {}
-if ($x != 'x' || $x !== 'y') {}
+
+/* false-positives: non-constant values */
 if ($x == 5 && $x == $y) {}

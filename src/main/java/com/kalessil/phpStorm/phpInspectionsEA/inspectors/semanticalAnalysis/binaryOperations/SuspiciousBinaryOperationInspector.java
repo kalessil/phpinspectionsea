@@ -55,7 +55,6 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> MistypedLogicalOperatorsStrategy.apply(expression, holder));
                 callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));
                 callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
-                callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleFalsyValuesCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityStrategy.apply(expression, holder));
                 callbacks.add(() -> ConstantConditionsPhpVersionStrategy.apply(expression, holder));
@@ -63,6 +62,7 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> TypesIntersectionStrategy.apply(expression, holder));
                 callbacks.add(() -> SimplifyBooleansComparisonStrategy.apply(expression, holder));
+                callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
 
                 /* run through strategies until the first one fired something */
                 for (final BooleanSupplier strategy: callbacks) {

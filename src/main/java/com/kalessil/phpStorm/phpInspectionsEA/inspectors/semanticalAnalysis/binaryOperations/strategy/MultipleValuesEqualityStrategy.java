@@ -63,7 +63,7 @@ final public class MultipleValuesEqualityStrategy {
                         final Pair<PsiElement, Boolean> next = details.computeIfAbsent(match, MultipleValuesEqualityStrategy::extract);
                         if (next != null) {
                             if (operator == PhpTokenTypes.opOR) {
-                                if (isConstantCondition(current, next)) {
+                                if (current.second && isConstantCondition(current, next)) {
                                     holder.registerProblem(match, String.format(messageAlwaysTrue, fragment.getText(), match.getText()));
                                     result = true;
                                 } else if (isNoEffectCondition(current, next)) {
@@ -72,7 +72,7 @@ final public class MultipleValuesEqualityStrategy {
                                     result = true;
                                 }
                             } else {
-                                if (isConstantCondition(current, next)) {
+                                if (!current.second && isConstantCondition(current, next)) {
                                     holder.registerProblem(match, String.format(messageAlwaysFalse, fragment.getText(), match.getText()));
                                     result = true;
                                 } else if (isNoEffectCondition(current, next)) {

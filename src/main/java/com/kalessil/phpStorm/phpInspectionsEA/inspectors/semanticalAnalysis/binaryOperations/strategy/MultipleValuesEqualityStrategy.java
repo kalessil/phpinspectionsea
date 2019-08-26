@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -69,7 +70,11 @@ final public class MultipleValuesEqualityStrategy {
                                     result = true;
                                 } else if (isNoEffectCondition(current, next)) {
                                     final PsiElement target = current.second ? match : fragment;
-                                    holder.registerProblem(target, String.format(messageNoEffect, target.getText(), (target == fragment ? match : fragment).getText()));
+                                    holder.registerProblem(
+                                            target,
+                                            String.format(messageNoEffect, target.getText(), (target == fragment ? match : fragment).getText()),
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                    );
                                     result = true;
                                 }
                             } else {
@@ -78,7 +83,11 @@ final public class MultipleValuesEqualityStrategy {
                                     result = true;
                                 } else if (isNoEffectCondition(current, next)) {
                                     final PsiElement target = current.second ? fragment : match;
-                                    holder.registerProblem(target, String.format(messageNoEffect, target.getText(), (target == fragment ? match : fragment).getText()));
+                                    holder.registerProblem(target, String.format(
+                                            messageNoEffect,
+                                            target.getText(), (target == fragment ? match : fragment).getText()),
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                    );
                                     result = true;
                                 }
                             }

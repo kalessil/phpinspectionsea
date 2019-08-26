@@ -536,6 +536,10 @@
         shortName="StringFragmentMisplacedInspection"             displayName="Incorrectly placed string fragment"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringFragmentMisplacedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="SuspiciousFunctionCallsInspection"             displayName="Suspicious function calls"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SuspiciousFunctionCallsInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

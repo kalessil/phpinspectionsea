@@ -233,6 +233,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | JsonDecodeUsageInspection                       | 'json_decode(...)' result type                            | yes | yes | yes  | no  |
 | Probable bugs        | ExitUsageCorrectnessInspection                  | 'exit' usage correctness                                  | n/a | yes | n/a  | no  |
 | Probable bugs        | StringFragmentMisplacedInspection               | Incorrectly placed string fragment                        | yes | yes | yes  | no  |
+| Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |
 
 Inspections Lists (Security)
 ---

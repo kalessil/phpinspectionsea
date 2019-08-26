@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ExplodeLimitUsageInspector extends PhpInspection {
-    private static final String messagePattern = "'%s' would fit more here (consumes less cpu and memory resources).";
+    private static final String messagePattern = "Perhaps '%s' can be used here, as only the first part has been used.";
 
     @NotNull
     @Override
@@ -48,7 +48,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("explode")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 2 && this.isTargetContext(reference)) {
+                    if (arguments.length == 2 && this.isTargetContext(reference) && this.isFromRootNamespace(reference)) {
                         final String replacement = String.format(
                                 "%sexplode(%s, %s, 2)",
                                 reference.getImmediateNamespaceName(),

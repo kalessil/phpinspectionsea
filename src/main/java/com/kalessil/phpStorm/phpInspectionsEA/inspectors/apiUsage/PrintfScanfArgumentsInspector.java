@@ -55,13 +55,10 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
         functions.put("fscanf",  1);
     }
 
-    final static private Pattern printfRegexPlaceHolders;
-    final static private Pattern scanfRegexPlaceHolders;
-
+    final static private Pattern regexPlaceHolders;
     static {
         // raw regex: %((\d+)\$)?[+-]?(?:[ 0]|\\?'.)?-?\d*(?:\.\d+)?[\[sducoxXbgGeEfF]
-        printfRegexPlaceHolders = Pattern.compile("%((\\d+)\\$)?[+-]?(?:[ 0]|\\\\?'.)?-?\\d*(?:\\.\\d+)?[\\[sducoxXbgGeEfF]");
-        scanfRegexPlaceHolders  = Pattern.compile("%\\*?((\\d+)\\$)?[+-]?(?:[ 0]|\\\\?'.)?-?\\d*(?:\\.\\d+)?[\\[sducoxXbgGeEfF]");
+        regexPlaceHolders = Pattern.compile("%((\\d+|\\*)\\$)?[+-]?(?:[ 0]|\\\\?'.)?-?\\d*(?:\\.\\d+)?[\\[sducoxXbgGeEfF]");
     }
 
     @Override
@@ -102,16 +99,8 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                         return;
                     }
 
-                    final Matcher regexMatcher = functionName.contains("printf")
-                            ? printfRegexPlaceHolders.matcher(contentAdapted)
-                            : scanfRegexPlaceHolders.matcher(contentAdapted);
+                    final Matcher regexMatcher = regexPlaceHolders.matcher(contentAdapted);
                     while (regexMatcher.find()) {
-                        if (functionName.contains("scanf")) {
-                            String placeholder = contentAdapted.substring(regexMatcher.start(), regexMatcher.end());
-                            if (placeholder.charAt(1) == '*') {
-                                continue;
-                            }
-                        }
                         ++countParsedAll;
 
                         if (null != regexMatcher.group(2)) {

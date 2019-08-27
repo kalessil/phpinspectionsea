@@ -46,14 +46,6 @@ final public class SequentialAssignmentsStrategy {
                         }
                     }
                 }
-                final PhpPsiElement next = scope.getNextPsiSibling();
-                if (next instanceof ForeachStatement && container instanceof Variable) {
-                    for (final Variable variable : ((ForeachStatement) next).getVariables()) {
-                        if (OpenapiEquivalenceUtil.areEqual(variable, container)) {
-                            holder.registerProblem(variable, String.format(patternGeneral, variable.getText()));
-                        }
-                    }
-                }
             }
         }
     }

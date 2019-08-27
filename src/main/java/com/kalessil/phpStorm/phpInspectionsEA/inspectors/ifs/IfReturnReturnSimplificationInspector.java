@@ -74,8 +74,8 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                                 }
                             }
 
-                            /* final reporting step */
-                            final String replacement;
+                            /* generate replacement */
+                            String replacement;
                             if (isReverse) {
                                 if (condition instanceof UnaryExpression) {
                                     PsiElement extracted = ((UnaryExpression) condition).getValue();
@@ -86,6 +86,14 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                                 }
                             } else {
                                 replacement = String.format("return %s", condition.getText());
+                            }
+                            /* preserve the assignment anyway */
+                            final PsiElement possiblyAssignment = firstValue.getParent();
+                            if (OpenapiTypesUtil.isAssignment(possiblyAssignment)) {
+                                final PsiElement container = ((AssignmentExpression) possiblyAssignment).getVariable();
+                                if (container != null) {
+                                    replacement = replacement.replace("return ", String.format("return %s = ", container.getText()));
+                                }
                             }
                             holder.registerProblem(
                                     statement.getFirstChild(),

@@ -47,11 +47,11 @@ class CasesHolder {
     }
 
     function ifAssignElseAssignReturn($x) {
-        return $x === 0;
+        return $result = $x === 0;
     }
 
     function assignIfAssignReturn($x) {
-        return $x === 0;
+        return $result = $x === 0;
     }
 
     function assignIfReturnReturn($x) {

@@ -57,7 +57,7 @@ class CasesHolder {
     }
 
     function ifAssignElseAssignReturn($x) {
-        <warning descr="The construct can be replaced with 'return $x === 0'.">if</warning> ($x === 0) {
+        <warning descr="The construct can be replaced with 'return $result = $x === 0'.">if</warning> ($x === 0) {
             $result = true;
         } else {
             $result = false;
@@ -67,7 +67,7 @@ class CasesHolder {
 
     function assignIfAssignReturn($x) {
         $result = false;
-        <warning descr="The construct can be replaced with 'return $x === 0'.">if</warning> ($x === 0) {
+        <warning descr="The construct can be replaced with 'return $result = $x === 0'.">if</warning> ($x === 0) {
             $result = true;
         }
         return $result;

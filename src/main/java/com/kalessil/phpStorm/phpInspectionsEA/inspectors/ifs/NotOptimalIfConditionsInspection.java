@@ -73,6 +73,9 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
             functionsSet.add("is_numeric");
             functionsSet.add("is_scalar");
             functionsSet.add("is_object");
+            functionsSet.add("is_callable");
+            functionsSet.add("is_countable");
+            functionsSet.add("is_iterable");
             functionsSet.add("function_exists");
             functionsSet.add("property_exists");
     }

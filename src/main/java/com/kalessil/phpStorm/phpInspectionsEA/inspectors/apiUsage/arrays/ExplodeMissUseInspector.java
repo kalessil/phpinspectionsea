@@ -37,8 +37,7 @@ public class ExplodeMissUseInspector extends PhpInspection {
     private static final Map<String, Integer> argumentMapping = new HashMap<>();
     static {
         argumentMapping.put("count", 0);     // `substr_count($string, '...') + 1`, `strpos($string, '') !== false`
-        argumentMapping.put("in_array", 1);  // `strpos($string, '...') !== false`
-        // "in_array" -> `strpos($string, '...')` change behaviour
+        // "in_array" -> `strpos($string, '...') !== false` as not includes delimiter, changes behaviour
         // "current"  -> `strstr($string, '...', true)` if fragment missing, strstr changes behaviour
     }
 
@@ -82,26 +81,6 @@ public class ExplodeMissUseInspector extends PhpInspection {
                                         final String replacement;
                                         final PsiElement target;
                                         switch (outerFunctionName) {
-                                            case "in_array":
-                                                parent                   = reference.getParent();
-                                                isRegular                = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
-                                                String pattern           = isRegular ? "%sstrpos(%s, %s.%s.%s) !== false" : "false !== %sstrpos(%s, %s.%s.%s)";
-                                                final boolean isInverted = parent instanceof UnaryExpression &&
-                                                                           OpenapiTypesUtil.is(parent.getFirstChild(), PhpTokenTypes.opNOT);
-                                                pattern                  = isInverted ? pattern.replace("!==", "===") : pattern;
-                                                final boolean wrap       = (!isInverted && parent instanceof UnaryExpression) ||
-                                                                           parent instanceof BinaryExpression;
-                                                pattern                  = wrap ? '(' + pattern + ')' : pattern;
-                                                replacement = String.format(
-                                                        pattern,
-                                                        reference.getImmediateNamespaceName(),
-                                                        innerArguments[1].getText(),
-                                                        innerArguments[0].getText(),
-                                                        outerArguments[0].getText(),
-                                                        innerArguments[0].getText()
-                                                );
-                                                target = isInverted ? parent : reference;
-                                                break;
                                             case "count":
                                                 parent    = reference.getParent();
                                                 isRegular = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();

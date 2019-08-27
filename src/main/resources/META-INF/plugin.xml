@@ -536,7 +536,7 @@
         shortName="StringFragmentMisplacedInspection"             displayName="Incorrectly placed string fragment"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StringFragmentMisplacedInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="SuspiciousFunctionCallsInspection"             displayName="Suspicious function calls"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.SuspiciousFunctionCallsInspector"/>
@@ -756,10 +756,6 @@
         shortName="NestedNotOperatorsInspection"                  displayName="Nested not operators usage"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.NestedNotOperatorsInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="UnnecessaryParenthesesInspection"              displayName="Unnecessary parentheses"
-        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryParenthesesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="UnnecessarySemicolonInspection"                displayName="Unnecessary semicolon"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"

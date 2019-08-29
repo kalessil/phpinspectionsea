@@ -230,7 +230,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SuspiciousVariableDeclarationInspection         | Suspicious variable declaration                           | n/a | yes | n/a  | no  |
 | Probable bugs        | StaticLambdaBindingInspection                   | Static lambdas binding                                    | yes | yes | yes  | no  |
 | Probable bugs        | ForeachSourceInspection                         | Foreach source to iterate over                            | n/a | yes | n/a  | yes |
-| Probable bugs        | JsonDecodeUsageInspection                       | 'json_decode(...)' result type                            | yes | yes | yes  | no  |
+| Probable bugs        | JsonEncodingApiUsageInspection                  | JSON encoding API usage                                   | yes | yes | yes  | no  |
 | Probable bugs        | ExitUsageCorrectnessInspection                  | 'exit' usage correctness                                  | n/a | yes | n/a  | no  |
 | Probable bugs        | StringFragmentMisplacedInspection               | Incorrectly placed string fragment                        | yes | yes | yes  | no  |
 | Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |

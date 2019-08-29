@@ -525,9 +525,9 @@
         groupName="Probable bugs"                                 enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="JsonDecodeUsageInspection"                     displayName="'json_decode(...)' result type"
+        shortName="JsonEncodingApiUsageInspection"                displayName="JSON encoding API usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WEAK WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.JsonDecodeUsageInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.JsonEncodingApiUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ExitUsageCorrectnessInspection"                displayName="'exit' usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"

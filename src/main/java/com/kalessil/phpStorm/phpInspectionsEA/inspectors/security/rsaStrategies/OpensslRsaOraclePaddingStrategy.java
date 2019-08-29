@@ -31,7 +31,7 @@ final public class OpensslRsaOraclePaddingStrategy {
     }
 
     static public boolean apply(@NotNull ProblemsHolder holder, @NotNull FunctionReference reference) {
-        boolean result = false;
+        boolean result               = false;
         final PsiElement[] arguments = reference.getParameters();
         if (arguments.length == 3 && isTargetCall(reference)) {
             holder.registerProblem(reference, message);
@@ -39,15 +39,11 @@ final public class OpensslRsaOraclePaddingStrategy {
         } else if (arguments.length == 4 && isTargetCall(reference)) {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(arguments[3]);
             if (!modeVariants.isEmpty()) {
-                for (final PsiElement variant : modeVariants) {
-                    if (variant instanceof ConstantReference) {
-                        final String constantName = ((ConstantReference) variant).getName();
-                        if (constantName != null && constantName.equals("OPENSSL_PKCS1_PADDING")) {
-                            holder.registerProblem(reference, message);
-                            result = true;
-                            break;
-                        }
-                    }
+                result = modeVariants.stream()
+                        .filter(variant   -> variant instanceof ConstantReference)
+                        .anyMatch(variant -> "OPENSSL_PKCS1_PADDING".equals(((ConstantReference) variant).getName()));
+                if (result) {
+                    holder.registerProblem(reference, message);
                 }
                 modeVariants.clear();
             }
@@ -63,7 +59,7 @@ final public class OpensslRsaOraclePaddingStrategy {
                 final Set<PsiElement> nameVariants = PossibleValuesDiscoveryUtil.discover(name);
                 if (!nameVariants.isEmpty()) {
                     result = nameVariants.stream()
-                            .filter(variant -> variant instanceof StringLiteralExpression)
+                            .filter(variant   -> variant instanceof StringLiteralExpression)
                             .anyMatch(variant -> functions.contains(((StringLiteralExpression) variant).getContents().replace("\\", "")));
                     nameVariants.clear();
                 }

@@ -3,10 +3,13 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +31,8 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
     public boolean DECODE_AS_OBJECT            = false;
     public boolean HARDEN_ERRORS_HANDLING      = true;
 
-    private static final String messageResultType = "Please specify the second argument (clarifies decoding into array or object).";
+    private static final String messageResultType     = "Please specify the second argument (clarifies decoding into array or object).";
+    private static final String messageErrorsHandling = "Please consider taking advantage of JSON_THROW_ON_ERROR flag for this call options.";
 
     @NotNull
     @Override
@@ -49,16 +53,47 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("json_decode")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (HARDEN_DECODING_RESULT_TYPE && arguments.length == 1) {
-                        final String replacement = String.format(
-                                "%sjson_decode(%s, %s)",
-                                reference.getImmediateNamespaceName(),
-                                arguments[0].getText(),
-                                DECODE_AS_ARRAY ? "true" : "false"
-                        );
-                        holder.registerProblem(reference, messageResultType, DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement));
+                if (functionName != null) {
+                    if (functionName.equals("json_decode")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (HARDEN_DECODING_RESULT_TYPE && arguments.length == 1) {
+                            final String replacement = String.format(
+                                    "%sjson_decode(%s, %s)",
+                                    reference.getImmediateNamespaceName(),
+                                    arguments[0].getText(),
+                                    DECODE_AS_ARRAY ? "true" : "false"
+                            );
+                            holder.registerProblem(reference, messageResultType, DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement));
+                        }
+                        if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
+                            final boolean hasFlag = arguments.length >= 4 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
+                            if (!hasFlag) {
+                                final String replacement = String.format(
+                                        "%sjson_decode(%s, %s, %s, %s)",
+                                        reference.getImmediateNamespaceName(),
+                                        arguments[0].getText(),
+                                        arguments.length > 1 ? arguments[1].getText() : (HARDEN_DECODING_RESULT_TYPE && DECODE_AS_ARRAY ? "true" : "false"),
+                                        arguments.length > 2 ? arguments[2].getText() : "512",
+                                        arguments.length > 3 ? "JSON_THROW_ON_ERROR | " + arguments[3].getText() : "JSON_THROW_ON_ERROR"
+                                );
+                                holder.registerProblem(reference, messageErrorsHandling, new HardenErrorsHandlingFix(replacement));
+                            }
+                        }
+                    } else if (functionName.equals("json_encode")) {
+                        if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            final boolean hasFlag        = arguments.length >= 2 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
+                            if (!hasFlag) {
+                                final String replacement = String.format(
+                                        "%sjson_encode(%s, %s, %s)",
+                                        reference.getImmediateNamespaceName(),
+                                        arguments[0].getText(),
+                                        arguments.length > 1 ? "JSON_THROW_ON_ERROR | " + arguments[1].getText() : "JSON_THROW_ON_ERROR",
+                                        arguments.length > 2 ? arguments[2].getText() : "512"
+                                );
+                                holder.registerProblem(reference, messageErrorsHandling, new HardenErrorsHandlingFix(replacement));
+                            }
+                        }
                     }
                 }
             }
@@ -86,6 +121,20 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
         }
 
         DecodeIntoArrayFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static final class HardenErrorsHandlingFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Harden errors handling";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        HardenErrorsHandlingFix(@NotNull String expression) {
             super(expression);
         }
     }

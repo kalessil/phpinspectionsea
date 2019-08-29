@@ -23,10 +23,12 @@ import javax.swing.*;
 
 public class JsonEncodingApiUsageInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean DECODE_AS_ARRAY  = true;
-    public boolean DECODE_AS_OBJECT = false;
+    public boolean HARDEN_DECODING_RESULT_TYPE = true;
+    public boolean DECODE_AS_ARRAY             = true;
+    public boolean DECODE_AS_OBJECT            = false;
+    public boolean HARDEN_ERRORS_HANDLING      = true;
 
-    private static final String message = "Please specify the second argument (clarifies decoding into array or object).";
+    private static final String messageResultType = "Please specify the second argument (clarifies decoding into array or object).";
 
     @NotNull
     @Override
@@ -49,18 +51,14 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("json_decode")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 1) {
+                    if (HARDEN_DECODING_RESULT_TYPE && arguments.length == 1) {
                         final String replacement = String.format(
                                 "%sjson_decode(%s, %s)",
                                 reference.getImmediateNamespaceName(),
                                 arguments[0].getText(),
                                 DECODE_AS_ARRAY ? "true" : "false"
                         );
-                        holder.registerProblem(
-                                reference,
-                                message,
-                                DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement)
-                        );
+                        holder.registerProblem(reference, messageResultType, DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement));
                     }
                 }
             }
@@ -68,12 +66,14 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) ->
+        return OptionsComponent.create((component) -> {
+                component.addCheckbox("Harden decoding return type", HARDEN_DECODING_RESULT_TYPE, (isSelected) -> HARDEN_DECODING_RESULT_TYPE = isSelected); ;
                 component.delegateRadioCreation(radio -> {
                     radio.addOption("Prefer decoding as array", DECODE_AS_ARRAY, (isSelected) -> DECODE_AS_ARRAY = isSelected);
                     radio.addOption("Prefer decoding as object", DECODE_AS_OBJECT, (isSelected) -> DECODE_AS_OBJECT = isSelected);
-                })
-        );
+                });
+                component.addCheckbox("Harden errors handling", HARDEN_ERRORS_HANDLING, (isSelected) -> HARDEN_ERRORS_HANDLING = isSelected); ;
+        });
     }
 
     private static final class DecodeIntoArrayFix extends UseSuggestedReplacementFixer {

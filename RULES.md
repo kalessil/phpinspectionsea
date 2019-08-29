@@ -45,6 +45,7 @@ Inspections Lists (Control flow)
 | Control Flow         | UnnecessaryBooleanCheckInspection               | Unnecessary boolean check                                                         | yes | yes | yes  | no  |
 | Control Flow         | BasenameCallsContextInspection                  | 'basename(...)' usage correctness                                                 | yes | yes | yes  | no  |
 | Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | no  |
+| Control Flow         | ExplodeLimitUsageInspection                     | 'explode(...)' limit can be used                                                  | yes | yes | yes  | no  |
 
 Inspections Lists (PhpUnit)
 ---
@@ -299,4 +300,3 @@ Inspections Lists (Performance)
 | Performance          | ImplodeMissUseInspection                        | 'implode(...)' misused                                                                            | yes | yes | yes  | no  |
 | Performance          | ArrayMapMissUseInspection                       | 'array_map(...)' misused                                                                          | yes | yes | yes  | no  |
 | Performance          | FileGetContentsMissUseInspection                | 'file_get_contents(...)' misused                                                                  | yes | yes | yes  | no  |
-| Performance          | ExplodeLimitUsageInspection                     | 'explode(...)' limit can be used                                                                  | yes | yes | yes  | no  |

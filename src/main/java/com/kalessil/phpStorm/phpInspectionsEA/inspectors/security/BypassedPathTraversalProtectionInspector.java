@@ -54,14 +54,11 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= 3) {
                         final Set<String> second = this.collectPossibleValues(arguments[1]);
-                        if (!second.isEmpty() && second.contains("")) {
-                            final boolean withQuickFix = !(arguments[0] instanceof ArrayCreationExpression);
-                            final Set<String> first    = this.collectPossibleValues(arguments[0]);
+                        if (!second.isEmpty()) {
+                            final Set<String> first = this.collectPossibleValues(arguments[0]);
                             if (!first.isEmpty() && (first.contains("../") || first.contains("..\\\\"))) {
-                                final String replacement = String.format(
-                                        "preg_replace('/\\.+[\\/\\\\]+/', '', %s)",
-                                        arguments[2].getText()
-                                );
+                                final boolean withQuickFix = !(arguments[0] instanceof ArrayCreationExpression);
+                                final String replacement   = String.format("preg_replace('/\\.+[\\/\\\\]+/', '', %s)", arguments[2].getText());
                                 holder.registerProblem(
                                         reference,
                                         messageFilterVar,
@@ -69,8 +66,8 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
                                 );
                             }
                             first.clear();
+                            second.clear();
                         }
-                        second.clear();
                     }
                 }
             }

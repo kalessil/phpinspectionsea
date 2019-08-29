@@ -6,7 +6,6 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -63,15 +62,9 @@ final public class OpensslRsaOraclePaddingStrategy {
             if (name != null) {
                 final Set<PsiElement> nameVariants = PossibleValuesDiscoveryUtil.discover(name);
                 if (!nameVariants.isEmpty()) {
-                    for (final PsiElement variant : nameVariants) {
-                        if (variant instanceof StringLiteralExpression) {
-                            final String content = ((StringLiteralExpression) variant).getContents();
-                            if (functions.contains(StringUtils.strip(content, "\\"))) {
-                                result = true;
-                                break;
-                            }
-                        }
-                    }
+                    result = nameVariants.stream()
+                            .filter(variant -> variant instanceof StringLiteralExpression)
+                            .anyMatch(variant -> functions.contains(((StringLiteralExpression) variant).getContents().replace("\\", "")));
                     nameVariants.clear();
                 }
             }

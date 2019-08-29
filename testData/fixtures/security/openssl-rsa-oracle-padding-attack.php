@@ -10,10 +10,10 @@ class Clazz
     {
         $encrypted = '';
 
-        $function1 = true ? 'openssl_public_encrypt' : 'openssl_private_encrypt';
+        $function1 = true ? '\openssl_public_encrypt' : '\openssl_private_encrypt';
         <error descr="This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">$function1('', $encrypted, '')</error>;
 
-        $function2 = 'openssl_public_encrypt';
+        $function2 = '\openssl_public_encrypt';
         <error descr="This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">$function2('', $encrypted, '')</error>;
 
         return $encrypted;

@@ -27,13 +27,10 @@ final public class McryptRsaOraclePaddingStrategy {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(reference.getParameters()[3]);
             if (!modeVariants.isEmpty()) {
                 for (final PsiElement variant : modeVariants) {
-                    if (variant instanceof ConstantReference) {
-                        final String constantName = ((ConstantReference) variant).getName();
-                        if (constantName != null && constantName.equals("MCRYPT_MODE_CBC")) {
-                            holder.registerProblem(reference, message);
-                            result = true;
-                            break;
-                        }
+                    if (variant instanceof ConstantReference && "MCRYPT_MODE_CBC".equals(((ConstantReference) variant).getName())) {
+                        holder.registerProblem(reference, message);
+                        result = true;
+                        break;
                     }
                 }
                 modeVariants.clear();
@@ -48,8 +45,7 @@ final public class McryptRsaOraclePaddingStrategy {
         if (functionName != null && functionName.equals("mcrypt_encrypt")) {
             final PsiElement[] arguments = reference.getParameters();
             if (arguments.length >= 4 && arguments[0] instanceof ConstantReference) {
-                final String constantName = ((ConstantReference) arguments[0]).getName();
-                result = constantName != null && constantName.equals("MCRYPT_RIJNDAEL_128");
+                result = "MCRYPT_RIJNDAEL_128".equals(((ConstantReference) arguments[0]).getName());
             }
         }
         return result;

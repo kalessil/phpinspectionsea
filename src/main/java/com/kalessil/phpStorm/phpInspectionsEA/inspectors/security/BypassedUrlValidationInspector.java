@@ -95,12 +95,10 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
                     } else if (functionName.equals("filter_var")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length >= 2) {
-                            for (final ConstantReference candidate : PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class)) {
-                                final String constantName = candidate.getName();
-                                if (constantName != null && constantName.equals("FILTER_VALIDATE_URL")) {
-                                    holder.registerProblem(reference, messageFilterVar);
-                                    break;
-                                }
+                            final boolean isTarget = PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream()
+                                    .anyMatch(candidate -> "FILTER_VALIDATE_URL".equals(candidate.getName()));
+                            if (isTarget) {
+                                holder.registerProblem(reference, messageFilterVar);
                             }
                         }
                     }

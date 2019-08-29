@@ -91,14 +91,14 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
                                 final String[] updatedArguments = new String[Math.max(2, arguments.length)];
                                 Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList()).toArray(updatedArguments);
                                 updatedArguments[1]             = updatedFlags;
-                                final String replacement        = String.format("htmlspecialchars(%s)", String.join(", ", updatedArguments));
+                                final String replacement        = String.format("%shtmlspecialchars(%s)", reference.getImmediateNamespaceName(), String.join(", ", updatedArguments));
                                 holder.registerProblem(reference, messageHarden, ProblemHighlightType.GENERIC_ERROR, new EscapeAllQuotesFix(replacement));
                             }
                         }
                     } else if (functions.contains(functionName)) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 2 && arguments[0] instanceof StringLiteralExpression) {
-                            final String callback = ((StringLiteralExpression) arguments[0]).getContents();
+                            final String callback = ((StringLiteralExpression) arguments[0]).getContents().replace("\\", "");
                             if (callback.equals("htmlspecialchars")) {
                                 holder.registerProblem(arguments[0], messageCallback);
                             }

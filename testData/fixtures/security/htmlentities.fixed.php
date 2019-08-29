@@ -12,7 +12,7 @@ function cases_holder() {
         htmlentities('', ENT_QUOTES | ENT_HTML5),
         htmlentities('', ENT_COMPAT | ENT_HTML5),
 
-        call_user_func('htmlentities', '...'),
-        array_map('htmlentities', []),
+        call_user_func('\htmlentities', '...'),
+        array_map('\htmlentities', []),
     ];
 }

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
@@ -80,7 +79,7 @@ public class CryptographicallySecureAlgorithmsInspector extends PhpInspection {
 
                 final String constantName = reference.getName();
                 if (constantName != null && constants.containsKey(constantName) && !this.isTestContext(reference)) {
-                    holder.registerProblem(reference, constants.get(constantName), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(reference, constants.get(constantName));
                 }
             }
         };

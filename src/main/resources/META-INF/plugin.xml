@@ -430,10 +430,6 @@
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HostnameSubstitutionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="RsaOraclePaddingAttacksInspection"             displayName="RSA oracle padding vulnerability"
-         groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.RsaOraclePaddingAttacksInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="BacktickOperatorUsageInspection"               displayName="Backtick operator usage"
          groupName="Security"                                      enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.BacktickOperatorUsageInspector"/>

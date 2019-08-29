@@ -223,7 +223,6 @@ Inspections Lists (Security)
 | Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)   | n/a | yes | n/a  | n/a |
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                               | n/a | yes | n/a  | yes |
 | Security             | HostnameSubstitutionInspection                     | Hostname substitution                                             | n/a | yes | n/a  | no  |
-| Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                  | n/a | yes | n/a  | yes |
 | Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                           | yes | yes | yes  | n/a |
 
 Inspections Lists (Performance)

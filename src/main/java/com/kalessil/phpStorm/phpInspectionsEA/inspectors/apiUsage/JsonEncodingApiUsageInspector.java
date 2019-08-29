@@ -21,7 +21,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class JsonDecodeUsageInspector extends BasePhpInspection {
+public class JsonEncodingApiUsageInspector extends BasePhpInspection {
     // Inspection options.
     public boolean DECODE_AS_ARRAY  = true;
     public boolean DECODE_AS_OBJECT = false;
@@ -31,13 +31,13 @@ public class JsonDecodeUsageInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getShortName() {
-        return "JsonDecodeUsageInspection";
+        return "JsonEncodingApiUsageInspection";
     }
 
     @NotNull
     @Override
     public String getDisplayName() {
-        return "'json_decode(...)' result type";
+        return "JSON encoding API usage";
     }
 
     @Override

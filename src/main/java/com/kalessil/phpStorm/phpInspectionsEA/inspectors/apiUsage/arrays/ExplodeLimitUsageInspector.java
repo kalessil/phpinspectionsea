@@ -43,7 +43,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
         return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
+                if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("explode")) {

@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  */
 
 public class ComposerPackageDependenciesIndexer extends FileBasedIndexExtension<String, String> {
-    public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.packages");
+    public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.package_dependencies");
     private final KeyDescriptor<String> descriptor  = new EnumeratorStringDescriptor();
 
     @NotNull

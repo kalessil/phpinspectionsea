@@ -1,12 +1,16 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
@@ -78,20 +82,27 @@ public class AutoloadingIssuesInspector extends PhpInspection {
             }
 
             private void checkDirectoryNamePsrCompliant(@NotNull PhpFile file, @NotNull PhpClass clazz, @NotNull String extractedClassName) {
-                final String path = file.getVirtualFile().getPath();
-                if (path.contains("/src/")) {
-                    final String[] fragments = path.split("/src/");
-                    if (fragments.length == 2) {
-                        final String normalizedFragment = fragments[1].replaceAll("/", "\\\\").replaceAll(file.getName(), "");
-                        final String expectedFqnEnding  = "\\" + normalizedFragment + extractedClassName;
-                        if (!clazz.getFQN().endsWith(expectedFqnEnding)) {
-                            final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
-                            if (classNameNode != null) {
-                                holder.registerProblem(classNameNode, messagePath);
-                            }
-                        }
-                    }
+                final String manifest = this.getManifest(file, holder.getProject());
+                if (manifest != null) {
+                    // get manifest directory and strip it from path -> normalized path
+                    // iterate extracted NS-es: if clazz FQN starts with the NS -> extract locations and match against each
+                    // report if none of location has been matched
                 }
+
+//                final String path = file.getVirtualFile().getPath();
+//                if (path.contains("/src/")) {
+//                    final String[] fragments = path.split("/src/");
+//                    if (fragments.length == 2) {
+//                        final String normalizedFragment = fragments[1].replaceAll("/", "\\\\").replaceAll(file.getName(), "");
+//                        final String expectedFqnEnding = "\\" + normalizedFragment + extractedClassName;
+//                        if (!clazz.getFQN().endsWith(expectedFqnEnding)) {
+//                            final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
+//                            if (classNameNode != null) {
+//                                holder.registerProblem(classNameNode, messagePath);
+//                            }
+//                        }
+//                    }
+//                }
             }
 
             private void checkFileNamePsrCompliant(@NotNull PhpClass clazz, @NotNull String extractedClassName, @NotNull String expectedClassName) {
@@ -111,6 +122,25 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                         holder.registerProblem(classNameNode, messageName);
                     }
                 }
+            }
+
+            @Nullable
+            private String getManifest(@NotNull PhpFile file, @NotNull Project project) {
+                String result         = null;
+                final String filePath = file.getVirtualFile().getCanonicalPath();
+                if (filePath != null) {
+                    List<String> manifests;
+                    try {
+                        manifests = FileBasedIndex.getInstance().getValues(ComposerPackageRelationIndexer.identity, filePath, GlobalSearchScope.allScope(project));
+                        if (manifests.size() == 1) {
+                            result = manifests.get(0);
+                        }
+                        manifests.clear();
+                    } catch (final Throwable failure) {
+                        result = null;
+                    }
+                }
+                return result;
             }
 
             @NotNull

@@ -35,6 +35,7 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
     public DataIndexer<String, String, FileContent> getIndexer() {
         return file -> {
             final VirtualFile rootFolder = file.getProject().getBaseDir();
+            /* up-wards scan for manifest or project root */
             VirtualFile manifest = null, currentFolder = file.getFile().getParent();
             while (currentFolder != null) {
                 manifest = currentFolder.findChild("composer.json");
@@ -43,7 +44,7 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
                 }
                 currentFolder = currentFolder.getParent();
             }
-
+            /* storing the file - manifest association */
             final String key = file.getFile().getCanonicalPath();
             if (key != null) {
                 final String value = manifest == null ? null : manifest.getCanonicalPath();

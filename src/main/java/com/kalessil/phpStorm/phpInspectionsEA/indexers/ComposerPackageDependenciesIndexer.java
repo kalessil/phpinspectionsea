@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-public class ComposerPackageManifestIndexer extends FileBasedIndexExtension<String, String> {
+public class ComposerPackageDependenciesIndexer extends FileBasedIndexExtension<String, String> {
     public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.packages");
     private final KeyDescriptor<String> descriptor  = new EnumeratorStringDescriptor();
 
@@ -105,7 +105,7 @@ public class ComposerPackageManifestIndexer extends FileBasedIndexExtension<Stri
 
     @Override
     public int getVersion() {
-        return 3;
+        return 1;
     }
 
     @NotNull

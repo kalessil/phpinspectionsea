@@ -18,7 +18,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
-import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageManifestIndexer;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageDependenciesIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
@@ -136,25 +136,25 @@ public class TransitiveDependenciesUsageInspector extends PhpInspection {
                 final FileBasedIndex index = this.getIndex();
                 if (index != null) {
                     final GlobalSearchScope scope        = GlobalSearchScope.allScope(project);
-                    final List<String> dependencyDetails = index.getValues(ComposerPackageManifestIndexer.identity, dependencyManifest, scope);
+                    final List<String> dependencyDetails = index.getValues(ComposerPackageDependenciesIndexer.identity, dependencyManifest, scope);
                     if (dependencyDetails.size() == 1) {
                         /* dependency should be listed in own manifest */
                         final String[] dependencySplit    = dependencyDetails.get(0).split(":", 2);
                         final String[] dependencyPackages = (dependencySplit.length == 2 ? dependencySplit[0] : "").split(",");
                         final String dependencyName       = dependencyPackages.length > 0 ? dependencyPackages[0] : "";
                         if (!dependencyName.isEmpty() && !this.isDependencyIgnored(dependencyName)) {
-                            final List<String> currentDetails = index.getValues(ComposerPackageManifestIndexer.identity, ownManifest, scope);
+                            final List<String> currentDetails = index.getValues(ComposerPackageDependenciesIndexer.identity, ownManifest, scope);
                             if (currentDetails.size() == 1) {
                                 final String[] currentSplit            = currentDetails.get(0).split(":", 2);
                                 final List<String> currentDependencies = Arrays.asList((currentSplit.length == 2 ? currentSplit[1] : "").split(","));
                                 /* false-positive: one of own dependencies replaces the dependency being analyzed */
                                 if (result = currentDependencies.stream().noneMatch(d -> d.equals(dependencyName))) {
-                                    for (final String file : index.getAllKeys(ComposerPackageManifestIndexer.identity, project)) {
+                                    for (final String file : index.getAllKeys(ComposerPackageDependenciesIndexer.identity, project)) {
                                         if (file.equals(ownManifest) || file.equals(dependencyManifest)) {
                                             continue;
                                         }
                                         /* find manifest replacing the dependency */
-                                        final List<String> details = index.getValues(ComposerPackageManifestIndexer.identity, file, scope);
+                                        final List<String> details = index.getValues(ComposerPackageDependenciesIndexer.identity, file, scope);
                                         if (details.size() == 1) {
                                             final String[] split        = details.get(0).split(":", 2);
                                             final List<String> packages = Arrays.asList((split.length == 2 ? split[0] : "").split(","));

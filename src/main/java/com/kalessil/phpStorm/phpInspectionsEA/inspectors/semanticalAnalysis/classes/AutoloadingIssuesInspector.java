@@ -67,32 +67,31 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                         final Matcher matcher = laravelMigration.matcher(fileName);
                         if (matcher.matches()) {
                             this.checkLaravelMigration(clazz, matcher.group(1));
-                        } else {
-                            final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
-                            /* PSR-0 classloading (Package_Subpackage_Class) naming */
-                            String extractedClassName      = clazz.getName();
-                            if (clazz.getFQN().lastIndexOf('\\') == 0 && extractedClassName.indexOf('_') != -1) {
-                                extractedClassName = extractedClassName.substring(extractedClassName.lastIndexOf('_') + 1);
+                            return;
+                        }
+
+                        /* check the file name as per extraction compliant with PSR-0/PSR-4 standards: file name */
+                        final String expectedClassName  = fileName.substring(0, fileName.indexOf('.'));
+                        final String extractedClassName = this.extractClassName(clazz);
+                        if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
+                            final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
+                            if (classNameNode != null) {
+                                holder.registerProblem(classNameNode, messageName);
                             }
-                            /* check the file name as per extraction compliant with PSR-0/PSR-4 standards */
-                            if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
-                                final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
-                                if (classNameNode != null) {
-                                    holder.registerProblem(classNameNode, messageName);
-                                }
-                            } else {
-                                final String path = file.getVirtualFile().getPath();
-                                if (path.contains("/src/")) {
-                                    final String[] fragments = path.split("/src/");
-                                    if (fragments.length == 2) {
-                                        final String normalizedFragment = fragments[1].replaceAll("/", "\\\\").replaceAll(fileName, "");
-                                        final String expectedFqnEnding  = "\\" + normalizedFragment + extractedClassName;
-                                        if (!clazz.getFQN().endsWith(expectedFqnEnding)) {
-                                            final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
-                                            if (classNameNode != null) {
-                                                holder.registerProblem(classNameNode, messagePath);
-                                            }
-                                        }
+                            return;
+                        }
+
+                        /* check the file name as per extraction compliant with PSR-0/PSR-4 standards: directory */
+                        final String path = file.getVirtualFile().getPath();
+                        if (path.contains("/src/")) {
+                            final String[] fragments = path.split("/src/");
+                            if (fragments.length == 2) {
+                                final String normalizedFragment = fragments[1].replaceAll("/", "\\\\").replaceAll(fileName, "");
+                                final String expectedFqnEnding  = "\\" + normalizedFragment + extractedClassName;
+                                if (!clazz.getFQN().endsWith(expectedFqnEnding)) {
+                                    final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
+                                    if (classNameNode != null) {
+                                        holder.registerProblem(classNameNode, messagePath);
                                     }
                                 }
                             }
@@ -109,6 +108,16 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                         holder.registerProblem(classNameNode, messageName);
                     }
                 }
+            }
+
+            @NotNull
+            private String extractClassName(@NotNull PhpClass clazz) {
+                /* PSR-0 and PSR-4 standards based */
+                String extractedClassName = clazz.getName();
+                if (clazz.getFQN().lastIndexOf('\\') == 0 && extractedClassName.indexOf('_') != -1) {
+                    extractedClassName = extractedClassName.substring(extractedClassName.lastIndexOf('_') + 1);
+                }
+                return extractedClassName;
             }
 
             @Nullable

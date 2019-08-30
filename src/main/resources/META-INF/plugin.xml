@@ -21,6 +21,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- indexers -->
 
+    <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageAutoloadingIndexer"/>
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer"/>
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageDependenciesIndexer"/>
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer"/>

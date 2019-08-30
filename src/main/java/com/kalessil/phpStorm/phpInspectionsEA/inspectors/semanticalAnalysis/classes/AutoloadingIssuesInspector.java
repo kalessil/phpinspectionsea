@@ -10,6 +10,7 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageAutoloadingIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -17,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -82,11 +84,20 @@ public class AutoloadingIssuesInspector extends PhpInspection {
             }
 
             private void checkDirectoryNamePsrCompliant(@NotNull PhpFile file, @NotNull PhpClass clazz, @NotNull String extractedClassName) {
-                final String manifest = this.getManifest(file, holder.getProject());
+                final String manifest = this.getComposerManifestPath(file, holder.getProject());
                 if (manifest != null) {
-                    // get manifest directory and strip it from path -> normalized path
-                    // iterate extracted NS-es: if clazz FQN starts with the NS -> extract locations and match against each
-                    // report if none of location has been matched
+                    final List<String> mapping = this.getAutoloadingLocations(manifest, holder.getProject());
+                    if (!mapping.isEmpty()) {
+                        // get manifest directory and strip it from path -> normalized path
+                        // iterate extracted NS-es: if clazz FQN starts with the NS -> extract locations and match against each
+                        // report if none of location has been matched
+
+                        final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
+                        if (classNameNode != null) {
+                            holder.registerProblem(classNameNode, messagePath);
+                        }
+                        mapping.clear();
+                    }
                 }
 
 //                final String path = file.getVirtualFile().getPath();
@@ -125,13 +136,12 @@ public class AutoloadingIssuesInspector extends PhpInspection {
             }
 
             @Nullable
-            private String getManifest(@NotNull PhpFile file, @NotNull Project project) {
+            private String getComposerManifestPath(@NotNull PhpFile file, @NotNull Project project) {
                 String result         = null;
                 final String filePath = file.getVirtualFile().getCanonicalPath();
                 if (filePath != null) {
-                    List<String> manifests;
                     try {
-                        manifests = FileBasedIndex.getInstance().getValues(ComposerPackageRelationIndexer.identity, filePath, GlobalSearchScope.allScope(project));
+                        final List<String> manifests = new ArrayList<>(FileBasedIndex.getInstance().getValues(ComposerPackageRelationIndexer.identity, filePath, GlobalSearchScope.allScope(project)));
                         if (manifests.size() == 1) {
                             result = manifests.get(0);
                         }
@@ -141,6 +151,17 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                     }
                 }
                 return result;
+            }
+
+            @NotNull
+            private List<String> getAutoloadingLocations(@NotNull String manifestPath, @NotNull Project project) {
+                List<String> result;
+                try {
+                    result = new ArrayList<>(FileBasedIndex.getInstance().getValues(ComposerPackageAutoloadingIndexer.identity, manifestPath, GlobalSearchScope.allScope(project)));
+                } catch (final Throwable failure) {
+                    result = new ArrayList<>();
+                }
+                return  result;
             }
 
             @NotNull

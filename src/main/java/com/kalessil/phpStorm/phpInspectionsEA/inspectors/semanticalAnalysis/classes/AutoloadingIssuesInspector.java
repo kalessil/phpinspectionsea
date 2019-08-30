@@ -13,12 +13,12 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -66,23 +66,15 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                     if (clazz != null) {
                         final Matcher matcher = laravelMigration.matcher(fileName);
                         if (matcher.matches()) {
-                            String expectedClassName = StringUtil.capitalizeWords(matcher.group(1).replaceAll("_", " "), true);
-                            expectedClassName        = expectedClassName.replaceAll(" ", "");
-                            /* match names and report issues */
-                            if (!expectedClassName.equals(clazz.getName())) {
-                                final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
-                                if (classNameNode != null) {
-                                    holder.registerProblem(classNameNode, messageName);
-                                }
-                            }
+                            this.checkLaravelMigration(clazz, matcher.group(1));
                         } else {
                             final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
-                            /* case: older PSR classloading naming (Package_Subpackage_Class) */
+                            /* PSR-0 classloading (Package_Subpackage_Class) naming */
                             String extractedClassName      = clazz.getName();
                             if (clazz.getFQN().lastIndexOf('\\') == 0 && extractedClassName.indexOf('_') != -1) {
                                 extractedClassName = extractedClassName.substring(extractedClassName.lastIndexOf('_') + 1);
                             }
-                            /* match names and report issues */
+                            /* check the file name as per extraction compliant with PSR-0/PSR-4 standards */
                             if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                                 final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                                 if (classNameNode != null) {
@@ -109,19 +101,24 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                 }
             }
 
-            @Nullable
-            private PhpClass getClass(@NotNull PhpFile file) {
-                /* according to PSRs file can contain only one class */
-                final List<PhpClass> classes = new ArrayList<>();
-                for (final PsiElement definition : file.getTopLevelDefs().values()) {
-                    if (definition instanceof PhpClass) {
-                        classes.add((PhpClass) definition);
-                        if (classes.size() > 1) {
-                            break;
-                        }
+            private void checkLaravelMigration(@NotNull PhpClass clazz, @NotNull String classNamingInput) {
+                final String expectedClassName = StringUtil.capitalizeWords(classNamingInput.replaceAll("_", " "), true).replaceAll(" ", "");
+                if (!expectedClassName.equals(clazz.getName())) {
+                    final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
+                    if (classNameNode != null) {
+                        holder.registerProblem(classNameNode, messageName);
                     }
                 }
-                final PhpClass clazz = classes.size() == 1 ? classes.get(0) : null;
+            }
+
+            @Nullable
+            private PhpClass getClass(@NotNull PhpFile file) {
+                PhpClass clazz                 = null;
+                final List<PsiElement> classes = file.getTopLevelDefs().values().stream().filter(d -> d instanceof PhpClass).collect(Collectors.toList());
+                if (classes.size() == 1) {
+                    /* according to PSRs file can contain only one class */
+                    clazz = (PhpClass) classes.get(0);
+                }
                 classes.clear();
 
                 return clazz;

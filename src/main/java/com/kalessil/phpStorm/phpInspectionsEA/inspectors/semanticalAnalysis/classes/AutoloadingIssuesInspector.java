@@ -59,15 +59,14 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                     file.getTopLevelDefs().values().stream()
                             .filter(definition  -> definition instanceof PhpClass)
                             .forEach(definition -> classes.add((PhpClass) definition));
-                    /* multiple classes defined, do nothing - this doesn't comply to PSRs */
                     if (classes.size() == 1) {
                         final PhpClass clazz = classes.get(0);
-                        /* support older PSR classloading (Package_Subpackage_Class) naming */
+                        /* PSR-0 classloading (Package_Subpackage_Class) naming */
                         String extractedClassName = clazz.getName();
                         if (clazz.getFQN().lastIndexOf('\\') == 0 && extractedClassName.indexOf('_') != -1) {
                             extractedClassName = extractedClassName.substring(1 + extractedClassName.lastIndexOf('_'));
                         }
-                        /* now check if names are identical */
+                        /* check the file name as per extraction compliant with PSR-0/PSR-4 standards */
                         final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
                         if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                             final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);

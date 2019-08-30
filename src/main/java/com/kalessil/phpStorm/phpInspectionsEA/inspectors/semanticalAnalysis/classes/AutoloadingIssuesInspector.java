@@ -75,8 +75,8 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                             this.checkLaravelMigration(clazz, matcher.group(1));
                         } else {
                             /* check the file name as per extraction compliant with PSR-0/PSR-4 standards */
-                            final String extractedClassName = this.extractClassName(clazz);
-                            this.checkFileNamePsrCompliant(clazz, extractedClassName, fileName.substring(0, fileName.indexOf('.')));
+                            final String extractedClassName = this.getClassName(clazz);
+                            this.checkFileNamePsrCompliant(clazz, extractedClassName, fileName);
                             this.checkDirectoryNamePsrCompliant(file, clazz, extractedClassName);
                         }
                     }
@@ -116,7 +116,8 @@ public class AutoloadingIssuesInspector extends PhpInspection {
 //                }
             }
 
-            private void checkFileNamePsrCompliant(@NotNull PhpClass clazz, @NotNull String extractedClassName, @NotNull String expectedClassName) {
+            private void checkFileNamePsrCompliant(@NotNull PhpClass clazz, @NotNull String extractedClassName, @NotNull String fileName) {
+                final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
                 if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                     final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                     if (classNameNode != null) {
@@ -165,7 +166,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
             }
 
             @NotNull
-            private String extractClassName(@NotNull PhpClass clazz) {
+            private String getClassName(@NotNull PhpClass clazz) {
                 String extractedClassName = clazz.getName();
                 if (clazz.getFQN().lastIndexOf('\\') == 0 && extractedClassName.indexOf('_') != -1) {
                     extractedClassName = extractedClassName.substring(extractedClassName.lastIndexOf('_') + 1);

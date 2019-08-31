@@ -5,9 +5,14 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -48,12 +53,27 @@ public class SecureCookiesTransferInspector extends LocalInspectionTool {
 
                 final String functionName = reference.getName();
                 if (functionName != null) {
-                    if (functionName.equals("session_set_cookie_params")) {
+                    if (functionName.equals("session_set_cookie_params") && this.isTargetCall(reference, 1)) {
                         this.analyze(reference, 3, 4);
-                    } else if (functionName.equals("setcookie")) {
+                    } else if (functionName.equals("setcookie") && this.isTargetCall(reference, 3)) {
                         this.analyze(reference, 5, 6);
                     }
                 }
+            }
+
+            private boolean isTargetCall(@NotNull FunctionReference reference, int optionsArrayPosition) {
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length == optionsArrayPosition && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
+                    final PsiElement optionsCandidate = arguments[optionsArrayPosition - 1];
+                    if (optionsCandidate instanceof PhpTypedElement) {
+                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) optionsCandidate, holder.getProject());
+                        if (resolved != null && !resolved.hasUnknown()) {
+                            return resolved.getTypes().stream().noneMatch(t -> Types.getType(t).equals(Types.strArray));
+                        }
+                    }
+                }
+
+                return true;
             }
 
             private void analyze(@NotNull FunctionReference reference, int secureFlagPosition, int httpOnlyFlagPosition) {

@@ -89,9 +89,7 @@ public class UnnecessaryBooleanCheckInspector extends PhpInspection {
                 if (expression instanceof PhpTypedElement) {
                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) expression, holder.getProject());
                     if (resolved != null) {
-                        return resolved.size() == 1 &&
-                               !resolved.hasUnknown() &&
-                               Types.getType(resolved.getTypes().iterator().next()).equals(Types.strBoolean);
+                        return resolved.size() == 1 && !resolved.hasUnknown() && resolved.equals(PhpType.BOOLEAN);
                     }
                 }
                 return false;

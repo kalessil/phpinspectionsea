@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc;
 
 import com.intellij.codeInspection.LocalInspectionEP;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.openapi.extensions.PluginId;
@@ -28,7 +27,7 @@ import static com.intellij.codeInspection.LocalInspectionEP.LOCAL_INSPECTION;
  */
 
 public class UnknownInspectionInspector extends BasePhpInspection {
-    private static final String message = "Unknown inspection: %i%.";
+    private static final String message = "Unknown inspection: %s.";
 
     final private static Set<String> inspectionsNames;
     private static int minInspectionNameLength;
@@ -75,7 +74,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                         if (!inspections.isEmpty()) {
                             final PsiElement target = tag.getFirstChild();
                             if (target != null) {
-                                holder.registerProblem(target, message.replace("%i%", String.join(", ", inspections)));
+                                holder.registerProblem(target, String.format(message, String.join(", ", inspections)));
                             }
                             inspections.clear();
                         }
@@ -86,8 +85,9 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     }
 
     private static Set<String> collectPhpRelatedInspections() {
+        final Set<String> names = new HashSet<>();
+
         final PluginId phpPlugin = PluginId.getId("com.jetbrains.php");
-        final Set<String> names  = new HashSet<>();
         for (final LocalInspectionEP inspection : LOCAL_INSPECTION.getExtensions()) {
             final IdeaPluginDescriptor plugin = (IdeaPluginDescriptor) inspection.getPluginDescriptor();
             if (phpPlugin.equals(plugin.getPluginId()) || ArrayUtils.contains(plugin.getDependentPluginIds(), phpPlugin)) {

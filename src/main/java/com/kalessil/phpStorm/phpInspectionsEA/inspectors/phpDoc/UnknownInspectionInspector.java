@@ -1,26 +1,22 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc;
 
+import com.intellij.codeInspection.LocalInspectionEP;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.containers.MultiMap;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import org.apache.commons.lang.ArrayUtils;
-import org.jdom.Attribute;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.intellij.codeInspection.LocalInspectionEP.LOCAL_INSPECTION;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -37,9 +33,8 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     final private static Set<String> inspectionsNames;
     private static int minInspectionNameLength;
     static {
-        inspectionsNames = collectKnownInspections();
+        inspectionsNames = collectPhpRelatedInspections();
         inspectionsNames.add("phpinspectionsea");
-        /* spell checker is a nameless plugin with no deps, hence hardcoding its inspections */
         inspectionsNames.add("SpellCheckingInspection");
         inspectionsNames.add("SqlNoDataSourceInspection");
 
@@ -71,63 +66,32 @@ public class UnknownInspectionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpDocTag(@NotNull PhpDocTag tag) {
-                if (!tag.getName().equals("@noinspection")) {
-                    return;
-                }
-
-                /* cleanup the tag and ensure we have anything to check */
-                final String tagValue     = tag.getTagValue().replaceAll("[^\\p{L}\\p{Nd}]+", " ").trim();
-                final String[] suppressed = tagValue.split("\\s+");
-                if (0 == suppressed.length || tagValue.isEmpty()) {
-                    return;
-                }
-
-                /* check if all suppressed inspections are known */
-                final List<String> reported = new ArrayList<>();
-                for (String suppression : suppressed) {
-                    if (suppression.length() >= minInspectionNameLength && !inspectionsNames.contains(suppression)) {
-                        reported.add(suppression);
+                if (tag.getName().equals("@noinspection")) {
+                    final String[] candidates = tag.getTagValue().replaceAll("[^\\p{L}\\p{Nd}]+", " ").trim().split("\\s+");
+                    if (candidates.length > 0) {
+                        final List<String> inspections = Arrays.stream(candidates)
+                                .filter(candidate -> candidate.length() >= minInspectionNameLength && !inspectionsNames.contains(candidate))
+                                .collect(Collectors.toList());
+                        if (!inspections.isEmpty()) {
+                            final PsiElement target = tag.getFirstChild();
+                            if (target != null) {
+                                holder.registerProblem(target, message.replace("%i%", String.join(", ", inspections)));
+                            }
+                            inspections.clear();
+                        }
                     }
-                }
-
-                /* report unknown inspections; if inspections provided by not loaded plugin they are reported */
-                if (!reported.isEmpty()) {
-                    final PsiElement target = tag.getFirstChild();
-                    if (null != target) {
-                        holder.registerProblem(target, message.replace("%i%", String.join(", ", reported)), ProblemHighlightType.WEAK_WARNING);
-                    }
-
-                    reported.clear();
                 }
             }
         };
     }
 
-    private static Set<String> collectKnownInspections() {
-        final Set<String> names   = new HashSet<>();
-        final PluginId phpSupport = PluginId.getId("com.jetbrains.php");
-
-        for (final IdeaPluginDescriptor plugin : PluginManager.getPlugins()) {
-            /* check plugins' dependencies and extensions */
-            /* we have to rely on impl-class, see  */
-            final MultiMap<String, Element> extensions = ((IdeaPluginDescriptorImpl) plugin).getExtensions();
-            final boolean isPhpPlugin                  = plugin.getPluginId().equals(phpSupport);
-            if (null == extensions || (!ArrayUtils.contains(plugin.getDependentPluginIds(), phpSupport)) && !isPhpPlugin) {
-                continue;
-            }
-
-            /* extract inspections; short names */
-            for (final Element node : extensions.values()) {
-                final String nodeName = node.getName();
-                if (null == nodeName || !nodeName.equals("localInspection")) {
-                    continue;
-                }
-
-                final Attribute name   = node.getAttribute("shortName");
-                final String shortName = null == name ? null : name.getValue();
-                if (null != shortName && !shortName.isEmpty()) {
-                    names.add(shortName);
-                }
+    private static Set<String> collectPhpRelatedInspections() {
+        final PluginId phpPlugin = PluginId.getId("com.jetbrains.php");
+        final Set<String> names  = new HashSet<>();
+        for (final LocalInspectionEP inspection : LOCAL_INSPECTION.getExtensions()) {
+            final IdeaPluginDescriptor plugin = (IdeaPluginDescriptor) inspection.getPluginDescriptor();
+            if (phpPlugin.equals(plugin.getPluginId()) || ArrayUtils.contains(plugin.getDependentPluginIds(), phpPlugin)) {
+                names.add(inspection.getShortName());
             }
         }
 

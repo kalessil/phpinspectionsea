@@ -134,15 +134,28 @@ final public class MultipleValuesEqualityStrategy {
     }
 
     private static boolean isConstantCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
-        return what.second == byWhat.second && OpenapiEquivalenceUtil.areEqual(what.first.first, byWhat.first.first);
+        if (what.second == byWhat.second) {
+            if (!(what.first.second instanceof Variable) && !(byWhat.first.second instanceof Variable)) {
+                return OpenapiEquivalenceUtil.areEqual(what.first.first, byWhat.first.first);
+            }
+        }
+        return false;
     }
 
     private static boolean isNoEffectCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
-        return what.second != byWhat.second && OpenapiEquivalenceUtil.areEqual(what.first.first, byWhat.first.first);
+        if (what.second != byWhat.second) {
+            if (!(what.first.second instanceof Variable) && !(byWhat.first.second instanceof Variable)) {
+                return OpenapiEquivalenceUtil.areEqual(what.first.first, byWhat.first.first);
+            }
+        }
+        return false;
     }
 
     private static boolean isSameValue(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
-        return OpenapiEquivalenceUtil.areEqual(what.first.second, byWhat.first.second);
+        if (!(what.first.second instanceof Variable) && !(byWhat.first.second instanceof Variable)) {
+            return OpenapiEquivalenceUtil.areEqual(what.first.second, byWhat.first.second);
+        }
+        return false;
     }
 
     @Nullable
@@ -154,7 +167,7 @@ final public class MultipleValuesEqualityStrategy {
             final PsiElement container  = valueProbe != null && isValueType(valueProbe) ? ExpressionSemanticUtil.getExpressionTroughParenthesis(source.getLeftOperand()) : valueProbe;
             if (container != null) {
                 final PsiElement value = OpenapiElementsUtil.getSecondOperand(source, container);
-                if (value != null && isValueType(value)) {
+                if (value != null && (value instanceof Variable || isValueType(value))) {
                     result = new Pair<>(new Pair<>(container, value), operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL);
                 }
             }

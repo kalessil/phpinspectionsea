@@ -15,10 +15,11 @@
     if ($x != 5 || <error descr="'$x != 5' seems to have no effect due to '$x != 5'.">$x != 5</error>) {}
     if ($x == 5 || <error descr="'$x == 5 || $x != 5' seems to be always true.">$x != 5</error>) {}
     if ($x == 5 && <error descr="'$x == 5 && $x != 5' seems to be always false.">$x != 5</error>) {}
-    if ($x == $y && $x == $y) {}
-    if ($x != $y || $x != $y) {}
-    if ($x == $y || $x != $y) {}
-    if ($x == $y && $x != $y) {}
+
+    if ($x == $y && $y == $x) {}
+    if ($x != $y || $y != $x) {}
+    if ($x == $y || $y != $x) {}
+    if ($x == $y && $y != $x) {}
 
     /* false-positives: non-constant values */
     if ($x == 5 && $x == $y) {}

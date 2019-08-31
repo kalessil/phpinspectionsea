@@ -18,10 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -37,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class AutoloadingIssuesInspector extends PhpInspection {
     private static final String messageName = "Class autoloading might be broken: file and class names are not matching.";
-    private static final String messagePath = "Class autoloading might be broken: directory path and namespace are not matching.";
+    private static final String messagePath = "Class autoloading might be broken: directory path and namespace are not matching. Expecting one of to exists: %s";
 
     final static private Pattern laravelMigration        = Pattern.compile("\\d{4}_\\d{2}_\\d{2}_\\d{6}_(\\w+)\\.php");
     private static final Collection<String> ignoredFiles = new HashSet<>();
@@ -75,45 +72,43 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                             this.checkLaravelMigration(clazz, matcher.group(1));
                         } else {
                             /* check the file name as per extraction compliant with PSR-0/PSR-4 standards */
-                            final String extractedClassName = this.getClassName(clazz);
-                            this.checkFileNamePsrCompliant(clazz, extractedClassName, fileName);
-                            this.checkDirectoryNamePsrCompliant(file, clazz, extractedClassName);
+                            this.checkFileNamePsrCompliant(clazz, this.getClassName(clazz), fileName);
+                            this.checkDirectoryNamePsrCompliant(file, clazz);
                         }
                     }
                 }
             }
 
-            private void checkDirectoryNamePsrCompliant(@NotNull PhpFile file, @NotNull PhpClass clazz, @NotNull String extractedClassName) {
+            private void checkDirectoryNamePsrCompliant(@NotNull PhpFile file, @NotNull PhpClass clazz) {
                 final String manifest = this.getComposerManifestPath(file, holder.getProject());
                 if (manifest != null) {
                     final List<String> mapping = this.getAutoloadingLocations(manifest, holder.getProject());
                     if (!mapping.isEmpty()) {
-                        // get manifest directory and strip it from path -> normalized path
-                        // iterate extracted NS-es: if clazz FQN starts with the NS -> extract locations and match against each
-                        // report if none of location has been matched
-
-                        final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
-                        if (classNameNode != null) {
-                            holder.registerProblem(classNameNode, messagePath);
+                        final String classFqn             = clazz.getFQN();
+                        final String fileLocationRelative = file.getVirtualFile().getCanonicalPath().replace(manifest.replace("composer.json", ""), "");
+                        for (final String mappingEntry : mapping) {
+                            final String[] mappingFragments = mappingEntry.split(":", 2);
+                            if (mappingFragments.length == 2 && classFqn.startsWith('\\' + mappingFragments[0])) {
+                                final List<String> possibleFileLocations = Arrays.stream(mappingFragments[1].split(","))
+                                        .map(location -> StringUtil.trimTrailing(StringUtil.trimLeading(location, '/'), '/') + '/')
+                                        .map(location -> location + fileLocationRelative.replaceFirst(location, ""))
+                                        .collect(Collectors.toList());
+                                if (!possibleFileLocations.isEmpty()) {
+                                    final String fileLocationFromFqn = classFqn.replace('\\' + mappingFragments[0], "").replaceAll("\\\\", "/") + ".php";
+                                    final boolean isTarget           = possibleFileLocations.stream().noneMatch(location -> location.endsWith('/' + fileLocationFromFqn));
+                                    if (isTarget) {
+                                        final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
+                                        if (classNameNode != null) {
+                                            holder.registerProblem(classNameNode, String.format(messagePath, String.join(",", possibleFileLocations)));
+                                        }
+                                    }
+                                    possibleFileLocations.clear();
+                                }
+                            }
                         }
                         mapping.clear();
                     }
                 }
-
-//                final String path = file.getVirtualFile().getPath();
-//                if (path.contains("/src/")) {
-//                    final String[] fragments = path.split("/src/");
-//                    if (fragments.length == 2) {
-//                        final String normalizedFragment = fragments[1].replaceAll("/", "\\\\").replaceAll(file.getName(), "");
-//                        final String expectedFqnEnding = "\\" + normalizedFragment + extractedClassName;
-//                        if (!clazz.getFQN().endsWith(expectedFqnEnding)) {
-//                            final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
-//                            if (classNameNode != null) {
-//                                holder.registerProblem(classNameNode, messagePath);
-//                            }
-//                        }
-//                    }
-//                }
             }
 
             private void checkFileNamePsrCompliant(@NotNull PhpClass clazz, @NotNull String extractedClassName, @NotNull String fileName) {

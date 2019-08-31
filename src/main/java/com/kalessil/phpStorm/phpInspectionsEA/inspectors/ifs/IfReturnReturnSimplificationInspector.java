@@ -240,7 +240,7 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                     final Function function = (Function) resolved;
                     if (OpenapiElementsUtil.getReturnType(function) != null) {
                         final PhpType returnType = function.getType();
-                        return returnType.size() == 1 && returnType.equals(PhpType.BOOLEAN);
+                        return returnType.size() == 1 && !returnType.hasUnknown() && returnType.equals(PhpType.BOOLEAN);
                     }
                 }
                 return false;

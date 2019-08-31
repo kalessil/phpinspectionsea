@@ -57,40 +57,64 @@ final public class MultipleValuesEqualityStrategy {
             @NotNull ProblemsHolder holder
     ) {
         boolean result                                                 = false;
-        final Map<BinaryExpression, Pair<PsiElement, Boolean>> details = new HashMap<>();
+        final Map<BinaryExpression, Pair<Pair<PsiElement, PsiElement>, Boolean>> details = new HashMap<>();
         for (final BinaryExpression fragment : filtered) {
-            final Pair<PsiElement, Boolean> current = details.computeIfAbsent(fragment, MultipleValuesEqualityStrategy::extract);
+            final Pair<Pair<PsiElement, PsiElement>, Boolean> current = details.computeIfAbsent(fragment, MultipleValuesEqualityStrategy::extract);
             if (current != null) {
                 boolean reachedStartingPoint = false;
                 for (final BinaryExpression match : filtered) {
                     reachedStartingPoint = reachedStartingPoint || match == fragment;
                     if (reachedStartingPoint && match != fragment) {
-                        final Pair<PsiElement, Boolean> next = details.computeIfAbsent(match, MultipleValuesEqualityStrategy::extract);
+                        final Pair<Pair<PsiElement, PsiElement>, Boolean> next = details.computeIfAbsent(match, MultipleValuesEqualityStrategy::extract);
                         if (next != null) {
                             if (operator == PhpTokenTypes.opOR) {
                                 if (current.second && isConstantCondition(current, next)) {
-                                    holder.registerProblem(match, String.format(messageAlwaysTrue, fragment.getText(), match.getText()));
+                                    if (isSameValue(current, next)) {
+                                        holder.registerProblem(
+                                                match,
+                                                String.format(messageNoEffect, match.getText(), fragment.getText()),
+                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                        );
+                                    } else {
+                                        holder.registerProblem(match, String.format(messageAlwaysTrue, fragment.getText(), match.getText()));
+                                    }
                                     result = true;
                                 } else if (isNoEffectCondition(current, next)) {
-                                    final PsiElement target = current.second ? match : fragment;
-                                    holder.registerProblem(
-                                            target,
-                                            String.format(messageNoEffect, target.getText(), (target == fragment ? match : fragment).getText()),
-                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                                    );
+                                    if (isSameValue(current, next)) {
+                                        holder.registerProblem(match, String.format(messageAlwaysTrue, fragment.getText(), match.getText()));
+                                    } else {
+                                        final PsiElement target = current.second ? match : fragment;
+                                        holder.registerProblem(
+                                                target,
+                                                String.format(messageNoEffect, target.getText(), (target == fragment ? match : fragment).getText()),
+                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                        );
+                                    }
                                     result = true;
                                 }
                             } else {
                                 if (!current.second && isConstantCondition(current, next)) {
-                                    holder.registerProblem(match, String.format(messageAlwaysFalse, fragment.getText(), match.getText()));
+                                    if (isSameValue(current, next)) {
+                                        holder.registerProblem(match, String.format(
+                                                messageNoEffect,
+                                                match.getText(), fragment.getText()),
+                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                        );
+                                    } else {
+                                        holder.registerProblem(match, String.format(messageAlwaysFalse, fragment.getText(), match.getText()));
+                                    }
                                     result = true;
                                 } else if (isNoEffectCondition(current, next)) {
-                                    final PsiElement target = current.second ? fragment : match;
-                                    holder.registerProblem(target, String.format(
-                                            messageNoEffect,
-                                            target.getText(), (target == fragment ? match : fragment).getText()),
-                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                                    );
+                                    if (isSameValue(current, next)) {
+                                        holder.registerProblem(match, String.format(messageAlwaysFalse, fragment.getText(), match.getText()));
+                                    } else {
+                                        final PsiElement target = current.second ? fragment : match;
+                                        holder.registerProblem(target, String.format(
+                                                messageNoEffect,
+                                                target.getText(), (target == fragment ? match : fragment).getText()),
+                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                        );
+                                    }
                                     result = true;
                                 }
                             }
@@ -110,17 +134,21 @@ final public class MultipleValuesEqualityStrategy {
                 OpenapiTypesUtil.isNumber(element);
     }
 
-    private static boolean isConstantCondition(@NotNull Pair<PsiElement, Boolean> what, Pair<PsiElement, Boolean> byWhat) {
-        return what.second == byWhat.second && OpenapiEquivalenceUtil.areEqual(what.first, byWhat.first);
+    private static boolean isConstantCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
+        return what.second == byWhat.second && OpenapiEquivalenceUtil.areEqual(what.first.first, byWhat.first.first);
     }
 
-    private static boolean isNoEffectCondition(@NotNull Pair<PsiElement, Boolean> what, Pair<PsiElement, Boolean> byWhat) {
-        return what.second != byWhat.second && OpenapiEquivalenceUtil.areEqual(what.first, byWhat.first);
+    private static boolean isNoEffectCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
+        return what.second != byWhat.second && OpenapiEquivalenceUtil.areEqual(what.first.first, byWhat.first.first);
+    }
+
+    private static boolean isSameValue(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
+        return OpenapiEquivalenceUtil.areEqual(what.first.second, byWhat.first.second);
     }
 
     @Nullable
-    private static Pair<PsiElement, Boolean> extract(@NotNull BinaryExpression source) {
-        Pair<PsiElement, Boolean> result = null;
+    private static Pair<Pair<PsiElement, PsiElement>, Boolean> extract(@NotNull BinaryExpression source) {
+        Pair<Pair<PsiElement, PsiElement>, Boolean> result = null;
         final IElementType operator      = source.getOperationType();
         if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opNOT_EQUAL) {
             final PsiElement valueProbe = ExpressionSemanticUtil.getExpressionTroughParenthesis(source.getRightOperand());
@@ -128,11 +156,11 @@ final public class MultipleValuesEqualityStrategy {
             if (container != null) {
                 final PsiElement value = OpenapiElementsUtil.getSecondOperand(source, container);
                 if (value != null && isValueType(value)) {
-                    result = new Pair<>(container, operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL);
+                    result = new Pair<>(new Pair<>(container, value), operator == PhpTokenTypes.opNOT_IDENTICAL || operator == PhpTokenTypes.opNOT_EQUAL);
                 }
             }
         }
-        return  result;
+        return result;
     }
 
     @NotNull

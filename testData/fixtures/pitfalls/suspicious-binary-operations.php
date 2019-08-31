@@ -78,6 +78,11 @@ if ($x !== 5 || <error descr="'$x !== 5 || $x !== 6' seems to be always true.">$
 if (<error descr="'$x == 5' seems to have no effect due to '$x != 6'.">$x == 5</error> || $x != 6) {}
 if ($x == 5 && <error descr="'$x != 6' seems to have no effect due to '$x == 5'.">$x != 6</error>) {}
 
+/* logical operands and multi-value edge-cases */
+if ($x == 5 && <error descr="'$x == 5' seems to have no effect due to '$x == 5'.">$x == 5</error>) {}
+if ($x != 5 || <error descr="'$x != 5' seems to have no effect due to '$x != 5'.">$x != 5</error>) {}
+if ($x == 5 || <error descr="'$x == 5 || $x != 5' seems to be always true.">$x != 5</error>) {}
+if ($x == 5 && <error descr="'$x == 5 && $x != 5' seems to be always false.">$x != 5</error>) {}
 
 /* false-positives: non-constant values */
 if ($x == 5 && $x == $y) {}

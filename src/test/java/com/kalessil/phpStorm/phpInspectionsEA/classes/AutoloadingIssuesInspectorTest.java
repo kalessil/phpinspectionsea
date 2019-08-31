@@ -15,6 +15,7 @@ final public class AutoloadingIssuesInspectorTest extends PhpCodeInsightFixtureT
     }
     public void testIfFindsDirectoryNameIssues() {
         myFixture.enableInspections(new AutoloadingIssuesInspector());
+        myFixture.configureByFile("testData/fixtures/classes/brokenAutoloading/composer.json");
         myFixture.configureByFile("testData/fixtures/classes/brokenAutoloading/src/Correct/Clazz.php");
         myFixture.testHighlighting(true, false, true);
         myFixture.configureByFile("testData/fixtures/classes/brokenAutoloading/src/Wrong/Clazz.php");

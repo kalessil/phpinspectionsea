@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class AutoloadingIssuesInspector extends PhpInspection {
     private static final String messageName = "Class autoloading might be broken: file and class names are not matching.";
-    private static final String messagePath = "Class autoloading might be broken: directory path and namespace are not matching. Expecting one of to exists: %s";
+    private static final String messagePath = "Class autoloading might be broken: directory path and namespace are not matching. Looked up: %s, for %s";
 
     final static private Pattern laravelMigration        = Pattern.compile("\\d{4}_\\d{2}_\\d{2}_\\d{6}_(\\w+)\\.php");
     private static final Collection<String> ignoredFiles = new HashSet<>();
@@ -99,7 +99,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                                     if (isTarget) {
                                         final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                                         if (classNameNode != null) {
-                                            holder.registerProblem(classNameNode, String.format(messagePath, String.join(",", possibleFileLocations)));
+                                            holder.registerProblem(classNameNode, String.format(messagePath, String.join(",", possibleFileLocations), "*/" + fileLocationFromFqn));
                                         }
                                     }
                                     possibleFileLocations.clear();

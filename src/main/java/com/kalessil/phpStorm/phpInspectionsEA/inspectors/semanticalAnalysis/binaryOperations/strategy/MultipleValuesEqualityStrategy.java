@@ -95,9 +95,9 @@ final public class MultipleValuesEqualityStrategy {
                             } else {
                                 if (!current.second && isConstantCondition(current, next)) {
                                     if (isSameValue(current, next)) {
-                                        holder.registerProblem(match, String.format(
-                                                messageNoEffect,
-                                                match.getText(), fragment.getText()),
+                                        holder.registerProblem(
+                                                match,
+                                                String.format(messageNoEffect, match.getText(), fragment.getText()),
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                         );
                                     } else {
@@ -109,9 +109,8 @@ final public class MultipleValuesEqualityStrategy {
                                         holder.registerProblem(match, String.format(messageAlwaysFalse, fragment.getText(), match.getText()));
                                     } else {
                                         final PsiElement target = current.second ? fragment : match;
-                                        holder.registerProblem(target, String.format(
-                                                messageNoEffect,
-                                                target.getText(), (target == fragment ? match : fragment).getText()),
+                                        holder.registerProblem(target,
+                                                String.format(messageNoEffect, target.getText(), (target == fragment ? match : fragment).getText()),
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                         );
                                     }

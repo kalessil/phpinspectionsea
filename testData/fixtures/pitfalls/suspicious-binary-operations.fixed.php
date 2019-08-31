@@ -68,21 +68,3 @@ $falsy    = false;
 if ($nullable >= 5) {}
 if ($falsy > 5) {}
 
-/* logical operands and multi-value cases */
-if ($x == 5 && $x == 6) {}
-if ($x == 5 && $x === 6) {}
-if ($x === 5 && $x === 6) {}
-if ($x != 5 || $x != 6) {}
-if ($x != 5 || $x !== 6) {}
-if ($x !== 5 || $x !== 6) {}
-if ($x == 5 || $x != 6) {}
-if ($x == 5 && $x != 6) {}
-
-/* logical operands and multi-value edge-cases */
-if ($x == 5 && $x == 5) {}
-if ($x != 5 || $x != 5) {}
-if ($x == 5 || $x != 5) {}
-if ($x == 5 && $x != 5) {}
-
-/* false-positives: non-constant values */
-if ($x == 5 && $x == $y) {}

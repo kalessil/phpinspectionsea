@@ -123,14 +123,6 @@ final public class MultipleValuesEqualityInBinaryStrategy {
         return result;
     }
 
-    private static boolean isValueType(@NotNull PsiElement element) {
-        return  element instanceof StringLiteralExpression ||
-                element instanceof ConstantReference ||
-                element instanceof ClassConstantReference ||
-                element instanceof ArrayCreationExpression ||
-                OpenapiTypesUtil.isNumber(element);
-    }
-
     private static boolean isConstantCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
         if (current.second == next.second) {
             final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
@@ -168,6 +160,14 @@ final public class MultipleValuesEqualityInBinaryStrategy {
             return result;
         }
         return false;
+    }
+
+    private static boolean isValueType(@NotNull PsiElement element) {
+        return  element instanceof StringLiteralExpression ||
+                element instanceof ConstantReference ||
+                element instanceof ClassConstantReference ||
+                element instanceof ArrayCreationExpression ||
+                OpenapiTypesUtil.isNumber(element);
     }
 
     @NotNull

@@ -62,9 +62,17 @@ final public class MultipleValuesEqualityInIfBodyStrategy {
                         final Pair<Pair<Variable, PsiElement>, Boolean> next = extractBinaryRepresentation(match);
                         if (next != null && isConstantCondition(current, next)) {
                             if (current.second == next.second) {
-                                holder.registerProblem(match, String.format(messageAlwaysTrue, match.getText()));
+                                if (isSameValue(current, next)) {
+                                    holder.registerProblem(match, String.format(messageAlwaysTrue, match.getText()));
+                                } else {
+                                    holder.registerProblem(match, String.format(messageAlwaysFalse, match.getText()));
+                                }
                             } else {
-                                holder.registerProblem(match, String.format(messageAlwaysFalse, match.getText()));
+                                if (isSameValue(current, next)) {
+                                    holder.registerProblem(match, String.format(messageAlwaysFalse, match.getText()));
+                                } else {
+                                    holder.registerProblem(match, String.format(messageAlwaysTrue, match.getText()));
+                                }
                             }
                         }
                     }
@@ -74,6 +82,17 @@ final public class MultipleValuesEqualityInIfBodyStrategy {
         }
 
         return result;
+    }
+
+    private static boolean isSameValue(@NotNull Pair<Pair<Variable, PsiElement>, Boolean> current, Pair<Pair<Variable, PsiElement>, Boolean> next) {
+        final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
+        if (!groups.isEmpty()) {
+            final boolean result = groups.values().stream().anyMatch(l -> l.size() == 2 && OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)));
+            groups.values().forEach(List::clear);
+            groups.clear();
+            return result;
+        }
+        return false;
     }
 
     private static boolean isConstantCondition(@NotNull Pair<Pair<Variable, PsiElement>, Boolean> current, Pair<Pair<Variable, PsiElement>, Boolean> next) {

@@ -36,6 +36,8 @@
     if ($x === 5 && $whatever) { return <error descr="'5 !== $x' seems to be always false.">5 !== $x</error>; }
     if ($x === $y) { return <error descr="'$y === $x' seems to be always true.">$y === $x</error>; }
     if ($x === $y) { return <error descr="'$y !== $x' seems to be always false.">$y !== $x</error>; }
+    if ($x !== $y) { return <error descr="'$y !== $x' seems to be always true.">$y !== $x</error>; }
+    if ($x !== $y) { return <error descr="'$y === $x' seems to be always false.">$y === $x</error>; }
 
     /* false-positives: assignments, non-constant values */
     if ($x === 5) { return $x == $y; }

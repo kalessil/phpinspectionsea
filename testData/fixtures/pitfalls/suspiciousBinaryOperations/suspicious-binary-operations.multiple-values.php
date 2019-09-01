@@ -26,14 +26,16 @@
     if ($x == $z && $x == $y) {}
 
     /* logical operands and multi-value cases for if-statements */
-    if ($x === 5) { return 6 == $x; }
-    if ($x === 5) { return 6 === $x; }
-    if ($x === 5) { return 6 != $x; }
-    if ($x === 5) { return 6 !== $x; }
+    if ($x === 5) { return 6 == $x; } // always false
+    if ($x === 5) { return 6 === $x; } // always false
+    if ($x === 5) { return 6 != $x; } // always true
+    if ($x === 5) { return 6 !== $x; } // always true
 
     /* logical operands and multi-value cases for if-statements - edge-cases */
-    if ($x === 5 && $whatever) { return 6 === $x; }
-    if ($x === 5 && $whatever) { return 6 !== $x; }
+    if ($x === 5 && $whatever) { return 5 === $x; } // always true
+    if ($x === 5 && $whatever) { return 5 !== $x; } // always false
+    if ($x === $y) { return $y === $x; } // always true
+    if ($x === $y) { return $y !== $x; } // always false
 
     /* false-positives: assignments, non-constant values */
     if ($x === 5) { return $x == $y; }

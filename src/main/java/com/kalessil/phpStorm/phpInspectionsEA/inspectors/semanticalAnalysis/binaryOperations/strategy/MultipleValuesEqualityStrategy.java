@@ -136,7 +136,7 @@ final public class MultipleValuesEqualityStrategy {
             final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
             if (!groups.isEmpty()) {
                 final boolean result = groups.values().stream()
-                        .anyMatch(l -> l.size() == 2 && (l.stream().allMatch(i -> i instanceof Variable) || l.stream().allMatch(MultipleValuesEqualityStrategy::isValueType)));
+                        .anyMatch(l -> l.size() == 2 && (OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)) || l.stream().allMatch(MultipleValuesEqualityStrategy::isValueType)));
                 groups.values().forEach(List::clear);
                 groups.clear();
                 return result;
@@ -150,7 +150,7 @@ final public class MultipleValuesEqualityStrategy {
             final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
             if (!groups.isEmpty()) {
                 final boolean result = groups.values().stream()
-                        .anyMatch(l -> l.size() == 2 && (l.stream().allMatch(i -> i instanceof Variable) || l.stream().allMatch(MultipleValuesEqualityStrategy::isValueType)));
+                        .anyMatch(l -> l.size() == 2 && (OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)) || l.stream().allMatch(MultipleValuesEqualityStrategy::isValueType)));
                 groups.values().forEach(List::clear);
                 groups.clear();
                 return result;

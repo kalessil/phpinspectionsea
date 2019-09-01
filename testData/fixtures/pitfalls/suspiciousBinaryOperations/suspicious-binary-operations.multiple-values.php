@@ -23,3 +23,4 @@
 
     /* false-positives: non-constant values */
     if ($x == 5 && $x == $y) {}
+    if ($x == $z && $x == $y) {}

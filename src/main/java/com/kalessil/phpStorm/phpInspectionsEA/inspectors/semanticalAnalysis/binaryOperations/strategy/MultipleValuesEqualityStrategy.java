@@ -42,9 +42,7 @@ final public class MultipleValuesEqualityStrategy {
             final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
             if (!(context instanceof BinaryExpression) || ((BinaryExpression) context).getOperationType() != operator) {
                 final List<BinaryExpression> fragments = extractFragments(expression, operator);
-                if (fragments.size() > 1) {
-                    result = analyze(fragments, operator, holder);
-                }
+                result                                 = fragments.size() > 1 && analyze(fragments, operator, holder);
                 fragments.clear();
             }
         }

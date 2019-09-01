@@ -69,8 +69,11 @@ public class ComposerPackageAutoloadingIndexer extends FileBasedIndexExtension<S
                                                             .forEach(location -> extractedLocations.add(((JsonStringLiteral) location).getValue()));
                                                 }
                                                 if (!extractedLocations.isEmpty()) {
-                                                    autoloading.add(String.format("%s:%s", namespace, String.join(",", extractedLocations)));
-                                                    extractedLocations.clear();
+                                                    extractedLocations.removeIf(String::isEmpty);
+                                                    if (!extractedLocations.isEmpty()) {
+                                                        autoloading.add(String.format("%s:%s", namespace, String.join(",", extractedLocations)));
+                                                        extractedLocations.clear();
+                                                    }
                                                 }
                                             }
                                         });
@@ -110,7 +113,7 @@ public class ComposerPackageAutoloadingIndexer extends FileBasedIndexExtension<S
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 
     @NotNull

@@ -29,7 +29,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-final public class NullableArgumentComparisonStrategy {
+final public class NotOperatorLackingTypeCheckStrategy {
     private static final String messagePattern = "This might work not as expected (an argument can be null/false), use '%s' to be sure.";
 
     private static final Map<IElementType, String> mapping = new HashMap<>();
@@ -56,9 +56,8 @@ final public class NullableArgumentComparisonStrategy {
                         final Set<String> types = new HashSet<>();
                         type.getTypes().forEach(t -> types.add(Types.getType(t)));
                         if (types.contains(Types.strNull) || types.contains(Types.strBoolean)) {
-                            final String replacement
-                                    = String.format("%s %s %s", argument.getText(), mapping.get(operator), value.getText());
-                            final String message = String.format(messagePattern, replacement);
+                            final String replacement = String.format("%s %s %s", argument.getText(), mapping.get(operator), value.getText());
+                            final String message     = String.format(messagePattern, replacement);
                             holder.registerProblem(target, message, new NullableArgumentComparisonFix(replacement));
                             result = true;
                         }

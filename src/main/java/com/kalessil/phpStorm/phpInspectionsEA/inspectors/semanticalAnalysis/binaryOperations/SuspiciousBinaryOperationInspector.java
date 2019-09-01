@@ -46,28 +46,31 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
-                final Collection<BooleanSupplier> callbacks = new ArrayList<>(11);
-                callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
+                final Collection<BooleanSupplier> callbacks = new ArrayList<>(20);
+                /* pit-falls and all sort of weak-typed language issues*/
                 callbacks.add(() -> PossiblyAssignmentStrategy.apply(expression, holder));
                 callbacks.add(() -> PossiblyArrayHashElementDeclarationStrategy.apply(expression, holder));
-                callbacks.add(() -> PossiblyMethodReferenceStrategy.apply(expression, holder));
-                callbacks.add(() -> NullableArgumentComparisonStrategy.apply(expression, holder));
                 callbacks.add(() -> IdenticalOperandsStrategy.apply(expression, holder));
+                callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
+                callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
+                callbacks.add(() -> PossiblyMethodReferenceStrategy.apply(expression, holder));
+                callbacks.add(() -> NotOperatorLackingTypeCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> MisplacedOperatorStrategy.apply(expression, holder));
                 callbacks.add(() -> MistypedLogicalOperatorsStrategy.apply(expression, holder));
                 callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));
+                /* constant conditions */
                 callbacks.add(() -> MultipleFalsyValuesCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInBinaryStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInIfBodyStrategy.apply(expression, holder));
                 callbacks.add(() -> ConstantConditionsPhpVersionStrategy.apply(expression, holder));
                 callbacks.add(() -> ConstantConditionsCountCheckStrategy.apply(expression, holder));
-                callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> TypesIntersectionStrategy.apply(expression, holder));
                 callbacks.add(() -> SimplifyBooleansComparisonStrategy.apply(expression, holder));
+                /* generic cases */
                 callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
                 callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
 
-                /* run through strategies until the first one fired something */
+                /* run through strategies until the first one fired a warning */
                 for (final BooleanSupplier strategy: callbacks) {
                     if (strategy.getAsBoolean()) {
                         break;

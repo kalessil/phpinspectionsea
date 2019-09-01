@@ -145,9 +145,12 @@ final public class MultipleValuesEqualityStrategy {
 
     private static boolean isNoEffectCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
         if (current.second != next.second) {
-            // TODO: rework to build groups (container - verified values); true on any match (multiple groups are possible)
-            if (!(current.first.second instanceof Variable) && !(next.first.second instanceof Variable)) {
-                return OpenapiEquivalenceUtil.areEqual(current.first.first, next.first.first);
+            final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
+            if (!groups.isEmpty()) {
+                final boolean result = groups.values().stream().anyMatch(l -> l.size() == 2);
+                groups.values().forEach(List::clear);
+                groups.clear();
+                return result;
             }
         }
         return false;
@@ -156,7 +159,10 @@ final public class MultipleValuesEqualityStrategy {
     private static boolean isSameValue(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
         final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
         if (!groups.isEmpty()) {
-            return groups.values().stream().anyMatch(l -> l.size() == 2 && OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)));
+            final boolean result = groups.values().stream().anyMatch(l -> l.size() == 2 && OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)));
+            groups.values().forEach(List::clear);
+            groups.clear();
+            return result;
         }
         return false;
     }

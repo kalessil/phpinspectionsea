@@ -18,8 +18,8 @@
 
     if ($x == $y && $y == $x) {}
     if ($x != $y || $y != $x) {}
-    if ($x == $y || $y != $x) {}
-    if ($x == $y && $y != $x) {}
+    if ($x == $y || <error descr="'$x == $y || $y != $x' seems to be always true.">$y != $x</error>) {}
+    if ($x == $y && <error descr="'$x == $y && $y != $x' seems to be always false.">$y != $x</error>) {}
 
     /* false-positives: non-constant values */
     if ($x == 5 && $x == $y) {}

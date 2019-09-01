@@ -36,7 +36,7 @@ final public class MultipleValuesEqualityInIfBodyStrategy {
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result              = false;
         final IElementType operator = expression.getOperationType();
-        if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
+        if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opIDENTICAL) {
             final PsiElement parent  = expression.getParent();
             final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
             if (context instanceof If) {

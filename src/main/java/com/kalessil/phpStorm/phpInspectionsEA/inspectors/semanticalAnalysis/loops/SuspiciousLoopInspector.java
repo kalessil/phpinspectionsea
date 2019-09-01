@@ -14,12 +14,14 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,6 +36,9 @@ import java.util.stream.Stream;
  */
 
 public class SuspiciousLoopInspector extends PhpInspection {
+    // Inspection options.
+    public boolean VERIFY_VARIABLES_OVERRIDE = true;
+
     private static final String messageMultipleConditions     = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String messageLoopBoundariesStepping = "Conditions and repeated operations are not complimentary, please check what's going on here.";
     private static final String messageLoopBoundariesCheck    = "Conditions doesn't seem to be correct, please check what's going on here.";
@@ -82,7 +87,9 @@ public class SuspiciousLoopInspector extends PhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement statement) {
                 if (this.shouldSkipAnalysis(statement, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
-                this.inspectVariables(statement);
+                if (VERIFY_VARIABLES_OVERRIDE) {
+                    this.inspectVariables(statement);
+                }
                 this.inspectParentConditions(statement, statement.getArray());
                 // this.inspectSource(statement, statement.getArray());
             }
@@ -91,8 +98,10 @@ public class SuspiciousLoopInspector extends PhpInspection {
             public void visitPhpFor(@NotNull For statement) {
                 if (this.shouldSkipAnalysis(statement, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
+                if (VERIFY_VARIABLES_OVERRIDE) {
+                    this.inspectVariables(statement);
+                }
                 this.inspectConditions(statement);
-                this.inspectVariables(statement);
                 this.findUsedContainers(statement).forEach(container -> this.inspectParentConditions(statement, container));
                 this.inspectBoundariesCorrectness(statement);
             }
@@ -512,5 +521,10 @@ public class SuspiciousLoopInspector extends PhpInspection {
                 return variables;
             }
         };
+    }
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Verify overriding scope variables", VERIFY_VARIABLES_OVERRIDE, (isSelected) -> VERIFY_VARIABLES_OVERRIDE = isSelected)
+        );
     }
 }

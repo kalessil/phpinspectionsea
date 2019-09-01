@@ -29,7 +29,7 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
-final public class MultipleValuesEqualityStrategy {
+final public class MultipleValuesEqualityInBinaryStrategy {
     private static final String messageAlwaysTrue  = "'%s || %s' seems to be always true.";
     private static final String messageAlwaysFalse = "'%s && %s' seems to be always false.";
     private static final String messageNoEffect    = "'%s' seems to have no effect due to '%s'.";
@@ -57,13 +57,13 @@ final public class MultipleValuesEqualityStrategy {
         boolean result                                                 = false;
         final Map<BinaryExpression, Pair<Pair<PsiElement, PsiElement>, Boolean>> details = new HashMap<>();
         for (final BinaryExpression fragment : filtered) {
-            final Pair<Pair<PsiElement, PsiElement>, Boolean> current = details.computeIfAbsent(fragment, MultipleValuesEqualityStrategy::extract);
+            final Pair<Pair<PsiElement, PsiElement>, Boolean> current = details.computeIfAbsent(fragment, MultipleValuesEqualityInBinaryStrategy::extract);
             if (current != null) {
                 boolean reachedStartingPoint = false;
                 for (final BinaryExpression match : filtered) {
                     reachedStartingPoint = reachedStartingPoint || match == fragment;
                     if (reachedStartingPoint && match != fragment) {
-                        final Pair<Pair<PsiElement, PsiElement>, Boolean> next = details.computeIfAbsent(match, MultipleValuesEqualityStrategy::extract);
+                        final Pair<Pair<PsiElement, PsiElement>, Boolean> next = details.computeIfAbsent(match, MultipleValuesEqualityInBinaryStrategy::extract);
                         if (next != null) {
                             if (operator == PhpTokenTypes.opOR) {
                                 if (current.second && isConstantCondition(current, next)) {
@@ -136,7 +136,7 @@ final public class MultipleValuesEqualityStrategy {
             final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
             if (!groups.isEmpty()) {
                 final boolean result = groups.values().stream()
-                        .anyMatch(l -> l.size() == 2 && (OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)) || l.stream().allMatch(MultipleValuesEqualityStrategy::isValueType)));
+                        .anyMatch(l -> l.size() == 2 && (OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)) || l.stream().allMatch(MultipleValuesEqualityInBinaryStrategy::isValueType)));
                 groups.values().forEach(List::clear);
                 groups.clear();
                 return result;
@@ -150,7 +150,7 @@ final public class MultipleValuesEqualityStrategy {
             final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
             if (!groups.isEmpty()) {
                 final boolean result = groups.values().stream()
-                        .anyMatch(l -> l.size() == 2 && (OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)) || l.stream().allMatch(MultipleValuesEqualityStrategy::isValueType)));
+                        .anyMatch(l -> l.size() == 2 && (OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)) || l.stream().allMatch(MultipleValuesEqualityInBinaryStrategy::isValueType)));
                 groups.values().forEach(List::clear);
                 groups.clear();
                 return result;

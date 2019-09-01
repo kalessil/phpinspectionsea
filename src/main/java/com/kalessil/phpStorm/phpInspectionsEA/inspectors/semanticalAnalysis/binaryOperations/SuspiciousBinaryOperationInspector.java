@@ -24,6 +24,8 @@ import java.util.function.BooleanSupplier;
  */
 
 public class SuspiciousBinaryOperationInspector extends PhpInspection {
+    // TODO: add options for the last 2 strategies
+
     @NotNull
     @Override
     public String getShortName() {
@@ -54,7 +56,6 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> MisplacedOperatorStrategy.apply(expression, holder));
                 callbacks.add(() -> MistypedLogicalOperatorsStrategy.apply(expression, holder));
                 callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));
-                callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleFalsyValuesCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInBinaryStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInIfBodyStrategy.apply(expression, holder));
@@ -63,6 +64,7 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> TypesIntersectionStrategy.apply(expression, holder));
                 callbacks.add(() -> SimplifyBooleansComparisonStrategy.apply(expression, holder));
+                callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
                 callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
 
                 /* run through strategies until the first one fired something */

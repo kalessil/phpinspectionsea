@@ -24,3 +24,14 @@
     /* false-positives: non-constant values */
     if ($x == 5 && $x == $y) {}
     if ($x == $z && $x == $y) {}
+
+    /* logical operands and multi-value cases for if-statements */
+    if ($x === 5) { return 6 == $x; }
+    if ($x === 5) { return 6 === $x; }
+    if ($x === 5) { return 6 != $x; }
+    if ($x === 5) { return 6 !== $x; }
+
+    /* false-positives: assignments, non-constant values */
+    if ($x === 5) { return $x == $y; }
+    if ($x == $z) { return $x == $y; }
+    if ($x === 5) { $x = '...'; return $x === 6; }

@@ -31,6 +31,10 @@
     if ($x === 5) { return 6 != $x; }
     if ($x === 5) { return 6 !== $x; }
 
+    /* logical operands and multi-value cases for if-statements - edge-cases */
+    if ($x === 5 && $whatever) { return 6 === $x; }
+    if ($x === 5 && $whatever) { return 6 !== $x; }
+
     /* false-positives: assignments, non-constant values */
     if ($x === 5) { return $x == $y; }
     if ($x == $z) { return $x == $y; }

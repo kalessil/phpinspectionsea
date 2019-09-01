@@ -133,29 +133,48 @@ final public class MultipleValuesEqualityStrategy {
                 OpenapiTypesUtil.isNumber(element);
     }
 
-    private static boolean isConstantCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
-        if (what.second == byWhat.second) {
-            if (!(what.first.second instanceof Variable) && !(byWhat.first.second instanceof Variable)) {
-                return OpenapiEquivalenceUtil.areEqual(what.first.first, byWhat.first.first);
+    private static boolean isConstantCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
+        if (current.second == next.second) {
+            // TODO: rework to build groups (container - verified values); true on any match (multiple groups are possible)
+            if (!(current.first.second instanceof Variable) && !(next.first.second instanceof Variable)) {
+                return OpenapiEquivalenceUtil.areEqual(current.first.first, next.first.first);
             }
         }
         return false;
     }
 
-    private static boolean isNoEffectCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
-        if (what.second != byWhat.second) {
-            if (!(what.first.second instanceof Variable) && !(byWhat.first.second instanceof Variable)) {
-                return OpenapiEquivalenceUtil.areEqual(what.first.first, byWhat.first.first);
+    private static boolean isNoEffectCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
+        if (current.second != next.second) {
+            // TODO: rework to build groups (container - verified values); true on any match (multiple groups are possible)
+            if (!(current.first.second instanceof Variable) && !(next.first.second instanceof Variable)) {
+                return OpenapiEquivalenceUtil.areEqual(current.first.first, next.first.first);
             }
         }
         return false;
     }
 
-    private static boolean isSameValue(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> what, Pair<Pair<PsiElement, PsiElement>, Boolean> byWhat) {
-        if (!(what.first.second instanceof Variable) && !(byWhat.first.second instanceof Variable)) {
-            return OpenapiEquivalenceUtil.areEqual(what.first.second, byWhat.first.second);
+    private static boolean isSameValue(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
+        final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
+        if (!groups.isEmpty()) {
+            return groups.values().stream().anyMatch(l -> l.size() == 2 && OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)));
         }
         return false;
+    }
+
+    private static Map<PsiElement, List<PsiElement>> groupValues(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
+        final Map<PsiElement, List<PsiElement>> groups = new HashMap<>();
+        Stream.of(current, next).forEach(source -> {
+            if (!isValueType(source.first.first)) {
+                final PsiElement key = groups.keySet().stream().filter(k -> OpenapiEquivalenceUtil.areEqual(k, source.first.first)).findFirst().orElse(source.first.first);
+                groups.computeIfAbsent(key, k -> new ArrayList<>()).add(source.first.second);
+            }
+            if (!isValueType(source.first.second)) {
+                final PsiElement key = groups.keySet().stream().filter(k -> OpenapiEquivalenceUtil.areEqual(k, source.first.second)).findFirst().orElse(source.first.second);
+                groups.computeIfAbsent(key, k -> new ArrayList<>()).add(source.first.first);
+            }
+        });
+
+        return groups;
     }
 
     @Nullable

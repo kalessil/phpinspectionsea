@@ -41,4 +41,5 @@
     if ($x === 5) { return $x == $y; }
     if ($x == $z) { return $x == $y; }
     if ($x !== 5) { return $x === 6; }
+    if ($x !== 5) { return $x !== 6; }
     if ($x === 5) { $x = '...'; return $x === 6; }

@@ -99,7 +99,7 @@ final public class MultipleValuesEqualityInIfBodyStrategy {
         final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
         if (!groups.isEmpty()) {
             final boolean result = groups.values().stream()
-                    .anyMatch(l -> l.size() == 2 && (OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)) || l.stream().allMatch(MultipleValuesEqualityInIfBodyStrategy::isValueType)));
+                    .anyMatch(l -> l.size() == 2 && (OpenapiEquivalenceUtil.areEqual(l.get(0), l.get(1)) || (!current.second && l.stream().allMatch(MultipleValuesEqualityInIfBodyStrategy::isValueType))));
             groups.values().forEach(List::clear);
             groups.clear();
             return result;

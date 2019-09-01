@@ -7,9 +7,11 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BooleanSupplier;
@@ -24,7 +26,10 @@ import java.util.function.BooleanSupplier;
  */
 
 public class SuspiciousBinaryOperationInspector extends PhpInspection {
-    // TODO: add options for the last 2 strategies
+    // Inspection options.
+    public boolean VERIFY_PHP_VERSION_CHECKS            = true;
+    public boolean VERIFY_CONSTANTS_IN_CONDITIONS       = true;
+    public boolean VERIFY_UNCLEAR_OPERATIONS_PRIORITIES = true;
 
     @NotNull
     @Override
@@ -62,13 +67,19 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> MultipleFalsyValuesCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInBinaryStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInIfBodyStrategy.apply(expression, holder));
-                callbacks.add(() -> ConstantConditionsPhpVersionStrategy.apply(expression, holder));
+                if (VERIFY_PHP_VERSION_CHECKS) {
+                    callbacks.add(() -> ConstantConditionsPhpVersionStrategy.apply(expression, holder));
+                }
                 callbacks.add(() -> ConstantConditionsCountCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> TypesIntersectionStrategy.apply(expression, holder));
                 callbacks.add(() -> SimplifyBooleansComparisonStrategy.apply(expression, holder));
                 /* generic cases */
-                callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
-                callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
+                if (VERIFY_CONSTANTS_IN_CONDITIONS) {
+                    callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
+                }
+                if (VERIFY_UNCLEAR_OPERATIONS_PRIORITIES) {
+                    callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
+                }
 
                 /* run through strategies until the first one fired a warning */
                 for (final BooleanSupplier strategy: callbacks) {
@@ -87,5 +98,13 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 ConstantConditionsIsNumericStrategy.apply(reference, holder);
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Verify operations priorities", VERIFY_UNCLEAR_OPERATIONS_PRIORITIES, (isSelected) -> VERIFY_UNCLEAR_OPERATIONS_PRIORITIES = isSelected);
+            component.addCheckbox("Verify PHP version checks", VERIFY_PHP_VERSION_CHECKS, (isSelected) -> VERIFY_PHP_VERSION_CHECKS = isSelected);
+            component.addCheckbox("Verify enforced conditions (with e.g. true)", VERIFY_CONSTANTS_IN_CONDITIONS, (isSelected) -> VERIFY_CONSTANTS_IN_CONDITIONS = isSelected);
+        });
     }
 }

@@ -7,7 +7,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bina
 
 final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        final SuspiciousBinaryOperationInspector inspector = new SuspiciousBinaryOperationInspector();
+        inspector.VERIFY_CONSTANTS_IN_CONDITIONS           = true;
+        inspector.VERIFY_UNCLEAR_OPERATIONS_PRIORITIES     = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/suspicious-binary-operations.php");
         myFixture.testHighlighting(true, false, true);
 
@@ -42,7 +45,9 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
     }
     public void testIfFindsVersionChecks() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP560);
-        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        final SuspiciousBinaryOperationInspector inspector = new SuspiciousBinaryOperationInspector();
+        inspector.VERIFY_PHP_VERSION_CHECKS                = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/suspicious-binary-operations.version.php");
         myFixture.testHighlighting(true, false, true);
     }

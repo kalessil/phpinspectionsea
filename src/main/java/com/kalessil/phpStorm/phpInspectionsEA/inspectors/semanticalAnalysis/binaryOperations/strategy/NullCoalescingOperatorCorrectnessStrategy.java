@@ -40,7 +40,7 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                 }
             } if (left instanceof FunctionReference) {
                 final PhpType resolved = OpenapiResolveUtil.resolveType((FunctionReference) left, holder.getProject());
-                if (resolved != null && !resolved.hasUnknown()) {
+                if (resolved != null && !resolved.isEmpty() && !resolved.hasUnknown()) {
                     final boolean isTarget = resolved.getTypes().stream().map(Types::getType).noneMatch(t -> t.equals(Types.strString) || t.equals(Types.strMixed));
                     if (isTarget) {
                         holder.registerProblem(left, String.format(messagePatternCall, left.getText()));

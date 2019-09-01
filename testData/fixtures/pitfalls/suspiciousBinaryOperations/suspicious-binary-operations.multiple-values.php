@@ -16,8 +16,8 @@
     if ($x == 5 || <error descr="'$x == 5 || $x != 5' seems to be always true.">$x != 5</error>) {}
     if ($x == 5 && <error descr="'$x == 5 && $x != 5' seems to be always false.">$x != 5</error>) {}
 
-    if ($x == $y && $y == $x) {}
-    if ($x != $y || $y != $x) {}
+    if ($x == $y && <error descr="'$y == $x' seems to have no effect due to '$x == $y'.">$y == $x</error>) {}
+    if ($x != $y || <error descr="'$y != $x' seems to have no effect due to '$x != $y'.">$y != $x</error>) {}
     if ($x == $y || <error descr="'$x == $y || $y != $x' seems to be always true.">$y != $x</error>) {}
     if ($x == $y && <error descr="'$x == $y && $y != $x' seems to be always false.">$y != $x</error>) {}
 

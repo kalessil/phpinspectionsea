@@ -135,9 +135,13 @@ final public class MultipleValuesEqualityStrategy {
 
     private static boolean isConstantCondition(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
         if (current.second == next.second) {
-            // TODO: rework to build groups (container - verified values); true on any match (multiple groups are possible)
-            if (!(current.first.second instanceof Variable) && !(next.first.second instanceof Variable)) {
-                return OpenapiEquivalenceUtil.areEqual(current.first.first, next.first.first);
+            final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
+            if (!groups.isEmpty()) {
+                final boolean result = groups.values().stream()
+                        .anyMatch(l -> l.size() == 2 && (l.stream().allMatch(i -> i instanceof Variable) || l.stream().noneMatch(i -> i instanceof Variable)));
+                groups.values().forEach(List::clear);
+                groups.clear();
+                return result;
             }
         }
         return false;
@@ -147,7 +151,8 @@ final public class MultipleValuesEqualityStrategy {
         if (current.second != next.second) {
             final Map<PsiElement, List<PsiElement>> groups = groupValues(current, next);
             if (!groups.isEmpty()) {
-                final boolean result = groups.values().stream().anyMatch(l -> l.size() == 2);
+                final boolean result = groups.values().stream()
+                        .anyMatch(l -> l.size() == 2 && (l.stream().allMatch(i -> i instanceof Variable) || l.stream().noneMatch(i -> i instanceof Variable)));
                 groups.values().forEach(List::clear);
                 groups.clear();
                 return result;
@@ -167,6 +172,7 @@ final public class MultipleValuesEqualityStrategy {
         return false;
     }
 
+    @NotNull
     private static Map<PsiElement, List<PsiElement>> groupValues(@NotNull Pair<Pair<PsiElement, PsiElement>, Boolean> current, Pair<Pair<PsiElement, PsiElement>, Boolean> next) {
         final Map<PsiElement, List<PsiElement>> groups = new HashMap<>();
         Stream.of(current, next).forEach(source -> {

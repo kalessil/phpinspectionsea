@@ -7,9 +7,11 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -24,6 +26,9 @@ import java.util.stream.Stream;
  */
 
 public class SuspiciousLoopInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean VERIFY_VARIABLES_OVERRIDE = true;
+
     private static final String messageMultipleConditions = "Please use && or || for multiple conditions. Currently no checks are performed after first positive result.";
     private static final String patternOverridesLoopVars  = "Variable '$%v%' is introduced in a outer loop and overridden here.";
     private static final String patternOverridesParameter = "Variable '$%v%' is introduced as a %t% parameter and overridden here.";
@@ -46,13 +51,18 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement statement) {
-                this.inspectVariables(statement);
+                if (VERIFY_VARIABLES_OVERRIDE) {
+                    this.inspectVariables(statement);
+
+                }
             }
 
             @Override
             public void visitPhpFor(@NotNull For statement) {
                 this.inspectConditions(statement);
-                this.inspectVariables(statement);
+                if (VERIFY_VARIABLES_OVERRIDE) {
+                    this.inspectVariables(statement);
+                }
             }
 
             private void inspectConditions(@NotNull For forStatement) {
@@ -125,5 +135,11 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                 return variables;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+                component.addCheckbox("Verify overriding scope variables", VERIFY_VARIABLES_OVERRIDE, (isSelected) -> VERIFY_VARIABLES_OVERRIDE = isSelected)
+        );
     }
 }

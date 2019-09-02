@@ -5,7 +5,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bina
 
 final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        final SuspiciousBinaryOperationInspector inspector = new SuspiciousBinaryOperationInspector();
+        inspector.VERIFY_UNCLEAR_OPERATIONS_PRIORITIES     = true;
+        inspector.VERIFY_CONSTANTS_IN_CONDITIONS           = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-binary-operations.php");
         myFixture.testHighlighting(true, false, true);
 

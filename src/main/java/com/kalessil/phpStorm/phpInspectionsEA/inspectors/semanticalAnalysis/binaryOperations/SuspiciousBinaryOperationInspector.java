@@ -6,8 +6,10 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BooleanSupplier;
@@ -22,6 +24,10 @@ import java.util.function.BooleanSupplier;
  */
 
 public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
+    // Inspection options.
+    public boolean VERIFY_CONSTANTS_IN_CONDITIONS       = true;
+    public boolean VERIFY_UNCLEAR_OPERATIONS_PRIORITIES = true;
+
     @NotNull
     @Override
     public String getShortName() {
@@ -48,9 +54,13 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                 callbacks.add(() -> IdenticalOperandsStrategy.apply(expression, holder));
                 callbacks.add(() -> MisplacedOperatorStrategy.apply(expression, holder));
                 callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));
-                callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
-                callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
                 callbacks.add(() -> ConcatenationWithArrayStrategy.apply(expression, holder));
+                if (VERIFY_CONSTANTS_IN_CONDITIONS) {
+                    callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));
+                }
+                if (VERIFY_UNCLEAR_OPERATIONS_PRIORITIES) {
+                    callbacks.add(() -> UnclearOperationsPriorityStrategy.apply(expression, holder));
+                }
 
                 /* run through strategies until the first one fired something */
                 for (final BooleanSupplier strategy: callbacks) {
@@ -61,5 +71,12 @@ public class SuspiciousBinaryOperationInspector extends BasePhpInspection {
                 callbacks.clear();
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Verify operations priorities", VERIFY_UNCLEAR_OPERATIONS_PRIORITIES, (isSelected) -> VERIFY_UNCLEAR_OPERATIONS_PRIORITIES = isSelected);
+            component.addCheckbox("Verify enforced conditions (with e.g. true)", VERIFY_CONSTANTS_IN_CONDITIONS, (isSelected) -> VERIFY_CONSTANTS_IN_CONDITIONS = isSelected);
+        });
     }
 }

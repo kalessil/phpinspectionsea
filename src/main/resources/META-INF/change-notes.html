@@ -1,21 +1,20 @@
 <html>
 Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Cascading 'str_replace(...)' calls: resolved a false-positive (replacement simplification)<br/>
-- Child method is exactly the same: resolved a false-positive (private members usage)<br/>
-- Class property initialization flaws: resolved a false-positive (typed properties)<br/>
-- Dynamic methods invocation via '::': resolved a false-positive (grand-parents method referencing)<br/>
-- Non-optimal regular expression: resolved a false-positive (multi-line regex-es)<br/>
-- One-time use variables: QF bug-fix<br/>
-- PhpUnit: methods mocking issues: resolved a false-positive (methods via setMethods())<br/>
-- Property could be static: enhance suppression support<br/>
-- Slow array function used in loop: resolved a false-positive (array access as target)<br/>
-- Suspicious assignments: resolved a false-positive (try-statements context)<br/>
-- Type casting can be used: resolved a false-positive (parent method calls)<br/>
-- Unnecessary call arguments specification: resolved a false-positive (array_keys)<br/>
-- Untrusted files inclusion: resolved a false-positive (absolute paths)<br/>
-- Variable functions usage: QF bug-fix<br/>
-- 'mkdir(...)' race condition: QF bug-fix<br/>
+- JSON encoding API usage: new settings<br/>
+- Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
+- Suspicious binary operations: new settings<br/>
+- Suspicious loop: new settings<br/>
+- 'str(i)str(...)' could be replaced with 'str(i)pos(...)': bug-fixed code generation<br/>
+- 'substr(...)' could be replaced with 'strpos(...)': resolved false-positives (multiple cases)<br/>
+<br/>
+- A constant can be used: new patterns<br/>
+- CURL: SSL server spoofing: new patterns<br/>
+- Deprecated configuration options: new patterns (PHP 7.2, 7.3)<br/>
+- Forgotten debug statements: new patterns (dump)<br/>
+- JSON encoding API usage: new patterns<br/>
+- Suspicious function calls: implemented<br/>
+- Unnecessary parentheses: dropped in favour of PhpStorm inspection<br/>
 <br/>
 <hr/>
 </html>

@@ -12,6 +12,9 @@ function calls_cases_holder() {
     $x = stripos($path, $pathPrefix) === 0;
     $x = mb_stripos($path, $pathPrefix) === 0;
     $x = mb_stripos($path, $pathPrefix) === 0;
+
+    /* false-positives: length is not as expected */
+    $x = substr($path, 0, strrpos($path, '...')) == $pathPrefix;
 }
 
 function array_access_cases(string $string, array $array) {

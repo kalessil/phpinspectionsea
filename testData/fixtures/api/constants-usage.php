@@ -13,8 +13,8 @@
     echo php_uname('...');
     echo php_uname();
 
-    <weak_warning descr="'PHP_VERSION_ID >= 70000' should be used instead.">version_compare(PHP_VERSION, '7', '>=')</weak_warning>;
-    <weak_warning descr="'PHP_VERSION_ID === 70100' should be used instead.">version_compare(PHP_VERSION, '7.1', '==')</weak_warning>;
-    <weak_warning descr="'PHP_VERSION_ID !== 70111' should be used instead.">version_compare(PHP_VERSION, '7.1.11', '!=')</weak_warning>;
+    <weak_warning descr="Consider using 'PHP_VERSION_ID >= 70000' instead.">version_compare(PHP_VERSION, '7', '>=')</weak_warning>;
+    <weak_warning descr="Consider using 'PHP_VERSION_ID === 70100' instead.">version_compare(PHP_VERSION, '7.1', '==')</weak_warning>;
+    <weak_warning descr="Consider using 'PHP_VERSION_ID !== 70111' instead.">version_compare(PHP_VERSION, '7.1.11', '!=')</weak_warning>;
 
     version_compare(PHP_VERSION, '7.1.11-whatever', '>=');

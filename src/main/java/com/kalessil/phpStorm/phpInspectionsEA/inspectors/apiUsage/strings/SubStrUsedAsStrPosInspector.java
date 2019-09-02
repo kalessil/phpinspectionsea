@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -34,11 +33,15 @@ import java.util.Set;
 public class SubStrUsedAsStrPosInspector extends PhpInspection {
     private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
 
-    private static final Set<String> functions      = new HashSet<>();
-    private static final Set<String> outerFunctions = new HashSet<>();
+    private static final Set<String> substringFunctions = new HashSet<>();
+    private static final Set<String> lengthFunctions    = new HashSet<>();
+    private static final Set<String> outerFunctions     = new HashSet<>();
     static {
-        functions.add("substr");
-        functions.add("mb_substr");
+        substringFunctions.add("substr");
+        substringFunctions.add("mb_substr");
+
+        lengthFunctions.add("strlen");
+        lengthFunctions.add("mb_strlen");
 
         outerFunctions.add("strtolower");
         outerFunctions.add("strtoupper");
@@ -80,18 +83,12 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
                                 final ArrayIndex index  = expression.getIndex();
                                 final PsiElement offset = index == null ? null : index.getValue();
                                 if (offset != null && offset.getText().equals("0")) {
-                                    final Project project  = holder.getProject();
-                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
+                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) container, holder.getProject());
                                     if (resolved != null) {
                                         /* false-positives: container should be a string */
-                                        final boolean isString = resolved.filterUnknown().getTypes().stream()
-                                                .anyMatch(type -> Types.getType(type).equals(Types.strString));
+                                        final boolean isString = resolved.filterUnknown().getTypes().stream().map(Types::getType).anyMatch(t -> t.equals(Types.strString));
                                         if (isString) {
-                                            final String replacement = String.format(
-                                                    "strpos(%s, %s) === 0",
-                                                    container.getText(),
-                                                    literal.getText()
-                                            );
+                                            final String replacement = String.format("strpos(%s, %s) === 0", container.getText(), literal.getText());
                                             holder.registerProblem(
                                                     parent,
                                                     String.format(messagePattern, replacement),
@@ -111,74 +108,71 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName == null || !functions.contains(functionName)) {
-                    return;
-                }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length != 3 && arguments.length != 4) {
-                    return;
-                }
+                if (functionName != null && substringFunctions.contains(functionName)) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 3 || arguments.length == 4) {
+                        /* checking 2nd and 3rd arguments is not needed/simplified:
+                         *   - 2nd re-used as it is (should be a positive number!)
+                         *   - 3rd is not important, as we'll rely on parent comparison operand instead
+                         */
+                        final String index = arguments[1].getText();
+                        if (OpenapiTypesUtil.isNumber(arguments[1]) && index.equals("0")) {
+                            if (!OpenapiTypesUtil.isFunctionReference(arguments[2]) || lengthFunctions.contains(((FunctionReference) arguments[2]).getName())) {
+                                /* prepare variables, so we could properly process polymorphic pattern */
+                                PsiElement highLevelCall    = reference;
+                                PsiElement parentExpression = reference.getParent();
+                                if (parentExpression instanceof ParameterList) {
+                                    parentExpression = parentExpression.getParent();
+                                }
 
-                /* checking 2nd and 3rd arguments is not needed/simplified:
-                 *   - 2nd re-used as it is (should be a positive number!)
-                 *   - 3rd is not important, as we'll rely on parent comparison operand instead
-                 */
-                final String index = arguments[1].getText();
-                if (!OpenapiTypesUtil.isNumber(arguments[1]) || !index.equals("0")) {
-                    return;
-                }
+                                /* if the call wrapped with case manipulation, propose to use stripos */
+                                boolean caseManipulated = false;
+                                if (OpenapiTypesUtil.isFunctionReference(parentExpression)) {
+                                    final FunctionReference parentCall = (FunctionReference) parentExpression;
+                                    final PsiElement[] parentArguments = parentCall.getParameters();
+                                    final String parentName            = parentCall.getName();
+                                    if (parentName != null && parentArguments.length == 1 && outerFunctions.contains(parentName)) {
+                                        caseManipulated  = true;
+                                        highLevelCall    = parentExpression;
+                                        parentExpression = parentExpression.getParent();
+                                    }
+                                }
 
-                /* prepare variables, so we could properly process polymorphic pattern */
-                PsiElement highLevelCall    = reference;
-                PsiElement parentExpression = reference.getParent();
-                if (parentExpression instanceof ParameterList) {
-                    parentExpression = parentExpression.getParent();
-                }
+                                /* check parent expression, to ensure pattern matched */
+                                if (parentExpression instanceof BinaryExpression) {
+                                    final BinaryExpression parent = (BinaryExpression) parentExpression;
+                                    if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(parent.getOperationType())) {
+                                        final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, highLevelCall);
+                                        final PsiElement operationNode = parent.getOperation();
+                                        if (secondOperand != null && operationNode != null) {
+                                            final String operator      = operationNode.getText();
+                                            final boolean isMbFunction = functionName.equals("mb_substr");
+                                            final boolean hasEncoding  = isMbFunction && arguments.length == 4;
 
-                /* if the call wrapped with case manipulation, propose to use stripos */
-                boolean caseManipulated = false;
-                if (OpenapiTypesUtil.isFunctionReference(parentExpression)) {
-                    final FunctionReference parentCall = (FunctionReference) parentExpression;
-                    final PsiElement[] parentArguments = parentCall.getParameters();
-                    final String parentName            = parentCall.getName();
-                    if (parentName != null && parentArguments.length == 1 && outerFunctions.contains(parentName)) {
-                        caseManipulated  = true;
-                        highLevelCall    = parentExpression;
-                        parentExpression = parentExpression.getParent();
-                    }
-                }
-
-                /* check parent expression, to ensure pattern matched */
-                if (parentExpression instanceof BinaryExpression) {
-                    final BinaryExpression parent = (BinaryExpression) parentExpression;
-                    if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(parent.getOperationType())) {
-                        final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(parent, highLevelCall);
-                        final PsiElement operationNode = parent.getOperation();
-                        if (secondOperand != null && operationNode != null) {
-                            final String operator      = operationNode.getText();
-                            final boolean isMbFunction = functionName.equals("mb_substr");
-                            final boolean hasEncoding  = isMbFunction && arguments.length == 4;
-
-                            final String call          = String.format(
-                                    "%s%s(%s, %s%s)",
-                                    reference.getImmediateNamespaceName(),
-                                    (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"),
-                                    arguments[0].getText(),
-                                    secondOperand.getText(),
-                                    hasEncoding ? (", " + arguments[3].getText()) : ""
-                            );
-                            final boolean isRegular    = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
-                            final String replacement   = String.format(
-                                    "%s %s %s",
-                                    isRegular ? call : index,
-                                    operator.length() == 2 ? (operator + '=') : operator,
-                                    isRegular ? index : call
-                            );
-                            holder.registerProblem(
-                                    parentExpression,
-                                    String.format(messagePattern, replacement),
-                                    new UseStringSearchFix(replacement)
-                            );
+                                            final String call          = String.format(
+                                                    "%s%s(%s, %s%s)",
+                                                    reference.getImmediateNamespaceName(),
+                                                    (isMbFunction ? "mb_" : "") + (caseManipulated ? "stripos" : "strpos"),
+                                                    arguments[0].getText(),
+                                                    secondOperand.getText(),
+                                                    hasEncoding ? (", " + arguments[3].getText()) : ""
+                                            );
+                                            final boolean isRegular    = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
+                                            final String replacement   = String.format(
+                                                    "%s %s %s",
+                                                    isRegular ? call : index,
+                                                    operator.length() == 2 ? (operator + '=') : operator,
+                                                    isRegular ? index : call
+                                            );
+                                            holder.registerProblem(
+                                                    parentExpression,
+                                                    String.format(messagePattern, replacement),
+                                                    new UseStringSearchFix(replacement)
+                                            );
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

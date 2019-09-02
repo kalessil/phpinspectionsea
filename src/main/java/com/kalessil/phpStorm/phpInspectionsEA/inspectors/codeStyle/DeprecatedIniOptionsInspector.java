@@ -58,7 +58,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         options.put("safe_mode_allowed_env_vars",      Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
         options.put("safe_mode_protected_env_vars",    Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
         /* http://php.net/manual/en/ini.core.php */
-        //options.put("sql.safe_mode",                   Triple.of(null, PhpLanguageLevel.PHP720, null));
+        options.put("sql.safe_mode",                   Triple.of(null, PhpLanguageLevel.PHP720, null));
         options.put("asp_tags",                        Triple.of(null, PhpLanguageLevel.PHP700, null));
         options.put("always_populate_raw_post_data",   Triple.of(PhpLanguageLevel.PHP560, PhpLanguageLevel.PHP700, null));
         options.put("y2k_compliance",                  Triple.of(null, PhpLanguageLevel.PHP540, null));
@@ -79,12 +79,20 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
         options.put("iconv.internal_encoding",         Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
         /* http://php.net/manual/en/mbstring.configuration.php */
         options.put("mbstring.script_encoding",        Triple.of(null, PhpLanguageLevel.PHP540, "zend.script_encoding"));
-        //options.put("mbstring.func_overload",          Triple.of(PhpLanguageLevel.PHP720, null, null));
+        options.put("mbstring.func_overload",          Triple.of(PhpLanguageLevel.PHP720, null, null));
         options.put("mbstring.internal_encoding",      Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
         options.put("mbstring.http_input",             Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
         options.put("mbstring.http_output",            Triple.of(PhpLanguageLevel.PHP560, null, "default_charset"));
         /* http://php.net/manual/en/sybase.configuration.php */
         options.put("magic_quotes_sybase",             Triple.of(PhpLanguageLevel.PHP530, PhpLanguageLevel.PHP540, null));
+        /* https://www.php.net/manual/en/errorfunc.configuration.php */
+        options.put("track_errors",                    Triple.of(PhpLanguageLevel.PHP720, null, null));
+        /* https://www.php.net/manual/en/ref.pdo-odbc.php */
+        options.put("pdo_odbc.db2_instance_name",      Triple.of(PhpLanguageLevel.PHP730, null, null));
+        /* https://www.php.net/manual/en/opcache.configuration.php */
+        options.put("opcache.load_comments",           Triple.of(null, PhpLanguageLevel.PHP700, null));
+        options.put("opcache.fast_shutdown",           Triple.of(null, PhpLanguageLevel.PHP720, null));
+        options.put("opcache.inherited_hack",          Triple.of(null, PhpLanguageLevel.PHP730, null));
     }
 
     @NotNull
@@ -109,7 +117,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                 if (functionName != null && targetFunctions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0 && arguments[0] instanceof StringLiteralExpression) {
-                        final String directive = ((StringLiteralExpression) arguments[0]).getContents();
+                        final String directive = ((StringLiteralExpression) arguments[0]).getContents().toLowerCase();
                         if (options.containsKey(directive)) {
                             final PhpLanguageLevel php                                       = PhpLanguageLevel.get(holder.getProject());
                             final Triple<PhpLanguageLevel, PhpLanguageLevel, String> details = options.get(directive);

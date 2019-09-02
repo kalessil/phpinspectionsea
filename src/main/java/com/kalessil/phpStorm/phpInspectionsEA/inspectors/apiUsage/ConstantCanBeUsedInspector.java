@@ -3,18 +3,20 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.PhpUse;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,16 +31,33 @@ import java.util.regex.Pattern;
 
 public class ConstantCanBeUsedInspector extends BasePhpInspection {
     private static final String useConstantPattern           = "%s constant should be used instead.";
-    private static final String usePhpVersionConstantPattern = "'%s' should be used instead.";
+    private static final String usePhpVersionConstantPattern = "Consider using '%s' instead.";
+    private static final String useOsFamilyConstantPattern   = "Consider using 'PHP_OS_FAMILY' instead.";
 
-    static private final Map<String, String> functions = new HashMap<>();
-    static private final Map<String, String> operators = new HashMap<>();
+    static private final Map<String, String> functionsToConstantMapping = new HashMap<>();
+    static private final Map<String, String> operators                  = new HashMap<>();
+    static private final Set<String> functionsForOsFamily               = new HashSet<>();
+    private static final Set<String> caseManipulationFunctions          = new HashSet<>();
     static {
-        functions.put("phpversion",    "PHP_VERSION");
-        functions.put("php_sapi_name", "PHP_SAPI");
-        functions.put("get_class",     "__CLASS__");
-        functions.put("pi",            "M_PI");
-        functions.put("php_uname",     "PHP_OS");
+        functionsToConstantMapping.put("phpversion",    "PHP_VERSION");
+        functionsToConstantMapping.put("php_sapi_name", "PHP_SAPI");
+        functionsToConstantMapping.put("get_class",     "__CLASS__");
+        functionsToConstantMapping.put("pi",            "M_PI");
+        functionsToConstantMapping.put("php_uname",     "PHP_OS");
+
+        functionsForOsFamily.add("strpos");
+        functionsForOsFamily.add("stripos");
+        functionsForOsFamily.add("mb_strpos");
+        functionsForOsFamily.add("mb_stripos");
+        functionsForOsFamily.add("strncasecmp");
+        functionsForOsFamily.add("strncmp");
+        functionsForOsFamily.add("substr");
+        functionsForOsFamily.add("mb_substr");
+
+        caseManipulationFunctions.add("strtolower");
+        caseManipulationFunctions.add("mb_strtolower");
+        caseManipulationFunctions.add("strtoupper");
+        caseManipulationFunctions.add("mb_strtoupper");
 
         operators.put("<",  "<");
         operators.put("lt", "<");
@@ -83,7 +102,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && !(reference.getParent() instanceof PhpUse)) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (functions.containsKey(functionName)) {
+                    if (functionsToConstantMapping.containsKey(functionName)) {
                         boolean canUseConstant = arguments.length == 0;
                         /* special handling for "php_uname" */
                         if (functionName.equals("php_uname")) {
@@ -93,16 +112,15 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                             }
                         }
                         if (canUseConstant) {
-                            final String constant = functions.get(functionName);
-                            final String message  = String.format(useConstantPattern, constant);
-                            holder.registerProblem(reference, message, new UseConstantFix(constant));
+                            final String constant = functionsToConstantMapping.get(functionName);
+                            holder.registerProblem(reference, String.format(useConstantPattern, constant), new UseConstantFix(constant));
                         }
                     } else if (arguments.length == 3 && functionName.equals("version_compare")) {
                         if (arguments[0] instanceof ConstantReference && arguments[1] instanceof StringLiteralExpression) {
                             final String constant = ((ConstantReference) arguments[0]).getName();
-                            final String version  = ((StringLiteralExpression) arguments[1]).getContents();
-                            if (constant != null && constant.equals("PHP_VERSION") && !StringUtils.isEmpty(version)) {
-                                if (arguments[2] instanceof StringLiteralExpression) {
+                            if (constant != null && constant.equals("PHP_VERSION")) {
+                                final String version = ((StringLiteralExpression) arguments[1]).getContents();
+                                if (!version.isEmpty() && arguments[2] instanceof StringLiteralExpression) {
                                     final String operator = ((StringLiteralExpression) arguments[2]).getContents();
                                     if (operators.containsKey(operator)) {
                                         final Matcher versionMatcher = versionRegex.matcher(version);
@@ -115,8 +133,54 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                                                 minor.length() == 1 ? '0' + minor: minor,
                                                 patch.length() == 1 ? '0' + patch: patch
                                             );
-                                            final String message = String.format(usePhpVersionConstantPattern, replacement);
-                                            holder.registerProblem(reference, message, new UseConstantFix(replacement));
+                                            holder.registerProblem(reference, String.format(usePhpVersionConstantPattern, replacement), new UseConstantFix(replacement));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void visitPhpConstantReference(@NotNull ConstantReference reference) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP720)) {
+                    final String name = reference.getName();
+                    if (name != null && name.equals("PHP_OS")) {
+                        final PsiElement parent = reference.getParent();
+                        PsiElement context      = parent instanceof ParameterList ? parent.getParent() : parent;
+                        if (OpenapiTypesUtil.isFunctionReference(context)) {
+                            final FunctionReference call = (FunctionReference) context;
+                            final String functionName    = call.getName();
+                            if (functionName != null && functionsForOsFamily.contains(functionName)) {
+                                /* substring call needs context re-specification */
+                                if (functionName.equals("substr") || functionName.equals("mb_substr")) {
+                                    final PsiElement substringParent  = call.getParent();
+                                    final PsiElement substringContext = substringParent instanceof ParameterList ? substringParent.getParent() : substringParent;
+                                    if (OpenapiTypesUtil.isFunctionReference(substringContext)) {
+                                        final String outerFunctionName = ((FunctionReference) substringContext).getName();
+                                        if (outerFunctionName != null && caseManipulationFunctions.contains(outerFunctionName)) {
+                                            context = substringContext;
+                                        }
+                                    }
+                                }
+                                /* now we have clear context, where we do expect comparison to false, number or string */
+                                final PsiElement binaryCandidate = context.getParent();
+                                if (binaryCandidate instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) binaryCandidate;
+                                    if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binary.getOperationType())) {
+                                        final PsiElement value = OpenapiElementsUtil.getSecondOperand(binary, context);
+                                        if (value != null) {
+                                            boolean suggest = false;
+                                            if (functionName.equals("substr") || functionName.equals("mb_substr")) {
+                                                suggest = value instanceof StringLiteralExpression;
+                                            } else {
+                                                suggest = OpenapiTypesUtil.isNumber(value) || PhpLanguageUtil.isFalse(value);
+                                            }
+                                            if (suggest) {
+                                                holder.registerProblem(context, useOsFamilyConstantPattern);
+                                            }
                                         }
                                     }
                                 }

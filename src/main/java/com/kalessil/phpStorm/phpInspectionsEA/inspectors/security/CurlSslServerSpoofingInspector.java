@@ -5,12 +5,10 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
@@ -52,38 +50,34 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
 
                 final String constantName = reference.getName();
                 if (constantName != null && constantName.startsWith("CURLOPT_")) {
-                    /* get 2nd parent level: ArrayHashElement, FunctionReference */
                     final PsiElement parent  = reference.getParent();
                     final PsiElement context = parent == null ? null : parent.getParent();
                     if (context != null) {
-                        final boolean isTarget =
-                                constantName.equals("CURLOPT_SSL_VERIFYHOST") ||
-                                constantName.equals("CURLOPT_SSL_VERIFYPEER");
+                        final boolean isTarget = constantName.equals("CURLOPT_SSL_VERIFYHOST") || constantName.equals("CURLOPT_SSL_VERIFYPEER");
                         if (isTarget) {
-                            this.checkConstantUsage(context, constantName, reference);
+                            this.analyze(context, constantName, reference);
                         }
                     }
                 }
             }
 
-            private void checkConstantUsage(
-                    @NotNull PsiElement parent,
-                    @NotNull String constantName,
-                    @NotNull ConstantReference constant
-            ) {
+            private void analyze(@NotNull PsiElement parent, @NotNull String constantName, @NotNull ConstantReference constant) {
                 if (parent instanceof FunctionReference) {
                     final FunctionReference call = (FunctionReference) parent;
                     final String functionName    = call.getName();
                     if (functionName != null && functionName.equals("curl_setopt")) {
-                        final PsiElement[] params = call.getParameters();
-                        if (params.length == 3 && params[2] != null) {
-                            if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
-                                if (this.isHostVerifyDisabled(params[2])) {
-                                    holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
-                                }
-                            } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
-                                if (this.isPeerVerifyDisabled(params[2])) {
-                                    holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
+                        final PsiElement[] arguments = call.getParameters();
+                        if (arguments.length == 3) {
+                            final PsiElement value = arguments[2];
+                            if (value != null) {
+                                if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
+                                    if (this.isHostVerifyDisabled(value)) {
+                                        holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
+                                    }
+                                } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
+                                    if (this.isPeerVerifyDisabled(value)) {
+                                        holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
+                                    }
                                 }
                             }
                         }
@@ -95,9 +89,28 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                             if (this.isHostVerifyDisabled(value)) {
                                 holder.registerProblem(parent, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
                             }
-                        }  else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
+                        } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
                             if (this.isPeerVerifyDisabled(value)) {
                                 holder.registerProblem(parent, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
+                            }
+                        }
+                    }
+                } else if (parent instanceof ArrayAccessExpression) {
+                    PsiElement context = parent;
+                    while (context instanceof ArrayAccessExpression) {
+                        context = context.getParent();
+                    }
+                    if (OpenapiTypesUtil.isAssignment(context)) {
+                        final PsiElement value = ((AssignmentExpression) context).getValue();
+                        if (value != null) {
+                            if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
+                                if (this.isHostVerifyDisabled(value)) {
+                                    holder.registerProblem(context, messageVerifyHost, ProblemHighlightType.GENERIC_ERROR);
+                                }
+                            } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
+                                if (this.isPeerVerifyDisabled(value)) {
+                                    holder.registerProblem(context, messageVerifyPeer, ProblemHighlightType.GENERIC_ERROR);
+                                }
                             }
                         }
                     }

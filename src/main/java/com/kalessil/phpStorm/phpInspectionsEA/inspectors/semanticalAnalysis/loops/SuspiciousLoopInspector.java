@@ -522,6 +522,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
             }
         };
     }
+
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
             component.addCheckbox("Verify overriding scope variables", VERIFY_VARIABLES_OVERRIDE, (isSelected) -> VERIFY_VARIABLES_OVERRIDE = isSelected)

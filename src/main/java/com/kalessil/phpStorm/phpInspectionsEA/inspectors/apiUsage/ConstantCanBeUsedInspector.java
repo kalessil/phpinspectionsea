@@ -130,8 +130,8 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                                             final String replacement = String.format("PHP_VERSION_ID %s %s%s%s",
                                                 operators.get(operator),
                                                 versionMatcher.group(1),
-                                                minor.length() == 1 ? '0' + minor: minor,
-                                                patch.length() == 1 ? '0' + patch: patch
+                                                minor.length() == 1 ? '0' + minor : minor,
+                                                patch.length() == 1 ? '0' + patch : patch
                                             );
                                             holder.registerProblem(reference, String.format(usePhpVersionConstantPattern, replacement), new UseConstantFix(replacement));
                                         }
@@ -172,7 +172,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                                     if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binary.getOperationType())) {
                                         final PsiElement value = OpenapiElementsUtil.getSecondOperand(binary, context);
                                         if (value != null) {
-                                            boolean suggest = false;
+                                            final boolean suggest;
                                             if (functionName.equals("substr") || functionName.equals("mb_substr")) {
                                                 suggest = value instanceof StringLiteralExpression;
                                             } else {

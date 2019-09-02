@@ -18,6 +18,7 @@ final public class ConstantCanBeUsedInspectorTest extends PhpCodeInsightFixtureT
     public void testIfFindsOsFamilyPatterns() {
         final PhpLanguageLevel level = PhpLanguageLevel.parse("7.3");
         if (level != null && level.getVersionString().equals("7.3")) {
+            PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
             myFixture.enableInspections(new ConstantCanBeUsedInspector());
             myFixture.configureByFile("testData/fixtures/api/constants-usage.php-os-family.php");
             myFixture.testHighlighting(true, false, true);

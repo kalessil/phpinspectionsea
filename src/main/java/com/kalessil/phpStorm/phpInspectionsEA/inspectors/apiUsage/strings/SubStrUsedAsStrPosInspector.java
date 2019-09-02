@@ -33,11 +33,15 @@ import java.util.Set;
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
 
-    private static final Set<String> functions      = new HashSet<>();
-    private static final Set<String> outerFunctions = new HashSet<>();
+    private static final Set<String> substringFunctions = new HashSet<>();
+    private static final Set<String> lengthFunctions    = new HashSet<>();
+    private static final Set<String> outerFunctions     = new HashSet<>();
     static {
-        functions.add("substr");
-        functions.add("mb_substr");
+        substringFunctions.add("substr");
+        substringFunctions.add("mb_substr");
+
+        lengthFunctions.add("strlen");
+        lengthFunctions.add("mb_strlen");
 
         outerFunctions.add("strtolower");
         outerFunctions.add("strtoupper");
@@ -77,18 +81,12 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                                 final ArrayIndex index  = expression.getIndex();
                                 final PsiElement offset = index == null ? null : index.getValue();
                                 if (offset != null && offset.getText().equals("0")) {
-                                    final Project project  = holder.getProject();
-                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
+                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) container, holder.getProject());
                                     if (resolved != null) {
                                         /* false-positives: container should be a string */
-                                        final boolean isString = resolved.filterUnknown().getTypes().stream()
-                                                .anyMatch(type -> Types.getType(type).equals(Types.strString));
+                                        final boolean isString = resolved.filterUnknown().getTypes().stream().map(Types::getType).anyMatch(t -> t.equals(Types.strString));
                                         if (isString) {
-                                            final String replacement = String.format(
-                                                    "strpos(%s, %s) === 0",
-                                                    container.getText(),
-                                                    literal.getText()
-                                            );
+                                            final String replacement = String.format("strpos(%s, %s) === 0", container.getText(), literal.getText());
                                             holder.registerProblem(
                                                     parent,
                                                     String.format(messagePattern, replacement),
@@ -106,7 +104,7 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || !functions.contains(functionName)) {
+                if (functionName == null || !substringFunctions.contains(functionName)) {
                     return;
                 }
                 final PsiElement[] arguments = reference.getParameters();

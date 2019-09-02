@@ -113,6 +113,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         /* Laravel-related debug functions */
         list.add("\\Illuminate\\Support\\Debug\\Dumper::dump");
         list.add("dd");
+        list.add("dump");
         /* Core-php debug functions */
         list.add("debug_print_backtrace");
         list.add("debug_zval_dump");

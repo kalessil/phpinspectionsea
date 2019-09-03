@@ -60,19 +60,19 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                this.inspectCallable(method);
+                this.analyze(method);
             }
 
             @Override
             public void visitPhpFunction(@NotNull Function function) {
-                this.inspectCallable(function);
+                this.analyze(function);
             }
 
-            private void inspectCallable (@NotNull Function callable) {
-                if (NamedElementUtil.getNameIdentifier(callable) != null) {
+            private void analyze(@NotNull Function callable) {
+                if (!OpenapiTypesUtil.isLambda(callable)) {
                     Arrays.stream(callable.getParameters())
                         .filter(parameter -> {
-                            if (parameter.isPassByRef()) {
+                            if (parameter.isPassByRef() && parameter.getDefaultValue() == null) {
                                 final PhpType declared = OpenapiResolveUtil.resolveDeclaredType(parameter);
                                 return !declared.isEmpty() && !PhpType.isSubType(declared, php7Types);
                             }
@@ -109,15 +109,12 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
             @Override
             public void visitPhpNewExpression(@NotNull NewExpression expression) {
                 final PsiElement parent = expression.getParent();
-                if (parent instanceof AssignmentExpression) {
-                    final AssignmentExpression assignment = (AssignmentExpression) parent;
-                    if (OpenapiTypesUtil.isAssignmentByReference(assignment)) {
-                        holder.registerProblem(
-                                expression,
-                                messageAssignment,
-                                new InstantiationLocalFix()
-                        );
-                    }
+                if (parent instanceof AssignmentExpression && OpenapiTypesUtil.isAssignmentByReference((AssignmentExpression) parent)) {
+                    holder.registerProblem(
+                            expression,
+                            messageAssignment,
+                            new InstantiationLocalFix()
+                    );
                 }
             }
         };

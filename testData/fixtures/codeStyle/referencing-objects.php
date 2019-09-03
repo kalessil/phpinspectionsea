@@ -24,17 +24,20 @@
 
 
     /* false-positives: scalar types */
-    function typeHinted(string & $param1, \string & $param2) {}
-    function nullableTypeHinted(?string & $param1, ?\string & $param2) {}
+    function type_declaration_cases_holder(string & $param1, \string & $param2) {}
+    function nullable_type_declaration_cases_holder(?string & $param1, ?\string & $param2) {}
 
     /* false-positives: writing into */
-    function writingInto(stdClass &$param) {
+    function value_has_been_written_cases_holder(stdClass &$param) {
         $param = new stdClass();
     }
 
     /* false-positives: boolean context */
-    function booleanContext(stdClass &$one, stdClass &$two, stdClass &$three) {
+    function boolean_context_cases_holder(stdClass &$one, stdClass &$two, stdClass &$three) {
         if ($one) {}
         while ($two) {}
         do {} while ($three);
     }
+
+    /* false-positives: optional parameters */
+    function with_default_value_cases_holder(stdClass &$one = null) {}

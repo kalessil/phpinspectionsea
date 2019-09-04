@@ -16,5 +16,8 @@
     echo $x !== null;
 
     echo ($x = null) !== null;
+    echo ($x ?: null) !== null;
+    echo ($x ?? null) !== null;
+    echo ($x ? null : null) !== null;
 
     echo is_null();

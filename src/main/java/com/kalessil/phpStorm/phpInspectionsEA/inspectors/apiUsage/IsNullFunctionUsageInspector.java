@@ -6,10 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
@@ -52,53 +49,45 @@ public class IsNullFunctionUsageInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName == null || !functionName.equals("is_null")) {
-                    return;
-                }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length != 1) {
-                    return;
-                }
+                if (functionName != null && functionName.equals("is_null")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        final PsiElement parent = reference.getParent();
 
-                final PsiElement parent = reference.getParent();
-
-                /* check the context */
-                boolean checksIsNull = true;
-                PsiElement target    = reference;
-                if (parent instanceof UnaryExpression) {
-                    if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT)) {
-                        checksIsNull = false;
-                        target       = parent;
-                    }
-                } else if (parent instanceof BinaryExpression) {
-                    /* extract isnulls' expression parts */
-                    final BinaryExpression expression = (BinaryExpression) parent;
-                    final PsiElement secondOperand    = OpenapiElementsUtil.getSecondOperand(expression, reference);
-                    if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                        final IElementType operation = expression.getOperationType();
-                        if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
-                            target       = parent;
-                            checksIsNull = PhpLanguageUtil.isTrue(secondOperand);
-                        } else if (operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                            target       = parent;
-                            checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
-                        } else {
-                            target = reference;
+                        /* check the context */
+                        boolean checksIsNull = true;
+                        PsiElement target    = reference;
+                        if (parent instanceof UnaryExpression) {
+                            if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT)) {
+                                checksIsNull = false;
+                                target       = parent;
+                            }
+                        } else if (parent instanceof BinaryExpression) {
+                            /* extract is_nulls' expression parts */
+                            final BinaryExpression expression = (BinaryExpression) parent;
+                            final PsiElement secondOperand    = OpenapiElementsUtil.getSecondOperand(expression, reference);
+                            if (PhpLanguageUtil.isBoolean(secondOperand)) {
+                                final IElementType operation = expression.getOperationType();
+                                if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
+                                    target       = parent;
+                                    checksIsNull = PhpLanguageUtil.isTrue(secondOperand);
+                                } else if (operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                                    target       = parent;
+                                    checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
+                                } else {
+                                    target       = reference;
+                                }
+                            }
                         }
+
+                        /* report the issue */
+                        final boolean wrap           = arguments[0] instanceof AssignmentExpression || arguments[0] instanceof TernaryExpression || arguments[0] instanceof BinaryExpression;
+                        final String wrappedArgument = wrap ? String.format("(%s)", arguments[0].getText()) : arguments[0].getText();
+                        final boolean isRegular      = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
+                        final String replacement     = String.format("%s %s %s", isRegular ? wrappedArgument : "null", checksIsNull ? "===" : "!==", isRegular ? "null" : wrappedArgument);
+                        holder.registerProblem(target, String.format(messagePattern, replacement), new CompareToNullFix(replacement));
                     }
                 }
-
-                /* report the issue */
-                final boolean isRegular      = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
-                final String wrappedArgument = isRegular && arguments[0] instanceof AssignmentExpression
-                                               ? String.format("(%s)", arguments[0].getText())
-                                               : arguments[0].getText();
-                final String checkIsNull     = checksIsNull ? "===" : "!==";
-                final String replacement     = isRegular
-                                               ? String.format("%s %s null", wrappedArgument, checkIsNull)
-                                               : String.format("null %s %s", checkIsNull, wrappedArgument);
-                final String message         = String.format(messagePattern, replacement);
-                holder.registerProblem(target, message, new CompareToNullFix(replacement));
             }
         };
     }

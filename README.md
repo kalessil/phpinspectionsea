@@ -8,7 +8,7 @@
 
 Php Inspections (EA Extended)
 ---
-<img src="https://user-images.githubusercontent.com/47294/26991958-2a7ee9f4-4d65-11e7-8d60-f57ca8cbb46a.png" alt="Php Inspections (EA Extended)" height="100" />
+<img src="docs/images/ea-logo.png" alt="Php Inspections (EA Extended)" height="100" />
 
 This project is an OSS Static Code Analysis [tool](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-) for PhpStorm (2016.2+) and Idea Ultimate.
 

@@ -46,53 +46,45 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || !functionName.equals("is_null")) {
-                    return;
-                }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length != 1) {
-                    return;
-                }
+                if (functionName != null && functionName.equals("is_null")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        final PsiElement parent = reference.getParent();
 
-                final PsiElement parent = reference.getParent();
-
-                /* check the context */
-                boolean checksIsNull = true;
-                PsiElement target    = reference;
-                if (parent instanceof UnaryExpression) {
-                    if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT)) {
-                        checksIsNull = false;
-                        target       = parent;
-                    }
-                } else if (parent instanceof BinaryExpression) {
-                    /* extract isnulls' expression parts */
-                    final BinaryExpression expression = (BinaryExpression) parent;
-                    final PsiElement secondOperand    = OpenapiElementsUtil.getSecondOperand(expression, reference);
-                    if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                        final IElementType operation = expression.getOperationType();
-                        if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
-                            target       = parent;
-                            checksIsNull = PhpLanguageUtil.isTrue(secondOperand);
-                        } else if (operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                            target       = parent;
-                            checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
-                        } else {
-                            target = reference;
+                        /* check the context */
+                        boolean checksIsNull = true;
+                        PsiElement target    = reference;
+                        if (parent instanceof UnaryExpression) {
+                            if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.opNOT)) {
+                                checksIsNull = false;
+                                target       = parent;
+                            }
+                        } else if (parent instanceof BinaryExpression) {
+                            /* extract is_nulls' expression parts */
+                            final BinaryExpression expression = (BinaryExpression) parent;
+                            final PsiElement secondOperand    = OpenapiElementsUtil.getSecondOperand(expression, reference);
+                            if (PhpLanguageUtil.isBoolean(secondOperand)) {
+                                final IElementType operation = expression.getOperationType();
+                                if (PhpTokenTypes.opEQUAL == operation || PhpTokenTypes.opIDENTICAL == operation) {
+                                    target       = parent;
+                                    checksIsNull = PhpLanguageUtil.isTrue(secondOperand);
+                                } else if (operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                                    target       = parent;
+                                    checksIsNull = !PhpLanguageUtil.isTrue(secondOperand);
+                                } else {
+                                    target       = reference;
+                                }
+                            }
                         }
+
+                        /* report the issue */
+                        final boolean wrap           = arguments[0] instanceof AssignmentExpression || arguments[0] instanceof TernaryExpression || arguments[0] instanceof BinaryExpression;
+                        final String wrappedArgument = wrap ? String.format("(%s)", arguments[0].getText()) : arguments[0].getText();
+                        final boolean isRegular      = ComparisonStyle.isRegular();
+                        final String replacement     = String.format("%s %s %s", isRegular ? wrappedArgument : "null", checksIsNull ? "===" : "!==", isRegular ? "null" : wrappedArgument);
+                        holder.registerProblem(target, String.format(messagePattern, replacement), new CompareToNullFix(replacement));
                     }
                 }
-
-                /* report the issue */
-                final boolean isRegular      = ComparisonStyle.isRegular();
-                final String wrappedArgument = arguments[0] instanceof AssignmentExpression || arguments[0] instanceof TernaryExpression || arguments[0] instanceof BinaryExpression
-                                               ? String.format("(%s)", arguments[0].getText())
-                                               : arguments[0].getText();
-                final String checkIsNull     = checksIsNull ? "===" : "!==";
-                final String replacement     = isRegular
-                                               ? String.format("%s %s null", wrappedArgument, checkIsNull)
-                                               : String.format("null %s %s", checkIsNull, wrappedArgument);
-                final String message         = String.format(messagePattern, replacement);
-                holder.registerProblem(target, message, new CompareToNullFix(replacement));
             }
         };
     }

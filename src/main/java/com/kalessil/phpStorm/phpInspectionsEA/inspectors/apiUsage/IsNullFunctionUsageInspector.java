@@ -5,10 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -87,7 +84,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
 
                 /* report the issue */
                 final boolean isRegular      = ComparisonStyle.isRegular();
-                final String wrappedArgument = isRegular && arguments[0] instanceof AssignmentExpression
+                final String wrappedArgument = arguments[0] instanceof AssignmentExpression || arguments[0] instanceof TernaryExpression || arguments[0] instanceof BinaryExpression
                                                ? String.format("(%s)", arguments[0].getText())
                                                : arguments[0].getText();
                 final String checkIsNull     = checksIsNull ? "===" : "!==";

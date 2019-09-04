@@ -16,5 +16,8 @@
     echo <warning descr="'$x !== null' construction should be used instead.">is_null($x) !== true</warning>;
 
     echo <warning descr="'($x = null) !== null' construction should be used instead.">is_null($x = null) !== true</warning>;
+    echo <warning descr="'($x ?: null) !== null' construction should be used instead.">!is_null($x ?: null)</warning>;
+    echo <warning descr="'($x ?? null) !== null' construction should be used instead.">!is_null($x ?? null)</warning>;
+    echo <warning descr="'($x ? null : null) !== null' construction should be used instead.">!is_null($x ? null : null)</warning>;
 
     echo is_null();

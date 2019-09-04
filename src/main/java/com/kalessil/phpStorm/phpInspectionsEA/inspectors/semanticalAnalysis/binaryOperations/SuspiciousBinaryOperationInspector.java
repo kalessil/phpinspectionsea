@@ -27,7 +27,7 @@ import java.util.function.BooleanSupplier;
 
 public class SuspiciousBinaryOperationInspector extends PhpInspection {
     // Inspection options.
-    public boolean VERIFY_PHP_VERSION_CHECKS            = true;
+    public boolean VERIFY_CONSTANTS_VALUES_CHECKS       = true;
     public boolean VERIFY_CONSTANTS_IN_CONDITIONS       = true;
     public boolean VERIFY_UNCLEAR_OPERATIONS_PRIORITIES = true;
 
@@ -67,7 +67,8 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> MultipleFalsyValuesCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInBinaryStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInIfBodyStrategy.apply(expression, holder));
-                if (VERIFY_PHP_VERSION_CHECKS) {
+                if (VERIFY_CONSTANTS_VALUES_CHECKS) {
+                    callbacks.add(() -> ConstantConditionsConstantsValuesStrategy.apply(expression, holder));
                     callbacks.add(() -> ConstantConditionsPhpVersionStrategy.apply(expression, holder));
                 }
                 callbacks.add(() -> ConstantConditionsCountCheckStrategy.apply(expression, holder));
@@ -103,7 +104,7 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
             component.addCheckbox("Verify operations priorities", VERIFY_UNCLEAR_OPERATIONS_PRIORITIES, (isSelected) -> VERIFY_UNCLEAR_OPERATIONS_PRIORITIES = isSelected);
-            component.addCheckbox("Verify PHP version checks", VERIFY_PHP_VERSION_CHECKS, (isSelected) -> VERIFY_PHP_VERSION_CHECKS = isSelected);
+            component.addCheckbox("Verify constants values checks", VERIFY_CONSTANTS_VALUES_CHECKS, (isSelected) -> VERIFY_CONSTANTS_VALUES_CHECKS = isSelected);
             component.addCheckbox("Verify enforced conditions (with e.g. true)", VERIFY_CONSTANTS_IN_CONDITIONS, (isSelected) -> VERIFY_CONSTANTS_IN_CONDITIONS = isSelected);
         });
     }

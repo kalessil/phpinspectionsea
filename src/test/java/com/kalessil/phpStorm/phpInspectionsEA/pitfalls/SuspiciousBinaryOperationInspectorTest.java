@@ -43,12 +43,12 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/suspicious-binary-operations.is_numeric.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testIfFindsVersionChecks() {
+    public void testIfFindsConstantValuesChecks() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP560);
         final SuspiciousBinaryOperationInspector inspector = new SuspiciousBinaryOperationInspector();
-        inspector.VERIFY_PHP_VERSION_CHECKS                = true;
+        inspector.VERIFY_CONSTANTS_VALUES_CHECKS           = true;
         myFixture.enableInspections(inspector);
-        myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/suspicious-binary-operations.version.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/suspicious-binary-operations.constant-values-check.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testIfFindsInvalidArrayOperationPatterns() {

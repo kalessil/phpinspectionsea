@@ -1,24 +1,16 @@
 <html>
 New features release<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/67451">v3.0.15</a> release<br/>
+- Changes from upcoming Php Inspections (EA Extended) v3.0.16 release<br/>
 <br/>
-- Declaration access can be weaker: resolved a false-positive (overriding traits methods)<br/>
-- One-time use variables: resolved a false-positive (preceding types annotation)<br/>
-- Overriding deprecated methods: resolved a false-positive (magic methods)<br/>
-- Traits methods conflicts resolution: resolved a false-positive (abstract methods)<br/>
-- Unnecessary closures: resolved a false-positive (non-arguments returns)<br/>
-- Unused function result: bug-fix settings interpretation<br/>
+- Class autoloading correctness: respect composer autoloading configuration<br/>
+- Secure cookies transfer: resolved false-positives (options array)<br/>
+- Suspicious assignments: resolved a false-positive (foreach-loop variables)<br/>
+- Suspicious binary operations: new settings<br/>
+- 'explode(...)' misused: dropped in_array + explode pattern (changes behaviour)<br/>
 <br/>
-- Callable parameter usage violates definition: new patterns<br/>
-- If-return-return could be simplified: new patterns<br/>
-- Hash timing attack: implemented<br/>
-- Null coalescing operator can be used: new patterns<br/>
 - Suspicious binary operations: new patterns<br/>
-- Suspicious loop: new patterns<br/>
-- Ternary operator could be simplified: new patterns<br/>
-- Unnecessary emptiness check: new patterns<br/>
-- 'file_get_contents(...)' misused: implemented<br/>
+- 'explode(...)' limit can be used: implemented<br/>
 <br/>
 <hr/>
 </html>

@@ -79,7 +79,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                                     );
                                 }
                             }
-                        } else if (this.canApplyPositiveLimit(reference) && this.isFromRootNamespace(reference)) {
+                        } else if (arguments.length == 2 && this.canApplyPositiveLimit(reference) && this.isFromRootNamespace(reference)) {
                             final String replacement = String.format(
                                     "%sexplode(%s, %s, 2)",
                                     reference.getImmediateNamespaceName(),

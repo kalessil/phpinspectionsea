@@ -28,7 +28,7 @@ import java.util.Map;
  */
 
 public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' should be used instead.";
+    private static final String messagePattern = "'%s' should be used instead (reduces cyclomatic and cognitive complexity).";
 
     private final static Map<IElementType, String> oppositeOperators = new HashMap<>();
     static {
@@ -61,18 +61,21 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 final PsiElement rawCondition = expression.getCondition();
-                final PsiElement condition    = ExpressionSemanticUtil.getExpressionTroughParenthesis(rawCondition);
-                if (rawCondition != null && condition != null) {
-                    final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                    final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                    /* case: can be replaced with condition itself */
-                    if (trueVariant != null && falseVariant != null && condition instanceof BinaryExpression) {
-                        /* check branches; if both variants are identical, nested ternary inspection will spot it */
-                        if (PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant)) {
-                            final String replacement = this.generateReplacement((BinaryExpression) condition, trueVariant);
-                            if (replacement != null) {
-                                final String message = String.format(messagePattern, replacement);
-                                holder.registerProblem(expression, message, new SimplifyFix(replacement));
+                if (rawCondition != null) {
+                    final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(rawCondition);
+                    if (condition instanceof BinaryExpression) {
+                        final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                        if (trueVariant != null) {
+                            final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                            if (falseVariant != null) {
+                                final boolean isTarget = PhpLanguageUtil.isBoolean(trueVariant) && PhpLanguageUtil.isBoolean(falseVariant);
+                                if (isTarget) {
+                                    final String replacement = this.generateReplacement((BinaryExpression) condition, trueVariant);
+                                    if (replacement != null) {
+                                        final String message = String.format(messagePattern, replacement);
+                                        holder.registerProblem(expression, message, new SimplifyFix(replacement));
+                                    }
+                                }
                             }
                         }
                     }

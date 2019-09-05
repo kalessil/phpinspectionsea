@@ -21,6 +21,9 @@ class CasesHolder {
         if ($x > 0) { return true; }
         return true;
     }
+    public function ifReturnReturnSix($x) {
+        return is_numeric($x);
+    }
 
     public function ifReturnElseReturnOne($x) {
         return $x > 0;

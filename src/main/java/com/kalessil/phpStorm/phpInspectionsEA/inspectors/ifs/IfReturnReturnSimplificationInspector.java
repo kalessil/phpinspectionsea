@@ -238,10 +238,12 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                 if (resolved instanceof Function) {
                     final Function function = (Function) resolved;
-                    if (OpenapiElementsUtil.getReturnType(function) != null) {
-                        final PhpType returnType = function.getType();
-                        return returnType.size() == 1 && !returnType.hasUnknown() && returnType.equals(PhpType.BOOLEAN);
+                    boolean isTarget        = OpenapiElementsUtil.getReturnType(function) != null;
+                    if (!isTarget && function.getName().startsWith("is_")) {
+                        final String location = function.getContainingFile().getVirtualFile().getCanonicalPath();
+                        isTarget              = location != null && location.contains(".jar!") && location.contains("/stubs/");
                     }
+                    return isTarget && function.getType().equals(PhpType.BOOLEAN);
                 }
                 return false;
             }

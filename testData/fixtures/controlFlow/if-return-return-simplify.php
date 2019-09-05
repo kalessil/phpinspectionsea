@@ -24,6 +24,10 @@ class CasesHolder {
         if ($x > 0) { return true; }
         return true;
     }
+    public function ifReturnReturnSix($x) {
+        <warning descr="The construct can be replaced with 'return is_numeric($x)'.">if</warning> (is_numeric($x)) { return true; }
+        return false;
+    }
 
     public function ifReturnElseReturnOne($x) {
         <warning descr="The construct can be replaced with 'return $x > 0'.">if</warning> ($x > 0) { return true; }

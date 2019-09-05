@@ -12,7 +12,7 @@ Inspections Lists (Control flow)
 | Group                | Short Name                                      | Full Name                                                                         | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------------------------------------- | --: | --: | ---: | --: |
 | Control Flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | yes | yes | yes  | no  |
-| Control Flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | no  |
+| Control Flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | yes |
 | Control Flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | yes  | yes |
 | Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a | yes | n/a  | yes |
 | Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | yes |
@@ -230,7 +230,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SuspiciousVariableDeclarationInspection         | Suspicious variable declaration                           | n/a | yes | n/a  | no  |
 | Probable bugs        | StaticLambdaBindingInspection                   | Static lambdas binding                                    | yes | yes | yes  | no  |
 | Probable bugs        | ForeachSourceInspection                         | Foreach source to iterate over                            | n/a | yes | n/a  | yes |
-| Probable bugs        | JsonEncodingApiUsageInspection                  | JSON encoding API usage                                   | yes | yes | yes  | no  |
+| Probable bugs        | JsonEncodingApiUsageInspection                  | JSON encoding API usage                                   | yes | yes | yes  | yes |
 | Probable bugs        | ExitUsageCorrectnessInspection                  | 'exit' usage correctness                                  | n/a | yes | n/a  | no  |
 | Probable bugs        | StringFragmentMisplacedInspection               | Incorrectly placed string fragment                        | yes | yes | yes  | no  |
 | Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |

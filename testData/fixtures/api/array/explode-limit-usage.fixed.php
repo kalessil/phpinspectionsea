@@ -13,3 +13,9 @@ function cases_holder() {
         $skip[1],
     ];
 }
+
+function cases_holder_negative_limit($argument) {
+    $parts = explode(':', $argument, -2);
+
+    return $parts;
+}

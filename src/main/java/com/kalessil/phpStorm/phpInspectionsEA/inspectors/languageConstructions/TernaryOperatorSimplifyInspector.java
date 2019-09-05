@@ -27,7 +27,7 @@ import java.util.Map;
  */
 
 public class TernaryOperatorSimplifyInspector extends PhpInspection {
-    private static final String messagePattern = "'%s' would make more sense here (simplification).";
+    private static final String messagePattern = "'%s' would make more sense here (reduces cyclomatic and cognitive complexity).";
 
     private final static Map<IElementType, String> oppositeOperators = new HashMap<>();
     static {
@@ -64,23 +64,25 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                 PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition != null && this.isTargetCondition(condition)) {
                     final PsiElement firstValue  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                    final PsiElement secondValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-                    if (firstValue != null && secondValue != null) {
-                        final boolean isDirect  = PhpLanguageUtil.isTrue(firstValue) && PhpLanguageUtil.isFalse(secondValue);
-                        final boolean isReverse = !isDirect && PhpLanguageUtil.isTrue(secondValue) && PhpLanguageUtil.isFalse(firstValue);
-                        if (isDirect || isReverse) {
-                            boolean isInverted = condition instanceof UnaryExpression;
-                            if (isInverted) {
-                                condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) condition).getValue());
-                            }
-                            if (condition != null) {
-                                final boolean invert     = (isDirect && isInverted) || (isReverse && !isInverted);
-                                final String replacement = this.generateReplacement(condition, invert);
-                                holder.registerProblem(
-                                        expression,
-                                        String.format(messagePattern, replacement),
-                                        new SimplifyFix(replacement)
-                                );
+                    if (firstValue != null) {
+                        final PsiElement secondValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                        if (secondValue != null) {
+                            final boolean isDirect  = PhpLanguageUtil.isTrue(firstValue) && PhpLanguageUtil.isFalse(secondValue);
+                            final boolean isReverse = !isDirect && PhpLanguageUtil.isTrue(secondValue) && PhpLanguageUtil.isFalse(firstValue);
+                            if (isDirect || isReverse) {
+                                boolean isInverted = condition instanceof UnaryExpression;
+                                if (isInverted) {
+                                    condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) condition).getValue());
+                                }
+                                if (condition != null) {
+                                    final boolean invert     = (isDirect && isInverted) || (isReverse && !isInverted);
+                                    final String replacement = this.generateReplacement(condition, invert);
+                                    holder.registerProblem(
+                                            expression,
+                                            String.format(messagePattern, replacement),
+                                            new SimplifyFix(replacement)
+                                    );
+                                }
                             }
                         }
                     }
@@ -102,12 +104,7 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                             final PsiElement left  = binary.getLeftOperand();
                             final PsiElement right = binary.getRightOperand();
                             if (left != null && right != null) {
-                                replacement = String.format(
-                                        "%s %s %s",
-                                        left.getText(),
-                                        oppositeOperators.get(operator),
-                                        right.getText()
-                                );
+                                replacement = String.format("%s %s %s", left.getText(), oppositeOperators.get(operator), right.getText());
                             }
                         }
                     }

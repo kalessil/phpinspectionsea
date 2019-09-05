@@ -102,7 +102,11 @@ In order to emphasize on this, lets read more carefully the _WARNING_ that comes
 [return value](http://php.net/manual/en/function.array-search.php#refsect1-function.array-search-returnvalues). Do you see how it is referenced
 again the issue with comparisons against loosely typed variables?
 
-## Parameter can be declared as array
+### JSON encoding API usage
 
-Reports if a callable parameter can be defined with the `array` type. Refactoring can affect class inheritance and
-test coverage should be verified before making changes.
+> Note: the inspection has settings, all of them deactivated by default
+
+The inspection checks 'json_decode()' and 'json_encode()' calls and proposes to harden types control in following ways:
+
+- specifying the second argument in json_decode(), so the expected type is has been declared implicitly
+- for PHP 7.3+ adding JSON_THROW_ON_ERROR to options for 'json_decode()' and 'json_encode()', so the calls doesn't fail silently

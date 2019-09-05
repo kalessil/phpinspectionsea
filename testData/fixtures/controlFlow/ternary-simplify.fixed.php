@@ -9,9 +9,10 @@
 
     $x = $x > 0;
     $x = $x > 0;
+    $x = !is_numeric($x);
 
     $x = $x > 0 ? true : null;
-    $x = is_numeric($x) ? false : true;
+    $x = trim($x) ? false : true;
 
     $x = empty($x);
     $x = !empty($x);

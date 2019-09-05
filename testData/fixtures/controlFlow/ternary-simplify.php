@@ -9,9 +9,10 @@
 
     $x = <weak_warning descr="'$x > 0' would make more sense here (reduces cyclomatic and cognitive complexity).">$x > 0 ? (true) : false</weak_warning>;
     $x = <weak_warning descr="'$x > 0' would make more sense here (reduces cyclomatic and cognitive complexity).">$x > 0 ? true : (false)</weak_warning>;
+    $x = <weak_warning descr="'!is_numeric($x)' would make more sense here (reduces cyclomatic and cognitive complexity).">is_numeric($x) ? false : true</weak_warning>;
 
     $x = $x > 0 ? true : null;
-    $x = is_numeric($x) ? false : true;
+    $x = trim($x) ? false : true;
 
     $x = <weak_warning descr="'empty($x)' would make more sense here (reduces cyclomatic and cognitive complexity).">empty($x) ? true : false</weak_warning>;
     $x = <weak_warning descr="'!empty($x)' would make more sense here (reduces cyclomatic and cognitive complexity).">!empty($x) ? true : false</weak_warning>;

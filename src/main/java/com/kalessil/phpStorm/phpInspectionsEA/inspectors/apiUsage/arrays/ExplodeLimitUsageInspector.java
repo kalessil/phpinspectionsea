@@ -1,15 +1,20 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ExplodeLimitUsageInspector extends PhpInspection {
-    private static final String messagePattern = "Perhaps '%s' can be used here, as only the first part has been used.";
+    private static final String messagePositiveLimitPattern = "'%s' could be used here (only the first part has been used).";
+    private static final String messageNegativeLimitPattern = "'%s' could be used here (following 'array_pop(...)' call to be dropped then).";
 
     @NotNull
     @Override
@@ -48,23 +54,76 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("explode")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 2 && this.isTargetContext(reference) && this.isFromRootNamespace(reference)) {
-                        final String replacement = String.format(
-                                "%sexplode(%s, %s, 2)",
-                                reference.getImmediateNamespaceName(),
-                                arguments[0].getText(),
-                                arguments[1].getText()
-                        );
-                        holder.registerProblem(
-                                reference,
-                                String.format(messagePattern, replacement),
-                                new AddLimitArgumentFixer(replacement)
-                        );
+                    if (arguments.length >= 2) {
+                        if (this.canApplyNegativeLimit(reference) && this.isFromRootNamespace(reference)) {
+                            final boolean canCalculateLimit = arguments.length == 2 || OpenapiTypesUtil.isNumber(arguments[2]);
+                            if (canCalculateLimit) {
+                                int limit;
+                                try {
+                                    limit = arguments.length == 3 ? Integer.parseInt(arguments[2].getText()) : 0;
+                                } catch (final NumberFormatException wrongFormat) {
+                                    limit = Integer.MAX_VALUE;
+                                }
+                                if (limit <= 0) {
+                                    final String replacement = String.format(
+                                            "%sexplode(%s, %s, %s)",
+                                            reference.getImmediateNamespaceName(),
+                                            arguments[0].getText(),
+                                            arguments[1].getText(),
+                                            limit - 1
+                                    );
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(messageNegativeLimitPattern, replacement),
+                                            new AddPNegativeLimitArgumentFixer(replacement)
+                                    );
+                                }
+                            }
+                        } else if (this.canApplyPositiveLimit(reference) && this.isFromRootNamespace(reference)) {
+                            final String replacement = String.format(
+                                    "%sexplode(%s, %s, 2)",
+                                    reference.getImmediateNamespaceName(),
+                                    arguments[0].getText(),
+                                    arguments[1].getText()
+                            );
+                            holder.registerProblem(
+                                    reference,
+                                    String.format(messagePositiveLimitPattern, replacement),
+                                    new AddPositiveLimitArgumentFixer(replacement)
+                            );
+                        }
                     }
                 }
             }
 
-            private boolean isTargetContext(@NotNull PsiElement expression) {
+            private boolean canApplyNegativeLimit(@NotNull PsiElement expression) {
+                final PsiElement parent = expression.getParent();
+                if (OpenapiTypesUtil.isAssignment(parent)) {
+                    final PsiElement grandParent = parent.getParent();
+                    if (OpenapiTypesUtil.isStatementImpl(grandParent)) {
+                        final PsiElement next = ((PhpPsiElement) grandParent).getNextPsiSibling();
+                        if (OpenapiTypesUtil.isStatementImpl(next)) {
+                            final PsiElement callCandidate = next.getFirstChild();
+                            if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
+                                final FunctionReference reference = (FunctionReference) callCandidate;
+                                final String functionName         = reference.getName();
+                                if (functionName != null && functionName.equals("array_pop")) {
+                                    final PsiElement[] callArguments = reference.getParameters();
+                                    if (callArguments.length == 1) {
+                                        final PsiElement container = ((AssignmentExpression) parent).getVariable();
+                                        final PsiElement match     = callArguments[0];
+                                        return container != null && match != null && OpenapiEquivalenceUtil.areEqual(container, match);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            private boolean canApplyPositiveLimit(@NotNull PsiElement expression) {
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof ArrayAccessExpression) {
                     final ArrayIndex index = ((ArrayAccessExpression) parent).getIndex();
@@ -87,7 +146,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                                     reachedStartingPoint = reachedStartingPoint || match == variable;
                                     if (reachedStartingPoint && match != variable && variableName.equals(match.getName())) {
                                         final PsiElement context = match.getParent();
-                                        if (!(result = context instanceof ArrayAccessExpression && this.isTargetContext(match))) {
+                                        if (!(result = context instanceof ArrayAccessExpression && this.canApplyPositiveLimit(match))) {
                                             break;
                                         }
                                     }
@@ -103,8 +162,8 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
         };
     }
 
-    private static final class AddLimitArgumentFixer extends UseSuggestedReplacementFixer {
-        private static final String title = "Add limit to the 'explode(...)' call";
+    private static final class AddPositiveLimitArgumentFixer extends UseSuggestedReplacementFixer {
+        private static final String title = "Add limit to 'explode(...)' call";
 
         @NotNull
         @Override
@@ -112,8 +171,51 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
             return title;
         }
 
-        AddLimitArgumentFixer(@NotNull String expression) {
+        AddPositiveLimitArgumentFixer(@NotNull String expression) {
             super(expression);
+        }
+    }
+
+    private static final class AddPNegativeLimitArgumentFixer implements LocalQuickFix {
+        private static final String title = "Add limit to 'explode(...)' and drop 'array_pop(...)' call";
+
+        final private String expression;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        AddPNegativeLimitArgumentFixer(@NotNull String expression) {
+            super();
+            this.expression = expression;
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression != null && !project.isDisposed()) {
+                final PsiElement replacement = PhpPsiElementFactory
+                        .createPhpPsiFromText(project, ParenthesizedExpression.class, '(' + this.expression + ')')
+                        .getArgument();
+                if (replacement != null) {
+                    final PhpPsiElement statementCandidate = (PhpPsiElement) expression.getParent().getParent();
+                    if (OpenapiTypesUtil.isStatementImpl(statementCandidate)) {
+                        final PsiElement next = statementCandidate.getNextPsiSibling();
+                        if (next != null) {
+                            next.delete();
+                            expression.replace(replacement);
+                        }
+                    }
+                }
+            }
         }
     }
 }

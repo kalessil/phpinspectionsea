@@ -62,22 +62,24 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
 
     final private static Set<String> functionsSet = new HashSet<>();
     static {
-            functionsSet.add("array_key_exists");
-            functionsSet.add("defined");
-            functionsSet.add("is_array");
-            functionsSet.add("is_string");
-            functionsSet.add("is_bool");
-            functionsSet.add("is_int");
-            functionsSet.add("is_float");
-            functionsSet.add("is_resource");
-            functionsSet.add("is_numeric");
-            functionsSet.add("is_scalar");
-            functionsSet.add("is_object");
-            functionsSet.add("is_callable");
-            functionsSet.add("is_countable");
-            functionsSet.add("is_iterable");
-            functionsSet.add("function_exists");
-            functionsSet.add("property_exists");
+        functionsSet.add("array_key_exists");
+        functionsSet.add("function_exists");
+        functionsSet.add("property_exists");
+
+        functionsSet.add("defined");
+        functionsSet.add("is_array");
+        functionsSet.add("is_bool");
+        functionsSet.add("is_callable");
+        functionsSet.add("is_countable");
+        functionsSet.add("is_float");
+        functionsSet.add("is_int");
+        functionsSet.add("is_iterable");
+        functionsSet.add("is_null");
+        functionsSet.add("is_numeric");
+        functionsSet.add("is_object");
+        functionsSet.add("is_resource");
+        functionsSet.add("is_scalar");
+        functionsSet.add("is_string");
     }
 
     @Override

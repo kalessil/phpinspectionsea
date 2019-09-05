@@ -128,3 +128,18 @@ The inspection finds for-constructs which can be refactored (by Quick-Fixing) in
 cognitive load, improving maintainability and enabling the analyzer to apply more checks.
 
 > Note: foreach-statements are also well optimized for working with <a href="https://secure.php.net/manual/en/class.iterator.php">iterators</a>.
+
+## Ternary operator could be simplified
+
+Reports if ternary operator can be refactored to simply use the conditional variable as the result
+(thus omitting the ternary branches). This reduces the both cyclomatic and cognitive code complexity.
+
+```php
+    /* sample code fragment before applying Quick-Fix */
+    $variable = $number > 0 ? true : false;
+    $variable = $number & $flag ? true : false;
+    
+    /* sample code fragment after applying Quick-Fix */
+    $variable = $number > 0;
+    $variable = (bool) ($number & $flag);
+```

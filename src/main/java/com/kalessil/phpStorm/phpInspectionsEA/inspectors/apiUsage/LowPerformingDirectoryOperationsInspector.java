@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
     private static final String messageSortsByDefaultPattern = "'%s(...)' sorts results by default, please provide second argument for specifying the intention.";
-    private static final String messageUnboxGlobPattern      = "'%s' would be more performing here (reduces amount of file-system interactions).";
+    private static final String messageUnboxGlobPattern      = "'%s' would be more performing here (reduces amount of file system interactions).";
 
     @NotNull
     @Override

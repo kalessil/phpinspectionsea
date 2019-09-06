@@ -8,6 +8,7 @@ class aClass {
     public function check($arg, $handle) {
         $pattern4 = '%%%%%%%d%d';
         $pattern5 = '[%[^]]]';
+        $pattern6 = '%*s %s';
 
         /* all function reported */
         echo <error descr="Amount of expected parameters is 3.">printf</error> ($pattern4, $arg);
@@ -52,6 +53,9 @@ class aClass {
 
         /* sscanf/fscanf special formats */
         sscanf($arg, $pattern5, $arg);
+
+        /* suppressed placeholders */
+        sscanf($arg, $pattern6, $var2);
     }
 
     public static function test_case_with_modification()

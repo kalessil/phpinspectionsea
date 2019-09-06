@@ -30,7 +30,7 @@ import java.util.Map;
  */
 
 public class GetTypeMissUseInspector extends BasePhpInspection {
-    private static final String messageUseFunctionPattern = "'%s' construction is more compact and easier to read.";
+    private static final String messageUseFunctionPattern = "'%s' would fit more here (clearer expresses the intention and SCA friendly).";
     private static final String messageInvalidPattern     = "'%s' is not a value returned by 'gettype(...)'.";
 
     @NotNull

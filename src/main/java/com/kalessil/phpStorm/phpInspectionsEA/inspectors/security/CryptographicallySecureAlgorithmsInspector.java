@@ -32,6 +32,8 @@ public class CryptographicallySecureAlgorithmsInspector extends PhpInspection {
         constants.put("MCRYPT_RIJNDAEL_256",    "mcrypt's MCRYPT_RIJNDAEL_256 is not AES compliant, MCRYPT_RIJNDAEL_128 + 256-bit key should be used instead.");
         /* weak algorithms, mcrypt constants */
         constants.put("MCRYPT_3DES",            "3DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead.");
+        constants.put("MCRYPT_TRIPLEDES",       "3DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead.");
+        constants.put("MCRYPT_DES_COMPAT",      "DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead.");
         constants.put("MCRYPT_DES",             "DES has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead.");
         constants.put("MCRYPT_RC2",             "RC2 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead.");
         constants.put("MCRYPT_RC4",             "RC4 has known vulnerabilities, consider using MCRYPT_RIJNDAEL_128 instead.");

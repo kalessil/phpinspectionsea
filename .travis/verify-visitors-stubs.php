@@ -5,6 +5,7 @@
 
     preg_match_all('/public void (visit\w+)\(/i', file_get_contents($sourcesPath . '/openApi/BasePhpElementVisitor.java'), $visitors);
     $stubbedVisitors = $visitors[1];
+    $stubbedVisitors [] = 'visitPhpStatement'; /* stubbing breaks DeclareDirectiveCorrectnessInspector */
 
     $needsStubbing = [];
     /* @var \SplFileInfo $file */

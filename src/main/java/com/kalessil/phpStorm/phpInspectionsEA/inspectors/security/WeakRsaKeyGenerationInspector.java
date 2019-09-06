@@ -24,9 +24,8 @@ import java.util.Map;
  */
 
 public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
-    private static final String messageAllDefaults          = "...";
-    private static final String messageLengthIsDefault      = "...";
-    private static final String messageLengthIsNoSufficient = "...";
+    private static final String messageLengthIsDefault      = "The generated RSA key length is insufficient (system defaults are 1024 or 2048 bits), using 4096 bits is recommended.";
+    private static final String messageLengthIsNoSufficient = "The generated RSA key length is insufficient, using 4096 bits is recommended.";
 
     private static final Map<String, Integer> targetFunctions = new HashMap<>();
     static {
@@ -64,28 +63,29 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                                     }
                                 }
                                 /* understand settings */
-                                final boolean isTargetType = keyType == null || "OPENSSL_KEYTYPE_RSA".equals(keyType.getName());
-                                if (isTargetType) {
+                                final boolean isTargetKeyType = keyType == null || "OPENSSL_KEYTYPE_RSA".equals(keyType.getName());
+                                if (isTargetKeyType) {
                                     if (keyLength == null) {
                                         holder.registerProblem(reference, messageLengthIsDefault);
-                                    } else {
-                                        if (OpenapiTypesUtil.isNumber(keyLength)) {
-                                            boolean isTarget;
-                                            try {
-                                                isTarget = Integer.parseInt(keyLength.getText()) <= 2048;
-                                            } catch (final NumberFormatException wrongFormat) {
-                                                isTarget = false;
-                                            }
-                                            if (isTarget) {
-                                                holder.registerProblem(reference, messageLengthIsNoSufficient);
-                                            }
+                                        break;
+                                    }
+                                    if (OpenapiTypesUtil.isNumber(keyLength)) {
+                                        boolean isTarget;
+                                        try {
+                                            isTarget = Integer.parseInt(keyLength.getText()) <= 2048;
+                                        } catch (final NumberFormatException wrongFormat) {
+                                            isTarget = false;
+                                        }
+                                        if (isTarget) {
+                                            holder.registerProblem(reference, messageLengthIsNoSufficient);
+                                            break;
                                         }
                                     }
                                 }
                             }
                         }
                     } else {
-                        holder.registerProblem(reference, messageAllDefaults);
+                        holder.registerProblem(reference, messageLengthIsDefault);
                     }
                 }
             }

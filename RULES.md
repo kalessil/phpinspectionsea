@@ -35,7 +35,7 @@ Inspections Lists (Control flow)
 | Control Flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a | yes | n/a  | no  |
 | Control Flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'                                 | yes | yes | yes  | yes |
 | Control Flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                          | yes | yes | yes  | no  |
-| Control Flow         | UnsetConstructsCanBeMergedInspection            | 'unset(...)' constructs can be merged                                             | yes | yes | yes  | no  |
+| Control Flow         | UnsetConstructsCanBeMergedInspection            | 'unset(...)' constructs can be merged                                             | yes | yes | yes  | yes |
 | Control Flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | yes | yes | yes  | no  |
 | Control Flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | yes | yes | yes  | no  |
 | Control Flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | yes  | no  |

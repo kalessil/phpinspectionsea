@@ -33,6 +33,18 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
         targetFunctions.put("openssl_csr_new",  3);
     }
 
+    @NotNull
+    @Override
+    public String getShortName() {
+        return "WeakRsaKeyGenerationInspection";
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "Insufficient RSA key length";
+    }
+
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {

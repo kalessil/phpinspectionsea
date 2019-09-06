@@ -266,6 +266,7 @@ Inspections Lists (Security)
 | Security             | BypassedPathTraversalProtectionInspection          | Bypassed pass traverse protection                                      | yes | yes | yes  | no  |
 | Security             | BypassedUrlValidationInspection                    | Bypassed URL validation                                                | n/a | yes | n/a  | no  |
 | Security             | HashTimingAttacksInspection                        | Hash timing attack                                                     | n/a | yes | n/a  | no  |
+| Security             | WeakRsaKeyGenerationInspection                     | Insufficient RSA key length                                            | n/a | yes | n/a  | no  |
 
 Inspections Lists (Performance)
 ---

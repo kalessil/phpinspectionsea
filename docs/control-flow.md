@@ -143,3 +143,14 @@ Reports if ternary operator can be refactored to simply use the conditional vari
     $variable = $number > 0;
     $variable = (bool) ($number & $flag);
 ```
+## Statement could be decoupled from foreach
+
+Analyzes foreach loops and reports expressions that are not connected with the loop's scope. In the most cases such 
+expression can be executed once outside of corresponding loop.
+
+> Note: known false-positives are related to the input/output operations, executed in the loop - suppression recommended for this case
+
+## 'gettype(...)' could be replaced with 'is_*(...)'
+
+Reports 'gettype()' function usages, which can be replaced by 'is_array()' and similar functions. 
+Such replacement is clearer expresses intention and more friendly to Static Code Analysis tools relying to types inference.

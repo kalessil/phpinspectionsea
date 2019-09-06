@@ -59,7 +59,7 @@ public class PrintfScanfArgumentsInspector extends PhpInspection {
     final static private Pattern regexPlaceHolders;
     static {
         // raw regex: %((\d+)\$)?[+-]?(?:[ 0]|\\?'.)?-?\d*(?:\.\d+)?[\[sducoxXbgGeEfF]
-        regexPlaceHolders = Pattern.compile("%((\\d+)\\$)?[+-]?(?:[ 0]|\\\\?'.)?-?\\d*(?:\\.\\d+)?[\\[sducoxXbgGeEfF]");
+        regexPlaceHolders = Pattern.compile("%((\\d+|\\*)\\$)?[+-]?(?:[ 0]|\\\\?'.)?-?\\d*(?:\\.\\d+)?[\\[sducoxXbgGeEfF]");
     }
 
     @Override
@@ -116,7 +116,7 @@ public class PrintfScanfArgumentsInspector extends PhpInspection {
                     final int expectedParametersCount = minimumArgumentsForAnalysis + Math.max(countWithoutPositionSpecifier, maxPositionSpecifier);
 
                     /* check for pattern validity */
-                    final int parametersInPattern = StringUtils.countMatches(content.replace("%%", ""), "%");
+                    final int parametersInPattern = StringUtils.countMatches(content.replace("%%", "").replace("%*",""), "%");
                     if (countParsedAll != parametersInPattern) {
                         holder.registerProblem(params[neededPosition], messagePattern, ProblemHighlightType.GENERIC_ERROR);
                         return;

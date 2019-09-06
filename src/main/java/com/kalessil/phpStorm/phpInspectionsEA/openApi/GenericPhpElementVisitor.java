@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.openApi;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.PhpFile;
@@ -45,13 +46,14 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
     public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
-    @Override public void visitPhpFile(PhpFile PhpFile)    {}
-    @Override public void visitPhpInclude(Include include) {}
+    @Override public void visitPhpFile(PhpFile PhpFile)        {}
+    @Override public void visitWhiteSpace(PsiWhiteSpace space) {}
 
-    @Override public void visitPhpMethodReference(MethodReference reference) {}
-    @Override public void visitPhpFunctionCall(FunctionReference reference)  {}
-    @Override public void visitPhpMethod(Method method)                      {}
-    @Override public void visitPhpFunction(Function function)                {}
+    @Override public void visitPhpMethodReference(MethodReference reference)               {}
+    @Override public void visitPhpFunctionCall(FunctionReference reference)                {}
+    @Override public void visitPhpConstantReference(ConstantReference reference)           {}
+    @Override public void visitPhpClassConstantReference(ClassConstantReference reference) {}
+    @Override public void visitPhpClassReference(ClassReference reference)                 {}
 
     @Override public void visitPhpForeach(ForeachStatement foreachStatement) {}
     @Override public void visitPhpFor(For forStatement)                      {}
@@ -64,37 +66,41 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpAssignmentExpression(AssignmentExpression expression)           {}
     @Override public void visitPhpSelfAssignmentExpression(SelfAssignmentExpression expression)   {}
     @Override public void visitPhpMultiassignmentExpression(MultiassignmentExpression expression) {}
+    @Override public void visitPhpUnaryExpression(UnaryExpression expression)                     {}
     @Override public void visitPhpParenthesizedExpression(ParenthesizedExpression expression)     {}
 
     @Override public void visitPhpIf(If ifStatement)             {}
     @Override public void visitPhpElseIf(ElseIf elseIfStatement) {}
     @Override public void visitPhpElse(Else elseStatement)       {}
 
-    @Override public void visitPhpBinaryExpression(BinaryExpression expression)       {}
-    @Override public void visitPhpIsset(PhpIsset issetExpression)                     {}
-    @Override public void visitPhpUnset(PhpUnset unsetStatement)                      {}
-    @Override public void visitPhpEmpty(PhpEmpty emptyExpression)                     {}
-    @Override public void visitPhpEchoStatement(PhpEchoStatement echoStatement)       {}
-    @Override public void visitPhpStaticStatement(PhpStaticStatement staticStatement) {}
-    @Override public void visitPhpNewExpression(NewExpression expression)             {}
-    @Override public void visitPhpPrint(PhpPrintExpression print)                     {}
-    @Override public void visitPhpGroupStatement(GroupStatement groupStatement)       {}
-    @Override public void visitPhpExit(PhpExit exitExpression)                        {}
+    @Override public void visitPhpBinaryExpression(BinaryExpression expression) {}
+    @Override public void visitPhpIsset(PhpIsset issetExpression)               {}
+    @Override public void visitPhpUnset(PhpUnset unsetStatement)                {}
+    @Override public void visitPhpEmpty(PhpEmpty emptyExpression)               {}
+    @Override public void visitPhpNewExpression(NewExpression expression)       {}
+    @Override public void visitPhpEchoStatement(PhpEchoStatement echo)          {}
+    @Override public void visitPhpPrint(PhpPrintExpression print)               {}
+    @Override public void visitPhpGroupStatement(GroupStatement groupStatement) {}
+    @Override public void visitPhpInclude(Include include)                      {}
+    @Override public void visitPhpStatement(Statement statement)                {}
+    @Override public void visitPhpGotoLabel(PhpGotoLabel label)                 {}
+    @Override public void visitPhpUse(PhpUse expression)                        {}
+    @Override public void visitPhpStaticStatement(PhpStaticStatement expression){}
+    @Override public void visitPhpExit(PhpExit exitExpression)                  {}
 
     @Override public void visitPhpClass(PhpClass clazz)                                            {}
-    @Override public void visitPhpConstantReference(ConstantReference reference)                   {}
-    @Override public void visitPhpClassConstantReference(ClassConstantReference constantReference) {}
-    @Override public void visitPhpClassReference(ClassReference classReference)                    {}
+    @Override public void visitPhpMethod(Method method)                                            {}
     @Override public void visitPhpField(Field field)                                               {}
+    @Override public void visitPhpFunction(Function function)                                      {}
 
     @Override public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {}
     @Override public void visitPhpArrayAccessExpression(ArrayAccessExpression expression)     {}
     @Override public void visitPhpStringLiteralExpression(StringLiteralExpression expression) {}
 
-    @Override public void visitPhpTry(Try tryStatement)          {}
-    @Override public void visitPhpCatch(Catch phpCatch)          {}
-    @Override public void visitPhpFinally(Finally element)       {}
-    @Override public void visitPhpThrow(PhpThrow throwStatement) {}
+    @Override public void visitPhpTry(Try tryStatement)      {}
+    @Override public void visitPhpCatch(Catch phpCatch)      {}
+    @Override public void visitPhpFinally(Finally element)   {}
+    @Override public void visitPhpThrow(PhpThrow expression) {}
 
     @Override public void visitPhpSwitch(PhpSwitch switchStatement) {}
     @Override public void visitPhpReturn(PhpReturn returnStatement) {}

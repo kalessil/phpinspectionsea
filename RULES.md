@@ -27,7 +27,7 @@ Inspections Lists (Control flow)
 | Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a | yes | n/a  | yes |
 | Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | yes |
 | Control Flow         | ThrowRawExceptionInspection                     | General exception is thrown                                                       | yes | yes | yes  | yes |
-| Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | no  |
+| Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | yes |
 | Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a | yes | n/a  | yes |
 | Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | yes |
 | Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | yes |

@@ -149,3 +149,8 @@ Analyzes foreach loops and reports expressions that are not connected with the l
 expression can be executed once outside of corresponding loop.
 
 > Note: known false-positives are related to the input/output operations, executed in the loop - suppression recommended for this case
+
+## 'gettype(...)' could be replaced with 'is_*(...)'
+
+Reports 'gettype()' function usages, which can be replaced by 'is_array()' and similar functions. 
+Such replacement is clearer expresses intention and more friendly to Static Code Analysis tools relying to types inference.

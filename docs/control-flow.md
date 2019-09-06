@@ -154,3 +154,17 @@ expression can be executed once outside of corresponding loop.
 
 Reports 'gettype()' function usages, which can be replaced by 'is_array()' and similar functions. 
 Such replacement is clearer expresses intention and more friendly to Static Code Analysis tools relying to types inference.
+
+## 'unset(...)' constructs can be merged
+
+Analyzes if the 'unset(...)' function was called sequentially. This can be safely replaced
+with the 'unset(..., ...[, ...])' construction.
+
+```php
+    /* sample code fragment before applying Quick-Fix */
+    unset($variable);
+    unset($argument);
+    
+    /* sample code fragment after applying Quick-Fix */
+    unset($variable, $argument);
+```

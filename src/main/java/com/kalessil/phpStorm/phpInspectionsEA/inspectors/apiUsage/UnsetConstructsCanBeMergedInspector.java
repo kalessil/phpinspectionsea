@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 
 public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
-    private static final String message = "Can be safely replaced with 'unset(..., ...[, ...])' construction.";
+    private static final String message = "Can be replaced with 'unset(..., ...)' construction (simplification).";
 
     @NotNull
     @Override

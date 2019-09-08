@@ -1,6 +1,5 @@
 <?php
 
-// array_slice(explode('/', ...), 0, -N) -> explode('/', ..., -number)
 // list($firstKey[,]) = explode('/', ...);  amount of commas + 1
 
 function cases_holder_positive_limit() {
@@ -15,8 +14,7 @@ function cases_holder_positive_limit() {
         explode('/', '...'),
         $skip[1],
 
-        <warning descr="'explode('/', '...', 2)[0]' could be used here (only the first part has been used).">current(explode('/', '...'))</warning>,
-        <warning descr="'explode('/', '...', 2)[0]' could be used here (only the first part has been used).">array_slice(explode('/', '...'), 0, 1)</warning>,
+        <warning descr="'explode('/', '...', 2)[0]' could be used here (only the first part has been used).">current(explode('/', '...'))</warning>
     ];
 }
 

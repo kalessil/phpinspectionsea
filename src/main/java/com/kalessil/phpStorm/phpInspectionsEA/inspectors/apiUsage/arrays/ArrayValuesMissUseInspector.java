@@ -27,6 +27,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
     private static final String messageGeneric  = "'array_values(...)' is not making any sense here (just use it's argument).";
     private static final String messageInArray  = "'array_values(...)' is not making any sense here (just search in it's argument).";
     private static final String messageCount    = "'array_values(...)' is not making any sense here (just count it's argument).";
+    private static final String messageKeys     = "'Perhaps it was intended to use 'array_keys(...)' here.";
 
     @NotNull
     @Override
@@ -101,7 +102,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                             }
                         }
 
-                        /* pattern 3: array_values(array_column(...)), array_values(array_slice(...)),  */
+                        /* pattern 3: array_values(array_column(...)), array_values(array_slice(...)), array_values(array_flip(...))  */
                         if (OpenapiTypesUtil.isFunctionReference(innerArguments[0])) {
                             final FunctionReference argument = (FunctionReference) innerArguments[0];
                             final String argumentName        = argument.getName();
@@ -117,6 +118,12 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                         holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
                                     } else if (argumentArguments.length == 4 && PhpLanguageUtil.isFalse(argumentArguments[3])) {
                                         holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
+                                    }
+                                } else if (argumentName.equals("array_flip")) {
+                                    final PsiElement[] argumentArguments = argument.getParameters();
+                                    if (argumentArguments.length == 1) {
+                                        final String replacement = String.format("%sarray_keys(%s)", reference.getImmediateNamespaceName(), argumentArguments[0].getText());
+                                        holder.registerProblem(reference, messageKeys, new ReplaceFix(replacement));
                                     }
                                 }
                             }

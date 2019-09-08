@@ -42,5 +42,8 @@ function cases_holder() {
         array_slice([], 0, 1),
         array_slice([], 0, 1, false),
         array_values(array_slice([], 0, 1, true)),
+
+        array_keys([]),
+        array_values(array_flip()),
     ];
 }

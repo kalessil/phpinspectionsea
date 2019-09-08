@@ -14,6 +14,7 @@ function cases_holder_positive_limit() {
         explode('/', '...'),
         $skip[1],
 
+        // PHP 5.4+
         <warning descr="'explode('/', '...', 2)[0]' could be used here (only the first part has been used).">current(explode('/', '...'))</warning>
     ];
 }

@@ -125,7 +125,15 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
 
             private boolean canApplyPositiveLimit(@NotNull PsiElement expression) {
                 final PsiElement parent = expression.getParent();
-                if (parent instanceof ArrayAccessExpression) {
+                if (parent instanceof ParameterList) {
+                    final PsiElement grandParent = parent.getParent();
+                    if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                        final String functionName = ((FunctionReference) grandParent).getName();
+                        if (functionName != null && functionName.equals("current")) {
+                            return true;
+                        }
+                    }
+                } else if (parent instanceof ArrayAccessExpression) {
                     final ArrayIndex index = ((ArrayAccessExpression) parent).getIndex();
                     if (index != null) {
                         final PsiElement indexValue = index.getValue();

@@ -4,6 +4,10 @@ function cases_holder_positive_limit() {
     $skip = explode('/', '...');
     $target = explode('/', '...', 2);
 
+    list($first,) = explode('/', '...', 2);
+    list($first) = explode('/', '...', 2);
+    list($first, ,) = explode('/', '...');
+
     return [
         explode('/', '...', 2)[0],
         $target[0],
@@ -11,6 +15,8 @@ function cases_holder_positive_limit() {
         explode('/', '...')[1],
         explode('/', '...'),
         $skip[1],
+
+        current(explode('/', '...', 2)),
     ];
 }
 

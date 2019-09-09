@@ -4,8 +4,8 @@ function cases_holder_positive_limit() {
     $skip = explode('/', '...');
     $target = <warning descr="'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>;
 
-    list($first,) = explode('/', '...');
-    list($first) = explode('/', '...');
+    list($first,) = <warning descr="'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>;
+    list($first) = <warning descr="'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>;
     list($first, ,) = explode('/', '...');
 
     return [

@@ -52,10 +52,10 @@ Inspections Lists (PhpUnit)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | --:  | --: |
-| PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes | yes | yes  | no  |
-| PhpUnit              | UnnecessaryAssertionInspection                  | PhpUnit: unnecessary assertion                      | yes | yes | yes  | no  |
-| PhpUnit              | MockingMethodsCorrectnessInspection             | PhpUnit: methods mocking issues                     | yes | yes | yes  | no  |
-| PhpUnit              | PhpUnitDeprecationsInspection                   | PhpUnit: API deprecations                           | n/a | yes | n/a  | no  |
+| PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes | yes | yes  | n/a |
+| PhpUnit              | UnnecessaryAssertionInspection                  | PhpUnit: unnecessary assertion                      | yes | yes | yes  | n/a |
+| PhpUnit              | MockingMethodsCorrectnessInspection             | PhpUnit: methods mocking issues                     | yes | yes | yes  | n/a |
+| PhpUnit              | PhpUnitDeprecationsInspection                   | PhpUnit: API deprecations                           | n/a | yes | n/a  | n/a |
 
 Inspections Lists (Unused)
 ---

@@ -37,7 +37,8 @@ public class SwitchContinuationInLoopInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
-            public void visitPhpContinue(PhpContinue continueStatement) {
+            @Override
+            public void visitPhpContinue(@NotNull PhpContinue continueStatement) {
                 if (this.shouldSkipAnalysis(continueStatement, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 /* check if continue already defined with desired level */

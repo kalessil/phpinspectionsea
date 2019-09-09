@@ -52,7 +52,8 @@ public class ClassOverridesFieldOfSuperClassInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
-            public void visitPhpField(Field ownField) {
+            @Override
+            public void visitPhpField(@NotNull Field ownField) {
                 if (this.shouldSkipAnalysis(ownField, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
 
                 /* skip un-explorable and test classes */

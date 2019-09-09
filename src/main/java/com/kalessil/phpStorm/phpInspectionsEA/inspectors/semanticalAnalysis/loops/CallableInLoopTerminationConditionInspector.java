@@ -49,7 +49,8 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
-            public void visitPhpFor(final For forStatement) {
+            @Override
+            public void visitPhpFor(@NotNull For forStatement) {
                 if (this.shouldSkipAnalysis(forStatement, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
 
                 final PhpPsiElement[] conditions = forStatement.getConditionalExpressions();

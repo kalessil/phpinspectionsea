@@ -86,7 +86,8 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
-            public void visitPhpIf(If ifStatement) {
+            @Override
+            public void visitPhpIf(@NotNull If ifStatement) {
                 if (this.shouldSkipAnalysis(ifStatement, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final List<PsiElement> objAllConditions = new ArrayList<>();

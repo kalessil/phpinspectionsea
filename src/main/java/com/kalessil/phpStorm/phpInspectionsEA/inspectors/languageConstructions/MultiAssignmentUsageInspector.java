@@ -39,7 +39,8 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
-            public void visitPhpMultiassignmentExpression(MultiassignmentExpression multiassignmentExpression) {
+            @Override
+            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression multiassignmentExpression) {
                 if (this.shouldSkipAnalysis(multiassignmentExpression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 /* ensure php version is at least PHP 5.5 */
@@ -92,7 +93,8 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
                 }
             }
 
-            public void visitPhpAssignmentExpression(AssignmentExpression assignmentExpression) {
+            @Override
+            public void visitPhpAssignmentExpression(@NotNull AssignmentExpression assignmentExpression) {
                 if (this.shouldSkipAnalysis(assignmentExpression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 /* ensure we are writing into a variable */

@@ -50,7 +50,8 @@ public class DateIntervalSpecificationInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
-            public void visitPhpNewExpression(final NewExpression expression) {
+            @Override
+            public void visitPhpNewExpression(@NotNull NewExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 /* before inspecting check parameters amount */

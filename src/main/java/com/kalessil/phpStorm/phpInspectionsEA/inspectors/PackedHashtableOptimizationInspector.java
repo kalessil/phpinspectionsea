@@ -48,7 +48,8 @@ final public class PackedHashtableOptimizationInspector extends PhpInspection {
         return new GenericPhpElementVisitor() {
             /* TODO: docs, http://blog.jpauli.tech/2016/04/08/hashtables.html#packed-hashtable-optimization */
 
-            public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {
+            @Override
+            public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
 
                 /* requires PHP7 */

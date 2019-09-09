@@ -36,7 +36,8 @@ public class DeprecatedConstructorStyleInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 if (this.shouldSkipAnalysis(method, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
                 final PhpClass clazz      = method.getContainingClass();

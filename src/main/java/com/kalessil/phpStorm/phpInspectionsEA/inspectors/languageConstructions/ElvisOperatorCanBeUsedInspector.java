@@ -44,7 +44,8 @@ public class ElvisOperatorCanBeUsedInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
-            public void visitPhpTernaryExpression(TernaryExpression expression) {
+            @Override
+            public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
                 /* construction requirements */

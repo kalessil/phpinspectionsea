@@ -63,7 +63,7 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
             }
 
             @Override
-            public void visitPhpEchoStatement(PhpEchoStatement echo) {
+            public void visitPhpEchoStatement(@NotNull PhpEchoStatement echo) {
                 if (this.shouldSkipAnalysis(echo, StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE)) { return; }
 
                 if (!OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {

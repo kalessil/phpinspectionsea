@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
@@ -139,27 +140,40 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                         final PsiElement indexValue = index.getValue();
                         return indexValue != null && OpenapiTypesUtil.isNumber(indexValue) && indexValue.getText().equals("0");
                     }
-                } else if (OpenapiTypesUtil.isAssignment(parent)) {
-                    final PsiElement container = ((AssignmentExpression) parent).getVariable();
-                    if (container instanceof Variable) {
-                        final Function scope = ExpressionSemanticUtil.getScope(expression);
-                        if (scope != null) {
-                            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
-                            if (body != null) {
-                                final Variable variable      = (Variable) container;
-                                final String variableName    = variable.getName();
-                                boolean reachedStartingPoint = false;
-                                boolean result               = false;
-                                for (final Variable match : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
-                                    reachedStartingPoint = reachedStartingPoint || match == variable;
-                                    if (reachedStartingPoint && match != variable && variableName.equals(match.getName())) {
-                                        final PsiElement context = match.getParent();
-                                        if (!(result = context instanceof ArrayAccessExpression && this.canApplyPositiveLimit(match))) {
-                                            break;
+                } else if (parent instanceof AssignmentExpression) {
+                    if (parent instanceof MultiassignmentExpression) {
+                        final MultiassignmentExpression assignment = (MultiassignmentExpression) parent;
+                        if (assignment.getVariables().size() == 1) {
+                            int commasCount  = 0;
+                            PsiElement child = assignment.getFirstChild();
+                            while (child != null && !OpenapiTypesUtil.is(child, PhpTokenTypes.opASGN)) {
+                                commasCount += OpenapiTypesUtil.is(child, PhpTokenTypes.opCOMMA) ? 1 : 0;
+                                child        = child.getNextSibling();
+                            }
+                            return commasCount < 2;
+                        }
+                    } else if (OpenapiTypesUtil.isAssignment(parent)) {
+                        final PsiElement container = ((AssignmentExpression) parent).getVariable();
+                        if (container instanceof Variable) {
+                            final Function scope = ExpressionSemanticUtil.getScope(expression);
+                            if (scope != null) {
+                                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                                if (body != null) {
+                                    final Variable variable      = (Variable) container;
+                                    final String variableName    = variable.getName();
+                                    boolean reachedStartingPoint = false;
+                                    boolean result               = false;
+                                    for (final Variable match : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
+                                        reachedStartingPoint = reachedStartingPoint || match == variable;
+                                        if (reachedStartingPoint && match != variable && variableName.equals(match.getName())) {
+                                            final PsiElement context = match.getParent();
+                                            if (!(result = context instanceof ArrayAccessExpression && this.canApplyPositiveLimit(match))) {
+                                                break;
+                                            }
                                         }
                                     }
+                                    return result;
                                 }
-                                return result;
                             }
                         }
                     }

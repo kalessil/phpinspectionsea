@@ -1,10 +1,12 @@
 <?php
 
-// list($firstKey[,]) = explode('/', ...);  amount of commas + 1
-
 function cases_holder_positive_limit() {
     $skip = explode('/', '...');
     $target = <warning descr="'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>;
+
+    list($first,) = explode('/', '...');
+    list($first) = explode('/', '...');
+    list($first, ,) = explode('/', '...');
 
     return [
         <warning descr="'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>[0],
@@ -14,8 +16,7 @@ function cases_holder_positive_limit() {
         explode('/', '...'),
         $skip[1],
 
-        // PHP 5.4+
-        <warning descr="'explode('/', '...', 2)[0]' could be used here (only the first part has been used).">current(explode('/', '...'))</warning>
+        current(<warning descr="'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>),
     ];
 }
 

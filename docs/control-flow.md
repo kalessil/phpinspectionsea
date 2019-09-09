@@ -168,3 +168,16 @@ with the 'unset(..., ...[, ...])' construction.
     /* sample code fragment after applying Quick-Fix */
     unset($variable, $argument);
 ```
+
+## One-time use variables
+
+In some cases variables are used as temporary value containers and it's possible to omit such variables at all.
+
+```php
+    /* sample code fragment before applying Quick-Fix */
+    $object = new Clazz();
+    return $object->method();
+    
+    /* sample code fragment after applying Quick-Fix */
+    return (new Clazz())->method();
+```

@@ -49,7 +49,8 @@ public class DateIntervalSpecificationInspector extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpNewExpression(final NewExpression expression) {
+            @Override
+            public void visitPhpNewExpression(@NotNull NewExpression expression) {
                 /* before inspecting check parameters amount */
                 final PsiElement[] params = expression.getParameters();
                 if (params.length == 1) {

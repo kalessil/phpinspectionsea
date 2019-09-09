@@ -60,7 +60,7 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
             }
 
             @Override
-            public void visitPhpEchoStatement(PhpEchoStatement echo) {
+            public void visitPhpEchoStatement(@NotNull PhpEchoStatement echo) {
                 if (!OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {
                     final PsiElement last = echo.getLastChild();
                     if (OpenapiTypesUtil.is(last, PhpTokenTypes.opSEMICOLON)) {

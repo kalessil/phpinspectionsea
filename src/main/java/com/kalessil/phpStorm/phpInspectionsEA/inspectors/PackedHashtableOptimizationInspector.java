@@ -47,7 +47,8 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
         return new BasePhpElementVisitor() {
             /* TODO: docs, http://blog.jpauli.tech/2016/04/08/hashtables.html#packed-hashtable-optimization */
 
-            public void visitPhpArrayCreationExpression(ArrayCreationExpression expression) {
+            @Override
+            public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
                 /* requires PHP7 */
                 if (PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP700)) {
                     return;

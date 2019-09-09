@@ -38,11 +38,13 @@ public class UselessUnsetInspector extends BasePhpInspection {
 
         /* foreach is also a case, but there is no way to get flow entry point in actual JB platform API */
         return new BasePhpElementVisitor() {
-            public void visitPhpMethod(Method method) {
+            @Override
+            public void visitPhpMethod(@NotNull Method method) {
                 this.inspectUsages(method.getParameters(), method);
             }
 
-            public void visitPhpFunction(Function function) {
+            @Override
+            public void visitPhpFunction(@NotNull Function function) {
                 this.inspectUsages(function.getParameters(), function);
             }
 

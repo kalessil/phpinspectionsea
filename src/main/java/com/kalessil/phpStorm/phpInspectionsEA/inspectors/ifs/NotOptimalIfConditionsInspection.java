@@ -83,7 +83,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
-            public void visitPhpIf(If ifStatement) {
+            @Override
+            public void visitPhpIf(@NotNull If ifStatement) {
                 final List<PsiElement> objAllConditions = new ArrayList<>();
                 final IElementType[] arrOperationHolder = { null };
 

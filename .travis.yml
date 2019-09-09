@@ -47,6 +47,7 @@ script:
   - php .travis/missing-toggles-check.php
   - php .travis/get-project-traverse-free-check.php
   - php .travis/verify-visitors-stubs.php
+  - php .travis/verify-visitors-definitions.php
   - php .travis/fix-short-and-display-names.php
   - ./gradlew check buildPlugin
   - wget -O src/main/resources/META-INF/plugin.master.xml https://raw.githubusercontent.com/kalessil/phpinspectionsea/master/src/main/resources/META-INF/plugin.xml

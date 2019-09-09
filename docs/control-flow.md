@@ -168,3 +168,31 @@ with the 'unset(..., ...[, ...])' construction.
     /* sample code fragment after applying Quick-Fix */
     unset($variable, $argument);
 ```
+
+## One-time use variables
+
+In some cases variables are used as temporary value containers and it's possible to omit such variables at all.
+
+```php
+    /* sample code fragment before applying Quick-Fix */
+    $object = new Clazz();
+    return $object->method();
+    
+    /* sample code fragment after applying Quick-Fix */
+    return (new Clazz())->method();
+```
+
+## 'list(...) = ' usage possible
+
+Since PHP 5.5 it's possible to use mass-assignments from array with 'list($variable, ...) = $array'. 
+Additionally to code compactness and performance, you'll notice if data array contains any un-used entries.
+
+```php
+    /* sample code fragment before applying Quick-Fix */
+    $array  = [ ... ];
+    $first  = $array[0];
+    $second = $array[1];
+    
+    /* sample code fragment after applying Quick-Fix */
+    list($first, $second) = [ ... ];
+```

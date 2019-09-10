@@ -56,6 +56,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                     if (outerArguments.length == 2) {
                         final PsiElement targetArgument = outerArguments[1];
                         if (targetArgument instanceof ArrayCreationExpression) {
+                            /* case: sprintf argument */
                             final PsiElement parent  = reference.getParent();
                             final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
                             if (OpenapiTypesUtil.isFunctionReference(context)) {
@@ -63,6 +64,11 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                 if (wrappingFunctionName != null && wrappingFunctionName.equals("sprintf")) {
                                     holder.registerProblem(reference, messageSprintf);
                                 }
+                            }
+                            /* case: just one element */
+                            final PsiElement[] values = targetArgument.getChildren();
+                            if (values.length == 1) {
+                                holder.registerProblem(reference, String.format(messagePattern, values[0].getText()));
                             }
                         } else {
                             final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(targetArgument);

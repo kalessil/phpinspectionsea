@@ -21,3 +21,10 @@ function cases_holder_sprintf() {
     $content = sprintf('%s', <warning descr="Consider taking advantage of the outer 'sprintf(...)' call instead (simplification).">implode(',', [])</warning>);
     $content = sprintf('%s', implode(',', $array));
 }
+
+function cases_holder_few_arguments() {
+    $content = <warning descr="Consider using '$singleElement' instead (consumes less cpu and memory resources).">implode('', [$singleElement])</warning>;
+
+    $content = implode('', [...$singleElement]);
+    $content = implode('', ['...', '...']);
+}

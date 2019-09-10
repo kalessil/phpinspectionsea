@@ -45,39 +45,64 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
 
-                if (PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP550)) {
-                    return;
-                }
-
-                final String functionName = reference.getName();
-                if (functionName != null && functionName.equals("array_map")) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 2 && arguments[1] != null && OpenapiTypesUtil.isLambda(arguments[0])) {
-                        final Function closure       = (Function) (arguments[0] instanceof Function ? arguments[0] : arguments[0].getFirstChild());
-                        final Parameter[] parameters = closure.getParameters();
-                        if (parameters.length > 0) {
-                            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(closure);
-                            if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
-                                final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
-                                if (last instanceof PhpReturn) {
-                                    final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
-                                    if (candidate instanceof ArrayAccessExpression) {
-                                        final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
-                                        final PhpPsiElement value          = access.getValue();
-                                        if (value instanceof Variable && parameters[0].getName().equals(value.getName())) {
-                                            final ArrayIndex index = access.getIndex();
-                                            final PsiElement key   = index == null ? null : index.getValue();
-                                            if (key != null) {
+                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
+                    final String functionName = reference.getName();
+                    if (functionName != null && functionName.equals("array_map")) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length == 2 && arguments[1] != null && OpenapiTypesUtil.isLambda(arguments[0])) {
+                            final Function closure       = (Function) (arguments[0] instanceof Function ? arguments[0] : arguments[0].getFirstChild());
+                            final Parameter[] parameters = closure.getParameters();
+                            if (parameters.length > 0) {
+                                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(closure);
+                                if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
+                                    final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
+                                    if (last instanceof PhpReturn) {
+                                        final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
+                                        if (candidate instanceof ArrayAccessExpression) {
+                                            final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
+                                            final PhpPsiElement value          = access.getValue();
+                                            if (value instanceof Variable && parameters[0].getName().equals(value.getName())) {
+                                                final ArrayIndex index = access.getIndex();
+                                                final PsiElement key   = index == null ? null : index.getValue();
+                                                if (key != null) {
+                                                        final String replacement = String.format(
+                                                                "%sarray_column(%s, %s)",
+                                                                reference.getImmediateNamespaceName(),
+                                                                arguments[1].getText(),
+                                                                key.getText()
+                                                        );
+                                                        holder.registerProblem(
+                                                                reference,
+                                                                String.format(messagePattern, replacement),
+                                                                new UseArrayColumnFixer(replacement)
+                                                        );
+                                                }
+                                            }
+                                        } else if (candidate instanceof FieldReference) {
+                                            final FieldReference fieldReference = (FieldReference) candidate;
+                                            final PhpPsiElement value            = fieldReference.getFirstPsiChild();
+                                            if (value instanceof Variable && parameters[0].getName().equals(value.getName())) {
+                                                final String columnForReplacement;
+                                                final String fieldName = fieldReference.getName();
+                                                if (fieldName != null && !fieldName.isEmpty()) {
+                                                    columnForReplacement = String.format("'%s'", fieldName);
+                                                } else {
+                                                    final PsiElement variableCandidate = value.getNextPsiSibling();
+                                                    columnForReplacement = variableCandidate == null ? null : variableCandidate.getText();
+                                                }
+                                                if (columnForReplacement != null) {
                                                     final String replacement = String.format(
-                                                            "array_column(%s, %s)",
+                                                            "%sarray_column(%s, %s)",
+                                                            reference.getImmediateNamespaceName(),
                                                             arguments[1].getText(),
-                                                            key.getText()
+                                                            columnForReplacement
                                                     );
                                                     holder.registerProblem(
                                                             reference,
                                                             String.format(messagePattern, replacement),
                                                             new UseArrayColumnFixer(replacement)
                                                     );
+                                                }
                                             }
                                         }
                                     }

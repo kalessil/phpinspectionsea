@@ -87,8 +87,8 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
                                                 if (fieldName != null && !fieldName.isEmpty()) {
                                                     columnForReplacement = String.format("'%s'", fieldName);
                                                 } else {
-                                                    final PsiElement variableCandidate = value.getNextPsiSibling();
-                                                    columnForReplacement = variableCandidate == null ? null : variableCandidate.getText();
+                                                    final PsiElement dynamicFieldName = value.getNextPsiSibling();
+                                                    columnForReplacement = dynamicFieldName instanceof Variable ? dynamicFieldName.getText() : null;
                                                 }
                                                 if (columnForReplacement != null) {
                                                     final String replacement = String.format(

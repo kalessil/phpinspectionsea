@@ -16,3 +16,8 @@ function cases_holder_explode() {
 
     $content = implode('...', explode(',', [], 1));
 }
+
+function cases_holder_sprintf() {
+    $content = sprintf('%s', implode(',', []));
+    $content = sprintf('%s', implode(',', $array));
+}

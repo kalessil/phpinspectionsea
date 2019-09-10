@@ -5,10 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -31,6 +28,7 @@ import java.util.Set;
 
 public class ImplodeMissUseInspector extends PhpInspection {
     private static final String messagePattern = "Consider using '%s' instead (consumes less cpu and memory resources).";
+    private static final String messageSprintf = "Consider taking advantage of the outer 'sprintf(...)' call instead (simplification).";
 
     @NotNull
     @Override
@@ -57,38 +55,32 @@ public class ImplodeMissUseInspector extends PhpInspection {
                     final PsiElement[] outerArguments = reference.getParameters();
                     if (outerArguments.length == 2) {
                         final PsiElement targetArgument = outerArguments[1];
-                        final Set<PsiElement> values    = PossibleValuesDiscoveryUtil.discover(targetArgument);
-                        if (values.size() == 1) {
-                            final PsiElement candidate = values.iterator().next();
-                            if (OpenapiTypesUtil.isFunctionReference(candidate)) {
-                                final FunctionReference innerCall = (FunctionReference) candidate;
-                                final String innerFunctionName    = innerCall.getName();
-                                if (innerFunctionName != null) {
-                                    if (innerFunctionName.equals("explode")) {
-                                        final PsiElement[] innerArguments = innerCall.getParameters();
-                                        if (innerArguments.length == 2 && this.isExclusiveUse(targetArgument, reference)) {
-                                            final String replacement = String.format(
-                                                    "%sstr_replace(%s, %s, %s)",
-                                                    reference.getImmediateNamespaceName(),
-                                                    innerArguments[0].getText(),
-                                                    outerArguments[0].getText(),
-                                                    innerArguments[1].getText()
-                                            );
-                                            holder.registerProblem(
-                                                    reference,
-                                                    String.format(messagePattern, replacement),
-                                                    new UseAlternativeFix(replacement)
-                                            );
-                                        }
-                                    } else if (innerFunctionName.equals("file")) {
-                                        final PsiElement[] innerArguments = innerCall.getParameters();
-                                        if (innerArguments.length == 1 && this.isExclusiveUse(targetArgument, reference)) {
-                                            final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(outerArguments[0]);
-                                            if (literal != null && literal.getContents().isEmpty()) {
+                        if (targetArgument instanceof ArrayCreationExpression) {
+                            final PsiElement parent  = reference.getParent();
+                            final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
+                            if (OpenapiTypesUtil.isFunctionReference(context)) {
+                                final String wrappingFunctionName = ((FunctionReference) context).getName();
+                                if (wrappingFunctionName != null && wrappingFunctionName.equals("sprintf")) {
+                                    holder.registerProblem(reference, messageSprintf);
+                                }
+                            }
+                        } else {
+                            final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(targetArgument);
+                            if (values.size() == 1) {
+                                final PsiElement candidate = values.iterator().next();
+                                if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                                    final FunctionReference innerCall = (FunctionReference) candidate;
+                                    final String innerFunctionName    = innerCall.getName();
+                                    if (innerFunctionName != null) {
+                                        if (innerFunctionName.equals("explode")) {
+                                            final PsiElement[] innerArguments = innerCall.getParameters();
+                                            if (innerArguments.length == 2 && this.isExclusiveUse(targetArgument, reference)) {
                                                 final String replacement = String.format(
-                                                        "%sfile_get_contents(%s)",
+                                                        "%sstr_replace(%s, %s, %s)",
                                                         reference.getImmediateNamespaceName(),
-                                                        innerArguments[0].getText()
+                                                        innerArguments[0].getText(),
+                                                        outerArguments[0].getText(),
+                                                        innerArguments[1].getText()
                                                 );
                                                 holder.registerProblem(
                                                         reference,
@@ -96,12 +88,29 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                                         new UseAlternativeFix(replacement)
                                                 );
                                             }
+                                        } else if (innerFunctionName.equals("file")) {
+                                            final PsiElement[] innerArguments = innerCall.getParameters();
+                                            if (innerArguments.length == 1 && this.isExclusiveUse(targetArgument, reference)) {
+                                                final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(outerArguments[0]);
+                                                if (literal != null && literal.getContents().isEmpty()) {
+                                                    final String replacement = String.format(
+                                                            "%sfile_get_contents(%s)",
+                                                            reference.getImmediateNamespaceName(),
+                                                            innerArguments[0].getText()
+                                                    );
+                                                    holder.registerProblem(
+                                                            reference,
+                                                            String.format(messagePattern, replacement),
+                                                            new UseAlternativeFix(replacement)
+                                                    );
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
+                            values.clear();
                         }
-                        values.clear();
                     }
                 }
             }

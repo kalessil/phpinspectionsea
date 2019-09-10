@@ -80,13 +80,13 @@ The inspection finds places where conditional return-statements can be simplifie
 complexity metrics and amount of maintainable codebase. 
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     if ($variable === 'value') {
         return true;
     }
     return false;
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     return $variable === 'value';
 ```
 
@@ -104,7 +104,7 @@ The inspection finds switch-constructs which can be refactored into more suitabl
 reducing cognitive load and clearer expressing code intention. 
 
 ```php
-    /* sample code fragment reported by the the inspection */
+    /* before */
     switch ($variable) {
         case 'value':
             /* operations: 1st batch */
@@ -114,7 +114,7 @@ reducing cognitive load and clearer expressing code intention.
             break;
     }
 
-    /* sample code fragment after refactoring */
+    /* after */
     if ($variable === 'value') {
         /* operations: 1st batch */
     } else {
@@ -135,11 +135,11 @@ Reports if ternary operator can be refactored to simply use the conditional vari
 (thus omitting the ternary branches). This reduces the both cyclomatic and cognitive code complexity.
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     $variable = $number > 0 ? true : false;
     $variable = $number & $flag ? true : false;
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     $variable = $number > 0;
     $variable = (bool) ($number & $flag);
 ```
@@ -161,11 +161,11 @@ Analyzes if the 'unset(...)' function was called sequentially. This can be safel
 with the 'unset(..., ...[, ...])' construction.
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     unset($variable);
     unset($argument);
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     unset($variable, $argument);
 ```
 
@@ -174,11 +174,11 @@ with the 'unset(..., ...[, ...])' construction.
 In some cases variables are used as temporary value containers and it's possible to omit such variables at all.
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     $object = new Clazz();
     return $object->method();
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     return (new Clazz())->method();
 ```
 
@@ -188,11 +188,11 @@ Since PHP 5.5 it's possible to use mass-assignments from array with 'list($varia
 Additionally to code compactness and performance, you'll notice if data array contains any un-used entries.
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     $array  = [ ... ];
     $first  = $array[0];
     $second = $array[1];
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     list($first, $second) = [ ... ];
 ```

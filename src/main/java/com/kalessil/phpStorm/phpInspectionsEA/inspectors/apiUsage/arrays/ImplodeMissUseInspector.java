@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
@@ -15,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Set;
 
 /*
@@ -62,13 +64,20 @@ public class ImplodeMissUseInspector extends PhpInspection {
                             if (OpenapiTypesUtil.isFunctionReference(context)) {
                                 final String wrappingFunctionName = ((FunctionReference) context).getName();
                                 if (wrappingFunctionName != null && wrappingFunctionName.equals("sprintf")) {
-                                    holder.registerProblem(reference, messageSprintf);
+                                    final boolean isTarget = Arrays.stream(targetArgument.getChildren())
+                                            .noneMatch(e -> e instanceof ArrayHashElement || OpenapiTypesUtil.is(e.getFirstChild(), PhpTokenTypes.opVARIADIC));
+                                    if (isTarget) {
+                                        holder.registerProblem(reference, messageSprintf);
+                                    }
                                 }
                             }
                             /* case: just one element */
                             final PsiElement[] values = targetArgument.getChildren();
-                            if (values.length == 1) {
-                                holder.registerProblem(reference, String.format(messagePattern, values[0].getText()));
+                            if (values.length == 1 && ! (values[0] instanceof ArrayHashElement)) {
+                                final boolean isTarget = !OpenapiTypesUtil.is(values[0].getFirstChild(), PhpTokenTypes.opVARIADIC);
+                                if (isTarget) {
+                                    holder.registerProblem(reference, String.format(messagePattern, values[0].getText()));
+                                }
                             }
                         } else {
                             final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(targetArgument);

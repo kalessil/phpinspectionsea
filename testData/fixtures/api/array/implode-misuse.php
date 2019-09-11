@@ -13,20 +13,15 @@ function cases_holder_file() {
 
 function cases_holder_explode() {
     $content = <warning descr="Consider using 'str_replace(',', '...', [])' instead (consumes less cpu and memory resources).">implode('...', explode(',', []))</warning>;
-
     $content = implode('...', explode(',', [], 1));
 }
 
 function cases_holder_sprintf() {
     $content = sprintf('%s', <warning descr="Consider taking advantage of the outer 'sprintf(...)' call instead (simplification).">implode(',', [])</warning>);
-
-    $content = sprintf('%s', implode(',', [...$values]));
     $content = sprintf('%s', implode(',', $array));
 }
 
 function cases_holder_few_arguments() {
     $content = <warning descr="Consider using '$singleElement' instead (consumes less cpu and memory resources).">implode('', [$singleElement])</warning>;
-
-    $content = implode('', [...$values]);
     $content = implode('', ['...', '...']);
 }

@@ -13,11 +13,15 @@ function cases_holder_file() {
 
 function cases_holder_explode() {
     $content = str_replace(',', '...', []);
-
     $content = implode('...', explode(',', [], 1));
 }
 
 function cases_holder_sprintf() {
     $content = sprintf('%s', implode(',', []));
     $content = sprintf('%s', implode(',', $array));
+}
+
+function cases_holder_few_arguments() {
+    $content = implode('', [$singleElement]);
+    $content = implode('', ['...', '...']);
 }

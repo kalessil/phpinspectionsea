@@ -4,15 +4,16 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.elements.ForeachStatement;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.ParameterList;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -94,7 +95,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                 }
                             }
                         }
-                        /* pattern 2: foreach(array_values as ...) */
+                        /* pattern 2: foreach(array_values(...) as ...) */
                         else if (parent instanceof ForeachStatement) {
                             final ForeachStatement foreach = (ForeachStatement) parent;
                             if (foreach.getKey() == null && !foreach.getVariables().isEmpty()) {
@@ -125,6 +126,18 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                         final String replacement = String.format("%sarray_keys(%s)", reference.getImmediateNamespaceName(), argumentArguments[0].getText());
                                         holder.registerProblem(reference, messageKeys, new ReplaceFix(replacement));
                                     }
+                                }
+                            }
+                        }
+
+                        /* pattern 4: array_values([ ... ]) */
+                        if (innerArguments[0] instanceof ArrayCreationExpression) {
+                            final PsiElement[] children = innerArguments[0].getChildren();
+                            if (children.length > 0) {
+                                final boolean isTarget = Arrays.stream(children)
+                                        .noneMatch(e -> e instanceof ArrayHashElement || OpenapiTypesUtil.is(e.getFirstChild(), PhpTokenTypes.opVARIADIC));
+                                if (isTarget) {
+                                    holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
                                 }
                             }
                         }

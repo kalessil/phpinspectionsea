@@ -45,5 +45,9 @@ function cases_holder() {
 
         array_keys([]),
         array_values(array_flip()),
+
+        [$value],
+        array_values([]),
+        array_values($array),
     ];
 }

@@ -45,5 +45,9 @@ function cases_holder() {
 
         <warning descr="'Perhaps it was intended to use 'array_keys(...)' here.">array_values(array_flip([]))</warning>,
         array_values(array_flip()),
+
+        <warning descr="'array_values(...)' is not making any sense here (just use it's argument).">array_values([$value])</warning>,
+        array_values([]),
+        array_values($array),
     ];
 }

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
-    private static final String messageUseInArray        = "'in_array(...)' should be used instead (clearer intention).";
+    private static final String messageUseInArray        = "'in_array(...)' would fit more here (clarifies intention, improves maintainability).";
     private static final String messageComparingWithTrue = "This makes no sense, as array_search(...) never returns true.";
 
     @NotNull

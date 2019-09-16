@@ -196,3 +196,109 @@ Additionally to code compactness and performance, you'll notice if data array co
     /* after */
     list($first, $second) = [ ... ];
 ```
+
+## 'array_search(...)' could be replaced by 'in_array(...)'
+
+Reports if 'array_search(...)' is used in the context of 'in_array(...)', where overhead lies in storing and returning index, 
+which is not used in case of 'in_array(...)'. Also reported cases are misleading and refactoring with 'in_array(...)' would clearer
+express intention of code constructs.
+
+```php
+    /* before */
+    if (array_search($what, $where, true) === false) {
+        /* some logic here */
+    }
+    
+    /* after */
+    if (! in_array($what, $where, true)) {
+        /* some logic here */
+    }
+```
+
+## 'strtr(...)' could be replaced with 'str_replace(...)'
+
+Reports if 'strtr(...)' is used in the context of 'str_replace(...)'. Reported cases are misleading and refactoring with 
+'str_replace(...)' would clearer express intention of code constructs.
+
+```php
+    /* before */
+    $normalizedPath = strtr($string, '\\', '/');
+    
+    /* after */
+    $normalizedPath = str_replace('\\', '/', $string);
+```
+
+## 'substr(...)' could be replaced with 'strpos(...)'
+
+'substr(...)' invokes additional memory allocation (more work for GC), which is not needed in the context.
+'strpos(...)' will do the same job with CPU resources only (assuming you are not dealing with big text fragments).
+
+```php
+    /* before */
+    $containsString = substr($where, 0, strlen($what)) === $what;
+    
+    /* after */
+    $containsString = strpos($where, $what) === 0;
+```
+
+> If you are eager for performance in your project this inspection in combination with "Fixed-time string starts with checks" 
+> (which is disabled by default) would be a good option.
+
+## Strings normalization
+
+The inspection checks order of string case and length manipulations and reports anomalies.
+
+```php
+    /* before */
+    $normalizedString = trim(strtolower($string));
+    
+    /* after */
+    $normalizedString = strtolower(trim($string));
+```
+
+## Redundant 'else' keyword
+
+Certain if-else conditions can have their else clause removed without changing the semantic.
+
+In the example below, the 'else' statement can be safely removed because its 'if' clause returns a value.
+Thus, even without the 'else/elseif', there’s no way you’ll be able to proceed past the if clause body.
+
+```php
+    /* before */
+    if ($value !== 'forbidden-value') {
+        return $value;
+    } else {
+        return null;
+    }
+
+    /* after */
+    if ($value !== 'forbidden-value') {
+        return $value;
+    }
+    return null;
+```
+
+> Please reference to corresponding <a href="https://softwareengineering.stackexchange.com/questions/122485/elegant-ways-to-handle-ifif-else-else">stackoverflow thread</a> for more details.
+
+## Inverted 'if-else' constructs
+
+> Note: this inspection is disabled by default as it might conflict with "Redundant 'else' keyword" inspection and guard clauses code style
+
+Certain if-else conditions can have their conditions unnecessary inverted, so removing inversion and exchanging branches 
+content is not changing the semantic.
+
+```php
+    /* before */
+    if (! $rule->valudate()) {
+        /* failed validation logic here */
+    } else {
+        /* passed validation logic here */
+    }
+
+    /* after */
+    if ($rule->valudate()) {
+        /* passed validation logic here */
+    } else {
+        /* failed validation logic here */
+    }
+```

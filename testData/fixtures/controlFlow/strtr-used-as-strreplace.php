@@ -4,7 +4,7 @@
     <weak_warning descr="'str_replace(\" \", \"_\", '...')' would fit more here (clarifies intention, improves maintainability).">strtr('...', " ", "_")</weak_warning>;
 
     <weak_warning descr="'str_replace('\\', '_', '...')' would fit more here (clarifies intention, improves maintainability).">strtr('...', '\\', '_')</weak_warning>;
-    <weak_warning descr="'str_replace(\"\\\", '_', '...')' would fit more here (clarifies intention, improves maintainability).">strtr('...', "\\", '_')</weak_warning>;
+    <weak_warning descr="'str_replace(\"\\\\\", '_', '...')' would fit more here (clarifies intention, improves maintainability).">strtr('...', "\\", '_')</weak_warning>;
 
     <weak_warning descr="'str_replace('\'', '_', '...')' would fit more here (clarifies intention, improves maintainability).">strtr('...', '\'', '_')</weak_warning>;
     <weak_warning descr="'str_replace(\"\n\", '_', '...')' would fit more here (clarifies intention, improves maintainability).">strtr('...', "\n", '_')</weak_warning>;

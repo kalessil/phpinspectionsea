@@ -53,35 +53,29 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName == null || !functionName.equals("array_search")) {
-                    return;
-                }
-                final PsiElement[] arguments = reference.getParameters();
-                if (arguments.length < 2) {
-                    return;
-                }
-
-                /* check if the call used as (boolean) logical operand */
-                if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    holder.registerProblem(reference, messageUseInArray, new TheLocalFix());
-                    return;
-                }
-
-                /* inspect implicit booleans comparison */
-                final PsiElement parent = reference.getParent();
-                if (parent instanceof BinaryExpression) {
-                    final BinaryExpression binary = (BinaryExpression) parent;
-                    final IElementType operation  = binary.getOperationType();
-                    if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-                        final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                        if (PhpLanguageUtil.isBoolean(secondOperand)) {
-                            /* should not compare with true: makes no sense as it never returned */
-                            if (PhpLanguageUtil.isTrue(secondOperand)) {
-                                holder.registerProblem(secondOperand, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
-                                return;
+                if (functionName != null && functionName.equals("array_search")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length >= 2) {
+                        if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+                            /* case: used as (boolean) logical operand */
+                            holder.registerProblem(reference, messageUseInArray, new TheLocalFix());
+                        } else {
+                            /* case: implicit booleans comparison */
+                            final PsiElement parent = reference.getParent();
+                            if (parent instanceof BinaryExpression) {
+                                final BinaryExpression binary = (BinaryExpression) parent;
+                                final IElementType operation  = binary.getOperationType();
+                                if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                                    final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                    if (PhpLanguageUtil.isBoolean(secondOperand)) {
+                                        if (PhpLanguageUtil.isTrue(secondOperand)) {
+                                            holder.registerProblem(secondOperand, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
+                                        } else {
+                                            holder.registerProblem(binary, messageUseInArray, new TheLocalFix());
+                                        }
+                                    }
+                                }
                             }
-
-                            holder.registerProblem(binary, messageUseInArray, new TheLocalFix());
                         }
                     }
                 }

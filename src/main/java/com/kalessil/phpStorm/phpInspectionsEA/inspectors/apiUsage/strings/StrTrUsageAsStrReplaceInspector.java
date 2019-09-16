@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 
 public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
+    private static final String messagePattern = "'%s' would fit more here (clarifies intention, improves maintainability).";
 
     final static private Pattern signleQuoted;
     final static private Pattern doubleQuoted;

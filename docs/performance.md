@@ -1,4 +1,5 @@
 # Performance
+
 This document covers changes to your code to improve php performance.
 
 ## Packed hashtable optimizations

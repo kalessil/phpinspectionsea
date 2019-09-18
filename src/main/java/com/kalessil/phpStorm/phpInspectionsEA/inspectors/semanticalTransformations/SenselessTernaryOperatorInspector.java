@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SenselessTernaryOperatorInspector extends BasePhpInspection {
-    private static final String patternUseOperands = "Can be replaced with '%o%' (reduces cyclomatic complexity and cognitive load).";
+    private static final String patternUseOperands = "Can be replaced with '%s' (reduces cyclomatic complexity and cognitive load).";
 
     @NotNull
     @Override
@@ -48,9 +48,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                 if (condition instanceof BinaryExpression) {
                     final BinaryExpression binary    = (BinaryExpression) condition;
                     final IElementType operationType = binary.getOperationType();
-                    final boolean isTargetOperation
-                        = operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL;
-                    if (isTargetOperation) {
+                    if (operationType == PhpTokenTypes.opIDENTICAL || operationType == PhpTokenTypes.opNOT_IDENTICAL) {
                         final boolean isInverted      = operationType == PhpTokenTypes.opNOT_IDENTICAL;
                         final PsiElement trueVariant  = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
                         final PsiElement falseVariant = isInverted ? expression.getTrueVariant() : expression.getFalseVariant();
@@ -67,11 +65,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                             ));
                             if (isLeftPartReturned && isRightPartReturned) {
                                 final String replacement = falseVariant.getText();
-                                holder.registerProblem(
-                                    expression,
-                                    patternUseOperands.replace("%o%", replacement),
-                                    new SimplifyFix(replacement)
-                                );
+                                holder.registerProblem(expression, String.format(patternUseOperands, replacement), new SimplifyFix(replacement));
                             }
                         }
                     }

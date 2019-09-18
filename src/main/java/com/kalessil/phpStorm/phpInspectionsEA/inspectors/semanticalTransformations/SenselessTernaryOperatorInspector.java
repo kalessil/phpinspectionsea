@@ -52,20 +52,18 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                         final boolean isInverted      = operationType == PhpTokenTypes.opNOT_IDENTICAL;
                         final PsiElement trueVariant  = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
                         final PsiElement falseVariant = isInverted ? expression.getTrueVariant() : expression.getFalseVariant();
-                        final PsiElement value        = binary.getRightOperand();
-                        final PsiElement subject      = binary.getLeftOperand();
-                        if (trueVariant != null && falseVariant != null && value != null && subject != null) {
-                            final boolean isLeftPartReturned = (
-                                OpenapiEquivalenceUtil.areEqual(value, trueVariant) ||
-                                OpenapiEquivalenceUtil.areEqual(value, falseVariant)
-                            );
-                            final boolean isRightPartReturned = (isLeftPartReturned && (
-                                OpenapiEquivalenceUtil.areEqual(subject, falseVariant) ||
-                                OpenapiEquivalenceUtil.areEqual(subject, trueVariant)
-                            ));
-                            if (isLeftPartReturned && isRightPartReturned) {
-                                final String replacement = falseVariant.getText();
-                                holder.registerProblem(expression, String.format(patternUseOperands, replacement), new SimplifyFix(replacement));
+                        if (trueVariant != null && falseVariant != null) {
+                            final PsiElement value   = binary.getRightOperand();
+                            final PsiElement subject = binary.getLeftOperand();
+                            if (value != null && subject != null) {
+                                final boolean isLeftPartReturned = OpenapiEquivalenceUtil.areEqual(value, trueVariant) || OpenapiEquivalenceUtil.areEqual(value, falseVariant);
+                                if (isLeftPartReturned) {
+                                    final boolean isRightPartReturned = OpenapiEquivalenceUtil.areEqual(subject, falseVariant) || OpenapiEquivalenceUtil.areEqual(subject, trueVariant);
+                                    if (isRightPartReturned) {
+                                        final String replacement = falseVariant.getText();
+                                        holder.registerProblem(expression, String.format(patternUseOperands, replacement), new SimplifyFix(replacement));
+                                    }
+                                }
                             }
                         }
                     }

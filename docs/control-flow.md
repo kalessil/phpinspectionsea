@@ -302,3 +302,85 @@ content is not changing the semantic.
         /* failed validation logic here */
     }
 ```
+
+## Unnecessary string case manipulation
+
+In some cases string case manipulation is not necessary.
+
+```php
+    /* before */
+    $matched = preg_match('/^prefix/i', strtolower($string));
+    
+    /* after */
+    $matched = preg_match('/^prefix/i', $string);
+```
+
+## 'array_unique(...)' can be used
+
+We were promoting usage of 'array_count_values(...)' instead of 'array_unique(...)' in some contexts previously, but
+the 'array_unique(...)' was optimized and we are now suggesting the opposite way.
+
+See this <a href="https://github.com/kalessil/phpinspectionsea/issues/434">thread</a> for more details.
+
+```php
+    /* before */
+    $values = array_keys(array_count_values($array));
+    $count = count(array_count_values($array));
+    
+    /* after */
+    $values = array_values(array_unique($array));
+    $count = count(array_unique($array));
+```
+
+## 'compact(...)' can be used
+
+> Note: this inspection is disabled by default as using 'compact(...)' is not a common practice
+
+Suggests using 'compact(...)' when it makes sense, normally this happens in context of dispatching arguments into templates.
+
+```php
+    /* before */
+    $array = ['first' => $first, 'second' => $second];
+    
+    /* after */
+    $array = compact('first', 'second');
+```
+
+## 'isset(...)' constructs can be merged
+
+The inspection is advising when multiple 'isset(...)' statements can be merged into one.
+
+```php
+    /* before */
+    $value = isset($first) && isset($second);
+    
+    /* after */
+    $value = isset($first, $second);
+```
+
+## 'strlen(...)' misused
+
+Analyzes 'strlen(...)' usages and reports if the construction can be replaced with empty string comparison.
+
+```php
+    /* before */
+    if (strlen($string))   {}
+    if (! strlen($string)) {}
+    
+    /* after */
+    if ($string !== '') {}
+    if ($string === '') {}
+```
+
+## 'ob_get_clean()' can be used
+
+Analyzes and reports code construct, which could use 'ob_get_clean()' function.
+
+```php
+    /* before */
+    $content = ob_get_contents();
+    ob_end_clean();
+
+    /* after */
+    $content = ob_get_clean();
+```

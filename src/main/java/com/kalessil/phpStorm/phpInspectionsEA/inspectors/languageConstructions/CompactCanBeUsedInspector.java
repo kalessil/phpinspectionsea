@@ -15,6 +15,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class CompactCanBeUsedInspector extends BasePhpInspection {
     private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
 
@@ -61,10 +70,9 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
 
                 if (variables.size() > 1) {
                     final String replacement = String.format("compact(%s)", String.join(", ", variables));
-                    final String message     = String.format(messagePattern, replacement);
-                    holder.registerProblem(expression.getFirstChild(), message, new UseCompactFix(replacement));
-                    variables.clear();
+                    holder.registerProblem(expression.getFirstChild(), String.format(messagePattern, replacement), new UseCompactFix(replacement));
                 }
+                variables.clear();
             }
         };
     }

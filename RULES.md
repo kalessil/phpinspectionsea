@@ -24,27 +24,27 @@ Inspections Lists (Control flow)
 | Control Flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | yes |
 | Control Flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a | yes | n/a  | yes |
 | Control Flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'                                 | yes | yes | yes  | yes |
-| Control Flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                          | yes | yes | yes  | no  |
+| Control Flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                          | yes | yes | yes  | yes |
 | Control Flow         | UnsetConstructsCanBeMergedInspection            | 'unset(...)' constructs can be merged                                             | yes | yes | yes  | yes |
-| Control Flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | yes | yes | yes  | no  |
-| Control Flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | yes | yes | yes  | no  |
-| Control Flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | yes  | no  |
-| Control Flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | yes  | no  |
-| Control Flow         | InvertedIfElseConstructsInspection              | Inverted 'if-else' constructs                                                     | yes | yes | yes  | no  |
-| Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | no  |
-| Control Flow         | ArrayUniqueCanBeUsedInspection                  | 'array_unique(...)' can be used                                                   | yes | yes | yes  | no  |
-| Control Flow         | CompactCanBeUsedInspection                      | 'compact(...)' can be used                                                        | yes | yes | yes  | no  |
+| Control Flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | yes | yes | yes  | yes |
+| Control Flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | yes | yes | yes  | yes |
+| Control Flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | yes  | yes |
+| Control Flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | yes  | yes |
+| Control Flow         | InvertedIfElseConstructsInspection              | Inverted 'if-else' constructs                                                     | yes | yes | yes  | yes |
+| Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | yes |
+| Control Flow         | ArrayUniqueCanBeUsedInspection                  | 'array_unique(...)' can be used                                                   | yes | yes | yes  | yes |
+| Control Flow         | CompactCanBeUsedInspection                      | 'compact(...)' can be used                                                        | yes | yes | yes  | yes |
 | Control Flow         | UnnecessaryVariableOverridesInspection          | Unnecessary variable overrides                                                    | yes | yes | yes  | no  |
 | Control Flow         | UnnecessaryContinueInspection                   | Unnecessary continue statements                                                   | yes | yes | yes  | no  |
 | Control Flow         | UnnecessaryEmptinessCheckInspection             | Unnecessary emptiness check                                                       | n/a | yes | n/a  | no  |
 | Control Flow         | IllusionOfChoiceInspection                      | Illusion of choice                                                                | yes | yes | yes  | no  |
-| Control Flow         | IssetConstructsCanBeMergedInspection            | 'isset(...)' constructs can be merged                                             | yes | yes | yes  | no  |
+| Control Flow         | IssetConstructsCanBeMergedInspection            | 'isset(...)' constructs can be merged                                             | yes | yes | yes  | yes |
 | Control Flow         | FuncNumArgsCanBeUsedInspection                  | 'func_num_args(...)' can be used                                                  | yes | yes | yes  | no  |
-| Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | no  |
+| Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | yes |
 | Control Flow         | InArrayCanBeUsedInspection                      | 'in_array(...)' can be used                                                       | n/a | yes | n/a  | no  |
 | Control Flow         | UnnecessaryBooleanCheckInspection               | Unnecessary boolean check                                                         | yes | yes | yes  | no  |
 | Control Flow         | BasenameCallsContextInspection                  | 'basename(...)' usage correctness                                                 | yes | yes | yes  | no  |
-| Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | no  |
+| Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | yes |
 | Control Flow         | ExplodeLimitUsageInspection                     | 'explode(...)' limit can be used                                                  | yes | yes | yes  | no  |
 
 Inspections Lists (PhpUnit)

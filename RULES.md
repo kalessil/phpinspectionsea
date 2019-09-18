@@ -41,12 +41,12 @@ Inspections Lists (Control flow)
 | Control Flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | yes  | yes |
 | Control Flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | yes  | yes |
 | Control Flow         | InvertedIfElseConstructsInspection              | Inverted 'if-else' constructs                                                     | yes | yes | yes  | yes |
-| Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | no  |
-| Control Flow         | ArrayUniqueCanBeUsedInspection                  | 'array_unique(...)' can be used                                                   | yes | yes | yes  | no  |
-| Control Flow         | CompactCanBeUsedInspection                      | 'compact(...)' can be used                                                        | yes | yes | yes  | no  |
-| Control Flow         | IssetConstructsCanBeMergedInspection            | 'isset(...)' constructs can be merged                                             | yes | yes | yes  | no  |
-| Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | no  |
-| Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | no  |
+| Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | yes |
+| Control Flow         | ArrayUniqueCanBeUsedInspection                  | 'array_unique(...)' can be used                                                   | yes | yes | yes  | yes |
+| Control Flow         | CompactCanBeUsedInspection                      | 'compact(...)' can be used                                                        | yes | yes | yes  | yes |
+| Control Flow         | IssetConstructsCanBeMergedInspection            | 'isset(...)' constructs can be merged                                             | yes | yes | yes  | yes |
+| Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | yes |
+| Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | yes |
 
 Inspections Lists (PhpUnit)
 ---

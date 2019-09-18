@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SenselessTernaryOperatorInspector extends BasePhpInspection {
-    private static final String patternUseOperands = "Can be replaced with '%o%'.";
+    private static final String patternUseOperands = "Can be replaced with '%o%' (reduces cyclomatic complexity and cognitive load).";
 
     @NotNull
     @Override

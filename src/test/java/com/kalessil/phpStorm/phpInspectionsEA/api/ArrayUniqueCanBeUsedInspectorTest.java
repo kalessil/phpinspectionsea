@@ -7,13 +7,16 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayUn
 
 final public class ArrayUniqueCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
-        myFixture.enableInspections(new ArrayUniqueCanBeUsedInspector());
-        myFixture.configureByFile("testData/fixtures/api/array-unique.php");
-        myFixture.testHighlighting(true, false, true);
+        final PhpLanguageLevel level = PhpLanguageLevel.parse("7.2");
+        if (level != null && level.getVersionString().equals("7.2")) {
+            PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
+            myFixture.enableInspections(new ArrayUniqueCanBeUsedInspector());
+            myFixture.configureByFile("testData/fixtures/api/array-unique.php");
+            myFixture.testHighlighting(true, false, true);
 
-        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
-        myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("testData/fixtures/api/array-unique.fixed.php");
+            myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+            myFixture.setTestDataPath(".");
+            myFixture.checkResultByFile("testData/fixtures/api/array-unique.fixed.php");
+        }
     }
 }

@@ -7,10 +7,6 @@ In cases when isset is applied to array-accessing expressions, this inspection c
 used to generate an index.<br />
 <br />
 It should be noted that array_key_exists returns true even if array item is null; this inspection
-is focused on verifying data structures' sanity and may be safely ignored in some cases.<br />
-<br />
-Refactoring this might present a significant cost in terms of 
-additional development and legacy code reverse engineering, so 
-the cost-benefit should be weighed carefully.
+is focused on verifying data structures' sanity and may be safely ignored in some cases.
 </body>
 </html>

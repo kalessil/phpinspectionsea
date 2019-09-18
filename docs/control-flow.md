@@ -80,13 +80,13 @@ The inspection finds places where conditional return-statements can be simplifie
 complexity metrics and amount of maintainable codebase. 
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     if ($variable === 'value') {
         return true;
     }
     return false;
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     return $variable === 'value';
 ```
 
@@ -104,7 +104,7 @@ The inspection finds switch-constructs which can be refactored into more suitabl
 reducing cognitive load and clearer expressing code intention. 
 
 ```php
-    /* sample code fragment reported by the the inspection */
+    /* before */
     switch ($variable) {
         case 'value':
             /* operations: 1st batch */
@@ -114,7 +114,7 @@ reducing cognitive load and clearer expressing code intention.
             break;
     }
 
-    /* sample code fragment after refactoring */
+    /* after */
     if ($variable === 'value') {
         /* operations: 1st batch */
     } else {
@@ -135,11 +135,11 @@ Reports if ternary operator can be refactored to simply use the conditional vari
 (thus omitting the ternary branches). This reduces the both cyclomatic and cognitive code complexity.
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     $variable = $number > 0 ? true : false;
     $variable = $number & $flag ? true : false;
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     $variable = $number > 0;
     $variable = (bool) ($number & $flag);
 ```
@@ -161,11 +161,11 @@ Analyzes if the 'unset(...)' function was called sequentially. This can be safel
 with the 'unset(..., ...[, ...])' construction.
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     unset($variable);
     unset($argument);
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     unset($variable, $argument);
 ```
 
@@ -174,11 +174,11 @@ with the 'unset(..., ...[, ...])' construction.
 In some cases variables are used as temporary value containers and it's possible to omit such variables at all.
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     $object = new Clazz();
     return $object->method();
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     return (new Clazz())->method();
 ```
 
@@ -188,11 +188,199 @@ Since PHP 5.5 it's possible to use mass-assignments from array with 'list($varia
 Additionally to code compactness and performance, you'll notice if data array contains any un-used entries.
 
 ```php
-    /* sample code fragment before applying Quick-Fix */
+    /* before */
     $array  = [ ... ];
     $first  = $array[0];
     $second = $array[1];
     
-    /* sample code fragment after applying Quick-Fix */
+    /* after */
     list($first, $second) = [ ... ];
+```
+
+## 'array_search(...)' could be replaced by 'in_array(...)'
+
+Reports if 'array_search(...)' is used in the context of 'in_array(...)', where overhead lies in storing and returning index, 
+which is not used in case of 'in_array(...)'. Also reported cases are misleading and refactoring with 'in_array(...)' would clearer
+express intention of code constructs.
+
+```php
+    /* before */
+    if (array_search($what, $where, true) === false) {
+        /* some logic here */
+    }
+    
+    /* after */
+    if (! in_array($what, $where, true)) {
+        /* some logic here */
+    }
+```
+
+## 'strtr(...)' could be replaced with 'str_replace(...)'
+
+Reports if 'strtr(...)' is used in the context of 'str_replace(...)'. Reported cases are misleading and refactoring with 
+'str_replace(...)' would clearer express intention of code constructs.
+
+```php
+    /* before */
+    $normalizedPath = strtr($string, '\\', '/');
+    
+    /* after */
+    $normalizedPath = str_replace('\\', '/', $string);
+```
+
+## 'substr(...)' could be replaced with 'strpos(...)'
+
+'substr(...)' invokes additional memory allocation (more work for GC), which is not needed in the context.
+'strpos(...)' will do the same job with CPU resources only (assuming you are not dealing with big text fragments).
+
+```php
+    /* before */
+    $containsString = substr($where, 0, strlen($what)) === $what;
+    
+    /* after */
+    $containsString = strpos($where, $what) === 0;
+```
+
+> If you are eager for performance in your project this inspection in combination with "Fixed-time string starts with checks" 
+> (which is disabled by default) would be a good option.
+
+## Strings normalization
+
+The inspection checks order of string case and length manipulations and reports anomalies.
+
+```php
+    /* before */
+    $normalizedString = trim(strtolower($string));
+    
+    /* after */
+    $normalizedString = strtolower(trim($string));
+```
+
+## Redundant 'else' keyword
+
+Certain if-else conditions can have their else clause removed without changing the semantic.
+
+In the example below, the 'else' statement can be safely removed because its 'if' clause returns a value.
+Thus, even without the 'else/elseif', there’s no way you’ll be able to proceed past the if clause body.
+
+```php
+    /* before */
+    if ($value !== 'forbidden-value') {
+        return $value;
+    } else {
+        return null;
+    }
+
+    /* after */
+    if ($value !== 'forbidden-value') {
+        return $value;
+    }
+    return null;
+```
+
+> Please reference to corresponding <a href="https://softwareengineering.stackexchange.com/questions/122485/elegant-ways-to-handle-ifif-else-else">stackoverflow thread</a> for more details.
+
+## Inverted 'if-else' constructs
+
+> Note: this inspection is disabled by default as it might conflict with "Redundant 'else' keyword" inspection and guard clauses code style
+
+Certain if-else conditions can have their conditions unnecessary inverted, so removing inversion and exchanging branches 
+content is not changing the semantic.
+
+```php
+    /* before */
+    if (! $rule->valudate()) {
+        /* failed validation logic here */
+    } else {
+        /* passed validation logic here */
+    }
+
+    /* after */
+    if ($rule->valudate()) {
+        /* passed validation logic here */
+    } else {
+        /* failed validation logic here */
+    }
+```
+
+## Unnecessary string case manipulation
+
+In some cases string case manipulation is not necessary.
+
+```php
+    /* before */
+    $matched = preg_match('/^prefix/i', strtolower($string));
+    
+    /* after */
+    $matched = preg_match('/^prefix/i', $string);
+```
+
+## 'array_unique(...)' can be used
+
+We were promoting usage of 'array_count_values(...)' instead of 'array_unique(...)' in some contexts previously, but
+the 'array_unique(...)' was optimized and we are now suggesting the opposite way.
+
+See this <a href="https://github.com/kalessil/phpinspectionsea/issues/434">thread</a> for more details.
+
+```php
+    /* before */
+    $values = array_keys(array_count_values($array));
+    $count = count(array_count_values($array));
+    
+    /* after */
+    $values = array_values(array_unique($array));
+    $count = count(array_unique($array));
+```
+
+## 'compact(...)' can be used
+
+> Note: this inspection is disabled by default as using 'compact(...)' is not a common practice
+
+Suggests using 'compact(...)' when it makes sense, normally this happens in context of dispatching arguments into templates.
+
+```php
+    /* before */
+    $array = ['first' => $first, 'second' => $second];
+    
+    /* after */
+    $array = compact('first', 'second');
+```
+
+## 'isset(...)' constructs can be merged
+
+The inspection is advising when multiple 'isset(...)' statements can be merged into one.
+
+```php
+    /* before */
+    $value = isset($first) && isset($second);
+    
+    /* after */
+    $value = isset($first, $second);
+```
+
+## 'strlen(...)' misused
+
+Analyzes 'strlen(...)' usages and reports if the construction can be replaced with empty string comparison.
+
+```php
+    /* before */
+    if (strlen($string))   {}
+    if (! strlen($string)) {}
+    
+    /* after */
+    if ($string !== '') {}
+    if ($string === '') {}
+```
+
+## 'ob_get_clean()' can be used
+
+Analyzes and reports code construct, which could use 'ob_get_clean()' function.
+
+```php
+    /* before */
+    $content = ob_get_contents();
+    ob_end_clean();
+
+    /* after */
+    $content = ob_get_clean();
 ```

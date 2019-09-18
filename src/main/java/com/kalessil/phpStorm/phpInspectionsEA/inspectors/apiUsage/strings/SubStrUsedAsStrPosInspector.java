@@ -75,25 +75,24 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
                     final BinaryExpression binary = (BinaryExpression) parent;
                     final IElementType operator   = binary.getOperationType();
                     if (operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opEQUAL) {
-                        final PsiElement literal   = OpenapiElementsUtil.getSecondOperand(binary, expression);
                         final PsiElement container = expression.getValue();
-                        if (container instanceof PhpTypedElement && literal instanceof StringLiteralExpression) {
-                            final StringLiteralExpression fragment = (StringLiteralExpression) literal;
-                            if (fragment.getContents().length() == 1) {
-                                final ArrayIndex index  = expression.getIndex();
-                                final PsiElement offset = index == null ? null : index.getValue();
-                                if (offset != null && offset.getText().equals("0")) {
-                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) container, holder.getProject());
-                                    if (resolved != null) {
-                                        /* false-positives: container should be a string */
-                                        final boolean isString = resolved.filterUnknown().getTypes().stream().map(Types::getType).anyMatch(t -> t.equals(Types.strString));
-                                        if (isString) {
-                                            final String replacement = String.format("strpos(%s, %s) === 0", container.getText(), literal.getText());
-                                            holder.registerProblem(
-                                                    parent,
-                                                    String.format(messagePattern, replacement),
-                                                    new UseStringSearchFix(replacement)
-                                            );
+                        if (container instanceof PhpTypedElement) {
+                            final PsiElement literal = OpenapiElementsUtil.getSecondOperand(binary, expression);
+                            if (literal instanceof StringLiteralExpression) {
+                                final StringLiteralExpression fragment = (StringLiteralExpression) literal;
+                                if (fragment.getContents().length() == 1) {
+                                    final ArrayIndex index  = expression.getIndex();
+                                    final PsiElement offset = index == null ? null : index.getValue();
+                                    if (offset != null && offset.getText().equals("0")) {
+                                        final PhpType containerType = OpenapiResolveUtil.resolveType((PhpTypedElement) container, holder.getProject());
+                                        if (containerType != null) {
+                                            /* false-positives: container should be a string */
+                                            final boolean isString = containerType.filterUnknown().getTypes().stream().map(Types::getType).anyMatch(t -> t.equals(Types.strString));
+                                            if (isString) {
+                                                // TODO: respect Yoda/Classic style as per plugin configuration, immediate NS
+                                                final String replacement = String.format("strpos(%s, %s) === 0", container.getText(), literal.getText());
+                                                holder.registerProblem(parent, String.format(messagePattern, replacement), new UseStringSearchFix(replacement));
+                                            }
                                         }
                                     }
                                 }

@@ -11,11 +11,11 @@ In case of streams the realpath [will cause unexpected behaviour](https://bugs.p
 alternative is to use the [dirname()](http://php.net/manual/en/function.dirname.php) function instead.
 
 ```php
-    /* examples affected by stream context */
+    /* before */
     define ('PROJECT_ROOT', realpath(__DIR__ . '/../'));
     require_once realpath(__DIR__ . '/../../vendor/autoload.php');
     
-    /* stream-safe alternatives */
+    /* after */
     define ('PROJECT_ROOT', dirname(__DIR__) . '/');
     require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 ```

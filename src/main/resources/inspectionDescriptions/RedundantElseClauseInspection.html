@@ -1,21 +1,5 @@
 <html>
 <body>
-Certain if-else conditions can have their else clause removed without changing the semantic.
-Consider the following method:
-<pre>
-    protected function getColumnOrValue(string $value, TableMap $table)
-    {
-        if (':' === $value[0]) {
-            return $table->getColumn(substr($value, 1));
-        } else {
-            return $value;
-        }
-    }
-</pre>
-In the above, the 'else' statement can be safely removed because its 'if' clause returns from the method.
-Thus, even without the 'else/elseif', there’s no way you’ll be able to proceed past the if clause body.<br />
-<br />
-Please reference to corresponding <a href="https://softwareengineering.stackexchange.com/questions/122485/elegant-ways-to-handle-ifif-else-else">stackoverflow thread</a>
-for more details.
+Documentation can be found <a href="https://github.com/kalessil/phpinspectionsea/blob/master/docs/control-flow.md#redundant-else-keyword">here</a>
 </body>
 </html>

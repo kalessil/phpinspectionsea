@@ -68,7 +68,7 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
                             );
                             holder.registerProblem(reference, messageResultType, DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement));
                         }
-                        if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
+                        if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
                             final boolean hasFlag = arguments.length >= 4 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
                             if (!hasFlag) {
                                 final String replacement = String.format(

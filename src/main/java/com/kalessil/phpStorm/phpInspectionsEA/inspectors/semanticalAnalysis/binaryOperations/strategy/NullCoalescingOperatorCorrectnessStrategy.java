@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 final public class NullCoalescingOperatorCorrectnessStrategy {
     private static final String messagePatternUnary = "The operation results to '%s', the right operand can be omitted.";
-    private static final String messagePatternCall  = "Due to '%s' used as left operand, using '?:' instead of '??' would make more sense.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result = false;
@@ -36,14 +35,6 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                     final IElementType operator = operation.getNode().getElementType();
                     if (result = (operator == PhpTokenTypes.opNOT || PhpTokenTypes.tsCAST_OPS.contains(operator))) {
                         holder.registerProblem(left, String.format(messagePatternUnary, left.getText()));
-                    }
-                }
-            } else if (left instanceof FunctionReference) {
-                final PhpType resolved = OpenapiResolveUtil.resolveType((FunctionReference) left, holder.getProject());
-                if (resolved != null && !resolved.isEmpty() && !resolved.hasUnknown()) {
-                    final boolean isTarget = resolved.getTypes().stream().map(Types::getType).noneMatch(t -> t.equals(Types.strString) || t.equals(Types.strMixed));
-                    if (isTarget) {
-                        holder.registerProblem(left, String.format(messagePatternCall, left.getText()));
                     }
                 }
             }

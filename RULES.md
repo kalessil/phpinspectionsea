@@ -86,10 +86,10 @@ Inspections Lists (Confusing constructs)
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Confusing constructs | SenselessTernaryOperatorInspection              | Suspicious ternary operator                         | yes | yes | yes  | yes |
-| Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a | yes | n/a  | no  |
-| Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | n/a | yes | n/a  | no  |
-| Confusing constructs | UselessReturnInspection                         | Useless return                                      | yes | yes | yes  | no  |
-| Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | yes  | no  |
+| Confusing constructs | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name             | n/a | yes | n/a  | yes |
+| Confusing constructs | NestedTernaryOperatorInspection                 | Nested ternary operator                             | n/a | yes | n/a  | yes |
+| Confusing constructs | UselessReturnInspection                         | Useless return                                      | yes | yes | yes  | yes |
+| Confusing constructs | ReferencingObjectsInspection                    | Referencing objects                                 | yes | yes | yes  | yes |
 
 Inspections Lists (Code style)
 ---

@@ -157,7 +157,7 @@ Inspections Lists (Architecture)
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a | yes | n/a  | yes |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a | yes | n/a  | yes |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a | yes | n/a  | no  |
-| Architecture         | EmptyClassInspection                            | Empty class                                         | n/a | yes | n/a  | no  |
+| Architecture         | EmptyClassInspection                            | Empty class                                         | n/a | yes | n/a  | yes |
 | Architecture         | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times          | yes | yes | yes  | no  |
 | Architecture         | MultipleReturnStatementsInspection              | Multiple return statements usage                    | n/a | yes | n/a  | yes |
 | Architecture         | EfferentObjectCouplingInspection                | Efferent coupling between objects                   | n/a | yes | n/a  | no  |

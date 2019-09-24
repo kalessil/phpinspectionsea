@@ -111,3 +111,33 @@ dependencies being updated.
 
 The issue can be resolved by adding the transitive dependency into require/require-dev section of applications' 
 composer.json file.  
+
+## Badly organized exception handling
+
+Analyzes try-catch constructs using a clean-code approach. Refactoring the findings can greatly improve code maintainability.
+
+The inspection reports multiple issue types, but let's take a case with more than 3 statements in try-block.
+From the clean code point of view such block has to be refactored:
+- unrelated statements should be moved to outer scope
+- the related statements should be moved into a method, representing the use-case (ideally representing a micro-transaction)
+
+```php
+    /* before */
+    try {
+        $variable = '...';
+        $variable = $actor->normalize($variable);
+        $variable = $actor->validate($variable);
+        $variable = $actor->process($variable);
+    } catch (\RuntimeException $failure) {
+        /* exception handling here */
+    }
+    
+    /* after */
+    $variable = '...';
+    try {
+        $variable = $actor->wellNamedMethodExplainingIntention($variable);
+    } catch (\RuntimeException $failure) {
+        /* exception handling here */
+    }
+}
+```

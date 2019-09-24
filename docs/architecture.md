@@ -167,3 +167,9 @@ Analyzes functions and methods parameters usage, verifying multiple cases:
         }
     }
 ```
+
+## Empty class
+
+Reports empty classes, which are normally should not exists.
+
+> Note: in order to keep such classes, make sure that parent class is abstract.

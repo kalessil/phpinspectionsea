@@ -36,6 +36,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
         inspectionsNames.add("phpinspectionsea");
         inspectionsNames.add("SpellCheckingInspection");
         inspectionsNames.add("SqlNoDataSourceInspection");
+        inspectionsNames.add("PhpUnused");
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
         minInspectionNameLength = Integer.MAX_VALUE;

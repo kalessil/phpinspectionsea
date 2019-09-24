@@ -152,7 +152,7 @@ Analyzes functions and methods parameters usage, verifying multiple cases:
 > Note: this inspection is disabled by default.
 
 ```php
-    function (string $string, array $array) {
+    function name (string $string, array $array) {
         /* gets reported, as we assigning string into originally array variable */
         $array = '...'; 
         

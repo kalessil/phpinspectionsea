@@ -4,9 +4,9 @@ buildscript {
     repositories {
         mavenCentral()
 
-        maven { url "http://jetbrains.bintray.com/intellij-third-party-dependencies" }
-        maven { url 'http://jitpack.io' }
-        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+        maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
     }
 }
 

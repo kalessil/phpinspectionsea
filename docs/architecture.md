@@ -141,11 +141,3 @@ From the clean code point of view such block has to be refactored:
     }
 }
 ```
-
-## Too many parameters in a callable
-
-The inspection encourages following Clean Code approach where functions and methods should have as few parameters as possible (3 max).
-
-> Note: since it's might not fit all projects, this inspection is disabled by default.
-
-> Note: the inspection has threshold and constructors handling settings.

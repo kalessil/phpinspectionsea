@@ -714,10 +714,6 @@
         groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.BadExceptionsProcessingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="MoreThanThreeArgumentsInspection"                displayName="Too many parameters in a callable"
-        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MoreThanThreeArgumentsInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="CallableParameterUseCaseInTypeContextInspection" displayName="Callable parameter usage violates definition"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.CallableParameterUseCaseInTypeContextInspection"/>

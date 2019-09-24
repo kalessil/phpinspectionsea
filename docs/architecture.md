@@ -114,7 +114,7 @@ composer.json file.
 
 ## Badly organized exception handling
 
-Analyzes try-catch constructs using a clean-code approach. Refactoring the findings can greatly improve code maintainability.
+Analyzes try-catch constructs using a Clean Code approach. Refactoring the findings can greatly improve code maintainability.
 
 The inspection reports multiple issue types, but let's take a case with more than 3 statements in try-block.
 From the clean code point of view such block has to be refactored:
@@ -141,3 +141,11 @@ From the clean code point of view such block has to be refactored:
     }
 }
 ```
+
+## Too many parameters in a callable
+
+The inspection encourages following Clean Code approach where functions and methods should have as few parameters as possible (3 max).
+
+> Note: since it's might not fit all projects, this inspection is disabled by default.
+
+> Note: the inspection has threshold and constructors handling settings.

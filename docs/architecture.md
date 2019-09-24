@@ -173,3 +173,9 @@ Analyzes functions and methods parameters usage, verifying multiple cases:
 Reports empty classes, which are normally should not exists.
 
 > Note: in order to keep such classes, make sure that parent class is abstract. You can deprecate the class as well.
+
+## Class implements interfaces multiple times
+
+Reports if the class duplicates any of its parent interfaces in its 'implements' definition.
+
+The case appears as refactorings left-overs or as indicator of application complexity is getting out of control.

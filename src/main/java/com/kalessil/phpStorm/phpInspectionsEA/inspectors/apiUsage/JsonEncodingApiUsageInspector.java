@@ -83,7 +83,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                         if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
                             final PsiElement[] arguments = reference.getParameters();
                             final boolean hasFlag        = arguments.length >= 2 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
-                            if (!hasFlag) {
+                            if (!hasFlag && arguments.length > 0) {
                                 final String replacement = String.format(
                                         "%sjson_encode(%s, %s, %s)",
                                         reference.getImmediateNamespaceName(),

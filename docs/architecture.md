@@ -179,3 +179,16 @@ Reports empty classes, which are normally should not exists.
 Reports if the class duplicates any of its parent interfaces in its 'implements' definition.
 
 The case appears as refactorings left-overs or as indicator of application complexity is getting out of control.
+
+
+```php
+    /* before */
+    interface Constract {}
+    class ParentClass implements Contract {}
+    class ChildClass extends ParentClass implements Contract {}
+
+    /* after */
+    interface Constract {}
+    class ParentClass implements Contract {}
+    class ChildClass extends ParentClass {}
+```

@@ -147,7 +147,9 @@ Analyzes functions and methods parameters usage, verifying multiple cases:
 - 'is_*(...)' calls against parameter type
 - assigning new values to parameter against parameter type
 
-> Note: When parameter is annotated as 'mixed', consider revising it to set specific type (the inspection skips analysis if finds 'mixed').
+> Note: when parameter is annotated as 'mixed', consider revising it to set specific type (the inspection skips analysis if finds 'mixed').
+
+> Note: this inspection is disabled by default.
 
 ```php
     function (string $string, array $array) {

@@ -139,5 +139,29 @@ From the clean code point of view such block has to be refactored:
     } catch (\RuntimeException $failure) {
         /* exception handling here */
     }
-}
+```
+
+## Callable parameter usage violates definition
+
+Analyzes functions and methods parameters usage, verifying multiple cases:
+- 'is_*(...)' calls against parameter type
+- assigning new values to parameter against parameter type
+
+> Note: When parameter is annotated as 'mixed', consider revising it to set specific type (the inspection skips analysis if finds 'mixed').
+
+```php
+    function (string $string, array $array) {
+        /* gets reported, as we assigning string into originally array variable */
+        $array = '...'; 
+        
+        /* gets reported, making no sense (always false in fact) */
+        if (is_array($string)) {
+            /* something happends here */
+        }
+
+        /* gets reported, making no sense (always true in fact) */
+        if (is_string($string)) {
+            /* something happends here */
+        }
+    }
 ```

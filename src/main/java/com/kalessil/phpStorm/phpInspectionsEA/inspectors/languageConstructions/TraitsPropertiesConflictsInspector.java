@@ -29,7 +29,7 @@ import java.util.Map;
  */
 
 public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%c%' and '%t%' define the same property ($%p%).";
+    private static final String messagePattern = "'%s' and '%s' define the same property ($%s).";
 
     @NotNull
     @Override
@@ -85,12 +85,11 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                             /* error case already covered by the IDEs */
                             final PsiElement ownFieldNameNode = NamedElementUtil.getNameIdentifier(ownField);
                             if (!isError && ownFieldNameNode != null) {
-                                final String message = messagePattern
-                                    .replace("%p%", ownFieldName)
-                                    .replace("%t%", trait.getName())
-                                    .replace("%c%", clazz.getName())
-                                ;
-                                holder.registerProblem(ownFieldNameNode, message, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(
+                                        ownFieldNameNode,
+                                        String.format(messagePattern, clazz.getName(), trait.getName(), ownFieldName),
+                                        ProblemHighlightType.WEAK_WARNING
+                                );
                             }
                             break;
                         }
@@ -139,14 +138,10 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
 
                             final PsiElement reportTarget = useReportTargets.get(trait);
                             if (reportTarget != null) {
-                                final String message = messagePattern
-                                        .replace("%p%", parentFieldName)
-                                        .replace("%t%", trait.getName())
-                                        .replace("%c%", clazz.getName());
                                 holder.registerProblem(
-                                    reportTarget,
-                                    message,
-                                    isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING
+                                        reportTarget,
+                                        String.format(messagePattern, clazz.getName(), trait.getName(), parentFieldName),
+                                        isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING
                                 );
                             }
                             break;

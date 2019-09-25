@@ -41,21 +41,14 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpReturn(@NotNull PhpReturn statement) {
-                PsiElement parent = statement.getParent();
-                while (parent != null && !(parent instanceof Finally)) {
-                    if (parent instanceof Function || parent instanceof PsiFile) {
-                        return;
-                    }
-                    parent = parent.getParent();
+                PsiElement context = statement.getParent();
+                while (context != null && !(context instanceof Finally) && !(context instanceof Function) && !(context instanceof PsiFile)) {
+                    context = context.getParent();
                 }
-
-                if (parent != null) {
-                    final PsiElement grandParent = parent.getParent();
-                    if (grandParent instanceof Try) {
-                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(grandParent);
-                        if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class) != null) {
-                            holder.registerProblem(statement, message);
-                        }
+                if (context instanceof Finally) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(context.getParent());
+                    if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class) != null) {
+                        holder.registerProblem(statement, message);
                     }
                 }
             }

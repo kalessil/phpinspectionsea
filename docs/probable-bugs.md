@@ -137,9 +137,6 @@ It appears when several processes are attempting to create a directory which doe
 yet exist. Specifically, when one process is between `is_dir()` and `mkdir()` after
 another process has already managed to create the directory.
 
-Apart from different code constructs which are vulnerable to this type of issue, the safe 
-variant is following: `!is_dir($folder) && !mkdir($folder) && !is_dir($folder)`.
-
 ```php
     /* before */
     if (!is_dir($directory)) {

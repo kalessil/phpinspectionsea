@@ -57,41 +57,32 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
 
                 /* check conflict with own fields */
                 for (final Field ownField : clazz.getOwnFields()) {
-                    /* get own field name and default value */
                     final String ownFieldName = ownField.getName();
-                    if (ownFieldName.isEmpty() || ownField.isConstant() || ownField.getModifier().isAbstract()) {
-                        continue;
-                    }
-                    /* ensure field doesn't have any user-land annotations */
-                    final PhpDocTag[] tags  = PsiTreeUtil.getChildrenOfType(ownField.getDocComment(), PhpDocTag.class);
-                    final boolean annotated = tags != null && Arrays.stream(tags).anyMatch(t -> !t.getName().equals(t.getName().toLowerCase()));
-                    if (annotated) {
-                        continue;
-                    }
+                    if (!ownFieldName.isEmpty() && !ownField.isConstant() && !ownField.getModifier().isAbstract() && !this.isAnnotated(ownField)) {
+                        final PsiElement ownFieldDefault = OpenapiResolveUtil.resolveDefaultValue(ownField);
+                        for (final PhpClass trait : traits) {
+                            final Field traitField = OpenapiResolveUtil.resolveField(trait, ownFieldName);
+                            if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
+                                final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
 
-                    final PsiElement ownFieldDefault = OpenapiResolveUtil.resolveDefaultValue(ownField);
-                    for (final PhpClass trait : traits) {
-                        final Field traitField = OpenapiResolveUtil.resolveField(trait, ownFieldName);
-                        if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
-                            final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
+                                final boolean isError;
+                                if (ownFieldDefault == null || traitFieldDefault == null) {
+                                    isError = traitFieldDefault != ownFieldDefault;
+                                } else {
+                                    isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, ownFieldDefault);
+                                }
 
-                            final boolean isError;
-                            if (ownFieldDefault == null || traitFieldDefault == null) {
-                                isError = traitFieldDefault != ownFieldDefault;
-                            } else {
-                                isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, ownFieldDefault);
+                                /* error case already covered by the IDEs */
+                                final PsiElement ownFieldNameNode = NamedElementUtil.getNameIdentifier(ownField);
+                                if (!isError && ownFieldNameNode != null) {
+                                    holder.registerProblem(
+                                            ownFieldNameNode,
+                                            String.format(messagePattern, clazz.getName(), trait.getName(), ownFieldName),
+                                            ProblemHighlightType.WEAK_WARNING
+                                    );
+                                }
+                                break;
                             }
-
-                            /* error case already covered by the IDEs */
-                            final PsiElement ownFieldNameNode = NamedElementUtil.getNameIdentifier(ownField);
-                            if (!isError && ownFieldNameNode != null) {
-                                holder.registerProblem(
-                                        ownFieldNameNode,
-                                        String.format(messagePattern, clazz.getName(), trait.getName(), ownFieldName),
-                                        ProblemHighlightType.WEAK_WARNING
-                                );
-                            }
-                            break;
                         }
                     }
                 }
@@ -118,37 +109,40 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                 /* iterate parent non-private fields to find conflicting properties */
                 for (final Field parentField : parent.getFields()) {
                     final String parentFieldName = parentField.getName();
-                    final PhpModifier modifier   = parentField.getModifier();
-                    if (parentFieldName.isEmpty() || parentField.isConstant() || modifier.isPrivate() || modifier.isAbstract()) {
-                        continue;
-                    }
+                    final PhpModifier modifier = parentField.getModifier();
+                    if (!parentFieldName.isEmpty() && !parentField.isConstant() && !modifier.isPrivate() && !modifier.isAbstract()) {
+                        final PsiElement parentFieldDefault = OpenapiResolveUtil.resolveDefaultValue(parentField);
+                        for (final PhpClass trait : traits) {
+                            final Field traitField = OpenapiResolveUtil.resolveField(trait, parentFieldName);
+                            if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
+                                final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
 
-                    final PsiElement parentFieldDefault = OpenapiResolveUtil.resolveDefaultValue(parentField);
-                    for (final PhpClass trait : traits) {
-                        final Field traitField = OpenapiResolveUtil.resolveField(trait, parentFieldName);
-                        if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
-                            final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
+                                final boolean isError;
+                                if (parentFieldDefault == null || traitFieldDefault == null) {
+                                    isError = traitFieldDefault != parentFieldDefault;
+                                } else {
+                                    isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);
+                                }
 
-                            final boolean isError;
-                            if (parentFieldDefault == null || traitFieldDefault == null) {
-                                isError = traitFieldDefault != parentFieldDefault;
-                            } else {
-                                isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);
+                                final PsiElement reportTarget = useReportTargets.get(trait);
+                                if (reportTarget != null) {
+                                    holder.registerProblem(
+                                            reportTarget,
+                                            String.format(messagePattern, clazz.getName(), trait.getName(), parentFieldName),
+                                            isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING
+                                    );
+                                }
+                                break;
                             }
-
-                            final PsiElement reportTarget = useReportTargets.get(trait);
-                            if (reportTarget != null) {
-                                holder.registerProblem(
-                                        reportTarget,
-                                        String.format(messagePattern, clazz.getName(), trait.getName(), parentFieldName),
-                                        isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING
-                                );
-                            }
-                            break;
                         }
                     }
                 }
                 useReportTargets.clear();
+            }
+
+            private boolean isAnnotated(@NotNull Field ownField) {
+                final PhpDocTag[] tags = PsiTreeUtil.getChildrenOfType(ownField.getDocComment(), PhpDocTag.class);
+                return tags != null && Arrays.stream(tags).anyMatch(t -> !t.getName().equals(t.getName().toLowerCase()));
             }
         };
     }

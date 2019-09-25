@@ -73,7 +73,17 @@ final public class OpenapiTypesUtil {
     }
 
     static public boolean isNumber(@Nullable PsiElement expression) {
-        return expression != null && expression.getNode().getElementType() == PhpElementTypes.NUMBER;
+        boolean result = false;
+        if (expression != null) {
+            /* regular numbers */
+            result = expression.getNode().getElementType() == PhpElementTypes.NUMBER;
+            /* negative numbers */
+            if (!result && expression instanceof UnaryExpression) {
+                final UnaryExpression unary = (UnaryExpression) expression;
+                result = is(unary.getOperation(), PhpTokenTypes.opMINUS) && is(unary.getValue(), PhpElementTypes.NUMBER);
+            }
+        }
+        return result;
     }
 
     static public boolean is(@Nullable PsiElement expression, @NotNull IElementType type) {

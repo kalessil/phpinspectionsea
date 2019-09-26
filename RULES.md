@@ -60,7 +60,7 @@ Inspections Lists (Unused)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a | yes | n/a  | no  |
+| Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a | yes | n/a  | yes |
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a | yes | n/a  | no  |
 | Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | yes  | no  |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |

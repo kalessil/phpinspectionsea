@@ -14,7 +14,6 @@ Inspections Lists (Type compatibility)
 | Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                     | yes | yes | yes  | yes |
 | Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                                 | yes | yes | yes  | yes |
 | Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search(...)' type unsafe usage | yes | yes | yes  | yes |
-| Type compatibility   | ForeachSourceInspection                         | Foreach source to iterate over                         | n/a | yes | n/a  | yes |
 | Type compatibility   | JsonEncodingApiUsageInspection                  | JSON encoding API usage                                | yes | yes | yes  | yes |
 
 Inspections Lists (Control flow)

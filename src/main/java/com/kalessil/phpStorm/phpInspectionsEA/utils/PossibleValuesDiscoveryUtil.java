@@ -79,8 +79,11 @@ public class PossibleValuesDiscoveryUtil {
 
         /* Case 6: constants value discovery */
         if (expression instanceof ConstantReference) {
-            handleConstantReference((ConstantReference) expression, result);
-            return result;
+            final boolean shouldResolve = !PhpLanguageUtil.isBoolean(expression) && !PhpLanguageUtil.isNull(expression);
+            if (shouldResolve) {
+                handleConstantReference((ConstantReference) expression, result);
+                return result;
+            }
         }
 
         /* default case: add expression itself */

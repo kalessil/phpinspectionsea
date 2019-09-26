@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.regex.Pattern;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -17,10 +19,15 @@ import org.jetbrains.annotations.NotNull;
 public class UselessIgnoreCaseModifierCheckStrategy {
     private static final String message = "'i' modifier is ambiguous here (no alphabet characters in given pattern).";
 
+    private static final Pattern matcher;
+    static {
+        matcher = Pattern.compile(".*\\p{L}.*", Pattern.DOTALL);
+    }
+
     static public void apply(final String modifiers, final String pattern, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (modifiers != null && !modifiers.isEmpty() && modifiers.indexOf('i') != -1) {
             final boolean check = pattern != null && !pattern.isEmpty();
-            if (check && !pattern.replaceAll("\\\\[\\\\dDwWsS]", "").matches(".*\\p{L}.*")) {
+            if (check && !matcher.matcher(pattern.replaceAll("\\\\[\\\\dDwWsS]", "")).matches()) {
                 holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
             }
         }

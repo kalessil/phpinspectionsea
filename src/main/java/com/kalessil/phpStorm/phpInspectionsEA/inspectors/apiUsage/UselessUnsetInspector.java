@@ -14,8 +14,16 @@ import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.jetbrains.php.lang.psi.elements.PhpUnset;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 public class UselessUnsetInspector extends BasePhpInspection {
     private static final String message = "Only local copy/reference will be unset. This unset can probably be removed.";
@@ -48,31 +56,21 @@ public class UselessUnsetInspector extends BasePhpInspection {
                 this.inspectUsages(function.getParameters(), function);
             }
 
-            private void inspectUsages(@NotNull Parameter[] parameters, @NotNull PhpScopeHolder objScopeHolder) {
-                final PhpEntryPointInstruction objEntryPoint = objScopeHolder.getControlFlow().getEntryPoint();
-
-                for (Parameter parameter : parameters) {
-                    final String parameterName = parameter.getName();
-                    if (StringUtils.isEmpty(parameterName)) {
-                        continue;
-                    }
-
-                    /* find all usages of a parameter */
-                    PhpAccessVariableInstruction[] usages =
-                            PhpControlFlowUtil.getFollowingVariableAccessInstructions(objEntryPoint, parameterName, false);
-                    if (usages.length == 0) {
-                        continue;
-                    }
-
-                    /* iterate over usages */
-                    for (PhpAccessVariableInstruction instruction : usages) {
-                        final PsiElement expression = instruction.getAnchor();
-                        /* target pattern detection */
-                        if (expression.getParent() instanceof PhpUnset) {
-                            /* choose warning target */
-                            int unsetParametersCount = ((PhpUnset) expression.getParent()).getArguments().length;
-                            final PsiElement target  = (unsetParametersCount == 1 ? expression.getParent() : expression);
-                            holder.registerProblem(target, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+            private void inspectUsages(@NotNull Parameter[] parameters, @NotNull PhpScopeHolder scope) {
+                if (parameters.length > 0) {
+                    final PhpEntryPointInstruction entry = scope.getControlFlow().getEntryPoint();
+                    for (final Parameter parameter : parameters) {
+                        final String parameterName = parameter.getName();
+                        if (!parameterName.isEmpty()) {
+                            final PhpAccessVariableInstruction[] usages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entry, parameterName, false);
+                            for (final PhpAccessVariableInstruction usage : usages) {
+                                final PsiElement expression = usage.getAnchor();
+                                if (expression.getParent() instanceof PhpUnset) {
+                                    int unsetParametersCount = ((PhpUnset) expression.getParent()).getArguments().length;
+                                    final PsiElement target  = (unsetParametersCount == 1 ? expression.getParent() : expression);
+                                    holder.registerProblem(target, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                }
+                            }
                         }
                     }
                 }

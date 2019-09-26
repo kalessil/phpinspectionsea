@@ -10,9 +10,24 @@ variables are used in write context only).
 While the inspection reports multiple cases, one of them is following:
 
 ```php
-    function name(array $array) {
+    function name (array $array) {
         $array[] = '...';
+
         /* some logic here, which is not using $array */
     }
 ```
 
+## Useless unset
+
+Unset operations applied to callable parameters only destroy local copies/links. When parameters are not re-used, 
+this operation can be safely removed.
+
+```php
+    function name (string $string) {
+        /* some logic here, which is using $string */
+
+        unset($string);
+
+        /* some logic here, which is not using $string */
+    }
+```

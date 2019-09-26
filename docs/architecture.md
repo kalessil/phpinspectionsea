@@ -180,7 +180,6 @@ Reports if the class duplicates any of its parent interfaces in its 'implements'
 
 The case appears as refactorings left-overs or as indicator of application complexity is getting out of control.
 
-
 ```php
     /* before */
     interface Constract {}

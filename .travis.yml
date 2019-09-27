@@ -52,3 +52,5 @@ script:
   - ./gradlew check buildPlugin
   - wget -O src/main/resources/META-INF/plugin.master.xml https://raw.githubusercontent.com/kalessil/phpinspectionsea/master/src/main/resources/META-INF/plugin.xml
   - php .travis/ultimate-stats-generate.php
+  - wget -O RULES.master.md https://raw.githubusercontent.com/kalessil/phpinspectionsea/master/RULES.md
+  - php .travis/ultimate-rules-list-check.php

@@ -73,7 +73,7 @@ public class PossibleValuesDiscoveryUtil {
 
         /* Case 5: class constants value discovery */
         if (expression instanceof ClassConstantReference) {
-            handleClassConstantReference((ClassConstantReference) expression, result);
+            handleClassConstantReference((ClassConstantReference) expression, result, processed);
             return result;
         }
 
@@ -103,7 +103,7 @@ public class PossibleValuesDiscoveryUtil {
                 if (parameter.getName().equals(variableName)) {
                     final PsiElement defaultValue = parameter.getDefaultValue();
                     if (defaultValue != null) {
-                        result.add(defaultValue);
+                        result.addAll(discover(defaultValue, processed));
                     }
                     break;
                 }
@@ -125,14 +125,15 @@ public class PossibleValuesDiscoveryUtil {
 
     static private void handleClassConstantReference(
             @NotNull ClassConstantReference reference,
-            @NotNull Set<PsiElement> result
+            @NotNull Set<PsiElement> result,
+            @NotNull Set<PsiElement> processed
     ) {
         final String name      = reference.getName();
         final PsiElement field = (name == null || name.isEmpty()) ? null : OpenapiResolveUtil.resolveReference(reference);
         if (field instanceof Field) {
             final PsiElement defaultValue = OpenapiResolveUtil.resolveDefaultValue((Field) field);
             if (defaultValue != null) {
-                result.add(defaultValue);
+                result.addAll(discover(defaultValue, processed));
             }
         }
     }
@@ -148,7 +149,7 @@ public class PossibleValuesDiscoveryUtil {
             /* TODO: properties without defaults returning variable as default are difficult to identify */
             final PsiElement defaultValue = OpenapiResolveUtil.resolveDefaultValue((Field) field);
             if (defaultValue != null && !defaultValue.getText().endsWith(name)) {
-                result.add(defaultValue);
+                result.addAll(discover(defaultValue, processed));
             }
         }
         final PhpClass clazz       = field instanceof Field ? ((Field) field).getContainingClass() : null;
@@ -164,13 +165,9 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull Set<PsiElement> result,
             @NotNull Set<PsiElement> processed
     ) {
-        Stream.of(ternary.getTrueVariant(), ternary.getFalseVariant()).filter(Objects::nonNull).forEach(variant -> {
-            final Set<PsiElement> variants = discover(variant, processed);
-            if (!variants.isEmpty()) {
-                result.addAll(variants);
-                variants.clear();
-            }
-        });
+        Stream.of(ternary.getTrueVariant(), ternary.getFalseVariant())
+                .filter(Objects::nonNull)
+                .forEach(variant -> result.addAll(discover(variant, processed)));
     }
 
     static private void handleNullCoalesce(
@@ -178,13 +175,9 @@ public class PossibleValuesDiscoveryUtil {
             @NotNull Set<PsiElement> result,
             @NotNull Set<PsiElement> processed
     ) {
-        Stream.of(binary.getLeftOperand(), binary.getRightOperand()).filter(Objects::nonNull).forEach(variant -> {
-            final Set<PsiElement> variants = discover(variant, processed);
-            if (!variants.isEmpty()) {
-                result.addAll(variants);
-                variants.clear();
-            }
-        });
+        Stream.of(binary.getLeftOperand(), binary.getRightOperand())
+                .filter(Objects::nonNull)
+                .forEach(variant -> result.addAll(discover(variant, processed)));
     }
 
     static private void handleAssignmentsInScope(
@@ -204,11 +197,7 @@ public class PossibleValuesDiscoveryUtil {
                         storedValue = ((AssignmentExpression) storedValue).getValue();
                     }
                     if (storedValue != null) {
-                        final Set<PsiElement> discoveredWrites = discover(storedValue, processed);
-                        if (!discoveredWrites.isEmpty()) {
-                            result.addAll(discoveredWrites);
-                            discoveredWrites.clear();
-                        }
+                        result.addAll(discover(storedValue, processed));
                     }
                 }
             }

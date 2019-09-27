@@ -32,7 +32,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
 
     private static final Pattern regexTargetNames;
     static {
-        regexTargetNames = Pattern.compile(".*(domain|email|host).*", Pattern.CASE_INSENSITIVE);
+        regexTargetNames = Pattern.compile(".*(domain|email|host|url).*", Pattern.CASE_INSENSITIVE);
     }
 
     @NotNull
@@ -77,11 +77,28 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                     } else if (parent instanceof ConcatenationExpression){
                         this.inspectConcatenationContext(expression, (ConcatenationExpression) parent, attribute);
                         break;
+                    } else if (parent instanceof ArrayHashElement){
+                        this.inspectPackedIntoArrayContext(expression, (ArrayHashElement) parent, attribute);
+                        break;
                     } else if (OpenapiTypesUtil.isAssignment(parent)) {
                         this.inspectAssignmentContext(expression, (AssignmentExpression) parent, attribute);
                         break;
                     }
                     parent = parent.getParent();
+                }
+            }
+
+            private void inspectPackedIntoArrayContext(
+                    @NotNull ArrayAccessExpression substitutedExpression,
+                    @NotNull ArrayHashElement context,
+                    @NotNull String attribute
+            ) {
+                final PsiElement index = context.getKey();
+                if (index instanceof StringLiteralExpression) {
+                    final Matcher matcher = regexTargetNames.matcher(((StringLiteralExpression) index).getContents());
+                    if (matcher.matches() && !this.isChecked(substitutedExpression)) {
+                        holder.registerProblem(substitutedExpression, messageNaming);
+                    }
                 }
             }
 

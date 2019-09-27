@@ -47,3 +47,10 @@
             $this->server = $_SERVER['HTTP_HOST'];
         }
     }
+
+    function packed_into_array() {
+        return [
+            'domain' => <error descr="The domain here can be compromised, consider introducing whitelists.">$_SERVER['HTTP_HOST']</error>,
+            $_SERVER['HTTP_HOST'],
+        ];
+    }

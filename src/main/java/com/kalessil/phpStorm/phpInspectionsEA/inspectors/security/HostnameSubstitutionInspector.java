@@ -78,7 +78,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                         this.inspectConcatenationContext(expression, (ConcatenationExpression) parent, attribute);
                         break;
                     } else if (parent instanceof ArrayHashElement){
-                        this.inspectPackedIntoArrayContext(expression, (ArrayHashElement) parent, attribute);
+                        this.inspectPackedIntoArrayContext(expression, (ArrayHashElement) parent);
                         break;
                     } else if (OpenapiTypesUtil.isAssignment(parent)) {
                         this.inspectAssignmentContext(expression, (AssignmentExpression) parent, attribute);
@@ -90,8 +90,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
 
             private void inspectPackedIntoArrayContext(
                     @NotNull ArrayAccessExpression substitutedExpression,
-                    @NotNull ArrayHashElement context,
-                    @NotNull String attribute
+                    @NotNull ArrayHashElement context
             ) {
                 final PsiElement index = context.getKey();
                 if (index instanceof StringLiteralExpression) {

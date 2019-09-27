@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,9 +27,8 @@ final public class McryptRsaOraclePaddingStrategy {
         if (isTargetCall(reference)) {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(reference.getParameters()[3]);
             if (!modeVariants.isEmpty()) {
-                result = modeVariants.stream()
-                        .filter(variant   -> variant instanceof ConstantReference)
-                        .anyMatch(variant -> "MCRYPT_MODE_CBC".equals(((ConstantReference) variant).getName()));
+                /* MCRYPT_MODE_CBC === 'cbc' */
+                result = modeVariants.stream().filter(variant -> variant instanceof StringLiteralExpression).anyMatch(variant -> ((StringLiteralExpression) variant).getContents().equals("cbc"));
                 if (result) {
                     holder.registerProblem(reference, message);
                 }

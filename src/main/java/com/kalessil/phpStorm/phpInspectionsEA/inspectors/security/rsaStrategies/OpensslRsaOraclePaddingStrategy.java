@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,9 +40,8 @@ final public class OpensslRsaOraclePaddingStrategy {
         } else if (arguments.length == 4 && isTargetCall(reference)) {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(arguments[3]);
             if (!modeVariants.isEmpty()) {
-                result = modeVariants.stream()
-                        .filter(variant   -> variant instanceof ConstantReference)
-                        .anyMatch(variant -> "OPENSSL_PKCS1_PADDING".equals(((ConstantReference) variant).getName()));
+                /* OPENSSL_PKCS1_PADDING === 1 */
+                result = modeVariants.stream().filter(OpenapiTypesUtil::isNumber).anyMatch(variant -> variant.getText().equals("1") );
                 if (result) {
                     holder.registerProblem(reference, message);
                 }

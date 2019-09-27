@@ -11,6 +11,12 @@ function cases_holder_file() {
     $content = implode('', file('...', FILE_USE_INCLUDE_PATH, null));
 }
 
+function cases_holder_http_build_query() {
+    $content = <warning descr="Consider taking advantage of using 'http_build_query(...)' here (simplification).">implode('&', [])</warning>;
+    $content = <warning descr="Consider taking advantage of using 'http_build_query(...)' here (simplification).">implode('&amp;', [])</warning>;
+    $content = implode('&&', []);
+}
+
 function cases_holder_explode() {
     $content = <warning descr="Consider using 'str_replace(',', '...', [])' instead (consumes less cpu and memory resources).">implode('...', explode(',', []))</warning>;
     $content = implode('...', explode(',', [], 1));

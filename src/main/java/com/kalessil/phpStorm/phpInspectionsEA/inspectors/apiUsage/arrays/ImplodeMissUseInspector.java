@@ -29,8 +29,9 @@ import java.util.Set;
  */
 
 public class ImplodeMissUseInspector extends PhpInspection {
-    private static final String messagePattern = "Consider using '%s' instead (consumes less cpu and memory resources).";
-    private static final String messageSprintf = "Consider taking advantage of the outer 'sprintf(...)' call instead (simplification).";
+    private static final String messagePattern    = "Consider using '%s' instead (consumes less cpu and memory resources).";
+    private static final String messageSprintf    = "Consider taking advantage of the outer 'sprintf(...)' call instead (simplification).";
+    private static final String messageBuildQuery = "Consider taking advantage of using 'http_build_query(...)' here (simplification).";
 
     @NotNull
     @Override
@@ -56,15 +57,15 @@ public class ImplodeMissUseInspector extends PhpInspection {
                 if (outerFunctionName != null && outerFunctionName.equals("implode")) {
                     final PsiElement[] outerArguments = reference.getParameters();
                     if (outerArguments.length == 2) {
-                        final PsiElement targetArgument = outerArguments[1];
-                        if (targetArgument instanceof ArrayCreationExpression) {
+                        final PsiElement arrayArgument = outerArguments[1];
+                        if (arrayArgument instanceof ArrayCreationExpression) {
                             /* case: sprintf argument */
                             final PsiElement parent  = reference.getParent();
                             final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
                             if (OpenapiTypesUtil.isFunctionReference(context)) {
                                 final String wrappingFunctionName = ((FunctionReference) context).getName();
                                 if (wrappingFunctionName != null && wrappingFunctionName.equals("sprintf")) {
-                                    final boolean isTarget = Arrays.stream(targetArgument.getChildren())
+                                    final boolean isTarget = Arrays.stream(arrayArgument.getChildren())
                                             .noneMatch(e -> e instanceof ArrayHashElement || OpenapiTypesUtil.is(e.getFirstChild(), PhpTokenTypes.opVARIADIC));
                                     if (isTarget) {
                                         holder.registerProblem(reference, messageSprintf);
@@ -72,7 +73,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                 }
                             }
                             /* case: just one element */
-                            final PsiElement[] values = targetArgument.getChildren();
+                            final PsiElement[] values = arrayArgument.getChildren();
                             if (values.length == 1 && ! (values[0] instanceof ArrayHashElement)) {
                                 final boolean isTarget = !OpenapiTypesUtil.is(values[0].getFirstChild(), PhpTokenTypes.opVARIADIC);
                                 if (isTarget) {
@@ -80,7 +81,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                 }
                             }
                         } else {
-                            final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(targetArgument);
+                            final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arrayArgument);
                             if (values.size() == 1) {
                                 final PsiElement candidate = values.iterator().next();
                                 if (OpenapiTypesUtil.isFunctionReference(candidate)) {
@@ -89,7 +90,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                     if (innerFunctionName != null) {
                                         if (innerFunctionName.equals("explode")) {
                                             final PsiElement[] innerArguments = innerCall.getParameters();
-                                            if (innerArguments.length == 2 && this.isExclusiveUse(targetArgument, reference)) {
+                                            if (innerArguments.length == 2 && this.isExclusiveUse(arrayArgument, reference)) {
                                                 final String replacement = String.format(
                                                         "%sstr_replace(%s, %s, %s)",
                                                         reference.getImmediateNamespaceName(),
@@ -105,7 +106,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                             }
                                         } else if (innerFunctionName.equals("file")) {
                                             final PsiElement[] innerArguments = innerCall.getParameters();
-                                            if (innerArguments.length == 1 && this.isExclusiveUse(targetArgument, reference)) {
+                                            if (innerArguments.length == 1 && this.isExclusiveUse(arrayArgument, reference)) {
                                                 final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(outerArguments[0]);
                                                 if (literal != null && literal.getContents().isEmpty()) {
                                                     final String replacement = String.format(
@@ -125,6 +126,15 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                 }
                             }
                             values.clear();
+                        }
+
+                        final PsiElement glueArgument = outerArguments[0];
+                        if (glueArgument instanceof StringLiteralExpression) {
+                            /* case: mimics http_build_query('(&amp;)|&') behaviour */
+                            final String glue = ((StringLiteralExpression) glueArgument).getContents();
+                            if (glue.equals("&") || glue.equals("&amp;")) {
+                                holder.registerProblem(reference, messageBuildQuery);
+                            }
                         }
                     }
                 }

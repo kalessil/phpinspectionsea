@@ -11,6 +11,12 @@ function cases_holder_file() {
     $content = implode('', file('...', FILE_USE_INCLUDE_PATH, null));
 }
 
+function cases_holder_http_build_query() {
+    $content = implode('&', []);
+    $content = implode('&amp;', []);
+    $content = implode('&&', []);
+}
+
 function cases_holder_explode() {
     $content = str_replace(',', '...', []);
     $content = implode('...', explode(',', [], 1));

@@ -137,8 +137,17 @@ It appears when several processes are attempting to create a directory which doe
 yet exist. Specifically, when one process is between `is_dir()` and `mkdir()` after
 another process has already managed to create the directory.
 
-Apart from different code constructs which are vulnerable to this type of issue, the safe 
-variant is following: `!is_dir($folder) && !mkdir($folder) && !is_dir($folder)`.
+```php
+    /* before */
+    if (!is_dir($directory)) {
+        mkdir($directory);
+    }
+    
+    /* after */
+    if (! is_dir($directory) && ! mkdir($directory) && ! is_dir($directory)) {
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', $directory));
+    }
+```
 
 ## 'file_put_contents(...)' race condition
 
@@ -183,3 +192,12 @@ The main assumption made here is that codebase is not relying to dynamic propert
 With this assumption magic methods `__isset` (we check only this one), `__get`, `__set` are needed.
 
 If the `__isset` method is not implemented, the both target constructs will constantly return `false`.
+
+## Incorrect random generation range
+
+Reports random number generation constructs where range is not specified correctly.
+
+```php
+    /* the following case will be reported */
+    $number = random_int(PHP_INT_MAX, PHP_INT_MIN);
+```

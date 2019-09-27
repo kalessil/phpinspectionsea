@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -56,19 +57,29 @@ public class IncorrectRandomRangeInspector extends PhpInspection {
                 if (functionName != null && functions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 2) {
-                        final PsiElement from = arguments[0];
-                        final PsiElement to   = arguments[1];
-                        if (OpenapiTypesUtil.isNumber(to) && OpenapiTypesUtil.isNumber(from)) {
-                            boolean isTarget;
-                            try {
-                                isTarget = Integer.parseInt(to.getText()) < Integer.parseInt(from.getText());
-                            } catch (final NumberFormatException wrongFormat) {
-                                isTarget = false;
-                            }
-                            if (isTarget) {
-                                holder.registerProblem(reference, message);
+                        final Set<PsiElement> fromVariants = PossibleValuesDiscoveryUtil.discover(arguments[0]);
+                        if (fromVariants.size() == 1) {
+                            final PsiElement from = fromVariants.iterator().next();
+                            if (OpenapiTypesUtil.isNumber(from)) {
+                                final Set<PsiElement> toVariants = PossibleValuesDiscoveryUtil.discover(arguments[1]);
+                                if (toVariants.size() == 1) {
+                                    final PsiElement to = toVariants.iterator().next();
+                                    if (OpenapiTypesUtil.isNumber(to)) {
+                                        boolean isTarget;
+                                        try {
+                                            isTarget = Long.parseLong(to.getText()) < Long.parseLong(from.getText());
+                                        } catch (final NumberFormatException wrongFormat) {
+                                            isTarget = false;
+                                        }
+                                        if (isTarget) {
+                                            holder.registerProblem(reference, message);
+                                        }
+                                    }
+                                }
+                                toVariants.clear();
                             }
                         }
+                        fromVariants.clear();
                     }
                 }
             }

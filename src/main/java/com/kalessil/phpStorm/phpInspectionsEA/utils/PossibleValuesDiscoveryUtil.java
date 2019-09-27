@@ -71,10 +71,19 @@ public class PossibleValuesDiscoveryUtil {
             return result;
         }
 
-        /* Case 5: constants value discovery */
+        /* Case 5: class constants value discovery */
         if (expression instanceof ClassConstantReference) {
             handleClassConstantReference((ClassConstantReference) expression, result);
             return result;
+        }
+
+        /* Case 6: constants value discovery */
+        if (expression instanceof ConstantReference) {
+            final boolean shouldResolve = !PhpLanguageUtil.isBoolean(expression) && !PhpLanguageUtil.isNull(expression);
+            if (shouldResolve) {
+                handleConstantReference((ConstantReference) expression, result);
+                return result;
+            }
         }
 
         /* default case: add expression itself */
@@ -100,6 +109,17 @@ public class PossibleValuesDiscoveryUtil {
                 }
             }
             handleAssignmentsInScope(callable, variable, result, processed);
+        }
+    }
+
+    static private void handleConstantReference(
+            @NotNull ConstantReference reference,
+            @NotNull Set<PsiElement> result
+    ) {
+        final String name       = reference.getName();
+        final PsiElement define = (name == null || name.isEmpty()) ? null : OpenapiResolveUtil.resolveReference(reference);
+        if (define instanceof PhpDefine) {
+            result.add(((PhpDefine) define).getValue());
         }
     }
 

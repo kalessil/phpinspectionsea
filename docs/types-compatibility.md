@@ -1,43 +1,5 @@
 # Types compatibility
 
-## Foreach source to iterate over
-
-Analyzes foreach expression's data sources, which are expected to be arrays or traversable objects.
-When analysis can not be performed (e.g. some methods are not annotated properly), additional
-warnings are generated to resolve annotation issues:
-
-- Types can not be checked (requests adding types information; check settings to disable this)
-- Types contains `mixed` or `object` (requests re-specification of types information; check settings to disable this)
-- Value can not be iterated (scalar types and classes without Iterator interface)
-
-Risk-free refactoring involves proper annotation, but if it is truly a datasource issue, this inspection 
-may reveal new bugs or dead code. Also, here are some hints how to add types information:
-
-```php
-    /* Case 1: `$items[1]` reported with `Expressions' type was not recognized, please check type hints.` message */
-    
-    /* @var $items string[][] <- the fix, $string type will be correctly recognized as `string` */
-    preg_match_all('/.+/','.', $items); /* preg_match_all/preg_match stores results in $items */
-    foreach ($items[1] as $string) {
-        ...
-    }
-    
-    /* Case 2: intended iteration over object properties */
-    
-    /* @var $object \stdClass */
-    foreach ((array) $object as $property => $value) { /* implicit casting expresses the intention */
-        ...
-    }
-    
-    /* Case 3: complex expression iteration, when no other way is possible */
-
-    /* @var $localVariable \stdClass[] */
-    $localVariable = $object->property->property[0]; /* e.g. dynamic property from a 3rd party library */
-    foreach ($localVariable as $value) {
-        ...
-    }
-```
-
 ## 'empty(...)' usage
 
 > Note: the inspection has settings, most of them deactivated by default

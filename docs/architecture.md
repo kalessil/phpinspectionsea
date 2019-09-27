@@ -111,3 +111,83 @@ dependencies being updated.
 
 The issue can be resolved by adding the transitive dependency into require/require-dev section of applications' 
 composer.json file.  
+
+## Badly organized exception handling
+
+Analyzes try-catch constructs using a Clean Code approach. Refactoring the findings can greatly improve code maintainability.
+
+The inspection reports multiple issue types, but let's take a case with more than 3 statements in try-block.
+From the clean code point of view such block has to be refactored:
+- unrelated statements should be moved to outer scope
+- the related statements should be moved into a method, representing the use-case (ideally representing a micro-transaction)
+
+```php
+    /* before */
+    try {
+        $variable = '...';
+        $variable = $actor->normalize($variable);
+        $variable = $actor->validate($variable);
+        $variable = $actor->process($variable);
+    } catch (\RuntimeException $failure) {
+        /* exception handling here */
+    }
+    
+    /* after */
+    $variable = '...';
+    try {
+        $variable = $actor->wellNamedMethodExplainingIntention($variable);
+    } catch (\RuntimeException $failure) {
+        /* exception handling here */
+    }
+```
+
+## Callable parameter usage violates definition
+
+Analyzes functions and methods parameters usage, verifying multiple cases:
+- 'is_*(...)' calls against parameter type
+- assigning new values to parameter against parameter type
+
+> Note: when parameter is annotated as 'mixed', consider revising it to set specific type (the inspection skips analysis if finds 'mixed').
+
+> Note: this inspection is disabled by default.
+
+```php
+    function name (string $string, array $array) {
+        /* gets reported, as we assigning string into originally array variable */
+        $array = '...'; 
+        
+        /* gets reported, making no sense (always false in fact) */
+        if (is_array($string)) {
+            /* something happends here */
+        }
+
+        /* gets reported, making no sense (always true in fact) */
+        if (is_string($string)) {
+            /* something happends here */
+        }
+    }
+```
+
+## Empty class
+
+Reports empty classes, which are normally should not exists.
+
+> Note: in order to keep such classes, make sure that parent class is abstract. You can deprecate the class as well.
+
+## Class implements interfaces multiple times
+
+Reports if the class duplicates any of its parent interfaces in its 'implements' definition.
+
+The case appears as refactorings left-overs or as indicator of application complexity is getting out of control.
+
+```php
+    /* before */
+    interface Constract {}
+    class ParentClass implements Contract {}
+    class ChildClass extends ParentClass implements Contract {}
+
+    /* after */
+    interface Constract {}
+    class ParentClass implements Contract {}
+    class ChildClass extends ParentClass {}
+```

@@ -188,13 +188,13 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes | yes | yes  | no  |
 | Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote(...) usage                              | yes | yes | yes  | yes |
 | Probable bugs        | SuspiciousAssignmentsInspection                 | Suspicious assignments                                    | n/a | yes | n/a  | no  |
-| Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes | yes | yes  | no  |
-| Probable bugs        | SuspiciousReturnInspection                      | Suspicious returns                                        | n/a | yes | n/a  | no  |
-| Probable bugs        | SuspiciousBinaryOperationInspection             | Suspicious binary operations                              | n/a | yes | n/a  | no  |
+| Probable bugs        | DateTimeConstantsUsageInspection                | DateTime constants usage validity                         | yes | yes | yes  | n/a |
+| Probable bugs        | SuspiciousReturnInspection                      | Suspicious returns                                        | n/a | yes | n/a  | n/a |
+| Probable bugs        | SuspiciousBinaryOperationInspection             | Suspicious binary operations                              | n/a | yes | n/a  | n/a |
 | Probable bugs        | IncompleteThrowStatementsInspection             | Incomplete throw statements                               | yes | yes | yes  | no  |
 | Probable bugs        | AutoloadingIssuesInspection                     | Class autoloading correctness                             | n/a | yes | n/a  | yes |
 | Probable bugs        | IssetArgumentExistenceInspection                | Isset operations variables existence                      | n/a | yes | n/a  | no  |
-| Probable bugs        | TraitsPropertiesConflictsInspection             | Traits properties conflicts resolution                    | n/a | yes | n/a  | no  |
+| Probable bugs        | TraitsPropertiesConflictsInspection             | Traits properties conflicts resolution                    | n/a | yes | n/a  | n/a |
 | Probable bugs        | NullPointerExceptionInspection                  | Null reference                                            | n/a | yes | n/a  | yes |
 | Probable bugs        | MissingIssetImplementationInspection            | Empty/isset results correctness                           | n/a | yes | n/a  | yes |
 | Probable bugs        | CallableMethodValidityInspection                | Callable methods validity                                 | n/a | yes | n/a  | no  |
@@ -243,11 +243,11 @@ Inspections Lists (Security)
 | Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                              | n/a | yes | n/a  | yes |
 | Security             | SecurityAdvisoriesInspection                       | Security advisories for Composer packages                              | yes | yes | yes  | yes |
 | Security             | CurlSslServerSpoofingInspection                    | CURL: SSL server spoofing (SSL MITM and Spoofing Attacks)              | n/a | yes | n/a  | yes |
-| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                            | n/a | yes | n/a  | no  |
+| Security             | EncryptionInitializationVectorRandomnessInspection | Encryption initialization vector randomness                            | n/a | yes | n/a  | n/a |
 | Security             | UnserializeExploitsInspection                      | Exploiting unserialize (PHP Object Injection Vulnerability)            | n/a | yes | n/a  | yes |
 | Security             | PotentialMalwareInspection                         | Basic malware patterns                                                 | n/a | yes | n/a  | yes |
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                                    | n/a | yes | n/a  | yes |
-| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)        | n/a | yes | n/a  | no  |
+| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)        | n/a | yes | n/a  | n/a |
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                                    | n/a | yes | n/a  | yes |
 | Security             | HostnameSubstitutionInspection                     | Hostname substitution                                                  | n/a | yes | n/a  | no  |
 | Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                       | n/a | yes | n/a  | yes |
@@ -256,7 +256,7 @@ Inspections Lists (Security)
 | Security             | NonSecureHtmlentitiesUsageInspection               | Insecure 'htmlentities(...)' usage (XSS attacks)                       | yes | yes | yes  | no  |
 | Security             | NonSecureHtmlspecialcharsUsageInspection           | Insecure 'htmlspecialchars(...)' usage (XSS attacks)                   | yes | yes | yes  | no  |
 | Security             | NonSecureShuffleUsageInspection                    | Insecure 'shuffle(...)' usage (Insufficient Entropy Vulnerability)     | n/a | yes | n/a  | no  |
-| Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                                | yes | yes | yes  | no  |
+| Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                                | yes | yes | yes  | n/a |
 | Security             | SecureCookiesTransferInspection                    | Secure cookies transfer                                                | yes | yes | yes  | no  |
 | Security             | NonSecureOpensslVerifyUsageInspection              | Insecure 'openssl_verify(...)' usage                                   | n/a | yes | n/a  | no  |
 | Security             | CommandExecutionAsSuperUserInspection              | Command execution as super user                                        | n/a | yes | n/a  | no  |

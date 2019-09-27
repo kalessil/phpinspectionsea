@@ -15,18 +15,16 @@
         if (false !== stripos($lineContent, 'inspect') && false !== strpos($lineContent, '|')) {
             $fragments = explode('|', $lineContent);
             if (count($fragments) >= 8) {
-                $groupName        = trim($fragments[1]);
                 $shortName        = trim($fragments[2]);
                 $displayName      = trim($fragments[3]);
-                $hasTests         = 'yes' === trim($fragments[5]);
-                $hasDocumentation = 'yes' === trim($fragments[7]);
+                $hasTests         = trim($fragments[5]);
+                $hasDocumentation = trim($fragments[7]);
 
                 $documentedUltimateRules[$shortName] = $valueObject = new \stdClass();
-                $valueObject->groupName              = $groupName;
                 $valueObject->shortName              = $shortName;
                 $valueObject->displayName            = $displayName;
                 $valueObject->hasTests               = $hasTests;
-                $valueObject->hasDocumentation        = $hasDocumentation;
+                $valueObject->hasDocumentation       = $hasDocumentation;
             }
         }
     }
@@ -38,18 +36,16 @@
         if (false !== stripos($lineContent, 'inspect') && false !== strpos($lineContent, '|')) {
             $fragments = explode('|', $lineContent);
             if (count($fragments) >= 8) {
-                $groupName        = trim($fragments[1]);
                 $shortName        = trim($fragments[2]);
                 $displayName      = trim($fragments[3]);
-                $hasTests         = 'yes' === trim($fragments[5]);
-                $hasDocumentation = 'yes' === trim($fragments[7]);
+                $hasTests         = trim($fragments[5]);
+                $hasDocumentation = trim($fragments[7]);
 
-                $documentedExtendedRules[$shortName]   = $valueObject = new \stdClass();
-                $valueObject->groupName                = $groupName;
-                $valueObject->shortName                = $shortName;
-                $valueObject->displayName              = $displayName;
-                $valueObject->hasTests                 = $hasTests;
-                $valueObject->hasDocumentation         = $hasDocumentation;
+                $documentedExtendedRules[$shortName] = $valueObject = new \stdClass();
+                $valueObject->shortName              = $shortName;
+                $valueObject->displayName            = $displayName;
+                $valueObject->hasTests               = $hasTests;
+                $valueObject->hasDocumentation       = $hasDocumentation;
             }
         }
     }

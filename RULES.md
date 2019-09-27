@@ -60,8 +60,8 @@ Inspections Lists (Unused)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a | yes | n/a  | no  |
-| Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a | yes | n/a  | no  |
+| Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a | yes | n/a  | yes |
+| Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a | yes | n/a  | yes |
 | Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | yes  | no  |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | yes  | no  |
@@ -105,10 +105,10 @@ Inspections Lists (Code style)
 | Code Style           | StaticClosureCanBeUsedInspection                | Static closure can be used                             | yes | yes | yes  | no  |
 | Code Style           | ImplodeArgumentsOrderInspection                 | 'implode(...)' arguments order                         | yes | yes | yes  | no  |
 | Code Style           | ShortEchoTagCanBeUsedInspection                 | Short echo tag can be used                             | yes | yes | yes  | no  |
-| Code Style           | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name                | n/a | yes | n/a  | no  |
-| Code Style           | NestedTernaryOperatorInspection                 | Nested ternary operator                                | n/a | yes | n/a  | no  |
-| Code Style           | UselessReturnInspection                         | Useless return                                         | yes | yes | yes  | no  |
-| Code Style           | ReferencingObjectsInspection                    | Referencing objects                                    | yes | yes | yes  | no  |
+| Code Style           | ClassMethodNameMatchesFieldNameInspection       | Method name matches existing field name                | n/a | yes | n/a  | yes |
+| Code Style           | NestedTernaryOperatorInspection                 | Nested ternary operator                                | n/a | yes | n/a  | yes |
+| Code Style           | UselessReturnInspection                         | Useless return                                         | yes | yes | yes  | yes |
+| Code Style           | ReferencingObjectsInspection                    | Referencing objects                                    | yes | yes | yes  | yes |
 | Code Style           | FopenBinaryUnsafeUsageInspection                | Binary-unsafe 'fopen(...)' usage                       | yes | yes | yes  | no  |
 | Code Style           | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                     | yes | yes | yes  | yes |
 | Code Style           | TypeUnsafeComparisonInspection                  | Type unsafe comparison                                 | yes | yes | yes  | yes |
@@ -146,16 +146,15 @@ Inspections Lists (Architecture)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
-| Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a | yes | n/a  | no  |
-| Architecture         | MoreThanThreeArgumentsInspection                | Too many parameters in a callable                   | n/a | yes | n/a  | no  |
-| Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a | yes | n/a  | no  |
+| Architecture         | BadExceptionsProcessingInspection               | Badly organized exception handling                  | n/a | yes | n/a  | yes |
+| Architecture         | CallableParameterUseCaseInTypeContextInspection | Callable parameter usage violates definition        | n/a | yes | n/a  | yes |
 | Architecture         | ClassOverridesFieldOfSuperClassInspection       | Class overrides a field of a parent class           | n/a | yes | n/a  | yes |
 | Architecture         | LongInheritanceChainInspection                  | Long inheritance chain                              | n/a | yes | n/a  | yes |
 | Architecture         | PropertyCanBeStaticInspection                   | Property could be static                            | n/a | yes | n/a  | no  |
-| Architecture         | EmptyClassInspection                            | Empty class                                         | n/a | yes | n/a  | no  |
+| Architecture         | EmptyClassInspection                            | Empty class                                         | n/a | yes | n/a  | yes |
 | Architecture         | OverridingDeprecatedMethodInspection            | Overriding deprecated methods                       | n/a | yes | n/a  | yes |
 | Architecture         | LowerAccessLevelInspection                      | Declaration access can be weaker                    | yes | yes | yes  | no  |
-| Architecture         | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times          | yes | yes | yes  | no  |
+| Architecture         | ClassReImplementsParentInterfaceInspection      | Class implements interfaces multiple times          | yes | yes | yes  | yes |
 | Architecture         | MultipleReturnStatementsInspection              | Multiple return statements usage                    | n/a | yes | n/a  | yes |
 | Architecture         | EfferentObjectCouplingInspection                | Efferent coupling between objects                   | n/a | yes | n/a  | no  |
 | Architecture         | TransitiveDependenciesUsageInspection           | Transitive dependencies usage                       | n/a | yes | n/a  | yes |
@@ -180,7 +179,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a | yes | n/a  | no  |
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a | yes | n/a  | no  |
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a | yes | n/a  | yes |
-| Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a | yes | n/a  | no  |
+| Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a | yes | n/a  | yes |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a | yes | n/a  | no  |
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes | yes | yes  | no  |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes | yes | yes  | yes |
@@ -229,7 +228,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | GetSetMethodCorrectnessInspection               | get/set methods correctness                               | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousVariableDeclarationInspection         | Suspicious variable declaration                           | n/a | yes | n/a  | no  |
 | Probable bugs        | StaticLambdaBindingInspection                   | Static lambdas binding                                    | yes | yes | yes  | no  |
-| Probable bugs        | ForeachSourceInspection                         | Foreach source to iterate over                            | n/a | yes | n/a  | yes |
 | Probable bugs        | JsonEncodingApiUsageInspection                  | JSON encoding API usage                                   | yes | yes | yes  | yes |
 | Probable bugs        | ExitUsageCorrectnessInspection                  | 'exit' usage correctness                                  | n/a | yes | n/a  | no  |
 | Probable bugs        | StringFragmentMisplacedInspection               | Incorrectly placed string fragment                        | yes | yes | yes  | no  |

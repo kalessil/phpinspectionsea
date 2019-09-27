@@ -522,10 +522,6 @@
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticLambdaBindingInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="ForeachSourceInspection"                       displayName="Foreach source to iterate over"
-        groupName="Probable bugs"                                 enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.ForeachSourceInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="JsonEncodingApiUsageInspection"                displayName="JSON encoding API usage"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.JsonEncodingApiUsageInspector"/>
@@ -969,10 +965,6 @@
         shortName="BadExceptionsProcessingInspection"               displayName="Badly organized exception handling"
         groupName="Architecture"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.BadExceptionsProcessingInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="MoreThanThreeArgumentsInspection"                displayName="Too many parameters in a callable"
-        groupName="Architecture"                                    enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.MoreThanThreeArgumentsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="CallableParameterUseCaseInTypeContextInspection" displayName="Callable parameter usage violates definition"
         groupName="Architecture"                                    enabledByDefault="true" level="WARNING"

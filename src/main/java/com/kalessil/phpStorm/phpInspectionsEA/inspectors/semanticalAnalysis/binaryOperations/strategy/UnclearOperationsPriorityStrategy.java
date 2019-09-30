@@ -32,9 +32,7 @@ final public class UnclearOperationsPriorityStrategy {
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
                 if (parentOperator != operator) {
-                    final boolean isTarget = parentOperator == PhpTokenTypes.opAND ||
-                                             parentOperator == PhpTokenTypes.opOR  ||
-                                             parentOperator == PhpTokenTypes.opCOALESCE;
+                    final boolean isTarget = parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR;
                     if (isTarget) {
                         final String replacement = '(' + expression.getText() + ')';
                         holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));

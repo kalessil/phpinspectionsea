@@ -16,5 +16,6 @@ $y = [
     returns_string() ?? '',
 
     <error descr="The operation results to '$defined . $undefined', the right operand can be omitted.">$defined . $undefined</error> ?? 'alternative',
+    $defined ?? <error descr="Operations priority might differ from what you expect: please wrap needed with '(...)'.">'alternative' . '...'</error>,
     $undefined ?? $undefined ?? 'alternative',
 ];

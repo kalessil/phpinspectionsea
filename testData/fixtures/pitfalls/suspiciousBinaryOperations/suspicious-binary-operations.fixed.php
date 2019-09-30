@@ -59,8 +59,8 @@ if (!$a <=> $b) {}
 /* operations priority issues: ternaries and null coalescing */
 if ($a ?: $b && $c) {}
 if ($a ?: $b || $c) {}
-if ($a ?? ($b && $c)) {}
-if ($a ?? ($b || $c)) {}
+if ($a ?? $b && $c) {}
+if ($a ?? $b || $c) {}
 
 /* nullable/falsy values comparison cases */
 $nullable = null;

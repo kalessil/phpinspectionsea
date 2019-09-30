@@ -15,10 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -46,6 +43,7 @@ public class OpAssignShortSyntaxInspector extends PhpInspection {
     }
 
     private static final Map<IElementType, IElementType> mapping = new HashMap<>();
+    private static final Set<IElementType> chainingSafeOperators = new HashSet<>();
     static {
         mapping.put(PhpTokenTypes.opPLUS,        PhpTokenTypes.opPLUS_ASGN);
         mapping.put(PhpTokenTypes.opMINUS,       PhpTokenTypes.opMINUS_ASGN);
@@ -58,6 +56,10 @@ public class OpAssignShortSyntaxInspector extends PhpInspection {
         mapping.put(PhpTokenTypes.opBIT_XOR,     PhpTokenTypes.opBIT_XOR_ASGN);
         mapping.put(PhpTokenTypes.opSHIFT_LEFT,  PhpTokenTypes.opSHIFT_LEFT_ASGN);
         mapping.put(PhpTokenTypes.opSHIFT_RIGHT, PhpTokenTypes.opSHIFT_RIGHT_ASGN);
+
+        chainingSafeOperators.add(PhpTokenTypes.opPLUS);
+        chainingSafeOperators.add(PhpTokenTypes.opCONCAT);
+        chainingSafeOperators.add(PhpTokenTypes.opMUL);
     }
 
     @Override
@@ -94,18 +96,21 @@ public class OpAssignShortSyntaxInspector extends PhpInspection {
                                     candidate = current.getLeftOperand();
                                 }
                                 if (candidate != null && OpenapiEquivalenceUtil.areEqual(variable, candidate)) {
-                                    Collections.reverse(fragments);
-                                    final String replacement = String.format(
-                                            "%s %s= %s",
-                                            candidate.getText(),
-                                            operator.getText(),
-                                            fragments.stream().map(PsiElement::getText).collect(Collectors.joining(" " + operator.getText() + " "))
-                                    );
-                                    holder.registerProblem(
-                                            assignment,
-                                            String.format(messagePattern, replacement),
-                                            new UseShorthandOperatorFix(replacement)
-                                    );
+                                    final boolean canShorten = (fragments.size() == 1 || chainingSafeOperators.contains(operation)) && fragments.stream().noneMatch(f -> f instanceof BinaryExpression);
+                                    if (canShorten) {
+                                        Collections.reverse(fragments);
+                                        final String replacement = String.format(
+                                                "%s %s= %s",
+                                                candidate.getText(),
+                                                operator.getText(),
+                                                fragments.stream().map(PsiElement::getText).collect(Collectors.joining(" " + operator.getText() + " "))
+                                        );
+                                        holder.registerProblem(
+                                                assignment,
+                                                String.format(messagePattern, replacement),
+                                                new UseShorthandOperatorFix(replacement)
+                                        );
+                                    }
                                 }
                                 fragments.clear();
                             }

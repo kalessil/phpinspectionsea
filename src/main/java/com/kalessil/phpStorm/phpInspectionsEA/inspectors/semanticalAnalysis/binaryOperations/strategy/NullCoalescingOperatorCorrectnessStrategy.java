@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class NullCoalescingOperatorCorrectnessStrategy {
-    private static final String messagePatternUnary = "The operation results to '%s', the right operand can be omitted.";
+    private static final String messagePattern = "The operation results to '%s', the right operand can be omitted.";
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result = false;
@@ -30,8 +30,13 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                 if (operation != null) {
                     final IElementType operator = operation.getNode().getElementType();
                     if (result = (operator == PhpTokenTypes.opNOT || PhpTokenTypes.tsCAST_OPS.contains(operator))) {
-                        holder.registerProblem(left, String.format(messagePatternUnary, left.getText()));
+                        holder.registerProblem(left, String.format(messagePattern, left.getText()));
                     }
+                }
+            } else if (left instanceof BinaryExpression) {
+                final IElementType operator = ((BinaryExpression) left).getOperationType();
+                if (operator != PhpTokenTypes.opCOALESCE) {
+                    holder.registerProblem(left, String.format(messagePattern, left.getText()));
                 }
             }
         }

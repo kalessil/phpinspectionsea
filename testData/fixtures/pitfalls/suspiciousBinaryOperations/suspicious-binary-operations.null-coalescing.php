@@ -13,5 +13,8 @@ $y = [
     $x ?? <error descr="The operation results to '(int)$x', the right operand can be omitted.">(int)$x</error> ?? '...',
 
     $x ?? returns_object($x) ?? '...',
-    returns_string() ?? ''
+    returns_string() ?? '',
+
+    <error descr="The operation results to '$defined . $undefined', the right operand can be omitted.">$defined . $undefined</error> ?? 'alternative',
+    $undefined ?? $undefined ?? 'alternative',
 ];

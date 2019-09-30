@@ -43,7 +43,12 @@ import java.util.stream.Stream;
 
 public class OneTimeUseVariablesInspector extends PhpInspection {
     // Inspection options.
-    public boolean ALLOW_LONG_STATEMENTS = false;
+    public boolean ALLOW_LONG_STATEMENTS       = false;
+    public boolean ANALYZE_RETURN_STATEMENTS   = true;
+    public boolean ANALYZE_THROW_STATEMENTS    = true;
+    public boolean ANALYZE_ECHO_STATEMENTS     = true;
+    public boolean ANALYZE_FOREACH_STATEMENTS  = true;
+    public boolean ANALYZE_ARRAY_DESTRUCTURING = true;
 
     private static final String messagePattern = "Variable $%s is redundant.";
     private static final String messageRename  = "The local variable introduction doesn't make much sense here, consider renaming a loop variable instead.";
@@ -195,28 +200,30 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
             public void visitPhpReturn(@NotNull PhpReturn expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                /* if function returning reference, do not inspect returns */
-                final Function scope = ExpressionSemanticUtil.getScope(expression);
-                if (scope != null) {
-                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(scope);
-                    if (nameNode != null) {
-                        /* is defined like returning reference */
-                        PsiElement referenceCandidate = nameNode.getPrevSibling();
-                        if (referenceCandidate instanceof PsiWhiteSpace) {
-                            referenceCandidate = referenceCandidate.getPrevSibling();
-                        }
-                        if (OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND)) {
-                            return;
+                if (ANALYZE_RETURN_STATEMENTS) {
+                    /* if function returning reference, do not inspect returns */
+                    final Function scope = ExpressionSemanticUtil.getScope(expression);
+                    if (scope != null) {
+                        final PsiElement nameNode = NamedElementUtil.getNameIdentifier(scope);
+                        if (nameNode != null) {
+                            /* is defined like returning reference */
+                            PsiElement referenceCandidate = nameNode.getPrevSibling();
+                            if (referenceCandidate instanceof PsiWhiteSpace) {
+                                referenceCandidate = referenceCandidate.getPrevSibling();
+                            }
+                            if (OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND)) {
+                                return;
+                            }
                         }
                     }
-                }
 
-                /* regular function, check one-time use variables */
-                final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
-                if (argument instanceof PhpPsiElement) {
-                    final Variable variable = this.getVariable(argument);
-                    if (variable != null) {
-                        this.checkOneTimeUse(expression, variable, scope);
+                    /* regular function, check one-time use variables */
+                    final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
+                    if (argument instanceof PhpPsiElement) {
+                        final Variable variable = this.getVariable(argument);
+                        if (variable != null) {
+                            this.checkOneTimeUse(expression, variable, scope);
+                        }
                     }
                 }
             }
@@ -225,18 +232,20 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                final PsiElement parent = expression.getParent();
-                if (OpenapiTypesUtil.isStatementImpl(parent)) {
-                    final Function scope = ExpressionSemanticUtil.getScope(expression);
-                    if (scope != null) {
-                        final PsiElement value  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
-                        final Variable variable = value == null ? null : this.getVariable(value);
-                        if (variable != null) {
-                            final PsiElement first = expression.getFirstChild();
-                            final boolean isTarget = OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
-                                                     OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
-                            if (isTarget) {
-                                this.checkOneTimeUse((PhpPsiElement) parent, variable, scope);
+                if (ANALYZE_ARRAY_DESTRUCTURING) {
+                    final PsiElement parent = expression.getParent();
+                    if (OpenapiTypesUtil.isStatementImpl(parent)) {
+                        final Function scope = ExpressionSemanticUtil.getScope(expression);
+                        if (scope != null) {
+                            final PsiElement value  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getValue());
+                            final Variable variable = value == null ? null : this.getVariable(value);
+                            if (variable != null) {
+                                final PsiElement first = expression.getFirstChild();
+                                final boolean isTarget = OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
+                                                         OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
+                                if (isTarget) {
+                                    this.checkOneTimeUse((PhpPsiElement) parent, variable, scope);
+                                }
                             }
                         }
                     }
@@ -296,11 +305,13 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
             public void visitPhpThrow(@NotNull PhpThrow expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
-                if (argument instanceof PhpPsiElement) {
-                    final Variable variable = this.getVariable(argument);
-                    if (variable != null) {
-                        this.checkOneTimeUse(expression, variable, ExpressionSemanticUtil.getScope(expression));
+                if (ANALYZE_THROW_STATEMENTS) {
+                    final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
+                    if (argument instanceof PhpPsiElement) {
+                        final Variable variable = this.getVariable(argument);
+                        if (variable != null) {
+                            this.checkOneTimeUse(expression, variable, ExpressionSemanticUtil.getScope(expression));
+                        }
                     }
                 }
             }
@@ -309,13 +320,15 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
             public void visitPhpEchoStatement(@NotNull PhpEchoStatement expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                final PsiElement[] arguments = expression.getArguments();
-                if (arguments.length == 1) {
-                    final Function scope = ExpressionSemanticUtil.getScope(expression);
-                    if (scope != null) {
-                        final Variable variable = this.getVariable(arguments[0]);
-                        if (variable != null) {
-                            this.checkOneTimeUse(expression, variable,scope);
+                if (ANALYZE_ECHO_STATEMENTS) {
+                    final PsiElement[] arguments = expression.getArguments();
+                    if (arguments.length == 1) {
+                        final Function scope = ExpressionSemanticUtil.getScope(expression);
+                        if (scope != null) {
+                            final Variable variable = this.getVariable(arguments[0]);
+                            if (variable != null) {
+                                this.checkOneTimeUse(expression, variable,scope);
+                            }
                         }
                     }
                 }
@@ -325,17 +338,19 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                final PsiElement source = expression.getArray();
-                if (source != null && !ExpressionSemanticUtil.isByReference(expression.getValue())) {
-                    final Function scope = ExpressionSemanticUtil.getScope(expression);
-                    if (scope != null) {
-                        final Variable extractedSource = this.getVariable(source);
-                        if (extractedSource != null) {
-                            this.checkOneTimeUse(expression, extractedSource, scope);
+                if (ANALYZE_FOREACH_STATEMENTS) {
+                    final PsiElement source = expression.getArray();
+                    if (source != null && !ExpressionSemanticUtil.isByReference(expression.getValue())) {
+                        final Function scope = ExpressionSemanticUtil.getScope(expression);
+                        if (scope != null) {
+                            final Variable extractedSource = this.getVariable(source);
+                            if (extractedSource != null) {
+                                this.checkOneTimeUse(expression, extractedSource, scope);
+                            }
+                            Stream.of(expression.getKey(), expression.getValue())
+                                    .filter(Objects::nonNull)
+                                    .forEach(variable -> this.checkIfCanRename(expression, variable, scope));
                         }
-                        Stream.of(expression.getKey(), expression.getValue())
-                                .filter(Objects::nonNull)
-                                .forEach(variable -> this.checkIfCanRename(expression, variable, scope));
                     }
                 }
             }
@@ -470,9 +485,14 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) ->
-            component.addCheckbox("Allow long statements (80+ chars)", ALLOW_LONG_STATEMENTS, (isSelected) -> ALLOW_LONG_STATEMENTS = isSelected)
-        );
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Allow long statements (80+ chars)", ALLOW_LONG_STATEMENTS, (isSelected) -> ALLOW_LONG_STATEMENTS = isSelected);
+            component.addCheckbox("Analyze return statements", ANALYZE_RETURN_STATEMENTS, (isSelected) -> ANALYZE_RETURN_STATEMENTS = isSelected);
+            component.addCheckbox("Analyze throw statements", ANALYZE_THROW_STATEMENTS, (isSelected) -> ANALYZE_THROW_STATEMENTS = isSelected);
+            component.addCheckbox("Analyze echo statements", ANALYZE_ECHO_STATEMENTS, (isSelected) -> ANALYZE_ECHO_STATEMENTS = isSelected);
+            component.addCheckbox("Analyze foreach statements", ANALYZE_FOREACH_STATEMENTS, (isSelected) -> ANALYZE_FOREACH_STATEMENTS = isSelected);
+            component.addCheckbox("Analyze array destructuring", ANALYZE_ARRAY_DESTRUCTURING, (isSelected) -> ANALYZE_ARRAY_DESTRUCTURING = isSelected);
+        });
     }
 
     private static final class RenameLoopVariableFix implements LocalQuickFix {

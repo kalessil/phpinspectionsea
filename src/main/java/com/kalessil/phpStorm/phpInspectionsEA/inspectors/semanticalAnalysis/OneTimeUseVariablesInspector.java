@@ -41,7 +41,10 @@ import java.util.List;
 
 public class OneTimeUseVariablesInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean ALLOW_LONG_STATEMENTS = false;
+    public boolean ALLOW_LONG_STATEMENTS       = false;
+    public boolean ANALYZE_RETURN_STATEMENTS   = true;
+    public boolean ANALYZE_THROW_STATEMENTS    = true;
+    public boolean ANALYZE_ARRAY_DESTRUCTURING = true;
 
     private static final String messagePattern = "Variable $%v% is redundant.";
 
@@ -153,39 +156,43 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpReturn(@NotNull PhpReturn returnStatement) {
-                /* if function returning reference, do not inspect returns */
-                final Function callable   = ExpressionSemanticUtil.getScope(returnStatement);
-                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
-                if (null != callable && null != nameNode) {
-                    /* is defined like returning reference */
-                    PsiElement referenceCandidate = nameNode.getPrevSibling();
-                    if (referenceCandidate instanceof PsiWhiteSpace) {
-                        referenceCandidate = referenceCandidate.getPrevSibling();
+                if (ANALYZE_RETURN_STATEMENTS) {
+                    /* if function returning reference, do not inspect returns */
+                    final Function callable   = ExpressionSemanticUtil.getScope(returnStatement);
+                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(callable);
+                    if (null != callable && null != nameNode) {
+                        /* is defined like returning reference */
+                        PsiElement referenceCandidate = nameNode.getPrevSibling();
+                        if (referenceCandidate instanceof PsiWhiteSpace) {
+                            referenceCandidate = referenceCandidate.getPrevSibling();
+                        }
+                        if (OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND)) {
+                            return;
+                        }
                     }
-                    if (OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND)) {
-                        return;
-                    }
-                }
 
-                /* regular function, check one-time use variables */
-                final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnStatement.getArgument());
-                if (argument instanceof PhpPsiElement) {
-                    final Variable variable = this.getVariable((PhpPsiElement) argument);
-                    if (null != variable) {
-                        checkOneTimeUse(returnStatement, variable);
+                    /* regular function, check one-time use variables */
+                    final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnStatement.getArgument());
+                    if (argument instanceof PhpPsiElement) {
+                        final Variable variable = this.getVariable((PhpPsiElement) argument);
+                        if (null != variable) {
+                            checkOneTimeUse(returnStatement, variable);
+                        }
                     }
                 }
             }
 
             @Override
             public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression multiassignmentExpression) {
-                final PsiElement firstChild = multiassignmentExpression.getFirstChild();
-                final IElementType nodeType = null == firstChild ? null : firstChild.getNode().getElementType();
-                if (null != nodeType && (PhpTokenTypes.kwLIST == nodeType || PhpTokenTypes.chLBRACKET == nodeType)) {
-                    final Variable variable = this.getVariable(multiassignmentExpression.getValue());
-                    final PsiElement parent = multiassignmentExpression.getParent();
-                    if (null != variable && OpenapiTypesUtil.isStatementImpl(parent)) {
-                        checkOneTimeUse((PhpPsiElement) parent, variable);
+                if (ANALYZE_ARRAY_DESTRUCTURING) {
+                    final PsiElement firstChild = multiassignmentExpression.getFirstChild();
+                    final IElementType nodeType = null == firstChild ? null : firstChild.getNode().getElementType();
+                    if (null != nodeType && (PhpTokenTypes.kwLIST == nodeType || PhpTokenTypes.chLBRACKET == nodeType)) {
+                        final Variable variable = this.getVariable(multiassignmentExpression.getValue());
+                        final PsiElement parent = multiassignmentExpression.getParent();
+                        if (null != variable && OpenapiTypesUtil.isStatementImpl(parent)) {
+                            checkOneTimeUse((PhpPsiElement) parent, variable);
+                        }
                     }
                 }
             }
@@ -194,11 +201,13 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpThrow(@NotNull PhpThrow throwStatement) {
-                final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(throwStatement.getArgument());
-                if (argument instanceof PhpPsiElement) {
-                    final Variable variable = this.getVariable((PhpPsiElement) argument);
-                    if (null != variable) {
-                        checkOneTimeUse(throwStatement, variable);
+                if (ANALYZE_THROW_STATEMENTS) {
+                    final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(throwStatement.getArgument());
+                    if (argument instanceof PhpPsiElement) {
+                        final Variable variable = this.getVariable((PhpPsiElement) argument);
+                        if (null != variable) {
+                            checkOneTimeUse(throwStatement, variable);
+                        }
                     }
                 }
             }
@@ -244,9 +253,12 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) ->
-            component.addCheckbox("Allow long statements (80+ chars)", ALLOW_LONG_STATEMENTS, (isSelected) -> ALLOW_LONG_STATEMENTS = isSelected)
-        );
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Allow long statements (80+ chars)", ALLOW_LONG_STATEMENTS, (isSelected) -> ALLOW_LONG_STATEMENTS = isSelected);
+            component.addCheckbox("Analyze return statements", ANALYZE_RETURN_STATEMENTS, (isSelected) -> ANALYZE_RETURN_STATEMENTS = isSelected);
+            component.addCheckbox("Analyze throw statements", ANALYZE_THROW_STATEMENTS, (isSelected) -> ANALYZE_THROW_STATEMENTS = isSelected);
+            component.addCheckbox("Analyze array destructuring", ANALYZE_ARRAY_DESTRUCTURING, (isSelected) -> ANALYZE_ARRAY_DESTRUCTURING = isSelected);
+        });
     }
 
     private static final class TheLocalFix implements LocalQuickFix {

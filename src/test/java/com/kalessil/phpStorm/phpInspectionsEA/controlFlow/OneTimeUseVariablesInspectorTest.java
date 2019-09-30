@@ -10,6 +10,9 @@ final public class OneTimeUseVariablesInspectorTest extends PhpCodeInsightFixtur
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
         final OneTimeUseVariablesInspector inspector = new OneTimeUseVariablesInspector();
         inspector.ALLOW_LONG_STATEMENTS              = true;
+        inspector.ANALYZE_RETURN_STATEMENTS          = true;
+        inspector.ANALYZE_THROW_STATEMENTS           = true;
+        inspector.ANALYZE_ARRAY_DESTRUCTURING        = true;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/controlFlow/one-time-use-variables.php");
         myFixture.testHighlighting(true, false, true);

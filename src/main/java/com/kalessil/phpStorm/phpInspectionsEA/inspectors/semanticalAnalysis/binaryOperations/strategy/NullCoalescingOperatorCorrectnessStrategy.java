@@ -35,7 +35,7 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                 }
             } else if (left instanceof BinaryExpression) {
                 final IElementType operator = ((BinaryExpression) left).getOperationType();
-                if (operator != PhpTokenTypes.opCOALESCE) {
+                if (result = (operator != PhpTokenTypes.opCOALESCE)) {
                     holder.registerProblem(left, String.format(messagePattern, left.getText()));
                 }
             }

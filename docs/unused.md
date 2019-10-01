@@ -114,3 +114,30 @@ Reports if a method only content is a parent method call.
     class ChildClass extends ParentClass {
     }
 ```
+
+## Child method is exactly the same
+
+Reports methods identical to parent's one (code duplication). In order to not slow dow IDE only methods with length of 20 expressions or less being analyzed.
+
+```php
+    /* before */
+    class ParentClass {
+        public function method(string $parameter) {
+            return $parameter;
+        }
+    }
+    class ChildClass extends ParentClass {
+        public function method(string $parameter) {
+            return $parameter;
+        }
+    }
+
+    /* after */
+    class ParentClass {
+        public function method(string $parameter) {
+            return $parameter;
+        }
+    }
+    class ChildClass extends ParentClass {
+    }
+```

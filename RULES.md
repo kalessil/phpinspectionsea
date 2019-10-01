@@ -63,7 +63,7 @@ Inspections Lists (Unused)
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a | yes | n/a  | yes |
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a | yes | n/a  | yes |
 | Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | yes  | yes |
-| Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |
+| Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | yes |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | yes  | no  |
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | yes  | no  |

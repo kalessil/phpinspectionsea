@@ -53,3 +53,37 @@ Class property default value is NULL if not specified, assigning it explicitly i
         private $property;
     }
 ```
+
+## Unused constructor dependencies
+
+Analyzes constructors in dependency injection context and reports stored but unused ones.
+
+```php
+    /* before */
+    class Clazz {
+        private $usedDependency;
+        private $unusedDependency;
+
+        public function __construct(object $usedDependency, object $unusedDependency) {
+            $this->usedDependency   = $usedDependency;
+            $this->unusedDependency = $unusedDependency;
+        }
+
+        public function getDependency(): object {
+            return $this->usedDependency;
+        }
+    }
+
+    /* after */
+    class Clazz {
+        private $usedDependency;
+
+        public function __construct(object $usedDependency) {
+            $this->usedDependency = $usedDependency;
+        }
+
+        public function getDependency(): object {
+            return $this->usedDependency;
+        }
+    }
+```

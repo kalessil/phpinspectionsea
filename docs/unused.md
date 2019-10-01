@@ -31,3 +31,25 @@ this operation can be safely removed.
         /* some logic here, which is not using $string */
     }
 ```
+
+## Class property initialization flaws
+
+Reports class properties explicitly initialized with NULL and redundant assignments in constructors.
+Class property default value is NULL if not specified, assigning it explicitly is redundant.
+
+```php
+    /* before */
+    class Clazz {
+        private $property = null;
+
+        public function __construct() {
+            $this->property = null;
+        }
+    }
+
+    /* after */
+    class Clazz {
+        /* @var string|null */
+        private $property;
+    }
+```

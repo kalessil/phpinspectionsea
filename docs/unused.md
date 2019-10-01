@@ -169,3 +169,15 @@ Suggests possible isset arguments simplifications.
     /* after */
     isset($array[0][0]);
 ```
+
+## Unnecessary 'date(...)' arguments specification
+
+Suggest omitting unnecessary date(...) calls arguments.
+
+```php
+    /* before */
+    date('...', time());
+
+    /* after */
+    date('...');
+```

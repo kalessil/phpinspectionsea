@@ -87,3 +87,30 @@ Analyzes constructors in dependency injection context and reports stored but unu
         }
     }
 ```
+
+## Senseless proxy function
+
+Reports if a method only content is a parent method call.
+
+```php
+    /* before */
+    class ParentClass {
+        public function method(string $parameter) {
+            return $parameter;
+        }
+    }
+    class ChildClass extends ParentClass {
+        public function method(string $parameter) {
+            return parent::method($parameter);
+        }
+    }
+
+    /* after */
+    class ParentClass {
+        public function method(string $parameter) {
+            return $parameter;
+        }
+    }
+    class ChildClass extends ParentClass {
+    }
+```

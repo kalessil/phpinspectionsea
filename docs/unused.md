@@ -157,3 +157,15 @@ Reports arguments which can be safely dropped, as they are identical to the defa
     /* after */
     name();
 ```
+
+## Unnecessary isset arguments specification
+
+Suggests possible isset arguments simplifications.
+
+```php
+    /* before */
+    isset($array, $array[0], $array[0][0]);
+
+    /* after */
+    isset($array[0][0]);
+```

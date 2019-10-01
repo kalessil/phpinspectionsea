@@ -68,7 +68,7 @@ Inspections Lists (Unused)
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | yes |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | yes  | n/a |
 | Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary call arguments specification            | yes | yes | yes  | yes |
-| Unused               | UnnecessaryIssetArgumentsInspection             | Unnecessary isset arguments specification           | yes | yes | yes  | no  |
+| Unused               | UnnecessaryIssetArgumentsInspection             | Unnecessary isset arguments specification           | yes | yes | yes  | yes |
 | Unused               | DateUsageInspection                             | Unnecessary 'date(...)' arguments specification     | yes | yes | yes  | no  |
 
 Inspections Lists (Compatibility)

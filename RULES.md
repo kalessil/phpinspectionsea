@@ -65,7 +65,7 @@ Inspections Lists (Unused)
 | Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | yes  | yes |
 | Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | yes |
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | yes  | yes |
-| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
+| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | yes |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | yes  | no  |
 | Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary call arguments specification            | yes | yes | yes  | no  |
 | Unused               | UnnecessaryIssetArgumentsInspection             | Unnecessary isset arguments specification           | yes | yes | yes  | no  |

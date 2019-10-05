@@ -38,10 +38,10 @@ In order to reduce execution time we can modify the code and perform the merge o
     }
    
     /* PHP below 5.6 */
-    $options = call_user_func_array('array_merge', $options + [[]]); // the nested empty array covers cases when no loops were made, must be second operand
+    $options = $options === [] ? [] : call_user_func_array('array_merge', $options + [[]]); // the nested empty array covers cases when no loops were made, must be second operand
 
     /* PHP 5.6+: more friendly to refactoring as less magic involved */
-    $options = array_merge([], ...$options); // the empty array covers cases when no loops were made
+    $options = $options === [] ? [] : array_merge([], ...$options); // the empty array covers cases when no loops were made
 ```
 
 ## Foreach variables reference usage correctness

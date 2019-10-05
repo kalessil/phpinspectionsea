@@ -97,7 +97,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create(
-            (component) -> component.addCheckbox("Suggest using random_int", SUGGEST_USING_RANDOM_INT, (isSelected) -> SUGGEST_USING_RANDOM_INT = isSelected)
+            (component) -> component.addCheckbox("Suggest using random_int()", SUGGEST_USING_RANDOM_INT, (isSelected) -> SUGGEST_USING_RANDOM_INT = isSelected)
         );
     }
 

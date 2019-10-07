@@ -53,21 +53,16 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement statement) {
                 if (VERIFY_VARIABLES_OVERRIDE) {
                     this.inspectVariables(statement);
-
                 }
             }
 
             @Override
             public void visitPhpFor(@NotNull For statement) {
-                this.inspectConditions(statement);
+                if (statement.getConditionalExpressions().length > 1) {
+                    holder.registerProblem(statement.getFirstChild(), messageMultipleConditions);
+                }
                 if (VERIFY_VARIABLES_OVERRIDE) {
                     this.inspectVariables(statement);
-                }
-            }
-
-            private void inspectConditions(@NotNull For forStatement) {
-                if (forStatement.getConditionalExpressions().length > 1) {
-                    holder.registerProblem(forStatement.getFirstChild(), messageMultipleConditions);
                 }
             }
 

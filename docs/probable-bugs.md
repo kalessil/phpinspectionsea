@@ -201,3 +201,10 @@ Reports random number generation constructs where range is not specified correct
     /* the following case will be reported */
     $number = random_int(PHP_INT_MAX, PHP_INT_MIN);
 ```
+
+## Suspicious loop
+
+Analyzes for and foreach loops and reports following cases:
+- overriding outer loops variables 
+- overriding function or method parameters
+- suspicious conditions

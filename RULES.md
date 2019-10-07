@@ -172,7 +172,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | PrintfScanfArgumentsInspection                  | *printf/*scanf arguments count mismatches                 | n/a | yes | n/a  | n/a |
 | Probable bugs        | RealpathInStreamContextInspection               | Phar-incompatible 'realpath(...)' usage                   | yes | yes | yes  | yes |
 | Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a | yes | n/a  | n/a |
-| Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a | yes | n/a  | n/a |
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a | yes | n/a  | yes |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a | yes | n/a  | yes |
 | Probable bugs        | SuspiciousSemicolonInspection                   | Suspicious semicolon                                      | n/a | yes | n/a  | no  |

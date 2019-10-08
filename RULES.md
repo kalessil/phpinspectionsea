@@ -62,14 +62,14 @@ Inspections Lists (Unused)
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | --: |
 | Unused               | OnlyWritesOnParameterInspection                 | Parameter/variable is not used                      | n/a | yes | n/a  | yes |
 | Unused               | UselessUnsetInspection                          | Useless unset                                       | n/a | yes | n/a  | yes |
-| Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | yes  | no  |
-| Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | no  |
-| Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | yes  | no  |
-| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | no  |
-| Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | yes  | no  |
-| Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary call arguments specification            | yes | yes | yes  | no  |
-| Unused               | UnnecessaryIssetArgumentsInspection             | Unnecessary isset arguments specification           | yes | yes | yes  | no  |
-| Unused               | DateUsageInspection                             | Unnecessary 'date(...)' arguments specification     | yes | yes | yes  | no  |
+| Unused               | PropertyInitializationFlawsInspection           | Class property initialization flaws                 | yes | yes | yes  | yes |
+| Unused               | UnusedConstructorDependenciesInspection         | Unused constructor dependencies                     | n/a | yes | n/a  | yes |
+| Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | yes  | yes |
+| Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | yes |
+| Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | yes  | n/a |
+| Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary call arguments specification            | yes | yes | yes  | yes |
+| Unused               | UnnecessaryIssetArgumentsInspection             | Unnecessary isset arguments specification           | yes | yes | yes  | yes |
+| Unused               | DateUsageInspection                             | Unnecessary 'date(...)' arguments specification     | yes | yes | yes  | yes |
 | Unused               | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
 | Unused               | UnusedMockInspection                            | Unused mocks                                        | n/a | yes | n/a  | no  |
 
@@ -109,7 +109,7 @@ Inspections Lists (Code style)
 | Code Style           | NestedTernaryOperatorInspection                 | Nested ternary operator                                | n/a | yes | n/a  | yes |
 | Code Style           | UselessReturnInspection                         | Useless return                                         | yes | yes | yes  | yes |
 | Code Style           | ReferencingObjectsInspection                    | Referencing objects                                    | yes | yes | yes  | yes |
-| Code Style           | FopenBinaryUnsafeUsageInspection                | Binary-unsafe 'fopen(...)' usage                       | yes | yes | yes  | no  |
+| Code Style           | FopenBinaryUnsafeUsageInspection                | Binary-unsafe 'fopen(...)' usage                       | yes | yes | yes  | n/a |
 | Code Style           | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                     | yes | yes | yes  | yes |
 | Code Style           | TypeUnsafeComparisonInspection                  | Type unsafe comparison                                 | yes | yes | yes  | yes |
 | Code Style           | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search(...)' type unsafe usage | yes | yes | yes  | yes |
@@ -138,9 +138,9 @@ Inspections Lists (Language level migration)
 | Language level migration | DynamicCallsToScopeIntrospectionInspection      | Deprecated dynamic calls to scope introspection     | n/a | yes | n/a  | no  |
 | Language level migration | UnsupportedEmptyListAssignmentsInspection       | Unsupported empty list assignments                  | n/a | yes | n/a  | no  |
 | Language level migration | YieldFromCanBeUsedInspection                    | 'yield from' can be used                            | yes | yes | yes  | no  |
-| Language level migration | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a | yes | n/a  | no  |
-| Language level migration | RandomApiMigrationInspection                    | Random API migration                                | yes | yes | yes  | no  |
-| Language level migration | MktimeUsageInspection                           | 'gmmktime(...)'/'mktime(...)' usage                 | yes | yes | yes  | no  |
+| Language level migration | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a | yes | n/a  | n/a |
+| Language level migration | RandomApiMigrationInspection                    | Random API migration                                | yes | yes | yes  | n/a |
+| Language level migration | MktimeUsageInspection                           | 'gmmktime(...)'/'mktime(...)' usage                 | yes | yes | yes  | n/a |
 
 Inspections Lists (Architecture)
 ---
@@ -172,11 +172,11 @@ Inspections Lists (Probable bugs)
 | :------------------- | :-------------------------------------------    | :--------------------------------------------------       | --: | --: | ---: | --: |
 | Probable bugs        | ForgottenDebugOutputInspection                  | Forgotten debug statements                                | n/a | yes | n/a  | yes |
 | Probable bugs        | AdditionOperationOnArraysInspection             | Addition operator used on arrays                          | n/a | yes | n/a  | yes |
-| Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a | yes | n/a  | no  |
-| Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a | yes | n/a  | no  |
-| Probable bugs        | PrintfScanfArgumentsInspection                  | *printf/*scanf arguments count mismatches                 | n/a | yes | n/a  | no  |
+| Probable bugs        | MagicMethodsValidityInspection                  | Magic methods validity                                    | n/a | yes | n/a  | n/a |
+| Probable bugs        | SuspiciousLoopInspection                        | Suspicious loop                                           | n/a | yes | n/a  | yes |
+| Probable bugs        | PrintfScanfArgumentsInspection                  | *printf/*scanf arguments count mismatches                 | n/a | yes | n/a  | n/a |
 | Probable bugs        | RealpathInStreamContextInspection               | Phar-incompatible 'realpath(...)' usage                   | yes | yes | yes  | yes |
-| Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a | yes | n/a  | no  |
+| Probable bugs        | OffsetOperationsInspection                      | Array and string offset validity                          | n/a | yes | n/a  | n/a |
 | Probable bugs        | SummerTimeUnsafeTimeManipulationInspection      | Summer-time unsafe date manipulations                     | n/a | yes | n/a  | no  |
 | Probable bugs        | MkdirRaceConditionInspection                    | 'mkdir(...)' race condition                               | n/a | yes | n/a  | yes |
 | Probable bugs        | IncorrectRandomRangeInspection                  | Incorrect random generation range                         | n/a | yes | n/a  | yes |
@@ -184,7 +184,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | InconsistentQueryBuildInspection                | Inconsistent 'http_build_query(...)' result               | yes | yes | yes  | no  |
 | Probable bugs        | SwitchContinuationInLoopInspection              | Continue misbehaviour in switch                           | yes | yes | yes  | yes |
 | Probable bugs        | CompactArgumentsInspection                      | 'compact(...)' variables existence                        | n/a | yes | n/a  | yes |
-| Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a | yes | n/a  | no  |
+| Probable bugs        | DateIntervalSpecificationInspection             | Date interval specification validity                      | n/a | yes | n/a  | n/a |
 | Probable bugs        | UsingInclusionOnceReturnValueInspection         | Suspicious usage of include_once/require_once return value| yes | yes | yes  | no  |
 | Probable bugs        | PregQuoteUsageInspection                        | Proper preg_quote(...) usage                              | yes | yes | yes  | yes |
 | Probable bugs        | SuspiciousAssignmentsInspection                 | Suspicious assignments                                    | n/a | yes | n/a  | no  |
@@ -198,14 +198,14 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | NullPointerExceptionInspection                  | Null reference                                            | n/a | yes | n/a  | yes |
 | Probable bugs        | MissingIssetImplementationInspection            | Empty/isset results correctness                           | n/a | yes | n/a  | yes |
 | Probable bugs        | CallableMethodValidityInspection                | Callable methods validity                                 | n/a | yes | n/a  | no  |
-| Probable bugs        | PassingByReferenceCorrectnessInspection         | Passing arguments by reference correctness                | n/a | yes | n/a  | no  |
+| Probable bugs        | PassingByReferenceCorrectnessInspection         | Passing arguments by reference correctness                | n/a | yes | n/a  | n/a |
 | Probable bugs        | ClassMockingCorrectnessInspection               | Class mocking correctness                                 | n/a | yes | n/a  | no  |
 | Probable bugs        | ClassConstantUsageCorrectnessInspection         | ::class constant usage correctness                        | n/a | yes | n/a  | yes |
-| Probable bugs        | DeclareDirectiveCorrectnessInspection           | Declare directive correctness                             | n/a | yes | n/a  | no  |
+| Probable bugs        | DeclareDirectiveCorrectnessInspection           | Declare directive correctness                             | n/a | yes | n/a  | n/a |
 | Probable bugs        | InfinityLoopInspection                          | Infinity loop detection                                   | n/a | yes | n/a  | no  |
 | Probable bugs        | StringsFirstCharactersCompareInspection         | Strings N-character comparison flaws                      | yes | yes | yes  | no  |
-| Probable bugs        | SimpleXmlLoadFileUsageInspection                | 'simplexml_load_file(...)' usage correctness              | yes | yes | yes  | no  |
-| Probable bugs        | DateTimeSetTimeUsageInspection                  | 'DateTime::setTime(...)' usage correctness                | n/a | yes | n/a  | no  |
+| Probable bugs        | SimpleXmlLoadFileUsageInspection                | 'simplexml_load_file(...)' usage correctness              | yes | yes | yes  | n/a |
+| Probable bugs        | DateTimeSetTimeUsageInspection                  | 'DateTime::setTime(...)' usage correctness                | n/a | yes | n/a  | n/a |
 | Probable bugs        | FilePutContentsRaceConditionInspection          | 'file_put_contents(...)' race condition                   | yes | yes | yes  | yes |
 | Probable bugs        | CoreInterfacesUsageInspection                   | Core interfaces usage correctness                         | n/a | yes | n/a  | no  |
 | Probable bugs        | SubstringCompareInspection                      | Substring comparison flaws                                | yes | yes | yes  | no  |
@@ -223,7 +223,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | ClassMemberExistenceCheckInspection             | Class member existence check correctness                  | n/a | yes | n/a  | no  |
 | Probable bugs        | IteratorToArrayKeysCollisionInspection          | 'iterator_to_array(...)' keys merging correctness         | yes | yes | yes  | no  |
 | Probable bugs        | LateStaticBindingInspection                     | Late static binding usage correctness                     | yes | yes | yes  | no  |
-| Probable bugs        | DuplicateArrayKeysInspection                    | Duplicate array keys                                      | n/a | yes | n/a  | no  |
+| Probable bugs        | DuplicateArrayKeysInspection                    | Duplicate array keys                                      | n/a | yes | n/a  | n/a |
 | Probable bugs        | TraitsMethodsConflictsInspection                | Traits methods conflicts resolution                       | n/a | yes | n/a  | no  |
 | Probable bugs        | GetSetMethodCorrectnessInspection               | get/set methods correctness                               | n/a | yes | n/a  | no  |
 | Probable bugs        | SuspiciousVariableDeclarationInspection         | Suspicious variable declaration                           | n/a | yes | n/a  | no  |

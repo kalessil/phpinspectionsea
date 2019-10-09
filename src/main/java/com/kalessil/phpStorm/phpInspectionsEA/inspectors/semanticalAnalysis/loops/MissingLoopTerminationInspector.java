@@ -46,25 +46,25 @@ public class MissingLoopTerminationInspector extends PhpInspection {
         return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement loop) {
-                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
+                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
                 this.analyze(loop);
             }
 
             @Override
             public void visitPhpFor(@NotNull For loop) {
-                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
+                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
                 this.analyze(loop);
             }
 
             @Override
             public void visitPhpWhile(@NotNull While loop) {
-                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
+                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
                 this.analyze(loop);
             }
 
             @Override
             public void visitPhpDoWhile(@NotNull DoWhile loop) {
-                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
+                if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
                 this.analyze(loop);
             }
 

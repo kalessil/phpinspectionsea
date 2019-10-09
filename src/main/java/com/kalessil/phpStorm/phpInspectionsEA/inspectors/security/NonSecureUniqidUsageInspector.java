@@ -31,7 +31,7 @@ import java.util.Map;
  */
 
 public class NonSecureUniqidUsageInspector extends PhpInspection {
-    private static final String message = "Insufficient entropy, please provide both prefix and more entropy parameters.";
+    private static final String message = "Please provide 'more_entropy' parameter in order to increase likelihood of uniqueness.";
 
     final private static Map<String, Integer> callbacksPositions = new HashMap<>();
     static {
@@ -67,13 +67,11 @@ public class NonSecureUniqidUsageInspector extends PhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null) {
                     if (functionName.equals("uniqid")) {
-                        /* direct call */
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length < 2 && this.isFromRootNamespace(reference)) {
                             holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR, new AddMissingParametersFix());
                         }
                     } else if (callbacksPositions.containsKey(functionName)) {
-                        /* calling in callbacks */
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length >= 2) {
                             final int callbackPosition            = callbacksPositions.get(functionName);

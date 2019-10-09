@@ -299,3 +299,4 @@ Inspections Lists (Performance)
 | Performance          | ImplodeMissUseInspection                        | 'implode(...)' misused                                                                            | yes | yes | yes  | no  |
 | Performance          | ArrayMapMissUseInspection                       | 'array_map(...)' misused                                                                          | yes | yes | yes  | no  |
 | Performance          | FileGetContentsMissUseInspection                | 'file_get_contents(...)' misused                                                                  | yes | yes | yes  | no  |
+| Performance          | MissingLoopTerminationInspection                | Missing loop termination                                                                          | yes | yes | yes  | no  |

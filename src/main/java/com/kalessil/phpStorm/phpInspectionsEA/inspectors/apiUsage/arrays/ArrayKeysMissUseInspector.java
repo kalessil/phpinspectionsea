@@ -58,6 +58,7 @@ public class ArrayKeysMissUseInspector extends PhpInspection {
                                 if (outerCallName != null) {
                                     switch (outerCallName) {
                                         case "count":
+                                        case "sizeof":
                                             holder.registerProblem(reference, messageCount, new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "array_unique":

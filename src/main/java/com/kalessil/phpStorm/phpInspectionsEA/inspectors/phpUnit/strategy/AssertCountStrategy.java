@@ -38,7 +38,7 @@ final public class AssertCountStrategy {
             if (assertionArguments.length > 1 && OpenapiTypesUtil.isFunctionReference(assertionArguments[1])) {
                 final FunctionReference candidate = (FunctionReference) assertionArguments[1];
                 final String functionName         = candidate.getName();
-                if (functionName != null && functionName.equals("count")) {
+                if (functionName != null && (functionName.equals("count") || functionName.equals("sizeof"))) {
                     final PsiElement[] functionArguments = candidate.getParameters();
                     if (functionArguments.length == 1) {
                         final String suggestedAssertion   = targetMapping.get(methodName);

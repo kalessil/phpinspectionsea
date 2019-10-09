@@ -234,7 +234,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                     if (isZero) {
                                         final FunctionReference call = (FunctionReference) left;
                                         final String functionName    = call.getName();
-                                        if (functionName != null && functionName.equals("count")) {
+                                        if (functionName != null && (functionName.equals("count") || functionName.equals("sizeof"))) {
                                             final IElementType operator = binary.getOperationType();
                                             if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
                                                 if (reported.add(binary)) {
@@ -257,7 +257,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 /* is_array(...) && [!]count() */
                                 final FunctionReference call = (FunctionReference) expression;
                                 final String functionName    = call.getName();
-                                if (functionName != null && functionName.equals("count")) {
+                                if (functionName != null && (functionName.equals("count") || functionName.equals("sizeof"))) {
                                     if (reported.add(call)) {
                                         final String message = this.isInverted(call) ? messageEmptyArrayCount : messageNotEmptyArrayCount;
                                         holder.registerProblem(call, String.format(message, argument.getText(), argument.getText()));

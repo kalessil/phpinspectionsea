@@ -17,7 +17,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -86,8 +85,8 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                                     .allMatch(statement -> {
                                         final PsiElement assignmentCandidate = statement.getFirstChild();
                                         if (OpenapiTypesUtil.isAssignment(assignmentCandidate)) {
-                                            final PsiElement value = ((AssignmentExpression) assignmentCandidate).getValue();
-                                            if (PhpLanguageUtil.isBoolean(value)) {
+                                            final AssignmentExpression assignment = (AssignmentExpression) assignmentCandidate;
+                                            if (assignment.getVariable() instanceof Variable && assignment.getValue() instanceof ConstantReference) {
                                                 return true;
                                             }
                                         }

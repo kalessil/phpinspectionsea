@@ -146,7 +146,7 @@
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem.FileGetContentsMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="MissingLoopTerminationInspection"              displayName="'Missing loop termination"
+        shortName="MissingLoopTerminationInspection"              displayName="Missing loop termination"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.MissingLoopTerminationInspector"/>
 

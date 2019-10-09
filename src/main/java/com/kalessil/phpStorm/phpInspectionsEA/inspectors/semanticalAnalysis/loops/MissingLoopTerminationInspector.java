@@ -1,11 +1,17 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -42,7 +48,7 @@ public class MissingLoopTerminationInspector extends PhpInspection {
 
     @Override
     @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, final boolean isOnTheFly) {
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement loop) {
@@ -88,12 +94,48 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                                         return false;
                                     });
                             if (isTarget) {
-                                problemsHolder.registerProblem(loop.getFirstChild(), message);
+                                holder.registerProblem(
+                                        loop.getFirstChild(),
+                                        message,
+                                        new AddBreakFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody))
+                                );
+
                             }
                         }
                     }
                 }
             }
         };
+    }
+
+    private static final class AddBreakFix implements LocalQuickFix {
+        private static final String title = "Add missing 'break;'";
+        private final SmartPsiElementPointer<PsiElement> after;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        AddBreakFix(@NotNull Project project, @NotNull PsiElement after) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
+            this.after                        = factory.createSmartPsiElementPointer(after);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement after = this.after.getElement();
+            if (after != null && !project.isDisposed()) {
+                after.getParent().addAfter(PhpPsiElementFactory.createFromText(project, PhpBreak.class, "break;"), after);
+            }
+        }
     }
 }

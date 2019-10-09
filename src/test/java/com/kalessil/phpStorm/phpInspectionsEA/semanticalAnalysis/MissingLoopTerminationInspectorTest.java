@@ -8,5 +8,9 @@ final public class MissingLoopTerminationInspectorTest extends PhpCodeInsightFix
         myFixture.enableInspections(new MissingLoopTerminationInspector());
         myFixture.configureByFile("testData/fixtures/semanticalAnalysis/missing-loop-termination.php");
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/semanticalAnalysis/missing-loop-termination.fixed.php");
     }
 }

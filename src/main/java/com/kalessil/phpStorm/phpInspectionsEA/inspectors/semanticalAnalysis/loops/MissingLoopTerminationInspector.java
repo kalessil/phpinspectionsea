@@ -3,6 +3,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loo
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
@@ -11,6 +13,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -70,16 +74,21 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                     final PsiElement ifCandidate = ExpressionSemanticUtil.getLastStatement(loopBody);
                     if (ifCandidate instanceof If) {
                         final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(ifCandidate);
-                        if (ifBody != null && ExpressionSemanticUtil.countExpressionsInGroup(ifBody) == 1) {
-                            final PsiElement expression = ExpressionSemanticUtil.getLastStatement(ifBody);
-                            if (expression != null) {
-                                final PsiElement assignmentCandidate = expression.getFirstChild();
-                                if (OpenapiTypesUtil.isAssignment(assignmentCandidate)) {
-                                    final PsiElement value = ((AssignmentExpression) assignmentCandidate).getValue();
-                                    if (PhpLanguageUtil.isTrue(value)) {
-                                        problemsHolder.registerProblem(expression, message);
-                                    }
-                                }
+                        if (ifBody != null) {
+                            final boolean isTarget = Arrays.stream(ifBody.getChildren())
+                                    .filter(statement   -> !(statement instanceof PhpDocType) && !(statement instanceof PhpDocComment))
+                                    .allMatch(statement -> {
+                                        final PsiElement assignmentCandidate = statement.getFirstChild();
+                                        if (OpenapiTypesUtil.isAssignment(assignmentCandidate)) {
+                                            final PsiElement value = ((AssignmentExpression) assignmentCandidate).getValue();
+                                            if (PhpLanguageUtil.isBoolean(value)) {
+                                                return true;
+                                            }
+                                        }
+                                        return false;
+                                    });
+                            if (isTarget) {
+                                problemsHolder.registerProblem(loop.getFirstChild(), message);
                             }
                         }
                     }

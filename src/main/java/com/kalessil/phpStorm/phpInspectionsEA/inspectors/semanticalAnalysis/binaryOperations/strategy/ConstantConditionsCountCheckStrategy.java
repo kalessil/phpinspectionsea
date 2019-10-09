@@ -43,6 +43,7 @@ final public class ConstantConditionsCountCheckStrategy {
         targetOperations.add(PhpTokenTypes.opLESS_OR_EQUAL);
 
         targetFunctions.put("count",          ValueRange.of(0, Long.MAX_VALUE));
+        targetFunctions.put("sizeof",         ValueRange.of(0, Long.MAX_VALUE));
         targetFunctions.put("filesize",       ValueRange.of(0, Long.MAX_VALUE));
         targetFunctions.put("strlen",         ValueRange.of(0, Long.MAX_VALUE));
         targetFunctions.put("mb_strlen",      ValueRange.of(0, Long.MAX_VALUE));
@@ -114,7 +115,7 @@ final public class ConstantConditionsCountCheckStrategy {
             final String functionName         = reference.getName();
             if (functionName != null) {
                 if (reference instanceof MethodReference) {
-                    result = functionName.equals("count") && isImplementingCountable((MethodReference) reference, holder);
+                    result = (functionName.equals("count") || functionName.equals("sizeof")) && isImplementingCountable((MethodReference) reference, holder);
                 } else {
                     result = targetFunctions.containsKey(functionName);
                 }

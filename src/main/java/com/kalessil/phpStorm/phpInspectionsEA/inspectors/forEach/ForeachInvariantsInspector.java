@@ -86,7 +86,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                     if (OpenapiTypesUtil.isFunctionReference(value)) {
                         final FunctionReference reference = (FunctionReference) value;
                         final String functionName         = reference.getName();
-                        if (functionName != null && functionName.equals("count")) {
+                        if (functionName != null && (functionName.equals("count") || functionName.equals("sizeof"))) {
                             final PsiElement[] arguments = reference.getParameters();
                             result = arguments.length == 1 && OpenapiEquivalenceUtil.areEqual(arguments[0], container);
                         }

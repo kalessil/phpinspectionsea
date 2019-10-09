@@ -48,6 +48,7 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
         functionsSet.add("array_replace");
         functionsSet.add("array_replace_recursive");
         functionsSet.add("count");
+        functionsSet.add("sizeof");
         functionsSet.add("array_unique");
     }
 

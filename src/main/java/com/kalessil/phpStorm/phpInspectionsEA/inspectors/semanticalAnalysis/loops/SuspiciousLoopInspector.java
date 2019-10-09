@@ -62,6 +62,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
         operationsAnomaly.add(PhpTokenTypes.opIDENTICAL);
 
         targetFunctions.add("count");
+        targetFunctions.add("sizeof");
         targetFunctions.add("strlen");
         targetFunctions.add("mb_strlen");
         targetFunctions.add("iconv_strlen");
@@ -253,7 +254,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                         final String functionName    = call.getName();
                         if (functionName != null) {
                             if (outerContext instanceof BinaryExpression) {
-                                if (functionName.equals("count")) {
+                                if (functionName.equals("count") || functionName.equals("sizeof")) {
                                     final BinaryExpression binary = (BinaryExpression) outerContext;
                                     if (call == binary.getLeftOperand()) {
                                         final PsiElement threshold = binary.getRightOperand();
@@ -270,7 +271,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                                     }
                                 }
                             } else if (outerContext instanceof UnaryExpression) {
-                                if (functionName.equals("count") || functionName.equals("is_array") || functionName.equals("is_iterable")) {
+                                if (functionName.equals("count") || functionName.equals("sizeof") || functionName.equals("is_array") || functionName.equals("is_iterable")) {
                                     final UnaryExpression unary = (UnaryExpression) outerContext;
                                     if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
                                         return outerContext;
@@ -431,7 +432,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                     final String functionName         = reference.getName();
                     if (functionName != null) {
                         if (reference instanceof MethodReference) {
-                            result = functionName.equals("count") && isImplementingCountable((MethodReference) reference);
+                            result = (functionName.equals("count") || functionName.equals("sizeof")) && isImplementingCountable((MethodReference) reference);
                         } else {
                             result = targetFunctions.contains(functionName);
                         }

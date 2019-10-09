@@ -85,6 +85,7 @@ public class ExplodeMissUseInspector extends PhpInspection {
                                         final PsiElement target;
                                         switch (outerFunctionName) {
                                             case "count":
+                                            case "sizeof":
                                                 parent    = reference.getParent();
                                                 isRegular = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
                                                 if (parent instanceof BinaryExpression) {

@@ -4,3 +4,4 @@
 /.vagrant
 /.gradle
 /build
+.DS_Store

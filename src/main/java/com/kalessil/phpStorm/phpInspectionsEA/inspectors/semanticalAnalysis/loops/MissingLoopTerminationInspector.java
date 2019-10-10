@@ -16,10 +16,13 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -31,7 +34,8 @@ import java.util.Arrays;
  */
 
 public class MissingLoopTerminationInspector extends PhpInspection {
-    private static final String message = "It seems the loop termination is missing, please place 'break;' at a proper place.";
+    private static final String messageBreak  = "It seems the loop termination is missing, please place 'break;' at a proper place.";
+    private static final String messageReturn = "It seems the loop termination is missing, please place 'return ...;' at a proper place.";
 
     @NotNull
     @Override
@@ -73,33 +77,49 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                 this.analyze(loop);
             }
 
-            private void analyze(@NotNull PsiElement loop) {
+            private void analyze(@NotNull PhpPsiElement loop) {
                 final GroupStatement loopBody = ExpressionSemanticUtil.getGroupStatement(loop);
                 if (loopBody != null && ExpressionSemanticUtil.countExpressionsInGroup(loopBody) == 1) {
                     final PsiElement ifCandidate = ExpressionSemanticUtil.getLastStatement(loopBody);
                     if (ifCandidate instanceof If) {
                         final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(ifCandidate);
                         if (ifBody != null) {
-                            final boolean isTarget = Arrays.stream(ifBody.getChildren())
+                            final List<PsiElement> containers = new ArrayList<>();
+                            final boolean isTarget            = Arrays.stream(ifBody.getChildren())
                                     .filter(statement   -> !(statement instanceof PhpDocType) && !(statement instanceof PhpDocComment))
                                     .allMatch(statement -> {
                                         final PsiElement assignmentCandidate = statement.getFirstChild();
                                         if (OpenapiTypesUtil.isAssignment(assignmentCandidate)) {
                                             final AssignmentExpression assignment = (AssignmentExpression) assignmentCandidate;
-                                            if (assignment.getVariable() instanceof Variable && assignment.getValue() instanceof ConstantReference) {
+                                            final PsiElement variable             = assignment.getVariable();
+                                            if (variable instanceof Variable && assignment.getValue() instanceof ConstantReference) {
+                                                containers.add(variable);
                                                 return true;
                                             }
                                         }
                                         return false;
                                     });
                             if (isTarget) {
+                                final PsiElement next = loop.getNextPsiSibling();
+                                if (next instanceof PhpReturn) {
+                                    final PsiElement value = ExpressionSemanticUtil.getReturnValue((PhpReturn) next);
+                                    if (value != null && containers.stream().anyMatch(v -> OpenapiEquivalenceUtil.areEqual(v, value))) {
+                                        holder.registerProblem(
+                                                loop.getFirstChild(),
+                                                messageReturn,
+                                                new AddReturnFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody), next)
+                                        );
+                                    }
+                                }
+
+                                /* default reporting */
                                 holder.registerProblem(
                                         loop.getFirstChild(),
-                                        message,
+                                        messageBreak,
                                         new AddBreakFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody))
                                 );
-
                             }
+                            containers.clear();
                         }
                     }
                 }
@@ -134,6 +154,40 @@ public class MissingLoopTerminationInspector extends PhpInspection {
             final PsiElement after = this.after.getElement();
             if (after != null && !project.isDisposed()) {
                 after.getParent().addAfter(PhpPsiElementFactory.createFromText(project, PhpBreak.class, "break;"), after);
+            }
+        }
+    }
+
+    private static final class AddReturnFix implements LocalQuickFix {
+        private static final String title = "Add missing 'return ...;'";
+        private final SmartPsiElementPointer<PsiElement> after;
+        private final SmartPsiElementPointer<PsiElement> what;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        AddReturnFix(@NotNull Project project, @NotNull PsiElement after, @NotNull PsiElement what) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
+            this.after                        = factory.createSmartPsiElementPointer(after);
+            this.what                         = factory.createSmartPsiElementPointer(what);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement after = this.after.getElement();
+            final PsiElement what  = this.what.getElement();
+            if (after != null && what != null && !project.isDisposed()) {
+                after.getParent().addAfter(what.copy(), after);
             }
         }
     }

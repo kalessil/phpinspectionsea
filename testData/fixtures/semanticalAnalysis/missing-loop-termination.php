@@ -23,4 +23,11 @@ function cases_holder() {
             $found   = true;
         }
     }
+
+    <warning descr="It seems the loop termination is missing, please place 'return ...;' at a proper place."><warning descr="It seems the loop termination is missing, please place 'return ...;' at a proper place.">foreach</warning></warning> ([] as $value) {
+        if ($value) {
+            $found = true;
+        }
+    }
+    return $found;
 }

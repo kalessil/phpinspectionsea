@@ -24,4 +24,12 @@ function cases_holder() {
             $found   = true;
         }
     }
+
+    foreach ([] as $value) {
+        if ($value) {
+            $found = true;
+            return $found;
+        }
+    }
+    return $found;
 }

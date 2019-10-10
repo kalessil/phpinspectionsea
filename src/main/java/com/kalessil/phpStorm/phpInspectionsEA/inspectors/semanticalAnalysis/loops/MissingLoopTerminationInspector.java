@@ -100,24 +100,28 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                                         return false;
                                     });
                             if (isTarget) {
-                                final PsiElement next = loop.getNextPsiSibling();
+                                boolean isReturnContext = false;
+                                final PsiElement next   = loop.getNextPsiSibling();
                                 if (next instanceof PhpReturn) {
                                     final PsiElement value = ExpressionSemanticUtil.getReturnValue((PhpReturn) next);
                                     if (value != null && containers.stream().anyMatch(v -> OpenapiEquivalenceUtil.areEqual(v, value))) {
-                                        holder.registerProblem(
-                                                loop.getFirstChild(),
-                                                messageReturn,
-                                                new AddReturnFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody), next)
-                                        );
+                                        isReturnContext = true;
                                     }
                                 }
 
-                                /* default reporting */
-                                holder.registerProblem(
-                                        loop.getFirstChild(),
-                                        messageBreak,
-                                        new AddBreakFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody))
-                                );
+                                if (isReturnContext) {
+                                    holder.registerProblem(
+                                            loop.getFirstChild(),
+                                            messageReturn,
+                                            new AddReturnFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody), next)
+                                    );
+                                } else {
+                                    holder.registerProblem(
+                                            loop.getFirstChild(),
+                                            messageBreak,
+                                            new AddBreakFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody))
+                                    );
+                                }
                             }
                             containers.clear();
                         }

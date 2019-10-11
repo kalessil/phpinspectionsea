@@ -82,8 +82,9 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                 if (loopBody != null && ExpressionSemanticUtil.countExpressionsInGroup(loopBody) == 1) {
                     final PsiElement ifCandidate = ExpressionSemanticUtil.getLastStatement(loopBody);
                     if (ifCandidate instanceof If) {
-                        final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(ifCandidate);
-                        if (ifBody != null) {
+                        final If ifStatement        = (If) ifCandidate;
+                        final GroupStatement ifBody = ExpressionSemanticUtil.getGroupStatement(ifStatement);
+                        if (ifBody != null && ifStatement.getElseBranch() == null && ifStatement.getElseIfBranches().length == 0) {
                             final List<PsiElement> containers = new ArrayList<>();
                             final boolean isTarget            = Arrays.stream(ifBody.getChildren())
                                     .filter(statement   -> !(statement instanceof PhpDocType) && !(statement instanceof PhpDocComment))

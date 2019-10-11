@@ -105,7 +105,7 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                                         }
                                         return false;
                                     });
-                            if (isTarget) {
+                            if (isTarget && ! containers.isEmpty()) {
                                 final PsiElement last = ExpressionSemanticUtil.getLastStatement(ifBody);
                                 if (last != null) {
                                     boolean isReturnContext   = false;

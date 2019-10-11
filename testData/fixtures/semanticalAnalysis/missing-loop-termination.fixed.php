@@ -20,6 +20,13 @@ function cases_holder() {
 
     foreach ([] as $value) {
         if ($value) {
+            $found = true;
+            break;
+        }
+    }
+
+    foreach ([] as $value) {
+        if ($value) {
             $element = $value;
             $found   = true;
         }

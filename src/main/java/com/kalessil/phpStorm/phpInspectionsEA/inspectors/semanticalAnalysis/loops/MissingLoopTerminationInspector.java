@@ -96,31 +96,46 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                                                 containers.add(variable);
                                                 return true;
                                             }
+                                        } else if (statement instanceof PhpContinue) {
+                                            final boolean withLevels = ((PhpContinue) statement).getFirstPsiChild() != null;
+                                            if (!withLevels) {
+                                                return true;
+                                            }
                                         }
                                         return false;
                                     });
                             if (isTarget) {
-                                boolean isReturnContext = false;
-                                final PsiElement next   = loop.getNextPsiSibling();
-                                if (next instanceof PhpReturn) {
-                                    final PsiElement value = ExpressionSemanticUtil.getReturnValue((PhpReturn) next);
-                                    if (value != null && containers.stream().anyMatch(v -> OpenapiEquivalenceUtil.areEqual(v, value))) {
-                                        isReturnContext = true;
+                                final PsiElement last = ExpressionSemanticUtil.getLastStatement(ifBody);
+                                if (last != null) {
+                                    boolean isReturnContext   = false;
+                                    boolean isContinueContext = last instanceof PhpContinue;
+                                    final PsiElement next     = loop.getNextPsiSibling();
+                                    if (next instanceof PhpReturn) {
+                                        final PsiElement value = ExpressionSemanticUtil.getReturnValue((PhpReturn) next);
+                                        if (value != null && containers.stream().anyMatch(v -> OpenapiEquivalenceUtil.areEqual(v, value))) {
+                                            isReturnContext = true;
+                                        }
                                     }
-                                }
 
-                                if (isReturnContext) {
-                                    holder.registerProblem(
-                                            loop.getFirstChild(),
-                                            messageReturn,
-                                            new AddReturnFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody), next)
-                                    );
-                                } else {
-                                    holder.registerProblem(
-                                            loop.getFirstChild(),
-                                            messageBreak,
-                                            new AddBreakFix(holder.getProject(), ExpressionSemanticUtil.getLastStatement(ifBody))
-                                    );
+                                    if (isContinueContext) {
+                                        holder.registerProblem(
+                                                loop.getFirstChild(),
+                                                messageBreak,
+                                                new ReplaceBreakFix(holder.getProject(), last)
+                                        );
+                                    } else if (isReturnContext) {
+                                        holder.registerProblem(
+                                                loop.getFirstChild(),
+                                                messageReturn,
+                                                new AddReturnFix(holder.getProject(), last, next)
+                                        );
+                                    } else {
+                                        holder.registerProblem(
+                                                loop.getFirstChild(),
+                                                messageBreak,
+                                                new AddBreakFix(holder.getProject(), last)
+                                        );
+                                    }
                                 }
                             }
                             containers.clear();
@@ -158,6 +173,37 @@ public class MissingLoopTerminationInspector extends PhpInspection {
             final PsiElement after = this.after.getElement();
             if (after != null && !project.isDisposed()) {
                 after.getParent().addAfter(PhpPsiElementFactory.createFromText(project, PhpBreak.class, "break;"), after);
+            }
+        }
+    }
+
+    private static final class ReplaceBreakFix implements LocalQuickFix {
+        private static final String title = "Replace 'continue;' with 'break;'";
+        private final SmartPsiElementPointer<PsiElement> next;
+
+        @NotNull
+        @Override
+        public String getName() {
+            return title;
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return title;
+        }
+
+        ReplaceBreakFix(@NotNull Project project, @NotNull PsiElement next) {
+            super();
+            final SmartPointerManager factory = SmartPointerManager.getInstance(project);
+            this.next                         = factory.createSmartPsiElementPointer(next);
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement next = this.next.getElement();
+            if (next != null && !project.isDisposed()) {
+                next.replace(PhpPsiElementFactory.createFromText(project, PhpBreak.class, "break;"));
             }
         }
     }

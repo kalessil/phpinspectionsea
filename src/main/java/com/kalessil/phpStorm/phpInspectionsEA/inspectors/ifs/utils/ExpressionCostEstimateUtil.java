@@ -55,7 +55,7 @@ final public class ExpressionCostEstimateUtil {
             return getExpressionCost(((FieldReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
         }
 
-        /* additional factor is due to hash-maps internals */
+        /* hash-maps is well optimized, hence no additional costs */
         if (objExpression instanceof ArrayAccessExpression) {
             final ArrayAccessExpression arrayAccess = (ArrayAccessExpression) objExpression;
             final ArrayIndex arrayIndex             =  arrayAccess.getIndex();
@@ -65,22 +65,7 @@ final public class ExpressionCostEstimateUtil {
                 intOwnCosts += getExpressionCost(arrayIndex.getValue(), functionsSetToAllow);
             }
 
-            /* default additional cost */
-            int additionalCosts = 1;
-
-            /* for pre-defined variables add no costs:
-                @see https://bitbucket.org/kalessil/phpinspectionsea/issues/239/non-optimal-if-conditions-incorrect */
-            if (arrayAccess.getValue() instanceof Variable) {
-                final String variableName = arrayAccess.getValue().getName();
-                if (
-                    !StringUtils.isEmpty(variableName) && variableName.charAt(0) == '_' &&
-                    predefinedVars.contains(variableName)
-                ) {
-                    additionalCosts = 0;
-                }
-            }
-
-            return (additionalCosts + intOwnCosts);
+            return intOwnCosts;
         }
 
         /* empty counts too much as empty, so it still sensitive overhead, but not add any factor */
@@ -139,16 +124,6 @@ final public class ExpressionCostEstimateUtil {
         if (objExpression instanceof UnaryExpression) {
             return getExpressionCost(((UnaryExpression) objExpression).getValue(), functionsSetToAllow);
         }
-
-/*        if (objExpression instanceof TernaryExpression) {
-            return
-                this.getExpressionCost(((TernaryExpression) objExpression).getCondition()) +
-                Math.max(
-                        this.getExpressionCost(((TernaryExpression) objExpression).getTrueVariant()),
-                        this.getExpressionCost(((TernaryExpression) objExpression).getFalseVariant())
-                );
-        }
-*/
 
         if (objExpression instanceof BinaryExpression) {
             return

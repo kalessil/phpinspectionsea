@@ -32,12 +32,13 @@ final public class MissingUnicodeModifierStrategy {
     }
 
     static public void apply(
+            @NotNull String functionName,
             @Nullable String modifiers,
             @Nullable String pattern,
             @NotNull  StringLiteralExpression target,
             @NotNull  ProblemsHolder holder
     ) {
-        if ((modifiers == null || modifiers.indexOf('u') == -1) && !StringUtils.isEmpty(pattern)) {
+        if ((modifiers == null || modifiers.indexOf('u') == -1) && pattern != null && ! pattern.isEmpty() && ! functionName.equals("preg_quote")) {
             if (unicodeCharactersPattern.matcher(pattern).matches()) {
                 holder.registerProblem(target, messageCharacters, ProblemHighlightType.GENERIC_ERROR);
             } else {

@@ -187,7 +187,7 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  *  - unicode characters without /u
                  */
                 MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);
-                MissingUnicodeModifierStrategy.apply(modifiers, regex, target, holder);
+                MissingUnicodeModifierStrategy.apply(functionName, modifiers, regex, target, holder);
             }
 
             private void checkCall(String functionName, FunctionReference reference, String regex, String modifiers) {

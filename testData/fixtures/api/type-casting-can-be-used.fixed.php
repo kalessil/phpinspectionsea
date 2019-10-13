@@ -9,6 +9,7 @@ function cases_holder() {
     $x = (int)($y ?? 1);
     $x = (int)($y ?: 1);
 
+    $x = (int)(1 / 2);
     $x = intval(1 / 2, 16);
 
     $x = (int)$x;

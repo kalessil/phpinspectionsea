@@ -3,7 +3,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
@@ -48,7 +50,7 @@ public class CompositionAndInheritanceInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(clazz, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
 
                 final boolean hasNeededModifiers = clazz.isFinal() || clazz.isAbstract();
-                if (!hasNeededModifiers && !clazz.isInterface() && !clazz.isTrait() && !clazz.isAnonymous()) {
+                if (!hasNeededModifiers && ! clazz.isInterface() && ! clazz.isTrait() && ! clazz.isAnonymous() && ! this.isAnnotated(clazz)) {
                     if (FORCE_FINAL_OR_ABSTRACT) {
                         this.report(clazz);
                     } else {
@@ -89,6 +91,11 @@ public class CompositionAndInheritanceInspector extends PhpInspection {
                         holder.registerProblem(nameNode, messageAbstract);
                     }
                 }
+            }
+
+            private boolean isAnnotated(@NotNull PhpClass clazz) {
+                final PhpDocTag[] tags = PsiTreeUtil.getChildrenOfType(clazz.getDocComment(), PhpDocTag.class);
+                return tags != null && Arrays.stream(tags).anyMatch(t -> !t.getName().equals(t.getName().toLowerCase()));
             }
         };
     }

@@ -9,6 +9,7 @@ import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstr
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -63,7 +64,7 @@ final public class ParameterImmediateOverrideStrategy {
                     }
                 }
                 if (nameHits == 1) {
-                    holder.registerProblem(expression, message);
+                    holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
                 }
             }
         }

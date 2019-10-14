@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -56,7 +57,7 @@ public class EfferentObjectCouplingInspector extends BasePhpInspection {
                             .collect(Collectors.toSet());
                     final int count = references.size();
                     if (count >= optionCouplingLimit) {
-                        holder.registerProblem(nameIdentifier, String.format(messagePattern, count));
+                        holder.registerProblem(nameIdentifier, String.format(ReportingUtil.wrapReportedMessage(messagePattern), count));
                     }
                 }
             }

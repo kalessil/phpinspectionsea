@@ -9,7 +9,7 @@ function buggyCompact($x, $y)
             'y',
             'z',
             'zz',
-            <error descr="'$zz' might not be defined in the scope.">'zz'</error>,
+            <error descr="[EA] '$zz' might not be defined in the scope.">'zz'</error>,
             "$$z"
         )
         +
@@ -18,7 +18,7 @@ function buggyCompact($x, $y)
             'y',
             'z',
             '$zz',
-            <error descr="'$$zz' might not be defined in the scope.">'$zz'</error>,
+            <error descr="[EA] '$$zz' might not be defined in the scope.">'$zz'</error>,
             "$$z"
         )
     ;
@@ -29,7 +29,7 @@ function buggyCompactControlFlow($x, $y)
     $temp = compact(
         'x',
         'y',
-        <error descr="'$z' might not be defined in the scope.">'z'</error>
+        <error descr="[EA] '$z' might not be defined in the scope.">'z'</error>
     );
     $z = $x + $y;
 

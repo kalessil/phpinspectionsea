@@ -8,7 +8,7 @@ class ImmediateOverridePropsClass {
     private $override3 = [];    // <- override is on 2nd instructions level
 
     private $suspiciousOverride1
-        = <weak_warning descr="The assignment can be safely removed as the constructor overrides it.">[]</weak_warning>;
+        = <weak_warning descr="[EA] The assignment can be safely removed as the constructor overrides it.">[]</weak_warning>;
     private $suspiciousOverride2 = [];
     private $suspiciousOverride3;
 
@@ -23,8 +23,8 @@ class ImmediateOverridePropsClass {
         }
 
         $this->suspiciousOverride1 = [[]];
-        <weak_warning descr="Written value is same as default one, consider removing this assignment.">$this->suspiciousOverride2 = [];</weak_warning>
-        <weak_warning descr="Written value is same as default one, consider removing this assignment.">$this->suspiciousOverride3 = null;</weak_warning>
+        <weak_warning descr="[EA] Written value is same as default one, consider removing this assignment.">$this->suspiciousOverride2 = [];</weak_warning>
+        <weak_warning descr="[EA] Written value is same as default one, consider removing this assignment.">$this->suspiciousOverride3 = null;</weak_warning>
     }
 
     /* false-positive: override is not in the constructor */
@@ -48,7 +48,7 @@ class classOverridesTraitFields extends ClassWithTrait {
     private $private = [];
 
     protected $protected
-        = <weak_warning descr="Written value is same as default one, consider removing this assignment.">[]</weak_warning>;
+        = <weak_warning descr="[EA] Written value is same as default one, consider removing this assignment.">[]</weak_warning>;
     public $public
-        = <weak_warning descr="Written value is same as default one, consider removing this assignment.">[]</weak_warning>;
+        = <weak_warning descr="[EA] Written value is same as default one, consider removing this assignment.">[]</weak_warning>;
 }

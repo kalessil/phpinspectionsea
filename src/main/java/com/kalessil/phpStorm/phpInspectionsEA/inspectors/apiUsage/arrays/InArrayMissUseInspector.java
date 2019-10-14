@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -67,7 +68,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                                     .replace("%a%", nestedCallParams[0].getText())
                                     .replace("%k%", arguments[0].getText());
                             final String message = String.format(patternKeyExists, replacement);
-                            holder.registerProblem(reference, message, new UseArrayKeyExistsFix(replacement));
+                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new UseArrayKeyExistsFix(replacement));
                         }
                     }
                 }
@@ -120,7 +121,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                                                    ? String.format("%s %s %s", arguments[0].getText(), comparison, lastItem.getText())
                                                    : String.format("%s %s %s", lastItem.getText(), comparison, arguments[0].getText());
                         final String message = String.format(patternComparison, replacement);
-                        holder.registerProblem(target, message, new UseComparisonFix(replacement));
+                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), new UseComparisonFix(replacement));
                     }
                 }
             }

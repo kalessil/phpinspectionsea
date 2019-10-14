@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -53,7 +54,7 @@ public class SimpleXmlLoadFileUsageInspector extends BasePhpInspection {
                         final String file         = fragments.remove(0);
                         final String xmlArguments = fragments.isEmpty() ? "" : ", " + String.join(", ", fragments);
                         final String replacement  = String.format("simplexml_load_string(file_get_contents(%s)%s)", file, xmlArguments);
-                        holder.registerProblem(reference, message, new LoadStringFix(replacement));
+                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new LoadStringFix(replacement));
                     }
                 }
             }

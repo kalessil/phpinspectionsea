@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -53,11 +54,11 @@ public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
                                     if (parentFunctionName.equals("array_keys")) {
                                         final String replacement = "array_values(array_unique(%a%))".replace("%a%", arguments[0].getText());
                                         final String message     = messagePattern.replace("%e%", replacement);
-                                        holder.registerProblem(context, message, new ReplaceFix(replacement));
+                                        holder.registerProblem(context, ReportingUtil.wrapReportedMessage(message), new ReplaceFix(replacement));
                                     } else if (parentFunctionName.equals("count")) {
                                         final String replacement = "count(array_unique(%a%))".replace("%a%", arguments[0].getText());
                                         final String message     = messagePattern.replace("%e%", replacement);
-                                        holder.registerProblem(context, message, new ReplaceFix(replacement));
+                                        holder.registerProblem(context, ReportingUtil.wrapReportedMessage(message), new ReplaceFix(replacement));
                                     }
                                 }
                             }

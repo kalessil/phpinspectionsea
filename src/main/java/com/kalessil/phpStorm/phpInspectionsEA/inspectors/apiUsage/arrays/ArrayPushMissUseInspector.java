@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -66,7 +67,7 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
                             final String replacement = String.format("%s[] = %s", arguments[0].getText(), arguments[1].getText());
                             holder.registerProblem(
                                     reference,
-                                    String.format(messageMisuse, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messageMisuse), replacement),
                                     new UseElementPushFix(replacement)
                             );
                         }
@@ -94,7 +95,7 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
                                             if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        messageUnneeded,
+                                                        ReportingUtil.wrapReportedMessage(messageUnneeded),
                                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                                 );
                                             }

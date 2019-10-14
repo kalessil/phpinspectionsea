@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -83,7 +84,7 @@ public class CompactArgumentsInspector extends BasePhpInspection {
                                     if (!declaredVariables.contains(subject)) {
                                         holder.registerProblem(
                                                 compactedVariables.get(subject),
-                                                String.format(messagePattern, subject),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), subject),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );
                                     }

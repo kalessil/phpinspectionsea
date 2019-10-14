@@ -237,7 +237,7 @@ Inspections Lists (Security)
 ---
 | Group                | Short Name                                         | Full Name                                                              | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------       | :--------------------------------------------------------------------- | --: | --: | ---: | --: |
-| Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid(...)' usage (Insufficient Entropy Vulnerability)      | yes | yes | yes  | no  |
+| Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid(...)' usage (Insufficient Entropy Vulnerability)      | yes | yes | yes  | n/a |
 | Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage (Variable extract Vulnerability)         | n/a | yes | n/a  | yes |
 | Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage (Variable extract Vulnerability)       | n/a | yes | n/a  | yes |
 | Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                              | n/a | yes | n/a  | yes |
@@ -249,7 +249,7 @@ Inspections Lists (Security)
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                                    | n/a | yes | n/a  | yes |
 | Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)        | n/a | yes | n/a  | n/a |
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                                    | n/a | yes | n/a  | yes |
-| Security             | HostnameSubstitutionInspection                     | Hostname substitution                                                  | n/a | yes | n/a  | no  |
+| Security             | HostnameSubstitutionInspection                     | Hostname substitution                                                  | n/a | yes | n/a  | n/a |
 | Security             | RsaOraclePaddingAttacksInspection                  | RSA oracle padding vulnerability                                       | n/a | yes | n/a  | yes |
 | Security             | NonSecureArrayRandUsageInspection                  | Insecure 'array_rand(...)' usage (Insufficient Entropy Vulnerability)  | n/a | yes | n/a  | no  |
 | Security             | NonSecureStrShuffleUsageInspection                 | Insecure 'str_shuffle(...)' usage (Insufficient Entropy Vulnerability) | n/a | yes | n/a  | no  |

@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -82,7 +83,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
                         final String wrappedArgument = wrap ? String.format("(%s)", arguments[0].getText()) : arguments[0].getText();
                         final boolean isRegular      = ComparisonStyle.isRegular();
                         final String replacement     = String.format("%s %s %s", isRegular ? wrappedArgument : "null", checksIsNull ? "===" : "!==", isRegular ? "null" : wrappedArgument);
-                        holder.registerProblem(target, String.format(messagePattern, replacement), new CompareToNullFix(replacement));
+                        holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new CompareToNullFix(replacement));
                     }
                 }
             }

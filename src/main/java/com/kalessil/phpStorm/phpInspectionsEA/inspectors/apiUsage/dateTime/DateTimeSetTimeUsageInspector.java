@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -50,7 +51,7 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
                         if (arguments.length == 4 && arguments[3] instanceof PhpPsiElement) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                             if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\DateTime.setTime")) {
-                                holder.registerProblem(arguments[3], message);
+                                holder.registerProblem(arguments[3], ReportingUtil.wrapReportedMessage(message));
                             }
                         }
                     }
@@ -64,7 +65,7 @@ public class DateTimeSetTimeUsageInspector extends BasePhpInspection {
                     if (functionName != null && functionName.equals("date_time_set")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 5 && this.isFromRootNamespace(reference)) {
-                            holder.registerProblem(arguments[4], message);
+                            holder.registerProblem(arguments[4], ReportingUtil.wrapReportedMessage(message));
                         }
                     }
                 }

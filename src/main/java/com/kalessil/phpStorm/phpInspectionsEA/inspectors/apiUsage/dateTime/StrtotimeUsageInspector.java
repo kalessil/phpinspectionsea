@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -57,7 +58,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                     if (arguments[0] instanceof StringLiteralExpression) {
                         final StringLiteralExpression pattern = (StringLiteralExpression) arguments[0];
                         if (pattern.getContents().equalsIgnoreCase("now")) {
-                            holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix());
+                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageUseTime), new UseTimeFunctionLocalFix());
                         }
                     }
                 }
@@ -69,7 +70,7 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                             final String replacement = "strtotime(%a%)".replace("%a%", arguments[0].getText());
                             holder.registerProblem(
                                     reference,
-                                    messageDropTime,
+                                    ReportingUtil.wrapReportedMessage(messageDropTime),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                     new DropTimeFunctionCallLocalFix(replacement)
                             );

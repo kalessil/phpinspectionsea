@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
@@ -65,7 +66,7 @@ public class DateIntervalSpecificationInspector extends BasePhpInspection {
                     if (pattern != null && pattern.getFirstPsiChild() == null) {
                         final String input = pattern.getContents();
                         if (!regexRegular.matcher(input).find() && !regexDateTimeAlike.matcher(input).find()) {
-                            holder.registerProblem(pattern, message);
+                            holder.registerProblem(pattern, ReportingUtil.wrapReportedMessage(message));
                         }
                     }
                 }

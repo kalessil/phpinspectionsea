@@ -1,9 +1,9 @@
 <?php
 
 function cases_holder($one = null, $two = '', stdClass $three = null) {
-    <warning descr="'get_class(...)' does not accept null as argument in PHP 7.2+ versions.">get_class(null)</warning>;
-    <warning descr="'get_class(...)' does not accept null as argument in PHP 7.2+ versions.">get_class($one)</warning>;
-    <warning descr="'get_class(...)' does not accept null as argument in PHP 7.2+ versions.">get_class($three)</warning>;
+    <warning descr="[EA] 'get_class(...)' does not accept null as argument in PHP 7.2+ versions.">get_class(null)</warning>;
+    <warning descr="[EA] 'get_class(...)' does not accept null as argument in PHP 7.2+ versions.">get_class($one)</warning>;
+    <warning descr="[EA] 'get_class(...)' does not accept null as argument in PHP 7.2+ versions.">get_class($three)</warning>;
 
     get_class($two);
 

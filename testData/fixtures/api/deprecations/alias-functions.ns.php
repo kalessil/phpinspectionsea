@@ -4,7 +4,7 @@ namespace OtherNamespace {
     function join() {}
 
     echo join();
-    echo \<warning descr="'join(...)' is an alias function, consider using 'implode(...)' instead.">join</warning>();
+    echo \<warning descr="[EA] 'join(...)' is an alias function, consider using 'implode(...)' instead.">join</warning>();
 }
 
 namespace CasesHolder {
@@ -12,5 +12,5 @@ namespace CasesHolder {
     use function OtherNamespace\join;
 
     echo join();
-    echo \<warning descr="'join(...)' is an alias function, consider using 'implode(...)' instead.">join</warning>();
+    echo \<warning descr="[EA] 'join(...)' is an alias function, consider using 'implode(...)' instead.">join</warning>();
 }

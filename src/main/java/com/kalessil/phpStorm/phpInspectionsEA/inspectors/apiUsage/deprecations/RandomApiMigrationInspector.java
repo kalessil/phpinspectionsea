@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -86,7 +87,7 @@ public class RandomApiMigrationInspector extends BasePhpInspection {
 
                         holder.registerProblem(
                                 reference,
-                                String.format(messagePattern, functionName, suggestion),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName, suggestion),
                                 new ModernizeCallFixer(suggestion)
                         );
                     }

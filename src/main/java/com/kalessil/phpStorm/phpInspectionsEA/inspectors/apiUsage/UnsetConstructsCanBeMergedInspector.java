@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpUnset;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class UnsetConstructsCanBeMergedInspector extends BasePhpInspection {
                     previous = ((PhpDocComment) previous).getPrevPsiSibling();
                 }
                 if (previous instanceof PhpUnset) {
-                    holder.registerProblem(unsetStatement, message, new TheLocalFix(holder.getProject(), unsetStatement));
+                    holder.registerProblem(unsetStatement, ReportingUtil.wrapReportedMessage(message), new TheLocalFix(holder.getProject(), unsetStatement));
                 }
             }
         };

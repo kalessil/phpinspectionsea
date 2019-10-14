@@ -10,6 +10,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -51,7 +52,7 @@ final public class MissingUnderscoreStrategy {
             final PsiElement target = NamedElementUtil.getNameIdentifier(method);
             if (target != null) {
                 final String message = String.format(messagePattern, methodName, methodName);
-                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING, new NameFix());
+                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING, new NameFix());
             }
         }
     }

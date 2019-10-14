@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -141,10 +142,10 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
 
                 /* report if criteria are met */
                 if (!hasIncreasingIndexes) {
-                    holder.registerProblem(expression.getFirstChild(), messageReorder);
+                    holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageReorder));
                 }
                 if (hasIncreasingIndexes && hasStringIndexes) {
-                    holder.registerProblem(expression.getFirstChild(), messageUseNumericKeys);
+                    holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageUseNumericKeys));
                 }
             }
         };

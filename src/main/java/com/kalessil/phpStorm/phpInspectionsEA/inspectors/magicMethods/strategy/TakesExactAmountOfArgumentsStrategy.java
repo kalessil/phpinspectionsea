@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -25,7 +26,7 @@ final public class TakesExactAmountOfArgumentsStrategy {
             if (nameNode != null) {
                 holder.registerProblem(
                         nameNode,
-                        String.format(messagePattern, method.getName(), argumentsCount),
+                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), method.getName(), argumentsCount),
                         ProblemHighlightType.ERROR
                 );
             }

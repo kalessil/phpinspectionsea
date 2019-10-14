@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -37,7 +38,7 @@ public class NormallyCallsParentMethodStrategy {
                     if (nameNode != null) {
                         holder.registerProblem(
                                 nameNode,
-                                String.format(messagePattern, methodName, parentMethodHolder.getName(), methodName)
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), methodName, parentMethodHolder.getName(), methodName)
                         );
                     }
 

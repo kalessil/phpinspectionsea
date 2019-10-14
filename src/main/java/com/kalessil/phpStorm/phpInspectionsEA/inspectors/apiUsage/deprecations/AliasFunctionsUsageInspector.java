@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -107,7 +108,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                             final String original = relevantAliases.get(functionName);
                             holder.registerProblem(
                                     target,
-                                    String.format(messagePattern, functionName, original),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName, original),
                                     ProblemHighlightType.LIKE_DEPRECATED,
                                     new TheLocalFix(original)
                             );
@@ -115,7 +116,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                     } else if (deprecatedAliases.containsKey(functionName) && this.isFromRootNamespace(reference)) {
                         final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
                         if (target != null) {
-                            holder.registerProblem(target, deprecatedAliases.get(functionName));
+                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(deprecatedAliases.get(functionName)));
                         }
                     }
                 }

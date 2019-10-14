@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +62,7 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                     final String replacement = this.generateReplacement(subject);
                     holder.registerProblem(
                             reference,
-                            replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement),
+                            ReportingUtil.wrapReportedMessage(replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement)),
                             replacement == null ? null : new SecureRealpathFix(replacement)
                     );
                     return;
@@ -73,7 +74,7 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                         final String replacement = this.generateReplacement(subject);
                         holder.registerProblem(
                                 reference,
-                                replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement),
+                                ReportingUtil.wrapReportedMessage(replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement)),
                                 replacement == null ? null : new SecureRealpathFix(replacement)
                         );
                         break;

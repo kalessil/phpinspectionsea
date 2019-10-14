@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -135,7 +136,7 @@ public class CascadingDirnameCallsInspector extends BasePhpInspection {
                     reported.clear();
 
                     final String message = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(reference, message, new TheLocalFix(replacement));
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new TheLocalFix(replacement));
                 }
             }
         };

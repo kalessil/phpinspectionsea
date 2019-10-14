@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -115,7 +116,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                     /* check for pattern validity */
                     final int parametersInPattern = StringUtils.countMatches(content.replace("%%", "").replace("%*",""), "%");
                     if (countParsedAll != parametersInPattern) {
-                        holder.registerProblem(params[neededPosition], messagePattern, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(params[neededPosition], ReportingUtil.wrapReportedMessage(messagePattern), ProblemHighlightType.GENERIC_ERROR);
                         return;
                     }
 
@@ -163,7 +164,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
 
                         holder.registerProblem(
                                 reference,
-                                messageParameters.replace("%c%", String.valueOf(expectedParametersCount)),
+                                ReportingUtil.wrapReportedMessage(messageParameters.replace("%c%", String.valueOf(expectedParametersCount))),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     }

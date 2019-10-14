@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -50,7 +51,7 @@ public class DirectoryConstantCanBeUsedInspector extends BasePhpInspection {
                     if (arguments.length == 1 && arguments[0] instanceof ConstantReference) {
                         final String constantName = ((ConstantReference) arguments[0]).getName();
                         if (constantName != null && constantName.equals("__FILE__")) {
-                            holder.registerProblem(reference, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                         }
                     }
                 }

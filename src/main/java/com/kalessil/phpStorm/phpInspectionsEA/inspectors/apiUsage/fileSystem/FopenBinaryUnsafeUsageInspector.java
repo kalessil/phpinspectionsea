@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -68,18 +69,18 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                                 if (!isCorrectlyPlaced) {
                                     holder.registerProblem(
                                             arguments[1],
-                                            messageMisplacedBinaryMode,
+                                            ReportingUtil.wrapReportedMessage(messageMisplacedBinaryMode),
                                             ProblemHighlightType.GENERIC_ERROR,
                                             new TheLocalFix(holder.getProject(), mode)
                                     );
                                 }
                             } else if (modeText.indexOf('t') != -1) {
                                 if (ENFORCE_BINARY_MODIFIER_USAGE) {
-                                    holder.registerProblem(arguments[1], messageReplaceWithBinaryMode, new TheLocalFix(holder.getProject(), mode));
+                                    holder.registerProblem(arguments[1], ReportingUtil.wrapReportedMessage(messageReplaceWithBinaryMode), new TheLocalFix(holder.getProject(), mode));
                                 }
                             } else {
                                 if (ENFORCE_BINARY_MODIFIER_USAGE) {
-                                    holder.registerProblem(arguments[1], messageUseBinaryMode, new TheLocalFix(holder.getProject(), mode));
+                                    holder.registerProblem(arguments[1], ReportingUtil.wrapReportedMessage(messageUseBinaryMode), new TheLocalFix(holder.getProject(), mode));
                                 }
                             }
                         }

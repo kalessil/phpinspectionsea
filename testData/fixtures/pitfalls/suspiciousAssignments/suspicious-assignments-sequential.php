@@ -4,7 +4,7 @@ function immediate_overrides()
 {
     /* case 1: possible override, if itself */
     if ($x) { $y1 = ''; }
-    <error descr="$y1 is immediately overridden, perhaps it was intended to use 'else' here.">$y1 = ''</error>;
+    <error descr="[EA] $y1 is immediately overridden, perhaps it was intended to use 'else' here.">$y1 = ''</error>;
 
     /* false-positive: if ends with an exit point */
     if ($x) {
@@ -25,7 +25,7 @@ function immediate_overrides()
 
     /* case 2: guaranteed override */
     $y5 = '';
-    <error descr="$y5 is immediately overridden, please check this code fragment.">$y5</error> = 'y5';
+    <error descr="[EA] $y5 is immediately overridden, please check this code fragment.">$y5</error> = 'y5';
 
     /* false-positive: depends on itself */
     $y6 = '';

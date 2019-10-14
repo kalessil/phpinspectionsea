@@ -10,8 +10,8 @@
     elseif (true) ;
     else ;
 
-    echo 1;<weak_warning descr="Unnecessary semicolon.">;</weak_warning>
-    <weak_warning descr="Unnecessary semicolon.">;</weak_warning>
+    echo 1;<weak_warning descr="[EA] Unnecessary semicolon.">;</weak_warning>
+    <weak_warning descr="[EA] Unnecessary semicolon.">;</weak_warning>
 ?>
 
-<?= $value<weak_warning descr="Unnecessary semicolon.">;</weak_warning> ?>
+<?= $value<weak_warning descr="[EA] Unnecessary semicolon.">;</weak_warning> ?>

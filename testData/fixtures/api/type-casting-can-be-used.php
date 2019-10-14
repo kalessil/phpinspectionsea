@@ -9,6 +9,7 @@ function cases_holder() {
     $x = <weak_warning descr="'(int) ($y ?? 1)' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">intval($y ?? 1)</weak_warning>;
     $x = <weak_warning descr="'(int) ($y ?: 1)' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">intval($y ?: 1)</weak_warning>;
 
+    $x = <weak_warning descr="'(int) (1 / 2)' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">intval(1 / 2, 10)</weak_warning>;
     $x = intval(1 / 2, 16);
 
     <weak_warning descr="'$x = (int) $x' can be used instead (reduces cognitive load, up to 6x times faster in PHP 5.x).">settype($x, 'int')</weak_warning>;

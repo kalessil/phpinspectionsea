@@ -57,7 +57,7 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null) {
-                    if (functionName.equals("json_decode")) {
+                    if (functionName.equals("json_decode") && this.isFromRootNamespace(reference)) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (HARDEN_DECODING_RESULT_TYPE && arguments.length == 1) {
                             final String replacement = String.format(
@@ -82,7 +82,7 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
                                 holder.registerProblem(reference, messageErrorsHandling, new HardenErrorsHandlingFix(replacement));
                             }
                         }
-                    } else if (functionName.equals("json_encode")) {
+                    } else if (functionName.equals("json_encode") && this.isFromRootNamespace(reference)) {
                         if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
                             final PsiElement[] arguments = reference.getParameters();
                             final boolean hasFlag        = arguments.length >= 2 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));

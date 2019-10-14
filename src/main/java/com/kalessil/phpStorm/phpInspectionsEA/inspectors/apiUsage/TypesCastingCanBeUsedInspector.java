@@ -98,7 +98,12 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                             }
                         }
                     } else {
-                        final boolean isTarget = arguments.length == 1;
+                        boolean isTarget = arguments.length == 1;
+                        if (! isTarget && arguments.length == 2 && functionName.equals("intval")) {
+                            final PsiElement base = arguments[1];
+                            isTarget              = OpenapiTypesUtil.isNumber(base) && base.getText().equals("10");
+                        }
+
                         if (isTarget) {
                             final boolean wrapArgument = arguments[0] instanceof BinaryExpression ||
                                                          arguments[0] instanceof TernaryExpression;

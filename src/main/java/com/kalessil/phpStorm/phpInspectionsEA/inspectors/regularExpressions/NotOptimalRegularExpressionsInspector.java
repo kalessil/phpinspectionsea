@@ -191,7 +191,7 @@ public class NotOptimalRegularExpressionsInspector extends PhpInspection {
 
                 /* probably bugs: nested tags check without /s, unicode characters without /u */
                 boolean missingModifiers = MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);
-                missingModifiers         = MissingUnicodeModifierStrategy.apply(modifiers, regex, target, holder) || missingModifiers;
+                missingModifiers         = MissingUnicodeModifierStrategy.apply(functionName, modifiers, regex, target, holder) || missingModifiers;
                 if (!missingModifiers) {
                     /* suspicious characters specification:  [...A-z...]/[...a-Z...] */
                     SuspiciousCharactersRangeSpecificationStrategy.apply(modifiers, regex, target, holder);

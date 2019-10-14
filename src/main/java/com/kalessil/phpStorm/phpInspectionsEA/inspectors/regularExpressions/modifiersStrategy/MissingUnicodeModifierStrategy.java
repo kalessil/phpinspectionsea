@@ -32,13 +32,14 @@ final public class MissingUnicodeModifierStrategy {
     }
 
     static public boolean apply(
+            @NotNull String functionName,
             @Nullable String modifiers,
             @Nullable String pattern,
             @NotNull PsiElement target,
             @NotNull  ProblemsHolder holder
     ) {
         boolean result = false;
-        if ((modifiers == null || modifiers.indexOf('u') == -1) && !StringUtils.isEmpty(pattern)) {
+        if ((modifiers == null || modifiers.indexOf('u') == -1) && pattern != null && ! pattern.isEmpty() && ! functionName.equals("preg_quote")) {
             if (result = unicodeCharactersPattern.matcher(pattern).matches()) {
                 holder.registerProblem(target, messageCharacters, ProblemHighlightType.GENERIC_ERROR);
             } else {

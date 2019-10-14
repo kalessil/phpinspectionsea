@@ -25,3 +25,6 @@ if (!call($mixed)) {
         /* something else */
     }
 }
+
+/* array access properly calculation check */
+if (isset($array[0]) || array_key_exists(0, $array)) {}

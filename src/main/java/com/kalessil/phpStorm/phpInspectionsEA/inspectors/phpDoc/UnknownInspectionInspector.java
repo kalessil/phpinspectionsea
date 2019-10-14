@@ -39,7 +39,6 @@ public class UnknownInspectionInspector extends PhpInspection {
         inspectionsNames = collectPhpRelatedInspections();
         inspectionsNames.add("phpinspectionsea");
         inspectionsNames.add("SpellCheckingInspection");
-        inspectionsNames.add("SqlNoDataSourceInspection");
         inspectionsNames.add("PhpUnused");
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
@@ -76,7 +75,7 @@ public class UnknownInspectionInspector extends PhpInspection {
                     final String[] candidates = tag.getTagValue().replaceAll("[^\\p{L}\\p{Nd}]+", " ").trim().split("\\s+");
                     if (candidates.length > 0) {
                         final List<String> inspections = Arrays.stream(candidates)
-                                .filter(candidate -> candidate.length() >= minInspectionNameLength && !inspectionsNames.contains(candidate))
+                                .filter(candidate -> candidate.length() >= minInspectionNameLength && !inspectionsNames.contains(candidate) && ! candidate.startsWith("Sql"))
                                 .collect(Collectors.toList());
                         if (!inspections.isEmpty()) {
                             final PsiElement target = tag.getFirstChild();

@@ -5,6 +5,7 @@
     preg_match(<error descr="/u modifier is missing (unicode characters found).">'/[а-яё].+/i'</error>, '');
     preg_match('/[а-яё].+/u', '');
     preg_match('/abc.+/',     '');
+    preg_quote('/[а-яё].+/', '/');
 
     /* case: contains \p, \P, \X */
     preg_match(<error descr="/u modifier is missing (unicode codepoints found).">'/\p/'</error>, '');

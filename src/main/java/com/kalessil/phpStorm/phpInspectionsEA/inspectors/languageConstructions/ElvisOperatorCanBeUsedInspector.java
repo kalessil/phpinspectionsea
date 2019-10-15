@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -60,7 +61,7 @@ public class ElvisOperatorCanBeUsedInspector extends PhpInspection {
 
                 /* if true variant is the object or expressions are not equals */
                 if (condition != trueVariant && OpenapiEquivalenceUtil.areEqual(condition, trueVariant)) {
-                    holder.registerProblem(expression.getTrueVariant(), strProblemDescription, ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    holder.registerProblem(expression.getTrueVariant(), ReportingUtil.wrapReportedMessage(strProblemDescription), ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
                 }
             }
         };

@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.Include;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,7 +52,7 @@ public class UsingInclusionOnceReturnValueInspector extends PhpInspection {
                 final PsiElement parent = include.getParent();
                 if (parent instanceof ControlStatement || !OpenapiTypesUtil.isStatementImpl(parent)) {
                     if (include.getArgument() != null && include.getFirstChild().getText().endsWith("_once")) {
-                        holder.registerProblem(include, message, new TheLocalFix());
+                        holder.registerProblem(include, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
                     }
                 }
             }

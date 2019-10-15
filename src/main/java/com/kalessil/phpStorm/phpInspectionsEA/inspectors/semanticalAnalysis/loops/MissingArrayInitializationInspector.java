@@ -20,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -99,7 +100,7 @@ public class MissingArrayInitializationInspector extends PhpInspection {
                                             }
                                         }
                                     }
-                                    problemsHolder.registerProblem(expression, message);
+                                    problemsHolder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
                                 }
                             }
                         }

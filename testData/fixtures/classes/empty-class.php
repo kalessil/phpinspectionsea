@@ -3,7 +3,7 @@
 class ClassWithAProperty { public $property; }
 class ClassWithAMethod   { public function __construct() {} }
 
-class <weak_warning descr="Class does not contain any properties or methods.">AnEmptyClass</weak_warning> {}
+class <weak_warning descr="[EA] Class does not contain any properties or methods.">AnEmptyClass</weak_warning> {}
 
 /* false-positives: empty interface */
 interface EmptyInterface {}

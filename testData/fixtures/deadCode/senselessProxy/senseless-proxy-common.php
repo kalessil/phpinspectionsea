@@ -22,11 +22,11 @@ class ChildClass extends SuperClass
     }
 
     /** Some PhpDoc here */
-    public function <weak_warning descr="'doSomething1' method can be dropped, as it only calls parent's one.">doSomething1</weak_warning>() {
+    public function <weak_warning descr="[EA] 'doSomething1' method can be dropped, as it only calls parent's one.">doSomething1</weak_warning>() {
         parent::doSomething1();
     }
 
-    public function <weak_warning descr="'doSomething2' method can be dropped, as it only calls parent's one.">doSomething2</weak_warning>($x) {
+    public function <weak_warning descr="[EA] 'doSomething2' method can be dropped, as it only calls parent's one.">doSomething2</weak_warning>($x) {
         parent::doSomething2($x);
     }
 

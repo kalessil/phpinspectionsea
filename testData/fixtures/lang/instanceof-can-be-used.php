@@ -8,13 +8,13 @@ class ChildClass extends ParentClass {}
 /** @param mixed $mixed */
 function get_class_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
-        <warning descr="'$object instanceof \stdClass' can be used instead.">get_class($object) == 'stdClass'</warning>,
-        <warning descr="'! $object instanceof \stdClass' can be used instead.">get_class($object) != 'stdClass'</warning>,
-        <warning descr="'$object instanceof \stdClass' can be used instead.">get_class($object) === 'stdClass'</warning>,
-        <warning descr="'! $object instanceof \stdClass' can be used instead.">get_class($object) !== 'stdClass'</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">get_class($object) == 'stdClass'</warning>,
+        <warning descr="[EA] '! $object instanceof \stdClass' can be used instead.">get_class($object) != 'stdClass'</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">get_class($object) === 'stdClass'</warning>,
+        <warning descr="[EA] '! $object instanceof \stdClass' can be used instead.">get_class($object) !== 'stdClass'</warning>,
 
-        <warning descr="'$object instanceof \FinalClass' can be used instead.">get_class($object) == 'FinalClass'</warning>,
-        <warning descr="'$object instanceof \ChildClass' can be used instead.">get_class($object) == 'ChildClass'</warning>,
+        <warning descr="[EA] '$object instanceof \FinalClass' can be used instead.">get_class($object) == 'FinalClass'</warning>,
+        <warning descr="[EA] '$object instanceof \ChildClass' can be used instead.">get_class($object) == 'ChildClass'</warning>,
 
         /* false-positives: has child classes */
         get_class($object) == 'ParentClass',
@@ -33,14 +33,14 @@ function get_class_cases_holder(\stdClass $object, string $string, $mixed) {
 /** @param mixed $mixed */
 function get_parent_class_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
-        <warning descr="'$object instanceof \stdClass' can be used instead.">get_parent_class($object) == 'stdClass'</warning>,
-        <warning descr="'! $object instanceof \stdClass' can be used instead.">get_parent_class($object) != 'stdClass'</warning>,
-        <warning descr="'$object instanceof \stdClass' can be used instead.">get_parent_class($object) === 'stdClass'</warning>,
-        <warning descr="'! $object instanceof \stdClass' can be used instead.">get_parent_class($object) !== 'stdClass'</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">get_parent_class($object) == 'stdClass'</warning>,
+        <warning descr="[EA] '! $object instanceof \stdClass' can be used instead.">get_parent_class($object) != 'stdClass'</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">get_parent_class($object) === 'stdClass'</warning>,
+        <warning descr="[EA] '! $object instanceof \stdClass' can be used instead.">get_parent_class($object) !== 'stdClass'</warning>,
 
-        <warning descr="'$object instanceof \FinalClass' can be used instead.">get_parent_class($object) == 'FinalClass'</warning>,
-        <warning descr="'$object instanceof \ChildClass' can be used instead.">get_parent_class($object) == 'ChildClass'</warning>,
-        <warning descr="'$object instanceof \ParentClass' can be used instead.">get_parent_class($object) == 'ParentClass'</warning>,
+        <warning descr="[EA] '$object instanceof \FinalClass' can be used instead.">get_parent_class($object) == 'FinalClass'</warning>,
+        <warning descr="[EA] '$object instanceof \ChildClass' can be used instead.">get_parent_class($object) == 'ChildClass'</warning>,
+        <warning descr="[EA] '$object instanceof \ParentClass' can be used instead.">get_parent_class($object) == 'ParentClass'</warning>,
 
         /* false-positives: string and mixed */
         get_parent_class($string) === 'stdClass',
@@ -53,12 +53,12 @@ function get_parent_class_cases_holder(\stdClass $object, string $string, $mixed
 /** @param mixed $mixed */
 function is_a_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
-        <warning descr="'$object instanceof \stdClass' can be used instead.">is_a($object, 'stdClass')</warning>,
-        <warning descr="'$object instanceof \stdClass' can be used instead.">is_a($object, 'stdClass', false)</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">is_a($object, 'stdClass')</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">is_a($object, 'stdClass', false)</warning>,
 
-        <warning descr="'$object instanceof \FinalClass' can be used instead.">is_a($object, 'FinalClass')</warning>,
-        <warning descr="'$object instanceof \ChildClass' can be used instead.">is_a($object, 'ChildClass')</warning>,
-        <warning descr="'$object instanceof \ParentClass' can be used instead.">is_a($object, 'ParentClass')</warning>,
+        <warning descr="[EA] '$object instanceof \FinalClass' can be used instead.">is_a($object, 'FinalClass')</warning>,
+        <warning descr="[EA] '$object instanceof \ChildClass' can be used instead.">is_a($object, 'ChildClass')</warning>,
+        <warning descr="[EA] '$object instanceof \ParentClass' can be used instead.">is_a($object, 'ParentClass')</warning>,
 
         /* false-positives: string and mixed */
         is_a($string, 'stdClass'),
@@ -73,12 +73,12 @@ function is_a_cases_holder(\stdClass $object, string $string, $mixed) {
 /** @param mixed $mixed */
 function is_subclass_of_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
-        <warning descr="'$object instanceof \stdClass' can be used instead.">is_subclass_of($object, 'stdClass')</warning>,
-        <warning descr="'$object instanceof \stdClass' can be used instead.">is_subclass_of($object, 'stdClass', false)</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">is_subclass_of($object, 'stdClass')</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">is_subclass_of($object, 'stdClass', false)</warning>,
 
-        <warning descr="'$object instanceof \FinalClass' can be used instead.">is_subclass_of($object, 'FinalClass')</warning>,
-        <warning descr="'$object instanceof \ChildClass' can be used instead.">is_subclass_of($object, 'ChildClass')</warning>,
-        <warning descr="'$object instanceof \ParentClass' can be used instead.">is_subclass_of($object, 'ParentClass')</warning>,
+        <warning descr="[EA] '$object instanceof \FinalClass' can be used instead.">is_subclass_of($object, 'FinalClass')</warning>,
+        <warning descr="[EA] '$object instanceof \ChildClass' can be used instead.">is_subclass_of($object, 'ChildClass')</warning>,
+        <warning descr="[EA] '$object instanceof \ParentClass' can be used instead.">is_subclass_of($object, 'ParentClass')</warning>,
 
         /* false-positives: string and mixed */
         is_subclass_of($string, 'stdClass'),
@@ -93,11 +93,11 @@ function is_subclass_of_cases_holder(\stdClass $object, string $string, $mixed) 
 /** @param mixed $mixed */
 function class_implements_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
-        <warning descr="'$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_implements($object))</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_implements($object))</warning>,
 
-        <warning descr="'$object instanceof \FinalClass' can be used instead.">in_array('FinalClass', class_implements($object))</warning>,
-        <warning descr="'$object instanceof \ChildClass' can be used instead.">in_array('ChildClass', class_implements($object))</warning>,
-        <warning descr="'$object instanceof \ParentClass' can be used instead.">in_array('ParentClass', class_implements($object))</warning>,
+        <warning descr="[EA] '$object instanceof \FinalClass' can be used instead.">in_array('FinalClass', class_implements($object))</warning>,
+        <warning descr="[EA] '$object instanceof \ChildClass' can be used instead.">in_array('ChildClass', class_implements($object))</warning>,
+        <warning descr="[EA] '$object instanceof \ParentClass' can be used instead.">in_array('ParentClass', class_implements($object))</warning>,
 
         /* false-positives: string and mixed */
         in_array('stdClass', class_implements($string)),
@@ -110,11 +110,11 @@ function class_implements_cases_holder(\stdClass $object, string $string, $mixed
 /** @param mixed $mixed */
 function class_parents_cases_holder(\stdClass $object, string $string, $mixed) {
     return [
-        <warning descr="'$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_parents($object))</warning>,
+        <warning descr="[EA] '$object instanceof \stdClass' can be used instead.">in_array('stdClass', class_parents($object))</warning>,
 
-        <warning descr="'$object instanceof \FinalClass' can be used instead.">in_array('FinalClass', class_parents($object))</warning>,
-        <warning descr="'$object instanceof \ChildClass' can be used instead.">in_array('ChildClass', class_parents($object))</warning>,
-        <warning descr="'$object instanceof \ParentClass' can be used instead.">in_array('ParentClass', class_parents($object))</warning>,
+        <warning descr="[EA] '$object instanceof \FinalClass' can be used instead.">in_array('FinalClass', class_parents($object))</warning>,
+        <warning descr="[EA] '$object instanceof \ChildClass' can be used instead.">in_array('ChildClass', class_parents($object))</warning>,
+        <warning descr="[EA] '$object instanceof \ParentClass' can be used instead.">in_array('ParentClass', class_parents($object))</warning>,
 
         /* false-positives: string and mixed */
         in_array('stdClass', class_parents($string)),

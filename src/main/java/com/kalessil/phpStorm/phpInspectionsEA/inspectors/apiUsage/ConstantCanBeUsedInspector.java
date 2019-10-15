@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -116,7 +117,7 @@ public class ConstantCanBeUsedInspector extends PhpInspection {
                         }
                         if (canUseConstant) {
                             final String constant = functionsToConstantMapping.get(functionName);
-                            holder.registerProblem(reference, String.format(useConstantPattern, constant), new UseConstantFix(constant));
+                            holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(useConstantPattern), constant), new UseConstantFix(constant));
                         }
                     } else if (arguments.length == 3 && functionName.equals("version_compare")) {
                         if (arguments[0] instanceof ConstantReference && arguments[1] instanceof StringLiteralExpression) {
@@ -136,7 +137,7 @@ public class ConstantCanBeUsedInspector extends PhpInspection {
                                                 minor.length() == 1 ? '0' + minor : minor,
                                                 patch.length() == 1 ? '0' + patch : patch
                                             );
-                                            holder.registerProblem(reference, String.format(usePhpVersionConstantPattern, replacement), new UseConstantFix(replacement));
+                                            holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(usePhpVersionConstantPattern), replacement), new UseConstantFix(replacement));
                                         }
                                     }
                                 }
@@ -184,7 +185,7 @@ public class ConstantCanBeUsedInspector extends PhpInspection {
                                                 suggest = OpenapiTypesUtil.isNumber(value) || PhpLanguageUtil.isFalse(value);
                                             }
                                             if (suggest) {
-                                                holder.registerProblem(context, useOsFamilyConstantPattern);
+                                                holder.registerProblem(context, ReportingUtil.wrapReportedMessage(useOsFamilyConstantPattern));
                                             }
                                         }
                                     }

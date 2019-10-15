@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.Statement;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -62,7 +63,7 @@ final public class QueryUsageStrategy {
                     variableAssigned != null && variableUsed != null &&
                     OpenapiEquivalenceUtil.areEqual(variableAssigned, variableUsed)
                 ) {
-                    holder.registerProblem(reference, message, new UseQueryFix(holder.getProject(), precedingReference));
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new UseQueryFix(holder.getProject(), precedingReference));
                 }
 
             }

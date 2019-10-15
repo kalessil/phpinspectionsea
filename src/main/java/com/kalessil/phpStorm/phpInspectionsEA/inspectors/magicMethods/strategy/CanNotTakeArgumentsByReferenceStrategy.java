@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 
 public class CanNotTakeArgumentsByReferenceStrategy {
     private static final String strProblemDescription = "%m% cannot accept arguments by reference.";
@@ -15,8 +16,8 @@ public class CanNotTakeArgumentsByReferenceStrategy {
             if (parameter.isPassByRef()) {
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                 if (nameNode != null) {
-                    final String strMessage = strProblemDescription.replace("%m%", method.getName());
-                    holder.registerProblem(nameNode, strMessage, ProblemHighlightType.ERROR);
+                    final String message = strProblemDescription.replace("%m%", method.getName());
+                    holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.ERROR);
                     return;
                 }
             }

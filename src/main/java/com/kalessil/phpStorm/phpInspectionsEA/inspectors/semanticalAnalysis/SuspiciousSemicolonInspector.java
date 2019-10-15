@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.Statement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -52,7 +53,7 @@ public class SuspiciousSemicolonInspector extends PhpInspection {
                             OpenapiTypesUtil.isLoop(parent) ||
                             parent instanceof If || parent instanceof ElseIf || parent instanceof Else
                         ) {
-                            holder.registerProblem(statement, message);
+                            holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(message));
                         }
                     }
                 }

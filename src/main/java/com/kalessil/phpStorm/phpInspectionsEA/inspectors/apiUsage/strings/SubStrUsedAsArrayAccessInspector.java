@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +71,7 @@ public class SubStrUsedAsArrayAccessInspector extends PhpInspection {
                                                 : String.format( "%s[%s]", source, offset);
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(messagePattern, replacement),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                 new TheLocalFix(replacement)
                                         );
                                     }

@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class NestedAssignmentsUsageInspector extends PhpInspection {
                 if (!(parent instanceof AssignmentExpression) && expression.getValue() instanceof AssignmentExpression) {
                     holder.registerProblem(
                             expression,
-                            message,
+                            ReportingUtil.wrapReportedMessage(message),
                             OpenapiTypesUtil.isStatementImpl(parent) ? new UseDedicatedAssignmentsFix() : null
                     );
                 }

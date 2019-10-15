@@ -13,7 +13,7 @@ trait A
 
 class Test_A
 {
-    public function <warning descr="Method has 3 return points, try to introduce just one to uncover complexity behind.">ThreeReturnsMethod</warning>() {
+    public function <warning descr="[EA] Method has 3 return points, try to introduce just one to uncover complexity behind.">ThreeReturnsMethod</warning>() {
         if ($this instanceof TestA) {
             return false;
         } elseif ($this instanceof \stdClass) {
@@ -22,7 +22,7 @@ class Test_A
         return true;
     }
 
-    public function <error descr="Method has 5 return points, try to introduce just one to uncover complexity behind.">FiveReturnsMethod</error>($a, $b, $c) {
+    public function <error descr="[EA] Method has 5 return points, try to introduce just one to uncover complexity behind.">FiveReturnsMethod</error>($a, $b, $c) {
         if ($this instanceof $a) {
             return false;
         }
@@ -58,7 +58,7 @@ class Test_B
                 return 0;
             }
 
-            public function <warning descr="Method has 3 return points, try to introduce just one to uncover complexity behind.">isValid</warning>() {
+            public function <warning descr="[EA] Method has 3 return points, try to introduce just one to uncover complexity behind.">isValid</warning>() {
                 if ($this instanceof Test_Valid) {
                     return true;
                 } elseif ($this instanceof \stdClass) {

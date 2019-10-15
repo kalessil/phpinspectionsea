@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,7 +104,7 @@ public class AdditionOperationOnArraysInspection extends PhpInspection {
                             final boolean isRightArray = rightResolved.filterUnknown().getTypes().stream()
                                     .anyMatch(type -> Types.getType(type).equals(Types.strArray));
                             if (isRightArray) {
-                                holder.registerProblem(operation, message);
+                                holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message));
                             }
                         }
                     }

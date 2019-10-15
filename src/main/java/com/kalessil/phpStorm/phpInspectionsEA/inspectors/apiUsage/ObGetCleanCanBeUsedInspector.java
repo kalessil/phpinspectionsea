@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -60,7 +61,7 @@ public class ObGetCleanCanBeUsedInspector extends PhpInspection {
                                     final String callName = call.getName();
                                     if (callName != null && callName.equals("ob_get_contents")) {
                                         if (this.isFromRootNamespace(reference) && this.isFromRootNamespace(call)) {
-                                            holder.registerProblem(call, message, new SimplifyFixer(holder.getProject(), parent));
+                                            holder.registerProblem(call, ReportingUtil.wrapReportedMessage(message), new SimplifyFixer(holder.getProject(), parent));
                                         }
                                         return;
                                     }

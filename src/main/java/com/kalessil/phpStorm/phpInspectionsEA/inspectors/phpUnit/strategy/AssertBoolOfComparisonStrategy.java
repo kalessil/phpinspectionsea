@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,7 +52,7 @@ final public class AssertBoolOfComparisonStrategy {
                     final String replacementMethod = "assert" +
                         (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
                     final String message = messagePattern.replace("%m%", replacementMethod);
-                    holder.registerProblem(reference, message, new TheLocalFix(holder.getProject(), replacementMethod, left, right));
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new TheLocalFix(holder.getProject(), replacementMethod, left, right));
 
                     return true;
                 }

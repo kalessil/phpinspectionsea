@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -125,7 +126,7 @@ final public class PlainApiUseCheckStrategy {
                 }
 
                 if (message != null) {
-                    holder.registerProblem(getPregMatchContext(reference), message, fixer);
+                    holder.registerProblem(getPregMatchContext(reference), ReportingUtil.wrapReportedMessage(message), fixer);
                     return;
                 }
             }
@@ -158,7 +159,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%p%", unescape(characterToTrim))
                     .replace("%s%", params[2].getText())
                     .replace("%f%", function);
-                holder.registerProblem(reference, String.format(messagePattern, replacement), new UseTrimFix(replacement));
+                holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new UseTrimFix(replacement));
                 return;
             }
 
@@ -171,7 +172,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
                     .replace("%s%", params[1].getText())
                     .replace("%p%", unescape(patternAdapted));
-                holder.registerProblem(reference, String.format(messagePattern, replacement), new UseExplodeFix(replacement));
+                holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new UseExplodeFix(replacement));
             }
         }
     }

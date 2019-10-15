@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -50,7 +51,7 @@ public class SenselessCommaInArrayDefinitionInspector extends PhpInspection {
                 final PsiElement last      = expression.getLastChild().getPrevSibling();
                 final PsiElement candidate = last instanceof PsiWhiteSpace ? last.getPrevSibling() : last;
                 if (OpenapiTypesUtil.is(candidate, PhpTokenTypes.opCOMMA)) {
-                    holder.registerProblem(candidate, message, new TheLocalFix());
+                    holder.registerProblem(candidate, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
                 }
             }
         };

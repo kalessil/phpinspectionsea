@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -63,7 +64,7 @@ public class SuspiciousFunctionCallsInspector extends PhpInspection {
                     if (arguments.length >= 2 && arguments[0] != null && arguments[1] != null) {
                         final boolean isTarget = OpenapiEquivalenceUtil.areEqual(arguments[0], arguments[1]);
                         if (isTarget) {
-                            holder.registerProblem(reference, message);
+                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
                         }
                     }
                 }

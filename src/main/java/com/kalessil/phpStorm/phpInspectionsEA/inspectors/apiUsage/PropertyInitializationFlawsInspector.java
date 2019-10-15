@@ -73,7 +73,7 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
                         if (OpenapiResolveUtil.resolveDeclaredType(field).isEmpty()) {
                             holder.registerProblem(
                                     fieldDefault,
-                                    messageDefaultNull,
+                                    ReportingUtil.wrapReportedMessage(messageDefaultNull),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                     new DropFieldDefaultValueFix()
                             );
@@ -96,7 +96,7 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
                             if (report) {
                                 holder.registerProblem(
                                         fieldDefault,
-                                        messageSenselessWrite,
+                                        ReportingUtil.wrapReportedMessage(messageSenselessWrite),
                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                 );
                             }
@@ -176,7 +176,7 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
                             (null == fieldDefault && PhpLanguageUtil.isNull(value)) ||
                             (null != fieldDefault && OpenapiEquivalenceUtil.areEqual(value, fieldDefault))
                         ) {
-                            holder.registerProblem(expression, messageSenselessWrite, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageSenselessWrite), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                             continue;
                         }
                         if (null == fieldDefault) {
@@ -193,7 +193,7 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
                         }
 
                         if (!isPropertyReused && REPORT_DEFAULTS_FLAWS) {
-                            holder.registerProblem(fieldDefault, messageDefaultOverride, new DropFieldDefaultValueFix());
+                            holder.registerProblem(fieldDefault, ReportingUtil.wrapReportedMessage(messageDefaultOverride), new DropFieldDefaultValueFix());
                         }
                     }
                 }

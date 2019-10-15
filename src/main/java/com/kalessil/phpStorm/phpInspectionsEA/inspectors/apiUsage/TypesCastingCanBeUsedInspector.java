@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -91,7 +92,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                                 );
                                 holder.registerProblem(
                                         reference,
-                                        String.format(messagePattern, replacement),
+                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                         ProblemHighlightType.LIKE_DEPRECATED,
                                         new UseTypeCastingFix(replacement)
                                 );
@@ -114,7 +115,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                             );
                             holder.registerProblem(
                                     reference,
-                                    String.format(messagePattern, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                     ProblemHighlightType.LIKE_DEPRECATED,
                                     new UseTypeCastingFix(replacement)
                             );
@@ -141,7 +142,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                             );
                             holder.registerProblem(
                                     literal,
-                                    String.format(messageInlining, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messageInlining), replacement),
                                     new UseTypeCastingFix(replacement)
                             );
                         }
@@ -176,7 +177,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                         final String replacement = String.format("(string) %s", base.getText());
                         holder.registerProblem(
                                 reference,
-                                String.format(messageMagic, replacement),
+                                String.format(ReportingUtil.wrapReportedMessage(messageMagic), replacement),
                                 new UseTypeCastingFix(replacement)
                         );
                     }

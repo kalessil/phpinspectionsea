@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ final public class SwitchFallThroughStrategy {
                         for (final PsiElement writtenVariable : written) {
                             if (OpenapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
-                                holder.registerProblem(variable, message);
+                                holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(message));
 
                                 break;
                             }
@@ -84,7 +85,7 @@ final public class SwitchFallThroughStrategy {
                         for (final PsiElement writtenVariable : written) {
                             if (OpenapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
-                                holder.registerProblem(variable, message);
+                                holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(message));
 
                                 break;
                             }

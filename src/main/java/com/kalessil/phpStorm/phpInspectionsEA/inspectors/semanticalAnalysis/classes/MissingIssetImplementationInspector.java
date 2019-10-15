@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,7 +120,7 @@ public class MissingIssetImplementationInspector extends PhpInspection {
                                     final boolean hasField = OpenapiResolveUtil.resolveField(clazz, parameterName) != null;
                                     if (!hasField && OpenapiResolveUtil.resolveMethod(clazz, "__isset") == null) {
                                         final String message = messagePattern.replace("%c%", type);
-                                        holder.registerProblem(parameter, message, ProblemHighlightType.GENERIC_ERROR);
+                                        holder.registerProblem(parameter, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
 
                                         break;
                                     }

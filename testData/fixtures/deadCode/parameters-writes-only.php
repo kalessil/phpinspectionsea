@@ -6,19 +6,19 @@ class Container {
             function
                 (array $inner, array &$outer)
                 use (
-                    <weak_warning descr="The variable seems to be not used.">$in</weak_warning>,
-                    &<weak_warning descr="The variable seems to be not used.">$out</weak_warning>,
+                    <weak_warning descr="[EA] The variable seems to be not used.">$in</weak_warning>,
+                    &<weak_warning descr="[EA] The variable seems to be not used.">$out</weak_warning>,
                     $log
                 )
             {
-                <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$inner[]</weak_warning> = '';
+                <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$inner[]</weak_warning> = '';
                 $outer []= '';
-                <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$log[]</weak_warning> = '';
+                <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$log[]</weak_warning> = '';
             };
     }
 
     public function method2(array $in, array &$out) {
-        <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$in[]</weak_warning> = '';
+        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$in[]</weak_warning> = '';
         $out []= '';
     }
 
@@ -26,10 +26,10 @@ class Container {
         $local = 0;
 
         foreach ([] as $i => $v) {
-            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$a[$i]</weak_warning> = ++$c;
+            <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$a[$i]</weak_warning> = ++$c;
 
-            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">++$b</weak_warning>;
-            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$b++</weak_warning>;
+            <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">++$b</weak_warning>;
+            <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$b++</weak_warning>;
 
             ++$d;
         }
@@ -56,17 +56,17 @@ class Container {
 
     public function unused_in_assignments_as_binary_operand() {
         return [
-            false === (<weak_warning descr="The variable seems to be not used.">$first</weak_warning> = array_search('...', [])),
-            false === <weak_warning descr="The variable seems to be not used.">$second</weak_warning> = array_search('...', []),
+            false === (<weak_warning descr="[EA] The variable seems to be not used.">$first</weak_warning> = array_search('...', [])),
+            false === <weak_warning descr="[EA] The variable seems to be not used.">$second</weak_warning> = array_search('...', []),
         ];
     }
 
     public function writes_only_via_short_constructs($one, $two) {
-        <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$one</weak_warning> += 1;
-        <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$one</weak_warning> -= 1;
+        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$one</weak_warning> += 1;
+        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$one</weak_warning> -= 1;
 
-        <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$two++</weak_warning>;
-        <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$two--</weak_warning>;
+        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$two++</weak_warning>;
+        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$two--</weak_warning>;
     }
 
     public function writes_only_with_include($variable, $file) {
@@ -75,7 +75,7 @@ class Container {
     }
 
     public function unused_in_assignments_as_array_index(&$a) {
-        $a[<weak_warning descr="The variable seems to be not used.">$index</weak_warning> = '...'] = '...';
+        $a[<weak_warning descr="[EA] The variable seems to be not used.">$index</weak_warning> = '...'] = '...';
 
         $a[$lastIndex = count($a)] = '...';
         return $lastIndex;
@@ -93,9 +93,9 @@ class Container {
         $first = $second = [];
 
         if ($parameter) {
-            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$first[]</weak_warning> = $parameter;
+            <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$first[]</weak_warning> = $parameter;
         } else {
-            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$second[]</weak_warning> = $parameter;
+            <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$second[]</weak_warning> = $parameter;
         }
     }
 
@@ -128,9 +128,9 @@ class Container {
     public function assignment_nodes_proper_targeting() {
         $string = '';
         if (true) {
-            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$string</weak_warning> .= '';
+            <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$string</weak_warning> .= '';
         } else {
-            <weak_warning descr="Parameter/variable is overridden, but is never used or appears outside of the scope.">$string</weak_warning> .= '';
+            <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$string</weak_warning> .= '';
         }
     }
 }

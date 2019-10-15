@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -38,14 +39,14 @@ final public class AndOrWordsUsageStrategy {
                 final String operator = operation.getText().trim();
                 if (operator.equalsIgnoreCase("and")) {
                     final String message = messagePattern.replace("%o%", "&&");
-                    holder.registerProblem(operation, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
 
                     continue;
                 }
 
                 if (operator.equalsIgnoreCase("or")) {
                     final String message = messagePattern.replace("%o%", "||");
-                    holder.registerProblem(operation, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
 
                     //continue;
                 }

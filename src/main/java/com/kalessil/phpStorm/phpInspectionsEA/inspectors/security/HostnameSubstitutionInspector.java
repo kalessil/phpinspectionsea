@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -115,7 +116,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                 if (right != null && left instanceof StringLiteralExpression) {
                     final boolean containsAt = ((StringLiteralExpression) left).getContents().endsWith("@");
                     if (containsAt && !this.isChecked(substitutedExpression)) {
-                        holder.registerProblem(right, String.format(patternGeneral, attribute));
+                        holder.registerProblem(right, String.format(ReportingUtil.wrapReportedMessage(patternGeneral), attribute));
                     }
                 }
             }
@@ -146,7 +147,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                     if (storageName != null && !storageName.isEmpty()) {
                         final Matcher matcher = regexTargetNames.matcher(storageName);
                         if (matcher.matches() && !this.isChecked(substitutedExpression)) {
-                            holder.registerProblem(substitutedExpression, messageNaming);
+                            holder.registerProblem(substitutedExpression, ReportingUtil.wrapReportedMessage(messageNaming));
                         }
                     }
                 } else if (storage instanceof Variable) {
@@ -171,7 +172,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                         if (!storageName.isEmpty()) {
                             final Matcher matcher = regexTargetNames.matcher(storageName);
                             if (matcher.matches() && !this.isChecked(substitutedExpression)) {
-                                holder.registerProblem(substitutedExpression, messageNaming);
+                                holder.registerProblem(substitutedExpression, ReportingUtil.wrapReportedMessage(messageNaming));
                             }
                         }
                     }

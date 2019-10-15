@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DeprecatedConstructorStyleInspector extends PhpInspection {
@@ -49,7 +50,7 @@ public class DeprecatedConstructorStyleInspector extends PhpInspection {
                 final String className = clazz.getName();
                 if (className.equals(method.getName()) && null == clazz.findOwnMethodByName("__construct")) {
                     final String message = messagePattern.replace("%s%", className);
-                    holder.registerProblem(nameNode, message, ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                    holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
                 }
             }
         };

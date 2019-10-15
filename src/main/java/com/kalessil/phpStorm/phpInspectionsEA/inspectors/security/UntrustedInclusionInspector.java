@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
@@ -54,7 +55,7 @@ public class UntrustedInclusionInspector extends PhpInspection {
                 if (file != null) {
                     final String path = file.getContents();
                     if (!path.isEmpty() && !absolutePathPattern.matcher(path).matches()) {
-                        holder.registerProblem(include, message);
+                        holder.registerProblem(include, ReportingUtil.wrapReportedMessage(message));
                     }
                 }
             }

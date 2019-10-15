@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +58,7 @@ public class EmptyClassInspector extends PhpInspection {
                         }
                         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
                         if (nameNode != null) {
-                            holder.registerProblem(nameNode, message);
+                            holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message));
                         }
                     }
                 }

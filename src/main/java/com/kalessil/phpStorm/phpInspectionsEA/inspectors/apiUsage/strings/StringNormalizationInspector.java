@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -95,18 +96,18 @@ public class StringNormalizationInspector extends PhpInspection {
                                         final String newInnerCall = reference.getText().replace(arguments[0].getText(), theString);
                                         final String replacement  = innerCall.getText().replace(theString, newInnerCall);
                                         final String message      = String.format(patternInvertedNesting, replacement);
-                                        holder.registerProblem(reference, message, new NormalizationFix(replacement));
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new NormalizationFix(replacement));
                                     }
                                 } else if (caseManipulation.contains(functionName) && caseManipulation.contains(innerCallName)) {
                                     if (functionName.equals(innerCallName)) {
                                         final String message = String.format(patternSenselessNesting, innerCallName);
-                                        holder.registerProblem(innerCall, message, new NormalizationFix(innerArguments[0].getText()));
+                                        holder.registerProblem(innerCall, ReportingUtil.wrapReportedMessage(message), new NormalizationFix(innerArguments[0].getText()));
                                     } else if (!innerCaseManipulation.contains(innerCallName)) {
                                         /* false-positives: ucwords with 2 arguments */
                                         final boolean isTarget = !innerCallName.equals("ucwords") || innerArguments.length == 1;
                                         if (isTarget) {
                                             final String message = String.format(patternSenselessNesting, innerCallName);
-                                            holder.registerProblem(innerCall, message, new NormalizationFix(innerArguments[0].getText()));
+                                            holder.registerProblem(innerCall, ReportingUtil.wrapReportedMessage(message), new NormalizationFix(innerArguments[0].getText()));
                                         }
                                     }
                                 }

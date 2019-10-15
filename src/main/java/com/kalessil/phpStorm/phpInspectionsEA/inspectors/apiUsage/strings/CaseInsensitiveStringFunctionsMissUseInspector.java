@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,7 +79,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspectio
                 if (!StringUtils.isEmpty(patternString) && !patternString.matches(".*\\p{L}.*")) {
                     final String replacementFunctionName = mapping.get(functionName);
                     final String message                 = messagePattern.replace("%f%", replacementFunctionName);
-                    holder.registerProblem(reference, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacementFunctionName));
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacementFunctionName));
                 }
             }
         };

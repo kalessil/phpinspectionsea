@@ -5,7 +5,7 @@ class MissingParent {
     public function __construct() {}
 }
 class MissingImplementation extends MissingParent {
-    private function <error descr="__construct is probably missing MissingParent::__construct call.">__construct</error>() {}
+    private function <error descr="[EA] __construct is probably missing MissingParent::__construct call.">__construct</error>() {}
 }
 
 /* false-positives: parent method is abstract */

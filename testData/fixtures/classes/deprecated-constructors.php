@@ -2,7 +2,7 @@
 
 class ClassWithDeprecatedConstructor
 {
-    public function <error descr="ClassWithDeprecatedConstructor has a deprecated constructor.">ClassWithDeprecatedConstructor</error>()
+    public function <error descr="[EA] ClassWithDeprecatedConstructor has a deprecated constructor.">ClassWithDeprecatedConstructor</error>()
     {
     }
 }

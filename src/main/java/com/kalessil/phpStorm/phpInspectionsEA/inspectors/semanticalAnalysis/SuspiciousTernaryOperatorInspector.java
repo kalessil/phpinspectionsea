@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -74,14 +75,14 @@ public class SuspiciousTernaryOperatorInspector extends PhpInspection {
 
                 /* Case 1: identical variants */
                 if (trueVariant != null && falseVariant != null && OpenapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
-                    holder.registerProblem(expression, messageVariantsIdentical, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageVariantsIdentical), ProblemHighlightType.GENERIC_ERROR);
                 }
 
                 /* Case 2: operations which might produce a value as not expected */
                 if (condition instanceof BinaryExpression && !(expression.getCondition() instanceof ParenthesizedExpression)) {
                     final IElementType operator = ((BinaryExpression) condition).getOperationType();
                     if (operator != null && !safeOperations.contains(operator)) {
-                        holder.registerProblem(condition, messagePriorities, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(condition, ReportingUtil.wrapReportedMessage(messagePriorities), ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
 
@@ -90,7 +91,7 @@ public class SuspiciousTernaryOperatorInspector extends PhpInspection {
                 if (parent instanceof BinaryExpression) {
                     final BinaryExpression binary = (BinaryExpression) parent;
                     if (binary.getRightOperand() == expression && PhpTokenTypes.tsLIT_OPS.contains(binary.getOperationType())) {
-                        holder.registerProblem(binary, messagePriorities, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messagePriorities), ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

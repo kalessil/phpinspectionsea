@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,7 +95,7 @@ public class ParameterDefaultValueIsNotNullInspector extends PhpInspection {
                         }
 
                         /* report violations */
-                        violations.forEach(param -> holder.registerProblem(param, message));
+                        violations.forEach(param -> holder.registerProblem(param, ReportingUtil.wrapReportedMessage(message)));
                         violations.clear();
                     }
                 }

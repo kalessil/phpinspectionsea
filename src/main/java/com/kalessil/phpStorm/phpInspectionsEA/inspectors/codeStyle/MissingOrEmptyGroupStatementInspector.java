@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -96,7 +97,7 @@ public class MissingOrEmptyGroupStatementInspector extends PhpInspection {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(construct);
                 if (body != null) {
                     if (REPORT_EMPTY_BODY && ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                        holder.registerProblem(construct.getFirstChild(), messageEmptyBody);
+                        holder.registerProblem(construct.getFirstChild(), ReportingUtil.wrapReportedMessage(messageEmptyBody));
                     }
                     return;
                 }
@@ -105,7 +106,7 @@ public class MissingOrEmptyGroupStatementInspector extends PhpInspection {
                     return;
                 }
 
-                holder.registerProblem(construct.getFirstChild(), messageMissingBrackets, new WrapBodyFix());
+                holder.registerProblem(construct.getFirstChild(), ReportingUtil.wrapReportedMessage(messageMissingBrackets), new WrapBodyFix());
             }
         };
     }

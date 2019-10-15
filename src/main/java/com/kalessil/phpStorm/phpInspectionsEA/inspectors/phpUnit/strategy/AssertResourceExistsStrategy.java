@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -56,7 +57,7 @@ final public class AssertResourceExistsStrategy {
                         }
                         holder.registerProblem(
                                 reference,
-                                String.format(messagePattern, suggestedAssertion),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
                                 new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                         );
 

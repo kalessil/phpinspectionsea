@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.Field;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -63,7 +64,7 @@ public class DateTimeConstantsUsageInspector extends PhpInspection {
                     if (resolved instanceof Field) {
                         final Field constant = (Field) resolved;
                         if (constant.isConstant() && targetClassConstants.contains(constant.getFQN())) {
-                            holder.registerProblem(constantReference, messageClassConstant, new TheLocalFix());
+                            holder.registerProblem(constantReference, ReportingUtil.wrapReportedMessage(messageClassConstant), new TheLocalFix());
                         }
                     }
                 }
@@ -75,7 +76,7 @@ public class DateTimeConstantsUsageInspector extends PhpInspection {
 
                 final String constantName = reference.getName();
                 if (constantName != null && constantName.equals("DATE_ISO8601")) {
-                    holder.registerProblem(reference, messageConstant, new TheLocalFix());
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageConstant), new TheLocalFix());
                 }
             }
         };

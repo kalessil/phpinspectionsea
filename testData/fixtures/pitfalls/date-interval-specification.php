@@ -1,11 +1,11 @@
 <?php
 
     /* reported */
-    $x = new DateInterval(<error descr="Date interval specification seems to be invalid.">'28D'</error>);
-    $x = new DateInterval(<error descr="Date interval specification seems to be invalid.">'PT28D'</error>);
-    $x = new DateInterval(<error descr="Date interval specification seems to be invalid.">'P28D1Y'</error>);
-    $x = new DateInterval(<error descr="Date interval specification seems to be invalid.">'PT00:00:01'</error>);
-    $x = new DateInterval(<error descr="Date interval specification seems to be invalid.">'PT'</error>);
+    $x = new DateInterval(<error descr="[EA] Date interval specification seems to be invalid.">'28D'</error>);
+    $x = new DateInterval(<error descr="[EA] Date interval specification seems to be invalid.">'PT28D'</error>);
+    $x = new DateInterval(<error descr="[EA] Date interval specification seems to be invalid.">'P28D1Y'</error>);
+    $x = new DateInterval(<error descr="[EA] Date interval specification seems to be invalid.">'PT00:00:01'</error>);
+    $x = new DateInterval(<error descr="[EA] Date interval specification seems to be invalid.">'PT'</error>);
 
     /* not reported */
     $x = new DateInterval("P28D{$inline}");

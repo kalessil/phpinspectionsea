@@ -6,21 +6,21 @@ namespace {
 
 namespace Unqualified\References {
 
-    echo <weak_warning descr="Using '\uniqid(...)' would enable some of opcode optimizations.">uniqid()</weak_warning>;
-    echo <weak_warning descr="Using '\PHP_INT_MAX' would enable some of opcode optimizations.">PHP_INT_MAX</weak_warning>;
+    echo <weak_warning descr="[EA] Using '\uniqid(...)' would enable some of opcode optimizations.">uniqid()</weak_warning>;
+    echo <weak_warning descr="[EA] Using '\PHP_INT_MAX' would enable some of opcode optimizations.">PHP_INT_MAX</weak_warning>;
 
-    echo \call_user_func(<weak_warning descr="Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>, '');
-    echo \call_user_func_array(<weak_warning descr="Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>, []);
-    echo \array_filter([], <weak_warning descr="Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>);
-    echo \array_map(<weak_warning descr="Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>, []);
-    echo \array_walk([], <weak_warning descr="Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>);
-    echo \array_reduce([], <weak_warning descr="Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>);
+    echo \call_user_func(<weak_warning descr="[EA] Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>, '');
+    echo \call_user_func_array(<weak_warning descr="[EA] Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>, []);
+    echo \array_filter([], <weak_warning descr="[EA] Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>);
+    echo \array_map(<weak_warning descr="[EA] Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>, []);
+    echo \array_walk([], <weak_warning descr="[EA] Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>);
+    echo \array_reduce([], <weak_warning descr="[EA] Using '\my_function' would enable some of opcode optimizations.">'my_function'</weak_warning>);
 
     /* case with double quotes */
-    echo \array_reduce([], <weak_warning descr="Using '\my_function' would enable some of opcode optimizations.">"my_function"</weak_warning>);
+    echo \array_reduce([], <weak_warning descr="[EA] Using '\my_function' would enable some of opcode optimizations.">"my_function"</weak_warning>);
 
     /* define calls tree structure differs, special case */
-    <weak_warning descr="Using '\define(...)' would enable some of opcode optimizations.">define('', '')</weak_warning>;
+    <weak_warning descr="[EA] Using '\define(...)' would enable some of opcode optimizations.">define('', '')</weak_warning>;
     \define('', '');
 
     /* false-positives: a qualified call */

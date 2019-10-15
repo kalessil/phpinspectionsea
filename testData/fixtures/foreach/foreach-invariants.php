@@ -4,10 +4,10 @@ namespace NS {
     class CasesHolder {
         public function casesHolder() {
             $iMax = count($arr);
-            <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $iMax; $i++) {
+            <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $iMax; $i++) {
                 echo $arr[$i];
             }
-            <error descr="Foreach should be used instead (8x faster, also deprecated since PHP 7.2).">while</error> (list($i, $v) = each($arr)) {
+            <error descr="[EA] Foreach should be used instead (8x faster, also deprecated since PHP 7.2).">while</error> (list($i, $v) = each($arr)) {
                 echo $v;
             }
 
@@ -24,13 +24,13 @@ namespace NS {
 
         public function casesForLimits($array, $limit) {
             $limitExternal = count($array);
-            <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $limitExternal; $i++) {
+            <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $limitExternal; $i++) {
                 echo $array[$i];
             }
-            <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $limitInitialized = count($array); $i < $limitInitialized; $i++) {
+            <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $limitInitialized = count($array); $i < $limitInitialized; $i++) {
                 echo $array[$i];
             }
-            <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < count($array); $i++) {
+            <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < count($array); $i++) {
                 echo $array[$i];
             }
             for ($i = 0; $i < $limit; $i++) {
@@ -52,7 +52,7 @@ namespace NS {
 namespace {
     function cases_holder($arr) {
         /* case: invariant */
-        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max1 = count($arr); $i < $max1; ++$i) {
+        <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max1 = count($arr); $i < $max1; ++$i) {
             echo $arr[$i], $arr[$i]->property;
             $x = $arr[$i];
             $x = !$arr[$i];
@@ -66,7 +66,7 @@ namespace {
             do {} while ($arr[$i]);
             if ($arr[$i]) {} elseif ($arr[$i]) {}
         }
-        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max2 = count($arr); $i < $max2; $i++) {
+        <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max2 = count($arr); $i < $max2; $i++) {
             $arr[$i]->property    = '...';
             $arr[$i]->property[0] = '...';
             $arr[$i][0]           = '...';
@@ -77,13 +77,13 @@ namespace {
             $x =& $arr[$i];
         }
         $max3 = count($arr);
-        <warning descr="Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $max3; $i++) {
+        <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0; $i < $max3; $i++) {
             echo $arr[$i]->property, $arr[$i]->property[0], $arr[$i][0];
             echo $arr[$i], $arr[$i] . " $arr[$i] " . " {$arr[$i]} ";
         }
 
         /* case: slow loop */
-        <error descr="Foreach should be used instead (8x faster, also deprecated since PHP 7.2).">while</error> (list($i, $v) = each($arr)) {
+        <error descr="[EA] Foreach should be used instead (8x faster, also deprecated since PHP 7.2).">while</error> (list($i, $v) = each($arr)) {
             echo $v->property;
         }
     }

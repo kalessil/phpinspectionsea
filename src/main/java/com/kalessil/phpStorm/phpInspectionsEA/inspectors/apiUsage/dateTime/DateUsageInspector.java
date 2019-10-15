@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -58,10 +59,10 @@ public class DateUsageInspector extends PhpInspection {
                             final String innerName        = inner.getName();
                             if (innerName != null && innerName.equals("time") && inner.getParameters().length == 0) {
                                 holder.registerProblem(
-                                    inner,
-                                    messageDropTime,
-                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                    new DropTimeFunctionCallLocalFix(holder.getProject(), arguments[0], arguments[1])
+                                        inner,
+                                        ReportingUtil.wrapReportedMessage(messageDropTime),
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                        new DropTimeFunctionCallLocalFix(holder.getProject(), arguments[0], arguments[1])
                                 );
                             }
                         }

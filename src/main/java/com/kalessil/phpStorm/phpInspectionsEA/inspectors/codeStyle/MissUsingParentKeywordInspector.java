@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -69,7 +70,7 @@ public class MissUsingParentKeywordInspector extends PhpInspection {
                                                 parameters == null ? "" : parameters.getText());
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(messagePattern, replacement),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                 new NormalizeClassReferenceFix(replacement)
                                         );
                                     }

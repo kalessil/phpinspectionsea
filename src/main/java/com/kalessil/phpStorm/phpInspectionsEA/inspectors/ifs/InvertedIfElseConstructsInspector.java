@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -72,7 +73,7 @@ public class InvertedIfElseConstructsInspector extends PhpInspection {
                                     final String newCondition = extractedCondition.getText();
                                     holder.registerProblem(
                                             elseStatement.getFirstChild(),
-                                            message,
+                                            ReportingUtil.wrapReportedMessage(message),
                                             new NormalizeWorkflowFix(holder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                     );
                                 }
@@ -97,7 +98,7 @@ public class InvertedIfElseConstructsInspector extends PhpInspection {
                                         final String newCondition = String.format("%s !== %s", left.getText(), right.getText());
                                         holder.registerProblem(
                                                 elseStatement.getFirstChild(),
-                                                message,
+                                                ReportingUtil.wrapReportedMessage(message),
                                                 new NormalizeWorkflowFix(holder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                         );
                                     }

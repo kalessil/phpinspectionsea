@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -58,7 +59,7 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
                         return;
                     }
 
-                    holder.registerProblem(statement, message, new DropUnnecessarySemicolonFix());
+                    holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(message), new DropUnnecessarySemicolonFix());
                 }
             }
 
@@ -69,7 +70,7 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
                 if (!OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {
                     final PsiElement last = echo.getLastChild();
                     if (OpenapiTypesUtil.is(last, PhpTokenTypes.opSEMICOLON)) {
-                        holder.registerProblem(last, message, new DropUnnecessarySemicolonFix());
+                        holder.registerProblem(last, ReportingUtil.wrapReportedMessage(message), new DropUnnecessarySemicolonFix());
                     }
                 }
             }

@@ -13,7 +13,7 @@ class SPSParent {
 }
 
 class SPSChild extends SPSParent {
-    public function <weak_warning descr="'method1' method can be dropped, as it only calls parent's one.">method1</weak_warning>($b) {
+    public function <weak_warning descr="[EA] 'method1' method can be dropped, as it only calls parent's one.">method1</weak_warning>($b) {
         parent::method1($b);
     }
     public function method2($a = null) { // nullable behaviour modified

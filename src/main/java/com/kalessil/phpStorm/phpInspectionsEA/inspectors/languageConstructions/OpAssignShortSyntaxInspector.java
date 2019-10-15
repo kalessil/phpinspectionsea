@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -107,7 +108,7 @@ public class OpAssignShortSyntaxInspector extends PhpInspection {
                                         );
                                         holder.registerProblem(
                                                 assignment,
-                                                String.format(messagePattern, replacement),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                 new UseShorthandOperatorFix(replacement)
                                         );
                                     }

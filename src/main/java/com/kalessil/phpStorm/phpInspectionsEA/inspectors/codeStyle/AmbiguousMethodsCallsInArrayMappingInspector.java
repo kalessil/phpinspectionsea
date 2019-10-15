@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -90,7 +91,7 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends PhpInspection 
                             for (final FunctionReference candidate : left) {
                                 final String candidateName = candidate.getName();
                                 if (currentName != null && currentName.equals(candidateName) && OpenapiEquivalenceUtil.areEqual(current, candidate)) {
-                                    holder.registerProblem(current, message);
+                                    holder.registerProblem(current, ReportingUtil.wrapReportedMessage(message));
                                     break iterate;
                                 }
                             }

@@ -8,11 +8,11 @@ function foo(&$argByReference, $argByValue) {
     unset($theStatic);
     unset($theGLobal);
 
-    <weak_warning descr="Only local copy/reference will be unset. This unset can probably be removed.">unset($argByReference);</weak_warning>
-    <weak_warning descr="Only local copy/reference will be unset. This unset can probably be removed.">unset($argByValue);</weak_warning>
+    <weak_warning descr="[EA] Only local copy/reference will be unset. This unset can probably be removed.">unset($argByReference);</weak_warning>
+    <weak_warning descr="[EA] Only local copy/reference will be unset. This unset can probably be removed.">unset($argByValue);</weak_warning>
     unset(
-        <weak_warning descr="Only local copy/reference will be unset. This unset can probably be removed.">$argByReference</weak_warning>,
-        <weak_warning descr="Only local copy/reference will be unset. This unset can probably be removed.">$argByValue</weak_warning>
+        <weak_warning descr="[EA] Only local copy/reference will be unset. This unset can probably be removed.">$argByReference</weak_warning>,
+        <weak_warning descr="[EA] Only local copy/reference will be unset. This unset can probably be removed.">$argByValue</weak_warning>
     );
 
     foreach(array() as $key => $value) {

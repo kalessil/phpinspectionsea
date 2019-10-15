@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 
 import java.util.Collection;
 
@@ -18,11 +19,11 @@ public class CanNotReturnTypeStrategy {
         final Collection<PhpReturn> returnStatements = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
 
         if (!returnStatements.isEmpty() && NamedElementUtil.getNameIdentifier(method) != null) {
-            final String strMessage = strProblemDescription.replace("%m%", method.getName());
+            final String message = strProblemDescription.replace("%m%", method.getName());
             for (final PhpReturn returnExpression : returnStatements) {
                 final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnExpression);
                 if (null != returnValue && method == ExpressionSemanticUtil.getScope(returnExpression)) {
-                    holder.registerProblem(returnExpression, strMessage, ProblemHighlightType.ERROR);
+                    holder.registerProblem(returnExpression, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.ERROR);
                 }
             }
         }

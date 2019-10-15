@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -24,7 +25,7 @@ final public class CanNotBeStaticStrategy {
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
             if (nameNode != null) {
                 final String message = String.format(messagePattern, method.getName());
-                holder.registerProblem(nameNode, message, ProblemHighlightType.ERROR);
+                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.ERROR);
             }
         }
     }

@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +80,7 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
                             if (variable.getName().equals(containerName)) {
                                 stopAnalysis = true;
 
-                                holder.registerProblem(multiassignmentExpression, messageImplicitList);
+                                holder.registerProblem(multiassignmentExpression, ReportingUtil.wrapReportedMessage(messageImplicitList));
                                 break;
                             }
                         }
@@ -125,7 +126,7 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
                     final PsiElement previousContainer = getContainer((AssignmentExpression) previousExpression);
                     if (previousContainer != null && OpenapiEquivalenceUtil.areEqual(ownContainer, previousContainer)) {
                         final String message = messagePattern.replace("%a%", ownContainer.getText());
-                        holder.registerProblem(assignmentExpression, message);
+                        holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(message));
                     }
                 }
             }

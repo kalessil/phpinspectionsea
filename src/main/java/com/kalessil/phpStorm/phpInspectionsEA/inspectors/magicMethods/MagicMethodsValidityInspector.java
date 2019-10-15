@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -164,11 +165,11 @@ public class MagicMethodsValidityInspector extends PhpInspection {
                     case "__autoload":
                         TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                         CanNotReturnTypeStrategy.apply(method, holder);
-                        holder.registerProblem(nameNode, messageUseSplAutoloading, ProblemHighlightType.LIKE_DEPRECATED);
+                        holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageUseSplAutoloading), ProblemHighlightType.LIKE_DEPRECATED);
                         break;
                     default:
                         if (methodName.startsWith("__") && !knownNonMagic.contains(methodName)) {
-                            holder.registerProblem(nameNode, messageNotMagic);
+                            holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageNotMagic));
                         } else {
                             MissingUnderscoreStrategy.apply(method, holder);
                         }

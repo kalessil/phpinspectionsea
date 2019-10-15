@@ -20,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +80,7 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
                     if (functionName != null && functionName.equals("get_called_class")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 0) {
-                            holder.registerProblem(reference, messageUseStatic, new UseStaticFix());
+                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageUseStatic), new UseStaticFix());
                         }
                     }
                 }
@@ -137,7 +138,7 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
                                 final String message = messagePattern.replace("%c%", normalizedContents);
                                 holder.registerProblem(
                                         expression,
-                                        message,
+                                        ReportingUtil.wrapReportedMessage(message),
                                         new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
                                 );
                             }

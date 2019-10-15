@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -69,13 +70,13 @@ public class MultipleReturnStatementsInspector extends PhpInspection {
                     if (returnsCount >= SCREAM_THRESHOLD) {
                         holder.registerProblem(
                                 nameIdentifier,
-                                String.format(messagePattern, returnsCount),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), returnsCount),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     } else if (returnsCount >= COMPLAIN_THRESHOLD) {
                         holder.registerProblem(
                                 nameIdentifier,
-                                String.format(messagePattern, returnsCount),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), returnsCount),
                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                         );
                     }

@@ -28,14 +28,14 @@ class BasePropertiesExample {
 }
 class PropertiesExample extends BasePropertiesExample {
     use
-        <weak_warning descr="'PropertiesExample' and 'PropertiesTraitForBase1' define the same property ($baseSame).">PropertiesTraitForBase1</weak_warning>,
-        <error descr="'PropertiesExample' and 'PropertiesTraitForBase2' define the same property ($baseDifferent2).">PropertiesTraitForBase2</error>
+        <weak_warning descr="[EA] 'PropertiesExample' and 'PropertiesTraitForBase1' define the same property ($baseSame).">PropertiesTraitForBase1</weak_warning>,
+        <error descr="[EA] 'PropertiesExample' and 'PropertiesTraitForBase2' define the same property ($baseDifferent2).">PropertiesTraitForBase2</error>
     ;
 
     use PropertiesTrait;
     /** @Id */
     public $sameAnnotated = true;
-    public <weak_warning descr="'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning> = true;
+    public <weak_warning descr="[EA] 'PropertiesExample' and 'PropertiesTrait' define the same property ($same).">$same</weak_warning> = true;
     private $different = true;
     
     private $privatePhpdocProperty = '...';

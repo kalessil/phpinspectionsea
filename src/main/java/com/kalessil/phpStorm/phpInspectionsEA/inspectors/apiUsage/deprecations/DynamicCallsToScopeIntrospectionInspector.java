@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -90,7 +91,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends PhpInspection {
                                 final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                                 final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
                                 if (targetCalls.containsKey(callback)) {
-                                    holder.registerProblem(target, String.format(messagePattern, callback));
+                                    holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messagePattern), callback));
                                 }
                             }
                         }

@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -141,7 +142,7 @@ public class IssetArgumentExistenceInspector extends PhpInspection {
                                     if (report && (IGNORE_INCLUDES || !this.hasIncludes(scope))) {
                                         holder.registerProblem(
                                                 variable,
-                                                String.format(messagePattern, variableName),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), variableName),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );
                                     }

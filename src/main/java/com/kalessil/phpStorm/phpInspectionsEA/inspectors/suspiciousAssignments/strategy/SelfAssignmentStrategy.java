@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -67,7 +68,7 @@ final public class SelfAssignmentStrategy {
             OpenapiTypesUtil.is(valueOperation, mapping.get(assignOperator)) &&
             OpenapiEquivalenceUtil.areEqual(variable, valueLeftPart)
         ) {
-            holder.registerProblem(expression, message);
+            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
         }
     }
 }

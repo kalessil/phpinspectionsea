@@ -22,6 +22,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,7 +180,7 @@ public class UnqualifiedReferenceInspector extends PhpInspection {
                                 if (!index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
                                     holder.registerProblem(
                                             callback,
-                                            String.format(messagePattern, function),
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), function),
                                             new TheLocalFix()
                                     );
                                 }
@@ -237,7 +238,7 @@ public class UnqualifiedReferenceInspector extends PhpInspection {
                             if (!isImported) {
                                 holder.registerProblem(
                                         reference,
-                                        String.format(messagePattern, referenceName + (isFunction ? "(...)" : "")),
+                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), referenceName + (isFunction ? "(...)" : "")),
                                         new TheLocalFix()
                                 );
                             }

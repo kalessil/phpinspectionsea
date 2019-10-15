@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -42,7 +43,7 @@ final public class IdenticalOperandsStrategy {
             final PsiElement left  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getLeftOperand());
             final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getRightOperand());
             if (left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, right)) {
-                holder.registerProblem(expression, message);
+                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
                 return true;
             }
         }

@@ -18,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -55,7 +56,7 @@ public class StaticClosureCanBeUsedInspector extends PhpInspection {
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
                     final boolean isTarget = !OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
                     if (isTarget && this.canBeStatic(function)) {
-                        holder.registerProblem(function.getFirstChild(), message, new MakeClosureStaticFix());
+                        holder.registerProblem(function.getFirstChild(), ReportingUtil.wrapReportedMessage(message), new MakeClosureStaticFix());
                     }
                 }
             }

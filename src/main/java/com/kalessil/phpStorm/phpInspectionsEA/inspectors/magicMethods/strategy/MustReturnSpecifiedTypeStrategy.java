@@ -9,10 +9,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -37,7 +34,7 @@ final public class MustReturnSpecifiedTypeStrategy {
                 final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
                 holder.registerProblem(
                         nameNode,
-                        String.format(messagePattern, method.getName(), withoutStatic.toString()),
+                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), method.getName(), withoutStatic.toString()),
                         ProblemHighlightType.ERROR
                 );
             }
@@ -64,7 +61,7 @@ final public class MustReturnSpecifiedTypeStrategy {
                 }
                 holder.registerProblem(
                         expression,
-                        String.format(messagePattern, method.getName(), withoutStatic.toString()),
+                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), method.getName(), withoutStatic.toString()),
                         ProblemHighlightType.ERROR
                 );
             }

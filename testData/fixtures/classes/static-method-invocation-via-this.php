@@ -9,7 +9,7 @@ class MethodsHolder {
     }
 
     public function nonStaticContext() {
-        <warning descr="'self::method(...)' should be used instead.">$this</warning>->method();
+        <warning descr="[EA] 'self::method(...)' should be used instead.">$this</warning>->method();
 
         static::method();
         self::method();
@@ -18,8 +18,8 @@ class MethodsHolder {
 
 function cases_holder() {
     $one = new MethodsHolder();
-    <warning descr="'...::method(...)' should be used instead.">$one->method()</warning>;
-    <warning descr="'...::method(...)' should be used instead.">(new MethodsHolder())->method()</warning>;
+    <warning descr="[EA] '...::method(...)' should be used instead.">$one->method()</warning>;
+    <warning descr="[EA] '...::method(...)' should be used instead.">(new MethodsHolder())->method()</warning>;
 }
 
 function parameters_and_used_variables_case_holder() {

@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -70,7 +71,7 @@ final public class AssertInstanceOfStrategy {
                         }
                         holder.registerProblem(
                                 reference,
-                                String.format(messagePattern, suggestedAssertion),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
                                 new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                         );
                         result = true;
@@ -110,7 +111,7 @@ final public class AssertInstanceOfStrategy {
                                     }
                                     holder.registerProblem(
                                             reference,
-                                            String.format(messagePattern, suggestedAssertion),
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
                                             new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                                     );
                                     result = true;

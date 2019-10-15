@@ -7,8 +7,8 @@ interface ExistingInterface {
 }
 
 class ImplementsInterface implements ExistingInterface {
-    function <weak_warning descr="': void' can be declared as return type hint (please use change signature intention to fix this).">methodWithUndeclaredType</weak_warning>() { return; }
-    function <weak_warning descr="': string' can be declared as return type hint (please use change signature intention to fix this).">methodWithStringType</weak_warning>() { return ''; }
+    function <weak_warning descr="[EA] ': void' can be declared as return type hint (please use change signature intention to fix this).">methodWithUndeclaredType</weak_warning>() { return; }
+    function <weak_warning descr="[EA] ': string' can be declared as return type hint (please use change signature intention to fix this).">methodWithStringType</weak_warning>() { return ''; }
 }
 
 class ExistingParent {
@@ -17,8 +17,8 @@ class ExistingParent {
 }
 
 class ImplementsAbstractMethods extends ExistingParent {
-    function <weak_warning descr="': void' can be declared as return type hint (please use change signature intention to fix this).">methodWithUndeclaredType</weak_warning>() { return; }
-    function <weak_warning descr="': string' can be declared as return type hint (please use change signature intention to fix this).">methodWithStringType</weak_warning>() { return ''; }
+    function <weak_warning descr="[EA] ': void' can be declared as return type hint (please use change signature intention to fix this).">methodWithUndeclaredType</weak_warning>() { return; }
+    function <weak_warning descr="[EA] ': string' can be declared as return type hint (please use change signature intention to fix this).">methodWithStringType</weak_warning>() { return ''; }
 }
 
 

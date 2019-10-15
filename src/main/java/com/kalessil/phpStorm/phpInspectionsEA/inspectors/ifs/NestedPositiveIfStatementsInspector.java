@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +67,7 @@ public class NestedPositiveIfStatementsInspector extends PhpInspection {
                             if (isTarget) {
                                 holder.registerProblem(
                                         expression.getFirstChild(),
-                                        message,
+                                        ReportingUtil.wrapReportedMessage(message),
                                         new MergeIntoParentIfFix(holder.getProject(), expression, parentIf)
                                 );
                             }
@@ -76,7 +77,7 @@ public class NestedPositiveIfStatementsInspector extends PhpInspection {
                         if (isTarget) {
                             holder.registerProblem(
                                     expression.getFirstChild(),
-                                    message,
+                                    ReportingUtil.wrapReportedMessage(message),
                                     new MergeIntoParentElseFix(holder.getProject(), expression, (Else) parentConstruct)
                             );
                         }

@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -106,7 +107,7 @@ public class TypeUnsafeArraySearchInspector extends PhpInspection {
                                 arguments[0].getText(),
                                 arguments[1].getText()
                         );
-                        holder.registerProblem(reference, message, new MakeSearchTypeSensitiveFix(replacement));
+                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new MakeSearchTypeSensitiveFix(replacement));
                     }
                 }
             }

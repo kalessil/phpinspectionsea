@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.PhpPrintExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;
@@ -74,7 +75,7 @@ public class ShortEchoTagCanBeUsedInspector extends PhpInspection {
                     if (OpenapiTypesUtil.is(closingTag, PhpTokenTypes.PHP_CLOSING_TAG)) {
                         holder.registerProblem(
                                 target.getFirstChild(),
-                                message,
+                                ReportingUtil.wrapReportedMessage(message),
                                 new UseShortEchoTagInspector(holder.getProject(), openingTag, context)
                         );
                     }

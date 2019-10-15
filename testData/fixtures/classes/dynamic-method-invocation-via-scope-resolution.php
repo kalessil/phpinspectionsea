@@ -11,14 +11,14 @@ class CasesHolder extends ParentCasesHolder
 
     public static function staticTrigger()
     {
-        <warning descr="'...->method(...)' should be used instead.">static::method()</warning>;
+        <warning descr="[EA] '...->method(...)' should be used instead.">static::method()</warning>;
     }
 
     public function dynamicTrigger()
     {
-        <warning descr="'$this->method(...)' should be used instead.">static::method()</warning>;
-        <warning descr="'$this->method(...)' should be used instead.">self::method()</warning>;
-        <warning descr="'$this->method(...)' should be used instead.">CasesHolder::method()</warning>;
+        <warning descr="[EA] '$this->method(...)' should be used instead.">static::method()</warning>;
+        <warning descr="[EA] '$this->method(...)' should be used instead.">self::method()</warning>;
+        <warning descr="[EA] '$this->method(...)' should be used instead.">CasesHolder::method()</warning>;
     }
 }
 
@@ -34,4 +34,4 @@ class ChildCasesHolder extends CasesHolder
 }
 
 $object = new CasesHolder();
-<warning descr="'...->method(...)' should be used instead.">$object::method()</warning>;
+<warning descr="[EA] '...->method(...)' should be used instead.">$object::method()</warning>;

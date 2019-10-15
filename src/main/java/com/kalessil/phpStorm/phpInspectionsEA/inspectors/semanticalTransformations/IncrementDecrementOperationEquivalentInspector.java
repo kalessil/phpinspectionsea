@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,14 +87,14 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
                             final String replacement
                                     = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
                             final String message = patternMessage.replace("%e%", replacement);
-                            holder.registerProblem(expression, message, new UseIncrementFix(replacement));
+                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new UseIncrementFix(replacement));
                         }
                     } else if (operation == PhpTokenTypes.opMINUS_ASGN) {
                         if (value.getText().equals("1") && !isArrayAccessOrString(variable)) {
                             final String replacement
                                     = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
                             final String message = patternMessage.replace("%e%", replacement);
-                            holder.registerProblem(expression, message, new UseDecrementFix(replacement));
+                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new UseDecrementFix(replacement));
                         }
                     }
                 }
@@ -125,7 +126,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
                                 final String replacement
                                         = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
                                 final String message = patternMessage.replace("%e%", replacement);
-                                holder.registerProblem(assignmentExpression, message, new UseIncrementFix(replacement));
+                                holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(message), new UseIncrementFix(replacement));
                             }
                         }
                     } else if (operation == PhpTokenTypes.opMINUS) {
@@ -138,7 +139,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
                             final String replacement
                                     = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
                             final String message = patternMessage.replace("%e%", replacement);
-                            holder.registerProblem(assignmentExpression, message, new UseDecrementFix(replacement));
+                            holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(message), new UseDecrementFix(replacement));
                         }
                     }
                 }

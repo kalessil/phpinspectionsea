@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +91,7 @@ public class MkdirRaceConditionInspector extends PhpInspection {
                     final String message              = String.format(messagePattern, String.join(", ", fixerArguments));
                     holder.registerProblem(
                             context instanceof If ? target : context,
-                            message,
+                            ReportingUtil.wrapReportedMessage(message),
                             context instanceof If ? new HardenConditionFix(arguments[0], fixerArguments, searchResult.isInverted) : new ThrowExceptionFix(arguments[0], fixerArguments)
                     );
                 }
@@ -133,7 +134,7 @@ public class MkdirRaceConditionInspector extends PhpInspection {
                         final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
                         final String messagePattern       = (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(binary.getOperationType()) ? patternFailAndCondition : patternFailOrCondition);
                         final String message              = String.format(messagePattern, String.join(", ", fixerArguments), arguments[0].getText());
-                        holder.registerProblem(target, message, new HardenConditionFix(arguments[0], fixerArguments, searchResult.isInverted));
+                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), new HardenConditionFix(arguments[0], fixerArguments, searchResult.isInverted));
                     }
                 }
             }

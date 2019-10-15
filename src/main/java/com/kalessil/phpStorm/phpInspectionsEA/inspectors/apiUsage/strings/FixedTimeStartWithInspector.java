@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public class FixedTimeStartWithInspector extends PhpInspection {
                                         );
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(messagePattern, replacement),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                 new UseFirstCharactersCompareFix(replacement)
                                         );
                                     }

@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -27,7 +28,7 @@ final public class HasAlsoMethodStrategy {
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
             if (nameNode != null) {
                 final String message = String.format(messagePattern, method.getName(), companion);
-                holder.registerProblem(nameNode, message, ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
             }
         }
     }

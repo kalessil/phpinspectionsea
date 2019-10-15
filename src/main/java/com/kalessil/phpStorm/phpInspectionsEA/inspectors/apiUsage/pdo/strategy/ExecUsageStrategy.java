@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -31,7 +32,7 @@ final public class ExecUsageStrategy {
                     OpenapiTypesUtil.isStatementImpl(reference.getParent()) &&
                     MethodIdentityUtil.isReferencingMethod(reference, "\\PDO", "query");
                 if (isTarget) {
-                    holder.registerProblem(reference, message, new UseExecFix());
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new UseExecFix());
                 }
             }
         }

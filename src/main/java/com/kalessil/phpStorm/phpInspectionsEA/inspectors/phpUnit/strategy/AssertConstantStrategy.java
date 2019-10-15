@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +58,7 @@ final public class AssertConstantStrategy {
                                 }
                                 holder.registerProblem(
                                         reference,
-                                        String.format(messagePattern, suggestedAssertion),
+                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
                                         new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                                 );
 

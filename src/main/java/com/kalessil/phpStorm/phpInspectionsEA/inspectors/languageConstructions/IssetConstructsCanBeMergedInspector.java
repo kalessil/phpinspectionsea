@@ -19,6 +19,7 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,9 +84,9 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
                                         fragments.remove(firstHit);
                                         fragments.remove(fragment);
                                         holder.registerProblem(
-                                            fragment,
-                                            messageIsset,
-                                            new MergeConstructsFix(holder.getProject(), expression, fragments, (PhpIsset)firstHit, (PhpIsset)fragment, operator)
+                                                fragment,
+                                                ReportingUtil.wrapReportedMessage(messageIsset),
+                                                new MergeConstructsFix(holder.getProject(), expression, fragments, (PhpIsset) firstHit, (PhpIsset) fragment, operator)
                                         );
                                         break;
                                     }
@@ -104,9 +105,9 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
                                             fragments.remove(firstHit.getParent());
                                             fragments.remove(fragment);
                                             holder.registerProblem(
-                                                candidate,
-                                                messageIvertedIsset,
-                                                new MergeConstructsFix(holder.getProject(), expression, fragments, (PhpIsset)firstHit, (PhpIsset)candidate, operator)
+                                                    candidate,
+                                                    ReportingUtil.wrapReportedMessage(messageIvertedIsset),
+                                                    new MergeConstructsFix(holder.getProject(), expression, fragments, (PhpIsset) firstHit, (PhpIsset) candidate, operator)
                                             );
                                             break;
                                         }

@@ -34,19 +34,19 @@ class IvRandomness {
         $this->iv = mt_rand();
 
         openssl_encrypt('data', 'method', 'password', 0,
-            <error descr="openssl_random_pseudo_bytes() should be used for IV, but found: 'variable', mt_rand().">$iv</error>);
+            <error descr="[EA] openssl_random_pseudo_bytes() should be used for IV, but found: 'variable', mt_rand().">$iv</error>);
         mcrypt_encrypt('cipher', 'key', 'data', 'mode',
-            <error descr="mcrypt_create_iv() should be used for IV, but found: 'variable', mt_rand().">$iv</error>);
+            <error descr="[EA] mcrypt_create_iv() should be used for IV, but found: 'variable', mt_rand().">$iv</error>);
 
         openssl_encrypt('data', 'method', 'password', 0,
-            <error descr="openssl_random_pseudo_bytes() should be used for IV, but found: 'default', mt_rand().">$this->iv</error>);
+            <error descr="[EA] openssl_random_pseudo_bytes() should be used for IV, but found: 'default', mt_rand().">$this->iv</error>);
         mcrypt_encrypt('cipher', 'key', 'data', 'mode',
-            <error descr="mcrypt_create_iv() should be used for IV, but found: 'default', mt_rand().">$this->iv</error>);
+            <error descr="[EA] mcrypt_create_iv() should be used for IV, but found: 'default', mt_rand().">$this->iv</error>);
 
         openssl_encrypt('data', 'method', 'password', 0,
-            <error descr="openssl_random_pseudo_bytes() should be used for IV, but found: 'constant'.">self::IV</error>);
+            <error descr="[EA] openssl_random_pseudo_bytes() should be used for IV, but found: 'constant'.">self::IV</error>);
         mcrypt_encrypt('cipher', 'key', 'data', 'mode',
-            <error descr="mcrypt_create_iv() should be used for IV, but found: 'constant'.">self::IV</error>);
+            <error descr="[EA] mcrypt_create_iv() should be used for IV, but found: 'constant'.">self::IV</error>);
     }
 
     private function wrappedRandomBytes($length) {

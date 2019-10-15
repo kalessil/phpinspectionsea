@@ -10,19 +10,19 @@
     function check_interfaces(IWithToString $i1, IWithoutToString $i2) {
         return [
             $i1 != '',
-            <error descr="\IWithoutToString miss __toString() implementation.">$i2 != ''</error>,
+            <error descr="[EA] \IWithoutToString miss __toString() implementation.">$i2 != ''</error>,
         ];
     }
     function check_abstract_classes(AbstractWithToString $a1, AbstractWithoutToString $a2) {
         return [
             $a1 != '',
-            <error descr="\AbstractWithoutToString miss __toString() implementation.">$a2 != ''</error>,
+            <error descr="[EA] \AbstractWithoutToString miss __toString() implementation.">$a2 != ''</error>,
         ];
     }
     function check_implementation_classes(ClassWithToString $c1, ClassWithoutToString $c2) {
         return [
             $c1 != '',
-            <error descr="\ClassWithoutToString miss __toString() implementation.">$c2 != ''</error>,
+            <error descr="[EA] \ClassWithoutToString miss __toString() implementation.">$c2 != ''</error>,
         ];
     }
 
@@ -30,9 +30,9 @@
 
     /* pattern: object can not be used in string context */
     $object = new ClassNeedsToStringMethod();
-    $result = <error descr="\ClassNeedsToStringMethod miss __toString() implementation.">$object == '...'</error>;
-    $result = <error descr="\ClassNeedsToStringMethod miss __toString() implementation.">$object != '...'</error>;
-    $result = <error descr="\ClassNeedsToStringMethod miss __toString() implementation.">$object <> '...'</error>;
+    $result = <error descr="[EA] \ClassNeedsToStringMethod miss __toString() implementation.">$object == '...'</error>;
+    $result = <error descr="[EA] \ClassNeedsToStringMethod miss __toString() implementation.">$object != '...'</error>;
+    $result = <error descr="[EA] \ClassNeedsToStringMethod miss __toString() implementation.">$object <> '...'</error>;
 
     /* pattern: safe comparison */
     $result = <warning descr="[EA] Safely use '===' here.">$x == '...'</warning>;

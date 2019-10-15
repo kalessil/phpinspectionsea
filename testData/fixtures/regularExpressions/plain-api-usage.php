@@ -32,15 +32,15 @@
     preg_match('/^whatever$/i',  $string);
 
     /* case: trim */
-    <warning descr="'ltrim($string, 'a')' can be used instead.">preg_replace('/^a+/', '', $string)</warning>;
-    <warning descr="'ltrim($string, 'a')' can be used instead.">preg_replace('/^a*/', '', $string)</warning>;
-    <warning descr="'rtrim($string, 'a')' can be used instead.">preg_replace('/a+$/', '', $string)</warning>;
-    <warning descr="'rtrim($string, 'a')' can be used instead.">preg_replace('/a*$/', '', $string)</warning>;
-    <warning descr="'trim($string, 'a')' can be used instead.">preg_replace('/^a+|a*$/', '', $string)</warning>;
-    <warning descr="'trim($string, 'a')' can be used instead.">preg_replace('/^a*|a+$/', '', $string)</warning>;
-    <warning descr="'ltrim($string)' can be used instead.">preg_replace('/^\s*/', '', $string)</warning>;
-    <warning descr="'rtrim($string)' can be used instead.">preg_replace('/\s*$/', '', $string)</warning>;
-    <warning descr="'trim($string)' can be used instead.">preg_replace('/^\s*|\s*$/', '', $string)</warning>;
+    <warning descr="[EA] 'ltrim($string, 'a')' can be used instead.">preg_replace('/^a+/', '', $string)</warning>;
+    <warning descr="[EA] 'ltrim($string, 'a')' can be used instead.">preg_replace('/^a*/', '', $string)</warning>;
+    <warning descr="[EA] 'rtrim($string, 'a')' can be used instead.">preg_replace('/a+$/', '', $string)</warning>;
+    <warning descr="[EA] 'rtrim($string, 'a')' can be used instead.">preg_replace('/a*$/', '', $string)</warning>;
+    <warning descr="[EA] 'trim($string, 'a')' can be used instead.">preg_replace('/^a+|a*$/', '', $string)</warning>;
+    <warning descr="[EA] 'trim($string, 'a')' can be used instead.">preg_replace('/^a*|a+$/', '', $string)</warning>;
+    <warning descr="[EA] 'ltrim($string)' can be used instead.">preg_replace('/^\s*/', '', $string)</warning>;
+    <warning descr="[EA] 'rtrim($string)' can be used instead.">preg_replace('/\s*$/', '', $string)</warning>;
+    <warning descr="[EA] 'trim($string)' can be used instead.">preg_replace('/^\s*|\s*$/', '', $string)</warning>;
     /* false-positives */
     preg_replace('/^a+/m', '', $string);
     preg_replace('/^a+/u', '', $string);
@@ -55,9 +55,9 @@
     preg_replace('/^a*|b+$/', '', $string);
 
     /* case: explode */
-    <warning descr="'explode(\",\", '')' can be used instead.">preg_split('/,/', '')</warning>;
-    <warning descr="'explode(\"text\", '')' can be used instead.">preg_split('/text/', '')</warning>;
-    <warning descr="'explode(\",\", '', 2)' can be used instead.">preg_split('/,/', '', 2)</warning>;
+    <warning descr="[EA] 'explode(\",\", '')' can be used instead.">preg_split('/,/', '')</warning>;
+    <warning descr="[EA] 'explode(\"text\", '')' can be used instead.">preg_split('/text/', '')</warning>;
+    <warning descr="[EA] 'explode(\",\", '', 2)' can be used instead.">preg_split('/,/', '', 2)</warning>;
     /* false-positives */
     preg_split('/.+/', '');
     preg_split('/\b/', '');

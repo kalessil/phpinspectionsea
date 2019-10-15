@@ -88,7 +88,7 @@ public class AssertRegexStrategy {
                                     }
                                     holder.registerProblem(
                                             reference,
-                                            String.format(messagePattern, suggestedAssertion),
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
                                             new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                                     );
                                     result = true;

@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -41,11 +42,11 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof TernaryExpression) {
-                    holder.registerProblem(condition, messageNested);
+                    holder.registerProblem(condition, ReportingUtil.wrapReportedMessage(messageNested));
                 }
                 final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                 if (trueVariant instanceof TernaryExpression) {
-                    holder.registerProblem(trueVariant, messageNested);
+                    holder.registerProblem(trueVariant, ReportingUtil.wrapReportedMessage(messageNested));
                 }
                 final PsiElement falseVariant        = expression.getFalseVariant();
                 final PsiElement unboxedFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(falseVariant);
@@ -54,7 +55,7 @@ public class NestedTernaryOperatorInspector extends BasePhpInspection {
                                           expression.isShort() &&
                                           ((TernaryExpression) falseVariant).isShort();
                     if (!allow) {
-                        holder.registerProblem(unboxedFalseVariant, messageNested);
+                        holder.registerProblem(unboxedFalseVariant, ReportingUtil.wrapReportedMessage(messageNested));
                     }
                 }
             }

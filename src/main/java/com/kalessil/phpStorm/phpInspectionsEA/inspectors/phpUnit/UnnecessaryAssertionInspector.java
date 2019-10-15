@@ -13,10 +13,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -87,7 +84,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                         if (innerMethodName != null && innerMethodName.equals("any")) {
                             holder.registerProblem(
                                     innerReference,
-                                    messageExpectsAny,
+                                    ReportingUtil.wrapReportedMessage(messageExpectsAny),
                                     new RemoveExpectsAssertionFixer(holder.getProject(), reference, reference.getFirstChild())
                             );
                         }
@@ -129,9 +126,9 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                                             /* match arguments types */
                                             final String expected = expectedType;
                                             if (expected == null) {
-                                                holder.registerProblem(reference, messageReturnType);
+                                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageReturnType));
                                             } else if (resolved.getTypes().stream().anyMatch(t -> Types.getType(t).equals(expected))) {
-                                                holder.registerProblem(reference, messageReturnType);
+                                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageReturnType));
                                             }
 
                                         }

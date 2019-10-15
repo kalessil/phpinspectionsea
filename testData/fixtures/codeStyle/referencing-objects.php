@@ -1,22 +1,22 @@
 <?php
 
-    $x = & <warning descr="Objects are always passed by reference; please correct '= & new '.">new stdClass()</warning>;
-    $x = &<warning descr="Objects are always passed by reference; please correct '= & new '.">new stdClass()</warning>;
+    $x = & <warning descr="[EA] Objects are always passed by reference; please correct '= & new '.">new stdClass()</warning>;
+    $x = &<warning descr="[EA] Objects are always passed by reference; please correct '= & new '.">new stdClass()</warning>;
 
-    function one   (<warning descr="Objects are always passed by reference; please correct '& $param1'.">stdClass & $param1</warning>, array & $arr, & $str) {}
-    function two   (<warning descr="Objects are always passed by reference; please correct '& $param1'.">stdClass &$param1</warning>, array &$arr, &$str) {}
-    function three (<warning descr="Objects are always passed by reference; please correct '& $param1'.">stdClass& $param1</warning>, array& $arr, &$str) {}
+    function one   (<warning descr="[EA] Objects are always passed by reference; please correct '& $param1'.">stdClass & $param1</warning>, array & $arr, & $str) {}
+    function two   (<warning descr="[EA] Objects are always passed by reference; please correct '& $param1'.">stdClass &$param1</warning>, array &$arr, &$str) {}
+    function three (<warning descr="[EA] Objects are always passed by reference; please correct '& $param1'.">stdClass& $param1</warning>, array& $arr, &$str) {}
 
     interface contract {
         public function method(
-            <warning descr="Objects are always passed by reference; please correct '& $param2'.">stdClass & $param2</warning>,
+            <warning descr="[EA] Objects are always passed by reference; please correct '& $param2'.">stdClass & $param2</warning>,
             array & $arr,
             & $str
         );
     }
     abstract class impl implements contract {
         abstract public function method2(
-            <warning descr="Objects are always passed by reference; please correct '& $param3'.">stdClass & $param3</warning>,
+            <warning descr="[EA] Objects are always passed by reference; please correct '& $param3'.">stdClass & $param3</warning>,
             array & $arr,
             & $str
         );

@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -53,7 +54,7 @@ public class ImplodeArgumentsOrderInspector extends PhpInspection {
                                 arguments[1].getText(),
                                 arguments[0].getText()
                         );
-                        holder.registerProblem(reference, message, new ReorderArgumentsFixer(replacement));
+                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new ReorderArgumentsFixer(replacement));
                     }
                 }
             }

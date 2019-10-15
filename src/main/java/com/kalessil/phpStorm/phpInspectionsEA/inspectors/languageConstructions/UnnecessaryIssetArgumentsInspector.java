@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class UnnecessaryIssetArgumentsInspector extends PhpInspection {
                                         if (match != current && !reported.contains(match)) {
                                             final boolean canSkip = OpenapiEquivalenceUtil.areEqual(discoveredBase, match);
                                             if (canSkip) {
-                                                holder.registerProblem(match, message, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropArgumentFix());
+                                                holder.registerProblem(match, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropArgumentFix());
                                                 reported.add(match);
                                             }
                                         }

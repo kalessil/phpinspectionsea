@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -71,7 +72,7 @@ public class StringsFirstCharactersCompareInspector extends PhpInspection {
                                 stringLength = -1;
                             }
                             if (isTarget && stringLength != -1) {
-                                holder.registerProblem(arguments[2], message, new LengthFix(String.valueOf(stringLength)));
+                                holder.registerProblem(arguments[2], ReportingUtil.wrapReportedMessage(message), new LengthFix(String.valueOf(stringLength)));
                             }
                         }
                     }

@@ -11,10 +11,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,12 +73,12 @@ public class DynamicInvocationViaScopeResolutionInspector extends PhpInspection 
                                         if (currentMethod.isStatic()) {
                                             holder.registerProblem(
                                                     reference,
-                                                    String.format(patternExpressionUsed, reference.getName())
+                                                    String.format(ReportingUtil.wrapReportedMessage(patternExpressionUsed), reference.getName())
                                             );
                                         } else {
                                             holder.registerProblem(
                                                     reference,
-                                                    String.format(patternScopeResolutionUsed, methodName),
+                                                    String.format(ReportingUtil.wrapReportedMessage(patternScopeResolutionUsed), methodName),
                                                     new TheLocalFix(holder.getProject(), operator, staticCandidate)
                                             );
                                         }
@@ -95,7 +92,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends PhpInspection 
                             if (base != null && !(base instanceof FunctionReference) && !(staticCandidate instanceof ClassReference)) {
                                 holder.registerProblem(
                                         reference,
-                                        String.format(patternExpressionUsed, reference.getName()),
+                                        String.format(ReportingUtil.wrapReportedMessage(patternExpressionUsed), reference.getName()),
                                         new TheLocalFix(holder.getProject(), operator, null)
                                 );
                             }

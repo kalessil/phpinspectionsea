@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -64,10 +65,10 @@ public class ComparisonOperandsOrderInspector extends PhpInspection {
                         if (isLeftConstant != isRightConstant) {
                             final boolean isRegular = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
                             if (isRightConstant && !isRegular) {
-                                holder.registerProblem(expression, messageUseYoda, new TheLocalFix());
+                                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageUseYoda), new TheLocalFix());
                             }
                             if (isLeftConstant && isRegular) {
-                                holder.registerProblem(expression, messageUseRegular, new TheLocalFix());
+                                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageUseRegular), new TheLocalFix());
                             }
                         }
                     }

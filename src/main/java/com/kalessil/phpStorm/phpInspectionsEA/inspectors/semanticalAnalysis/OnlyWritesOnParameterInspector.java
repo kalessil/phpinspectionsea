@@ -20,10 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCos
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -154,10 +151,10 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
 
                         if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
                             if (this.getVariableUsages(parameterName, function).length == 0) {
-                                holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageUnused), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                             }
                         } else if (this.analyzeAndReturnUsagesCount(parameterName, function) == 0) {
-                            holder.registerProblem(variable, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageUnused), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                         }
                     }
                 }
@@ -284,7 +281,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                 }
                                 /* false-negative: inline assignment result has been used */
                                 if (usages.length == 2 && usages[0].getAnchor() == usages[1].getAnchor()) {
-                                    holder.registerProblem(assignmentVariableCandidate, messageUnused, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(assignmentVariableCandidate, ReportingUtil.wrapReportedMessage(messageUnused), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                     return 1;
                                 }
                                 continue;
@@ -332,7 +329,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                         for (final PsiElement targetExpression : new HashSet<>(targetExpressions)) {
                             holder.registerProblem(
                                     targetExpression,
-                                    messageOnlyWrites,
+                                    ReportingUtil.wrapReportedMessage(messageOnlyWrites),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL
                             );
                         }

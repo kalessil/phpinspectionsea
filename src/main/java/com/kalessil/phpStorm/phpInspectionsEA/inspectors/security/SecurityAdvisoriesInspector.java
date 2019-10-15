@@ -11,6 +11,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -232,7 +233,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                     if (!packageName.isEmpty() && !packageVersion.isEmpty()) {
                         /* identify usage development components */
                         if (REPORT_MISPLACED_DEPENDENCIES && optionConfiguration.contains(packageName)) {
-                            holder.registerProblem(pair.getKey().getFirstChild(), useRequireDev);
+                            holder.registerProblem(pair.getKey().getFirstChild(), ReportingUtil.wrapReportedMessage(useRequireDev));
                         }
                         /* identify usage of third party components */
                         if (!hasThirdPartyPackages && packageName.indexOf('/') != -1) {
@@ -256,7 +257,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                             if (!packageName.isEmpty() && !packageVersion.isEmpty()) {
                                 if (packageName.equals("roave/security-advisories")) {
                                     if (!packageVersion.equals("dev-master")) {
-                                        holder.registerProblem(pair.getValue(), useMaster);
+                                        holder.registerProblem(pair.getValue(), ReportingUtil.wrapReportedMessage(useMaster));
                                     }
                                     isSecured = true;
                                     break;
@@ -270,7 +271,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 if (!isSecured && hasThirdPartyPackages) {
                     holder.registerProblem(
                             productionRequire.getFirstChild(),
-                            message,
+                            ReportingUtil.wrapReportedMessage(message),
                             new AddAdvisoriesFix(holder.getProject(), productionRequire, developmentRequire)
                     );
                 }

@@ -16,10 +16,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -87,7 +84,7 @@ public class StaticInvocationViaThisInspector extends PhpInspection {
                                     if (resolved instanceof Method && ((Method) resolved).isStatic()) {
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(messageExpressionUsed, methodName)
+                                                String.format(ReportingUtil.wrapReportedMessage(messageExpressionUsed), methodName)
                                         );
                                     }
                                 }
@@ -131,7 +128,7 @@ public class StaticInvocationViaThisInspector extends PhpInspection {
                 }
                 holder.registerProblem(
                         base,
-                        String.format(messageThisUsed, method.getName()),
+                        String.format(ReportingUtil.wrapReportedMessage(messageThisUsed), method.getName()),
                         new TheLocalFix(holder.getProject(), base, operator)
                 );
             }

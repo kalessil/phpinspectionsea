@@ -20,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -60,7 +61,7 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length >= 2) {
                         if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                            holder.registerProblem(reference, messageUseInArray, new TheLocalFix());
+                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageUseInArray), new TheLocalFix());
                         } else {
                             final PsiElement parent = reference.getParent();
                             if (parent instanceof BinaryExpression) {
@@ -70,9 +71,9 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
                                     final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
                                     if (PhpLanguageUtil.isBoolean(second)) {
                                         if (PhpLanguageUtil.isTrue(second)) {
-                                            holder.registerProblem(second, messageComparingWithTrue, ProblemHighlightType.GENERIC_ERROR);
+                                            holder.registerProblem(second, ReportingUtil.wrapReportedMessage(messageComparingWithTrue), ProblemHighlightType.GENERIC_ERROR);
                                         } else {
-                                            holder.registerProblem(binary, messageUseInArray, new TheLocalFix());
+                                            holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageUseInArray), new TheLocalFix());
                                         }
                                     }
                                 }

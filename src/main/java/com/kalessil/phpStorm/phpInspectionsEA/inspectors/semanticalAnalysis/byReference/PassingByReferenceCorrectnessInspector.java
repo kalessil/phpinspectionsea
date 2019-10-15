@@ -8,10 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -103,11 +100,11 @@ public class PassingByReferenceCorrectnessInspector extends PhpInspection {
                                 if (inner instanceof Function) {
                                     final PsiElement name = NamedElementUtil.getNameIdentifier((Function) inner);
                                     if (!ExpressionSemanticUtil.isByReference(name)) {
-                                        holder.registerProblem(argument, message);
+                                        holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(message));
                                     }
                                 }
                             } else if (argument instanceof NewExpression) {
-                                holder.registerProblem(argument, message);
+                                holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(message));
                             }
                         }
                     }

@@ -12,10 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -91,7 +88,7 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
                                             if (isString) {
                                                 // TODO: respect Yoda/Classic style as per plugin configuration, immediate NS
                                                 final String replacement = String.format("strpos(%s, %s) === 0", container.getText(), literal.getText());
-                                                holder.registerProblem(parent, String.format(messagePattern, replacement), new UseStringSearchFix(replacement));
+                                                holder.registerProblem(parent, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new UseStringSearchFix(replacement));
                                             }
                                         }
                                     }
@@ -165,7 +162,7 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     parentExpression,
-                                                    String.format(messagePattern, replacement),
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                     new UseStringSearchFix(replacement)
                                             );
                                         }

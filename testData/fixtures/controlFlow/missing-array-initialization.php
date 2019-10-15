@@ -3,8 +3,8 @@
 function patterns() {
     while (++$index < 100) {
         foreach ([] as $value) {
-            <warning descr="The array initialization is missing, please place it at a proper place.">$array[]</warning> = $value;
-            <warning descr="The array initialization is missing, please place it at a proper place.">$array[$index][]</warning> = $value;
+            <warning descr="[EA] The array initialization is missing, please place it at a proper place.">$array[]</warning> = $value;
+            <warning descr="[EA] The array initialization is missing, please place it at a proper place.">$array[$index][]</warning> = $value;
         }
     }
 

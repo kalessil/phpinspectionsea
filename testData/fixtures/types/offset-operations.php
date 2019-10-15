@@ -32,37 +32,37 @@
             $strContainer[0] = 'a';
             $strContainer{0} = 'a';
             $strContainer
-                [<error descr="Resolved index type ([array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('', '')</error>] = 'a';
+                [<error descr="[EA] Resolved index type ([array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('', '')</error>] = 'a';
             $strContainer[]= 'a';
 
             $arrContainer = array();
             $arrContainer[0] = 'a';
             $arrContainer
-                [<error descr="Resolved index type ([array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('', '')</error>] = 'a';
+                [<error descr="[EA] Resolved index type ([array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('', '')</error>] = 'a';
             $arrContainer[]= 'a';
 
             $boolContainer = false;
-            <error descr="'$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[0]</error>
+            <error descr="[EA] '$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[0]</error>
                 = 'a';
-            <error descr="'$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[explode('', '')]</error>
+            <error descr="[EA] '$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[explode('', '')]</error>
                 = 'a';
 
             $objOffsetContainer = new OffsetSupport();
             $objOffsetContainer[''] = 0;
-            $objOffsetContainer[<error descr="Resolved index type ([int]) is incompatible with possible [string]. Probably just proper type hinting needed.">0</error>]
+            $objOffsetContainer[<error descr="[EA] Resolved index type ([int]) is incompatible with possible [string]. Probably just proper type hinting needed.">0</error>]
                 = 0;
             $objOffsetContainer
-                [<error descr="Resolved index type ([\stdClass]) is incompatible with possible [string]. Probably just proper type hinting needed.">new stdClass()</error>] = 0;
+                [<error descr="[EA] Resolved index type ([\stdClass]) is incompatible with possible [string]. Probably just proper type hinting needed.">new stdClass()</error>] = 0;
 
             $objMagicContainer = new MagicSupport();
             $objMagicContainer[0] = 0;
             $objMagicContainer
-                [<error descr="Resolved index type ([\stdClass]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">new stdClass()</error>] = 0;
+                [<error descr="[EA] Resolved index type ([\stdClass]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">new stdClass()</error>] = 0;
 
             $objStdContainer = new stdClass();
-            <error descr="'$objStdContainer' may not support offset operations (or its type not annotated properly: [\stdClass]).">$objStdContainer[0]</error>
+            <error descr="[EA] '$objStdContainer' may not support offset operations (or its type not annotated properly: [\stdClass]).">$objStdContainer[0]</error>
                 = 0;
-            <error descr="'$objStdContainer' may not support offset operations (or its type not annotated properly: [\stdClass]).">$objStdContainer[new stdClass()]</error>
+            <error descr="[EA] '$objStdContainer' may not support offset operations (or its type not annotated properly: [\stdClass]).">$objStdContainer[new stdClass()]</error>
                 = 0;
 
             /* TODO: this needs to be reported */

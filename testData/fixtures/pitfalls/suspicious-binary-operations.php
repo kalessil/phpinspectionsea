@@ -39,9 +39,9 @@ $x = [
     $x && <error descr="[EA] This operand enforces the operation result.">false</error>,
     $x && <error descr="[EA] This operand enforces the operation result.">null</error>,
     $x && <error descr="[EA] This operand doesn't make any sense here.">true</error>,
-    $x || <error descr="This operand doesn't make any sense here.">false</error>,
-    $x || <error descr="This operand doesn't make any sense here.">null</error>,
-    $x || <error descr="This operand enforces the operation result.">true</error>,
+    $x || <error descr="[EA] This operand doesn't make any sense here.">false</error>,
+    $x || <error descr="[EA] This operand doesn't make any sense here.">null</error>,
+    $x || <error descr="[EA] This operand enforces the operation result.">true</error>,
 ];
 
 /* a bug: ternary always returns the argument */

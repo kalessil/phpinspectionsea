@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +57,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
                     if (fieldName != null && fieldReference.getReferenceType().isStatic()) {
                         /* short cut: report all static fields writes */
                         if (!ALLOW_WRITE_FROM_SOURCE_CLASS) {
-                            holder.registerProblem(assignmentExpression, messageDisallowAnyWrites);
+                            holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(messageDisallowAnyWrites));
                             return;
                         }
                         /* analyze only external writes */
@@ -68,11 +69,11 @@ public class DisallowWritingIntoStaticPropertiesInspector extends BasePhpInspect
                                 final PhpClass   caller          = ((Method) scope).getContainingClass();
                                 final PsiElement referencedField = OpenapiResolveUtil.resolveReference((FieldReference) candidate);
                                 if (referencedField != null && caller != ((Field) referencedField).getContainingClass()) {
-                                    holder.registerProblem(assignmentExpression, messageDisallowExternalWrites);
+                                    holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(messageDisallowExternalWrites));
                                 }
                             } else {
                                 /* global, late static bind and function contexts */
-                                holder.registerProblem(assignmentExpression, messageDisallowExternalWrites);
+                                holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(messageDisallowExternalWrites));
                             }
                         }
                     }

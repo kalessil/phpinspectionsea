@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 final public class AssertBoolInvertedStrategy {
@@ -37,7 +38,7 @@ final public class AssertBoolInvertedStrategy {
                 final String replacementMethod = function.equals("assertTrue") ? "assertNotTrue" : "assertNotFalse";
                 holder.registerProblem(
                         reference,
-                        String.format(messagePattern, replacementMethod),
+                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacementMethod),
                         new TheLocalFix(holder.getProject(), replacementMethod, invertedParam)
                 );
                 return true;

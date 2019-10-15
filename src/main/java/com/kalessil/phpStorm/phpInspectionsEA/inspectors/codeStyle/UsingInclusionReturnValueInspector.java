@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.Include;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -18,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class UsingInclusionReturnValueInspector  extends BasePhpInspection {
-    private static final String message
-            = "Operating on this return mechanism is considered a bad practice. OOP can be used instead.";
+    private static final String message = "Operating on this return mechanism is considered a bad practice. OOP can be used instead.";
 
     @NotNull
     @Override
@@ -40,7 +40,7 @@ public class UsingInclusionReturnValueInspector  extends BasePhpInspection {
             @Override
             public void visitPhpInclude(@NotNull Include include) {
                 if (!OpenapiTypesUtil.isStatementImpl(include.getParent())) {
-                    holder.registerProblem(include, message);
+                    holder.registerProblem(include, ReportingUtil.wrapReportedMessage(message));
                 }
             }
         };

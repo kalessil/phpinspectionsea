@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -52,7 +53,7 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
                     ) {
                         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                         if (nameNode != null) {
-                            holder.registerProblem(nameNode, message, new TheLocalFix());
+                            holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
                         }
                     }
                 }

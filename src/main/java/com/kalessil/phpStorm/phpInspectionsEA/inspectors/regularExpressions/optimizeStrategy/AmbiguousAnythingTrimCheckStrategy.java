@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,10 +33,10 @@ final public class AmbiguousAnythingTrimCheckStrategy {
             int countBackRefs = StringUtils.countMatches(pattern, "\\0") - StringUtils.countMatches(pattern, "\\\\0");
             if (countBackRefs <= 0) {
                 if (pattern.startsWith(".*")) {
-                    holder.registerProblem(target, messageLeading, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageLeading), ProblemHighlightType.WEAK_WARNING);
                 }
                 if (pattern.endsWith(".*")) {
-                    holder.registerProblem(target, messageTrailing, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageTrailing), ProblemHighlightType.WEAK_WARNING);
                 }
             }
         }

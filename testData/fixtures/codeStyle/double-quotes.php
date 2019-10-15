@@ -1,9 +1,9 @@
 <?php
 
     /* patterns, incl. un-escaping */
-    echo <weak_warning descr="Safely use single quotes instead.">"string"</weak_warning>;
-    echo <weak_warning descr="Safely use single quotes instead.">"\$\""</weak_warning>;
-    echo <weak_warning descr="Safely use single quotes instead.">""</weak_warning>;
+    echo <weak_warning descr="[EA] Safely use single quotes instead.">"string"</weak_warning>;
+    echo <weak_warning descr="[EA] Safely use single quotes instead.">"\$\""</weak_warning>;
+    echo <weak_warning descr="[EA] Safely use single quotes instead.">""</weak_warning>;
 
     /* false-positives */
     echo '123';

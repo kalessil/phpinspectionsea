@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -125,7 +126,7 @@ final public class PlainApiUseCheckStrategy {
                 }
 
                 if (message != null) {
-                    holder.registerProblem(getPregMatchContext(reference), message, fixer);
+                    holder.registerProblem(getPregMatchContext(reference), ReportingUtil.wrapReportedMessage(message), fixer);
                     return;
                 }
             }

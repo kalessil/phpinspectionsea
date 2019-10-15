@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +29,7 @@ final public class UselessDotAllModifierCheckStrategy {
         if (modifiers != null && pattern != null && !pattern.isEmpty() && modifiers.indexOf('s') != -1) {
             final String normalized = pattern.replaceAll("\\[[^\\]]+\\]", "");
             if (StringUtils.countMatches(normalized, ".") - StringUtils.countMatches(normalized, "\\.") == 0) {
-                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
             }
         }
     }

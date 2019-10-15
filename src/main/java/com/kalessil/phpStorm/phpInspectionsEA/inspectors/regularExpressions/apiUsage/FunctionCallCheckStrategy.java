@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,10 +26,10 @@ final public class FunctionCallCheckStrategy {
         if (functionName != null && !functionName.isEmpty()) {
             final PsiElement[] arguments = reference.getParameters();
             if (arguments.length == 1 && functionName.equals("preg_quote")) {
-                holder.registerProblem(reference, messageQuote);
+                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageQuote));
             } else if (arguments.length == 2 && functionName.equals("preg_match_all")) {
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
-                    holder.registerProblem(reference, messageMatch, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageMatch), ProblemHighlightType.WEAK_WARNING);
                 }
             }
         }

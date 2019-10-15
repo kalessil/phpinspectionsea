@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,11 +101,11 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                                 if (inner instanceof Function) {
                                     final PsiElement name = NamedElementUtil.getNameIdentifier((Function) inner);
                                     if (!this.isByReference(name)) {
-                                        holder.registerProblem(argument, message);
+                                        holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(message));
                                     }
                                 }
                             } else if (argument instanceof NewExpression) {
-                                holder.registerProblem(argument, message);
+                                holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(message));
                             }
                         }
                     }

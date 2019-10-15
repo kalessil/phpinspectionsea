@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ final public class MissingDotAllCheckStrategy {
         if ((modifiers == null || modifiers.indexOf('s') == -1) && pattern != null && pattern.indexOf('>') != -1) {
             final Matcher matcher = regexTagContentPattern.matcher(pattern);
             if (matcher.matches()) {
-                holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
             }
         }
     }

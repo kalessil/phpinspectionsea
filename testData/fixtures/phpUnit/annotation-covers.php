@@ -22,7 +22,7 @@ namespace {
         public function testOffsetUnset2() {}
 
         /** @covers MyIterator::offsetUnzet */
-        public function <error descr="@covers referencing to a non-existing entity 'MyIterator::offsetUnzet'">testOffsetUnset3</error>() {}
+        public function <error descr="[EA] @covers referencing to a non-existing entity 'MyIterator::offsetUnzet'">testOffsetUnset3</error>() {}
 
         /** @covers \PUT\Covers\Annotation\MyArrayIterator::offsetUnset */
         public function testOffsetUnset4() {}

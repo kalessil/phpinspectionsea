@@ -42,5 +42,5 @@ function variable_variables() {
 
     $reported = 'reported';
 
-    return compact($name, <weak_warning descr="There is chance that it should be 'reported' here.">$reported</weak_warning>);
+    return compact($name, <weak_warning descr="[EA] There is chance that it should be 'reported' here.">$reported</weak_warning>);
 }

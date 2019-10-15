@@ -2,7 +2,7 @@
 
 
 /* a typo: comparison instead of assignment */
-$a <error descr="It seems that '=' should be here.">==</error> $b;
+$a <error descr="[EA] It seems that '=' should be here.">==</error> $b;
 
 /* a typo: greater or equal instead of has element definition */
 $a = ['x' <error descr="It seems that '=>' should be here.">>=</error> 'y'];

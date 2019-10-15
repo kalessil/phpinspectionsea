@@ -5,11 +5,11 @@ class CasesHolder {
 
     function trigger() {
         $one = $this->emitter();
-        <warning descr="Null pointer exception may occur here.">$one</warning>->unknownProperty = null;
+        <warning descr="[EA] Null pointer exception may occur here.">$one</warning>->unknownProperty = null;
 
         /* @var string|null $two */
         $two = $this->emitter();
-        <warning descr="Null pointer exception may occur here.">$two</warning>->unknownProperty = null;
+        <warning descr="[EA] Null pointer exception may occur here.">$two</warning>->unknownProperty = null;
 
         /* @var string $three */
         $three = $this->emitter();

@@ -20,7 +20,7 @@
 
     isset(
         $array[0]->property[0]->property,
-        <weak_warning descr="This argument can be skipped (handled by its array access).">$array[0]->property[0]</weak_warning>,
-        <weak_warning descr="This argument can be skipped (handled by its array access).">$array[0]->property</weak_warning>,
-        <weak_warning descr="This argument can be skipped (handled by its array access).">$array[0]</weak_warning>
+        <weak_warning descr="[EA] This argument can be skipped (handled by its array access).">$array[0]->property[0]</weak_warning>,
+        <weak_warning descr="[EA] This argument can be skipped (handled by its array access).">$array[0]->property</weak_warning>,
+        <weak_warning descr="[EA] This argument can be skipped (handled by its array access).">$array[0]</weak_warning>
     );

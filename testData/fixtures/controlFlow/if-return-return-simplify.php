@@ -25,7 +25,7 @@ class CasesHolder {
         return true;
     }
     public function ifReturnReturnSix($x) {
-        <warning descr="The construct can be replaced with 'return is_numeric($x)'.">if</warning> (is_numeric($x)) { return true; }
+        <warning descr="[EA] The construct can be replaced with 'return is_numeric($x)'.">if</warning> (is_numeric($x)) { return true; }
         return false;
     }
 
@@ -49,19 +49,19 @@ class CasesHolder {
     }
 
     public function ifNotReturnElseReturn($x): bool {
-        <warning descr="The construct can be replaced with 'return !$this->ifNotReturnElseReturn()'.">if</warning> (!$this->ifNotReturnElseReturn()) { return true; }
+        <warning descr="[EA] The construct can be replaced with 'return !$this->ifNotReturnElseReturn()'.">if</warning> (!$this->ifNotReturnElseReturn()) { return true; }
         else { return false; }
-        <warning descr="The construct can be replaced with 'return $this->ifNotReturnElseReturn()'.">if</warning> (!$this->ifNotReturnElseReturn()) { return false; }
+        <warning descr="[EA] The construct can be replaced with 'return $this->ifNotReturnElseReturn()'.">if</warning> (!$this->ifNotReturnElseReturn()) { return false; }
         else { return true; }
 
-        <warning descr="The construct can be replaced with 'return $this->ifNotReturnElseReturn()'.">if</warning> ($this->ifNotReturnElseReturn()) { return true; }
+        <warning descr="[EA] The construct can be replaced with 'return $this->ifNotReturnElseReturn()'.">if</warning> ($this->ifNotReturnElseReturn()) { return true; }
         else { return false; }
-        <warning descr="The construct can be replaced with 'return !($this->ifNotReturnElseReturn())'.">if</warning> ($this->ifNotReturnElseReturn()) { return false; }
+        <warning descr="[EA] The construct can be replaced with 'return !($this->ifNotReturnElseReturn())'.">if</warning> ($this->ifNotReturnElseReturn()) { return false; }
         else { return true; }
     }
 
     function ifAssignElseAssignReturn($x) {
-        <warning descr="The construct can be replaced with 'return $result = $x === 0'.">if</warning> ($x === 0) {
+        <warning descr="[EA] The construct can be replaced with 'return $result = $x === 0'.">if</warning> ($x === 0) {
             $result = true;
         } else {
             $result = false;
@@ -71,7 +71,7 @@ class CasesHolder {
 
     function assignIfAssignReturn($x) {
         $result = false;
-        <warning descr="The construct can be replaced with 'return $result = $x === 0'.">if</warning> ($x === 0) {
+        <warning descr="[EA] The construct can be replaced with 'return $result = $x === 0'.">if</warning> ($x === 0) {
             $result = true;
         }
         return $result;
@@ -79,7 +79,7 @@ class CasesHolder {
 
     function assignIfReturnReturn($x) {
         $result = false;
-        <warning descr="The construct can be replaced with 'return $x === 0'.">if</warning> ($x === 0) {
+        <warning descr="[EA] The construct can be replaced with 'return $x === 0'.">if</warning> ($x === 0) {
             return true;
         }
         return $result;

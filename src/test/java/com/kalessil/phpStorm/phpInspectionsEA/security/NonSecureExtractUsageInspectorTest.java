@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureExtra
 final public class NonSecureExtractUsageInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new NonSecureExtractUsageInspector());
-
         myFixture.configureByFile("testData/fixtures/security/extract.php");
         myFixture.testHighlighting(true, false, true);
     }

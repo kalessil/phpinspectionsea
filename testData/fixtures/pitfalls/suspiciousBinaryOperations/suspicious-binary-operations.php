@@ -2,8 +2,8 @@
 
 /* a pitfall: instanceof <trait> returns false */
 trait IOAT_Trait {}
-$x = <error descr="instanceof against traits returns 'false'.">$z instanceof IOAT_Trait</error>;
-$x = <error descr="instanceof against traits returns 'false'.">$z instanceof \IOAT_Trait</error>;
+$x = <error descr="[EA] instanceof against traits returns 'false'.">$z instanceof IOAT_Trait</error>;
+$x = <error descr="[EA] instanceof against traits returns 'false'.">$z instanceof \IOAT_Trait</error>;
 
 /* false-positive: instanceof in trait and late binding */
 trait IOAT_InTrait {
@@ -13,15 +13,15 @@ trait IOAT_InTrait {
 }
 
 /* a bug: left and right operands are identical */
-$a = <error descr="Left and right operands are identical.">$x == ($x)</error>;
-$a = <error descr="Left and right operands are identical.">($x) == $x</error>;
-$a = <error descr="Left and right operands are identical.">$x == $x</error>;
+$a = <error descr="[EA] Left and right operands are identical.">$x == ($x)</error>;
+$a = <error descr="[EA] Left and right operands are identical.">($x) == $x</error>;
+$a = <error descr="[EA] Left and right operands are identical.">$x == $x</error>;
 
 /* a bug: misplaced operator */
 class MisplacedOperations
 {
     public function method(bool $one) {
-        if (count($one <error descr="This operator is probably misplaced.">></error> 0)) {}
+        if (count($one <error descr="[EA] This operator is probably misplaced.">></error> 0)) {}
 
         if ($this->method($one > 0)) {}
     }
@@ -29,12 +29,12 @@ class MisplacedOperations
 
 /* a bug: hardcoded booleans */
 $x = [
-    $x && <error descr="This operand enforces the operation result.">false</error>,
-    $x && <error descr="This operand enforces the operation result.">null</error>,
-    $x && <error descr="This operand doesn't make any sense here.">true</error>,
-    $x || <error descr="This operand doesn't make any sense here.">false</error>,
-    $x || <error descr="This operand doesn't make any sense here.">null</error>,
-    $x || <error descr="This operand enforces the operation result.">true</error>,
+    $x && <error descr="[EA] This operand enforces the operation result.">false</error>,
+    $x && <error descr="[EA] This operand enforces the operation result.">null</error>,
+    $x && <error descr="[EA] This operand doesn't make any sense here.">true</error>,
+    $x || <error descr="[EA] This operand doesn't make any sense here.">false</error>,
+    $x || <error descr="[EA] This operand doesn't make any sense here.">null</error>,
+    $x || <error descr="[EA] This operand enforces the operation result.">true</error>,
 ];
 
 /* operations priority issues */

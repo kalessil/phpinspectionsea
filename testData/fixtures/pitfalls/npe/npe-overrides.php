@@ -6,8 +6,8 @@ class CasesHolder {
 
     function method() {
         $var = $this->returnsNullable(new stdClass());
-        $var = $this->returnsNullable(<warning descr="Null pointer exception may occur here.">$var</warning>);
-        $var = $this->returnsObject(<warning descr="Null pointer exception may occur here.">$var</warning>);
+        $var = $this->returnsNullable(<warning descr="[EA] Null pointer exception may occur here.">$var</warning>);
+        $var = $this->returnsObject(<warning descr="[EA] Null pointer exception may occur here.">$var</warning>);
         $var = $this->returnsObject($var);
     }
 }

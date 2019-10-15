@@ -6,7 +6,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.Cryptographica
 final public class CryptographicallySecureAlgorithmsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new CryptographicallySecureAlgorithmsInspector());
-
         myFixture.configureByFile("testData/fixtures/security/weak-algorithms.php");
         myFixture.testHighlighting(true, false, true);
     }

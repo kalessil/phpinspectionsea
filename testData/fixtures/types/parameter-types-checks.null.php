@@ -10,8 +10,8 @@ class CasesHolder {
             $second !== null,
 
             /* target cases */
-            <warning descr="Makes no sense, because this type is not defined in annotations.">$third === null</warning>,
-            <warning descr="Makes no sense, because it's always true according to annotations.">$third !== null</warning>,
+            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">$third === null</warning>,
+            <warning descr="[EA] Makes no sense, because it's always true according to annotations.">$third !== null</warning>,
 
             /* weakly typed comparison is not handled */
             $third == null,

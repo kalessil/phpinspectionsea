@@ -37,17 +37,17 @@ class CasesHolder
     }
 
     public function reportArrayAccessCases() {
-        $x = <error descr="'$x' seems to be not defined in the scope.">$x</error>[0][0] ?? null;
-        $e = empty(<error descr="'$e' seems to be not defined in the scope.">$e</error>[0][0]);
-        $i = isset(<error descr="'$i' seems to be not defined in the scope.">$i</error>[0][0]);
+        $x = <error descr="[EA] '$x' seems to be not defined in the scope.">$x</error>[0][0] ?? null;
+        $e = empty(<error descr="[EA] '$e' seems to be not defined in the scope.">$e</error>[0][0]);
+        $i = isset(<error descr="[EA] '$i' seems to be not defined in the scope.">$i</error>[0][0]);
 
         return [ $x, $e, $i ];
     }
 
     public function reportMemberReferencesCases() {
-        $x = <error descr="'$x' seems to be not defined in the scope.">$x</error>->property ?? null;
-        $e = empty(<error descr="'$e' seems to be not defined in the scope.">$e</error>->property);
-        $i = isset(<error descr="'$i' seems to be not defined in the scope.">$i</error>->method()[0]);
+        $x = <error descr="[EA] '$x' seems to be not defined in the scope.">$x</error>->property ?? null;
+        $e = empty(<error descr="[EA] '$e' seems to be not defined in the scope.">$e</error>->property);
+        $i = isset(<error descr="[EA] '$i' seems to be not defined in the scope.">$i</error>->method()[0]);
 
         return [ $x, $e, $i ];
     }

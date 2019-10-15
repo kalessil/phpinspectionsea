@@ -73,6 +73,6 @@ class ClassWithAnnotations
 
     public function __construct($property) {
         $this->annotatedProperty = $property;
-        <weak_warning descr="Property is used only in constructor, perhaps we are dealing with dead code here.">$this->typedProperty</weak_warning> = $property;
+        <weak_warning descr="[EA] Property is used only in constructor, perhaps we are dealing with dead code here.">$this->typedProperty</weak_warning> = $property;
     }
 }

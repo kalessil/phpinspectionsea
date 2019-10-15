@@ -2,7 +2,7 @@
 
 function cases_holder_isset_implicit() {
     $container = 'default';
-    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
     }
 
@@ -11,7 +11,7 @@ function cases_holder_isset_implicit() {
     $container = 'default';   if (isset($value)) { $value = $value; }
     $container = &$reference; if (isset($value)) { $container = $value; }
 
-    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
     } else {
         $container = 'default';
@@ -19,7 +19,7 @@ function cases_holder_isset_implicit() {
 
     if (isset($value)) {
         $container = $value;
-    } else <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    } else <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
     } else {
         $container = 'default';
@@ -29,7 +29,7 @@ function cases_holder_isset_implicit() {
     if (isset($value)) { $container = trim($value); } else { $container = 'default'; }
     if (isset($value)) { $value = $value; } else { $container = 'default'; }
 
-    <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] 'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         return $value;
     } else {
         return 'default';
@@ -38,7 +38,7 @@ function cases_holder_isset_implicit() {
     /* false-positives: value mismatches */
     if (isset($value)) { return trim($value); } else { return 'default'; }
 
-    <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] 'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         return $value;
     }
     return 'default';
@@ -51,12 +51,12 @@ function cases_holder_isset_implicit() {
 function cases_holder_isset_non_implicit() {
     return [
         function ($value) {
-            <weak_warning descr="'return $value ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+            <weak_warning descr="[EA] 'return $value ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
                 return $value;
             }
         },
         function ($value) {
-            <weak_warning descr="'return $value ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+            <weak_warning descr="[EA] 'return $value ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
                 return $value;
             }
             return;
@@ -66,18 +66,18 @@ function cases_holder_isset_non_implicit() {
 
 function cases_holder_identity() {
     $container = 'default';
-    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
+    <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
         $container = $value;
     }
     $container = 'default';
-    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (!($value === null)) {
+    <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (!($value === null)) {
         $container = $value;
     }
 
     /* false-positive: inverted logic */
     $container = 'default'; if ($value === null) { $container = $value; }
 
-    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
+    <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
         $container = $value;
     } else {
         $container = 'default';
@@ -86,7 +86,7 @@ function cases_holder_identity() {
     /* false-positive: mismatched value */
     if ($value !== null) { $container = trim($value); } else { $container = 'default'; }
 
-    <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
+    <weak_warning descr="[EA] 'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
         return $value;
     } else {
         return 'default';
@@ -95,7 +95,7 @@ function cases_holder_identity() {
     /* false-positive: mismatched value */
     if ($value !== null) { return trim($value); } else { return 'default'; }
 
-    <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
+    <weak_warning descr="[EA] 'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> ($value !== null) {
         return $value;
     }
     return 'default';
@@ -106,14 +106,14 @@ function cases_holder_identity() {
 
 function cases_holder_array_key_exists() {
     $container = null;
-    <weak_warning descr="'$container = $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
+    <weak_warning descr="[EA] '$container = $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
         $container = $array[$key];
     }
 
     /* false-positive: no-null alternative */
     $container = 'default'; if (array_key_exists($key, $array)) { $container = $array[$key]; }
 
-    <weak_warning descr="'$container = $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
+    <weak_warning descr="[EA] '$container = $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
         $container = $array[$key];
     } else {
         $container = null;
@@ -122,7 +122,7 @@ function cases_holder_array_key_exists() {
     /* false-positive: mismatched value */
     if (array_key_exists($key, $array)) { $container = trim($array[$key]); } else { $container = null; }
 
-    <weak_warning descr="'return $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
+    <weak_warning descr="[EA] 'return $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
         return $array[$key];
     } else {
         return null;
@@ -131,7 +131,7 @@ function cases_holder_array_key_exists() {
     /* false-positive: mismatched value */
     if (array_key_exists($key, $array)) { return trim($array[$key]); } else { return null; }
 
-    <weak_warning descr="'return $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
+    <weak_warning descr="[EA] 'return $array[$key] ?? null' can be used instead (reduces cognitive load).">if</weak_warning> (array_key_exists($key, $array)) {
         return $array[$key];
     }
     return null;

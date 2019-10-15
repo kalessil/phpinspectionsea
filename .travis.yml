@@ -47,5 +47,6 @@ script:
   - php .travis/get-project-traverse-free-check.php
   - php .travis/verify-visitors-stubs.php
   - php .travis/verify-visitors-definitions.php
+  - php .travis/verify-messages-prefixing.php
   - php .travis/fix-short-and-display-names.php
   - ./gradlew check buildPlugin

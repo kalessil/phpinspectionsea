@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -65,10 +66,10 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                         if (isLeftConstant != isRightConstant) {
                             final boolean isRegular = ComparisonStyle.isRegular();
                             if (isRightConstant && !isRegular) {
-                                problemsHolder.registerProblem(expression, messageUseYoda, new TheLocalFix());
+                                problemsHolder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageUseYoda), new TheLocalFix());
                             }
                             if (isLeftConstant && isRegular) {
-                                problemsHolder.registerProblem(expression, messageUseRegular, new TheLocalFix());
+                                problemsHolder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageUseRegular), new TheLocalFix());
                             }
                         }
                     }

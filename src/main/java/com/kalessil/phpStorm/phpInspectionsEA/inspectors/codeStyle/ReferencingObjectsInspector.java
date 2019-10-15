@@ -99,7 +99,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                         .forEach(parameter ->
                                 holder.registerProblem(
                                         parameter,
-                                        String.format(messageParameter, parameter.getName()),
+                                        String.format(ReportingUtil.wrapReportedMessage(messageParameter), parameter.getName()),
                                         new ParameterLocalFix(holder.getProject(), parameter)
                                 )
                         );
@@ -112,7 +112,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                 if (parent instanceof AssignmentExpression && OpenapiTypesUtil.isAssignmentByReference((AssignmentExpression) parent)) {
                     holder.registerProblem(
                             expression,
-                            messageAssignment,
+                            ReportingUtil.wrapReportedMessage(messageAssignment),
                             new InstantiationLocalFix()
                     );
                 }

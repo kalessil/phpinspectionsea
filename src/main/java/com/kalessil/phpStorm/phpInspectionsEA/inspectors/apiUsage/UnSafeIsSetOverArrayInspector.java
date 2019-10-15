@@ -123,7 +123,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                             final String replacement = String.join(" ", fragments);
                             holder.registerProblem(
                                     issetInverted ? issetExpression.getParent() : issetExpression,
-                                    String.format(patternUseNullComparison, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(patternUseNullComparison), replacement),
                                     ProblemHighlightType.WEAK_WARNING,
                                     new CompareToNullFix(replacement)
                             );
@@ -134,12 +134,12 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
                 /* TODO: has method/function reference as index */
                 if (REPORT_CONCATENATION_IN_INDEXES && !isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
-                    holder.registerProblem(argument, messageConcatenationInIndex);
+                    holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(messageConcatenationInIndex));
                     return;
                 }
 
                 if (SUGGEST_TO_USE_ARRAY_KEY_EXISTS && !isArrayAccess((ArrayAccessExpression) argument)) {
-                    holder.registerProblem(argument, messageUseArrayKeyExists, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(messageUseArrayKeyExists), ProblemHighlightType.WEAK_WARNING);
                 }
             }
 

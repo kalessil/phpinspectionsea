@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
@@ -76,7 +77,7 @@ public class StrTrUsageAsStrReplaceInspector extends BasePhpInspection {
                                     );
                                     holder.registerProblem(
                                             reference,
-                                            String.format(messagePattern, replacement),
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                             new UseStringReplaceFix(replacement)
                                     );
                                 }

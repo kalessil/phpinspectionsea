@@ -21,6 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +61,7 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
 
                 /* Case 1: suggest providing blowfish as the 2nd parameter*/
                 if (arguments.length == 1) {
-                    holder.registerProblem(reference, messageWeakSalt);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageWeakSalt));
                     return;
                 }
 
@@ -72,14 +73,14 @@ public class NonSecureCryptUsageInspector extends BasePhpInspection {
 
                 /* Case 2: using $2a$; use $2y$ instead - http://php.net/security/crypt_blowfish.php*/
                 if (saltValue.startsWith("$2a$")) {
-                    holder.registerProblem(reference, messageInsecureSalt, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageInsecureSalt), ProblemHighlightType.GENERIC_ERROR);
                     return;
                 }
 
                 /* Case 3: -> password_hash(PASSWORD_BCRYPT) in PHP 5.5+ */
                 final boolean isBlowfish = saltValue.startsWith("$2y$") || saltValue.startsWith("$2x$");
                 if (isBlowfish && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
-                    holder.registerProblem(reference, messagePasswordHash, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messagePasswordHash), ProblemHighlightType.WEAK_WARNING);
                 }
             }
 

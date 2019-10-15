@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -57,9 +58,9 @@ public class DuplicateArrayKeysInspector extends BasePhpInspection {
                                 final boolean isPairDuplicated = !(value instanceof ArrayCreationExpression) &&
                                                                  OpenapiEquivalenceUtil.areEqual(value, processed.get(literal));
                                 if (isPairDuplicated) {
-                                    holder.registerProblem(pair, messageDuplicatePair, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(pair, ReportingUtil.wrapReportedMessage(messageDuplicatePair), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                                 } else {
-                                    holder.registerProblem(key, messageDuplicateKey);
+                                    holder.registerProblem(key, ReportingUtil.wrapReportedMessage(messageDuplicateKey));
                                 }
                             }
                             processed.put(literal, value);

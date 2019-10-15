@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -61,7 +62,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                                     final boolean isRightPartReturned = OpenapiEquivalenceUtil.areEqual(subject, falseVariant) || OpenapiEquivalenceUtil.areEqual(subject, trueVariant);
                                     if (isRightPartReturned) {
                                         final String replacement = falseVariant.getText();
-                                        holder.registerProblem(expression, String.format(patternUseOperands, replacement), new SimplifyFix(replacement));
+                                        holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(patternUseOperands), replacement), new SimplifyFix(replacement));
                                     }
                                 }
                             }

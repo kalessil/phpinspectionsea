@@ -108,7 +108,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                             );
                             holder.registerProblem(
                                     target,
-                                    String.format(messagePattern, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                     new CompareToEmptyStringFix(replacement)
                             );
                         }

@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
 
                 if (variables.size() > 1) {
                     final String replacement = String.format("compact(%s)", String.join(", ", variables));
-                    holder.registerProblem(expression.getFirstChild(), String.format(messagePattern, replacement), new UseCompactFix(replacement));
+                    holder.registerProblem(expression.getFirstChild(), String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new UseCompactFix(replacement));
                 }
                 variables.clear();
             }

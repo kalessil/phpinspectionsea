@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -92,7 +93,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                                     final String message     = String.format(messagePattern, replacement);
                                     holder.registerProblem(
                                             statement.getFirstChild(),
-                                            message,
+                                            ReportingUtil.wrapReportedMessage(message),
                                             new SimplifyFix(holder.getProject(), statement, elseBranch == null ? second : statement, replacement)
                                     );
                                 }

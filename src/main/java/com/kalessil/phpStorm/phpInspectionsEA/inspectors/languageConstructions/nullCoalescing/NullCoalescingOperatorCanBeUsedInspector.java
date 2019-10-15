@@ -129,7 +129,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         if (replacement != null) {
                             holder.registerProblem(
                                     expression.getFirstChild(),
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern,) replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                     new ReplaceMultipleConstructsFix(holder.getProject(), previous.getParent(), expression, replacement)
                             );
                         }

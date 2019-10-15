@@ -2,7 +2,7 @@
 
 function cases_holder() {
     $container = 'default';
-    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
     }
 
@@ -20,7 +20,7 @@ function cases_holder() {
         $value = $value;
     }
 
-    <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
     } else {
         $container = 'default';
@@ -28,7 +28,7 @@ function cases_holder() {
 
     if (isset($value)) {
         $container = $value;
-    } else <weak_warning descr="'$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    } else <weak_warning descr="[EA] '$container = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $container = $value;
     } else {
         $container = 'default';
@@ -46,7 +46,7 @@ function cases_holder() {
         $container = 'default';
     }
 
-    <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] 'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         return $value;
     } else {
         return 'default';
@@ -59,7 +59,7 @@ function cases_holder() {
         return 'default';
     }
 
-    <weak_warning descr="'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] 'return $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         return $value;
     }
     return 'default';
@@ -71,7 +71,7 @@ function cases_holder() {
     return 'default';
 
     $one = $two = 'default';
-    <weak_warning descr="'$one = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
+    <weak_warning descr="[EA] '$one = $value ?? 'default'' can be used instead (reduces cognitive load).">if</weak_warning> (isset($value)) {
         $one = $value;
     }
 }

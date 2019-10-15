@@ -24,10 +24,10 @@ class CasesHolder
 
     public function reportedCases()
     {
-        $x = <error descr="'$x' seems to be not defined in the scope.">$x</error> ?? '';
-        $e = empty(<error descr="'$e' seems to be not defined in the scope.">$e</error>);
-        $i = isset(<error descr="'$i' seems to be not defined in the scope.">$i</error>);
-        $z = <error descr="'$y' seems to be not defined in the scope.">$y</error> ?? '';
+        $x = <error descr="[EA] '$x' seems to be not defined in the scope.">$x</error> ?? '';
+        $e = empty(<error descr="[EA] '$e' seems to be not defined in the scope.">$e</error>);
+        $i = isset(<error descr="[EA] '$i' seems to be not defined in the scope.">$i</error>);
+        $z = <error descr="[EA] '$y' seems to be not defined in the scope.">$y</error> ?? '';
         return [$x, $z, $e, $i];
     }
 

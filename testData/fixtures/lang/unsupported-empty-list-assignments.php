@@ -1,8 +1,8 @@
 <?php
 
 /* case 1: regular array syntax */
-foreach ($array as <error descr="Provokes a PHP Fatal error (Cannot use empty list).">list</error>(, )) {}
-<error descr="Provokes a PHP Fatal error (Cannot use empty list).">list</error>(, ) = $array;
+foreach ($array as <error descr="[EA] Provokes a PHP Fatal error (Cannot use empty list).">list</error>(, )) {}
+<error descr="[EA] Provokes a PHP Fatal error (Cannot use empty list).">list</error>(, ) = $array;
 
 /* false-positives: variable is presented */
 foreach ($array as list($variable, )) {}

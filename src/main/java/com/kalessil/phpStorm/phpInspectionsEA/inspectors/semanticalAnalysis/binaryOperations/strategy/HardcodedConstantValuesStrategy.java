@@ -7,6 +7,7 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,11 +44,11 @@ final public class HardcodedConstantValuesStrategy {
     ) {
         return Stream.of(left, right).anyMatch(operand -> {
             if (PhpLanguageUtil.isFalse(operand) || PhpLanguageUtil.isNull(operand)) {
-                holder.registerProblem(operand, messageEnforces);
+                holder.registerProblem(operand, ReportingUtil.wrapReportedMessage(messageEnforces));
                 return true;
             }
             if (PhpLanguageUtil.isTrue(operand)) {
-                holder.registerProblem(operand, messageSenseless, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                holder.registerProblem(operand, ReportingUtil.wrapReportedMessage(messageSenseless), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                 return true;
             }
             return false;

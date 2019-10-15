@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                         if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                             final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                             if (classNameNode != null) {
-                                holder.registerProblem(classNameNode, message);
+                                holder.registerProblem(classNameNode, ReportingUtil.wrapReportedMessage(message));
                             }
                         }
                     }

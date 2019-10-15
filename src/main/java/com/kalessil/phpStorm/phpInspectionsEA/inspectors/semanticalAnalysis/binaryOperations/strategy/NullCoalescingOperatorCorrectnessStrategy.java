@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -29,7 +30,7 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
             if (operation != null) {
                 final IElementType operator = operation.getNode().getElementType();
                 if (result = (operator == PhpTokenTypes.opNOT || PhpTokenTypes.tsCAST_OPS.contains(operator))) {
-                    holder.registerProblem(left, String.format(messagePattern, left.getText()));
+                    holder.registerProblem(left, String.format(ReportingUtil.wrapReportedMessage(messagePattern), left.getText()));
                 }
             }
         }

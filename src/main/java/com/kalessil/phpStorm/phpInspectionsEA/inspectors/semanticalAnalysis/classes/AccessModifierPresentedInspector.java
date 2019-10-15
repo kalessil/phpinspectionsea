@@ -19,6 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -69,7 +70,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                         final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
                         if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
                             final String message = String.format(messagePattern, method.getName());
-                            holder.registerProblem(methodName, message, new MemberVisibilityFix(holder.getProject(), modifiers));
+                            holder.registerProblem(methodName, ReportingUtil.wrapReportedMessage(message), new MemberVisibilityFix(holder.getProject(), modifiers));
                         }
                     }
                 }
@@ -84,13 +85,13 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             /* {const}.isPublic() always returns true, even if visibility is not declared */
                             if (ANALYZE_CONSTANTS && checkConstantVisibility && field.getPrevPsiSibling() == null) {
                                 final String message = String.format(messagePattern, field.getName());
-                                holder.registerProblem(fieldName, message, new ConstantVisibilityFix(holder.getProject(), field));
+                                holder.registerProblem(fieldName, ReportingUtil.wrapReportedMessage(message), new ConstantVisibilityFix(holder.getProject(), field));
                             }
                         } else {
                             final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
                             if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
                                 final String message = String.format(messagePattern, field.getName());
-                                holder.registerProblem(fieldName, message, new MemberVisibilityFix(holder.getProject(), modifiers));
+                                holder.registerProblem(fieldName, ReportingUtil.wrapReportedMessage(message), new MemberVisibilityFix(holder.getProject(), modifiers));
                             }
                         }
                     }

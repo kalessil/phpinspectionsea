@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +77,7 @@ final public class MisplacedOperatorStrategy {
                                             .replace("%o%", operator.getText())
                                             .replace("%c%", call.getText())
                                             .replace(expression.getText(), leftOperand.getText());
-                                    holder.registerProblem(operator, message, new MisplacedOperatorFix(holder.getProject(), replacement, call));
+                                    holder.registerProblem(operator, ReportingUtil.wrapReportedMessage(message), new MisplacedOperatorFix(holder.getProject(), replacement, call));
                                     return true;
                                 }
                             }

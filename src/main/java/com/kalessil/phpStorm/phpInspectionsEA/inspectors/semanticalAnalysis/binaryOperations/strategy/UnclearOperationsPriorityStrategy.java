@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -33,14 +34,14 @@ final public class UnclearOperationsPriorityStrategy {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
                 if (parentOperator != operator && (parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR)) {
                     final String replacement = '(' + expression.getText() + ')';
-                    holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
+                    holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new WrapItAsItIsFix(replacement));
                     return true;
                 }
             }
             /* assignment dramatically changing precedence */
             else if (OpenapiTypesUtil.isAssignment(parent) && !OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                 final String replacement = '(' + expression.getText() + ')';
-                holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
+                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new WrapItAsItIsFix(replacement));
                 return true;
             }
         } else if (PhpTokenTypes.tsCOMPARE_OPS.contains(operator)) {
@@ -50,7 +51,7 @@ final public class UnclearOperationsPriorityStrategy {
                 if (assignedValue != null) {
                     final String value       = assignedValue.getText();
                     final String replacement = assignment.getText().replace(value, '(' + value + ')');
-                    holder.registerProblem(parent, message, new WrapItAsItIsFix(replacement));
+                    holder.registerProblem(parent, ReportingUtil.wrapReportedMessage(message), new WrapItAsItIsFix(replacement));
                     return true;
                 }
             } else if (PhpTokenTypes.tsCOMPARE_ORDER_OPS.contains(operator) && operator != PhpTokenTypes.opSPACESHIP) {
@@ -60,7 +61,7 @@ final public class UnclearOperationsPriorityStrategy {
                     if (OpenapiTypesUtil.is(candidate.getOperation(), PhpTokenTypes.opNOT)) {
                         final String value       = candidate.getText();
                         final String replacement = expression.getText().replace(value, '(' + value + ')');
-                        holder.registerProblem(expression, message, new WrapItAsItIsFix(replacement));
+                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new WrapItAsItIsFix(replacement));
                         return true;
                     }
                 }

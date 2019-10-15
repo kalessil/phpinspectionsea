@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,7 +94,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     final Method method = (Method) element;
                     if (!method.getAccess().isPublic()) {
                         final String message = patternNotPublic.replace("%m%", method.getName());
-                        holder.registerProblem(target, message);
+                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
                     }
 
                     boolean needStatic = false;
@@ -122,7 +123,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     }
                     if (needStatic) {
                         final String message = patternNotStatic.replace("%m%", method.getName());
-                        holder.registerProblem(target, message);
+                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
                     }
                 }
             }

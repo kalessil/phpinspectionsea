@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +60,7 @@ final public class NullableArgumentComparisonStrategy {
                             final String replacement
                                     = String.format("%s %s %s", argument.getText(), mapping.get(operator), value.getText());
                             final String message = String.format(messagePattern, replacement);
-                            holder.registerProblem(target, message, new NullableArgumentComparisonFix(replacement));
+                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), new NullableArgumentComparisonFix(replacement));
                             result = true;
                         }
                         types.clear();

@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -66,7 +67,7 @@ public class UselessReturnInspector extends BasePhpInspection {
                                                       !this.isStaticVariable(variable, scope);
                             if (isTarget) {
                                 final String replacement = String.format("return %s;", assignmentValue.getText());
-                                holder.registerProblem(expression, messageConfusing, new SimplifyFix(replacement));
+                                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageConfusing), new SimplifyFix(replacement));
                             }
                         }
                     }
@@ -91,7 +92,7 @@ public class UselessReturnInspector extends BasePhpInspection {
                 if (lastStatement instanceof PhpReturn) {
                     final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) lastStatement);
                     if (returnValue == null) {
-                        holder.registerProblem(lastStatement, messageSenseless, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        holder.registerProblem(lastStatement, ReportingUtil.wrapReportedMessage(messageSenseless), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                     }
                 }
             }

@@ -3,8 +3,8 @@
     $x = [];
     $y = [];
 
-    $z = $x <warning descr="Perhaps array_merge/array_replace can be used instead. Feel free to disable the inspection if '+' is intended.">+</warning> $y;
-    $z <warning descr="Perhaps array_merge/array_replace can be used instead. Feel free to disable the inspection if '+' is intended.">+=</warning> $y;
+    $z = $x <warning descr="[EA] Perhaps array_merge/array_replace can be used instead. Feel free to disable the inspection if '+' is intended.">+</warning> $y;
+    $z <warning descr="[EA] Perhaps array_merge/array_replace can be used instead. Feel free to disable the inspection if '+' is intended.">+=</warning> $y;
 
     /* false-positives: implicit arrays, obvious types and behaviour */
     $a = [] + $z;

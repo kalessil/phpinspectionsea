@@ -10,10 +10,10 @@ namespace SecondNamespace {
     use FirstNamespace\AliasedClass as AliasClass;
 
     return [
-        <error descr="::class result and the class qualified name are not identical (case mismatch).">TestClass</error>::class,
-        <error descr="::class result and the class qualified name are not identical (case mismatch).">aliasclass</error>::class,
+        <error descr="[EA] ::class result and the class qualified name are not identical (case mismatch).">TestClass</error>::class,
+        <error descr="[EA] ::class result and the class qualified name are not identical (case mismatch).">aliasclass</error>::class,
         AliasClass::class,
-        <error descr="::class result and the class qualified name are not identical (case mismatch).">SubSpace\subspaceclass</error>::class,
+        <error descr="[EA] ::class result and the class qualified name are not identical (case mismatch).">SubSpace\subspaceclass</error>::class,
         SubSpace\SubSpaceClass::class,
     ];
 }
@@ -36,9 +36,9 @@ namespace ThirdNamespace {
     {
         public function method() {
             return [
-                <error descr="::class result and the class qualified name are not identical (case mismatch).">TestClass</error>::class,
-                <error descr="::class result and the class qualified name are not identical (case mismatch).">\stdclass</error>::class,
-                <error descr="::class result and the class qualified name are not identical (case mismatch).">SubSpace\subspaceclass</error>::class,
+                <error descr="[EA] ::class result and the class qualified name are not identical (case mismatch).">TestClass</error>::class,
+                <error descr="[EA] ::class result and the class qualified name are not identical (case mismatch).">\stdclass</error>::class,
+                <error descr="[EA] ::class result and the class qualified name are not identical (case mismatch).">SubSpace\subspaceclass</error>::class,
                 SubSpace\SubSpaceClass::class,
                 \stdClass::class,
                 parent::class,

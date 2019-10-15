@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -71,7 +72,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
                                                 arguments[0].getText(),
                                                 needsFilter ? (arguments.length == 2 ? arguments[1].getText() + " | GLOB_ONLYDIR" : "GLOB_ONLYDIR") : arguments[1].getText()
                                         );
-                                        holder.registerProblem(outerCall, String.format(messageUnboxGlobPattern, replacement), new OptimizeDirectoriesFilteringFix(replacement));
+                                        holder.registerProblem(outerCall, String.format(ReportingUtil.wrapReportedMessage(messageUnboxGlobPattern), replacement), new OptimizeDirectoriesFilteringFix(replacement));
                                         return;
                                     }
                                 }
@@ -88,7 +89,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
                                 arguments[0].getText(),
                                 functionName.equals("scandir") ? "SCANDIR_SORT_NONE" : "GLOB_NOSORT"
                         );
-                        holder.registerProblem(reference, String.format(messageSortsByDefaultPattern, functionName), new NoSortFix(replacement));
+                        holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messageSortsByDefaultPattern), functionName), new NoSortFix(replacement));
                     }
                 }
             }

@@ -10,10 +10,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -68,7 +65,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                     final boolean isTarget = Arrays.stream(arrayArgument.getChildren())
                                             .noneMatch(e -> e instanceof ArrayHashElement || OpenapiTypesUtil.is(e.getFirstChild(), PhpTokenTypes.opVARIADIC));
                                     if (isTarget) {
-                                        holder.registerProblem(reference, messageSprintf);
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageSprintf));
                                     }
                                 }
                             }
@@ -77,7 +74,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                             if (values.length == 1 && ! (values[0] instanceof ArrayHashElement)) {
                                 final boolean isTarget = !OpenapiTypesUtil.is(values[0].getFirstChild(), PhpTokenTypes.opVARIADIC);
                                 if (isTarget) {
-                                    holder.registerProblem(reference, String.format(messagePattern, values[0].getText()));
+                                    holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), values[0].getText()));
                                 }
                             }
                         } else {
@@ -100,7 +97,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                                 );
                                                 holder.registerProblem(
                                                         reference,
-                                                        String.format(messagePattern, replacement),
+                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                         new UseAlternativeFix(replacement)
                                                 );
                                             }
@@ -116,7 +113,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                                     );
                                                     holder.registerProblem(
                                                             reference,
-                                                            String.format(messagePattern, replacement),
+                                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                             new UseAlternativeFix(replacement)
                                                     );
                                                 }
@@ -133,7 +130,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                             /* case: mimics http_build_query('(&amp;)|&') behaviour */
                             final String glue = ((StringLiteralExpression) glueArgument).getContents();
                             if (glue.equals("&") || glue.equals("&amp;")) {
-                                holder.registerProblem(reference, messageBuildQuery);
+                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageBuildQuery));
                             }
                         }
                     }

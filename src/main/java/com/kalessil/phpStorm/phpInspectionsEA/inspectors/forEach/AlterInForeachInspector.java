@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -109,7 +110,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
                             /* check if warning needs to be reported */
                             if (!isRequirementFullFilled) {
-                                holder.registerProblem(objForeachValue, messageMissingUnset);
+                                holder.registerProblem(objForeachValue, ReportingUtil.wrapReportedMessage(messageMissingUnset));
                             }
                         } else {
                             /* check for unset in parent foreach-statements: foreach-{foreach}-unset */
@@ -141,7 +142,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                             unsetArgumentName.equals(foreachValueName)
                                         ) {
                                             final String message = patternAmbiguousUnset.replace("%v%", foreachValueName);
-                                            holder.registerProblem(unsetExpression, message, ProblemHighlightType.WEAK_WARNING);
+                                            holder.registerProblem(unsetExpression, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
                                         }
                                     }
                                 }
@@ -162,7 +163,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                         prevElement = prevElement.getPrevSibling();
                     }
                     if (OpenapiTypesUtil.is(prevElement, PhpTokenTypes.opBIT_AND)) {
-                        holder.registerProblem(prevElement, messageKeyReference, ProblemHighlightType.ERROR);
+                        holder.registerProblem(prevElement, ReportingUtil.wrapReportedMessage(messageKeyReference), ProblemHighlightType.ERROR);
                     }
                 }
             }
@@ -218,7 +219,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                 final String message = patternSuggestReference
                                         .replace("%c%", strName)
                                         .replace("%v%", strName);
-                                holder.registerProblem(operand, message, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(operand, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
 
                                 return;
                             }

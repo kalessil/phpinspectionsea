@@ -12,10 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPsiSearchUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -130,13 +127,13 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                         /* operating with variables should be taken into account */
                                         final boolean isVariablesUsed = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, (Class) Variable.class) != null;
                                         if (null == loopInterrupter && isVariablesUsed) {
-                                            holder.registerProblem(reportingTarget, messageDisconnected);
+                                            holder.registerProblem(reportingTarget, ReportingUtil.wrapReportedMessage(messageDisconnected));
                                         }
                                     }
                                 }
 
                                 if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
-                                    holder.registerProblem(oneInstruction, messageUseClone);
+                                    holder.registerProblem(oneInstruction, ReportingUtil.wrapReportedMessage(messageUseClone));
                                 }
                             }
                         }

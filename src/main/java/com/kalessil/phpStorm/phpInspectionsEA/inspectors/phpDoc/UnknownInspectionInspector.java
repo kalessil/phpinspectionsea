@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,7 +78,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                         if (!inspections.isEmpty()) {
                             final PsiElement target = tag.getFirstChild();
                             if (target != null) {
-                                holder.registerProblem(target, String.format(message, String.join(", ", inspections)));
+                                holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(message), String.join(", ", inspections)));
                             }
                             inspections.clear();
                         }

@@ -64,7 +64,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                 if (container != null && this.isLimitFor(limit, container)) {
                                         holder.registerProblem(
                                                 expression.getFirstChild(),
-                                                foreachInvariant,
+                                                ReportingUtil.wrapReportedMessage(foreachInvariant),
                                                 new UseForeachFix(holder.getProject(), expression, indexVariable, null, container, limit)
                                         );
                                 }
@@ -122,7 +122,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                 if (!isContainerUsed) {
                                     holder.registerProblem(
                                             parent.getFirstChild(),
-                                            eachFunctionUsed,
+                                            ReportingUtil.wrapReportedMessage(eachFunctionUsed),
                                             ProblemHighlightType.GENERIC_ERROR,
                                             fixer
                                     );

@@ -8,6 +8,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -69,7 +70,7 @@ public class InfinityLoopInspector extends BasePhpInspection {
                                 final PhpExpression subject = value.getClassReference();
                                 final String reference      = subject == null ? null : subject.getText();
                                 if (reference != null && references.contains(reference)) {
-                                    holder.registerProblem(value, message);
+                                    holder.registerProblem(value, ReportingUtil.wrapReportedMessage(message));
                                 }
                             }
                         }

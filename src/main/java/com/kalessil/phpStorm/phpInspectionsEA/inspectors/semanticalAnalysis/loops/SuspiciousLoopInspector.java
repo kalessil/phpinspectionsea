@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -59,7 +60,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
             @Override
             public void visitPhpFor(@NotNull For statement) {
                 if (statement.getConditionalExpressions().length > 1) {
-                    holder.registerProblem(statement.getFirstChild(), messageMultipleConditions);
+                    holder.registerProblem(statement.getFirstChild(), ReportingUtil.wrapReportedMessage(messageMultipleConditions));
                 }
                 if (VERIFY_VARIABLES_OVERRIDE) {
                     this.inspectVariables(statement);
@@ -81,7 +82,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                             final String message = patternOverridesParameter
                                 .replace("%v%", variable)
                                 .replace("%t%", function instanceof Method ? "method" : "function");
-                            holder.registerProblem(loop.getFirstChild(), message);
+                            holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                         }
                     });
                     parameters.clear();
@@ -96,7 +97,7 @@ public class SuspiciousLoopInspector extends BasePhpInspection {
                         loopVariables.forEach(variable -> {
                             if (parentVariables.contains(variable)) {
                                 final String message = patternOverridesLoopVars.replace("%v%", variable);
-                                holder.registerProblem(loop.getFirstChild(), message);
+                                holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                             }
                         });
                         parentVariables.clear();

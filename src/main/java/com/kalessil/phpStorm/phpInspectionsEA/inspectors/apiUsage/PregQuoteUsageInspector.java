@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -48,11 +49,11 @@ public class PregQuoteUsageInspector extends PhpInspection {
                 if (functionName != null && functionName.equals("preg_quote")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
-                        holder.registerProblem(reference, messageMissing);
+                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageMissing));
                     } else if (arguments.length == 2) {
                         final PsiElement escaped = arguments[1];
                         if (escaped instanceof ConstantReference && escaped.getText().equals("DIRECTORY_SEPARATOR")) {
-                            holder.registerProblem(escaped, messageSeparator, new UseSlashSeparatorFix("'/'"));
+                            holder.registerProblem(escaped, ReportingUtil.wrapReportedMessage(messageSeparator), new UseSlashSeparatorFix("'/'"));
                         }
                     }
                 }

@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -115,7 +116,7 @@ public class SubstringCompareInspector extends PhpInspection {
 
                                     if (isTarget) {
                                         final String replacement = String.valueOf(givenOffset > 0 ? stringLength : -stringLength);
-                                        holder.registerProblem(offset, message, new LengthFix(replacement));
+                                        holder.registerProblem(offset, ReportingUtil.wrapReportedMessage(message), new LengthFix(replacement));
                                     }
                                 }
                             }

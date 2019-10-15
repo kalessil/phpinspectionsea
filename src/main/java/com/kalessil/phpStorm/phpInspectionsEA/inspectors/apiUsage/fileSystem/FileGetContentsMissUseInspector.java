@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -91,7 +92,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                 );
                                                 holder.registerProblem(
                                                         outerCall,
-                                                        String.format(messagePattern, replacement),
+                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                         new UseCopyFix(replacement)
                                                 );
                                             }
@@ -107,7 +108,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                 );
                                                 holder.registerProblem(
                                                         outerCall,
-                                                        String.format(messagePattern, replacement),
+                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                         new UseFileHashFix(replacement)
                                                 );
                                             }
@@ -124,7 +125,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                 );
                                                 holder.registerProblem(
                                                         outerCall,
-                                                        String.format(messagePattern, replacement),
+                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                         new UseFileHashFix(replacement)
                                                 );
                                             }
@@ -137,7 +138,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     outerCall,
-                                                    String.format(messagePattern, replacement),
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                     new UseFileHashFix(replacement)
                                             );
                                         }

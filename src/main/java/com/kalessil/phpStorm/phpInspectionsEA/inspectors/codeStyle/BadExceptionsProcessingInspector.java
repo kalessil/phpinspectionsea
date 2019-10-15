@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -53,7 +54,7 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                     if (expressionsCount > 3) {
                         holder.registerProblem(
                                 tryStatement.getFirstChild(),
-                                String.format(messagePattern, String.valueOf(expressionsCount))
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), String.valueOf(expressionsCount))
                         );
                     }
                 }
@@ -73,9 +74,9 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                                     .anyMatch(v -> variableName.equals(v.getName()));
                             if (!isVariableUsed) {
                                 if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                                    holder.registerProblem(variable, messageFailSilently);
+                                    holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageFailSilently));
                                 } else {
-                                    holder.registerProblem(variable, messageChainedException);
+                                    holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageChainedException));
                                 }
                             } else if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                                 /* the catch should be the last and only re-throw */
@@ -85,7 +86,7 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                                         final PhpThrow lastThrow  = (PhpThrow) last;
                                         final PsiElement argument = lastThrow.getArgument();
                                         if (argument != null && OpenapiEquivalenceUtil.areEqual(argument, variable)) {
-                                            holder.registerProblem(variable, messageRethrown);
+                                            holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageRethrown));
                                         }
                                     }
                                 }

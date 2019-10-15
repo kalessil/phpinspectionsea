@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -55,7 +56,7 @@ public class UnnecessaryUseAliasInspector extends PhpInspection {
                         if (symbol.endsWith('\\' + alias)) {
                             holder.registerProblem(
                                     expression.getLastChild(),
-                                    String.format(messageAlias, alias),
+                                    String.format(ReportingUtil.wrapReportedMessage(messageAlias), alias),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                     new TheLocalFix()
                             );
@@ -65,7 +66,7 @@ public class UnnecessaryUseAliasInspector extends PhpInspection {
                                 for (final PsiElement definition : ((PhpFile) file).getTopLevelDefs().values()) {
                                     if (definition instanceof PhpUse && ((PhpUse) definition).getFQN().equals(symbol)) {
                                         if (definition != expression) {
-                                            holder.registerProblem(expression.getFirstChild(), messageImport);
+                                            holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageImport));
                                             break;
                                         }
                                     }

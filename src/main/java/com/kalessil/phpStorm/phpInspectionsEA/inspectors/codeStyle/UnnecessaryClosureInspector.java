@@ -11,10 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,7 +89,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     expression,
-                                                    String.format(messagePattern, replacement),
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                     new UseCallbackFix(replacement)
                                             );
@@ -106,7 +103,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                 final String replacement = String.format("'%s'", castingsMapping.get(operator));
                                                 holder.registerProblem(
                                                         expression,
-                                                        String.format(messagePattern, replacement),
+                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                         new UseCallbackFix(replacement)
                                                 );

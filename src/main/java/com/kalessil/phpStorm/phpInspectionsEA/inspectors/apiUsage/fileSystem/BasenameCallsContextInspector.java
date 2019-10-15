@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -70,7 +71,7 @@ public class BasenameCallsContextInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     reference,
-                                                    String.format(messagePattern, replacement),
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                     new UseSecondArgumentFix(replacement)
                                             );
                                             break;

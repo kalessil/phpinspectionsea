@@ -8,12 +8,12 @@ namespace BasicCasesHolder {
 
     class ClassOne extends AbstractOne
         implements
-            <warning descr="'\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractOne'.">ParentInterface</warning> {}
+            <warning descr="[EA] '\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractOne'.">ParentInterface</warning> {}
 
     class ClassTwo extends AbstractTwo
         implements
-            <warning descr="'\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ParentInterface</warning>,
-            <warning descr="'\BasicCasesHolder\ChildInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ChildInterface</warning> {}
+            <warning descr="[EA] '\BasicCasesHolder\ParentInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ParentInterface</warning>,
+            <warning descr="[EA] '\BasicCasesHolder\ChildInterface' is already announced in '\BasicCasesHolder\AbstractTwo'.">ChildInterface</warning> {}
 }
 
 namespace AliasingCasesHolder {
@@ -22,5 +22,5 @@ namespace AliasingCasesHolder {
     abstract class AbstractClass implements \Traversable {}
     class RegularClass extends AbstractClass
         implements
-            <warning descr="'\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</warning> {}
+            <warning descr="[EA] '\Traversable' is already announced in '\AliasingCasesHolder\AbstractClass'.">ForeachSupport</warning> {}
 }

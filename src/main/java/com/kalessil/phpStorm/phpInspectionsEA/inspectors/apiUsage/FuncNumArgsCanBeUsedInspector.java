@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -53,7 +54,7 @@ public class FuncNumArgsCanBeUsedInspector extends PhpInspection {
                             final String namespace = innerReference.getImmediateNamespaceName();
                             holder.registerProblem(
                                     reference,
-                                    message,
+                                    ReportingUtil.wrapReportedMessage(message),
                                     new UseAlternativeFix(namespace + "func_num_args()")
                             );
                         }

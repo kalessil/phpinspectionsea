@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -89,7 +90,7 @@ public class RandomApiMigrationInspector extends PhpInspection {
 
                         holder.registerProblem(
                                 reference,
-                                String.format(messagePattern, functionName, suggestion),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName, suggestion),
                                 new ModernizeCallFixer(suggestion)
                         );
                     }

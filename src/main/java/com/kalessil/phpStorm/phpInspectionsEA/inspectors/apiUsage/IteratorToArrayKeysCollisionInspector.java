@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -54,7 +55,7 @@ public class IteratorToArrayKeysCollisionInspector extends PhpInspection {
                         );
                         holder.registerProblem(
                                 reference,
-                                messagePattern,
+                                ReportingUtil.wrapReportedMessage(messagePattern),
                                 new IgnoreOriginalKeysFix(replacement)
                         );
                     }

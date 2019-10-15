@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -50,11 +51,11 @@ public class MktimeUsageInspector extends PhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 0) {
                         if (this.isFromRootNamespace(reference)) {
-                            holder.registerProblem(reference, messageUseTime, new UseTimeFunctionLocalFix());
+                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageUseTime), new UseTimeFunctionLocalFix());
                         }
                     } else if (arguments.length == 7 && arguments[6] instanceof PhpTypedElement) {
                         if (this.isFromRootNamespace(reference)) {
-                            holder.registerProblem(arguments[6], messageParameterDeprecated, ProblemHighlightType.LIKE_DEPRECATED);
+                            holder.registerProblem(arguments[6], ReportingUtil.wrapReportedMessage(messageParameterDeprecated), ProblemHighlightType.LIKE_DEPRECATED);
                         }
                     }
                 }

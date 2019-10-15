@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -50,7 +51,7 @@ public class StreamSelectUsageInspector extends PhpInspection {
                                 if (OpenapiTypesUtil.isNumber(threshold)) {
                                     try {
                                         if (Long.parseLong(threshold.getText()) < 200000) {
-                                            holder.registerProblem(microseconds, message);
+                                            holder.registerProblem(microseconds, ReportingUtil.wrapReportedMessage(message));
                                         }
                                     } catch (final NumberFormatException failure) {
                                         // do nothing

@@ -9,10 +9,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -79,7 +76,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                                     if (!isError && ownFieldNameNode != null) {
                                         holder.registerProblem(
                                                 ownFieldNameNode,
-                                                String.format(messagePattern, clazz.getName(), trait.getName(), ownFieldName),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), clazz.getName(), trait.getName(), ownFieldName),
                                                 ProblemHighlightType.WEAK_WARNING
                                         );
                                     }
@@ -131,7 +128,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                                     if (reportTarget != null) {
                                         holder.registerProblem(
                                                 reportTarget,
-                                                String.format(messagePattern, clazz.getName(), trait.getName(), parentFieldName),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), clazz.getName(), trait.getName(), parentFieldName),
                                                 isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING
                                         );
                                     }

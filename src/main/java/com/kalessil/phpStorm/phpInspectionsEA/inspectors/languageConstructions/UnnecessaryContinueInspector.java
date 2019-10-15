@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +63,7 @@ public class UnnecessaryContinueInspector extends PhpInspection {
                         if (body != null) {
                             final List<PsiElement> lastStatements = this.collectLastStatements(body, new ArrayList<>());
                             if (lastStatements.stream().anyMatch(statement -> continueStatement == statement)) {
-                                holder.registerProblem(continueStatement, message, new RemoveUnnecessaryStatementFix());
+                                holder.registerProblem(continueStatement, ReportingUtil.wrapReportedMessage(message), new RemoveUnnecessaryStatementFix());
                             }
                             lastStatements.clear();
                         }

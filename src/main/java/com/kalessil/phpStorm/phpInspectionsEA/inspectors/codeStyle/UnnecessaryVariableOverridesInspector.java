@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -94,10 +95,10 @@ public class UnnecessaryVariableOverridesInspector extends PhpInspection {
                                             }
 
                                             holder.registerProblem(
-                                                candidate,
-                                                message,
-                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                new MergeCallsFix(holder.getProject(), value, candidateValue, previous.getParent())
+                                                    candidate,
+                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                    new MergeCallsFix(holder.getProject(), value, candidateValue, previous.getParent())
                                             );
                                         }
                                     }

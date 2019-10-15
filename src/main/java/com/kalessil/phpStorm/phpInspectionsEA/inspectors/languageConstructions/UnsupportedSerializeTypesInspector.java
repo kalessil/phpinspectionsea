@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -71,7 +72,7 @@ public class UnsupportedSerializeTypesInspector extends PhpInspection {
                             if (!foundTypes.isEmpty()) {
                                 holder.registerProblem(
                                         arguments[0],
-                                        String.format(messagePattern, foundTypes.get(0)),
+                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), foundTypes.get(0)),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                                 foundTypes.clear();

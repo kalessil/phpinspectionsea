@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -89,13 +90,13 @@ public class TestingUnfriendlyApisInspector extends PhpInspection {
                     if (mocksCount >= SCREAM_THRESHOLD) {
                         holder.registerProblem(
                                 nameIdentifier,
-                                String.format(messagePattern, mocksCount),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), mocksCount),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     } else if (mocksCount >= COMPLAIN_THRESHOLD) {
                         holder.registerProblem(
                                 nameIdentifier,
-                                String.format(messagePattern, mocksCount),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), mocksCount),
                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                         );
                     }

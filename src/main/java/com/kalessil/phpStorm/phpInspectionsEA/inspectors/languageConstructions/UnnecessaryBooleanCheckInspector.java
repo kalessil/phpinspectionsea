@@ -77,7 +77,7 @@ public class UnnecessaryBooleanCheckInspector extends PhpInspection {
                                                             (isValueInverted && operation == PhpTokenTypes.opNOT_IDENTICAL && PhpLanguageUtil.isFalse(bool)) ||
                                                             (!isValueInverted && operation == PhpTokenTypes.opIDENTICAL && PhpLanguageUtil.isFalse(bool));
                                 final String replacement  = (invertValue ? "!" : "") + value.getText();
-                                holder.registerProblem(expression, String.format(message, replacement), new SimplifyFix(replacement));
+                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(message), replacement), new SimplifyFix(replacement));
                             }
                         }
                     }

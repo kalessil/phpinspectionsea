@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -61,7 +62,7 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
                                     isTarget = false;
                                 }
                                 if (isTarget) {
-                                    holder.registerProblem(statement, String.format(messagePattern, code));
+                                    holder.registerProblem(statement, String.format(ReportingUtil.wrapReportedMessage(messagePattern), code));
                                     break;
                                 }
                             }

@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -59,7 +60,7 @@ public class MissingElseKeywordInspector extends PhpInspection {
                         last = last.getLastChild();
                     }
                     if (last != null && !(last.getParent() instanceof Else)) {
-                        holder.registerProblem(expression.getFirstChild(), message);
+                        holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                     }
                 }
             }

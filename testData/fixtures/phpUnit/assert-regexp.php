@@ -3,8 +3,8 @@
 class TestAssertRegExp
 {
     public function test() {
-        <weak_warning descr="'assertRegExp(...)' would fit more here.">$this->assertTrue(preg_match('', '...') > 0)</weak_warning>;
-        <weak_warning descr="'assertNotRegExp(...)' would fit more here.">$this->assertFalse(preg_match('', '...') > 0)</weak_warning>;
+        <weak_warning descr="[EA] 'assertRegExp(...)' would fit more here.">$this->assertTrue(preg_match('', '...') > 0)</weak_warning>;
+        <weak_warning descr="[EA] 'assertNotRegExp(...)' would fit more here.">$this->assertFalse(preg_match('', '...') > 0)</weak_warning>;
 
         <weak_warning descr="[EA] 'assertNotRegExp(...)' would fit more here.">$this->assertSame(0, preg_match('', '...'))</weak_warning>;
         <weak_warning descr="[EA] 'assertRegExp(...)' would fit more here.">$this->assertSame(1, preg_match('', '...'))</weak_warning>;
@@ -20,8 +20,8 @@ class TestAssertRegExp
     }
 
     public function testWithMessages() {
-        <weak_warning descr="'assertRegExp(...)' would fit more here.">$this->assertTrue(preg_match('', '...') > 0, '...')</weak_warning>;
-        <weak_warning descr="'assertNotRegExp(...)' would fit more here.">$this->assertFalse(preg_match('', '...') > 0, '...')</weak_warning>;
+        <weak_warning descr="[EA] 'assertRegExp(...)' would fit more here.">$this->assertTrue(preg_match('', '...') > 0, '...')</weak_warning>;
+        <weak_warning descr="[EA] 'assertNotRegExp(...)' would fit more here.">$this->assertFalse(preg_match('', '...') > 0, '...')</weak_warning>;
 
         <weak_warning descr="[EA] 'assertNotRegExp(...)' would fit more here.">$this->assertSame(0, preg_match('', '...'), '...')</weak_warning>;
         <weak_warning descr="[EA] 'assertRegExp(...)' would fit more here.">$this->assertSame(1, preg_match('', '...'), '...')</weak_warning>;

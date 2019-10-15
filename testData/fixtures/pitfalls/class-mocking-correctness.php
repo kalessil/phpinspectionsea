@@ -32,39 +32,39 @@ namespace {
     $phpUnitOld = new \PHPUnit_Framework_TestCase();
     $phpUnitNew = new \PHPUnit\Framework\TestCase();
 
-    $phpUnitOld->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
-    $phpUnitOld->getMock(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
-    $phpUnitOld->getMockClass(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
+    $phpUnitOld->getMockBuilder(<error descr="[EA] Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
+    $phpUnitOld->getMock(<error descr="[EA] Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
+    $phpUnitOld->getMockClass(<error descr="[EA] Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
     $phpUnitOld->getMockBuilder(stdClass::class);
 
-    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
-    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">'FinalClazz'</error>);
-    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">'\FinalClazz'</error>);
-    $phpUnitNew->getMockBuilder(<error descr="Causes reflection errors as the referenced class is final.">"\\FinalClazz"</error>);
-    $phpUnitNew->getMockClass(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
+    $phpUnitNew->getMockBuilder(<error descr="[EA] Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
+    $phpUnitNew->getMockBuilder(<error descr="[EA] Causes reflection errors as the referenced class is final.">'FinalClazz'</error>);
+    $phpUnitNew->getMockBuilder(<error descr="[EA] Causes reflection errors as the referenced class is final.">'\FinalClazz'</error>);
+    $phpUnitNew->getMockBuilder(<error descr="[EA] Causes reflection errors as the referenced class is final.">"\\FinalClazz"</error>);
+    $phpUnitNew->getMockClass(<error descr="[EA] Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
     $phpUnitNew->getMockBuilder(stdClass::class);
 
-    $phpUnitNew->createMock(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
-    $phpUnitNew->createMock(<error descr="Causes reflection errors as the referenced class is a trait.">TraitClazz::class</error>);
+    $phpUnitNew->createMock(<error descr="[EA] Causes reflection errors as the referenced class is final.">FinalClazz::class</error>);
+    $phpUnitNew->createMock(<error descr="[EA] Causes reflection errors as the referenced class is a trait.">TraitClazz::class</error>);
     $phpUnitNew->createMock(stdClass::class);
 
-    $phpUnitNew->getMockForAbstractClass(<error descr="Needs an abstract class here.">FinalClazz::class</error>);
-    $phpUnitNew->getMockForTrait(<error descr="Needs a trait here.">FinalClazz::class</error>);
+    $phpUnitNew->getMockForAbstractClass(<error descr="[EA] Needs an abstract class here.">FinalClazz::class</error>);
+    $phpUnitNew->getMockForTrait(<error descr="[EA] Needs a trait here.">FinalClazz::class</error>);
 
-    $phpUnitOld->getMockBuilder(<error descr="Perhaps it was intended to mock it with getMockForAbstractClass method.">AbstractClazz::class</error>);
+    $phpUnitOld->getMockBuilder(<error descr="[EA] Perhaps it was intended to mock it with getMockForAbstractClass method.">AbstractClazz::class</error>);
     $phpUnitOld->getMockBuilder(AbstractClazz::class)->getMockForAbstractClass();
-    $phpUnitOld->getMockBuilder(<error descr="Perhaps it was intended to mock it with getMockForTrait method.">TraitClazz::class</error>);
+    $phpUnitOld->getMockBuilder(<error descr="[EA] Perhaps it was intended to mock it with getMockForTrait method.">TraitClazz::class</error>);
     $phpUnitOld->getMockBuilder(TraitClazz::class)->getMockForTrait();
     $phpUnitOld->getMockBuilder(InterfaceClazz::class);
 
     class ClazzSpec extends \PhpSpec\ObjectBehavior
     {
-        function it_does_something(<error descr="Causes reflection errors as the referenced class is final.">FinalClazz</error> $clazz) {}
+        function it_does_something(<error descr="[EA] Causes reflection errors as the referenced class is final.">FinalClazz</error> $clazz) {}
     }
 
     class NeedsConstructorMocking   { public function __construct($parameter){} }
     class NeedsNoConstructorMocking { public function __construct($parameter = null){} }
 
-    $phpUnitNew->getMockBuilder(<error descr="Needs constructor to be disabled or supplied with arguments.">NeedsConstructorMocking::class</error>)->getMock();
+    $phpUnitNew->getMockBuilder(<error descr="[EA] Needs constructor to be disabled or supplied with arguments.">NeedsConstructorMocking::class</error>)->getMock();
     $phpUnitNew->getMockBuilder(NeedsNoConstructorMocking::class)->getMock();
 }

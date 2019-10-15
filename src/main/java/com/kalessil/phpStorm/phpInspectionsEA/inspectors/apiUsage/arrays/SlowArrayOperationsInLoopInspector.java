@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -72,12 +73,12 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                                 if (OpenapiTypesUtil.isLoop(current)) {
                                     if (context instanceof AssignmentExpression) {
                                         if (this.isTargetAssignment((AssignmentExpression) context, reference) && this.isFromRootNamespace(reference)) {
-                                            holder.registerProblem(reference, String.format(messagePattern, functionName));
+                                            holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName));
                                         }
                                         return;
                                     } else if (context instanceof MethodReference) {
                                         if (this.isTargetReference((MethodReference) context, reference) && this.isFromRootNamespace(reference)) {
-                                            holder.registerProblem(reference, String.format(messagePattern, functionName));
+                                            holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName));
                                         }
                                         return;
                                     }

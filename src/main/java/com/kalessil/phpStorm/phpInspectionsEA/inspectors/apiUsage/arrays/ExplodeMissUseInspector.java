@@ -15,10 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -123,9 +120,9 @@ public class ExplodeMissUseInspector extends PhpInspection {
                                         }
                                         final String message = String.format(messagePattern, replacement);
                                         if (innerCall == targetArgument) {
-                                            holder.registerProblem(target, message, new UseAlternativeFix(replacement));
+                                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), new UseAlternativeFix(replacement));
                                         } else {
-                                            holder.registerProblem(target, message);
+                                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
                                         }
                                     }
                                 }

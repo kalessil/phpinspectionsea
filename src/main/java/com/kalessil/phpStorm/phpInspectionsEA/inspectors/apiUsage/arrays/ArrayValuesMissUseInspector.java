@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -65,29 +66,29 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                     switch (outerCallName) {
                                         case "count":
                                         case "sizeof":
-                                            holder.registerProblem(reference, messageCount, new ReplaceFix(innerArguments[0].getText()));
+                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageCount), new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "in_array":
-                                            holder.registerProblem(reference, messageInArray, new ReplaceFix(innerArguments[0].getText()));
+                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageInArray), new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "array_column":
                                         case "array_combine":
                                         case "array_values":
                                         case "implode":
-                                            holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
+                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageGeneric), new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "str_replace":
                                         case "str_ireplace":
                                         case "preg_replace":
                                             final PsiElement[] replaceArguments = outerCall.getParameters();
                                             if (replaceArguments.length >= 3 && replaceArguments[1] == reference) {
-                                                holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
+                                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageGeneric), new ReplaceFix(innerArguments[0].getText()));
                                             }
                                             break;
                                         case "array_slice":
                                             final PsiElement[] sliceArguments = outerCall.getParameters();
                                             if (sliceArguments.length < 4) {
-                                                holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
+                                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageGeneric), new ReplaceFix(innerArguments[0].getText()));
                                             }
                                             break;
                                         default:
@@ -100,7 +101,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                         else if (parent instanceof ForeachStatement) {
                             final ForeachStatement foreach = (ForeachStatement) parent;
                             if (foreach.getKey() == null && !foreach.getVariables().isEmpty()) {
-                                holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
+                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageGeneric), new ReplaceFix(innerArguments[0].getText()));
                             }
                         }
 
@@ -112,20 +113,20 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                 if (argumentName.equals("array_column")) {
                                     final PsiElement[] argumentArguments = argument.getParameters();
                                     if (argumentArguments.length == 2) {
-                                        holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageGeneric), new ReplaceFix(argument.getText()));
                                     }
                                 } else if (argumentName.equals("array_slice")) {
                                     final PsiElement[] argumentArguments = argument.getParameters();
                                     if (argumentArguments.length < 4) {
-                                        holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageGeneric), new ReplaceFix(argument.getText()));
                                     } else if (argumentArguments.length == 4 && PhpLanguageUtil.isFalse(argumentArguments[3])) {
-                                        holder.registerProblem(reference, messageGeneric, new ReplaceFix(argument.getText()));
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageGeneric), new ReplaceFix(argument.getText()));
                                     }
                                 } else if (argumentName.equals("array_flip")) {
                                     final PsiElement[] argumentArguments = argument.getParameters();
                                     if (argumentArguments.length == 1) {
                                         final String replacement = String.format("%sarray_keys(%s)", reference.getImmediateNamespaceName(), argumentArguments[0].getText());
-                                        holder.registerProblem(reference, messageKeys, new ReplaceFix(replacement));
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageKeys), new ReplaceFix(replacement));
                                     }
                                 }
                             }
@@ -138,7 +139,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                 final boolean isTarget = Arrays.stream(children)
                                         .noneMatch(e -> e instanceof ArrayHashElement || OpenapiTypesUtil.is(e.getFirstChild(), PhpTokenTypes.opVARIADIC));
                                 if (isTarget) {
-                                    holder.registerProblem(reference, messageGeneric, new ReplaceFix(innerArguments[0].getText()));
+                                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageGeneric), new ReplaceFix(innerArguments[0].getText()));
                                 }
                             }
                         }

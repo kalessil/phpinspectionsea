@@ -10,10 +10,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,7 +73,10 @@ public class InArrayCanBeUsedInspector extends PhpInspection {
                                                            PsiTreeUtil.findChildOfType(subject, FunctionReference.class) != null;
                                 if (isTarget) {
                                     final String alternative = String.format("%sin_array(..., [...])", operator == PhpTokenTypes.opOR ? "" : "!");
-                                    holder.registerProblem(values.get(values.size() - 1).getParent(), String.format(messagePattern, alternative));
+                                    holder.registerProblem(
+                                            values.get(values.size() - 1).getParent(),
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), alternative)
+                                    );
                                 }
                             }
                             values.clear();

@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -75,7 +76,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                                     );
                                     holder.registerProblem(
                                             reference,
-                                            String.format(messageNegativeLimitPattern, replacement),
+                                            String.format(ReportingUtil.wrapReportedMessage(messageNegativeLimitPattern), replacement),
                                             new AddPNegativeLimitArgumentFixer(replacement)
                                     );
                                 }
@@ -89,7 +90,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                             );
                             holder.registerProblem(
                                     reference,
-                                    String.format(messagePositiveLimitPattern, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePositiveLimitPattern), replacement),
                                     new AddPositiveLimitArgumentFixer(replacement)
                             );
                         }

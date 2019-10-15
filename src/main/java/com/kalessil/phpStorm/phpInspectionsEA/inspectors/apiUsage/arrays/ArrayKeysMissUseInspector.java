@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -59,10 +60,10 @@ public class ArrayKeysMissUseInspector extends PhpInspection {
                                     switch (outerCallName) {
                                         case "count":
                                         case "sizeof":
-                                            holder.registerProblem(reference, messageCount, new ReplaceFix(innerArguments[0].getText()));
+                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageCount), new ReplaceFix(innerArguments[0].getText()));
                                             break;
                                         case "array_unique":
-                                            holder.registerProblem(outerCall, messageArrayUnique, new ReplaceFix(reference.getText()));
+                                            holder.registerProblem(outerCall, ReportingUtil.wrapReportedMessage(messageArrayUnique), new ReplaceFix(reference.getText()));
                                             break;
                                         /* NOTE: "array_slice" was checked, but it changes semantics */
                                         default:

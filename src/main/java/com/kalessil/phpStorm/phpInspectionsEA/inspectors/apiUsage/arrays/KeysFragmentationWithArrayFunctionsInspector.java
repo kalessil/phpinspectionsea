@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -75,7 +76,7 @@ public class KeysFragmentationWithArrayFunctionsInspector extends PhpInspection 
                                                 if (containerName.equals(variableName)) {
                                                     final ArrayIndex index = access.getIndex();
                                                     if (index != null && OpenapiTypesUtil.isNumber(index.getValue())) {
-                                                        holder.registerProblem(reference.getFirstChild(), message);
+                                                        holder.registerProblem(reference.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                                                         break;
                                                     }
                                                 }
@@ -87,7 +88,7 @@ public class KeysFragmentationWithArrayFunctionsInspector extends PhpInspection 
                                                         .filter(a   -> a instanceof Variable)
                                                         .anyMatch(a -> ((Variable) a).getName().equals(variableName));
                                                 if (isTarget && this.isInPotentiallyBuggyCall(usedArguments[0].getParent())) {
-                                                    holder.registerProblem(reference.getFirstChild(), message);
+                                                    holder.registerProblem(reference.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                                                 }
                                             }
                                         }
@@ -95,7 +96,7 @@ public class KeysFragmentationWithArrayFunctionsInspector extends PhpInspection 
                                 }
                             }
                         } else if (this.isInPotentiallyBuggyCall(parent)) {
-                            holder.registerProblem(reference.getFirstChild(), message);
+                            holder.registerProblem(reference.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                         }
                     }
                 }

@@ -23,6 +23,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +79,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         if (replacement != null) {
                             holder.registerProblem(
                                     expression,
-                                    String.format(messagePattern, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                     new ReplaceSingleConstructFix(replacement)
                             );
                             break;
@@ -128,7 +129,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                         if (replacement != null) {
                             holder.registerProblem(
                                     expression.getFirstChild(),
-                                    String.format(messagePattern, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern,) replacement),
                                     new ReplaceMultipleConstructsFix(holder.getProject(), previous.getParent(), expression, replacement)
                             );
                         }
@@ -148,7 +149,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     if (replacement != null) {
                         holder.registerProblem(
                                 expression.getFirstChild(),
-                                String.format(messagePattern, replacement),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                 new ReplaceMultipleConstructsFix(holder.getProject(), expression, next, replacement)
                         );
                     }
@@ -172,7 +173,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                 if (replacement != null) {
                                     holder.registerProblem(
                                             expression.getFirstChild(),
-                                            String.format(messagePattern, replacement),
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                             new ReplaceMultipleConstructsFix(holder.getProject(), expression, expression, replacement)
                                     );
                                 }
@@ -184,7 +185,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                                     if (replacement != null) {
                                         holder.registerProblem(
                                                 expression.getFirstChild(),
-                                                String.format(messagePattern, replacement),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                 new ReplaceMultipleConstructsFix(holder.getProject(), expression, expression, replacement)
                                         );
                                     }

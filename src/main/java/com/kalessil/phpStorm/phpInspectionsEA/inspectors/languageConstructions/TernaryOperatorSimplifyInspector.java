@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,7 +74,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                                     final String replacement = this.generateReplacement((BinaryExpression) condition, trueVariant);
                                     if (replacement != null) {
                                         final String message = String.format(messagePattern, replacement);
-                                        holder.registerProblem(expression, message, new SimplifyFix(replacement));
+                                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new SimplifyFix(replacement));
                                     }
                                 }
                             }

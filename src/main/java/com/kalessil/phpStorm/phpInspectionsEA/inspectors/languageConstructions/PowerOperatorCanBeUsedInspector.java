@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -59,7 +60,7 @@ public class PowerOperatorCanBeUsedInspector extends BasePhpInspection {
                                             .replace("%b%", arguments[0].getText());
                             holder.registerProblem(
                                     reference,
-                                    String.format(messagePattern, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                     new UseTheOperatorFix(replacement)
                             );
                         }

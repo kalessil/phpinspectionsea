@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -86,7 +87,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                         if (parentField.getModifier().isPrivate()) {
                             if (REPORT_PRIVATE_REDEFINITION) {
                                 final String message = patternProtectedCandidate.replace("%c%", parentFieldHolder.getFQN());
-                                holder.registerProblem(fieldNameNode, message, ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(fieldNameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
                             }
                             return;
                         }
@@ -95,7 +96,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                         if (!ownField.getModifier().getAccess().isWeakerThan(parentField.getModifier().getAccess())) {
                            /* fire common warning */
                             final String message = patternShadows.replace("%p%", ownFieldName).replace("%c%", parentFieldHolder.getFQN());
-                            holder.registerProblem(fieldNameNode, message, ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(fieldNameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
                         }
                     }
                 }

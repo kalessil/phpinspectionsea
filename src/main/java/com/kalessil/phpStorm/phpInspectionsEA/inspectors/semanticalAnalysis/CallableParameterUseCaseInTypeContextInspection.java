@@ -201,7 +201,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                     final PsiElement operation = ((UnaryExpression) callParent).getOperation();
                                     isReversedCheck            = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
                                 }
-                                holder.registerProblem(functionCall, isReversedCheck ? messageNoSense : messageViolationInCheck);
+                                holder.registerProblem(functionCall, ReportingUtil.wrapReportedMessage(isReversedCheck ? messageNoSense : messageViolationInCheck));
                             }
                             continue;
                         }
@@ -296,7 +296,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                                         final boolean isViolation = !this.isTypeCompatibleWith(type, paramTypes, index);
                                         if (isViolation) {
-                                            holder.registerProblem(value, String.format(patternViolationInAssignment, type));
+                                            holder.registerProblem(value, String.format(ReportingUtil.wrapReportedMessage(patternViolationInAssignment), type));
                                             break;
                                         }
                                     }

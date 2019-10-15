@@ -119,13 +119,13 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     if (method.getAccess().equals(parentMethod.getAccess())) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(messagePatternIdentical, method.getName()),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePatternIdentical), method.getName()),
                                 canFix ? new DropMethodFix() : null
                         );
                     } else {
                         holder.registerProblem(
                                 methodName,
-                                String.format(messagePatternProxy, method.getName()),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePatternProxy), method.getName()),
                                 canFix ? new ProxyCallFix() : null
                         );
                     }

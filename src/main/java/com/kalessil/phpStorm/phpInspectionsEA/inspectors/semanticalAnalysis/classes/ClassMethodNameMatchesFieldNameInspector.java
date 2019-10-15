@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,12 +55,12 @@ public class ClassMethodNameMatchesFieldNameInspector extends BasePhpInspection 
                         if (resolvedType != null && nameNode != null) {
                             final PhpType knownType = resolvedType.filterUnknown();
                             if (knownType.isEmpty()) {
-                                holder.registerProblem(nameNode, messageFieldType);
+                                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageFieldType));
                             } else {
                                 final boolean isCallable = knownType.getTypes().stream()
                                         .anyMatch(t -> Types.getType(t).equals(Types.strCallable));
                                 if (isCallable) {
-                                    holder.registerProblem(nameNode, messageMatches);
+                                    holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageMatches));
                                 }
                             }
                         }

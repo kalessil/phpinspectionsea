@@ -14,6 +14,7 @@ import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -62,7 +63,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
                     return;
                 }
 
-                holder.registerProblem(expression, message, new TheLocalFix());
+                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
             }
         };
     }

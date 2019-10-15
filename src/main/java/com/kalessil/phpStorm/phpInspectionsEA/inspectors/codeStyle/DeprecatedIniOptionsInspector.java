@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -128,7 +129,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                                 holder.registerProblem(
                                         arguments[0],
                                         String.format(
-                                                alternative == null ? patternRemoved : patternRemovedWithAlternative,
+                                                ReportingUtil.wrapReportedMessage(alternative == null ? patternRemoved : patternRemovedWithAlternative),
                                                 directive,
                                                 removalVersion.getVersion(),
                                                 alternative
@@ -139,7 +140,7 @@ public class DeprecatedIniOptionsInspector extends BasePhpInspection {
                                 holder.registerProblem(
                                         arguments[0],
                                         String.format(
-                                                alternative == null ? patternDeprecated : patternDeprecatedWithAlternative,
+                                                ReportingUtil.wrapReportedMessage(alternative == null ? patternDeprecated : patternDeprecatedWithAlternative),
                                                 directive,
                                                 deprecationVersion.getVersion(),
                                                 alternative

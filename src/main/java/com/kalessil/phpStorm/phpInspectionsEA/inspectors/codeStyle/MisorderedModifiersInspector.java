@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpModifierList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
                         final String original = this.getOriginalOrder(modifiers);
                         final String expected = this.getExpectedOrder(original, standardOrder);
                         if (!original.equals(expected)) {
-                            problemsHolder.registerProblem(modifiersNode, message, new TheLocalFix(expected));
+                            problemsHolder.registerProblem(modifiersNode, ReportingUtil.wrapReportedMessage(message), new TheLocalFix(expected));
                         }
                     }
                 }

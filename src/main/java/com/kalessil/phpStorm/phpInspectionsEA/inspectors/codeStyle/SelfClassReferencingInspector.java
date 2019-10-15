@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -73,14 +74,14 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                                     if (constantName != null && constantName.equals("class")) {
                                         final String replacement = "__CLASS__";
                                         final String message     = String.format(messagePattern, parent.getText(), replacement);
-                                        problemsHolder.registerProblem(parent, message, new NormalizeReferenceFix(replacement));
+                                        problemsHolder.registerProblem(parent, ReportingUtil.wrapReportedMessage(message), new NormalizeReferenceFix(replacement));
                                         return;
                                     }
                                 }
 
                                 if (!(parent instanceof ExtendsList)) {
                                     final String message = String.format(messagePattern, targetReference, targetReplacement);
-                                    problemsHolder.registerProblem(reference, message, new NormalizeReferenceFix(targetReplacement));
+                                    problemsHolder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new NormalizeReferenceFix(targetReplacement));
                                 }
                             });
 
@@ -93,7 +94,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                                 .forEach(reference -> {
                                     final String replacement = targetReplacement + "::class";
                                     final String message     = String.format(messagePattern, reference.getText(), replacement);
-                                    problemsHolder.registerProblem(reference, message, new NormalizeReferenceFix(replacement));
+                                    problemsHolder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new NormalizeReferenceFix(replacement));
                                 });
                     }
                 }

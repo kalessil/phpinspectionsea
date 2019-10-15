@@ -16,6 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -86,7 +87,7 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
                             (nestingLevel % 2 == 0 ? messageUseBoolCasting : messageUseSingleNot).replace("%e%", value.getText());
                     final LocalQuickFix fixer =
                             nestingLevel % 2 == 0 ? new UseCastingLocalFix(holder.getProject(), value) : new UseSingleNotLocalFix(holder.getProject(), value);
-                    holder.registerProblem(target, message, fixer);
+                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), fixer);
                 }
             }
         };

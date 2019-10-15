@@ -7,13 +7,13 @@
             is_array($iterable) ||
             is_array($stringsArray) ||
 
-            <warning descr="Makes no sense, because this type is not defined in annotations.">is_int($array)</warning> ||
-            <warning descr="Makes no sense, because this type is not defined in annotations.">is_int($iterable)</warning> ||
-            <warning descr="Makes no sense, because this type is not defined in annotations.">is_int($stringsArray)</warning> ||
+            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_int($array)</warning> ||
+            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_int($iterable)</warning> ||
+            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_int($stringsArray)</warning> ||
 
-            !<warning descr="Makes no sense, because it's always true according to annotations.">is_int($array)</warning> ||
-            !<warning descr="Makes no sense, because it's always true according to annotations.">is_int($iterable)</warning> ||
-            !<warning descr="Makes no sense, because it's always true according to annotations.">is_int($stringsArray)</warning>
+            !<warning descr="[EA] Makes no sense, because it's always true according to annotations.">is_int($array)</warning> ||
+            !<warning descr="[EA] Makes no sense, because it's always true according to annotations.">is_int($iterable)</warning> ||
+            !<warning descr="[EA] Makes no sense, because it's always true according to annotations.">is_int($stringsArray)</warning>
         ;
     };
 
@@ -70,10 +70,10 @@
             $first = new Clazz();
         }
 
-        $second = <warning descr="New value type (\Clazz) is not in annotated types.">$second ?? new Clazz()</warning>;
-        $second = <warning descr="New value type (\Clazz) is not in annotated types.">$second ?: new Clazz()</warning>;
+        $second = <warning descr="[EA] New value type (\Clazz) is not in annotated types.">$second ?? new Clazz()</warning>;
+        $second = <warning descr="[EA] New value type (\Clazz) is not in annotated types.">$second ?: new Clazz()</warning>;
         if (null === $second) {
-            $second = <warning descr="New value type (\Clazz) is not in annotated types.">new Clazz()</warning>;
+            $second = <warning descr="[EA] New value type (\Clazz) is not in annotated types.">new Clazz()</warning>;
         }
 
         return [ $first, $second ];
@@ -112,7 +112,7 @@
             $parameter = $this->returnStatic();
             $parameter = $this->returnStatic()->returnStatic();
 
-            $parameter = <warning descr="New value type (null) is not in annotated types.">null</warning>;
+            $parameter = <warning descr="[EA] New value type (null) is not in annotated types.">null</warning>;
         }
 
         public function class_types(IndirectClassReference $parameter) {
@@ -131,7 +131,7 @@
     /* false-positive: incomplete types influenced by null as default value */
     function incomplete_types($one = null, $two = []) {
         $one = '';
-        $two = <warning descr="New value type (string) is not in annotated types.">''</warning>;
+        $two = <warning descr="[EA] New value type (string) is not in annotated types.">''</warning>;
     }
 
     /* false-positive: core functions returning string|false, string|null */
@@ -163,5 +163,5 @@
     /* false-positives: issues with proper binary expression types identification */
     function binary_expression_types(int $parameter) {
         $parameter = 1 * $parameter * 1;
-        $parameter = <warning descr="New value type (float) is not in annotated types.">1 * 1.0 * $parameter * 1</warning>;
+        $parameter = <warning descr="[EA] New value type (float) is not in annotated types.">1 * 1.0 * $parameter * 1</warning>;
     }

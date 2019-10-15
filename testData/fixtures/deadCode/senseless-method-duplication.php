@@ -33,7 +33,7 @@
 
     class ClassDuplicates extends ClassTransitive {
 
-        protected function <weak_warning descr="'method' method can be dropped, as it identical to parent's one.">method</weak_warning> ()
+        protected function <weak_warning descr="[EA] 'method' method can be dropped, as it identical to parent's one.">method</weak_warning> ()
         {
             // single-line comment here
             $x = [];
@@ -47,12 +47,12 @@
             return $x;
         }
 
-        public function <weak_warning descr="'methodProxy' method should call parent's one instead of duplicating code.">methodProxy</weak_warning>($x)
+        public function <weak_warning descr="[EA] 'methodProxy' method should call parent's one instead of duplicating code.">methodProxy</weak_warning>($x)
         {
             return $this->method();
         }
 
-        public function <weak_warning descr="'methodDuplicate' method should call parent's one instead of duplicating code.">methodDuplicate</weak_warning>($x)
+        public function <weak_warning descr="[EA] 'methodDuplicate' method should call parent's one instead of duplicating code.">methodDuplicate</weak_warning>($x)
         {
             return $this->method();
         }

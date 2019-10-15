@@ -27,14 +27,14 @@ class ClassWithoutIsset
             isset($regularObject->publicProperty),
 
             isset($validObject->property),
-            isset(<error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>),
+            isset(<error descr="[EA] \ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>),
 
             empty($regularObject-><error descr="Member has private access">privateProperty</error>),
             empty($regularObject-><error descr="Member has protected access">protectedProperty</error>),
             empty($regularObject->publicProperty),
 
             empty($validObject->property),
-            empty(<error descr="\ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>)
+            empty(<error descr="[EA] \ClassWithoutIsset needs to implement __isset to properly work here.">$invalidObject->property</error>)
         ];
     }
 

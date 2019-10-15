@@ -1,8 +1,8 @@
 <?php
 
 function cases_holder_array_filter() {
-    $fragmentedOne = <warning descr="Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([], function($v) { return (bool) $v; });
-    $fragmentedTwo = <warning descr="Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([]);
+    $fragmentedOne = <warning descr="[EA] Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([], function($v) { return (bool) $v; });
+    $fragmentedTwo = <warning descr="[EA] Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([]);
     
     $defragmented = array_values(array_filter([]));
 
@@ -20,7 +20,7 @@ function cases_holder_array_filter() {
 }
 
 function cases_holder_array_unique() {
-    $fragmented = <warning descr="Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_unique</warning>([]);
+    $fragmented = <warning descr="[EA] Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_unique</warning>([]);
 
     $defragmented = array_values(array_unique([]));
 
@@ -36,9 +36,9 @@ function cases_holder_array_unique() {
 }
 
 function cases_holder_json_encode() {
-    $fragmented = <warning descr="Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([]);
+    $fragmented = <warning descr="[EA] Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([]);
     return [
-        json_encode(<warning descr="Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([])),
+        json_encode(<warning descr="[EA] Result keys set might be fragmented, wrapping with 'array_values(...)' is recommended.">array_filter</warning>([])),
         json_encode($fragmented)
     ];
 }

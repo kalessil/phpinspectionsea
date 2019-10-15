@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -46,7 +47,7 @@ public class NonSecureExtractUsageInspector extends PhpInspection {
                 if (functionName != null && functionName.equals("extract")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1 && !this.isTestContext(reference)) {
-                        holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
                 /* TODO: call_user_func, array_walk - dynamic contexts */

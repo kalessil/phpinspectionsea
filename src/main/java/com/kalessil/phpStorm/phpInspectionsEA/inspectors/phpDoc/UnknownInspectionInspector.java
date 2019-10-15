@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,7 +81,7 @@ public class UnknownInspectionInspector extends PhpInspection {
                         if (!inspections.isEmpty()) {
                             final PsiElement target = tag.getFirstChild();
                             if (target != null) {
-                                holder.registerProblem(target, String.format(message, String.join(", ", inspections)));
+                                holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(message), String.join(", ", inspections)));
                             }
                             inspections.clear();
                         }

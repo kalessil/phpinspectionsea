@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.cla
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +48,7 @@ public class ShortClassDefinitionStrategy {
                             .replace("%r%", replacement.getValue())
                             .replace("%h%", safetyHint);
 
-                    holder.registerProblem(target, message, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
                 }
             }
 

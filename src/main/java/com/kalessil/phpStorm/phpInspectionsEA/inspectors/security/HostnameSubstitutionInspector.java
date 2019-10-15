@@ -97,7 +97,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                 if (index instanceof StringLiteralExpression) {
                     final Matcher matcher = regexTargetNames.matcher(((StringLiteralExpression) index).getContents());
                     if (matcher.matches() && !this.isChecked(substitutedExpression)) {
-                        holder.registerProblem(substitutedExpression, messageNaming);
+                        holder.registerProblem(substitutedExpression, ReportingUtil.wrapReportedMessage(messageNaming));
                     }
                 }
             }
@@ -136,7 +136,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                             if (string.getFirstPsiChild() == null) {
                                 final Matcher matcher = regexTargetNames.matcher(string.getContents());
                                 if (matcher.matches()) {
-                                    holder.registerProblem(substitutedExpression, messageNaming);
+                                    holder.registerProblem(substitutedExpression, ReportingUtil.wrapReportedMessage(messageNaming));
                                 }
                             }
                         }

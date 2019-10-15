@@ -12,10 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +68,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends PhpInspection {
                             if (left instanceof FunctionReference) {
                                 holder.registerProblem(
                                         binary,
-                                        String.format(messageSimplify, left.getText()),
+                                        String.format(ReportingUtil.wrapReportedMessage(messageSimplify), left.getText()),
                                         new UseLeftOperandFix(left.getText())
                                 );
                             }
@@ -89,7 +86,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends PhpInspection {
                                                 ? rightTypes.stream().anyMatch(leftTypes::contains)
                                                 : rightTypes.containsAll(leftTypes);
                                         if (!complimentary && !this.areRelated(rightTypes, leftTypes)) {
-                                            holder.registerProblem(binary, String.format(messageMismatch, leftTypes.toString(), rightTypes.toString()));
+                                            holder.registerProblem(binary, String.format(ReportingUtil.wrapReportedMessage(messageMismatch), leftTypes.toString(), rightTypes.toString()));
                                         }
                                         rightTypes.clear();
                                     }

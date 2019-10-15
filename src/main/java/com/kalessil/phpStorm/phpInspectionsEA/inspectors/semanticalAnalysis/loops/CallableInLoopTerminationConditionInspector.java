@@ -18,6 +18,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -60,7 +61,7 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
                         OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
                         OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())
                     ) {
-                        holder.registerProblem(condition, message, ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(holder.getProject(), forStatement, condition));
+                        holder.registerProblem(condition, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(holder.getProject(), forStatement, condition));
                     }
                 }
             }

@@ -10,10 +10,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -82,7 +79,7 @@ public class TraitsPropertiesConflictsInspector extends PhpInspection {
                                     if (!isError && ownFieldNameNode != null) {
                                         holder.registerProblem(
                                                 ownFieldNameNode,
-                                                String.format(messagePattern, clazz.getName(), trait.getName(), ownFieldName),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), clazz.getName(), trait.getName(), ownFieldName),
                                                 ProblemHighlightType.WEAK_WARNING
                                         );
                                     }
@@ -134,7 +131,7 @@ public class TraitsPropertiesConflictsInspector extends PhpInspection {
                                     if (reportTarget != null) {
                                         holder.registerProblem(
                                                 reportTarget,
-                                                String.format(messagePattern, clazz.getName(), trait.getName(), parentFieldName),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), clazz.getName(), trait.getName(), parentFieldName),
                                                 isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING
                                         );
                                     }

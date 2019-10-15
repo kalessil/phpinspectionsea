@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.exp
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -73,7 +74,7 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                             if (candidate.matches("^\\\\[dDwWsS][*+]$")) {
                                 holder.registerProblem(
                                         target,
-                                        String.format(patternCompound, candidate, matcher.group(3)),
+                                        String.format(ReportingUtil.wrapReportedMessage(patternCompound), candidate, matcher.group(3)),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                                 result = true;
@@ -85,14 +86,14 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                             if (fragments.contains("\\d") && fragments.contains("\\w")) {
                                 holder.registerProblem(
                                         target,
-                                        String.format(patternExclusive, "\\d", "\\w", fragment),
+                                        String.format(ReportingUtil.wrapReportedMessage(patternExclusive), "\\d", "\\w", fragment),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                                 result = true;
                             } else if (fragments.contains("\\D") && fragments.contains("\\W")) {
                                 holder.registerProblem(
                                         target,
-                                        String.format(patternExclusive, "\\D", "\\W", fragment),
+                                        String.format(ReportingUtil.wrapReportedMessage(patternExclusive), "\\D", "\\W", fragment),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                                 result = true;

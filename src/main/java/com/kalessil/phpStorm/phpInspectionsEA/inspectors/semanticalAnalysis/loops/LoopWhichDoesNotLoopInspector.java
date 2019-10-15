@@ -10,10 +10,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -74,7 +71,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                         }
                     }
 
-                    holder.registerProblem(loop.getFirstChild(), message);
+                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                 }
             }
 
@@ -83,7 +80,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), message);
+                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                 }
             }
 
@@ -92,7 +89,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), message);
+                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                 }
             }
 
@@ -101,7 +98,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), message);
+                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
                 }
             }
 

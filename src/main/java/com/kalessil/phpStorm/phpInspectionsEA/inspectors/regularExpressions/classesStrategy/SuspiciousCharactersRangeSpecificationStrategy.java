@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.cla
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,16 +64,16 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
                             }
                         }
 
-                        holder.registerProblem(target, String.format(messagePattern, range, match), ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messagePattern), range, match), ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }
 
             if (modifiers != null && modifiers.contains("u")) {
                 if (pattern.contains("а-я") && !pattern.contains("ё")) {
-                    holder.registerProblem(target, String.format(messageMissingCyrillic, "а-я", "ёа-я"), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messageMissingCyrillic), "а-я", "ёа-я"), ProblemHighlightType.GENERIC_ERROR);
                 } else if (pattern.contains("А-Я") && !pattern.contains("Ё")) {
-                    holder.registerProblem(target, String.format(messageMissingCyrillic, "А-Я", "ЁА-Я"), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messageMissingCyrillic), "А-Я", "ЁА-Я"), ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         }

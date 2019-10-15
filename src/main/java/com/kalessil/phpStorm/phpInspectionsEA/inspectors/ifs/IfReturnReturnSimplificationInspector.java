@@ -97,7 +97,7 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                             }
                             holder.registerProblem(
                                     statement.getFirstChild(),
-                                    String.format(messagePattern, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                     new SimplifyFix(holder.getProject(), fragments.first.first, fragments.first.second, replacement)
                             );
                         }

@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.exp
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -57,14 +58,14 @@ final public class NotMutuallyExclusiveContiguousQuantifiedTokensStrategy {
                     if (normalized.contains("\\w\\d") || normalized.contains("\\d\\w")) {
                         holder.registerProblem(
                                 target,
-                                String.format(messagePattern, "\\d", "\\w", fragment),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), "\\d", "\\w", fragment),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                         result = true;
                     } else if (normalized.contains("\\W\\D") || normalized.contains("\\D\\W")) {
                         holder.registerProblem(
                                 target,
-                                String.format(messagePattern, "\\D", "\\W", fragment),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), "\\D", "\\W", fragment),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                         result = true;

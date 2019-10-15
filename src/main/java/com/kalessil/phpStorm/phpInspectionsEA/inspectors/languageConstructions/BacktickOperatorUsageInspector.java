@@ -8,6 +8,7 @@ import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -47,7 +48,7 @@ public class BacktickOperatorUsageInspector extends PhpInspection {
                 if (raw.length() > 2) {
                     final String command     = raw.substring(1, raw.length() - 1).replaceAll("\\\\`", "`");
                     final String replacement = String.format("shell_exec(\"%s\")", PhpStringUtil.escapeText(command, false));
-                    holder.registerProblem(expression, message, new UseShellExecFix(replacement));
+                    holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new UseShellExecFix(replacement));
                 }
             }
         };

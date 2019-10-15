@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opt
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ final public class SingleCharactersAlternationStrategy {
                 if (adviceOptimization) {
                     holder.registerProblem(
                             target,
-                            String.format(messagePattern, regexMatcher.group(0), String.format("([%s])", String.join("", branches)))
+                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), regexMatcher.group(0), String.format("([%s])", String.join("", branches)))
                     );
                 }
                 branches.clear();

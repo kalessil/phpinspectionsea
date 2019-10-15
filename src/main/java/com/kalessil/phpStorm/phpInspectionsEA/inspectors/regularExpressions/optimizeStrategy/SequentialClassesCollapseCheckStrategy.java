@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opt
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ final public class SequentialClassesCollapseCheckStrategy {
             if (matcher.find()) {
                 holder.registerProblem(
                         target,
-                        String.format(messagePattern, matcher.group(0), matcher.group(2)),
+                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), matcher.group(0), matcher.group(2)),
                         ProblemHighlightType.WEAK_WARNING
                 );
             }

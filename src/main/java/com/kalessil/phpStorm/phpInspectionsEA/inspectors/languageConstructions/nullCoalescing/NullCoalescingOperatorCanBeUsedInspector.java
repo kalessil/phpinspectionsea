@@ -19,10 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,7 +73,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                 if (replacement != null) {
                                     holder.registerProblem(
                                             expression,
-                                            String.format(messagePattern, replacement),
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                             new ReplaceSingleConstructFix(replacement)
                                     );
                                 }
@@ -107,7 +104,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                         final String replacement = String.format("return %s", coalescing);
                                         holder.registerProblem(
                                                 statement.getFirstChild(),
-                                                String.format(messagePattern, replacement),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                 new ReplaceMultipleConstructFix(project, fragments.first.first, fragments.first.second, replacement)
                                         );
                                     } else if (context instanceof AssignmentExpression) {
@@ -115,7 +112,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                         final String replacement   = String.format("%s = %s", container.getText(), coalescing);
                                         holder.registerProblem(
                                                 statement.getFirstChild(),
-                                                String.format(messagePattern, replacement),
+                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                                 new ReplaceMultipleConstructFix(project, fragments.first.first, fragments.first.second, replacement)
                                         );
                                     }

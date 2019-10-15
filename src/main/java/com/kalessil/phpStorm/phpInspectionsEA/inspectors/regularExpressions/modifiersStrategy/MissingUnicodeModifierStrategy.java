@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,11 +42,11 @@ final public class MissingUnicodeModifierStrategy {
         boolean result = false;
         if ((modifiers == null || modifiers.indexOf('u') == -1) && pattern != null && ! pattern.isEmpty() && ! functionName.equals("preg_quote")) {
             if (result = unicodeCharactersPattern.matcher(pattern).matches()) {
-                holder.registerProblem(target, messageCharacters, ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageCharacters), ProblemHighlightType.GENERIC_ERROR);
             } else {
                 final String normalized = StringUtils.replace(pattern, "\\\\", "");
                 if (result = unicodeCodepointsPattern.matcher(normalized).matches()) {
-                    holder.registerProblem(target, messageCodepoints, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageCodepoints), ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         }

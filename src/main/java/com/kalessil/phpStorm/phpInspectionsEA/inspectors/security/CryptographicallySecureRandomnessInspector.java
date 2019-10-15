@@ -11,10 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -66,7 +63,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
 
                 /* Case 1: use random_bytes in PHP7 */
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) { // PHP7 and newer
-                    holder.registerProblem(reference, messageUseRandomBytes, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageUseRandomBytes), ProblemHighlightType.WEAK_WARNING);
                 }
 
 
@@ -74,7 +71,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                 final boolean hasSecondArgument = arguments.length == 2;
                 if (!hasSecondArgument) {
                     final String message = isOpenSSL ? messageOpenssl2ndArgumentNotDefined : messageMcrypt2ndArgumentNotDefined;
-                    holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
                 }
 
 
@@ -95,7 +92,7 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     resultVerified            = variable == null || isCheckedForFalse(variable);
                 }
                 if (!resultVerified) {
-                    holder.registerProblem(reference, messageVerifyBytes, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageVerifyBytes), ProblemHighlightType.GENERIC_ERROR);
                 }
 
                 /* Case 4: is 2nd argument verified/strong enough */
@@ -107,13 +104,13 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                         reliableSource = constant != null && constant.equals("MCRYPT_DEV_RANDOM");
                     }
                     if (!reliableSource) {
-                        holder.registerProblem(arguments[1], messageMcrypt2ndArgumentNotSecure, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(arguments[1], ReportingUtil.wrapReportedMessage(messageMcrypt2ndArgumentNotSecure), ProblemHighlightType.GENERIC_ERROR);
                         return;
                     }
                 }
                 if (hasSecondArgument && isOpenSSL) {
                     if (!isCheckedForFalse(arguments[1]) && arguments[1].getTextLength() > 0) {
-                        holder.registerProblem(arguments[1], messageOpenssl2ndArgumentNotVerified, ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(arguments[1], ReportingUtil.wrapReportedMessage(messageOpenssl2ndArgumentNotVerified), ProblemHighlightType.GENERIC_ERROR);
                     }
                 }
             }

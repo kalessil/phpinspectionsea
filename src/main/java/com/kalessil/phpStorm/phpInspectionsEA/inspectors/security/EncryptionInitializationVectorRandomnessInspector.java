@@ -11,10 +11,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -86,7 +83,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
 
                             final String ivFunction = functionName.startsWith("openssl_") ? "openssl_random_pseudo_bytes" : "mcrypt_create_iv";
                             final String message    = String.format(messagePattern, ivFunction, String.join(", ", reporting));
-                            holder.registerProblem(arguments[4], message, ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(arguments[4], ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
                         }
 
                         reporting.clear();

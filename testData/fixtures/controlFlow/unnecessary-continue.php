@@ -2,42 +2,42 @@
 
 function cases_holder() {
     foreach ([] as $value) {
-        <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+        <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
     }
 
     for (;;) {
-        <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+        <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
     }
 
     do {
-        <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+        <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
     } while (true);
 
     while (true) {
-        <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+        <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
     }
 
     foreach ([] as $value) {
         if ($value === 0) {
-            <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+            <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
         } elseif ($value === -1) {
             if ($value === -1) {
-                <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+                <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
             } else {
-                <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+                <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
             }
         } else {
-            <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+            <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
         }
     }
 
     foreach ([] as $value) {
         try {
-            <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+            <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
         } catch (Exception $exception) {
-            <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+            <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
         } finally {
-            <warning descr="It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
+            <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
         }
     }
 

@@ -7,7 +7,7 @@ class SampleTest {
         $service = new Service($this->createMock(Clazz::class));
     }
 
-    public function <warning descr="2 mocks has been introduced here: either the test case should be refactored or API has design issues.">complain</warning>()
+    public function <warning descr="[EA] 2 mocks has been introduced here: either the test case should be refactored or API has design issues.">complain</warning>()
     {
         $mock = $this->getMockBuilder(Service::class)->setConstructorArgs([$this->createMock(Clazz::class)])->getMock();
         $service = new Service($this->createMock(Clazz::class));
@@ -15,7 +15,7 @@ class SampleTest {
         $trigger = $this->createMock(Clazz::class);
     }
 
-    public function <error descr="3 mocks has been introduced here: either the test case should be refactored or API has design issues.">scream</error>()
+    public function <error descr="[EA] 3 mocks has been introduced here: either the test case should be refactored or API has design issues.">scream</error>()
     {
         $mock = $this->getMockBuilder(Service::class)->setConstructorArgs([$this->createMock(Clazz::class)])->getMock();
         $service = new Service($this->createMock(Clazz::class));

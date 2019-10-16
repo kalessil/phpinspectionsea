@@ -23,11 +23,11 @@
     class ClassDuplicates extends ClassWithSameMethods {
         use TraitWithSameMethods;
 
-        protected function <weak_warning descr="'traitMethodDuplicate' method can be dropped, as it identical to '\TraitWithSameMethods::traitMethodDuplicate'.">traitMethodDuplicate</weak_warning>()
+        protected function <weak_warning descr="[EA] 'traitMethodDuplicate' method can be dropped, as it identical to '\TraitWithSameMethods::traitMethodDuplicate'.">traitMethodDuplicate</weak_warning>()
         {
             return $this->classMethodDuplicate();
         }
-        protected function <weak_warning descr="'classMethodDuplicate' method can be dropped, as it identical to '\ClassWithSameMethods::classMethodDuplicate'.">classMethodDuplicate</weak_warning> ()
+        protected function <weak_warning descr="[EA] 'classMethodDuplicate' method can be dropped, as it identical to '\ClassWithSameMethods::classMethodDuplicate'.">classMethodDuplicate</weak_warning> ()
         {
             // single-line comment here
             $x = [];
@@ -41,7 +41,7 @@
             return $x;
         }
 
-        public function <weak_warning descr="'protectedMethodProxy' method should call parent's one instead of duplicating code.">protectedMethodProxy</weak_warning>($x) { return $this->classMethodDuplicate(); }
+        public function <weak_warning descr="[EA] 'protectedMethodProxy' method should call parent's one instead of duplicating code.">protectedMethodProxy</weak_warning>($x) { return $this->classMethodDuplicate(); }
         public function privateMethodProxy($x) { return $this->classMethodDuplicate(); }
         protected function abc() { echo 2; }
     }

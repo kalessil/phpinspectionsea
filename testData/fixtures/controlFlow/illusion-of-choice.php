@@ -3,17 +3,17 @@
 class CasesHolder {
 
     public function ternaries($x, $y) {
-        ($x === $y) ? $x : <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
+        ($x === $y) ? $x : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
 
-        $x === $y ? $x : <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
-        $x !== $y ? <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> : $y;
-        $x == $y ? $x : <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
-        $x != $y ? <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> : $y;
+        $x === $y ? $x : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
+        $x !== $y ? <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> : $y;
+        $x == $y ? $x : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
+        $x != $y ? <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> : $y;
 
-        $x === 0 ? 0 : <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning>;
-        $x !== 0 ? <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> : 0;
-        $x === 0 ? $x : <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">0</warning>;
-        $x !== 0 ? <warning descr="Actually the same value is in the alternative variant. It's possible to simplify the construct.">0</warning> : $x;
+        $x === 0 ? 0 : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning>;
+        $x !== 0 ? <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$x</warning> : 0;
+        $x === 0 ? $x : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">0</warning>;
+        $x !== 0 ? <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">0</warning> : $x;
 
         /* false-positives */
         $x === $y ? $x : $x;
@@ -26,11 +26,11 @@ class CasesHolder {
         if ($x === $y) {
             return $x;
         } else {
-            return <warning descr="Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$y</warning>;
+            return <warning descr="[EA] Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$y</warning>;
         }
 
         if ($x !== $y) {
-            return <warning descr="Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
+            return <warning descr="[EA] Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
         } else {
             return $y;
         }
@@ -38,23 +38,23 @@ class CasesHolder {
         if ($x === $y) {
             return $x;
         }
-        return <warning descr="Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$y</warning>;
+        return <warning descr="[EA] Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$y</warning>;
 
         if ($x !== $y) {
-            return <warning descr="Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
+            return <warning descr="[EA] Actually the same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
         }
         return $y;
 
         if ($x === $y) {
             return $x;
         } else {
-            return <warning descr="Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
+            return <warning descr="[EA] Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
         }
 
         if ($x === $y) {
             return $x;
         }
-        return <warning descr="Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
+        return <warning descr="[EA] Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
 
 
         /* false-positives */

@@ -15,7 +15,7 @@ trait DirectMixin {
 }
 
 /** @method annotatedMethod() */
-class <warning descr="Some of public methods (ownPublicMethod) are not part of the class contracts. Perhaps a contract is incomplete.">ImplementationClass</warning> extends AbstractClass implements Contract {
+class <warning descr="[EA] Some of public methods (ownPublicMethod) are not part of the class contracts. Perhaps a contract is incomplete.">ImplementationClass</warning> extends AbstractClass implements Contract {
     use DirectMixin;
     public function __construct() {}
 

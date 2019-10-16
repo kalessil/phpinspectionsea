@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -60,7 +61,7 @@ public class FilePutContentsRaceConditionInspector extends PhpInspection {
                     if (arguments.length == 2 && !this.isTestContext(reference)) {
                         /* there is no solid pattern, hence we are searching test fragments under the hood */
                         if (!REDUCED_SCOPE || this.match(arguments[0], ".php") || this.match(arguments[1], "<?php")) {
-                            holder.registerProblem(reference, message, new AddLockExFlagFix());
+                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new AddLockExFlagFix());
                         }
                     }
                 }

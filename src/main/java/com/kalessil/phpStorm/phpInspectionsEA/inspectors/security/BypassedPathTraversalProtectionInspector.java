@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -61,7 +62,7 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
                                 final String replacement   = String.format("preg_replace('/\\.+[\\/\\\\]+/', '', %s)", arguments[2].getText());
                                 holder.registerProblem(
                                         reference,
-                                        messageFilterVar,
+                                        ReportingUtil.wrapReportedMessage(messageFilterVar),
                                         withQuickFix ? new UsePregReplaceFix(replacement) : null
                                 );
                             }

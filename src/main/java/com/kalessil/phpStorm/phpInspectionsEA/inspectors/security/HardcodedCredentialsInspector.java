@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -147,7 +148,7 @@ public class HardcodedCredentialsInspector extends PhpInspection {
                 final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(target);
                 if (!values.isEmpty()) {
                     if (values.stream().anyMatch(candidate -> candidate instanceof StringLiteralExpression)) {
-                        holder.registerProblem(target, message);
+                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
                     }
                     values.clear();
                 }

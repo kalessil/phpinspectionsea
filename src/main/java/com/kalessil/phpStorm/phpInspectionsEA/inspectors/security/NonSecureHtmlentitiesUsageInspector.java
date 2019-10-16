@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -91,7 +92,7 @@ public class NonSecureHtmlentitiesUsageInspector extends PhpInspection {
                                 Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList()).toArray(updatedArguments);
                                 updatedArguments[1]             = updatedFlags;
                                 final String replacement        = String.format("%shtmlentities(%s)", reference.getImmediateNamespaceName(), String.join(", ", updatedArguments));
-                                holder.registerProblem(reference, messageHarden, new EscapeAllQuotesFix(replacement));
+                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageHarden), new EscapeAllQuotesFix(replacement));
                             }
                         }
                     } else if (functions.contains(functionName)) {
@@ -99,7 +100,7 @@ public class NonSecureHtmlentitiesUsageInspector extends PhpInspection {
                         if (arguments.length == 2 && arguments[0] instanceof StringLiteralExpression) {
                             final String callback = ((StringLiteralExpression) arguments[0]).getContents().replace("\\", "");
                             if (callback.equals("htmlentities")) {
-                                holder.registerProblem(arguments[0], messageCallback);
+                                holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageCallback));
                             }
                         }
                     }

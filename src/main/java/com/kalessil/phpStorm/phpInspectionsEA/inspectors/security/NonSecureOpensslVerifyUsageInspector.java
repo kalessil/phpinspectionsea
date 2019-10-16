@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -81,14 +82,14 @@ public class NonSecureOpensslVerifyUsageInspector extends PhpInspection {
                                 if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binary.getOperationType())) {
                                     final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, target);
                                     if (second != null && OpenapiTypesUtil.isNumber(second) && !second.getText().equals("1")) {
-                                        holder.registerProblem(target, messageHarden, ProblemHighlightType.GENERIC_ERROR);
+                                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageHarden), ProblemHighlightType.GENERIC_ERROR);
                                     }
                                 }
                             }
                         } else if (parent instanceof PhpReturn) {
-                            holder.registerProblem(target, messageReturn, ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageReturn), ProblemHighlightType.GENERIC_ERROR);
                         } else if (ExpressionSemanticUtil.isUsedAsLogicalOperand(target)) {
-                            holder.registerProblem(target, messageHarden, ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageHarden), ProblemHighlightType.GENERIC_ERROR);
                         }
                     }
                     targets.clear();

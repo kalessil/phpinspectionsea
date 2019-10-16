@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -34,7 +35,7 @@ final public class OpensslRsaOraclePaddingStrategy {
         boolean result               = false;
         final PsiElement[] arguments = reference.getParameters();
         if (arguments.length == 3 && isTargetCall(reference)) {
-            holder.registerProblem(reference, message);
+            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
             result = true;
         } else if (arguments.length == 4 && isTargetCall(reference)) {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(arguments[3]);
@@ -42,7 +43,7 @@ final public class OpensslRsaOraclePaddingStrategy {
                 /* OPENSSL_PKCS1_PADDING === 1 */
                 result = modeVariants.stream().filter(OpenapiTypesUtil::isNumber).anyMatch(variant -> variant.getText().equals("1") );
                 if (result) {
-                    holder.registerProblem(reference, message);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
                 }
                 modeVariants.clear();
             }

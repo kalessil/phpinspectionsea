@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -30,7 +31,7 @@ final public class McryptRsaOraclePaddingStrategy {
                 /* MCRYPT_MODE_CBC === 'cbc' */
                 result = modeVariants.stream().filter(variant -> variant instanceof StringLiteralExpression).anyMatch(variant -> ((StringLiteralExpression) variant).getContents().equals("cbc"));
                 if (result) {
-                    holder.registerProblem(reference, message);
+                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
                 }
                 modeVariants.clear();
             }

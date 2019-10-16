@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.PhpShellCommandExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -45,7 +46,7 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
                 if (content.length() >= 3) {
                     final boolean isTarget = content.startsWith("su ") || content.startsWith("sudo ");
                     if (isTarget) {
-                        holder.registerProblem(literal, message);
+                        holder.registerProblem(literal, ReportingUtil.wrapReportedMessage(message));
                     }
                 }
             }
@@ -59,7 +60,7 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
                     final String command   = content.substring(1, content.length() - 1);
                     final boolean isTarget = command.startsWith("su ") || command.startsWith("sudo ");
                     if (isTarget) {
-                        holder.registerProblem(expression, message);
+                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
                     }
                 }
             }

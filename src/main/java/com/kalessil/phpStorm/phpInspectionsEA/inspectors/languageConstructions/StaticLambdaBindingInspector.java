@@ -18,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -63,7 +64,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                                 if (element instanceof Variable) {
                                     final Variable variable = (Variable) element;
                                     if (variable.getName().equals("this")) {
-                                        holder.registerProblem(variable, messageThis, new TurnClosureIntoNonStaticFix(project, function.getFirstChild()));
+                                        holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageThis), new TurnClosureIntoNonStaticFix(project, function.getFirstChild()));
                                         return;
                                     }
                                 } else {
@@ -72,7 +73,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                                     if (base instanceof ClassReference && base.getText().equals("parent")) {
                                         final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                                         if (resolved instanceof Method && !((Method) resolved).isStatic()) {
-                                            holder.registerProblem(reference, messageParent, new TurnClosureIntoNonStaticFix(project, function.getFirstChild()));
+                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageParent), new TurnClosureIntoNonStaticFix(project, function.getFirstChild()));
                                             return;
                                         }
                                     }

@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -91,7 +92,7 @@ public class SecureCookiesTransferInspector extends LocalInspectionTool {
                     }
                     holder.registerProblem(
                             reference,
-                            pattern,
+                            ReportingUtil.wrapReportedMessage(pattern),
                             new AddArgumentsFix(String.format("%s(%s)", reference.getName(), String.join(", ", fragments)))
                     );
                     fragments.clear();

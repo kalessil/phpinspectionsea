@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -80,10 +81,10 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
                                         if (matcher.find()) {
                                             final String candidate = matcher.group(2);
                                             if (!candidate.startsWith("^") && regexProtocolCheck.matcher(candidate).find()) {
-                                                holder.registerProblem(reference, messageProtocol);
+                                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageProtocol));
                                             }
                                             if (!candidate.endsWith("$") && regexFileExtensionCheck.matcher(candidate).find()) {
-                                                holder.registerProblem(reference, messageExtension);
+                                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageExtension));
                                             }
                                             break;
                                         }
@@ -98,7 +99,7 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
                             final boolean isTarget = PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream()
                                     .anyMatch(candidate -> "FILTER_VALIDATE_URL".equals(candidate.getName()));
                             if (isTarget) {
-                                holder.registerProblem(reference, messageFilterVar);
+                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageFilterVar));
                             }
                         }
                     }

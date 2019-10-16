@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -78,7 +79,7 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                                 final boolean isTargetKeyType = keyType == null || "OPENSSL_KEYTYPE_RSA".equals(keyType.getName());
                                 if (isTargetKeyType) {
                                     if (keyLength == null) {
-                                        holder.registerProblem(reference, messageLengthIsDefault);
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageLengthIsDefault));
                                         break;
                                     }
                                     if (OpenapiTypesUtil.isNumber(keyLength)) {
@@ -89,7 +90,7 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                                             isTarget = false;
                                         }
                                         if (isTarget) {
-                                            holder.registerProblem(reference, messageLengthIsNoSufficient);
+                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageLengthIsNoSufficient));
                                             break;
                                         }
                                     }
@@ -97,7 +98,7 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                             }
                         }
                     } else {
-                        holder.registerProblem(reference, messageLengthIsDefault);
+                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageLengthIsDefault));
                     }
                 }
             }

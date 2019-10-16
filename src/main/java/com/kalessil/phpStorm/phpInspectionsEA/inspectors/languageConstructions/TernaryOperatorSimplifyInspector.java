@@ -79,7 +79,7 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                                     final String replacement = this.generateReplacement(condition, invert);
                                     holder.registerProblem(
                                             expression,
-                                            String.format(messagePattern, replacement),
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                             new SimplifyFix(replacement)
                                     );
                                 }

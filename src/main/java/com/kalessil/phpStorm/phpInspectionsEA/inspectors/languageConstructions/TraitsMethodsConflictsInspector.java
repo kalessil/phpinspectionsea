@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -59,7 +60,7 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                                 if (traitsMethods.containsKey(methodName)) {
                                     holder.registerProblem(
                                             pair.getValue(),
-                                            String.format(messagePattern, methodName, traitsMethods.get(methodName).getFQN())
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), methodName, traitsMethods.get(methodName).getFQN())
                                     );
                                 }
                                 traitsMethods.putIfAbsent(methodName, pair.getKey());

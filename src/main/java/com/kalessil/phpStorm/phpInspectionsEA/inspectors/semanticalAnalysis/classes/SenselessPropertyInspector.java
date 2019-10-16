@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -70,7 +71,7 @@ public class SenselessPropertyInspector extends PhpInspection {
                                     if (!methodName.equals("__construct")) {
                                         final Method method = OpenapiResolveUtil.resolveMethod(clazz, methodName);
                                         if (method != null && this.isTarget(f, method)) {
-                                            holder.registerProblem(f, String.format(messagePattern, fieldName, methodName));
+                                            holder.registerProblem(f, String.format(ReportingUtil.wrapReportedMessage(messagePattern), fieldName, methodName));
                                         }
                                     }
                                 }

@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,7 @@ final public class MistypedLogicalOperatorsStrategy {
                         result = true;
                         holder.registerProblem(
                                 targetExpression,
-                                String.format(messagePattern, operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
                         );
                     }
                 }

@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -28,7 +29,7 @@ final public class PossiblyArrayHashElementDeclarationStrategy {
             if (left instanceof StringLiteralExpression) {
                 final PsiElement parent = expression.getParent();
                 if (parent != null && parent.getParent() instanceof ArrayCreationExpression) {
-                    holder.registerProblem(operation, message);
+                    holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message));
                     return true;
                 }
             }

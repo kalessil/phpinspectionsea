@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -51,20 +52,20 @@ public class ConstantConditionsPhpVersionStrategy {
                         final IElementType operator = expression.getOperationType();
                         /* the checked version is below current, inspect constant conditions */
                         if (result = (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL)) {
-                            holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
+                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
                         } else if (result = (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL)) {
-                            holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
+                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
                         } else if (result = (operator == PhpTokenTypes.opGREATER || operator == PhpTokenTypes.opGREATER_OR_EQUAL)) {
-                            holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
+                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
                         } else if (result = (operator == PhpTokenTypes.opLESS || operator == PhpTokenTypes.opLESS_OR_EQUAL)) {
-                            holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
+                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
                         }
                     } else if (checked == current) {
                         final IElementType operator = expression.getOperationType();
                         if (result = (operator == PhpTokenTypes.opGREATER_OR_EQUAL)) {
-                            holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
+                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
                         } else if (result = (operator == PhpTokenTypes.opLESS)) {
-                            holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
+                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
                         }
                     }
                 }

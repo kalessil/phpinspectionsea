@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -53,7 +54,7 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
                             final String replacement = String.format("'%s'", ((Variable) key).getName());
                             holder.registerProblem(
                                     key,
-                                    String.format(messagePattern, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
                                     new UseStringKeyFix(replacement)
                             );
                         }

@@ -9,10 +9,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.elements.Variable;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,13 +47,13 @@ final public class MultipleFalsyValuesCheckStrategy {
             if (operator == PhpTokenTypes.opAND) {
                 holder.registerProblem(
                         target,
-                        String.format(isFalsySame ? messageAlwaysTrue : messageAlwaysFalse, target.getText()),
+                        String.format(ReportingUtil.wrapReportedMessage(isFalsySame ? messageAlwaysTrue : messageAlwaysFalse), target.getText()),
                         isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                 );
             } else {
                 holder.registerProblem(
                         target,
-                        String.format(isFalsySame ? messageAlwaysFalse : messageAlwaysTrue, target.getText()),
+                        String.format(ReportingUtil.wrapReportedMessage(isFalsySame ? messageAlwaysFalse : messageAlwaysTrue), target.getText()),
                         isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                 );
             }

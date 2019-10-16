@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -35,7 +36,7 @@ final public class ConstantConditionsIsNumericStrategy {
                     final boolean isTarget     = OpenapiTypesUtil.is(operation, PhpTokenTypes.opFLOAT_CAST) ||
                                                  OpenapiTypesUtil.is(operation, PhpTokenTypes.opINTEGER_CAST);
                     if (isTarget) {
-                        holder.registerProblem(reference, String.format(messageAlwaysTrue, reference.getText()));
+                        holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), reference.getText()));
                         return true;
                     }
                 } else if (argument instanceof FunctionReference) {
@@ -45,7 +46,7 @@ final public class ConstantConditionsIsNumericStrategy {
                         if (type != null && type.size() == 1) {
                             final boolean isTarget = type.equals(PhpType.INT) || type.equals(PhpType.FLOAT);
                             if (isTarget) {
-                                holder.registerProblem(reference, String.format(messageAlwaysTrue, reference.getText()));
+                                holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), reference.getText()));
                                 return true;
                             }
                         }

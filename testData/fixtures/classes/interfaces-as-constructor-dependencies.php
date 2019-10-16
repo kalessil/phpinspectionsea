@@ -18,10 +18,10 @@ namespace One {
         public function __construct(
             string $string,
             $typehinted,
-            <weak_warning descr="The parameters' type should be replaced with an interface (contract) (extensibility concerns).">AbstractComponent $abstract</weak_warning>,
-            <weak_warning descr="The parameters' type should be replaced with an interface (contract) (extensibility concerns).">?FromLegacyApplication $legacy</weak_warning>,
-            <weak_warning descr="The parameters' type should be replaced with an interface (contract) (extensibility concerns).">?FromModernApplication $modern</weak_warning>,
-            <weak_warning descr="The parameters' class doesn't implement any interfaces (contracts), consider introducing one (extensibility concerns).">?ProtoductionComponent $protoduction</weak_warning>
+            <weak_warning descr="[EA] The parameters' type should be replaced with an interface (contract) (extensibility concerns).">AbstractComponent $abstract</weak_warning>,
+            <weak_warning descr="[EA] The parameters' type should be replaced with an interface (contract) (extensibility concerns).">?FromLegacyApplication $legacy</weak_warning>,
+            <weak_warning descr="[EA] The parameters' type should be replaced with an interface (contract) (extensibility concerns).">?FromModernApplication $modern</weak_warning>,
+            <weak_warning descr="[EA] The parameters' class doesn't implement any interfaces (contracts), consider introducing one (extensibility concerns).">?ProtoductionComponent $protoduction</weak_warning>
         ) {}
     }
 }

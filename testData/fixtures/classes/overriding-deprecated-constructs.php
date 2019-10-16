@@ -6,7 +6,7 @@
         public function deprecatedInInterface();
     }
     class ClassImplementsDeprecatedMethod implements InterfaceWithDeprecatedMethod {
-        public function <warning descr="'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning> () {}
+        public function <warning descr="[EA] 'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning> () {}
     }
     /** @deprecated  */
     class DeprecatedClassImplementsDeprecatedMethod implements InterfaceWithDeprecatedMethod {
@@ -21,7 +21,7 @@
         public function deprecatedInClassSecond(){}
     }
     class ClassOverridesDeprecatedMethods extends DeprecatedMethod {
-        public function <warning descr="'deprecatedInClassFirst' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInClassFirst</warning> () {}
+        public function <warning descr="[EA] 'deprecatedInClassFirst' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInClassFirst</warning> () {}
         /** @deprecated */
         public function deprecatedInClassSecond(){}
     }
@@ -31,7 +31,7 @@
         public function deprecatedInClassSecond(){}
     }
     interface InterfaceOverridesDeprecatedMethods extends InterfaceWithDeprecatedMethod {
-        public function <warning descr="'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning>();
+        public function <warning descr="[EA] 'deprecatedInInterface' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInInterface</warning>();
     }
 
     /* pattern: overriding trait deprecation */
@@ -41,7 +41,7 @@
     }
     class ClassWithTrait {
         use TraitWithDeprecations;
-        public function <warning descr="'deprecatedInTrait' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInTrait</warning>(){}
+        public function <warning descr="[EA] 'deprecatedInTrait' overrides/implements a deprecated method. Consider refactoring or deprecate it as well.">deprecatedInTrait</warning>(){}
     }
 
     /* pattern: child deprecation instead of parent */
@@ -51,9 +51,9 @@
     }
     abstract class DeprecationHolderChild extends DeprecationHolderParent {
         /** @deprecated */
-        public function <warning descr="The parents' overridden/implemented 'abstractToDeprecate' probably needs to be deprecated as well.">abstractToDeprecate</warning> () {}
+        public function <warning descr="[EA] The parents' overridden/implemented 'abstractToDeprecate' probably needs to be deprecated as well.">abstractToDeprecate</warning> () {}
         /** @deprecated */
-        public function <warning descr="The parents' overridden/implemented 'implementationToDeprecate' probably needs to be deprecated as well.">implementationToDeprecate</warning> () {}
+        public function <warning descr="[EA] The parents' overridden/implemented 'implementationToDeprecate' probably needs to be deprecated as well.">implementationToDeprecate</warning> () {}
     }
 
     /* false-positives: implemented deprecation and deprecated */
@@ -68,8 +68,8 @@
     }
 
     class MissingDeprecationTags {
-        public function <warning descr="'regular' triggers a deprecation warning, but misses @deprecated annotation.">regular</warning>()  { trigger_error('...', E_USER_DEPRECATED); }
-        public function <warning descr="'suppressed' triggers a deprecation warning, but misses @deprecated annotation.">suppressed</warning>() { @trigger_error('...', E_USER_DEPRECATED); }
+        public function <warning descr="[EA] 'regular' triggers a deprecation warning, but misses @deprecated annotation.">regular</warning>()  { trigger_error('...', E_USER_DEPRECATED); }
+        public function <warning descr="[EA] 'suppressed' triggers a deprecation warning, but misses @deprecated annotation.">suppressed</warning>() { @trigger_error('...', E_USER_DEPRECATED); }
 
         /** @deprecated  */
         public function deprecated()  { trigger_error('...', E_USER_DEPRECATED); }

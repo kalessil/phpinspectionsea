@@ -5,15 +5,15 @@ class CasesHolder
 {
     protected $reported;
     protected $trigger;
-    public function <warning descr="It's probably a wrong field was used here ('reported' could fit).">isReported</warning>()
+    public function <warning descr="[EA] It's probably a wrong field was used here ('reported' could fit).">isReported</warning>()
     {
         return $this->trigger;
     }
-    public function <warning descr="It's probably a wrong field was used here ('reported' could fit).">getReported</warning>()
+    public function <warning descr="[EA] It's probably a wrong field was used here ('reported' could fit).">getReported</warning>()
     {
         return $this->trigger;
     }
-    public function <warning descr="It's probably a wrong field was used here ('reported' could fit).">setReported</warning>()
+    public function <warning descr="[EA] It's probably a wrong field was used here ('reported' could fit).">setReported</warning>()
     {
         $this->trigger = '...';
     }

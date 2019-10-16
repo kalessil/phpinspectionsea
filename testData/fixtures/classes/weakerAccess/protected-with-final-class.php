@@ -10,7 +10,7 @@ class NoFinalClassWithProperties {
 /* applicable: should affect only the protected property */
 final class FinalClassWithProperties {
     public  $isPublic;
-    <weak_warning descr="Since the class is final, the member can be declared private.">protected</weak_warning> $isProtected;
+    <weak_warning descr="[EA] Since the class is final, the member can be declared private.">protected</weak_warning> $isProtected;
     private $isPrivate;
 }
 
@@ -38,12 +38,12 @@ abstract class AbstractClass {
 final class FinalClassWithMethods {
               function noModifierMethod() {}
     public    function publicMethod() {}
-    <weak_warning descr="Since the class is final, the member can be declared private.">protected</weak_warning> function protectedMethod() {}
+    <weak_warning descr="[EA] Since the class is final, the member can be declared private.">protected</weak_warning> function protectedMethod() {}
     private   function privateMethod() {}
 
     static           function staticNoModifierMethod() {}
     static public    function staticPublicMethod() {}
-    static <weak_warning descr="Since the class is final, the member can be declared private.">protected</weak_warning> function staticProtectedMethod() {}
+    static <weak_warning descr="[EA] Since the class is final, the member can be declared private.">protected</weak_warning> function staticProtectedMethod() {}
     static private   function staticPrivateMethod() {}
 }
 
@@ -59,13 +59,13 @@ class ClassWithConstant {
 final class FinalClassWithConstant {
             const NO_MODIFIER_CONSTANT = 0;
     public  const PUBLIC_CONSTANT      = 1;
-    <weak_warning descr="Since the class is final, the member can be declared private.">protected</weak_warning> const PROTECTED_CONSTANT  = 2;
+    <weak_warning descr="[EA] Since the class is final, the member can be declared private.">protected</weak_warning> const PROTECTED_CONSTANT  = 2;
     private const PRIVATE_CONSTANT     = 3;
 }
 
 /* applicable: should affect the protected constant, even with different case */
 final class FinalClassWithUppercaseConstant {
-    <weak_warning descr="Since the class is final, the member can be declared private.">PROTECTED</weak_warning> const IGNORE_CASE = true;
+    <weak_warning descr="[EA] Since the class is final, the member can be declared private.">PROTECTED</weak_warning> const IGNORE_CASE = true;
 }
 
 /* not applicable: not a final class */
@@ -94,6 +94,6 @@ final class RespectAbstractClassSignatures extends AbstractClassTestingAllTypes 
 
 /* applicable: protected members/references which are not presented in parent class */
 final class FinalClassWithNonOverriddenProtectedMembers extends stdClass {
-    <weak_warning descr="Since the class is final, the member can be declared private.">protected</weak_warning> $ownProtectedField;
-    <weak_warning descr="Since the class is final, the member can be declared private.">protected</weak_warning> function ownProtectedMethod() { }
+    <weak_warning descr="[EA] Since the class is final, the member can be declared private.">protected</weak_warning> $ownProtectedField;
+    <weak_warning descr="[EA] Since the class is final, the member can be declared private.">protected</weak_warning> function ownProtectedMethod() { }
 }

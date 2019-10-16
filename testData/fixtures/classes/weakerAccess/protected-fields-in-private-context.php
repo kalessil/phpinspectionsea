@@ -10,7 +10,7 @@ class ProtectedFieldsInPrivateContext {
     protected $protectedUsedInPublicProtectedPrivate;
     protected $protectedUsedInProtected;
     protected $protectedUsedInProtectedPrivate;
-    <weak_warning descr="Since the property used in private context only, it could be declared private.">protected</weak_warning> $protectedUsedInPrivate;
+    <weak_warning descr="[EA] Since the property used in private context only, it could be declared private.">protected</weak_warning> $protectedUsedInPrivate;
 
     public function publicMethod() {
         return [
@@ -52,7 +52,7 @@ class ProtectedFieldsInPrivateContext {
 }
 
 class ProtectedFieldsInMagicContext {
-    <weak_warning descr="Since the property used in private context only, it could be declared private.">protected</weak_warning> $protectedUsedInMagic;
+    <weak_warning descr="[EA] Since the property used in private context only, it could be declared private.">protected</weak_warning> $protectedUsedInMagic;
     public function __toString() { return (string)$this->protectedUsedInMagic; }
 }
 

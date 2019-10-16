@@ -10,6 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class GetSetMethodCorrectnessInspector extends PhpInspection {
                                             if (!isDelegating) {
                                                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                                                 if (nameNode != null) {
-                                                    holder.registerProblem(nameNode, String.format(messagePattern, alternatives.get(0)));
+                                                    holder.registerProblem(nameNode, String.format(ReportingUtil.wrapReportedMessage(messagePattern), alternatives.get(0)));
                                                 }
                                             }
                                         }

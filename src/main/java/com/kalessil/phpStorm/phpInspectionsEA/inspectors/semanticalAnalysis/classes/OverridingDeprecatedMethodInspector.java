@@ -7,10 +7,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -68,7 +65,7 @@ public class OverridingDeprecatedMethodInspector extends PhpInspection {
                                     if (OpenapiTypesUtil.isStatementImpl(parent) && parent.getParent() == body) {
                                         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                                         if (nameNode != null ) {
-                                            holder.registerProblem(nameNode, String.format(patternMissingDeprecationTag, method.getName()));
+                                            holder.registerProblem(nameNode, String.format(ReportingUtil.wrapReportedMessage(patternMissingDeprecationTag), method.getName()));
                                         }
                                     }
                                 }
@@ -100,10 +97,10 @@ public class OverridingDeprecatedMethodInspector extends PhpInspection {
                                 final Method contractMethod = OpenapiResolveUtil.resolveMethod(contract, methodName);
                                 if (contractMethod != null) {
                                     if (!isMethodDeprecated && contractMethod.isDeprecated()) {
-                                        holder.registerProblem(nameNode, String.format(patternNeedsDeprecation, methodName));
+                                        holder.registerProblem(nameNode, String.format(ReportingUtil.wrapReportedMessage(patternNeedsDeprecation), methodName));
                                         return;
                                     } else if (isMethodDeprecated && !contractMethod.isDeprecated()) {
-                                        holder.registerProblem(nameNode, String.format(patternDeprecateParent, methodName));
+                                        holder.registerProblem(nameNode, String.format(ReportingUtil.wrapReportedMessage(patternDeprecateParent), methodName));
                                         return;
                                     }
                                 }

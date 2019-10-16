@@ -15,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIn
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,7 +100,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                                     if (isTarget) {
                                         final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                                         if (classNameNode != null) {
-                                            holder.registerProblem(classNameNode, String.format(messagePath, String.join(",", possibleFileLocations), "*/" + fileLocationFromFqn));
+                                            holder.registerProblem(classNameNode, String.format(ReportingUtil.wrapReportedMessage(messagePath), String.join(",", possibleFileLocations), "*/" + fileLocationFromFqn));
                                         }
                                     }
                                     possibleFileLocations.clear();
@@ -116,7 +117,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                 if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                     final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                     if (classNameNode != null) {
-                        holder.registerProblem(classNameNode, messageName);
+                        holder.registerProblem(classNameNode, ReportingUtil.wrapReportedMessage(messageName));
                     }
                 }
             }
@@ -126,7 +127,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                 if (!expectedClassName.equals(clazz.getName())) {
                     final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                     if (classNameNode != null) {
-                        holder.registerProblem(classNameNode, messageName);
+                        holder.registerProblem(classNameNode, ReportingUtil.wrapReportedMessage(messageName));
                     }
                 }
             }

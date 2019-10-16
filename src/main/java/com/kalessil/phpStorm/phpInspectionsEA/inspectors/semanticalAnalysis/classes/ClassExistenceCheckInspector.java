@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +74,7 @@ public class ClassExistenceCheckInspector extends PhpInspection {
                         if (functionName.equals("is_a") && argumentsCount == 2 && arguments[0] instanceof PhpTypedElement) {
                             final PhpType types = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], project);
                             if (types != null && types.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strString))) {
-                                holder.registerProblem(reference, messageString);
+                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageString));
                             }
                         }
                         candidate = argumentsCount >= 2 ? arguments[1] : null;
@@ -88,7 +89,7 @@ public class ClassExistenceCheckInspector extends PhpInspection {
                         if (constantName != null && constantName.equals("class") && targetClass instanceof ClassReference) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) targetClass);
                             if (resolved instanceof PhpClass && !callbacks.get(functionName).apply((PhpClass) resolved)) {
-                                holder.registerProblem(reference, messageMismatch);
+                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageMismatch));
                             }
                         }
                     }

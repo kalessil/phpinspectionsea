@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.utils.ModifierExtractionUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -110,7 +111,7 @@ final public class PropertyUsedInPrivateContextStrategy {
                         if (usages.size() == 1 && usages.contains("private")) {
                             final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(list);
                             if (modifier != null) {
-                                holder.registerProblem(modifier, message, new MakePrivateFixer(holder.getProject(), modifier));
+                                holder.registerProblem(modifier, ReportingUtil.wrapReportedMessage(message), new MakePrivateFixer(holder.getProject(), modifier));
                             }
                         }
                     }

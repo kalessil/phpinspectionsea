@@ -13,10 +13,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -112,7 +109,7 @@ public class CallableMethodValidityInspector extends PhpInspection {
                         final boolean isTarget = OpenapiResolveUtil.resolveDeclaredType(parameters[0]).equals(new PhpType().add("\\Exception"));
                         if (isTarget) {
                             final PsiElement target = OpenapiTypesUtil.isLambda(argument) ? parameters[0] : argument;
-                            holder.registerProblem(target, messageUseThrowable);
+                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageUseThrowable));
                         }
                     }
                 }
@@ -122,7 +119,7 @@ public class CallableMethodValidityInspector extends PhpInspection {
                 if (resolved instanceof Method) {
                     final Method method = (Method) resolved;
                     if (!method.getAccess().isPublic()) {
-                        holder.registerProblem(target, String.format(patternNotPublic, method.getName()));
+                        holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(patternNotPublic), method.getName()));
                     }
 
                     boolean needStatic = false;
@@ -150,7 +147,7 @@ public class CallableMethodValidityInspector extends PhpInspection {
                         }
                     }
                     if (needStatic) {
-                        holder.registerProblem(target, String.format(patternNotStatic, method.getName()));
+                        holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(patternNotStatic), method.getName()));
                     }
                 }
             }

@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -72,7 +73,7 @@ public class CoreInterfacesUsageInspector extends PhpInspection {
                                 } else {
                                     message = String.format(patternsWithAlternatives, classFQN, alternatives.toString());
                                 }
-                                holder.registerProblem(reference, message, ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
 
                                 break;
                             }

@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,17 +74,17 @@ final public class ClassMemberExistenceCheckInspector extends PhpInspection {
                                 if (functionName.equals("method_exists")) {
                                     member = OpenapiResolveUtil.resolveMethod(clazz, memberName);
                                     if (member == null && OpenapiResolveUtil.resolveField(clazz, memberName) != null) {
-                                        holder.registerProblem(reference, messageFalse);
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageFalse));
                                     }
                                 } else if (functionName.equals("property_exists")) {
                                     member = OpenapiResolveUtil.resolveField(clazz, memberName);
                                     if (member == null && OpenapiResolveUtil.resolveMethod(clazz, memberName) != null) {
-                                        holder.registerProblem(reference, messageFalse);
+                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageFalse));
                                     }
                                 }
                                 /* analyze */
                                 if (member != null && ExpressionSemanticUtil.getBlockScope(member) instanceof PhpClass) {
-                                    holder.registerProblem(reference, messageTrue);
+                                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageTrue));
                                 }
                             }
                         }

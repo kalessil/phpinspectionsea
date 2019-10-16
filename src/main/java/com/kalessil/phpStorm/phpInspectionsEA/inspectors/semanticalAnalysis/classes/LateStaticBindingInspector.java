@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -57,7 +58,7 @@ public class LateStaticBindingInspector extends PhpInspection {
                             if (scope instanceof Method) {
                                 final PhpClass clazz = ((Method) scope).getContainingClass();
                                 if (clazz != null && !clazz.isFinal()) {
-                                    holder.registerProblem(base, messagePrivateMethod, new UseSelfFix());
+                                    holder.registerProblem(base, ReportingUtil.wrapReportedMessage(messagePrivateMethod), new UseSelfFix());
                                 }
                             }
                         }

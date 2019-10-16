@@ -130,13 +130,13 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                     if (ownMethod.getAccess().equals(overriddenMethod.getAccess())) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(messagePatternIdentical, ownMethod.getName(), overriddenMethod.getFQN().replace(".", "::")),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePatternIdentical), ownMethod.getName(), overriddenMethod.getFQN().replace(".", "::")),
                                 canFix ? new DropMethodFix() : null
                         );
                     } else if (canUseProxy) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(messagePatternProxy, ownMethod.getName()),
+                                String.format(ReportingUtil.wrapReportedMessage(messagePatternProxy), ownMethod.getName()),
                                 canFix ? new ProxyCallFix() : null
                         );
                     }

@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -86,9 +87,9 @@ public class CompositionAndInheritanceInspector extends PhpInspection {
                 if (nameNode != null) {
                     final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                     if (OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).isEmpty()) {
-                        holder.registerProblem(nameNode, messageGeneric);
+                        holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageGeneric));
                     } else {
-                        holder.registerProblem(nameNode, messageAbstract);
+                        holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageAbstract));
                     }
                 }
             }

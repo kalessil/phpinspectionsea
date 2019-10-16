@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -91,7 +92,7 @@ public class MissingDirectorySeparatorInspector extends PhpInspection {
                         if (target != null) {
                             final String content = target.getContents();
                             if (content.matches("^[\\w\\.].*$")) {
-                                holder.registerProblem(candidate, message);
+                                holder.registerProblem(candidate, ReportingUtil.wrapReportedMessage(message));
                             }
                         }
                     }

@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +66,7 @@ public class ContractViolationInspector extends PhpInspection {
                                         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
                                         if (nameNode != null) {
                                             Collections.sort(violations);
-                                            holder.registerProblem(nameNode, String.format(messagePattern, String.join(", ", violations)));
+                                            holder.registerProblem(nameNode, String.format(ReportingUtil.wrapReportedMessage(messagePattern), String.join(", ", violations)));
                                         }
                                         violations.clear();
                                     }

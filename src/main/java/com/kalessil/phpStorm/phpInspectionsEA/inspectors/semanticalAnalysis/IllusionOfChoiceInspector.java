@@ -19,6 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -135,7 +136,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
                         final String replacement = String.format("return %s", falseVariant.getText());
                         holder.registerProblem(
                                 falseVariant,
-                                 messageSameValueConditional,
+                                ReportingUtil.wrapReportedMessage(messageSameValueConditional),
                                 new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
                         );
                     }
@@ -159,7 +160,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
                                 final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
                                 holder.registerProblem(
                                         falseValue,
-                                        isConditional ? messageDegradedConditional : messageDegradedTernary,
+                                        ReportingUtil.wrapReportedMessage(isConditional ? messageDegradedConditional : messageDegradedTernary),
                                         new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
                                 );
                             }

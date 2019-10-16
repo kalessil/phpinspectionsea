@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -72,11 +73,11 @@ public class SummerTimeUnsafeTimeManipulationInspector extends PhpInspection {
                     final PsiElement right = expression.getRightOperand();
                     if (right != null && this.isTargetMagicNumber(right) && this.isTargetContext(right)) {
                         if (!this.isTestContext(expression)) {
-                            holder.registerProblem(expression, message);
+                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
                         }
                     } else if (left != null && this.isTargetMagicNumber(left) && this.isTargetContext(left)) {
                         if (!this.isTestContext(expression)) {
-                            holder.registerProblem(expression, message);
+                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
                         }
                     }
                 }
@@ -89,7 +90,7 @@ public class SummerTimeUnsafeTimeManipulationInspector extends PhpInspection {
                 if (targetAssignments.contains(expression.getOperationType())) {
                     final PsiElement value = expression.getValue();
                     if (value != null && this.isTargetMagicNumber(value) && !this.isTestContext(expression)) {
-                        holder.registerProblem(expression, message);
+                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
                     }
                 }
             }

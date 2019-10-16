@@ -49,8 +49,10 @@ final public class SuspiciousOperatorFormattingStrategy {
             /* analyze statement */
             final IElementType valueOperation = valueOperator.getNode().getElementType();
             if (mapping.containsKey(valueOperation)) {
-                final String message = messagePattern.replace("%o%", mapping.get(valueOperation));
-                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
+                holder.registerProblem(
+                        expression,
+                        ReportingUtil.wrapReportedMessage(messagePattern.replace("%o%", mapping.get(valueOperation)))
+                );
             }
         }
     }

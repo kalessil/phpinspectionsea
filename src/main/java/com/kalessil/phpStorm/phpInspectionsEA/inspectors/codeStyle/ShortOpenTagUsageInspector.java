@@ -67,7 +67,11 @@ public class ShortOpenTagUsageInspector extends PhpInspection {
 
             private void analyze(@NotNull LeafPsiElement candidate) {
                 if (candidate.getElementType() == PhpTokenTypes.PHP_OPENING_TAG && candidate.getText().equals("<?")) {
-                    holder.registerProblem(candidate, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
+                    holder.registerProblem(
+                            candidate,
+                            ReportingUtil.wrapReportedMessage(message),
+                            new TheLocalFix()
+                    );
                 }
             }
         };

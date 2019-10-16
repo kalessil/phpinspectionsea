@@ -78,8 +78,12 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspectio
                 final String patternString = pattern.getContents();
                 if (!StringUtils.isEmpty(patternString) && !patternString.matches(".*\\p{L}.*")) {
                     final String replacementFunctionName = mapping.get(functionName);
-                    final String message                 = messagePattern.replace("%f%", replacementFunctionName);
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING, new TheLocalFix(replacementFunctionName));
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%f%", replacementFunctionName)),
+                            ProblemHighlightType.WEAK_WARNING,
+                            new TheLocalFix(replacementFunctionName)
+                    );
                 }
             }
         };

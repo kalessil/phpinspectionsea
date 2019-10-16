@@ -54,7 +54,11 @@ public class ImplodeArgumentsOrderInspector extends PhpInspection {
                                 arguments[1].getText(),
                                 arguments[0].getText()
                         );
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new ReorderArgumentsFixer(replacement));
+                        holder.registerProblem(
+                                reference,
+                                ReportingUtil.wrapReportedMessage(message),
+                                new ReorderArgumentsFixer(replacement)
+                        );
                     }
                 }
             }

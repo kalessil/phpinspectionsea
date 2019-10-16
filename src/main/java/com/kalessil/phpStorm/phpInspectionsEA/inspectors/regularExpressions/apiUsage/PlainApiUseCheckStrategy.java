@@ -126,7 +126,11 @@ final public class PlainApiUseCheckStrategy {
                 }
 
                 if (message != null) {
-                    holder.registerProblem(getPregMatchContext(reference), ReportingUtil.wrapReportedMessage(message), fixer);
+                    holder.registerProblem(
+                            getPregMatchContext(reference),
+                            ReportingUtil.wrapReportedMessage(message),
+                            fixer
+                    );
                     return;
                 }
             }
@@ -159,7 +163,11 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%p%", unescape(characterToTrim))
                     .replace("%s%", params[2].getText())
                     .replace("%f%", function);
-                holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new UseTrimFix(replacement));
+                holder.registerProblem(
+                        reference,
+                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                        new UseTrimFix(replacement)
+                );
                 return;
             }
 
@@ -172,7 +180,11 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")
                     .replace("%s%", params[1].getText())
                     .replace("%p%", unescape(patternAdapted));
-                holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new UseExplodeFix(replacement));
+                holder.registerProblem(
+                        reference,
+                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                        new UseExplodeFix(replacement)
+                );
             }
         }
     }

@@ -101,10 +101,12 @@ public class AdditionOperationOnArraysInspection extends PhpInspection {
                     if (isLeftArray) {
                         final PhpType rightResolved = OpenapiResolveUtil.resolveType(right, project);
                         if (rightResolved != null) {
-                            final boolean isRightArray = rightResolved.filterUnknown().getTypes().stream()
-                                    .anyMatch(type -> Types.getType(type).equals(Types.strArray));
+                            final boolean isRightArray = rightResolved.filterUnknown().getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strArray));
                             if (isRightArray) {
-                                holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message));
+                                holder.registerProblem(
+                                        operation,
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                             }
                         }
                     }

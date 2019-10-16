@@ -119,7 +119,10 @@ public class AliasFunctionsUsageInspector extends PhpInspection {
                     } else if (deprecatedAliases.containsKey(functionName) && this.isFromRootNamespace(reference)) {
                         final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
                         if (target != null) {
-                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(deprecatedAliases.get(functionName)));
+                            holder.registerProblem(
+                                    target,
+                                    ReportingUtil.wrapReportedMessage(deprecatedAliases.get(functionName))
+                            );
                         }
                     }
                 }

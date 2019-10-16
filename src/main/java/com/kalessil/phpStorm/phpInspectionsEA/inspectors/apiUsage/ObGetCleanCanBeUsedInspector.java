@@ -61,7 +61,11 @@ public class ObGetCleanCanBeUsedInspector extends PhpInspection {
                                     final String callName = call.getName();
                                     if (callName != null && callName.equals("ob_get_contents")) {
                                         if (this.isFromRootNamespace(reference) && this.isFromRootNamespace(call)) {
-                                            holder.registerProblem(call, ReportingUtil.wrapReportedMessage(message), new SimplifyFixer(holder.getProject(), parent));
+                                            holder.registerProblem(
+                                                    call,
+                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    new SimplifyFixer(holder.getProject(), parent)
+                                            );
                                         }
                                         return;
                                     }

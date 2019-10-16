@@ -71,7 +71,10 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                         }
                     }
 
-                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            loop.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
 
@@ -80,7 +83,10 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            loop.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
 
@@ -89,7 +95,10 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            loop.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
 
@@ -98,7 +107,10 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            loop.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
 

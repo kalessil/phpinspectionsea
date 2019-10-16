@@ -191,8 +191,12 @@ public class SenselessProxyMethodInspector extends PhpInspection {
 
                     /* decide if need to report any issues */
                     if (isDispatchingWithoutModifications && !isChangingSignature) {
-                        final String message = messagePattern.replace("%s%", method.getName());
-                        holder.registerProblem(methodNameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING, new DropMethodFix());
+                        holder.registerProblem(
+                                methodNameNode,
+                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%s%", method.getName())),
+                                ProblemHighlightType.WEAK_WARNING,
+                                new DropMethodFix()
+                        );
                     }
                 }
             }

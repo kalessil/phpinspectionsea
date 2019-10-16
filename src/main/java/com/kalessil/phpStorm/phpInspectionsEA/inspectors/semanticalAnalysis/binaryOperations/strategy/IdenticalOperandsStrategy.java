@@ -43,7 +43,10 @@ final public class IdenticalOperandsStrategy {
             final PsiElement left  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getLeftOperand());
             final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getRightOperand());
             if (left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, right)) {
-                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
+                holder.registerProblem(
+                        expression,
+                        ReportingUtil.wrapReportedMessage(message)
+                );
                 return true;
             }
         }

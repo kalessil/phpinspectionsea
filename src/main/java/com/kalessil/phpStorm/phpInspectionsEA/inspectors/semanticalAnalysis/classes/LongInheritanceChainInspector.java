@@ -96,8 +96,11 @@ public class LongInheritanceChainInspector extends PhpInspection {
                 }
 
                 if (parentsCount >= 3 && !clazz.isDeprecated()) {
-                    final String message = messagePattern.replace("%c%", String.valueOf(parentsCount));
-                    holder.registerProblem(psiClassName, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            psiClassName,
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", String.valueOf(parentsCount))),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
             }
         };

@@ -62,7 +62,10 @@ final public class ChainedCallsStrategy {
                                 }
                             }
                             if (!isNullTested) {
-                                holder.registerProblem(operator, ReportingUtil.wrapReportedMessage(message));
+                                holder.registerProblem(
+                                        operator,
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                                 break;
                             }
                         }

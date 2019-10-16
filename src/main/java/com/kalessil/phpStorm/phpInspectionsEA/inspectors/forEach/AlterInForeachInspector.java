@@ -113,7 +113,10 @@ public class AlterInForeachInspector extends PhpInspection {
 
                             /* check if warning needs to be reported */
                             if (!isRequirementFullFilled) {
-                                holder.registerProblem(objForeachValue, ReportingUtil.wrapReportedMessage(messageMissingUnset));
+                                holder.registerProblem(
+                                        objForeachValue,
+                                        ReportingUtil.wrapReportedMessage(messageMissingUnset)
+                                );
                             }
                         } else {
                             /* check for unset in parent foreach-statements: foreach-{foreach}-unset */
@@ -144,8 +147,11 @@ public class AlterInForeachInspector extends PhpInspection {
                                             !StringUtils.isEmpty(foreachValueName) &&
                                             unsetArgumentName.equals(foreachValueName)
                                         ) {
-                                            final String message = patternAmbiguousUnset.replace("%v%", foreachValueName);
-                                            holder.registerProblem(unsetExpression, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                                            holder.registerProblem(
+                                                    unsetExpression,
+                                                    ReportingUtil.wrapReportedMessage(patternAmbiguousUnset.replace("%v%", foreachValueName)),
+                                                    ProblemHighlightType.WEAK_WARNING
+                                            );
                                         }
                                     }
                                 }
@@ -166,7 +172,11 @@ public class AlterInForeachInspector extends PhpInspection {
                         prevElement = prevElement.getPrevSibling();
                     }
                     if (OpenapiTypesUtil.is(prevElement, PhpTokenTypes.opBIT_AND)) {
-                        holder.registerProblem(prevElement, ReportingUtil.wrapReportedMessage(messageKeyReference), ProblemHighlightType.ERROR);
+                        holder.registerProblem(
+                                prevElement,
+                                ReportingUtil.wrapReportedMessage(messageKeyReference),
+                                ProblemHighlightType.ERROR
+                        );
                     }
                 }
             }
@@ -221,10 +231,11 @@ public class AlterInForeachInspector extends PhpInspection {
                         ) {
                             final String strName = objForeachValue.getName();
                             if (!StringUtils.isEmpty(strName)) {
-                                final String message = patternSuggestReference
-                                        .replace("%c%", strName)
-                                        .replace("%v%", strName);
-                                holder.registerProblem(operand, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(
+                                        operand,
+                                        ReportingUtil.wrapReportedMessage(patternSuggestReference.replace("%c%", strName).replace("%v%", strName)),
+                                        ProblemHighlightType.WEAK_WARNING
+                                );
 
                                 return;
                             }

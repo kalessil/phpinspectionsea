@@ -59,7 +59,11 @@ public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
                     previous = ((PhpDocComment) previous).getPrevPsiSibling();
                 }
                 if (previous instanceof PhpUnset) {
-                    holder.registerProblem(unsetStatement, ReportingUtil.wrapReportedMessage(message), new TheLocalFix(holder.getProject(), unsetStatement));
+                    holder.registerProblem(
+                            unsetStatement,
+                            ReportingUtil.wrapReportedMessage(message),
+                            new TheLocalFix(holder.getProject(), unsetStatement)
+                    );
                 }
             }
         };

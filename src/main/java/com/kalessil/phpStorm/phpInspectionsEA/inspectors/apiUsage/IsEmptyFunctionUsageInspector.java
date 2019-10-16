@@ -87,7 +87,11 @@ public class IsEmptyFunctionUsageInspector extends PhpInspection {
                                                        ? String.format("0 %s count(%s)", comparision, subject.getText())
                                                        : String.format("count(%s) %s 0", subject.getText(), comparision);
                             final PsiElement target  = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(patternAlternative), replacement), new UseCountFix(replacement));
+                            holder.registerProblem(
+                                    target,
+                                    String.format(ReportingUtil.wrapReportedMessage(patternAlternative), replacement),
+                                    new UseCountFix(replacement)
+                            );
                         }
                         resolvedTypes.clear();
 
@@ -126,7 +130,11 @@ public class IsEmptyFunctionUsageInspector extends PhpInspection {
                 }
 
                 if (REPORT_EMPTY_USAGE) {
-                    holder.registerProblem(emptyExpression, ReportingUtil.wrapReportedMessage(messageDoNotUse), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            emptyExpression,
+                            ReportingUtil.wrapReportedMessage(messageDoNotUse),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
             }
 

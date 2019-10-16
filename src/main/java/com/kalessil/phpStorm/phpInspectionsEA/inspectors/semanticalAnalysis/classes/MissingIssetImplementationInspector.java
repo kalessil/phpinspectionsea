@@ -119,9 +119,11 @@ public class MissingIssetImplementationInspector extends PhpInspection {
                                 if (clazz != null && !magicClasses.contains(clazz.getFQN())) {
                                     final boolean hasField = OpenapiResolveUtil.resolveField(clazz, parameterName) != null;
                                     if (!hasField && OpenapiResolveUtil.resolveMethod(clazz, "__isset") == null) {
-                                        final String message = messagePattern.replace("%c%", type);
-                                        holder.registerProblem(parameter, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
-
+                                        holder.registerProblem(
+                                                parameter,
+                                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", type)),
+                                                ProblemHighlightType.GENERIC_ERROR
+                                        );
                                         break;
                                     }
                                 }

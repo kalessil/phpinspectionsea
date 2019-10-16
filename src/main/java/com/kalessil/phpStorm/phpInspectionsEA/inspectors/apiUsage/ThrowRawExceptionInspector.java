@@ -61,11 +61,18 @@ public class ThrowRawExceptionInspector extends PhpInspection {
                     final String classFqn               = classReference == null ? null : classReference.getFQN();
                     if (classFqn != null) {
                         if (classFqn.equals("\\Exception")) {
-                            holder.registerProblem(classReference, ReportingUtil.wrapReportedMessage(messageRawException), new TheLocalFix());
+                            holder.registerProblem(
+                                    classReference,
+                                    ReportingUtil.wrapReportedMessage(messageRawException),
+                                    new TheLocalFix()
+                            );
                         } else if (REPORT_MISSING_ARGUMENTS && newExpression.getParameters().length == 0) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(classReference);
                             if (resolved instanceof PhpClass && this.isTarget((PhpClass) resolved)) {
-                                holder.registerProblem(newExpression, ReportingUtil.wrapReportedMessage(messageNoArguments));
+                                holder.registerProblem(
+                                        newExpression,
+                                        ReportingUtil.wrapReportedMessage(messageNoArguments)
+                                );
                             }
                         }
                     }

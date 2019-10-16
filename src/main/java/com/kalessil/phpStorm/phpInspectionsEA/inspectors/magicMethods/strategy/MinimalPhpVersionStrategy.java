@@ -14,10 +14,11 @@ public class MinimalPhpVersionStrategy {
     static public void apply(final Method method, final ProblemsHolder holder, final PhpLanguageLevel neededVersion) {
         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
         if (nameNode != null && PhpLanguageLevel.get(holder.getProject()).below(neededVersion)) {
-            final String message = strProblemDescription
-                    .replace("%m%", method.getName())
-                    .replace("%v%", neededVersion.getVersion());
-            holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+            holder.registerProblem(
+                    nameNode,
+                    ReportingUtil.wrapReportedMessage(strProblemDescription.replace("%m%", method.getName()).replace("%v%", neededVersion.getVersion())),
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
+            );
         }
     }
 }

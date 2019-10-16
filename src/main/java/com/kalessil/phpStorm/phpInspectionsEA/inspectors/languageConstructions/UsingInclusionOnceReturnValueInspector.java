@@ -52,7 +52,11 @@ public class UsingInclusionOnceReturnValueInspector extends PhpInspection {
                 final PsiElement parent = include.getParent();
                 if (parent instanceof ControlStatement || !OpenapiTypesUtil.isStatementImpl(parent)) {
                     if (include.getArgument() != null && include.getFirstChild().getText().endsWith("_once")) {
-                        holder.registerProblem(include, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
+                        holder.registerProblem(
+                                include,
+                                ReportingUtil.wrapReportedMessage(message),
+                                new TheLocalFix()
+                        );
                     }
                 }
             }

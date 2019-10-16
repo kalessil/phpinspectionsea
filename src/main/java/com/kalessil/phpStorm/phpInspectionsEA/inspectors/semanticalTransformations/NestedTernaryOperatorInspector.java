@@ -45,11 +45,17 @@ public class NestedTernaryOperatorInspector extends PhpInspection {
 
                 final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
                 if (condition instanceof TernaryExpression) {
-                    holder.registerProblem(condition, ReportingUtil.wrapReportedMessage(messageNested));
+                    holder.registerProblem(
+                            condition,
+                            ReportingUtil.wrapReportedMessage(messageNested)
+                    );
                 }
                 final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                 if (trueVariant instanceof TernaryExpression) {
-                    holder.registerProblem(trueVariant, ReportingUtil.wrapReportedMessage(messageNested));
+                    holder.registerProblem(
+                            trueVariant,
+                            ReportingUtil.wrapReportedMessage(messageNested)
+                    );
                 }
                 final PsiElement falseVariant        = expression.getFalseVariant();
                 final PsiElement unboxedFalseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(falseVariant);
@@ -58,7 +64,10 @@ public class NestedTernaryOperatorInspector extends PhpInspection {
                                           expression.isShort() &&
                                           ((TernaryExpression) falseVariant).isShort();
                     if (!allow) {
-                        holder.registerProblem(unboxedFalseVariant, ReportingUtil.wrapReportedMessage(messageNested));
+                        holder.registerProblem(
+                                unboxedFalseVariant,
+                                ReportingUtil.wrapReportedMessage(messageNested)
+                        );
                     }
                 }
             }

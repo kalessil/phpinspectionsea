@@ -110,16 +110,27 @@ public class PhpUnitTestsInspector extends PhpInspection {
                                                     isNamedDataset       = key instanceof StringLiteralExpression;
                                                 }
                                                 if (!isNamedDataset) {
-                                                    holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageNamedProvider));
+                                                    holder.registerProblem(
+                                                            nameNode,
+                                                            ReportingUtil.wrapReportedMessage(messageNamedProvider)
+                                                    );
                                                 }
                                             }
                                         }
                                     }
                                 } else {
-                                    holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageDataProvider), ProblemHighlightType.GENERIC_ERROR);
+                                    holder.registerProblem(
+                                            nameNode,
+                                            ReportingUtil.wrapReportedMessage(messageDataProvider),
+                                            ProblemHighlightType.GENERIC_ERROR
+                                    );
                                 }
                             } else {
-                                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageDataProvider), ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(
+                                        nameNode,
+                                        ReportingUtil.wrapReportedMessage(messageDataProvider),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
                             }
                         }
                     } else if (tagName.equals("@depends")) {
@@ -134,14 +145,26 @@ public class PhpUnitTestsInspector extends PhpInspection {
                                     if (!dependency.getName().startsWith("test")) {
                                         final PhpDocComment docBlock = dependency.getDocComment();
                                         if (docBlock == null || docBlock.getTagElementsByName("@test").length == 0) {
-                                            holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageDepends), ProblemHighlightType.GENERIC_ERROR);
+                                            holder.registerProblem(
+                                                    nameNode,
+                                                    ReportingUtil.wrapReportedMessage(messageDepends),
+                                                    ProblemHighlightType.GENERIC_ERROR
+                                            );
                                         }
                                     }
                                 } else {
-                                    holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageDepends), ProblemHighlightType.GENERIC_ERROR);
+                                    holder.registerProblem(
+                                            nameNode,
+                                            ReportingUtil.wrapReportedMessage(messageDepends),
+                                            ProblemHighlightType.GENERIC_ERROR
+                                    );
                                 }
                             } else {
-                                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageDepends), ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(
+                                        nameNode,
+                                        ReportingUtil.wrapReportedMessage(messageDepends),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
                             }
                         }
                     } else if (tagName.equals("@covers")) {
@@ -170,8 +193,11 @@ public class PhpUnitTestsInspector extends PhpInspection {
 
                             final boolean callableNeeded = referenceText.contains("::");
                             if ((callableNeeded && !hasCallableReference) || (!callableNeeded && !hasClassReference)) {
-                                final String message = String.format(messageCovers, referenceText);
-                                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(
+                                        nameNode,
+                                        ReportingUtil.wrapReportedMessage(String.format(messageCovers, referenceText)),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
                             }
                         }
                     } else if (tagName.equals("@test")) {

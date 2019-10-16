@@ -61,7 +61,12 @@ public class ElvisOperatorCanBeUsedInspector extends PhpInspection {
 
                 /* if true variant is the object or expressions are not equals */
                 if (condition != trueVariant && OpenapiEquivalenceUtil.areEqual(condition, trueVariant)) {
-                    holder.registerProblem(expression.getTrueVariant(), ReportingUtil.wrapReportedMessage(strProblemDescription), ProblemHighlightType.WEAK_WARNING, new TheLocalFix());
+                    holder.registerProblem(
+                            expression.getTrueVariant(),
+                            ReportingUtil.wrapReportedMessage(strProblemDescription),
+                            ProblemHighlightType.WEAK_WARNING,
+                            new TheLocalFix()
+                    );
                 }
             }
         };

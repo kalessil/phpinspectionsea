@@ -235,7 +235,11 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                                         continue;
                                     }
 
-                                    holder.registerProblem(instanceOfExpression, ReportingUtil.wrapReportedMessage(messageInstanceOfAmbiguous), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(
+                                            instanceOfExpression,
+                                            ReportingUtil.wrapReportedMessage(messageInstanceOfAmbiguous),
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                    );
                                     break;
                                 }
                             }
@@ -279,7 +283,11 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                                     OpenapiEquivalenceUtil.areEqual(testSubject, left) ||
                                     OpenapiEquivalenceUtil.areEqual(testSubject, right)
                                 ) {
-                                    holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageInstanceOfComplementarity), ProblemHighlightType.WEAK_WARNING);
+                                    holder.registerProblem(
+                                            expression,
+                                            ReportingUtil.wrapReportedMessage(messageInstanceOfComplementarity),
+                                            ProblemHighlightType.WEAK_WARNING
+                                    );
                                 }
                             }
                         }
@@ -315,7 +323,10 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                         /* search duplicates in current scope */
                         for (final PsiElement innerLoopExpression : callsExtracted) {
                             if (innerLoopExpression != null && OpenapiEquivalenceUtil.areEqual(innerLoopExpression, expression)) {
-                                holder.registerProblem(innerLoopExpression, ReportingUtil.wrapReportedMessage(messageDuplicateConditionPart));
+                                holder.registerProblem(
+                                        innerLoopExpression,
+                                        ReportingUtil.wrapReportedMessage(messageDuplicateConditionPart)
+                                );
                                 callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
                             }
                         }
@@ -443,7 +454,10 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                                 }
                             }
 
-                            holder.registerProblem(innerLoopExpression, ReportingUtil.wrapReportedMessage(messageDuplicateConditions));
+                            holder.registerProblem(
+                                    innerLoopExpression,
+                                    ReportingUtil.wrapReportedMessage(messageDuplicateConditions)
+                            );
                             conditions.set(conditions.indexOf(innerLoopExpression), null);
                         }
                     }
@@ -451,7 +465,10 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                     /* search duplicates in outer scopes */
                     for (final PsiElement objOuterScopeExpression : objParentConditions) {
                         if (objOuterScopeExpression != null && OpenapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression)) {
-                            holder.registerProblem(objExpression, ReportingUtil.wrapReportedMessage(messageDuplicateConditions));
+                            holder.registerProblem(
+                                    objExpression,
+                                    ReportingUtil.wrapReportedMessage(messageDuplicateConditions)
+                            );
                             objParentConditions.set(objParentConditions.indexOf(objOuterScopeExpression), null);
                         }
                     }
@@ -485,7 +502,11 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                         null != previousCond && intLoopCurrentCost < intPreviousCost &&
                         !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(previousCond, condition)
                     ) {
-                        holder.registerProblem(condition, ReportingUtil.wrapReportedMessage(messageOrdering), ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(
+                                condition,
+                                ReportingUtil.wrapReportedMessage(messageOrdering),
+                                ProblemHighlightType.WEAK_WARNING
+                        );
                     }
 
                     intPreviousCost = intLoopCurrentCost;

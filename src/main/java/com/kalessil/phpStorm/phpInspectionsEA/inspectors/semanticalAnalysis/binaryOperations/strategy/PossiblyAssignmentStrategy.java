@@ -25,7 +25,10 @@ final public class PossiblyAssignmentStrategy {
         if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opEQUAL)) {
             final PsiElement parent = expression.getParent();
             if (OpenapiTypesUtil.isStatementImpl(parent)) {
-                holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message));
+                holder.registerProblem(
+                        operation,
+                        ReportingUtil.wrapReportedMessage(message)
+                );
                 return true;
             }
         }

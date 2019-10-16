@@ -86,7 +86,10 @@ public class ProperNullCoalescingOperatorUsageInspector extends PhpInspection {
                                                 ? rightTypes.stream().anyMatch(leftTypes::contains)
                                                 : rightTypes.containsAll(leftTypes);
                                         if (!complimentary && !this.areRelated(rightTypes, leftTypes)) {
-                                            holder.registerProblem(binary, String.format(ReportingUtil.wrapReportedMessage(messageMismatch), leftTypes.toString(), rightTypes.toString()));
+                                            holder.registerProblem(
+                                                    binary,
+                                                    String.format(ReportingUtil.wrapReportedMessage(messageMismatch), leftTypes.toString(), rightTypes.toString())
+                                            );
                                         }
                                         rightTypes.clear();
                                     }

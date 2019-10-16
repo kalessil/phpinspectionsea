@@ -86,7 +86,11 @@ public class IsNullFunctionUsageInspector extends PhpInspection {
                         final String wrappedArgument = wrap ? String.format("(%s)", arguments[0].getText()) : arguments[0].getText();
                         final boolean isRegular      = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
                         final String replacement     = String.format("%s %s %s", isRegular ? wrappedArgument : "null", checksIsNull ? "===" : "!==", isRegular ? "null" : wrappedArgument);
-                        holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new CompareToNullFix(replacement));
+                        holder.registerProblem(
+                                target,
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                new CompareToNullFix(replacement)
+                        );
                     }
                 }
             }

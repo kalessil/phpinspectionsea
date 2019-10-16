@@ -56,7 +56,11 @@ public class UnnecessaryFinalModifierInspector extends PhpInspection {
                     ) {
                         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                         if (nameNode != null) {
-                            holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
+                            holder.registerProblem(
+                                    nameNode,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    new TheLocalFix()
+                            );
                         }
                     }
                 }

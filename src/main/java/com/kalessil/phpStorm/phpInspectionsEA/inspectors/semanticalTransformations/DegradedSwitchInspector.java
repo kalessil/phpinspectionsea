@@ -47,13 +47,22 @@ public class DegradedSwitchInspector extends PhpInspection {
                 final PhpCase[] cases = expression.getCases();
                 if (cases.length == 0) {
                     if (expression.getDefaultCase() != null) {
-                        holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageOnlyDefault));
+                        holder.registerProblem(
+                                expression.getFirstChild(),
+                                ReportingUtil.wrapReportedMessage(messageOnlyDefault)
+                        );
                     }
                 } else if (cases.length == 1) {
                     if (expression.getDefaultCase() == null) {
-                        holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageIf));
+                        holder.registerProblem(
+                                expression.getFirstChild(),
+                                ReportingUtil.wrapReportedMessage(messageIf)
+                        );
                     } else {
-                        holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageIfElse));
+                        holder.registerProblem(
+                                expression.getFirstChild(),
+                                ReportingUtil.wrapReportedMessage(messageIfElse)
+                        );
                     }
                 }
             }

@@ -89,8 +89,11 @@ public class ClassOverridesFieldOfSuperClassInspector extends PhpInspection {
                         /* re-defining private fields with the same name is pretty suspicious itself */
                         if (parentField.getModifier().isPrivate()) {
                             if (REPORT_PRIVATE_REDEFINITION) {
-                                final String message = patternProtectedCandidate.replace("%c%", parentFieldHolder.getFQN());
-                                holder.registerProblem(fieldNameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                                holder.registerProblem(
+                                        fieldNameNode,
+                                        ReportingUtil.wrapReportedMessage(patternProtectedCandidate.replace("%c%", parentFieldHolder.getFQN())),
+                                        ProblemHighlightType.WEAK_WARNING
+                                );
                             }
                             return;
                         }
@@ -98,8 +101,11 @@ public class ClassOverridesFieldOfSuperClassInspector extends PhpInspection {
                         /* report only cases when access level is not changed */
                         if (!ownField.getModifier().getAccess().isWeakerThan(parentField.getModifier().getAccess())) {
                            /* fire common warning */
-                            final String message = patternShadows.replace("%p%", ownFieldName).replace("%c%", parentFieldHolder.getFQN());
-                            holder.registerProblem(fieldNameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                            holder.registerProblem(
+                                    fieldNameNode,
+                                    ReportingUtil.wrapReportedMessage(patternShadows.replace("%p%", ownFieldName).replace("%c%", parentFieldHolder.getFQN())),
+                                    ProblemHighlightType.WEAK_WARNING
+                            );
                         }
                     }
                 }

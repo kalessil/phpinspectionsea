@@ -138,8 +138,11 @@ public class CascadingDirnameCallsInspector extends PhpInspection {
                             .replace("%l%", String.join(" + ", reported));
                     reported.clear();
 
-                    final String message = messagePattern.replace("%e%", replacement);
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new TheLocalFix(replacement));
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%e%", replacement)),
+                            new TheLocalFix(replacement)
+                    );
                 }
             }
         };

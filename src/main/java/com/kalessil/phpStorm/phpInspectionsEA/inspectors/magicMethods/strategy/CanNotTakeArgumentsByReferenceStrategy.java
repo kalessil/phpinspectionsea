@@ -16,8 +16,11 @@ public class CanNotTakeArgumentsByReferenceStrategy {
             if (parameter.isPassByRef()) {
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                 if (nameNode != null) {
-                    final String message = strProblemDescription.replace("%m%", method.getName());
-                    holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.ERROR);
+                    holder.registerProblem(
+                            nameNode,
+                            ReportingUtil.wrapReportedMessage(strProblemDescription.replace("%m%", method.getName())),
+                            ProblemHighlightType.ERROR
+                    );
                     return;
                 }
             }

@@ -66,7 +66,11 @@ public class UnNecessaryDoubleQuotesInspector extends PhpInspection {
                     return;
                 }
 
-                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
+                holder.registerProblem(
+                        expression,
+                        ReportingUtil.wrapReportedMessage(message),
+                        new TheLocalFix()
+                );
             }
         };
     }

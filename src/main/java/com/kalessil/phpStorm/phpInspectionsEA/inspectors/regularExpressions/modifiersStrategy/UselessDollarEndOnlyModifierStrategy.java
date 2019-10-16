@@ -29,13 +29,21 @@ public class UselessDollarEndOnlyModifierStrategy {
     ) {
         if (modifiers != null && !modifiers.isEmpty() && modifiers.indexOf('D') != -1) {
             if (modifiers.indexOf('m') != -1) {
-                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageIgnored), ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(
+                        target,
+                        ReportingUtil.wrapReportedMessage(messageIgnored),
+                        ProblemHighlightType.WEAK_WARNING
+                );
             }
 
             if (pattern != null && !pattern.isEmpty()) {
                 int countEnds = StringUtils.countMatches(pattern, "$") - StringUtils.countMatches(pattern, "\\$");
                 if (countEnds == 0) {
-                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageAmbiguous), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            target,
+                            ReportingUtil.wrapReportedMessage(messageAmbiguous),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
             }
         }

@@ -91,7 +91,10 @@ public class DynamicCallsToScopeIntrospectionInspector extends PhpInspection {
                                 final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                                 final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
                                 if (targetCalls.containsKey(callback)) {
-                                    holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messagePattern), callback));
+                                    holder.registerProblem(
+                                            target,
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), callback)
+                                    );
                                 }
                             }
                         }

@@ -49,8 +49,12 @@ public class DeprecatedConstructorStyleInspector extends PhpInspection {
 
                 final String className = clazz.getName();
                 if (className.equals(method.getName()) && null == clazz.findOwnMethodByName("__construct")) {
-                    final String message = messagePattern.replace("%s%", className);
-                    holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                    holder.registerProblem(
+                            nameNode,
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%s%", className)),
+                            ProblemHighlightType.LIKE_DEPRECATED,
+                            new TheLocalFix()
+                    );
                 }
             }
         };

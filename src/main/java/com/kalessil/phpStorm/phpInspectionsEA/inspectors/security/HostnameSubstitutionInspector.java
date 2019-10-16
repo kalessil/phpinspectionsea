@@ -116,7 +116,10 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                 if (right != null && left instanceof StringLiteralExpression) {
                     final boolean containsAt = ((StringLiteralExpression) left).getContents().endsWith("@");
                     if (containsAt && !this.isChecked(substitutedExpression)) {
-                        holder.registerProblem(right, String.format(ReportingUtil.wrapReportedMessage(patternGeneral), attribute));
+                        holder.registerProblem(
+                                right,
+                                String.format(ReportingUtil.wrapReportedMessage(patternGeneral), attribute)
+                        );
                     }
                 }
             }
@@ -147,7 +150,10 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                     if (storageName != null && !storageName.isEmpty()) {
                         final Matcher matcher = regexTargetNames.matcher(storageName);
                         if (matcher.matches() && !this.isChecked(substitutedExpression)) {
-                            holder.registerProblem(substitutedExpression, ReportingUtil.wrapReportedMessage(messageNaming));
+                            holder.registerProblem(
+                                    substitutedExpression,
+                                    ReportingUtil.wrapReportedMessage(messageNaming)
+                            );
                         }
                     }
                 } else if (storage instanceof Variable) {
@@ -172,7 +178,10 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                         if (!storageName.isEmpty()) {
                             final Matcher matcher = regexTargetNames.matcher(storageName);
                             if (matcher.matches() && !this.isChecked(substitutedExpression)) {
-                                holder.registerProblem(substitutedExpression, ReportingUtil.wrapReportedMessage(messageNaming));
+                                holder.registerProblem(
+                                        substitutedExpression,
+                                        ReportingUtil.wrapReportedMessage(messageNaming)
+                                );
                             }
                         }
                     }

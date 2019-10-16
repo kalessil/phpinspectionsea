@@ -57,8 +57,10 @@ public class DeclareDirectiveCorrectnessInspector extends PhpInspection {
                 if (declarationText != null && declarationText.indexOf('=') != -1) {
                     final String directive = declarationText.split("=")[0];
                     if (!directives.contains(directive.trim())) {
-                        final String message = messagePattern.replace("%d%", directive);
-                        holder.registerProblem(declare, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                declare,
+                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%d%", directive))
+                        );
                     }
                 }
             }

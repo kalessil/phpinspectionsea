@@ -38,16 +38,21 @@ final public class AndOrWordsUsageStrategy {
 
                 final String operator = operation.getText().trim();
                 if (operator.equalsIgnoreCase("and")) {
-                    final String message = messagePattern.replace("%o%", "&&");
-                    holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            operation,
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%o%", "&&")),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
 
                     continue;
                 }
 
                 if (operator.equalsIgnoreCase("or")) {
-                    final String message = messagePattern.replace("%o%", "||");
-                    holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
-
+                    holder.registerProblem(
+                            operation,
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%o%", "||")),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                     //continue;
                 }
             }

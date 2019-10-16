@@ -73,7 +73,12 @@ public class UnnecessaryCastingInspector extends PhpInspection {
                         if (parent instanceof BinaryExpression) {
                             final BinaryExpression binary = (BinaryExpression) parent;
                             if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
-                                holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(messageConcatenate), ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
+                                holder.registerProblem(
+                                        operation,
+                                        ReportingUtil.wrapReportedMessage(messageConcatenate),
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                        new ReplaceWithArgumentFix()
+                                );
                                 return;
                             }
                         }
@@ -81,7 +86,12 @@ public class UnnecessaryCastingInspector extends PhpInspection {
                         else if (parent instanceof SelfAssignmentExpression) {
                             final SelfAssignmentExpression assignment = (SelfAssignmentExpression) parent;
                             if (assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN) {
-                                holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(messageConcatenate), ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
+                                holder.registerProblem(
+                                        operation,
+                                        ReportingUtil.wrapReportedMessage(messageConcatenate),
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                        new ReplaceWithArgumentFix()
+                                );
                                 return;
                             }
                         }
@@ -93,7 +103,12 @@ public class UnnecessaryCastingInspector extends PhpInspection {
                             if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
                                 final boolean isTarget = !this.isNullCoalescingOnly(argument);
                                 if (isTarget) {
-                                    holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(messageGeneric), ProblemHighlightType.LIKE_UNUSED_SYMBOL, new ReplaceWithArgumentFix());
+                                    holder.registerProblem(
+                                            operation,
+                                            ReportingUtil.wrapReportedMessage(messageGeneric),
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                            new ReplaceWithArgumentFix()
+                                    );
                                 }
                             }
                         }

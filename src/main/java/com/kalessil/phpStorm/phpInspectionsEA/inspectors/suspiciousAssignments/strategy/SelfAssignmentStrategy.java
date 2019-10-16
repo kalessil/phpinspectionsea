@@ -64,11 +64,11 @@ final public class SelfAssignmentStrategy {
         }
 
         /* now analysis itself */
-        if (
-            OpenapiTypesUtil.is(valueOperation, mapping.get(assignOperator)) &&
-            OpenapiEquivalenceUtil.areEqual(variable, valueLeftPart)
-        ) {
-            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
+        if (OpenapiTypesUtil.is(valueOperation, mapping.get(assignOperator)) && OpenapiEquivalenceUtil.areEqual(variable, valueLeftPart)) {
+            holder.registerProblem(
+                    expression,
+                    ReportingUtil.wrapReportedMessage(message)
+            );
         }
     }
 }

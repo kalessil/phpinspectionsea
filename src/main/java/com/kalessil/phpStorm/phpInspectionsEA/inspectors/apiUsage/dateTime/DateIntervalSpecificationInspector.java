@@ -69,7 +69,10 @@ public class DateIntervalSpecificationInspector extends PhpInspection {
                     if (pattern != null && pattern.getFirstPsiChild() == null) {
                         final String input = pattern.getContents();
                         if (!regexRegular.matcher(input).find() && !regexDateTimeAlike.matcher(input).find()) {
-                            holder.registerProblem(pattern, ReportingUtil.wrapReportedMessage(message));
+                            holder.registerProblem(
+                                    pattern,
+                                    ReportingUtil.wrapReportedMessage(message)
+                            );
                         }
                     }
                 }

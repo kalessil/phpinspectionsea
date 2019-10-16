@@ -44,11 +44,18 @@ final public class HardcodedConstantValuesStrategy {
     ) {
         return Stream.of(left, right).anyMatch(operand -> {
             if (PhpLanguageUtil.isFalse(operand) || PhpLanguageUtil.isNull(operand)) {
-                holder.registerProblem(operand, ReportingUtil.wrapReportedMessage(messageEnforces));
+                holder.registerProblem(
+                        operand,
+                        ReportingUtil.wrapReportedMessage(messageEnforces)
+                );
                 return true;
             }
             if (PhpLanguageUtil.isTrue(operand)) {
-                holder.registerProblem(operand, ReportingUtil.wrapReportedMessage(messageSenseless), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                holder.registerProblem(
+                        operand,
+                        ReportingUtil.wrapReportedMessage(messageSenseless),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                );
                 return true;
             }
             return false;
@@ -62,11 +69,18 @@ final public class HardcodedConstantValuesStrategy {
     ) {
         return Stream.of(left, right).anyMatch(operand -> {
             if (PhpLanguageUtil.isTrue(operand)) {
-                holder.registerProblem(operand, ReportingUtil.wrapReportedMessage(messageEnforces));
+                holder.registerProblem(
+                        operand,
+                        ReportingUtil.wrapReportedMessage(messageEnforces)
+                );
                 return true;
             }
             if (PhpLanguageUtil.isFalse(operand) || PhpLanguageUtil.isNull(operand)) {
-                holder.registerProblem(operand, ReportingUtil.wrapReportedMessage(messageSenseless), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                holder.registerProblem(
+                        operand,
+                        ReportingUtil.wrapReportedMessage(messageSenseless),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                );
                 return true;
             }
             return false;

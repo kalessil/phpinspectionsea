@@ -47,8 +47,10 @@ final public class SwitchFallThroughStrategy {
                         for (final PsiElement writtenVariable : written) {
                             if (OpenapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
-                                holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(message));
-
+                                holder.registerProblem(
+                                        variable,
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                                 break;
                             }
                         }
@@ -85,8 +87,10 @@ final public class SwitchFallThroughStrategy {
                         for (final PsiElement writtenVariable : written) {
                             if (OpenapiEquivalenceUtil.areEqual(writtenVariable, variable)) {
                                 isOverridden = true;
-                                holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(message));
-
+                                holder.registerProblem(
+                                        variable,
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                                 break;
                             }
                         }

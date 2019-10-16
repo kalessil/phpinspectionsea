@@ -79,11 +79,19 @@ public class FopenBinaryUnsafeUsageInspector extends PhpInspection {
                                 }
                             } else if (modeText.indexOf('t') != -1) {
                                 if (ENFORCE_BINARY_MODIFIER_USAGE) {
-                                    holder.registerProblem(arguments[1], ReportingUtil.wrapReportedMessage(messageReplaceWithBinaryMode), new TheLocalFix(holder.getProject(), mode));
+                                    holder.registerProblem(
+                                            arguments[1],
+                                            ReportingUtil.wrapReportedMessage(messageReplaceWithBinaryMode),
+                                            new TheLocalFix(holder.getProject(), mode)
+                                    );
                                 }
                             } else {
                                 if (ENFORCE_BINARY_MODIFIER_USAGE) {
-                                    holder.registerProblem(arguments[1], ReportingUtil.wrapReportedMessage(messageUseBinaryMode), new TheLocalFix(holder.getProject(), mode));
+                                    holder.registerProblem(
+                                            arguments[1],
+                                            ReportingUtil.wrapReportedMessage(messageUseBinaryMode),
+                                            new TheLocalFix(holder.getProject(), mode)
+                                    );
                                 }
                             }
                         }

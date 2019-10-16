@@ -97,7 +97,10 @@ public class MissingOrEmptyGroupStatementInspector extends PhpInspection {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(construct);
                 if (body != null) {
                     if (REPORT_EMPTY_BODY && ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                        holder.registerProblem(construct.getFirstChild(), ReportingUtil.wrapReportedMessage(messageEmptyBody));
+                        holder.registerProblem(
+                                construct.getFirstChild(),
+                                ReportingUtil.wrapReportedMessage(messageEmptyBody)
+                        );
                     }
                     return;
                 }
@@ -106,7 +109,11 @@ public class MissingOrEmptyGroupStatementInspector extends PhpInspection {
                     return;
                 }
 
-                holder.registerProblem(construct.getFirstChild(), ReportingUtil.wrapReportedMessage(messageMissingBrackets), new WrapBodyFix());
+                holder.registerProblem(
+                        construct.getFirstChild(),
+                        ReportingUtil.wrapReportedMessage(messageMissingBrackets),
+                        new WrapBodyFix()
+                );
             }
         };
     }

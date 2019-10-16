@@ -23,7 +23,11 @@ public class AllowedModifierCheckStrategy {
         if (modifiers != null && !modifiers.isEmpty() && !functionName.equals("preg_quote")) {
             for (char modifier : modifiers.toCharArray()) {
                 if ("eimsuxADJSUX".indexOf(modifier) == -1) {
-                    holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(message), String.valueOf(modifier)), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(
+                            target,
+                            String.format(ReportingUtil.wrapReportedMessage(message), String.valueOf(modifier)),
+                            ProblemHighlightType.GENERIC_ERROR
+                    );
                 }
             }
         }

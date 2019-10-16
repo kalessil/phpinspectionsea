@@ -60,7 +60,10 @@ public class EfferentObjectCouplingInspector extends PhpInspection {
                             .collect(Collectors.toSet());
                     final int count = references.size();
                     if (count >= optionCouplingLimit) {
-                        holder.registerProblem(nameIdentifier, String.format(ReportingUtil.wrapReportedMessage(messagePattern), count));
+                        holder.registerProblem(
+                                nameIdentifier,
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), count)
+                        );
                     }
                 }
             }

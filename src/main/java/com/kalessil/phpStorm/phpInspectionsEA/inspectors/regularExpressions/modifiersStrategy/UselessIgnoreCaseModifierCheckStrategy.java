@@ -29,7 +29,11 @@ public class UselessIgnoreCaseModifierCheckStrategy {
         if (modifiers != null && !modifiers.isEmpty() && modifiers.indexOf('i') != -1) {
             final boolean check = pattern != null && !pattern.isEmpty();
             if (check && !matcher.matcher(pattern.replaceAll("\\\\[\\\\dDwWsS]", "")).matches()) {
-                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(
+                        target,
+                        ReportingUtil.wrapReportedMessage(message),
+                        ProblemHighlightType.WEAK_WARNING
+                );
             }
         }
     }

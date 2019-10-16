@@ -64,7 +64,10 @@ public class GetClassUsageInspector extends PhpInspection {
                                 final boolean hasNull = resolved.filterUnknown().getTypes().stream()
                                         .anyMatch(t -> Types.getType(t).equals(Types.strNull));
                                 if ((hasNull || isNullableParameter(arguments[0])) && !isNullabilityChecked(arguments[0])) {
-                                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
+                                    holder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
                                 }
                             }
                         }

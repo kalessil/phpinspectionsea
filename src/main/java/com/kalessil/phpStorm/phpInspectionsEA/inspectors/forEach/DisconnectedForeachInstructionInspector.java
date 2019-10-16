@@ -130,13 +130,19 @@ public class DisconnectedForeachInstructionInspector extends PhpInspection {
                                         /* operating with variables should be taken into account */
                                         final boolean isVariablesUsed = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, (Class) Variable.class) != null;
                                         if (null == loopInterrupter && isVariablesUsed) {
-                                            holder.registerProblem(reportingTarget, ReportingUtil.wrapReportedMessage(messageDisconnected));
+                                            holder.registerProblem(
+                                                    reportingTarget,
+                                                    ReportingUtil.wrapReportedMessage(messageDisconnected)
+                                            );
                                         }
                                     }
                                 }
 
                                 if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
-                                    holder.registerProblem(oneInstruction, ReportingUtil.wrapReportedMessage(messageUseClone));
+                                    holder.registerProblem(
+                                            oneInstruction,
+                                            ReportingUtil.wrapReportedMessage(messageUseClone)
+                                    );
                                 }
                             }
                         }

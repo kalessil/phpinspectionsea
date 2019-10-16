@@ -86,11 +86,13 @@ public class NestedNotOperatorsInspector extends PhpInspection {
                 }
 
                 if (nestingLevel > 1) {
-                    final String message =
-                            (nestingLevel % 2 == 0 ? messageUseBoolCasting : messageUseSingleNot).replace("%e%", value.getText());
-                    final LocalQuickFix fixer =
-                            nestingLevel % 2 == 0 ? new UseCastingLocalFix(holder.getProject(), value) : new UseSingleNotLocalFix(holder.getProject(), value);
-                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), fixer);
+                    final String message      = (nestingLevel % 2 == 0 ? messageUseBoolCasting : messageUseSingleNot).replace("%e%", value.getText());
+                    final LocalQuickFix fixer = nestingLevel % 2 == 0 ? new UseCastingLocalFix(holder.getProject(), value) : new UseSingleNotLocalFix(holder.getProject(), value);
+                    holder.registerProblem(
+                            target,
+                            ReportingUtil.wrapReportedMessage(message),
+                            fixer
+                    );
                 }
             }
         };

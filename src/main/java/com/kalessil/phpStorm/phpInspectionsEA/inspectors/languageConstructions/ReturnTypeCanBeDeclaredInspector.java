@@ -152,7 +152,11 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                         final String message      = messagePattern
                                 .replace("%t%", Types.strVoid)
                                 .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
-                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), fixer);
+                        holder.registerProblem(
+                                target,
+                                ReportingUtil.wrapReportedMessage(message),
+                                fixer
+                        );
                     }
                 }
                 /* case 2: offer using type */
@@ -167,7 +171,11 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                             .replace("%t%", suggestedType)
                             .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
                         ;
-                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), fixer);
+                        holder.registerProblem(
+                                target,
+                                ReportingUtil.wrapReportedMessage(message),
+                                fixer
+                        );
                     }
                 }
                 /* case 3: offer using nullable type */
@@ -186,7 +194,11 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                             .replace("%t%", typeHint)
                             .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
                         ;
-                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), fixer);
+                        holder.registerProblem(
+                                target,
+                                ReportingUtil.wrapReportedMessage(message),
+                                fixer
+                        );
                     }
                 }
             }

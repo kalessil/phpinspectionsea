@@ -43,7 +43,10 @@ public class UsingInclusionReturnValueInspector  extends PhpInspection {
                 if (this.shouldSkipAnalysis(include, StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE)) { return; }
 
                 if (!OpenapiTypesUtil.isStatementImpl(include.getParent())) {
-                    holder.registerProblem(include, ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            include,
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
         };

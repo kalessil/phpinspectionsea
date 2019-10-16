@@ -49,10 +49,12 @@ final public class AssertBoolOfComparisonStrategy {
                     final boolean isOperationInverting = operation == PhpTokenTypes.opNOT_EQUAL || operation == PhpTokenTypes.opNOT_IDENTICAL;
                     final boolean isTypeStrict         = operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL;
 
-                    final String replacementMethod = "assert" +
-                        (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
-                    final String message = messagePattern.replace("%m%", replacementMethod);
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new TheLocalFix(holder.getProject(), replacementMethod, left, right));
+                    final String replacementMethod = "assert" + (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%m%", replacementMethod)),
+                            new TheLocalFix(holder.getProject(), replacementMethod, left, right)
+                    );
 
                     return true;
                 }

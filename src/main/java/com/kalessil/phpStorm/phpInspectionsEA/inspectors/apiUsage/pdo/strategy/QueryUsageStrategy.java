@@ -59,11 +59,12 @@ final public class QueryUsageStrategy {
             if (MethodIdentityUtil.isReferencingMethod(precedingReference, "\\PDO", "prepare")) {
                 final PsiElement variableAssigned = assignment.getVariable();
                 final PsiElement variableUsed     = reference.getClassReference();
-                if (
-                    variableAssigned != null && variableUsed != null &&
-                    OpenapiEquivalenceUtil.areEqual(variableAssigned, variableUsed)
-                ) {
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new UseQueryFix(holder.getProject(), precedingReference));
+                if (variableAssigned != null && variableUsed != null && OpenapiEquivalenceUtil.areEqual(variableAssigned, variableUsed)) {
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(message),
+                            new UseQueryFix(holder.getProject(), precedingReference)
+                    );
                 }
 
             }

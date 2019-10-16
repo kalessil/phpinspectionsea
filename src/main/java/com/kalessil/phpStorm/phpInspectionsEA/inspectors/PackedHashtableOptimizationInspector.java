@@ -145,10 +145,16 @@ final public class PackedHashtableOptimizationInspector extends PhpInspection {
 
                 /* report if criteria are met */
                 if (!hasIncreasingIndexes) {
-                    holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageReorder));
+                    holder.registerProblem(
+                            expression.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(messageReorder)
+                    );
                 }
                 if (hasIncreasingIndexes && hasStringIndexes) {
-                    holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageUseNumericKeys));
+                    holder.registerProblem(
+                            expression.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(messageUseNumericKeys)
+                    );
                 }
             }
         };

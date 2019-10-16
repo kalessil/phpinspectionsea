@@ -54,7 +54,10 @@ public class DateTimeSetTimeUsageInspector extends PhpInspection {
                         if (arguments.length == 4 && arguments[3] instanceof PhpPsiElement) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                             if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\DateTime.setTime")) {
-                                holder.registerProblem(arguments[3], ReportingUtil.wrapReportedMessage(message));
+                                holder.registerProblem(
+                                        arguments[3],
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                             }
                         }
                     }
@@ -70,7 +73,10 @@ public class DateTimeSetTimeUsageInspector extends PhpInspection {
                     if (functionName != null && functionName.equals("date_time_set")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 5 && this.isFromRootNamespace(reference)) {
-                            holder.registerProblem(arguments[4], ReportingUtil.wrapReportedMessage(message));
+                            holder.registerProblem(
+                                    arguments[4],
+                                    ReportingUtil.wrapReportedMessage(message)
+                            );
                         }
                     }
                 }

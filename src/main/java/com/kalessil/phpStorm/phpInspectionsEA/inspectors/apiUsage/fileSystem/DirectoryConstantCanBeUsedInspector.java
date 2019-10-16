@@ -54,7 +54,12 @@ public class DirectoryConstantCanBeUsedInspector extends PhpInspection {
                     if (arguments.length == 1 && arguments[0] instanceof ConstantReference) {
                         final String constantName = ((ConstantReference) arguments[0]).getName();
                         if (constantName != null && constantName.equals("__FILE__")) {
-                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    ProblemHighlightType.LIKE_DEPRECATED,
+                                    new TheLocalFix()
+                            );
                         }
                     }
                 }

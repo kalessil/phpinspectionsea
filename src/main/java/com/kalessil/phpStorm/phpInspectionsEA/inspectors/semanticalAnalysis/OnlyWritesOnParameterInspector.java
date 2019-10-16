@@ -151,10 +151,18 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
 
                         if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
                             if (this.getVariableUsages(parameterName, function).length == 0) {
-                                holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageUnused), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                holder.registerProblem(
+                                        variable,
+                                        ReportingUtil.wrapReportedMessage(messageUnused),
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                );
                             }
                         } else if (this.analyzeAndReturnUsagesCount(parameterName, function) == 0) {
-                            holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageUnused), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            holder.registerProblem(
+                                    variable,
+                                    ReportingUtil.wrapReportedMessage(messageUnused),
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                            );
                         }
                     }
                 }
@@ -281,7 +289,11 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                 }
                                 /* false-negative: inline assignment result has been used */
                                 if (usages.length == 2 && usages[0].getAnchor() == usages[1].getAnchor()) {
-                                    holder.registerProblem(assignmentVariableCandidate, ReportingUtil.wrapReportedMessage(messageUnused), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(
+                                            assignmentVariableCandidate,
+                                            ReportingUtil.wrapReportedMessage(messageUnused),
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                    );
                                     return 1;
                                 }
                                 continue;

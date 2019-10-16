@@ -68,7 +68,10 @@ public class PropertyCanBeStaticInspector extends PhpInspection {
                                         if (item instanceof ArrayCreationExpression || item instanceof StringLiteralExpression) {
                                             if (++intArrayOrStringCount == 3 && !this.isSuppressed(field)) {
                                                 final boolean canUseConstants = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560);
-                                                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(canUseConstants ? messageWithConstants : messageNoConstants));
+                                                holder.registerProblem(
+                                                        nameNode,
+                                                        ReportingUtil.wrapReportedMessage(canUseConstants ? messageWithConstants : messageNoConstants)
+                                                );
                                                 break;
                                             }
                                         }

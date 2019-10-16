@@ -64,7 +64,11 @@ public class MockingMethodsCorrectnessInspector extends PhpInspection {
                                 if (isTarget && this.isTestContext(reference)) {
                                     final PsiElement nameNode = NamedElementUtil.getNameIdentifier(reference);
                                     if (nameNode != null) {
-                                        holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageWillMethod), new UseWillMethodFix());
+                                        holder.registerProblem(
+                                                nameNode,
+                                                ReportingUtil.wrapReportedMessage(messageWillMethod),
+                                                new UseWillMethodFix()
+                                        );
                                     }
                                 }
                             }
@@ -121,9 +125,17 @@ public class MockingMethodsCorrectnessInspector extends PhpInspection {
                                         if (resolved instanceof PhpClass) {
                                             final Method method = OpenapiResolveUtil.resolveMethod((PhpClass) resolved, methodName.getContents());
                                             if (method == null) {
-                                                holder.registerProblem(methodName, ReportingUtil.wrapReportedMessage(messageUnresolvedMethod), ProblemHighlightType.GENERIC_ERROR);
+                                                holder.registerProblem(
+                                                        methodName,
+                                                        ReportingUtil.wrapReportedMessage(messageUnresolvedMethod),
+                                                        ProblemHighlightType.GENERIC_ERROR
+                                                );
                                             } else if (method.isFinal()) {
-                                                holder.registerProblem(methodName, ReportingUtil.wrapReportedMessage(messageFinalMethod), ProblemHighlightType.GENERIC_ERROR);
+                                                holder.registerProblem(
+                                                        methodName,
+                                                        ReportingUtil.wrapReportedMessage(messageFinalMethod),
+                                                        ProblemHighlightType.GENERIC_ERROR
+                                                );
                                             }
                                         }
                                     }

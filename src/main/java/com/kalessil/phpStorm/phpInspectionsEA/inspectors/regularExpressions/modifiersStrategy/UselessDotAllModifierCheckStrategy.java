@@ -29,7 +29,11 @@ final public class UselessDotAllModifierCheckStrategy {
         if (modifiers != null && pattern != null && !pattern.isEmpty() && modifiers.indexOf('s') != -1) {
             final String normalized = pattern.replaceAll("\\[[^\\]]+\\]", "");
             if (StringUtils.countMatches(normalized, ".") - StringUtils.countMatches(normalized, "\\.") == 0) {
-                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(
+                        target,
+                        ReportingUtil.wrapReportedMessage(message),
+                        ProblemHighlightType.WEAK_WARNING
+                );
             }
         }
     }

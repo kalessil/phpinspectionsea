@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +46,7 @@ final public class PossiblyMethodReferenceStrategy {
                                     final boolean hasMethod = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(normalized, index).stream()
                                             .anyMatch(clazz -> OpenapiResolveUtil.resolveMethod(clazz, functionName) != null);
                                     if (hasMethod) {
-                                        holder.registerProblem(operation, message);
+                                        holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message));
                                         return true;
                                     }
                                 }

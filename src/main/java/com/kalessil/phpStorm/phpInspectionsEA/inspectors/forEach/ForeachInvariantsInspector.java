@@ -112,7 +112,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                             if (!isContainerUsed) {
                                 holder.registerProblem(
                                         whileStatement.getFirstChild(),
-                                        foreachInvariant,
+                                        ReportingUtil.wrapReportedMessage(foreachInvariant),
                                         new UseForeachFix(holder.getProject(), whileStatement, null, assignment.getVariable(), container, null)
                                 );
                             }

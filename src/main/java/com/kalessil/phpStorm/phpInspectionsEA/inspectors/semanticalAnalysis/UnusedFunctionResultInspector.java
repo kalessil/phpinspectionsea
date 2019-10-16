@@ -12,10 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -126,7 +123,7 @@ public class UnusedFunctionResultInspector extends PhpInspection {
                                 if (REPORT_ONLY_SCALARS) {
                                     final boolean skip = types.removeIf(t -> t.startsWith("\\") || t.equals(Types.strStatic) || t.equals(Types.strObject)) && types.isEmpty();
                                     if (!skip) {
-                                        holder.registerProblem(target, message);
+                                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
                                     }
                                 } else {
                                     if (!REPORT_FLUENT_INTERFACES && reference instanceof MethodReference) {
@@ -144,7 +141,7 @@ public class UnusedFunctionResultInspector extends PhpInspection {
                                     final boolean skip = (!REPORT_MIXED_TYPE && types.remove(Types.strMixed) && types.isEmpty()) ||
                                                          (!REPORT_FLUENT_INTERFACES && types.isEmpty());
                                     if (!skip) {
-                                        holder.registerProblem(target, message);
+                                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
                                     }
                                 }
                             }

@@ -7,10 +7,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,15 +60,15 @@ final public class MultipleValuesEqualityInIfBodyStrategy {
                         if (next != null && isConstantCondition(current, next)) {
                             if (current.second == next.second) {
                                 if (isSameValue(current, next)) {
-                                    holder.registerProblem(match, String.format(messageAlwaysTrue, match.getText()));
+                                    holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), match.getText()));
                                 } else {
-                                    holder.registerProblem(match, String.format(messageAlwaysFalse, match.getText()));
+                                    holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), match.getText()));
                                 }
                             } else {
                                 if (isSameValue(current, next)) {
-                                    holder.registerProblem(match, String.format(messageAlwaysFalse, match.getText()));
+                                    holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), match.getText()));
                                 } else {
-                                    holder.registerProblem(match, String.format(messageAlwaysTrue, match.getText()));
+                                    holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), match.getText()));
                                 }
                             }
                         }

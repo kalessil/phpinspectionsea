@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,9 +40,9 @@ final public class TypesIntersectionStrategy {
                     final boolean isIntersecting = right.getTypes().stream().anyMatch(leftTypes::contains);
                     if (result = !isIntersecting) {
                         if (operation == PhpTokenTypes.opIDENTICAL) {
-                            holder.registerProblem(expression, String.format(messageAlwaysFalse, expression.getText()));
+                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
                         } else {
-                            holder.registerProblem(expression, String.format(messageAlwaysTrue, expression.getText()));
+                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
                         }
                     }
                 }

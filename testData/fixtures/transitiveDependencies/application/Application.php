@@ -3,7 +3,7 @@
 namespace Company {
     use First\Subsplit\Clazz as SubsplitClazz;
     use First\Clazz as FirstClass;
-    use <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">Second\Clazz</warning> as SecondClass;
+    use <warning descr="[EA] The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">Second\Clazz</warning> as SecondClass;
     use Ignored\Clazz as IgnoredClass;
 
     class Application extends SecondClass {
@@ -15,7 +15,7 @@ namespace Company {
                 new \stdClass(),
                 new \First\Subsplit\Clazz(),
                 new \First\Clazz(),
-                new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz</warning>(),
+                new <warning descr="[EA] The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz</warning>(),
                 new \Ignored\Clazz(),
 
                 new SubsplitClazz(),
@@ -32,7 +32,7 @@ namespace Company {
     return [
         new \stdClass(),
         new \First\Clazz(),
-        new <warning descr="The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz</warning>(),
+        new <warning descr="[EA] The class belongs to a package which is not directly required in your composer.json. Please add the package into your composer.json">\Second\Clazz</warning>(),
         new \Ignored\Clazz(),
     ];
 }

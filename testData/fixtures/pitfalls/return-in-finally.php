@@ -5,13 +5,13 @@ function finally_cases_holder($argument, $exception)
     try {
         if ($argument) { return $argument; }
     } finally {
-        <error descr="Voids all returned values and thrown exceptions from the try-block (returned values and exceptions are lost).">return $argument;</error>
+        <error descr="[EA] Voids all returned values and thrown exceptions from the try-block (returned values and exceptions are lost).">return $argument;</error>
     }
 
     try {
         if ($argument) { throw $exception; }
     } finally {
-        <error descr="Voids all returned values and thrown exceptions from the try-block (returned values and exceptions are lost).">return $exception;</error>
+        <error descr="[EA] Voids all returned values and thrown exceptions from the try-block (returned values and exceptions are lost).">return $exception;</error>
     }
 
     /* false-positives */
@@ -24,7 +24,7 @@ function finally_cases_holder($argument, $exception)
 function yield_cases_holder($argument): Generator
 {
     yield $argument;
-    <error descr="It was probably intended to use 'yield' or 'yield from' here.">return $argument;</error>
+    <error descr="[EA] It was probably intended to use 'yield' or 'yield from' here.">return $argument;</error>
 
     /* false-positives */
     return;

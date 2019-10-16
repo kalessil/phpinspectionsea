@@ -9,8 +9,8 @@ class CasesHolder
 
     public function scenario(): void
     {
-        $this->notNullableConsumer(<warning descr="Null pointer exception may occur here (result can be null).">$this->trigger()</warning>);
-        $this->notNullableConsumer(<warning descr="Null pointer exception may occur here (result can be null).">null</warning>);
+        $this->notNullableConsumer(<warning descr="[EA] Null pointer exception may occur here (result can be null).">$this->trigger()</warning>);
+        $this->notNullableConsumer(<warning descr="[EA] Null pointer exception may occur here (result can be null).">null</warning>);
 
         $this->nullableConsumer($this->trigger(), $this->trigger());
         $this->nullableConsumer(null, null);

@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +80,7 @@ final public class NestedCallsStrategy {
                                 declaredType.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull)) ||
                                 declaredType.filterPrimitives().isEmpty();
                             if (!canBeNull) {
-                                holder.registerProblem(argument, message);
+                                holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(message));
                             }
                         }
                     });

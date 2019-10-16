@@ -13,6 +13,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -174,7 +175,7 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                                     final boolean depends = PsiTreeUtil.findChildrenOfType(currentBase, Variable.class).stream()
                                             .anyMatch(v -> variables.contains(v.getName()));
                                     if (!depends) {
-                                        holder.registerProblem(currentBase, messageLoop);
+                                        holder.registerProblem(currentBase, ReportingUtil.wrapReportedMessage(messageLoop));
                                     }
                                     variables.clear();
                                 }
@@ -185,7 +186,7 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                             if (candidate instanceof MethodReference && !this.isTestContext(parent)) {
                                 final PsiElement previousBase = candidate.getFirstChild();
                                 if (OpenapiEquivalenceUtil.areEqual(currentBase, previousBase)) {
-                                    holder.registerProblem(currentBase, messageSequential);
+                                    holder.registerProblem(currentBase, ReportingUtil.wrapReportedMessage(messageSequential));
                                 }
                             }
                         }
@@ -230,7 +231,7 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                                     matches = OpenapiEquivalenceUtil.areEqual(first, second);
                                 }
                                 if (matches) {
-                                    holder.registerProblem(second, messageSequential);
+                                    holder.registerProblem(second, ReportingUtil.wrapReportedMessage(messageSequential));
                                     break iterate;
                                 }
                             }

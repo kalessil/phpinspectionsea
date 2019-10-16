@@ -24,6 +24,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +84,7 @@ public class TransitiveDependenciesUsageInspector extends PhpInspection {
                             if (dependencyManifest != null && !ownManifest.equals(dependencyManifest)) {
                                 final boolean isTarget = this.isTransitiveDependency(ownManifest, dependencyManifest, project);
                                 if (isTarget) {
-                                    holder.registerProblem(reference, message, new OpenDependencyManifest(dependencyManifest));
+                                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new OpenDependencyManifest(dependencyManifest));
                                 }
                             }
                         }

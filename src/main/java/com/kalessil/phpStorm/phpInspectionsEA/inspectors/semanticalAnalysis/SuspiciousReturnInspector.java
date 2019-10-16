@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -69,7 +70,7 @@ public class SuspiciousReturnInspector extends PhpInspection {
             private void analyzeReturnFromFinally(@NotNull PhpReturn statement, @NotNull Try scope) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
-                    holder.registerProblem(statement, messageFinally);
+                    holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(messageFinally));
                 }
             }
 
@@ -80,7 +81,7 @@ public class SuspiciousReturnInspector extends PhpInspection {
                         final boolean hasYields = PsiTreeUtil.findChildrenOfType(scope, PhpYield.class).stream()
                                 .anyMatch(yield -> PsiTreeUtil.findFirstParent(yield, PARENT_FUNCTION) == scope);
                         if (hasYields) {
-                            holder.registerProblem(statement, messageYield);
+                            holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(messageYield));
                         }
                     }
                 }

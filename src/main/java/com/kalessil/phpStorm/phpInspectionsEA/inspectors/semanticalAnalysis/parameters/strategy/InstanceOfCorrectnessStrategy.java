@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,7 @@ final public class InstanceOfCorrectnessStrategy {
                     final PhpClass resolvedClass = (PhpClass) resolved;
                     if (parameterTypes.contains(resolvedClass.getFQN())) {
                         if (typesCount == 1) {
-                            holder.registerProblem(binary, messageSameClass);
+                            holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageSameClass));
                             result = true;
                         } else if (typesCount == 2 && parameterTypes.contains(Types.strNull)) {
                             final PsiElement parent  = binary.getParent();
@@ -52,7 +53,7 @@ final public class InstanceOfCorrectnessStrategy {
                             final String replacement = String.format("%s %s null", left.getText(), binary == target ? "!==" : "===");
                             holder.registerProblem(
                                     target,
-                                    String.format(patternCompareNull, replacement),
+                                    String.format(ReportingUtil.wrapReportedMessage(patternCompareNull), replacement),
                                     new CompareToNullFix(replacement)
                             );
                             result = true;
@@ -66,7 +67,7 @@ final public class InstanceOfCorrectnessStrategy {
                             if (classes.size() == 1) {
                                 final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlInheritanceTree(resolvedClass, true);
                                 if (!parents.contains(classes.iterator().next())) {
-                                    holder.registerProblem(binary, messageUnrelatedClass);
+                                    holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageUnrelatedClass));
                                     result = true;
                                 }
                             }
@@ -74,7 +75,7 @@ final public class InstanceOfCorrectnessStrategy {
                     }
                 }
             } else {
-                holder.registerProblem(binary, messageNotObject);
+                holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageNotObject));
                 result = true;
             }
         }

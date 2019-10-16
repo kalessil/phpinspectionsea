@@ -130,7 +130,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                 }
                 /* analyze the source */
                 if (iterable instanceof ArrayCreationExpression && iterable.getChildren().length == 0) {
-                    holder.registerProblem(source, String.format(patternEmptyArray, source.getText()));
+                    holder.registerProblem(source, String.format(ReportingUtil.wrapReportedMessage(patternEmptyArray), source.getText()));
                 }
             }
 
@@ -180,7 +180,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                             if (anomaly != null && !this.isOverridden(source, condition.getParent())) {
                                 holder.registerProblem(
                                         loop.getFirstChild(),
-                                        String.format(patternConditionAnomaly, anomaly.getText())
+                                        String.format(ReportingUtil.wrapReportedMessage(patternConditionAnomaly), anomaly.getText())
                                 );
                                 break;
                             }
@@ -286,7 +286,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
 
             private void inspectConditions(@NotNull For forStatement) {
                 if (forStatement.getConditionalExpressions().length > 1) {
-                    holder.registerProblem(forStatement.getFirstChild(), messageMultipleConditions);
+                    holder.registerProblem(forStatement.getFirstChild(), ReportingUtil.wrapReportedMessage(messageMultipleConditions));
                 }
             }
 
@@ -352,7 +352,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
 
                 if (!expectedRepeatedOperator.isEmpty()) {
                     if (!expectedRepeatedOperator.contains(repeatedOperator)) {
-                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesStepping);
+                        holder.registerProblem(forStatement.getFirstChild(), ReportingUtil.wrapReportedMessage(messageLoopBoundariesStepping));
                     }
                     expectedRepeatedOperator.clear();
 
@@ -387,7 +387,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                                 if (limitVariants.size() == 1) {
                                     final PsiElement limitValue = limitVariants.iterator().next();
                                     if (this.isTargetCall(limitValue)) {
-                                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesCheck);
+                                        holder.registerProblem(forStatement.getFirstChild(), ReportingUtil.wrapReportedMessage(messageLoopBoundariesCheck));
                                     }
                                 }
                                 limitVariants.clear();
@@ -415,7 +415,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                                 if (limitVariants.size() == 1) {
                                     final PsiElement limitValue = limitVariants.iterator().next();
                                     if (OpenapiTypesUtil.isNumber(limitValue) && limitValue.getText().equals("0")) {
-                                        holder.registerProblem(forStatement.getFirstChild(), messageLoopBoundariesCheck);
+                                        holder.registerProblem(forStatement.getFirstChild(), ReportingUtil.wrapReportedMessage(messageLoopBoundariesCheck));
                                     }
                                 }
                                 limitVariants.clear();
@@ -474,7 +474,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                     loopVariables.stream().filter(parameters::contains).forEach(variable -> {
                         holder.registerProblem(
                                 loop.getFirstChild(),
-                                String.format(patternOverridesParameter, variable, scope instanceof Method ? "method" : "function")
+                                String.format(ReportingUtil.wrapReportedMessage(patternOverridesParameter), variable, scope instanceof Method ? "method" : "function")
                         );
                     });
                     parameters.clear();
@@ -488,7 +488,7 @@ public class SuspiciousLoopInspector extends PhpInspection {
                         final Set<String> parentVariables = this.getLoopVariables((PhpPsiElement) parent);
                         loopVariables.forEach(variable -> {
                             if (parentVariables.contains(variable)) {
-                                holder.registerProblem(loop.getFirstChild(), String.format(patternOverridesLoopVars, variable));
+                                holder.registerProblem(loop.getFirstChild(), String.format(ReportingUtil.wrapReportedMessage(patternOverridesLoopVars), variable));
                             }
                         });
                         parentVariables.clear();

@@ -18,6 +18,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -121,19 +122,19 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                                     if (isContinueContext) {
                                         holder.registerProblem(
                                                 loop.getFirstChild(),
-                                                messageBreak,
+                                                ReportingUtil.wrapReportedMessage(messageBreak),
                                                 new ReplaceBreakFix(holder.getProject(), last)
                                         );
                                     } else if (isReturnContext) {
                                         holder.registerProblem(
                                                 loop.getFirstChild(),
-                                                messageReturn,
+                                                ReportingUtil.wrapReportedMessage(messageReturn),
                                                 new AddReturnFix(holder.getProject(), last, next)
                                         );
                                     } else {
                                         holder.registerProblem(
                                                 loop.getFirstChild(),
-                                                messageBreak,
+                                                ReportingUtil.wrapReportedMessage(messageBreak),
                                                 new AddBreakFix(holder.getProject(), last)
                                         );
                                     }

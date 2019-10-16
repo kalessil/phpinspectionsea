@@ -19,10 +19,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -160,7 +157,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                         if (!(value instanceof NewExpression) || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540)) {
                             holder.registerProblem(
                                     assignVariable,
-                                    String.format(messagePattern, variableName),
+                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), variableName),
                                     new InlineValueFix(holder.getProject(), assign.getParent(), argument, value)
                             );
                         }
@@ -187,7 +184,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                             if (!typeAnnotated) {
                                 holder.registerProblem(
                                         container,
-                                        String.format(messagePattern, variableName),
+                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), variableName),
                                         new InlineValueFix(holder.getProject(), assignment.getParent(), argument, value)
                                 );
                             }
@@ -395,7 +392,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                                     if (targetUsageInLoop == targetUsageInScope) {
                                         holder.registerProblem(
                                                 target,
-                                                messageRename,
+                                                ReportingUtil.wrapReportedMessage(messageRename),
                                                 new RenameLoopVariableFix(holder.getProject(), targetAssignment, subject, targetVariable)
                                         );
                                     }

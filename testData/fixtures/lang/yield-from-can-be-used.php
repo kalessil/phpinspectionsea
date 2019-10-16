@@ -2,10 +2,10 @@
 
 function cases_holder($source)
 {
-    <warning descr="'yield from ...' can be used instead (generator delegation).">foreach</warning> ($source as $value) {
+    <warning descr="[EA] 'yield from ...' can be used instead (generator delegation).">foreach</warning> ($source as $value) {
         yield $value;
     }
-    <warning descr="'yield from ...' can be used instead (generator delegation).">foreach</warning> ($source as $key => $value) {
+    <warning descr="[EA] 'yield from ...' can be used instead (generator delegation).">foreach</warning> ($source as $key => $value) {
         yield $key => $value;
     }
 

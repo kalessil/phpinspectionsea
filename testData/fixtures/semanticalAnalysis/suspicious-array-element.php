@@ -1,6 +1,6 @@
 <?php
 
-    $array = [<warning descr="There is chance that it should be 'variable' here.">$variable</warning> => $variable];
+    $array = [<warning descr="[EA] There is chance that it should be 'variable' here.">$variable</warning> => $variable];
 
     $array = ['variable' => $variable];
     $array = [$variable];

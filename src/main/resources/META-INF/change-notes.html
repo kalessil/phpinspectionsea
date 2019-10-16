@@ -1,29 +1,16 @@
 <html>
 New features release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- JSON encoding API usage: Fixed OOB exceptions<br/>
-- JSON encoding API usage: new settings<br/>
-- Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
-- Non-optimal regular expression: resolved a false-positive (i-modifier and multi-line regex)<br/>
-- Suspicious binary operations: new settings<br/>
-- Suspicious loop: new settings<br/>
-- Referencing objects: resolved a false-positive (optional parameters)<br/>
-- Unknown inspection suppression: resolved a false-positive (PhpUnused)<br/>
-- *printf/*scanf arguments count mismatches: resolved a false-positive (suppressed placeholders; thank you @powerhamster)<br/>
-- 'null === ...' can be used: QF bug-fixes<br/>
-- 'str(i)str(...)' could be replaced with 'str(i)pos(...)': bug-fixed code generation<br/>
-- 'substr(...)' could be replaced with 'strpos(...)': resolved false-positives (multiple cases)<br/>
+- Prefix all messages with '[EA] '<br/>
 <br/>
-- A constant can be used: new patterns<br/>
-- Cryptographically secure algorithms: new patterns<br/>
-- CURL: SSL server spoofing: new patterns<br/>
-- Deprecated configuration options: new patterns (PHP 7.2, 7.3)<br/>
-- Foreach source to iterate over: dropped (was too problematic)<br/>
-- Forgotten debug statements: new patterns (dump)<br/>
-- JSON encoding API usage: new patterns<br/>
-- Incorrect random generation range: new patterns<br/>
-- Suspicious function calls: implemented<br/>
-- Unnecessary parentheses: dropped in favour of PhpStorm inspection<br/>
+- JSON encoding API usage: resolved false-positives (non core functions)<br/>
+- Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
+- Non-optimal regular expression: resolved a false-positive (preg_quote and missing u-modifier)<br/>
+- Short syntax for applied operation: resolved false-positives (multiple cases)<br/>
+- Unknown inspection suppression: resolved false-positives (Sql-prefixed inspections)<br/>
+<br/>
+- One-time use variables: new settings<br/>
+- Type casting can be used: new patterns<br/>
 <br/>
 <hr/>
 </html>

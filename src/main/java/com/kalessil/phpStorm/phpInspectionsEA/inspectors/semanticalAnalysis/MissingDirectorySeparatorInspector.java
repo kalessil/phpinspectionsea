@@ -90,7 +90,7 @@ public class MissingDirectorySeparatorInspector extends PhpInspection {
                         final StringLiteralExpression target = ExpressionSemanticUtil.resolveAsStringLiteral(candidate);
                         if (target != null) {
                             final String content = target.getContents();
-                            if (!content.startsWith("/") && !content.startsWith("\\") && content.matches("^\\w.*$")) {
+                            if (content.matches("^[\\w\\.].*$")) {
                                 holder.registerProblem(candidate, message);
                             }
                         }

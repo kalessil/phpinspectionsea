@@ -8,6 +8,7 @@ class CasesHolder
             __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
             '' . __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning>,
             __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning> . '',
+            __DIR__ . <warning descr="Looks like a directory separator is missing here.">'vendor'</warning> . '..',
 
             /* valid cases */
             __DIR__ . DIRECTORY_SEPARATOR,

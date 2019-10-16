@@ -51,8 +51,12 @@ final public class MissingUnderscoreStrategy {
         if (invalidNames.contains(methodName)) {
             final PsiElement target = NamedElementUtil.getNameIdentifier(method);
             if (target != null) {
-                final String message = String.format(messagePattern, methodName, methodName);
-                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING, new NameFix());
+                holder.registerProblem(
+                        target,
+                        ReportingUtil.wrapReportedMessage(String.format(messagePattern, methodName, methodName)),
+                        ProblemHighlightType.WEAK_WARNING,
+                        new NameFix()
+                );
             }
         }
     }

@@ -44,7 +44,11 @@ public class PregQuoteUsageInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("preg_quote")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(
+                                reference,
+                                ReportingUtil.wrapReportedMessage(message),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
                     }
                 }
             }

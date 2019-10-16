@@ -35,7 +35,10 @@ final public class UnnecessaryCaseManipulationCheckStrategy {
                 final String argumentName = ((FunctionReference) arguments[1]).getName();
                 if (argumentName != null && targetFunctions.contains(argumentName)) {
                     final boolean isCaseInsensitive = modifiers != null && modifiers.indexOf('i') != -1;
-                    holder.registerProblem(arguments[1], ReportingUtil.wrapReportedMessage(isCaseInsensitive ? messageUnnecessary : messageNotOptimal));
+                    holder.registerProblem(
+                            arguments[1],
+                            ReportingUtil.wrapReportedMessage(isCaseInsensitive ? messageUnnecessary : messageNotOptimal)
+                    );
                 }
             }
         }

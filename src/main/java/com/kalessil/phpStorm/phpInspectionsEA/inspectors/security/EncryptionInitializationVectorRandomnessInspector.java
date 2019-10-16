@@ -82,8 +82,11 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                             Collections.sort(reporting);
 
                             final String ivFunction = functionName.startsWith("openssl_") ? "openssl_random_pseudo_bytes" : "mcrypt_create_iv";
-                            final String message    = String.format(messagePattern, ivFunction, String.join(", ", reporting));
-                            holder.registerProblem(arguments[4], ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(
+                                    arguments[4],
+                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, ivFunction, String.join(", ", reporting))),
+                                    ProblemHighlightType.GENERIC_ERROR
+                            );
                         }
 
                         reporting.clear();

@@ -134,12 +134,19 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
 
                 /* TODO: has method/function reference as index */
                 if (REPORT_CONCATENATION_IN_INDEXES && !isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
-                    holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(messageConcatenationInIndex));
+                    holder.registerProblem(
+                            argument,
+                            ReportingUtil.wrapReportedMessage(messageConcatenationInIndex)
+                    );
                     return;
                 }
 
                 if (SUGGEST_TO_USE_ARRAY_KEY_EXISTS && !isArrayAccess((ArrayAccessExpression) argument)) {
-                    holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(messageUseArrayKeyExists), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            argument,
+                            ReportingUtil.wrapReportedMessage(messageUseArrayKeyExists),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
             }
 

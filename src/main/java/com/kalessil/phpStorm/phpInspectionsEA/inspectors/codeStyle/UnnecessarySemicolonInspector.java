@@ -56,7 +56,11 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
                         return;
                     }
 
-                    holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(message), new DropUnnecessarySemicolonFix());
+                    holder.registerProblem(
+                            statement,
+                            ReportingUtil.wrapReportedMessage(message),
+                            new DropUnnecessarySemicolonFix()
+                    );
                 }
             }
 
@@ -65,7 +69,11 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
                 if (!OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {
                     final PsiElement last = echo.getLastChild();
                     if (OpenapiTypesUtil.is(last, PhpTokenTypes.opSEMICOLON)) {
-                        holder.registerProblem(last, ReportingUtil.wrapReportedMessage(message), new DropUnnecessarySemicolonFix());
+                        holder.registerProblem(
+                                last,
+                                ReportingUtil.wrapReportedMessage(message),
+                                new DropUnnecessarySemicolonFix()
+                        );
                     }
                 }
             }

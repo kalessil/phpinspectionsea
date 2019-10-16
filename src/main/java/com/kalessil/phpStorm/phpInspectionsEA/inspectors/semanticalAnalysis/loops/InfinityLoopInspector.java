@@ -70,7 +70,10 @@ public class InfinityLoopInspector extends BasePhpInspection {
                                 final PhpExpression subject = value.getClassReference();
                                 final String reference      = subject == null ? null : subject.getText();
                                 if (reference != null && references.contains(reference)) {
-                                    holder.registerProblem(value, ReportingUtil.wrapReportedMessage(message));
+                                    holder.registerProblem(
+                                            value,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
                                 }
                             }
                         }

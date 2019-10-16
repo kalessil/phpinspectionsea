@@ -44,7 +44,11 @@ public class NonSecureExtractUsageInspector extends BasePhpInspection {
                 if (functionName != null && functionName.equals("extract")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1 && !this.isTestContext(reference)) {
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(
+                                reference,
+                                ReportingUtil.wrapReportedMessage(message),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
                     }
                 }
             }

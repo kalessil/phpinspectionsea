@@ -49,8 +49,10 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                 final GroupStatement body  = ExpressionSemanticUtil.getGroupStatement(tryStatement);
                 final int expressionsCount = body == null ? 0 : ExpressionSemanticUtil.countExpressionsInGroup(body);
                 if (expressionsCount > 3) {
-                    final String message = messagePattern.replace("%c%", String.valueOf(expressionsCount));
-                    holder.registerProblem(tryStatement.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            tryStatement.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", String.valueOf(expressionsCount)))
+                    );
                 }
             }
 
@@ -70,9 +72,15 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                         }
                         if (!isVariableUsed) {
                             if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                                holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageFailSilently));
+                                holder.registerProblem(
+                                        variable,
+                                        ReportingUtil.wrapReportedMessage(messageFailSilently)
+                                );
                             } else {
-                                holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageChainedException));
+                                holder.registerProblem(
+                                        variable,
+                                        ReportingUtil.wrapReportedMessage(messageChainedException)
+                                );
                             }
                         }
                     }

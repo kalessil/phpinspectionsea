@@ -66,7 +66,10 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);
                             if (!variants.isEmpty()) {
                                 if (variants.stream().noneMatch(referencedQn::equals)) {
-                                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
+                                    holder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
                                 }
                                 variants.clear();
                             }

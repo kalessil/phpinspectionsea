@@ -70,7 +70,10 @@ public class IncorrectRandomRangeInspector extends BasePhpInspection {
                                             isTarget = false;
                                         }
                                         if (isTarget) {
-                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
+                                            holder.registerProblem(
+                                                    reference,
+                                                    ReportingUtil.wrapReportedMessage(message)
+                                            );
                                         }
                                     }
                                 }

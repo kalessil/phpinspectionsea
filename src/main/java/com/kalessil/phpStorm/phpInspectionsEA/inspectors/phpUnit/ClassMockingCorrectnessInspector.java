@@ -78,7 +78,10 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                             if (typeCandidate instanceof ClassReference) {
                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) typeCandidate);
                                 if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
-                                    holder.registerProblem(typeCandidate, ReportingUtil.wrapReportedMessage(messageFinal));
+                                    holder.registerProblem(
+                                            typeCandidate,
+                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                    );
                                 }
                             }
                         }
@@ -97,9 +100,15 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                         if (referencedClass != null) {
                             if (methodName.equals("createMock")) {
                                 if (referencedClass.isTrait()) {
-                                    holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageTrait));
+                                    holder.registerProblem(
+                                            arguments[0],
+                                            ReportingUtil.wrapReportedMessage(messageTrait)
+                                    );
                                 } else if (referencedClass.isFinal()) {
-                                    holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageFinal));
+                                    holder.registerProblem(
+                                            arguments[0],
+                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                    );
                                 }
                             } else if (methodName.equals("getMockBuilder")) {
                                 final PsiElement parent = reference.getParent();
@@ -110,37 +119,57 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                 /* classes might need different mocking methods usage */
                                 if (referencedClass.isAbstract() && !referencedClass.isInterface()) {
                                     if (parentName == null) {
-                                        holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageMockAbstract));
+                                        holder.registerProblem(
+                                                arguments[0],
+                                                ReportingUtil.wrapReportedMessage(messageMockAbstract)
+                                        );
                                     }
                                 } else if (referencedClass.isTrait()) {
                                     if (parentName == null) {
-                                        holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageMockTrait));
+                                        holder.registerProblem(
+                                                arguments[0],
+                                                ReportingUtil.wrapReportedMessage(messageMockTrait)
+                                        );
                                     }
                                 } else if (referencedClass.isFinal()) {
-                                    holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageFinal));
+                                    holder.registerProblem(
+                                            arguments[0],
+                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                    );
                                 }
                                 /* constructor might require arguments */
                                 if (parentName != null && parentName.equals("getMock")) {
                                     final Method constructor  = referencedClass.getConstructor();
                                     if (constructor != null) {
-                                        final boolean needsArguments = Arrays.stream(constructor.getParameters())
-                                                .anyMatch(parameter -> parameter.getDefaultValue() == null);
+                                        final boolean needsArguments = Arrays.stream(constructor.getParameters()).anyMatch(parameter -> parameter.getDefaultValue() == null);
                                         if (needsArguments) {
-                                            holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageMockConstructor));
+                                            holder.registerProblem(
+                                                    arguments[0],
+                                                    ReportingUtil.wrapReportedMessage(messageMockConstructor)
+                                            );
                                         }
                                     }
                                 }
                             } else if (methodName.equals("getMockForTrait")) {
                                 if (!referencedClass.isTrait()) {
-                                    holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageNeedsTrait));
+                                    holder.registerProblem(
+                                            arguments[0],
+                                            ReportingUtil.wrapReportedMessage(messageNeedsTrait)
+                                    );
                                 }
                             } else if (methodName.equals("getMockForAbstractClass")) {
                                 if (!referencedClass.isAbstract()) {
-                                    holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageNeedsAbstract));
+                                    holder.registerProblem(
+                                            arguments[0],
+                                            ReportingUtil.wrapReportedMessage(messageNeedsAbstract)
+                                    );
                                 }
                             } else {
                                 if (referencedClass.isFinal()) {
-                                    holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageFinal));
+                                    holder.registerProblem(
+                                            arguments[0],
+                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                    );
                                 }
                             }
                         }

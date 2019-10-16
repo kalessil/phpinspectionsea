@@ -116,7 +116,11 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                     /* check for pattern validity */
                     final int parametersInPattern = StringUtils.countMatches(content.replace("%%", "").replace("%*",""), "%");
                     if (countParsedAll != parametersInPattern) {
-                        holder.registerProblem(params[neededPosition], ReportingUtil.wrapReportedMessage(messagePattern), ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(
+                                params[neededPosition],
+                                ReportingUtil.wrapReportedMessage(messagePattern),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
                         return;
                     }
 

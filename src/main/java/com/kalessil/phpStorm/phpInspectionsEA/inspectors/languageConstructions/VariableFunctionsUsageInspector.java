@@ -81,7 +81,11 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                             arguments[0].getText(),
                                             dispatched.stream().map(this::argumentAsString).collect(Collectors.joining(", "))
                                     );
-                                    holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(patternInlineArgs), replacement), new InlineFix(replacement));
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(ReportingUtil.wrapReportedMessage(patternInlineArgs), replacement),
+                                            new InlineFix(replacement)
+                                    );
                                 }
                                 dispatched.clear();
                             }

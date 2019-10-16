@@ -67,7 +67,12 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
                     if (functionName.equals("uniqid")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length < 2 && this.isFromRootNamespace(reference)) {
-                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR, new AddMissingParametersFix());
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    ProblemHighlightType.GENERIC_ERROR,
+                                    new AddMissingParametersFix()
+                            );
                         }
                     } else if (callbacksPositions.containsKey(functionName)) {
                         final PsiElement[] arguments = reference.getParameters();
@@ -78,7 +83,12 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
                                 final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                                 final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
                                 if (callback.equals("uniqid")) {
-                                    holder.registerProblem(arguments[callbackPosition], ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR, new UseLambdaFix());
+                                    holder.registerProblem(
+                                            arguments[callbackPosition],
+                                            ReportingUtil.wrapReportedMessage(message),
+                                            ProblemHighlightType.GENERIC_ERROR,
+                                            new UseLambdaFix()
+                                    );
                                 }
                             }
                         }

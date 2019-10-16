@@ -105,10 +105,13 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                     if (isTargetContext && ExpressionSemanticUtil.getScope(target) != null) {
                         final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, project);
                         if (resolved != null) {
-                            final boolean isTarget = resolved.filterUnknown().getTypes().stream()
-                                    .anyMatch(type -> Types.getType(type).equals(Types.strString));
+                            final boolean isTarget = resolved.filterUnknown().getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strString));
                             if (isTarget) {
-                                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(
+                                        target,
+                                        ReportingUtil.wrapReportedMessage(message),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
                             }
                         }
                     }

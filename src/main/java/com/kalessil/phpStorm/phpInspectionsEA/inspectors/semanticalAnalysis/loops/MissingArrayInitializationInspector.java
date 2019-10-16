@@ -97,7 +97,10 @@ public class MissingArrayInitializationInspector extends BasePhpInspection {
                                             }
                                         }
                                     }
-                                    problemsHolder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
+                                    problemsHolder.registerProblem(
+                                            expression,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
                                 }
                             }
                         }

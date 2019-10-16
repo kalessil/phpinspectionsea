@@ -81,12 +81,20 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
                                     if (!mapping.containsKey(type)) {
                                         /* edge case: compared string is wrong xD - bug */
                                         if (!type.equals("unknown type") && !type.equals("resource (closed)")) {
-                                            holder.registerProblem(value, String.format(ReportingUtil.wrapReportedMessage(messageInvalidPattern), type), ProblemHighlightType.GENERIC_ERROR);
+                                            holder.registerProblem(
+                                                    value,
+                                                    String.format(ReportingUtil.wrapReportedMessage(messageInvalidPattern), type),
+                                                    ProblemHighlightType.GENERIC_ERROR
+                                            );
                                         }
                                     } else {
                                         final boolean isInverted = operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL;
                                         final String replacement = String.format("%s%s(%s)", isInverted ? "!" : "", mapping.get(type), arguments[0].getText());
-                                        holder.registerProblem(parent, String.format(ReportingUtil.wrapReportedMessage(messageUseFunctionPattern), replacement), new UseSuggestedFunctionFix(replacement));
+                                        holder.registerProblem(
+                                                parent,
+                                                String.format(ReportingUtil.wrapReportedMessage(messageUseFunctionPattern), replacement),
+                                                new UseSuggestedFunctionFix(replacement)
+                                        );
                                     }
                                 }
                             }

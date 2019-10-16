@@ -67,7 +67,11 @@ public class UselessReturnInspector extends BasePhpInspection {
                                                       !this.isStaticVariable(variable, scope);
                             if (isTarget) {
                                 final String replacement = String.format("return %s;", assignmentValue.getText());
-                                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageConfusing), new SimplifyFix(replacement));
+                                holder.registerProblem(
+                                        expression,
+                                        ReportingUtil.wrapReportedMessage(messageConfusing),
+                                        new SimplifyFix(replacement)
+                                );
                             }
                         }
                     }
@@ -92,7 +96,11 @@ public class UselessReturnInspector extends BasePhpInspection {
                 if (lastStatement instanceof PhpReturn) {
                     final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue((PhpReturn) lastStatement);
                     if (returnValue == null) {
-                        holder.registerProblem(lastStatement, ReportingUtil.wrapReportedMessage(messageSenseless), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        holder.registerProblem(
+                                lastStatement,
+                                ReportingUtil.wrapReportedMessage(messageSenseless),
+                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                        );
                     }
                 }
             }

@@ -86,7 +86,10 @@ public class AmbiguousMethodsCallsInArrayMappingInspector extends BasePhpInspect
                             for (final FunctionReference candidate : left) {
                                 final String candidateName = candidate.getName();
                                 if (currentName != null && currentName.equals(candidateName) && OpenapiEquivalenceUtil.areEqual(current, candidate)) {
-                                    holder.registerProblem(current, ReportingUtil.wrapReportedMessage(message));
+                                    holder.registerProblem(
+                                            current,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
                                     break iterate;
                                 }
                             }

@@ -53,7 +53,11 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
                     final boolean isTarget = !OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
                     if (isTarget && this.canBeStatic(function)) {
-                        holder.registerProblem(function.getFirstChild(), ReportingUtil.wrapReportedMessage(message), new MakeClosureStaticFix());
+                        holder.registerProblem(
+                                function.getFirstChild(),
+                                ReportingUtil.wrapReportedMessage(message),
+                                new MakeClosureStaticFix()
+                        );
                     }
                 }
             }

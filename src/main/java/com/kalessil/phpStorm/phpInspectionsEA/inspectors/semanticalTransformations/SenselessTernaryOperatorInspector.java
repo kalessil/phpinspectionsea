@@ -62,7 +62,11 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                                     final boolean isRightPartReturned = OpenapiEquivalenceUtil.areEqual(subject, falseVariant) || OpenapiEquivalenceUtil.areEqual(subject, trueVariant);
                                     if (isRightPartReturned) {
                                         final String replacement = falseVariant.getText();
-                                        holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(patternUseOperands), replacement), new SimplifyFix(replacement));
+                                        holder.registerProblem(
+                                                expression,
+                                                String.format(ReportingUtil.wrapReportedMessage(patternUseOperands), replacement),
+                                                new SimplifyFix(replacement)
+                                        );
                                     }
                                 }
                             }

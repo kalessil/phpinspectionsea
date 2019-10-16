@@ -68,28 +68,40 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                         }
                     }
 
-                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            loop.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
 
             @Override
             public void visitPhpFor(@NotNull For loop) {
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            loop.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
 
             @Override
             public void visitPhpWhile(@NotNull While loop) {
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            loop.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
 
             @Override
             public void visitPhpDoWhile(@NotNull DoWhile loop) {
                 if (this.isNotLooping(loop)) {
-                    holder.registerProblem(loop.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            loop.getFirstChild(),
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
 

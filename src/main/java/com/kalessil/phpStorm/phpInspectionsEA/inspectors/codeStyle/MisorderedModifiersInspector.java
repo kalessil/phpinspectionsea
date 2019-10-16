@@ -73,7 +73,11 @@ public class MisorderedModifiersInspector extends BasePhpInspection {
                         final String original = this.getOriginalOrder(modifiers);
                         final String expected = this.getExpectedOrder(original, standardOrder);
                         if (!original.equals(expected)) {
-                            problemsHolder.registerProblem(modifiersNode, ReportingUtil.wrapReportedMessage(message), new TheLocalFix(expected));
+                            problemsHolder.registerProblem(
+                                    modifiersNode,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    new TheLocalFix(expected)
+                            );
                         }
                     }
                 }

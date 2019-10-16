@@ -81,17 +81,21 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
                 if (null != value && null != operation && null != variable) {
                     if (operation == PhpTokenTypes.opPLUS_ASGN) {
                         if (value.getText().equals("1") && !isArrayAccessOrString(variable)) {
-                            final String replacement
-                                    = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
-                            final String message = patternMessage.replace("%e%", replacement);
-                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new UseIncrementFix(replacement));
+                            final String replacement = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
+                            holder.registerProblem(
+                                    expression,
+                                    ReportingUtil.wrapReportedMessage(patternMessage.replace("%e%", replacement)),
+                                    new UseIncrementFix(replacement)
+                            );
                         }
                     } else if (operation == PhpTokenTypes.opMINUS_ASGN) {
                         if (value.getText().equals("1") && !isArrayAccessOrString(variable)) {
-                            final String replacement
-                                    = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
-                            final String message = patternMessage.replace("%e%", replacement);
-                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new UseDecrementFix(replacement));
+                            final String replacement = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
+                            holder.registerProblem(
+                                    expression,
+                                    ReportingUtil.wrapReportedMessage(patternMessage.replace("%e%", replacement)),
+                                    new UseDecrementFix(replacement)
+                            );
                         }
                     }
                 }
@@ -118,10 +122,12 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
                             (rightOperand.getText().equals("1") && OpenapiEquivalenceUtil.areEqual(leftOperand, variable))
                         ) {
                             if (!isArrayAccessOrString(variable)) {
-                                final String replacement
-                                        = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
-                                final String message = patternMessage.replace("%e%", replacement);
-                                holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(message), new UseIncrementFix(replacement));
+                                final String replacement = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
+                                holder.registerProblem(
+                                        assignmentExpression,
+                                        ReportingUtil.wrapReportedMessage(patternMessage.replace("%e%", replacement)),
+                                        new UseIncrementFix(replacement)
+                                );
                             }
                         }
                     } else if (operation == PhpTokenTypes.opMINUS) {
@@ -131,10 +137,12 @@ public class IncrementDecrementOperationEquivalentInspector extends BasePhpInspe
                             OpenapiEquivalenceUtil.areEqual(leftOperand, variable) &&
                             !isArrayAccessOrString(variable)
                         ) {
-                            final String replacement
-                                    = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
-                            final String message = patternMessage.replace("%e%", replacement);
-                            holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(message), new UseDecrementFix(replacement));
+                            final String replacement = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
+                            holder.registerProblem(
+                                    assignmentExpression,
+                                    ReportingUtil.wrapReportedMessage(patternMessage.replace("%e%", replacement)),
+                                    new UseDecrementFix(replacement)
+                            );
                         }
                     }
                 }

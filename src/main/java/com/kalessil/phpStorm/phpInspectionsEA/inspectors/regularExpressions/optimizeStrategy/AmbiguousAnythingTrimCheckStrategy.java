@@ -33,10 +33,18 @@ final public class AmbiguousAnythingTrimCheckStrategy {
             int countBackRefs = StringUtils.countMatches(pattern, "\\0") - StringUtils.countMatches(pattern, "\\\\0");
             if (countBackRefs <= 0) {
                 if (pattern.startsWith(".*")) {
-                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageLeading), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            target,
+                            ReportingUtil.wrapReportedMessage(messageLeading),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
                 if (pattern.endsWith(".*")) {
-                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageTrailing), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            target,
+                            ReportingUtil.wrapReportedMessage(messageTrailing),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
             }
         }

@@ -64,7 +64,10 @@ final public class ParameterImmediateOverrideStrategy {
                     }
                 }
                 if (nameHits == 1) {
-                    holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            expression,
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
         }

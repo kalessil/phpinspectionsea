@@ -93,8 +93,10 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                 if (element instanceof Method) {
                     final Method method = (Method) element;
                     if (!method.getAccess().isPublic()) {
-                        final String message = patternNotPublic.replace("%m%", method.getName());
-                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                target,
+                                ReportingUtil.wrapReportedMessage(patternNotPublic.replace("%m%", method.getName()))
+                        );
                     }
 
                     boolean needStatic = false;
@@ -122,8 +124,10 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                         }
                     }
                     if (needStatic) {
-                        final String message = patternNotStatic.replace("%m%", method.getName());
-                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                target,
+                                ReportingUtil.wrapReportedMessage(patternNotStatic.replace("%m%", method.getName()))
+                        );
                     }
                 }
             }

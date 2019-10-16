@@ -168,7 +168,10 @@ final public class SequentialAssignmentsStrategy {
                 }
             }
 
-            holder.registerProblem(container, String.format(ReportingUtil.wrapReportedMessage(patternGeneral), container.getText()));
+            holder.registerProblem(
+                    container,
+                    String.format(ReportingUtil.wrapReportedMessage(patternGeneral), container.getText())
+            );
         }
     }
 }

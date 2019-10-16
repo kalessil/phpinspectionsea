@@ -68,7 +68,12 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
                     }
 
                     /* TODO: marks as unused instead, see https://youtrack.jetbrains.com/issue/WI-34508 */
-                    holder.registerProblem(label, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED, new TheLocalFix());
+                    holder.registerProblem(
+                            label,
+                            ReportingUtil.wrapReportedMessage(message),
+                            ProblemHighlightType.LIKE_DEPRECATED,
+                            new TheLocalFix()
+                    );
                 }
             }
         };

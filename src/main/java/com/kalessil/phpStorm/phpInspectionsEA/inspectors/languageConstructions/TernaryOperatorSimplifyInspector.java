@@ -73,8 +73,11 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                                 if (isTarget) {
                                     final String replacement = this.generateReplacement((BinaryExpression) condition, trueVariant);
                                     if (replacement != null) {
-                                        final String message = String.format(messagePattern, replacement);
-                                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new SimplifyFix(replacement));
+                                        holder.registerProblem(
+                                                expression,
+                                                ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement)),
+                                                new SimplifyFix(replacement)
+                                        );
                                     }
                                 }
                             }

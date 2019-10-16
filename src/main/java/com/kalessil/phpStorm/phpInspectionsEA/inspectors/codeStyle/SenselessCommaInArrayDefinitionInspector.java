@@ -48,7 +48,11 @@ public class SenselessCommaInArrayDefinitionInspector extends BasePhpInspection 
                 final PsiElement last      = expression.getLastChild().getPrevSibling();
                 final PsiElement candidate = last instanceof PsiWhiteSpace ? last.getPrevSibling() : last;
                 if (OpenapiTypesUtil.is(candidate, PhpTokenTypes.opCOMMA)) {
-                    holder.registerProblem(candidate, ReportingUtil.wrapReportedMessage(message), new TheLocalFix());
+                    holder.registerProblem(
+                            candidate,
+                            ReportingUtil.wrapReportedMessage(message),
+                            new TheLocalFix()
+                    );
                 }
             }
         };

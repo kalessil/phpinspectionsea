@@ -80,7 +80,11 @@ public class CryptographicallySecureAlgorithmsInspector extends BasePhpInspectio
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
                 if (constantName != null && constants.containsKey(constantName) && !this.isTestContext(reference)) {
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(constants.get(constantName)), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(constants.get(constantName)),
+                            ProblemHighlightType.GENERIC_ERROR
+                    );
                 }
             }
         };

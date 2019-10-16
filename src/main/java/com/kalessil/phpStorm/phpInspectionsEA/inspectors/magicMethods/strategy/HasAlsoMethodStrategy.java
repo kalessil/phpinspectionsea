@@ -27,8 +27,11 @@ final public class HasAlsoMethodStrategy {
         if (clazz != null && OpenapiResolveUtil.resolveMethod(clazz, companion) == null) {
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
             if (nameNode != null) {
-                final String message = String.format(messagePattern, method.getName(), companion);
-                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(
+                        nameNode,
+                        ReportingUtil.wrapReportedMessage(String.format(messagePattern, method.getName(), companion)),
+                        ProblemHighlightType.GENERIC_ERROR
+                );
             }
         }
     }

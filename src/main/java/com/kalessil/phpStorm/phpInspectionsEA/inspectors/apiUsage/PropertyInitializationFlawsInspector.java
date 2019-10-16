@@ -171,7 +171,11 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                             (null == fieldDefault && PhpLanguageUtil.isNull(value)) ||
                             (null != fieldDefault && OpenapiEquivalenceUtil.areEqual(value, fieldDefault))
                         ) {
-                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageSenselessWrite), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                            holder.registerProblem(
+                                    expression,
+                                    ReportingUtil.wrapReportedMessage(messageSenselessWrite),
+                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                            );
                             continue;
                         }
                         if (null == fieldDefault) {
@@ -188,7 +192,11 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         }
 
                         if (!isPropertyReused && REPORT_DEFAULTS_FLAWS) {
-                            holder.registerProblem(fieldDefault, ReportingUtil.wrapReportedMessage(messageDefaultOverride), new DropFieldDefaultValueFix());
+                            holder.registerProblem(
+                                    fieldDefault,
+                                    ReportingUtil.wrapReportedMessage(messageDefaultOverride),
+                                    new DropFieldDefaultValueFix()
+                            );
                         }
                     }
                 }

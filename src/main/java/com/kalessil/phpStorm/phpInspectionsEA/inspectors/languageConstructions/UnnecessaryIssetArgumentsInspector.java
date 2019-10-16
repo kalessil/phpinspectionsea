@@ -71,11 +71,13 @@ public class UnnecessaryIssetArgumentsInspector extends BasePhpInspection {
                             if (!bases.isEmpty()) {
                                 for (final PsiElement discoveredBase : bases) {
                                     for (final PsiElement match : arguments) {
-                                        if (
-                                            match != current && !reported.contains(match) &&
-                                            OpenapiEquivalenceUtil.areEqual(discoveredBase, match)
-                                        ) {
-                                            holder.registerProblem(match, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropArgumentFix());
+                                        if (match != current && !reported.contains(match) && OpenapiEquivalenceUtil.areEqual(discoveredBase, match)) {
+                                            holder.registerProblem(
+                                                    match,
+                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                    new DropArgumentFix()
+                                            );
                                             reported.add(match);
                                         }
                                     }

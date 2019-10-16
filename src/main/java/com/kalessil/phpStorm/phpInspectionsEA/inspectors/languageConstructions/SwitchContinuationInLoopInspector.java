@@ -60,7 +60,12 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
                     /* when met a loop, complete analysis */
                     if (OpenapiTypesUtil.isLoop(objParent)) {
                         if (isSwitch) {
-                            holder.registerProblem(continueStatement, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR, new UseContinue2LocalFix());
+                            holder.registerProblem(
+                                    continueStatement,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    ProblemHighlightType.GENERIC_ERROR,
+                                    new UseContinue2LocalFix()
+                            );
                         }
 
                         return;

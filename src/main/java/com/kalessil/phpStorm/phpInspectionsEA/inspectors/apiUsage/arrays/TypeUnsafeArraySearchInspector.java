@@ -104,7 +104,11 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
                                 arguments[0].getText(),
                                 arguments[1].getText()
                         );
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new MakeSearchTypeSensitiveFix(replacement));
+                        holder.registerProblem(
+                                reference,
+                                ReportingUtil.wrapReportedMessage(message),
+                                new MakeSearchTypeSensitiveFix(replacement)
+                        );
                     }
                 }
             }

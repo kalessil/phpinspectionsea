@@ -56,7 +56,11 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                     if (OpenapiTypesUtil.isStatementImpl(parent)) {
                         final PsiElement listKeyword = assignment.getFirstChild();
                         if (OpenapiTypesUtil.is(listKeyword, PhpTokenTypes.kwLIST)) {
-                            holder.registerProblem(listKeyword, ReportingUtil.wrapReportedMessage(messageAssign), new TheLocalFix(holder.getProject(), assignment));
+                            holder.registerProblem(
+                                    listKeyword,
+                                    ReportingUtil.wrapReportedMessage(messageAssign),
+                                    new TheLocalFix(holder.getProject(), assignment)
+                            );
                         }
                     }
                 }
@@ -71,7 +75,11 @@ public class ShortListSyntaxCanBeUsedInspector extends BasePhpInspection {
                         PsiElement childNode = foreach.getFirstChild();
                         while (childNode != null && !(childNode instanceof GroupStatement)) {
                             if (OpenapiTypesUtil.is(childNode, PhpTokenTypes.kwLIST)) {
-                                holder.registerProblem(childNode, ReportingUtil.wrapReportedMessage(messageForeach), new TheLocalFix(holder.getProject(), foreach));
+                                holder.registerProblem(
+                                        childNode,
+                                        ReportingUtil.wrapReportedMessage(messageForeach),
+                                        new TheLocalFix(holder.getProject(), foreach)
+                                );
                                 break;
                             }
                             childNode = childNode.getNextSibling();

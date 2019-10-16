@@ -163,11 +163,18 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                     case "__autoload":
                         TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
                         CanNotReturnTypeStrategy.apply(method, holder);
-                        holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageUseSplAutoloading), ProblemHighlightType.LIKE_DEPRECATED);
+                        holder.registerProblem(
+                                nameNode,
+                                ReportingUtil.wrapReportedMessage(messageUseSplAutoloading),
+                                ProblemHighlightType.LIKE_DEPRECATED
+                        );
                         break;
                     default:
                         if (methodName.startsWith("__") && !knownNonMagic.contains(methodName)) {
-                            holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageNotMagic));
+                            holder.registerProblem(
+                                    nameNode,
+                                    ReportingUtil.wrapReportedMessage(messageNotMagic)
+                            );
                         } else {
                             MissingUnderscoreStrategy.apply(method, holder);
                         }

@@ -36,7 +36,11 @@ final public class MissingDotAllCheckStrategy {
         if ((modifiers == null || modifiers.indexOf('s') == -1) && pattern != null && pattern.indexOf('>') != -1) {
             final Matcher matcher = regexTagContentPattern.matcher(pattern);
             if (matcher.matches()) {
-                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                holder.registerProblem(
+                        target,
+                        ReportingUtil.wrapReportedMessage(message),
+                        ProblemHighlightType.WEAK_WARNING
+                );
             }
         }
     }

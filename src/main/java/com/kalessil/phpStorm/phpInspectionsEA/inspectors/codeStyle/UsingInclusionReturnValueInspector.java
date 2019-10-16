@@ -40,7 +40,10 @@ public class UsingInclusionReturnValueInspector  extends BasePhpInspection {
             @Override
             public void visitPhpInclude(@NotNull Include include) {
                 if (!OpenapiTypesUtil.isStatementImpl(include.getParent())) {
-                    holder.registerProblem(include, ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            include,
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
         };

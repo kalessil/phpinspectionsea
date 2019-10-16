@@ -70,11 +70,19 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                             if (value != null) {
                                 if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
                                     if (this.isHostVerifyDisabled(value)) {
-                                        holder.registerProblem(parent, ReportingUtil.wrapReportedMessage(messageVerifyHost), ProblemHighlightType.GENERIC_ERROR);
+                                        holder.registerProblem(
+                                                parent,
+                                                ReportingUtil.wrapReportedMessage(messageVerifyHost),
+                                                ProblemHighlightType.GENERIC_ERROR
+                                        );
                                     }
                                 } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
                                     if (this.isPeerVerifyDisabled(value)) {
-                                        holder.registerProblem(parent, ReportingUtil.wrapReportedMessage(messageVerifyPeer), ProblemHighlightType.GENERIC_ERROR);
+                                        holder.registerProblem(
+                                                parent,
+                                                ReportingUtil.wrapReportedMessage(messageVerifyPeer),
+                                                ProblemHighlightType.GENERIC_ERROR
+                                        );
                                     }
                                 }
                             }
@@ -85,11 +93,19 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                     if (value != null) {
                         if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
                             if (this.isHostVerifyDisabled(value)) {
-                                holder.registerProblem(parent, ReportingUtil.wrapReportedMessage(messageVerifyHost), ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(
+                                        parent,
+                                        ReportingUtil.wrapReportedMessage(messageVerifyHost),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
                             }
                         } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
                             if (this.isPeerVerifyDisabled(value)) {
-                                holder.registerProblem(parent, ReportingUtil.wrapReportedMessage(messageVerifyPeer), ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(
+                                        parent,
+                                        ReportingUtil.wrapReportedMessage(messageVerifyPeer),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
                             }
                         }
                     }
@@ -103,11 +119,19 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                         if (value != null) {
                             if (constantName.equals("CURLOPT_SSL_VERIFYHOST")) {
                                 if (this.isHostVerifyDisabled(value)) {
-                                    holder.registerProblem(context, ReportingUtil.wrapReportedMessage(messageVerifyHost), ProblemHighlightType.GENERIC_ERROR);
+                                    holder.registerProblem(
+                                            context,
+                                            ReportingUtil.wrapReportedMessage(messageVerifyHost),
+                                            ProblemHighlightType.GENERIC_ERROR
+                                    );
                                 }
                             } else if (constantName.equals("CURLOPT_SSL_VERIFYPEER")) {
                                 if (this.isPeerVerifyDisabled(value)) {
-                                    holder.registerProblem(context, ReportingUtil.wrapReportedMessage(messageVerifyPeer), ProblemHighlightType.GENERIC_ERROR);
+                                    holder.registerProblem(
+                                            context,
+                                            ReportingUtil.wrapReportedMessage(messageVerifyPeer),
+                                            ProblemHighlightType.GENERIC_ERROR
+                                    );
                                 }
                             }
                         }

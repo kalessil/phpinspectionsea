@@ -76,8 +76,10 @@ public class MultiAssignmentUsageInspector extends BasePhpInspection {
                         for (final Variable variable : variables) {
                             if (variable.getName().equals(containerName)) {
                                 stopAnalysis = true;
-
-                                holder.registerProblem(multiassignmentExpression, ReportingUtil.wrapReportedMessage(messageImplicitList));
+                                holder.registerProblem(
+                                        multiassignmentExpression,
+                                        ReportingUtil.wrapReportedMessage(messageImplicitList)
+                                );
                                 break;
                             }
                         }

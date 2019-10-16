@@ -61,7 +61,10 @@ public class SuspiciousFunctionCallsInspector extends BasePhpInspection {
                     if (arguments.length >= 2 && arguments[0] != null && arguments[1] != null) {
                         final boolean isTarget = OpenapiEquivalenceUtil.areEqual(arguments[0], arguments[1]);
                         if (isTarget) {
-                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(message)
+                            );
                         }
                     }
                 }

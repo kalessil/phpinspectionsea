@@ -77,7 +77,11 @@ final public class MisplacedOperatorStrategy {
                                             .replace("%o%", operator.getText())
                                             .replace("%c%", call.getText())
                                             .replace(expression.getText(), leftOperand.getText());
-                                    holder.registerProblem(operator, ReportingUtil.wrapReportedMessage(message), new MisplacedOperatorFix(holder.getProject(), replacement, call));
+                                    holder.registerProblem(
+                                            operator,
+                                            ReportingUtil.wrapReportedMessage(message),
+                                            new MisplacedOperatorFix(holder.getProject(), replacement, call)
+                                    );
                                     return true;
                                 }
                             }

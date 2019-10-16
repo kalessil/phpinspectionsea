@@ -63,7 +63,10 @@ final public class InstanceOfTraitStrategy {
 
         /* analysis itself */
         if (resolved instanceof PhpClass && ((PhpClass) resolved).isTrait()) {
-            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
+            holder.registerProblem(
+                    expression,
+                    ReportingUtil.wrapReportedMessage(message)
+            );
             return true;
         }
 

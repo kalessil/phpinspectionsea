@@ -58,9 +58,16 @@ public class DuplicateArrayKeysInspector extends BasePhpInspection {
                                 final boolean isPairDuplicated = !(value instanceof ArrayCreationExpression) &&
                                                                  OpenapiEquivalenceUtil.areEqual(value, processed.get(literal));
                                 if (isPairDuplicated) {
-                                    holder.registerProblem(pair, ReportingUtil.wrapReportedMessage(messageDuplicatePair), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(
+                                            pair,
+                                            ReportingUtil.wrapReportedMessage(messageDuplicatePair),
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                    );
                                 } else {
-                                    holder.registerProblem(key, ReportingUtil.wrapReportedMessage(messageDuplicateKey));
+                                    holder.registerProblem(
+                                            key,
+                                            ReportingUtil.wrapReportedMessage(messageDuplicateKey)
+                                    );
                                 }
                             }
                             processed.put(literal, value);

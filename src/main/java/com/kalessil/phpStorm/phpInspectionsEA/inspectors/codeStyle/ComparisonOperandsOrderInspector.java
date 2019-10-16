@@ -66,10 +66,18 @@ public class ComparisonOperandsOrderInspector extends BasePhpInspection {
                         if (isLeftConstant != isRightConstant) {
                             final boolean isRegular = ComparisonStyle.isRegular();
                             if (isRightConstant && !isRegular) {
-                                problemsHolder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageUseYoda), new TheLocalFix());
+                                problemsHolder.registerProblem(
+                                        expression,
+                                        ReportingUtil.wrapReportedMessage(messageUseYoda),
+                                        new TheLocalFix()
+                                );
                             }
                             if (isLeftConstant && isRegular) {
-                                problemsHolder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageUseRegular), new TheLocalFix());
+                                problemsHolder.registerProblem(
+                                        expression,
+                                        ReportingUtil.wrapReportedMessage(messageUseRegular),
+                                        new TheLocalFix()
+                                );
                             }
                         }
                     }

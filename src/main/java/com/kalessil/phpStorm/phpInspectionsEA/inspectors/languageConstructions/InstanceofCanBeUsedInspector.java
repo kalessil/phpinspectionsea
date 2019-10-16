@@ -117,7 +117,11 @@ public class InstanceofCanBeUsedInspector extends BasePhpInspection {
                             subject.getText(),
                             fqn
                     );
-                    holder.registerProblem(context, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new UseInstanceofFix(replacement));
+                    holder.registerProblem(
+                            context,
+                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                            new UseInstanceofFix(replacement)
+                    );
                 }
             }
 

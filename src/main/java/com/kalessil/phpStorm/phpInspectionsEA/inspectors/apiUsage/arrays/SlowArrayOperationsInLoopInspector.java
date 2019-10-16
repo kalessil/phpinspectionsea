@@ -75,7 +75,10 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                                     if (container != null) {
                                         for (final PsiElement argument : arguments) {
                                             if (OpenapiEquivalenceUtil.areEqual(container, argument)) {
-                                                holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName));
+                                                holder.registerProblem(
+                                                        reference,
+                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName)
+                                                );
                                                 return;
                                             }
                                         }

@@ -46,11 +46,11 @@ public class SuspiciousSemicolonInspector extends BasePhpInspection {
                 if (statement.getChildren().length == 0) {
                     final PsiElement parent = statement.getParent();
                     if (parent != null) {
-                        if (
-                            OpenapiTypesUtil.isLoop(parent) ||
-                            parent instanceof If || parent instanceof ElseIf || parent instanceof Else
-                        ) {
-                            holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(message));
+                        if (OpenapiTypesUtil.isLoop(parent) || parent instanceof If || parent instanceof ElseIf || parent instanceof Else) {
+                            holder.registerProblem(
+                                    statement,
+                                    ReportingUtil.wrapReportedMessage(message)
+                            );
                         }
                     }
                 }

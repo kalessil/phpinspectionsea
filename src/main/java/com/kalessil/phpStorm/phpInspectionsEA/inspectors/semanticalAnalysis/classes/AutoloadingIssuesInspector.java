@@ -72,7 +72,10 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                         if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                             final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                             if (classNameNode != null) {
-                                holder.registerProblem(classNameNode, ReportingUtil.wrapReportedMessage(message));
+                                holder.registerProblem(
+                                        classNameNode,
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                             }
                         }
                     }

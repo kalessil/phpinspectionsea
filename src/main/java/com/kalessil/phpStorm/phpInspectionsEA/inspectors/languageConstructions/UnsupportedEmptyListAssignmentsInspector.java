@@ -64,7 +64,11 @@ public class UnsupportedEmptyListAssignmentsInspector extends BasePhpInspection 
                             current = current.getNextSibling();
                         }
                         if (isTarget) {
-                            holder.registerProblem(current, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(
+                                    current,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    ProblemHighlightType.GENERIC_ERROR
+                            );
                         }
                     }
                 }
@@ -80,7 +84,11 @@ public class UnsupportedEmptyListAssignmentsInspector extends BasePhpInspection 
                                 OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
                                 OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
                         if (isTarget) {
-                            holder.registerProblem(first, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                            holder.registerProblem(
+                                    first,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    ProblemHighlightType.GENERIC_ERROR
+                            );
                         }
                     }
                 }

@@ -92,19 +92,28 @@ public class StringNormalizationInspector extends BasePhpInspection {
                                         final String theString    = innerArguments[0].getText();
                                         final String newInnerCall = reference.getText().replace(arguments[0].getText(), theString);
                                         final String replacement  = innerCall.getText().replace(theString, newInnerCall);
-                                        final String message      = String.format(patternInvertedNesting, replacement);
-                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new NormalizationFix(replacement));
+                                        holder.registerProblem(
+                                                reference,
+                                                ReportingUtil.wrapReportedMessage(String.format(patternInvertedNesting, replacement)),
+                                                new NormalizationFix(replacement)
+                                        );
                                     }
                                 } else if (caseManipulation.contains(functionName) && caseManipulation.contains(innerCallName)) {
                                     if (functionName.equals(innerCallName)) {
-                                        final String message = String.format(patternSenselessNesting, innerCallName);
-                                        holder.registerProblem(innerCall, ReportingUtil.wrapReportedMessage(message), new NormalizationFix(innerArguments[0].getText()));
+                                        holder.registerProblem(
+                                                innerCall,
+                                                ReportingUtil.wrapReportedMessage(String.format(patternSenselessNesting, innerCallName)),
+                                                new NormalizationFix(innerArguments[0].getText())
+                                        );
                                     } else if (!innerCaseManipulation.contains(innerCallName)) {
                                         /* false-positives: ucwords with 2 arguments */
                                         final boolean isTarget = !innerCallName.equals("ucwords") || innerArguments.length == 1;
                                         if (isTarget) {
-                                            final String message = String.format(patternSenselessNesting, innerCallName);
-                                            holder.registerProblem(innerCall, ReportingUtil.wrapReportedMessage(message), new NormalizationFix(innerArguments[0].getText()));
+                                            holder.registerProblem(
+                                                    innerCall,
+                                                    ReportingUtil.wrapReportedMessage(String.format(patternSenselessNesting, innerCallName)),
+                                                    new NormalizationFix(innerArguments[0].getText())
+                                            );
                                         }
                                     }
                                 }

@@ -53,12 +53,18 @@ public class ArrayUniqueCanBeUsedInspector extends BasePhpInspection {
                                 if (parentFunctionName != null) {
                                     if (parentFunctionName.equals("array_keys")) {
                                         final String replacement = "array_values(array_unique(%a%))".replace("%a%", arguments[0].getText());
-                                        final String message     = messagePattern.replace("%e%", replacement);
-                                        holder.registerProblem(context, ReportingUtil.wrapReportedMessage(message), new ReplaceFix(replacement));
+                                        holder.registerProblem(
+                                                context,
+                                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%e%", replacement)),
+                                                new ReplaceFix(replacement)
+                                        );
                                     } else if (parentFunctionName.equals("count")) {
                                         final String replacement = "count(array_unique(%a%))".replace("%a%", arguments[0].getText());
-                                        final String message     = messagePattern.replace("%e%", replacement);
-                                        holder.registerProblem(context, ReportingUtil.wrapReportedMessage(message), new ReplaceFix(replacement));
+                                        holder.registerProblem(
+                                                context,
+                                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%e%", replacement)),
+                                                new ReplaceFix(replacement)
+                                        );
                                     }
                                 }
                             }

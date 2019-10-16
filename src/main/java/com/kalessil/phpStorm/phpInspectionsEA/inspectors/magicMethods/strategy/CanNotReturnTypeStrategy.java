@@ -23,7 +23,11 @@ public class CanNotReturnTypeStrategy {
             for (final PhpReturn returnExpression : returnStatements) {
                 final PhpExpression returnValue = ExpressionSemanticUtil.getReturnValue(returnExpression);
                 if (null != returnValue && method == ExpressionSemanticUtil.getScope(returnExpression)) {
-                    holder.registerProblem(returnExpression, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.ERROR);
+                    holder.registerProblem(
+                            returnExpression,
+                            ReportingUtil.wrapReportedMessage(message),
+                            ProblemHighlightType.ERROR
+                    );
                 }
             }
         }

@@ -249,7 +249,10 @@ final public class NullableVariablesStrategy {
             else if (parent instanceof ArrayAccessExpression) {
                 final PsiElement container = ((ArrayAccessExpression) parent).getValue();
                 if (variable == container && processed.add(variable)) {
-                    holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            variable,
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
             /* cases when NPE can be introduced: member reference */
@@ -282,20 +285,29 @@ final public class NullableVariablesStrategy {
                     }
 
                     if (processed.add(subject)) {
-                        holder.registerProblem(subject, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                subject,
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                 }
             }
             /* cases when NPE can be introduced: __invoke calls */
             else if (OpenapiTypesUtil.isFunctionReference(parent) && variable == parent.getFirstChild()) {
                 if (processed.add(variable)) {
-                    holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            variable,
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
             /* cases when NPE can be introduced: clone operator */
             else if (parent instanceof UnaryExpression) {
                 if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.kwCLONE) && processed.add(variable)) {
-                    holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            variable,
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
             }
             /* cases when null dispatched into to non-null parameter */
@@ -325,7 +337,10 @@ final public class NullableVariablesStrategy {
                             }
                         }
                         if (isObject && processed.add(variable)) {
-                            holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(message));
+                            holder.registerProblem(
+                                    variable,
+                                    ReportingUtil.wrapReportedMessage(message)
+                            );
                         }
                     }
                     declaredTypes.clear();

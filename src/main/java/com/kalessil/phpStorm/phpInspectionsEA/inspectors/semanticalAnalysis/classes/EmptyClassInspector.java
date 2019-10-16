@@ -55,7 +55,10 @@ public class EmptyClassInspector extends BasePhpInspection {
                         }
                         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
                         if (nameNode != null) {
-                            holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message));
+                            holder.registerProblem(
+                                    nameNode,
+                                    ReportingUtil.wrapReportedMessage(message)
+                            );
                         }
                     }
                 }

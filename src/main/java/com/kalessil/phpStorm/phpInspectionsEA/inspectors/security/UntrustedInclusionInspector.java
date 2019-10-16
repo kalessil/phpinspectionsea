@@ -52,7 +52,10 @@ public class UntrustedInclusionInspector extends BasePhpInspection {
                 if (file != null) {
                     final String path = file.getContents();
                     if (!path.isEmpty() && !absolutePathPattern.matcher(path).matches()) {
-                        holder.registerProblem(include, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                include,
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                 }
             }

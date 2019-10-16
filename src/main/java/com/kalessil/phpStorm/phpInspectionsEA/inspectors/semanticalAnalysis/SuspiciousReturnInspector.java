@@ -49,7 +49,10 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
                 if (context instanceof Finally) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(context.getParent());
                     if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class) != null) {
-                        holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                statement,
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                 }
             }

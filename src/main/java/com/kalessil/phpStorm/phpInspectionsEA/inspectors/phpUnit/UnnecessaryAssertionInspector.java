@@ -126,9 +126,15 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                                             /* match arguments types */
                                             final String expected = expectedType;
                                             if (expected == null) {
-                                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageReturnType));
+                                                holder.registerProblem(
+                                                        reference,
+                                                        ReportingUtil.wrapReportedMessage(messageReturnType)
+                                                );
                                             } else if (resolved.getTypes().stream().anyMatch(t -> Types.getType(t).equals(expected))) {
-                                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageReturnType));
+                                                holder.registerProblem(
+                                                        reference,
+                                                        ReportingUtil.wrapReportedMessage(messageReturnType)
+                                                );
                                             }
 
                                         }

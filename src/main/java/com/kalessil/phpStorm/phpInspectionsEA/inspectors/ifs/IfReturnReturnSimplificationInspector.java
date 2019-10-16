@@ -90,10 +90,9 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
 
                                     /* final reporting step */
                                     final String replacement = String.format(isReverse ? "return !(%s)" : "return %s", cond.getText());
-                                    final String message     = String.format(messagePattern, replacement);
                                     holder.registerProblem(
                                             statement.getFirstChild(),
-                                            ReportingUtil.wrapReportedMessage(message),
+                                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement)),
                                             new SimplifyFix(holder.getProject(), statement, elseBranch == null ? second : statement, replacement)
                                     );
                                 }

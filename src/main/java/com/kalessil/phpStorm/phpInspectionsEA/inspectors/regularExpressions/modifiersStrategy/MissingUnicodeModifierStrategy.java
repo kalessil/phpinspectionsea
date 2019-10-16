@@ -41,11 +41,19 @@ final public class MissingUnicodeModifierStrategy {
     ) {
         if ((modifiers == null || modifiers.indexOf('u') == -1) && pattern != null && ! pattern.isEmpty() && ! functionName.equals("preg_quote")) {
             if (unicodeCharactersPattern.matcher(pattern).matches()) {
-                holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageCharacters), ProblemHighlightType.GENERIC_ERROR);
+                holder.registerProblem(
+                        target,
+                        ReportingUtil.wrapReportedMessage(messageCharacters),
+                        ProblemHighlightType.GENERIC_ERROR
+                );
             } else {
                 final String normalized = StringUtils.replace(pattern, "\\\\", "");
                 if (unicodeCodepointsPattern.matcher(normalized).matches()) {
-                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageCodepoints), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(
+                            target,
+                            ReportingUtil.wrapReportedMessage(messageCodepoints),
+                            ProblemHighlightType.GENERIC_ERROR
+                    );
                 }
             }
         }

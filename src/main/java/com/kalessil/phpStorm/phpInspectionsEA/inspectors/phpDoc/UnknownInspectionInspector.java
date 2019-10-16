@@ -78,7 +78,10 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                         if (!inspections.isEmpty()) {
                             final PsiElement target = tag.getFirstChild();
                             if (target != null) {
-                                holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(message), String.join(", ", inspections)));
+                                holder.registerProblem(
+                                        target,
+                                        String.format(ReportingUtil.wrapReportedMessage(message), String.join(", ", inspections))
+                                );
                             }
                             inspections.clear();
                         }

@@ -85,7 +85,11 @@ public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
                                             if (isString) {
                                                 // TODO: respect Yoda/Classic style as per plugin configuration, immediate NS
                                                 final String replacement = String.format("strpos(%s, %s) === 0", container.getText(), literal.getText());
-                                                holder.registerProblem(parent, String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement), new UseStringSearchFix(replacement));
+                                                holder.registerProblem(
+                                                        parent,
+                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                        new UseStringSearchFix(replacement)
+                                                );
                                             }
                                         }
                                     }

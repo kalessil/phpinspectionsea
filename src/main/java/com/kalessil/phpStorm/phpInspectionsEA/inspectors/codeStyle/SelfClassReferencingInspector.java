@@ -73,15 +73,21 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                                     final String constantName = ((ClassConstantReference) parent).getName();
                                     if (constantName != null && constantName.equals("class")) {
                                         final String replacement = "__CLASS__";
-                                        final String message     = String.format(messagePattern, parent.getText(), replacement);
-                                        problemsHolder.registerProblem(parent, ReportingUtil.wrapReportedMessage(message), new NormalizeReferenceFix(replacement));
+                                        problemsHolder.registerProblem(
+                                                parent,
+                                                ReportingUtil.wrapReportedMessage(String.format(messagePattern, parent.getText(), replacement)),
+                                                new NormalizeReferenceFix(replacement)
+                                        );
                                         return;
                                     }
                                 }
 
                                 if (!(parent instanceof ExtendsList)) {
-                                    final String message = String.format(messagePattern, targetReference, targetReplacement);
-                                    problemsHolder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new NormalizeReferenceFix(targetReplacement));
+                                    problemsHolder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, targetReference, targetReplacement)),
+                                            new NormalizeReferenceFix(targetReplacement)
+                                    );
                                 }
                             });
 
@@ -93,8 +99,11 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                                 )
                                 .forEach(reference -> {
                                     final String replacement = targetReplacement + "::class";
-                                    final String message     = String.format(messagePattern, reference.getText(), replacement);
-                                    problemsHolder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new NormalizeReferenceFix(replacement));
+                                    problemsHolder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, reference.getText(), replacement)),
+                                            new NormalizeReferenceFix(replacement)
+                                    );
                                 });
                     }
                 }

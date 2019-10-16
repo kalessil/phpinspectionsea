@@ -236,7 +236,10 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                     if (!packageName.isEmpty() && !packageVersion.isEmpty()) {
                         /* identify usage development components */
                         if (REPORT_MISPLACED_DEPENDENCIES && optionConfiguration.contains(packageName)) {
-                            holder.registerProblem(pair.getKey().getFirstChild(), ReportingUtil.wrapReportedMessage(useRequireDev));
+                            holder.registerProblem(
+                                    pair.getKey().getFirstChild(),
+                                    ReportingUtil.wrapReportedMessage(useRequireDev)
+                            );
                         }
                         /* identify usage of third party components */
                         if (!hasThirdPartyPackages && packageName.indexOf('/') != -1) {
@@ -260,7 +263,10 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                             if (!packageName.isEmpty() && !packageVersion.isEmpty()) {
                                 if (packageName.equals("roave/security-advisories")) {
                                     if (!packageVersion.equals("dev-master")) {
-                                        holder.registerProblem(pair.getValue(), ReportingUtil.wrapReportedMessage(useMaster));
+                                        holder.registerProblem(
+                                                pair.getValue(),
+                                                ReportingUtil.wrapReportedMessage(useMaster)
+                                        );
                                     }
                                     isSecured = true;
                                     break;

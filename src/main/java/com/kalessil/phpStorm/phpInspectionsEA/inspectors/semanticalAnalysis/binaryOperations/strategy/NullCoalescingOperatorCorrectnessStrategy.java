@@ -30,7 +30,10 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
             if (operation != null) {
                 final IElementType operator = operation.getNode().getElementType();
                 if (result = (operator == PhpTokenTypes.opNOT || PhpTokenTypes.tsCAST_OPS.contains(operator))) {
-                    holder.registerProblem(left, String.format(ReportingUtil.wrapReportedMessage(messagePattern), left.getText()));
+                    holder.registerProblem(
+                            left,
+                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), left.getText())
+                    );
                 }
             }
         }

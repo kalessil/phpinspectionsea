@@ -12,7 +12,11 @@ public class DeprecatedModifiersCheckStrategy {
 
     static public void apply(final String modifiers, @NotNull final StringLiteralExpression target, @NotNull final ProblemsHolder holder) {
         if (!StringUtils.isEmpty(modifiers) && modifiers.indexOf('e') >= 0) {
-            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+            holder.registerProblem(
+                    target,
+                    ReportingUtil.wrapReportedMessage(message),
+                    ProblemHighlightType.GENERIC_ERROR
+            );
         }
     }
 }

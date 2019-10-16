@@ -44,7 +44,11 @@ public class NonSecureParseStrUsageInspector  extends BasePhpInspection {
                 if (functionName != null && (functionName.equals("parse_str") || functionName.equals("mb_parse_str"))) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(
+                                reference,
+                                ReportingUtil.wrapReportedMessage(message),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
                     }
                 }
             }

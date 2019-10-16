@@ -46,20 +46,32 @@ public class PhpUnitDeprecationsInspector extends BasePhpInspection {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 3) {
                         if (arguments.length >= 4 && !arguments[3].getText().isEmpty()) {
-                            final String message = String.format(messageDeprecated, "$delta", methodName + "WithDelta");
-                            holder.registerProblem(arguments[3], ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED);
+                            holder.registerProblem(
+                                    arguments[3],
+                                    ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$delta", methodName + "WithDelta")),
+                                    ProblemHighlightType.LIKE_DEPRECATED
+                            );
                         }
                         if (arguments.length >= 5 && !arguments[4].getText().isEmpty()) {
-                            final String message = String.format(messageRemoved, "$maxDepth");
-                            holder.registerProblem(arguments[4], ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED);
+                            holder.registerProblem(
+                                    arguments[4],
+                                    ReportingUtil.wrapReportedMessage(String.format(messageRemoved, "$maxDepth")),
+                                    ProblemHighlightType.LIKE_DEPRECATED
+                            );
                         }
                         if (arguments.length >= 6 && !arguments[5].getText().isEmpty()) {
-                            final String message = String.format(messageDeprecated, "$canonicalize", methodName + "Canonicalizing");
-                            holder.registerProblem(arguments[5], ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED);
+                            holder.registerProblem(
+                                    arguments[5],
+                                    ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$canonicalize", methodName + "Canonicalizing")),
+                                    ProblemHighlightType.LIKE_DEPRECATED
+                            );
                         }
                         if (arguments.length >= 7 && !arguments[6].getText().isEmpty()) {
-                            final String message = String.format(messageDeprecated, "$ignoreCase", methodName + "IgnoringCase");
-                            holder.registerProblem(arguments[6], ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_DEPRECATED);
+                            holder.registerProblem(
+                                    arguments[6],
+                                    ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$ignoreCase", methodName + "IgnoringCase")),
+                                    ProblemHighlightType.LIKE_DEPRECATED
+                            );
                         }
                     }
                 }

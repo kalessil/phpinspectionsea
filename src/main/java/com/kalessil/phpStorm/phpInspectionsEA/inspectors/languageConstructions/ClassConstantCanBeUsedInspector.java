@@ -77,7 +77,11 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     if (functionName != null && functionName.equals("get_called_class")) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 0) {
-                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageUseStatic), new UseStaticFix());
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(messageUseStatic),
+                                    new UseStaticFix()
+                            );
                         }
                     }
                 }
@@ -130,10 +134,9 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         /* check resolved items */
                         if (!classes.isEmpty()) {
                             if (1 == classes.size() && classes.get(0).getFQN().equals(fqn)) {
-                                final String message = messagePattern.replace("%c%", normalizedContents);
                                 holder.registerProblem(
                                         expression,
-                                        ReportingUtil.wrapReportedMessage(message),
+                                        ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", normalizedContents)),
                                         new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
                                 );
                             }

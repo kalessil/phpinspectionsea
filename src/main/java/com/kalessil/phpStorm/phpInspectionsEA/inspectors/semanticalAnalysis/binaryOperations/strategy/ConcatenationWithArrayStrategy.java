@@ -27,7 +27,10 @@ final public class ConcatenationWithArrayStrategy {
             final boolean isTarget = expression.getLeftOperand() instanceof ArrayCreationExpression ||
                                      expression.getRightOperand() instanceof ArrayCreationExpression;
             if (isTarget) {
-                holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message));
+                holder.registerProblem(
+                        operation,
+                        ReportingUtil.wrapReportedMessage(message)
+                );
                 return true;
             }
         }

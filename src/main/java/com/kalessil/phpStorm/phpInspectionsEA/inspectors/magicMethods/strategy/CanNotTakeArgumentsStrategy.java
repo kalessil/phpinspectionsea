@@ -24,8 +24,11 @@ final public class CanNotTakeArgumentsStrategy {
         if (method.getParameters().length > 0) {
             final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
             if (nameNode != null) {
-                final String message = String.format(messagePattern,  method.getName());
-                holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.ERROR);
+                holder.registerProblem(
+                        nameNode,
+                        ReportingUtil.wrapReportedMessage(String.format(messagePattern,  method.getName())),
+                        ProblemHighlightType.ERROR
+                );
             }
         }
     }

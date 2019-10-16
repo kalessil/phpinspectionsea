@@ -64,7 +64,11 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                                     arguments[0].getText(),
                                     DECODE_AS_ARRAY ? "true" : "false"
                             );
-                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageResultType), DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement));
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(messageResultType),
+                                    DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement)
+                            );
                         }
                         if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
                             final boolean hasFlag = arguments.length >= 4 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
@@ -77,7 +81,11 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                                         arguments.length > 2 ? arguments[2].getText() : "512",
                                         arguments.length > 3 ? "JSON_THROW_ON_ERROR | " + arguments[3].getText() : "JSON_THROW_ON_ERROR"
                                 );
-                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageErrorsHandling), new HardenErrorsHandlingFix(replacement));
+                                holder.registerProblem(
+                                        reference,
+                                        ReportingUtil.wrapReportedMessage(messageErrorsHandling),
+                                        new HardenErrorsHandlingFix(replacement)
+                                );
                             }
                         }
                     } else if (functionName.equals("json_encode") && this.isFromRootNamespace(reference)) {
@@ -92,7 +100,11 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                                         arguments.length > 1 ? "JSON_THROW_ON_ERROR | " + arguments[1].getText() : "JSON_THROW_ON_ERROR",
                                         arguments.length > 2 ? arguments[2].getText() : "512"
                                 );
-                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageErrorsHandling), new HardenErrorsHandlingFix(replacement));
+                                holder.registerProblem(
+                                        reference,
+                                        ReportingUtil.wrapReportedMessage(messageErrorsHandling),
+                                        new HardenErrorsHandlingFix(replacement)
+                                );
                             }
                         }
                     }

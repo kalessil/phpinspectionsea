@@ -61,7 +61,11 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
                     if (resolved instanceof Field) {
                         final Field constant = (Field) resolved;
                         if (constant.isConstant() && targetClassConstants.contains(constant.getFQN())) {
-                            holder.registerProblem(constantReference, ReportingUtil.wrapReportedMessage(messageClassConstant), new TheLocalFix());
+                            holder.registerProblem(
+                                    constantReference,
+                                    ReportingUtil.wrapReportedMessage(messageClassConstant),
+                                    new TheLocalFix()
+                            );
                         }
                     }
                 }
@@ -71,7 +75,11 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
                 if (constantName != null && constantName.equals("DATE_ISO8601")) {
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageConstant), new TheLocalFix());
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(messageConstant),
+                            new TheLocalFix()
+                    );
                 }
             }
         };

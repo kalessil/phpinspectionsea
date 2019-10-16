@@ -32,7 +32,11 @@ final public class ExecUsageStrategy {
                     OpenapiTypesUtil.isStatementImpl(reference.getParent()) &&
                     MethodIdentityUtil.isReferencingMethod(reference, "\\PDO", "query");
                 if (isTarget) {
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new UseExecFix());
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(message),
+                            new UseExecFix()
+                    );
                 }
             }
         }

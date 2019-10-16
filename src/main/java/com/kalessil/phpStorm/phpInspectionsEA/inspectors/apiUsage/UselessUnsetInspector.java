@@ -69,7 +69,11 @@ public class UselessUnsetInspector extends BasePhpInspection {
                                 if (expression.getParent() instanceof PhpUnset) {
                                     int unsetParametersCount = ((PhpUnset) expression.getParent()).getArguments().length;
                                     final PsiElement target  = (unsetParametersCount == 1 ? expression.getParent() : expression);
-                                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                    holder.registerProblem(
+                                            target,
+                                            ReportingUtil.wrapReportedMessage(message),
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                    );
                                 }
                             }
                         }

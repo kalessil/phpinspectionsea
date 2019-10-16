@@ -204,7 +204,10 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                             if (resolved instanceof Method) {
                                 final PhpClass clazz = ((Method) resolved).getContainingClass();
                                 if (clazz != null && match.getFirst().equals(clazz.getFQN()) && !this.isInDebugFunction(reference)) {
-                                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
+                                    holder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
                                     return;
                                 }
                             }
@@ -221,7 +224,10 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                     if (paramsNeeded == null || reference.getParameters().length != paramsNeeded) {
                         final boolean isValidContext = this.isBuffered(reference) || this.isInDebugFunction(reference);
                         if (!isValidContext) {
-                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(message)
+                            );
                         }
                     }
                 }

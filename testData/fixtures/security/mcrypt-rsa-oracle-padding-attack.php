@@ -10,11 +10,11 @@ class Clazz
     {
         $localVariable = MCRYPT_MODE_CBC;
 
-        <error descr="This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', MCRYPT_MODE_CBC)</error>;
-        <error descr="This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', self::MODE)</error>;
-        <error descr="This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', $this->mode)</error>;
-        <error descr="This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', $optionalParameter)</error>;
-        <error descr="This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', $localVariable)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', MCRYPT_MODE_CBC)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', self::MODE)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', $this->mode)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', $optionalParameter)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks (see our documentation on GitHub for options).">mcrypt_encrypt(MCRYPT_RIJNDAEL_128, '', '', $localVariable)</error>;
 
         mcrypt_encrypt(MCRYPT_3DES, '', '', MCRYPT_MODE_CBC);
     }

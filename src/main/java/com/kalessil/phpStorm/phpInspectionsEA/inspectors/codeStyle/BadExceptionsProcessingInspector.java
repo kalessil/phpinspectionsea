@@ -70,13 +70,18 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                     if (!variableName.isEmpty()) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(catchStatement);
                         if (body != null) {
-                            boolean isVariableUsed = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
-                                    .anyMatch(v -> variableName.equals(v.getName()));
+                            boolean isVariableUsed = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream().anyMatch(v -> variableName.equals(v.getName()));
                             if (!isVariableUsed) {
                                 if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                                    holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageFailSilently));
+                                    holder.registerProblem(
+                                            variable,
+                                            ReportingUtil.wrapReportedMessage(messageFailSilently)
+                                    );
                                 } else {
-                                    holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageChainedException));
+                                    holder.registerProblem(
+                                            variable,
+                                            ReportingUtil.wrapReportedMessage(messageChainedException)
+                                    );
                                 }
                             } else if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                                 /* the catch should be the last and only re-throw */
@@ -86,7 +91,10 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                                         final PhpThrow lastThrow  = (PhpThrow) last;
                                         final PsiElement argument = lastThrow.getArgument();
                                         if (argument != null && OpenapiEquivalenceUtil.areEqual(argument, variable)) {
-                                            holder.registerProblem(variable, ReportingUtil.wrapReportedMessage(messageRethrown));
+                                            holder.registerProblem(
+                                                    variable,
+                                                    ReportingUtil.wrapReportedMessage(messageRethrown)
+                                            );
                                         }
                                     }
                                 }

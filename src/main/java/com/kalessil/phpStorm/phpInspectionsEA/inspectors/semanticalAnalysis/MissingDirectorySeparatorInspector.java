@@ -92,7 +92,10 @@ public class MissingDirectorySeparatorInspector extends PhpInspection {
                         if (target != null) {
                             final String content = target.getContents();
                             if (content.matches("^[\\w\\.].*$")) {
-                                holder.registerProblem(candidate, ReportingUtil.wrapReportedMessage(message));
+                                holder.registerProblem(
+                                        candidate,
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                             }
                         }
                     }

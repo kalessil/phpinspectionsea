@@ -116,7 +116,11 @@ public class SubstringCompareInspector extends PhpInspection {
 
                                     if (isTarget) {
                                         final String replacement = String.valueOf(givenOffset > 0 ? stringLength : -stringLength);
-                                        holder.registerProblem(offset, ReportingUtil.wrapReportedMessage(message), new LengthFix(replacement));
+                                        holder.registerProblem(
+                                                offset,
+                                                ReportingUtil.wrapReportedMessage(message),
+                                                new LengthFix(replacement)
+                                        );
                                     }
                                 }
                             }

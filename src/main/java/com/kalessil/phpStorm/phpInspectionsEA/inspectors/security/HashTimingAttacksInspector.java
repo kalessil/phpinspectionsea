@@ -84,11 +84,17 @@ public class HashTimingAttacksInspector extends PhpInspection {
                 if (context instanceof BinaryExpression) {
                     final PsiElement second = OpenapiElementsUtil.getSecondOperand((BinaryExpression) context, reference);
                     if (second != null && this.isTarget((BinaryExpression) context, second)) {
-                        holder.registerProblem(context, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                context,
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                 } else if (OpenapiTypesUtil.isFunctionReference(context)) {
                     if (this.isTarget((FunctionReference) context)) {
-                        holder.registerProblem(context, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                context,
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                 } else if (OpenapiTypesUtil.isAssignment(context)) {
                     final PsiElement container = ((AssignmentExpression) context).getVariable();
@@ -107,13 +113,19 @@ public class HashTimingAttacksInspector extends PhpInspection {
                                         if (parent instanceof BinaryExpression) {
                                             final PsiElement second = OpenapiElementsUtil.getSecondOperand((BinaryExpression) parent, variable);
                                             if (second != null && this.isTarget((BinaryExpression) parent, second)) {
-                                                holder.registerProblem(parent, ReportingUtil.wrapReportedMessage(message));
+                                                holder.registerProblem(
+                                                        parent,
+                                                        ReportingUtil.wrapReportedMessage(message)
+                                                );
                                                 break;
                                             }
                                         } else if (parent instanceof ParameterList) {
                                             final PsiElement grandParent = parent.getParent();
                                             if (OpenapiTypesUtil.isFunctionReference(grandParent) && this.isTarget((FunctionReference) grandParent)) {
-                                                holder.registerProblem(grandParent, ReportingUtil.wrapReportedMessage(message));
+                                                holder.registerProblem(
+                                                        grandParent,
+                                                        ReportingUtil.wrapReportedMessage(message)
+                                                );
                                                 break;
                                             }
                                         }

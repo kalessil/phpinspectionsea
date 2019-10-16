@@ -31,7 +31,10 @@ final public class McryptRsaOraclePaddingStrategy {
                 /* MCRYPT_MODE_CBC === 'cbc' */
                 result = modeVariants.stream().filter(variant -> variant instanceof StringLiteralExpression).anyMatch(variant -> ((StringLiteralExpression) variant).getContents().equals("cbc"));
                 if (result) {
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                 }
                 modeVariants.clear();
             }

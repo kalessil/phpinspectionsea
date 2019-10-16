@@ -64,16 +64,28 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
                             }
                         }
 
-                        holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messagePattern), range, match), ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(
+                                target,
+                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), range, match),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
                     }
                 }
             }
 
             if (modifiers != null && modifiers.contains("u")) {
                 if (pattern.contains("а-я") && !pattern.contains("ё")) {
-                    holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messageMissingCyrillic), "а-я", "ёа-я"), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(
+                            target,
+                            String.format(ReportingUtil.wrapReportedMessage(messageMissingCyrillic), "а-я", "ёа-я"),
+                            ProblemHighlightType.GENERIC_ERROR
+                    );
                 } else if (pattern.contains("А-Я") && !pattern.contains("Ё")) {
-                    holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(messageMissingCyrillic), "А-Я", "ЁА-Я"), ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(
+                            target,
+                            String.format(ReportingUtil.wrapReportedMessage(messageMissingCyrillic), "А-Я", "ЁА-Я"),
+                            ProblemHighlightType.GENERIC_ERROR
+                    );
                 }
             }
         }

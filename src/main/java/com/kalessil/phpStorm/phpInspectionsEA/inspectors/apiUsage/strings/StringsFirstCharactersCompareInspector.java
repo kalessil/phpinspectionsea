@@ -72,7 +72,11 @@ public class StringsFirstCharactersCompareInspector extends PhpInspection {
                                 stringLength = -1;
                             }
                             if (isTarget && stringLength != -1) {
-                                holder.registerProblem(arguments[2], ReportingUtil.wrapReportedMessage(message), new LengthFix(String.valueOf(stringLength)));
+                                holder.registerProblem(
+                                        arguments[2],
+                                        ReportingUtil.wrapReportedMessage(message),
+                                        new LengthFix(String.valueOf(stringLength))
+                                );
                             }
                         }
                     }

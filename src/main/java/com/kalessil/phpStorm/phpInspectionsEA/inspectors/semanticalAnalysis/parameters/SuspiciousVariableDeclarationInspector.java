@@ -68,7 +68,10 @@ public class SuspiciousVariableDeclarationInspector extends PhpInspection {
                         final String variableName = variable.getName();
                         /* pattern: use variable matches any parameter */
                         if (hasParameters && parameters.stream().anyMatch(p -> variableName.equals(p.getName()))) {
-                            holder.registerProblem(variable, String.format(ReportingUtil.wrapReportedMessage(messageSameParameter), variableName));
+                            holder.registerProblem(
+                                    variable,
+                                    String.format(ReportingUtil.wrapReportedMessage(messageSameParameter), variableName)
+                            );
                         }
                     }
                 }
@@ -94,11 +97,17 @@ public class SuspiciousVariableDeclarationInspector extends PhpInspection {
                             if (variableName != null && !variableName.isEmpty()) {
                                 /* pattern: static variable matches a parameter */
                                 if (hasParameters && parameters.stream().anyMatch(parameter -> variableName.equals(parameter.getName()))) {
-                                    holder.registerProblem(declared, String.format(ReportingUtil.wrapReportedMessage(messageSameParameter), variableName));
+                                    holder.registerProblem(
+                                            declared,
+                                            String.format(ReportingUtil.wrapReportedMessage(messageSameParameter), variableName)
+                                    );
                                 }
                                 /* pattern: static variable matches a use-variable */
                                 if (hasUseVariables && useVariables.stream().anyMatch(variable -> variableName.equals(variable.getName()))) {
-                                    holder.registerProblem(declared, String.format(ReportingUtil.wrapReportedMessage(messageSameUse), variableName));
+                                    holder.registerProblem(
+                                            declared,
+                                            String.format(ReportingUtil.wrapReportedMessage(messageSameUse), variableName)
+                                    );
                                 }
                             }
                         }

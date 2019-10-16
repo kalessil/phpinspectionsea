@@ -82,7 +82,10 @@ public class CryptographicallySecureAlgorithmsInspector extends PhpInspection {
 
                 final String constantName = reference.getName();
                 if (constantName != null && constants.containsKey(constantName) && !this.isTestContext(reference)) {
-                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(constants.get(constantName)));
+                    holder.registerProblem(
+                            reference,
+                            ReportingUtil.wrapReportedMessage(constants.get(constantName))
+                    );
                 }
             }
         };

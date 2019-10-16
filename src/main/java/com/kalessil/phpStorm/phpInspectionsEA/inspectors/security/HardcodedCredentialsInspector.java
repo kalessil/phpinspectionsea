@@ -148,7 +148,10 @@ public class HardcodedCredentialsInspector extends PhpInspection {
                 final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(target);
                 if (!values.isEmpty()) {
                     if (values.stream().anyMatch(candidate -> candidate instanceof StringLiteralExpression)) {
-                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                target,
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                     values.clear();
                 }

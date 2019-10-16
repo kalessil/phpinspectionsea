@@ -72,7 +72,11 @@ public class ArrayMapMissUseInspector extends PhpInspection {
                                                 String.join(", ", arguments)
                                         );
                                         arguments.clear();
-                                        holder.registerProblem(outerCall, ReportingUtil.wrapReportedMessage(message), new ReplaceFix(replacement));
+                                        holder.registerProblem(
+                                                outerCall,
+                                                ReportingUtil.wrapReportedMessage(message),
+                                                new ReplaceFix(replacement)
+                                        );
                                     }
                                 }
                             }

@@ -109,7 +109,10 @@ public class NotOptimalRegularExpressionsInspector extends PhpInspection {
                                     }
                                 }
                                 if (!hasDelimiters && !functionName.equals("preg_quote")) {
-                                    holder.registerProblem(arguments[0], ReportingUtil.wrapReportedMessage(messageNoDelimiters));
+                                    holder.registerProblem(
+                                            arguments[0],
+                                            ReportingUtil.wrapReportedMessage(messageNoDelimiters)
+                                    );
                                 }
                             }
                         }

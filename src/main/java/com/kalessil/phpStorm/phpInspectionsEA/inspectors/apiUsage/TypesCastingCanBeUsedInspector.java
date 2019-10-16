@@ -160,7 +160,10 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                     if (variable instanceof Variable) {
                         final PsiElement number = OpenapiElementsUtil.getSecondOperand(expression, variable);
                         if (number != null && OpenapiTypesUtil.isNumber(number) && number.getText().equals("1")) {
-                            holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageMultiplyOne));
+                            holder.registerProblem(
+                                    expression,
+                                    ReportingUtil.wrapReportedMessage(messageMultiplyOne)
+                            );
                         }
                     }
                 }

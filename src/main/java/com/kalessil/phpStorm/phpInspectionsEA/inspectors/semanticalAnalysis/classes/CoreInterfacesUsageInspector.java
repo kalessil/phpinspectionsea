@@ -73,8 +73,11 @@ public class CoreInterfacesUsageInspector extends PhpInspection {
                                 } else {
                                     message = String.format(patternsWithAlternatives, classFQN, alternatives.toString());
                                 }
-                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
-
+                                holder.registerProblem(
+                                        reference,
+                                        ReportingUtil.wrapReportedMessage(message),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
                                 break;
                             }
                         }

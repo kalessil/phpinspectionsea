@@ -74,7 +74,10 @@ public class ClassExistenceCheckInspector extends PhpInspection {
                         if (functionName.equals("is_a") && argumentsCount == 2 && arguments[0] instanceof PhpTypedElement) {
                             final PhpType types = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], project);
                             if (types != null && types.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strString))) {
-                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageString));
+                                holder.registerProblem(
+                                        reference,
+                                        ReportingUtil.wrapReportedMessage(messageString)
+                                );
                             }
                         }
                         candidate = argumentsCount >= 2 ? arguments[1] : null;
@@ -89,7 +92,10 @@ public class ClassExistenceCheckInspector extends PhpInspection {
                         if (constantName != null && constantName.equals("class") && targetClass instanceof ClassReference) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) targetClass);
                             if (resolved instanceof PhpClass && !callbacks.get(functionName).apply((PhpClass) resolved)) {
-                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageMismatch));
+                                holder.registerProblem(
+                                        reference,
+                                        ReportingUtil.wrapReportedMessage(messageMismatch)
+                                );
                             }
                         }
                     }

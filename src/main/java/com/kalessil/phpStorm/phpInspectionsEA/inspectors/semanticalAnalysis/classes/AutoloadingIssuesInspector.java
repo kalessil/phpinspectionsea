@@ -100,7 +100,10 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                                     if (isTarget) {
                                         final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                                         if (classNameNode != null) {
-                                            holder.registerProblem(classNameNode, String.format(ReportingUtil.wrapReportedMessage(messagePath), String.join(",", possibleFileLocations), "*/" + fileLocationFromFqn));
+                                            holder.registerProblem(
+                                                    classNameNode,
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePath), String.join(",", possibleFileLocations), "*/" + fileLocationFromFqn)
+                                            );
                                         }
                                     }
                                     possibleFileLocations.clear();
@@ -117,7 +120,10 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                 if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
                     final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                     if (classNameNode != null) {
-                        holder.registerProblem(classNameNode, ReportingUtil.wrapReportedMessage(messageName));
+                        holder.registerProblem(
+                                classNameNode,
+                                ReportingUtil.wrapReportedMessage(messageName)
+                        );
                     }
                 }
             }
@@ -127,7 +133,10 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                 if (!expectedClassName.equals(clazz.getName())) {
                     final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                     if (classNameNode != null) {
-                        holder.registerProblem(classNameNode, ReportingUtil.wrapReportedMessage(messageName));
+                        holder.registerProblem(
+                                classNameNode,
+                                ReportingUtil.wrapReportedMessage(messageName)
+                        );
                     }
                 }
             }

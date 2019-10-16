@@ -43,12 +43,11 @@ public class ShortClassDefinitionStrategy {
             for (Map.Entry<String, String> replacement : mapping.entrySet()) {
                 final String wildcard = replacement.getKey();
                 if (patternAdapted.contains(wildcard)) {
-                    final String message = messagePattern
-                            .replace("%p%", wildcard)
-                            .replace("%r%", replacement.getValue())
-                            .replace("%h%", safetyHint);
-
-                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            target,
+                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%p%", wildcard).replace("%r%", replacement.getValue()).replace("%h%", safetyHint)),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
             }
 

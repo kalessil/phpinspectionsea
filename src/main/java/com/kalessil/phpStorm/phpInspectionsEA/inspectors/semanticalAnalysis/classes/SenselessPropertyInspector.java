@@ -71,7 +71,10 @@ public class SenselessPropertyInspector extends PhpInspection {
                                     if (!methodName.equals("__construct")) {
                                         final Method method = OpenapiResolveUtil.resolveMethod(clazz, methodName);
                                         if (method != null && this.isTarget(f, method)) {
-                                            holder.registerProblem(f, String.format(ReportingUtil.wrapReportedMessage(messagePattern), fieldName, methodName));
+                                            holder.registerProblem(
+                                                    f,
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), fieldName, methodName)
+                                            );
                                         }
                                     }
                                 }

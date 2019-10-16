@@ -175,7 +175,10 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                                     final boolean depends = PsiTreeUtil.findChildrenOfType(currentBase, Variable.class).stream()
                                             .anyMatch(v -> variables.contains(v.getName()));
                                     if (!depends) {
-                                        holder.registerProblem(currentBase, ReportingUtil.wrapReportedMessage(messageLoop));
+                                        holder.registerProblem(
+                                                currentBase,
+                                                ReportingUtil.wrapReportedMessage(messageLoop)
+                                        );
                                     }
                                     variables.clear();
                                 }
@@ -186,7 +189,10 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                             if (candidate instanceof MethodReference && !this.isTestContext(parent)) {
                                 final PsiElement previousBase = candidate.getFirstChild();
                                 if (OpenapiEquivalenceUtil.areEqual(currentBase, previousBase)) {
-                                    holder.registerProblem(currentBase, ReportingUtil.wrapReportedMessage(messageSequential));
+                                    holder.registerProblem(
+                                            currentBase,
+                                            ReportingUtil.wrapReportedMessage(messageSequential)
+                                    );
                                 }
                             }
                         }
@@ -231,7 +237,10 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                                     matches = OpenapiEquivalenceUtil.areEqual(first, second);
                                 }
                                 if (matches) {
-                                    holder.registerProblem(second, ReportingUtil.wrapReportedMessage(messageSequential));
+                                    holder.registerProblem(
+                                            second,
+                                            ReportingUtil.wrapReportedMessage(messageSequential)
+                                    );
                                     break iterate;
                                 }
                             }

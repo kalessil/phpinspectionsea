@@ -34,7 +34,11 @@ final public class ProtectedMembersOfFinalClassStrategy {
             if (parent == null || !isOverride(subject, clazz, parent)) {
                 final PsiElement modifier = ModifierExtractionUtil.getProtectedModifier(subject);
                 if (modifier != null) {
-                    holder.registerProblem(modifier, ReportingUtil.wrapReportedMessage(message), new MakePrivateFixer(holder.getProject(), modifier));
+                    holder.registerProblem(
+                            modifier,
+                            ReportingUtil.wrapReportedMessage(message),
+                            new MakePrivateFixer(holder.getProject(), modifier)
+                    );
                 }
             }
         }

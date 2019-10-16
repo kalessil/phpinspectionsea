@@ -61,7 +61,11 @@ public class FilePutContentsRaceConditionInspector extends PhpInspection {
                     if (arguments.length == 2 && !this.isTestContext(reference)) {
                         /* there is no solid pattern, hence we are searching test fragments under the hood */
                         if (!REDUCED_SCOPE || this.match(arguments[0], ".php") || this.match(arguments[1], "<?php")) {
-                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new AddLockExFlagFix());
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    new AddLockExFlagFix()
+                            );
                         }
                     }
                 }

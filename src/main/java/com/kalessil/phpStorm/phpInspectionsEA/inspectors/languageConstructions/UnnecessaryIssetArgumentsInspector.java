@@ -79,7 +79,11 @@ public class UnnecessaryIssetArgumentsInspector extends PhpInspection {
                                         if (match != current && !reported.contains(match)) {
                                             final boolean canSkip = OpenapiEquivalenceUtil.areEqual(discoveredBase, match);
                                             if (canSkip) {
-                                                holder.registerProblem(match, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL, new DropArgumentFix());
+                                                holder.registerProblem(
+                                                        match,
+                                                        ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                        new DropArgumentFix()
+                                                );
                                                 reported.add(match);
                                             }
                                         }

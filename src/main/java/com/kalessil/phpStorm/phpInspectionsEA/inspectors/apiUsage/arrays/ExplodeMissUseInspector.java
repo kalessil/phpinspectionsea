@@ -120,9 +120,16 @@ public class ExplodeMissUseInspector extends PhpInspection {
                                         }
                                         final String message = String.format(messagePattern, replacement);
                                         if (innerCall == targetArgument) {
-                                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), new UseAlternativeFix(replacement));
+                                            holder.registerProblem(
+                                                    target,
+                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    new UseAlternativeFix(replacement)
+                                            );
                                         } else {
-                                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
+                                            holder.registerProblem(
+                                                    target,
+                                                    ReportingUtil.wrapReportedMessage(message)
+                                            );
                                         }
                                     }
                                 }

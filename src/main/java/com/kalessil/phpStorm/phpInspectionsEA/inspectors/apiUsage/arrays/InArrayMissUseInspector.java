@@ -70,8 +70,11 @@ public class InArrayMissUseInspector extends PhpInspection {
                             final String replacement = "array_key_exists(%k%, %a%)"
                                     .replace("%a%", nestedCallParams[0].getText())
                                     .replace("%k%", arguments[0].getText());
-                            final String message = String.format(patternKeyExists, replacement);
-                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new UseArrayKeyExistsFix(replacement));
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(String.format(patternKeyExists, replacement)),
+                                    new UseArrayKeyExistsFix(replacement)
+                            );
                         }
                     }
                 }
@@ -123,8 +126,11 @@ public class InArrayMissUseInspector extends PhpInspection {
                         final String replacement = holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle()
                                                    ? String.format("%s %s %s", lastItem.getText(), comparison, arguments[0].getText())
                                                    : String.format("%s %s %s", arguments[0].getText(), comparison, lastItem.getText());
-                        final String message = String.format(patternComparison, replacement);
-                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), new UseComparisonFix(replacement));
+                        holder.registerProblem(
+                                target,
+                                ReportingUtil.wrapReportedMessage(String.format(patternComparison, replacement)),
+                                new UseComparisonFix(replacement)
+                        );
                     }
                 }
             }

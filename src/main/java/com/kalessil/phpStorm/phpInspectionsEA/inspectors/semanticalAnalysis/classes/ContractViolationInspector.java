@@ -66,7 +66,10 @@ public class ContractViolationInspector extends PhpInspection {
                                         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
                                         if (nameNode != null) {
                                             Collections.sort(violations);
-                                            holder.registerProblem(nameNode, String.format(ReportingUtil.wrapReportedMessage(messagePattern), String.join(", ", violations)));
+                                            holder.registerProblem(
+                                                    nameNode,
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), String.join(", ", violations))
+                                            );
                                         }
                                         violations.clear();
                                     }

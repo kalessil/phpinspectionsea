@@ -61,8 +61,7 @@ public class GetClassUsageInspector extends PhpInspection {
                         if (arguments.length == 1 && arguments[0] instanceof PhpTypedElement) {
                             final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[0], project);
                             if (resolved != null) {
-                                final boolean hasNull = resolved.filterUnknown().getTypes().stream()
-                                        .anyMatch(t -> Types.getType(t).equals(Types.strNull));
+                                final boolean hasNull = resolved.filterUnknown().getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull));
                                 if ((hasNull || isNullableParameter(arguments[0])) && !isNullabilityChecked(arguments[0])) {
                                     holder.registerProblem(
                                             reference,

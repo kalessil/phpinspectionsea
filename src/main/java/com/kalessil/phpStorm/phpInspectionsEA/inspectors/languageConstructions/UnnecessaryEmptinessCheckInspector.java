@@ -168,7 +168,10 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                                 if (report) {
                                                     final PsiElement node = this.target(target, argument);
                                                     if (reported.add(node)) {
-                                                        holder.registerProblem(node, ReportingUtil.wrapReportedMessage(messageAlwaysTrue));
+                                                        holder.registerProblem(
+                                                                node,
+                                                                ReportingUtil.wrapReportedMessage(messageAlwaysTrue)
+                                                        );
                                                     }
                                                 }
                                             }
@@ -176,21 +179,30 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                             if (REPORT_CONTROVERTIAL) {
                                                 final PsiElement node = this.target(target, argument);
                                                 if (reported.add(node)) {
-                                                    holder.registerProblem(node, ReportingUtil.wrapReportedMessage(messageControversialNull));
+                                                    holder.registerProblem(
+                                                            node,
+                                                            ReportingUtil.wrapReportedMessage(messageControversialNull)
+                                                    );
                                                 }
                                             }
                                         } else if ((newState & STATE_CONFLICTING_IS_FALSY) == STATE_CONFLICTING_IS_FALSY) {
                                             if (REPORT_CONTROVERTIAL) {
                                                 final PsiElement node = this.target(target, argument);
                                                 if (reported.add(node)) {
-                                                    holder.registerProblem(node, ReportingUtil.wrapReportedMessage(messageControversialFalsy));
+                                                    holder.registerProblem(
+                                                            node,
+                                                            ReportingUtil.wrapReportedMessage(messageControversialFalsy)
+                                                    );
                                                 }
                                             }
                                         } else if ((newState & STATE_CONFLICTING_IS_SET) == STATE_CONFLICTING_IS_SET) {
                                             if (REPORT_CONTROVERTIAL) {
                                                 final PsiElement node = this.target(target, argument);
                                                 if (reported.add(node)) {
-                                                    holder.registerProblem(node, ReportingUtil.wrapReportedMessage(messageControversialIsset));
+                                                    holder.registerProblem(
+                                                            node,
+                                                            ReportingUtil.wrapReportedMessage(messageControversialIsset)
+                                                    );
                                                 }
                                             }
                                         }
@@ -235,15 +247,24 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                             final IElementType operator = binary.getOperationType();
                                             if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
                                                 if (reported.add(binary)) {
-                                                    holder.registerProblem(binary, String.format(ReportingUtil.wrapReportedMessage(messageEmptyArrayCount), argument.getText(), argument.getText()));
+                                                    holder.registerProblem(
+                                                            binary,
+                                                            String.format(ReportingUtil.wrapReportedMessage(messageEmptyArrayCount), argument.getText(), argument.getText())
+                                                    );
                                                 }
                                             } else if (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
                                                 if (reported.add(binary)) {
-                                                    holder.registerProblem(binary, String.format(ReportingUtil.wrapReportedMessage(messageNotEmptyArrayCount), argument.getText(), argument.getText()));
+                                                    holder.registerProblem(
+                                                            binary,
+                                                            String.format(ReportingUtil.wrapReportedMessage(messageNotEmptyArrayCount), argument.getText(), argument.getText())
+                                                    );
                                                 }
                                             } else if (operator == PhpTokenTypes.opGREATER) {
                                                 if (reported.add(binary)) {
-                                                    holder.registerProblem(binary, String.format(ReportingUtil.wrapReportedMessage(messageNotEmptyArrayCount), argument.getText(), argument.getText()));
+                                                    holder.registerProblem(
+                                                            binary,
+                                                            String.format(ReportingUtil.wrapReportedMessage(messageNotEmptyArrayCount), argument.getText(), argument.getText())
+                                                    );
                                                 }
                                             }
                                             break;
@@ -257,7 +278,10 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (functionName != null && (functionName.equals("count") || functionName.equals("sizeof"))) {
                                     if (reported.add(call)) {
                                         final String message = this.isInverted(call) ? messageEmptyArrayCount : messageNotEmptyArrayCount;
-                                        holder.registerProblem(call, String.format(ReportingUtil.wrapReportedMessage(message), argument.getText(), argument.getText()));
+                                        holder.registerProblem(
+                                                call,
+                                                String.format(ReportingUtil.wrapReportedMessage(message), argument.getText(), argument.getText())
+                                        );
                                     }
                                     break;
                                 }
@@ -284,13 +308,19 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 /* !isset($request) && empty($request): empty() is always true */
                                 final PsiElement node = this.target(empty.get(), argument);
                                 if (reported.add(node)) {
-                                    holder.registerProblem(node, ReportingUtil.wrapReportedMessage(messageAlwaysTrue));
+                                    holder.registerProblem(
+                                            node,
+                                            ReportingUtil.wrapReportedMessage(messageAlwaysTrue)
+                                    );
                                 }
                             } else if (!isIssetInverted && isEmptyInverted) {
                                 /* isset($request) && !empty($request): isset() can be dropped  */
                                 final PsiElement node = this.target(isset.get(), argument);
                                 if (reported.add(node)) {
-                                    holder.registerProblem(node, ReportingUtil.wrapReportedMessage(messageIssetCanBeDropped));
+                                    holder.registerProblem(
+                                            node,
+                                            ReportingUtil.wrapReportedMessage(messageIssetCanBeDropped)
+                                    );
                                 }
                             }
                         } else if (operator == PhpTokenTypes.opOR) {
@@ -300,13 +330,19 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 /* !isset($request) || empty($request): !isset() can be dropped */
                                 final PsiElement node = this.target(isset.get(), argument);
                                 if (reported.add(node)) {
-                                    holder.registerProblem(node, ReportingUtil.wrapReportedMessage(messageIssetCanBeDropped));
+                                    holder.registerProblem(
+                                            node,
+                                            ReportingUtil.wrapReportedMessage(messageIssetCanBeDropped)
+                                    );
                                 }
                             } else if (!isIssetInverted && isEmptyInverted) {
                                 /* isset($request) || !empty($request): !empty() is always false */
                                 final PsiElement node = this.target(empty.get(), argument);
                                 if (reported.add(node)) {
-                                    holder.registerProblem(node, ReportingUtil.wrapReportedMessage(messageAlwaysFalse));
+                                    holder.registerProblem(
+                                            node,
+                                            ReportingUtil.wrapReportedMessage(messageAlwaysFalse)
+                                    );
                                 }
                             }
                         }
@@ -338,7 +374,10 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (operation == targetOperator) {
                                     final PsiElement node = this.target(empty.get(), argument);
                                     if (reported.add(node)) {
-                                        holder.registerProblem(node, ReportingUtil.wrapReportedMessage(targetMessage));
+                                        holder.registerProblem(
+                                                node,
+                                                ReportingUtil.wrapReportedMessage(targetMessage)
+                                        );
                                     }
                                     break;
                                 }
@@ -363,14 +402,20 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                             if (!this.isInverted(isset.get()) && !this.isInverted(candidate.get())) {
                                 final PsiElement node = this.target(isset.get(), argument);
                                 if (reported.add(node)) {
-                                    holder.registerProblem(node, String.format(ReportingUtil.wrapReportedMessage(messageNotEmpty), argument.getText()));
+                                    holder.registerProblem(
+                                            node,
+                                            String.format(ReportingUtil.wrapReportedMessage(messageNotEmpty), argument.getText())
+                                    );
                                 }
                             }
                         } else {
                             if (this.isInverted(isset.get()) && this.isInverted(candidate.get())) {
                                 final PsiElement node = this.target(isset.get(), argument);
                                 if (reported.add(node)) {
-                                    holder.registerProblem(node, String.format(ReportingUtil.wrapReportedMessage(messageEmpty), argument.getText()));
+                                    holder.registerProblem(
+                                            node,
+                                            String.format(ReportingUtil.wrapReportedMessage(messageEmpty), argument.getText())
+                                    );
                                 }
                             }
                         }

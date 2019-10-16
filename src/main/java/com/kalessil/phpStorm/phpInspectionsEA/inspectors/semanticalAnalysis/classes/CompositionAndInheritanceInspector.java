@@ -87,9 +87,15 @@ public class CompositionAndInheritanceInspector extends PhpInspection {
                 if (nameNode != null) {
                     final PhpIndex index = PhpIndex.getInstance(holder.getProject());
                     if (OpenapiResolveUtil.resolveChildClasses(clazz.getFQN(), index).isEmpty()) {
-                        holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageGeneric));
+                        holder.registerProblem(
+                                nameNode,
+                                ReportingUtil.wrapReportedMessage(messageGeneric)
+                        );
                     } else {
-                        holder.registerProblem(nameNode, ReportingUtil.wrapReportedMessage(messageAbstract));
+                        holder.registerProblem(
+                                nameNode,
+                                ReportingUtil.wrapReportedMessage(messageAbstract)
+                        );
                     }
                 }
             }

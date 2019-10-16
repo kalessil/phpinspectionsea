@@ -58,7 +58,11 @@ public class LateStaticBindingInspector extends PhpInspection {
                             if (scope instanceof Method) {
                                 final PhpClass clazz = ((Method) scope).getContainingClass();
                                 if (clazz != null && !clazz.isFinal()) {
-                                    holder.registerProblem(base, ReportingUtil.wrapReportedMessage(messagePrivateMethod), new UseSelfFix());
+                                    holder.registerProblem(
+                                            base,
+                                            ReportingUtil.wrapReportedMessage(messagePrivateMethod),
+                                            new UseSelfFix()
+                                    );
                                 }
                             }
                         }

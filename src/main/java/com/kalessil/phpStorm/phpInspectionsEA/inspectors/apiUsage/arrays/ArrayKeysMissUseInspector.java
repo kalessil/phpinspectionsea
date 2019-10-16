@@ -60,10 +60,18 @@ public class ArrayKeysMissUseInspector extends PhpInspection {
                                     switch (outerCallName) {
                                         case "count":
                                         case "sizeof":
-                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageCount), new ReplaceFix(innerArguments[0].getText()));
+                                            holder.registerProblem(
+                                                    reference,
+                                                    ReportingUtil.wrapReportedMessage(messageCount),
+                                                    new ReplaceFix(innerArguments[0].getText())
+                                            );
                                             break;
                                         case "array_unique":
-                                            holder.registerProblem(outerCall, ReportingUtil.wrapReportedMessage(messageArrayUnique), new ReplaceFix(reference.getText()));
+                                            holder.registerProblem(
+                                                    outerCall,
+                                                    ReportingUtil.wrapReportedMessage(messageArrayUnique),
+                                                    new ReplaceFix(reference.getText())
+                                            );
                                             break;
                                         /* NOTE: "array_slice" was checked, but it changes semantics */
                                         default:

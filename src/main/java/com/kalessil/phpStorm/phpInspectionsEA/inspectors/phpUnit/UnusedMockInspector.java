@@ -72,7 +72,11 @@ public class UnusedMockInspector extends PhpInspection {
                                                     return true;
                                                 });
                                         if (!isUsed) {
-                                            holder.registerProblem(container, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                                            holder.registerProblem(
+                                                    container,
+                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                            );
                                         }
                                     }
                                 }

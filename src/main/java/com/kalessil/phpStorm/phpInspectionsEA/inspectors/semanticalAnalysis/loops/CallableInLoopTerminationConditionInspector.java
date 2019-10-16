@@ -61,7 +61,11 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
                         OpenapiTypesUtil.isFunctionReference(condition.getRightOperand()) ||
                         OpenapiTypesUtil.isFunctionReference(condition.getLeftOperand())
                     ) {
-                        holder.registerProblem(condition, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR, new TheLocalFix(holder.getProject(), forStatement, condition));
+                        holder.registerProblem(
+                                condition,
+                                ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR,
+                                new TheLocalFix(holder.getProject(), forStatement, condition)
+                        );
                     }
                 }
             }

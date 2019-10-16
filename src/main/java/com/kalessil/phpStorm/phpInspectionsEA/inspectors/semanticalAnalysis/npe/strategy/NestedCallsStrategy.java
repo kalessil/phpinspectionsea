@@ -80,7 +80,10 @@ final public class NestedCallsStrategy {
                                 declaredType.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strNull)) ||
                                 declaredType.filterPrimitives().isEmpty();
                             if (!canBeNull) {
-                                holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(message));
+                                holder.registerProblem(
+                                        argument,
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                             }
                         }
                     });

@@ -60,7 +60,10 @@ public class MissingElseKeywordInspector extends PhpInspection {
                         last = last.getLastChild();
                     }
                     if (last != null && !(last.getParent() instanceof Else)) {
-                        holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                expression.getFirstChild(),
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                 }
             }

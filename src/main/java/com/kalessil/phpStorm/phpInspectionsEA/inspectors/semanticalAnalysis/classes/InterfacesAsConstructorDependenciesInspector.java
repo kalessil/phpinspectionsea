@@ -81,9 +81,15 @@ public class InterfacesAsConstructorDependenciesInspector extends PhpInspection 
                             .filter(contract -> !contract.getNamespaceName().equals("\\") || contract.getFQN().indexOf('_') != -1)
                             .collect(Collectors.toList());
                     if (!contracts.isEmpty()) {
-                        holder.registerProblem(parameter, ReportingUtil.wrapReportedMessage(messageUseContract));
+                        holder.registerProblem(
+                                parameter,
+                                ReportingUtil.wrapReportedMessage(messageUseContract)
+                        );
                     } else if (!TOLERATE_MISSING_CONTRACTS) {
-                        holder.registerProblem(parameter, ReportingUtil.wrapReportedMessage(messageMissingContract));
+                        holder.registerProblem(
+                                parameter,
+                                ReportingUtil.wrapReportedMessage(messageMissingContract)
+                        );
                     }
                     contracts.clear();
                 }

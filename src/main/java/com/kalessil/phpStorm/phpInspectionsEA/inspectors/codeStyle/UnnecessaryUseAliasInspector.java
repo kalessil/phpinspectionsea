@@ -66,7 +66,10 @@ public class UnnecessaryUseAliasInspector extends PhpInspection {
                                 for (final PsiElement definition : ((PhpFile) file).getTopLevelDefs().values()) {
                                     if (definition instanceof PhpUse && ((PhpUse) definition).getFQN().equals(symbol)) {
                                         if (definition != expression) {
-                                            holder.registerProblem(expression.getFirstChild(), ReportingUtil.wrapReportedMessage(messageImport));
+                                            holder.registerProblem(
+                                                    expression.getFirstChild(),
+                                                    ReportingUtil.wrapReportedMessage(messageImport)
+                                            );
                                             break;
                                         }
                                     }

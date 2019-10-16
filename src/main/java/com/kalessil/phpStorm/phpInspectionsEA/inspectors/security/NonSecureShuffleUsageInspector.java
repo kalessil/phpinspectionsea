@@ -47,7 +47,11 @@ public class NonSecureShuffleUsageInspector extends PhpInspection {
                 if (functionName != null && functionName.equals("shuffle")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                        holder.registerProblem(
+                                reference,
+                                ReportingUtil.wrapReportedMessage(message),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
                     }
                 }
                 /* TODO: call_user_func, array_walk - dynamic contexts */

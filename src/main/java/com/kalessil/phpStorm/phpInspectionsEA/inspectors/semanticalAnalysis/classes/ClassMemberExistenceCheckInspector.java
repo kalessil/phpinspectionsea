@@ -74,17 +74,26 @@ final public class ClassMemberExistenceCheckInspector extends PhpInspection {
                                 if (functionName.equals("method_exists")) {
                                     member = OpenapiResolveUtil.resolveMethod(clazz, memberName);
                                     if (member == null && OpenapiResolveUtil.resolveField(clazz, memberName) != null) {
-                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageFalse));
+                                        holder.registerProblem(
+                                                reference,
+                                                ReportingUtil.wrapReportedMessage(messageFalse)
+                                        );
                                     }
                                 } else if (functionName.equals("property_exists")) {
                                     member = OpenapiResolveUtil.resolveField(clazz, memberName);
                                     if (member == null && OpenapiResolveUtil.resolveMethod(clazz, memberName) != null) {
-                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageFalse));
+                                        holder.registerProblem(
+                                                reference,
+                                                ReportingUtil.wrapReportedMessage(messageFalse)
+                                        );
                                     }
                                 }
                                 /* analyze */
                                 if (member != null && ExpressionSemanticUtil.getBlockScope(member) instanceof PhpClass) {
-                                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageTrue));
+                                    holder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(messageTrue)
+                                    );
                                 }
                             }
                         }

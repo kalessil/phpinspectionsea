@@ -73,12 +73,18 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                                 if (OpenapiTypesUtil.isLoop(current)) {
                                     if (context instanceof AssignmentExpression) {
                                         if (this.isTargetAssignment((AssignmentExpression) context, reference) && this.isFromRootNamespace(reference)) {
-                                            holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName));
+                                            holder.registerProblem(
+                                                    reference,
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName)
+                                            );
                                         }
                                         return;
                                     } else if (context instanceof MethodReference) {
                                         if (this.isTargetReference((MethodReference) context, reference) && this.isFromRootNamespace(reference)) {
-                                            holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName));
+                                            holder.registerProblem(
+                                                    reference,
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName)
+                                            );
                                         }
                                         return;
                                     }

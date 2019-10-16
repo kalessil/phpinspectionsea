@@ -65,10 +65,18 @@ public class ComparisonOperandsOrderInspector extends PhpInspection {
                         if (isLeftConstant != isRightConstant) {
                             final boolean isRegular = !holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle();
                             if (isRightConstant && !isRegular) {
-                                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageUseYoda), new TheLocalFix());
+                                holder.registerProblem(
+                                        expression,
+                                        ReportingUtil.wrapReportedMessage(messageUseYoda),
+                                        new TheLocalFix()
+                                );
                             }
                             if (isLeftConstant && isRegular) {
-                                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageUseRegular), new TheLocalFix());
+                                holder.registerProblem(
+                                        expression,
+                                        ReportingUtil.wrapReportedMessage(messageUseRegular),
+                                        new TheLocalFix()
+                                );
                             }
                         }
                     }

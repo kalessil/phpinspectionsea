@@ -63,7 +63,11 @@ public class UnnecessaryContinueInspector extends PhpInspection {
                         if (body != null) {
                             final List<PsiElement> lastStatements = this.collectLastStatements(body, new ArrayList<>());
                             if (lastStatements.stream().anyMatch(statement -> continueStatement == statement)) {
-                                holder.registerProblem(continueStatement, ReportingUtil.wrapReportedMessage(message), new RemoveUnnecessaryStatementFix());
+                                holder.registerProblem(
+                                        continueStatement,
+                                        ReportingUtil.wrapReportedMessage(message),
+                                        new RemoveUnnecessaryStatementFix()
+                                );
                             }
                             lastStatements.clear();
                         }

@@ -29,7 +29,10 @@ final public class PossiblyArrayHashElementDeclarationStrategy {
             if (left instanceof StringLiteralExpression) {
                 final PsiElement parent = expression.getParent();
                 if (parent != null && parent.getParent() instanceof ArrayCreationExpression) {
-                    holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message));
+                    holder.registerProblem(
+                            operation,
+                            ReportingUtil.wrapReportedMessage(message)
+                    );
                     return true;
                 }
             }

@@ -36,7 +36,11 @@ final public class UnclearOperationsPriorityStrategy {
                     final boolean isTarget = parentOperator == PhpTokenTypes.opAND || parentOperator == PhpTokenTypes.opOR;
                     if (isTarget) {
                         final String replacement = '(' + expression.getText() + ')';
-                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new WrapItAsItIsFix(replacement));
+                        holder.registerProblem(
+                                expression,
+                                ReportingUtil.wrapReportedMessage(message),
+                                new WrapItAsItIsFix(replacement)
+                        );
                         return true;
                     }
                 }
@@ -44,7 +48,11 @@ final public class UnclearOperationsPriorityStrategy {
             /* assignment dramatically changing precedence */
             else if (OpenapiTypesUtil.isAssignment(parent) && !OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                 final String replacement = '(' + expression.getText() + ')';
-                holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new WrapItAsItIsFix(replacement));
+                holder.registerProblem(
+                        expression,
+                        ReportingUtil.wrapReportedMessage(message),
+                        new WrapItAsItIsFix(replacement)
+                );
                 return true;
             }
         } else if (PhpTokenTypes.tsCOMPARE_OPS.contains(operator)) {
@@ -54,7 +62,11 @@ final public class UnclearOperationsPriorityStrategy {
                 if (assignedValue != null) {
                     final String value       = assignedValue.getText();
                     final String replacement = assignment.getText().replace(value, '(' + value + ')');
-                    holder.registerProblem(parent, ReportingUtil.wrapReportedMessage(message), new WrapItAsItIsFix(replacement));
+                    holder.registerProblem(
+                            parent,
+                            ReportingUtil.wrapReportedMessage(message),
+                            new WrapItAsItIsFix(replacement)
+                    );
                     return true;
                 }
             } else if (
@@ -68,7 +80,11 @@ final public class UnclearOperationsPriorityStrategy {
                     if (OpenapiTypesUtil.is(candidate.getOperation(), PhpTokenTypes.opNOT)) {
                         final String value       = candidate.getText();
                         final String replacement = expression.getText().replace(value, '(' + value + ')');
-                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message), new WrapItAsItIsFix(replacement));
+                        holder.registerProblem(
+                                expression,
+                                ReportingUtil.wrapReportedMessage(message),
+                                new WrapItAsItIsFix(replacement)
+                        );
                         return true;
                     }
                 }

@@ -36,7 +36,11 @@ final public class UselessUngreedyModifierCheckStrategy {
                     return;
                 }
             }
-            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+            holder.registerProblem(
+                    target,
+                    ReportingUtil.wrapReportedMessage(message),
+                    ProblemHighlightType.WEAK_WARNING
+            );
         }
     }
 }

@@ -49,11 +49,18 @@ public class PregQuoteUsageInspector extends PhpInspection {
                 if (functionName != null && functionName.equals("preg_quote")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageMissing));
+                        holder.registerProblem(
+                                reference,
+                                ReportingUtil.wrapReportedMessage(messageMissing)
+                        );
                     } else if (arguments.length == 2) {
                         final PsiElement escaped = arguments[1];
                         if (escaped instanceof ConstantReference && escaped.getText().equals("DIRECTORY_SEPARATOR")) {
-                            holder.registerProblem(escaped, ReportingUtil.wrapReportedMessage(messageSeparator), new UseSlashSeparatorFix("'/'"));
+                            holder.registerProblem(
+                                    escaped,
+                                    ReportingUtil.wrapReportedMessage(messageSeparator),
+                                    new UseSlashSeparatorFix("'/'")
+                            );
                         }
                     }
                 }

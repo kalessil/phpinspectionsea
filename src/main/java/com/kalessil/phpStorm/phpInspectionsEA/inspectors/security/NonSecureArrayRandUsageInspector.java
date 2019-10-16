@@ -54,7 +54,11 @@ public class NonSecureArrayRandUsageInspector extends PhpInspection {
                         if (parent instanceof ArrayIndex) {
                             final PsiElement container = ((ArrayAccessExpression) parent.getParent()).getValue();
                             if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
-                                holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR);
+                                holder.registerProblem(
+                                        reference,
+                                        ReportingUtil.wrapReportedMessage(message),
+                                        ProblemHighlightType.GENERIC_ERROR
+                                );
                             }
                         }
                     }

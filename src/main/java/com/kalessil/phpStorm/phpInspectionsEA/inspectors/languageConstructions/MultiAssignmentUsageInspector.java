@@ -127,8 +127,10 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
                 if (ownContainer != null) {
                     final PsiElement previousContainer = getContainer((AssignmentExpression) previousExpression);
                     if (previousContainer != null && OpenapiEquivalenceUtil.areEqual(ownContainer, previousContainer)) {
-                        final String message = messagePattern.replace("%a%", ownContainer.getText());
-                        holder.registerProblem(assignmentExpression, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                assignmentExpression,
+                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%a%", ownContainer.getText()))
+                        );
                     }
                 }
             }

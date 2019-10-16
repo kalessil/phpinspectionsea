@@ -46,7 +46,10 @@ final public class PossiblyMethodReferenceStrategy {
                                     final boolean hasMethod = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(normalized, index).stream()
                                             .anyMatch(clazz -> OpenapiResolveUtil.resolveMethod(clazz, functionName) != null);
                                     if (hasMethod) {
-                                        holder.registerProblem(operation, ReportingUtil.wrapReportedMessage(message));
+                                        holder.registerProblem(
+                                                operation,
+                                                ReportingUtil.wrapReportedMessage(message)
+                                        );
                                         return true;
                                     }
                                 }

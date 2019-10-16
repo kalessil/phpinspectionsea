@@ -51,7 +51,10 @@ public class StreamSelectUsageInspector extends PhpInspection {
                                 if (OpenapiTypesUtil.isNumber(threshold)) {
                                     try {
                                         if (Long.parseLong(threshold.getText()) < 200000) {
-                                            holder.registerProblem(microseconds, ReportingUtil.wrapReportedMessage(message));
+                                            holder.registerProblem(
+                                                    microseconds,
+                                                    ReportingUtil.wrapReportedMessage(message)
+                                            );
                                         }
                                     } catch (final NumberFormatException failure) {
                                         // do nothing

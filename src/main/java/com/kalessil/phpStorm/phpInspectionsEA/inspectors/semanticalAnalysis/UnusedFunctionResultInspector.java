@@ -123,7 +123,10 @@ public class UnusedFunctionResultInspector extends PhpInspection {
                                 if (REPORT_ONLY_SCALARS) {
                                     final boolean skip = types.removeIf(t -> t.startsWith("\\") || t.equals(Types.strStatic) || t.equals(Types.strObject)) && types.isEmpty();
                                     if (!skip) {
-                                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
+                                        holder.registerProblem(
+                                                target,
+                                                ReportingUtil.wrapReportedMessage(message)
+                                        );
                                     }
                                 } else {
                                     if (!REPORT_FLUENT_INTERFACES && reference instanceof MethodReference) {
@@ -141,7 +144,10 @@ public class UnusedFunctionResultInspector extends PhpInspection {
                                     final boolean skip = (!REPORT_MIXED_TYPE && types.remove(Types.strMixed) && types.isEmpty()) ||
                                                          (!REPORT_FLUENT_INTERFACES && types.isEmpty());
                                     if (!skip) {
-                                        holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
+                                        holder.registerProblem(
+                                                target,
+                                                ReportingUtil.wrapReportedMessage(message)
+                                        );
                                     }
                                 }
                             }

@@ -62,7 +62,10 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
                                     isTarget = false;
                                 }
                                 if (isTarget) {
-                                    holder.registerProblem(statement, String.format(ReportingUtil.wrapReportedMessage(messagePattern), code));
+                                    holder.registerProblem(
+                                            statement,
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), code)
+                                    );
                                     break;
                                 }
                             }

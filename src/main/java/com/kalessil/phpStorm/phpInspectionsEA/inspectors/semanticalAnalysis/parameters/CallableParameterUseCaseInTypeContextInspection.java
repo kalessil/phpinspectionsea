@@ -209,10 +209,16 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                     final PsiElement operation = ((UnaryExpression) callParent).getOperation();
                                     isReversedCheck            = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
                                 }
-                                holder.registerProblem(functionCall, ReportingUtil.wrapReportedMessage(isReversedCheck ? messageNoSense : messageViolationInCheck));
+                                holder.registerProblem(
+                                        functionCall,
+                                        ReportingUtil.wrapReportedMessage(isReversedCheck ? messageNoSense : messageViolationInCheck)
+                                );
                             } else {
                                 if (hasTypeDeclared && parameterTypes.size() == 1 && !isClassCheck) {
-                                    holder.registerProblem(functionCall, ReportingUtil.wrapReportedMessage(messageTypeHint));
+                                    holder.registerProblem(
+                                            functionCall,
+                                            ReportingUtil.wrapReportedMessage(messageTypeHint)
+                                    );
                                 }
                             }
                             continue;
@@ -308,7 +314,10 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
 
                                         final boolean isViolation = !this.isTypeCompatibleWith(type, parameterTypes, index);
                                         if (isViolation) {
-                                            holder.registerProblem(value, String.format(ReportingUtil.wrapReportedMessage(patternViolationInAssignment), type));
+                                            holder.registerProblem(
+                                                    value,
+                                                    String.format(ReportingUtil.wrapReportedMessage(patternViolationInAssignment), type)
+                                            );
                                             break;
                                         }
                                     }
@@ -357,9 +366,15 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                     if (!requiredTypes.isEmpty()) {
                                         /* ensure generic types expectations are met */
                                         if (operator == PhpTokenTypes.opIDENTICAL && parameterTypes.stream().noneMatch(requiredTypes::contains)) {
-                                            holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageViolationInCheck));
+                                            holder.registerProblem(
+                                                    binary,
+                                                    ReportingUtil.wrapReportedMessage(messageViolationInCheck)
+                                            );
                                         } else if (operator == PhpTokenTypes.opNOT_IDENTICAL && parameterTypes.stream().noneMatch(requiredTypes::contains)) {
-                                            holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageNoSense));
+                                            holder.registerProblem(
+                                                    binary,
+                                                    ReportingUtil.wrapReportedMessage(messageNoSense)
+                                            );
                                         }
                                         requiredTypes.clear();
                                     } else if (OpenapiTypesUtil.isNumber(secondOperand)) {
@@ -370,9 +385,15 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                                 parameterTypes.contains(Types.strNumber);
                                         if (!isNumber) {
                                             if (operator == PhpTokenTypes.opIDENTICAL) {
-                                                holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageViolationInCheck));
+                                                holder.registerProblem(
+                                                        binary,
+                                                        ReportingUtil.wrapReportedMessage(messageViolationInCheck)
+                                                );
                                             } else if (operator == PhpTokenTypes.opNOT_IDENTICAL) {
-                                                holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageNoSense));
+                                                holder.registerProblem(
+                                                        binary,
+                                                        ReportingUtil.wrapReportedMessage(messageNoSense)
+                                                );
                                             }
                                         }
                                     }

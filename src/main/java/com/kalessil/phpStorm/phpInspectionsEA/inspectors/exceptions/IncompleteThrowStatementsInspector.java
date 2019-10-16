@@ -61,7 +61,11 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
                     if (functionName != null && !functionName.isEmpty()) {
                         final boolean startsWithUppercase = Character.isUpperCase(functionName.charAt(0));
                         if (startsWithUppercase && OpenapiResolveUtil.resolveReference(call) == null) {
-                            holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(messageNew), new AddMissingNewFix());
+                            holder.registerProblem(
+                                    argument,
+                                    ReportingUtil.wrapReportedMessage(messageNew),
+                                    new AddMissingNewFix()
+                            );
                         }
                     }
                 }
@@ -79,12 +83,20 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
                         final String exceptionMessage = ((StringLiteralExpression) params[0]).getContents();
                         if (exceptionMessage.contains("%s") && this.isExceptionClass(argument)) {
                             final String replacement = "sprintf(" + params[0].getText() + ", )";
-                            holder.registerProblem(params[0], ReportingUtil.wrapReportedMessage(messageSprintf), new AddMissingSprintfFix(replacement));
+                            holder.registerProblem(
+                                    params[0],
+                                    ReportingUtil.wrapReportedMessage(messageSprintf),
+                                    new AddMissingSprintfFix(replacement)
+                            );
                         }
                     }
                     /* pattern 'new Exception(...);' */
                     if (OpenapiTypesUtil.isStatementImpl(expression.getParent()) && this.isExceptionClass(argument)) {
-                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(messageThrow), new AddMissingThrowFix());
+                        holder.registerProblem(
+                                expression,
+                                ReportingUtil.wrapReportedMessage(messageThrow),
+                                new AddMissingThrowFix()
+                        );
                     }
                 }
             }

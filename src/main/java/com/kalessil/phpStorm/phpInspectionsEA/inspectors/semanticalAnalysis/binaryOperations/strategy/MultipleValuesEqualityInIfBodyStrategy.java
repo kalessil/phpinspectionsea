@@ -60,15 +60,27 @@ final public class MultipleValuesEqualityInIfBodyStrategy {
                         if (next != null && isConstantCondition(current, next)) {
                             if (current.second == next.second) {
                                 if (isSameValue(current, next)) {
-                                    holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), match.getText()));
+                                    holder.registerProblem(
+                                            match,
+                                            String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), match.getText())
+                                    );
                                 } else {
-                                    holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), match.getText()));
+                                    holder.registerProblem(
+                                            match,
+                                            String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), match.getText())
+                                    );
                                 }
                             } else {
                                 if (isSameValue(current, next)) {
-                                    holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), match.getText()));
+                                    holder.registerProblem(
+                                            match,
+                                            String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), match.getText())
+                                    );
                                 } else {
-                                    holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), match.getText()));
+                                    holder.registerProblem(
+                                            match,
+                                            String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), match.getText())
+                                    );
                                 }
                             }
                         }

@@ -71,35 +71,65 @@ final public class ConstantConditionsCountCheckStrategy {
                         final ValueRange range = targetFunctions.get(((FunctionReference) left).getName());
                         if (operator == PhpTokenTypes.opLESS) {
                             if (result = (number <= range.getMinimum())) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText())
+                                );
                             } else if (result = (number > range.getMaximum())) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText())
+                                );
                             }
                         } else if (operator == PhpTokenTypes.opLESS_OR_EQUAL) {
                             if (result = (number < range.getMinimum())) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText())
+                                );
                             } else if (result = (number >= range.getMaximum())) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText())
+                                );
                             }
                         } else if (operator == PhpTokenTypes.opEQUAL || operator == PhpTokenTypes.opIDENTICAL) {
                             if (result = (!range.isValidValue(number))) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText())
+                                );
                             }
                         } else if (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
                             if (result = (!range.isValidValue(number))) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText())
+                                );
                             }
                         } else if (operator == PhpTokenTypes.opGREATER) {
                             if (result = (number < range.getMinimum())) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText())
+                                );
                             } else if (result = (number >= range.getMaximum())) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText())
+                                );
                             }
                         } else if (operator == PhpTokenTypes.opGREATER_OR_EQUAL) {
                             if (result = (number <= range.getMinimum())) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText())
+                                );
                             } else if (result = (number > range.getMaximum())) {
-                                holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText())
+                                );
                             }
                         }
                     }

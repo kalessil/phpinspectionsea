@@ -70,7 +70,10 @@ public class SuspiciousReturnInspector extends PhpInspection {
             private void analyzeReturnFromFinally(@NotNull PhpReturn statement, @NotNull Try scope) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
-                    holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(messageFinally));
+                    holder.registerProblem(
+                            statement,
+                            ReportingUtil.wrapReportedMessage(messageFinally)
+                    );
                 }
             }
 
@@ -81,7 +84,10 @@ public class SuspiciousReturnInspector extends PhpInspection {
                         final boolean hasYields = PsiTreeUtil.findChildrenOfType(scope, PhpYield.class).stream()
                                 .anyMatch(yield -> PsiTreeUtil.findFirstParent(yield, PARENT_FUNCTION) == scope);
                         if (hasYields) {
-                            holder.registerProblem(statement, ReportingUtil.wrapReportedMessage(messageYield));
+                            holder.registerProblem(
+                                    statement,
+                                    ReportingUtil.wrapReportedMessage(messageYield)
+                            );
                         }
                     }
                 }

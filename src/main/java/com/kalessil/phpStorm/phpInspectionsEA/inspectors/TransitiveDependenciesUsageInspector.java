@@ -84,7 +84,11 @@ public class TransitiveDependenciesUsageInspector extends PhpInspection {
                             if (dependencyManifest != null && !ownManifest.equals(dependencyManifest)) {
                                 final boolean isTarget = this.isTransitiveDependency(ownManifest, dependencyManifest, project);
                                 if (isTarget) {
-                                    holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(message), new OpenDependencyManifest(dependencyManifest));
+                                    holder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(message),
+                                            new OpenDependencyManifest(dependencyManifest)
+                                    );
                                 }
                             }
                         }

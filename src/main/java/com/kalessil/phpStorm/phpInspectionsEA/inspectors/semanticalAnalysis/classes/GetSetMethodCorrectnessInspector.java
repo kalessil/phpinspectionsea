@@ -94,7 +94,10 @@ public class GetSetMethodCorrectnessInspector extends PhpInspection {
                                             if (!isDelegating) {
                                                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                                                 if (nameNode != null) {
-                                                    holder.registerProblem(nameNode, String.format(ReportingUtil.wrapReportedMessage(messagePattern), alternatives.get(0)));
+                                                    holder.registerProblem(
+                                                            nameNode,
+                                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), alternatives.get(0))
+                                                    );
                                                 }
                                             }
                                         }

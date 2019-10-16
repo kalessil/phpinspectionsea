@@ -46,7 +46,10 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
                 if (content.length() >= 3) {
                     final boolean isTarget = content.startsWith("su ") || content.startsWith("sudo ");
                     if (isTarget) {
-                        holder.registerProblem(literal, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                literal,
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                 }
             }
@@ -60,7 +63,10 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
                     final String command   = content.substring(1, content.length() - 1);
                     final boolean isTarget = command.startsWith("su ") || command.startsWith("sudo ");
                     if (isTarget) {
-                        holder.registerProblem(expression, ReportingUtil.wrapReportedMessage(message));
+                        holder.registerProblem(
+                                expression,
+                                ReportingUtil.wrapReportedMessage(message)
+                        );
                     }
                 }
             }

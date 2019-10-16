@@ -32,20 +32,29 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                 if (operation != null) {
                     final IElementType operator = operation.getNode().getElementType();
                     if (result = (operator == PhpTokenTypes.opNOT || PhpTokenTypes.tsCAST_OPS.contains(operator))) {
-                        holder.registerProblem(left, String.format(ReportingUtil.wrapReportedMessage(messageLeft), left.getText()));
+                        holder.registerProblem(
+                                left,
+                                String.format(ReportingUtil.wrapReportedMessage(messageLeft), left.getText())
+                        );
                     }
                 }
             } else if (left instanceof BinaryExpression) {
                 final IElementType operator = ((BinaryExpression) left).getOperationType();
                 if (result = (operator != PhpTokenTypes.opCOALESCE)) {
-                    holder.registerProblem(left, String.format(ReportingUtil.wrapReportedMessage(messageLeft), left.getText()));
+                    holder.registerProblem(
+                            left,
+                            String.format(ReportingUtil.wrapReportedMessage(messageLeft), left.getText())
+                    );
                 }
             }
             final PsiElement right = expression.getRightOperand();
             if (right instanceof BinaryExpression) {
                 final IElementType operator = ((BinaryExpression) right).getOperationType();
                 if (result = (operator != PhpTokenTypes.opCOALESCE)) {
-                    holder.registerProblem(right, ReportingUtil.wrapReportedMessage(messageRight));
+                    holder.registerProblem(
+                            right,
+                            ReportingUtil.wrapReportedMessage(messageRight)
+                    );
                 }
             }
         }

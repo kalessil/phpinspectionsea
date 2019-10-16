@@ -39,7 +39,11 @@ final public class MissingDotAllCheckStrategy {
             if (!hasModifier) {
                 final Matcher regexMatcher = regexTagContentPattern.matcher(pattern);
                 if (result = regexMatcher.matches()) {
-                    holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(
+                            target,
+                            ReportingUtil.wrapReportedMessage(message),
+                            ProblemHighlightType.WEAK_WARNING
+                    );
                 }
             }
         }

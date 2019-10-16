@@ -100,11 +100,17 @@ public class PassingByReferenceCorrectnessInspector extends PhpInspection {
                                 if (inner instanceof Function) {
                                     final PsiElement name = NamedElementUtil.getNameIdentifier((Function) inner);
                                     if (!ExpressionSemanticUtil.isByReference(name)) {
-                                        holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(message));
+                                        holder.registerProblem(
+                                                argument,
+                                                ReportingUtil.wrapReportedMessage(message)
+                                        );
                                     }
                                 }
                             } else if (argument instanceof NewExpression) {
-                                holder.registerProblem(argument, ReportingUtil.wrapReportedMessage(message));
+                                holder.registerProblem(
+                                        argument,
+                                        ReportingUtil.wrapReportedMessage(message)
+                                );
                             }
                         }
                     }

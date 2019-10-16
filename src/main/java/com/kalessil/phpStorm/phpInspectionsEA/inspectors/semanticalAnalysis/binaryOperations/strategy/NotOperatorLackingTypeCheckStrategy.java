@@ -58,8 +58,11 @@ final public class NotOperatorLackingTypeCheckStrategy {
                         type.getTypes().forEach(t -> types.add(Types.getType(t)));
                         if (types.contains(Types.strNull) || types.contains(Types.strBoolean)) {
                             final String replacement = String.format("%s %s %s", argument.getText(), mapping.get(operator), value.getText());
-                            final String message     = String.format(messagePattern, replacement);
-                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message), new NullableArgumentComparisonFix(replacement));
+                            holder.registerProblem(
+                                    target,
+                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement)),
+                                    new NullableArgumentComparisonFix(replacement)
+                            );
                             result = true;
                         }
                         types.clear();

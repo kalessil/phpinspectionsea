@@ -40,9 +40,15 @@ final public class TypesIntersectionStrategy {
                     final boolean isIntersecting = right.getTypes().stream().anyMatch(leftTypes::contains);
                     if (result = !isIntersecting) {
                         if (operation == PhpTokenTypes.opIDENTICAL) {
-                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText()));
+                            holder.registerProblem(
+                                    expression,
+                                    String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText())
+                            );
                         } else {
-                            holder.registerProblem(expression, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText()));
+                            holder.registerProblem(
+                                    expression,
+                                    String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText())
+                            );
                         }
                     }
                 }

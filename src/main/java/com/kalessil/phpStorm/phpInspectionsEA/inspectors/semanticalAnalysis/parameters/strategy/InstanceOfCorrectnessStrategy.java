@@ -45,7 +45,10 @@ final public class InstanceOfCorrectnessStrategy {
                     final PhpClass resolvedClass = (PhpClass) resolved;
                     if (parameterTypes.contains(resolvedClass.getFQN())) {
                         if (typesCount == 1) {
-                            holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageSameClass));
+                            holder.registerProblem(
+                                    binary,
+                                    ReportingUtil.wrapReportedMessage(messageSameClass)
+                            );
                             result = true;
                         } else if (typesCount == 2 && parameterTypes.contains(Types.strNull)) {
                             final PsiElement parent  = binary.getParent();
@@ -67,7 +70,10 @@ final public class InstanceOfCorrectnessStrategy {
                             if (classes.size() == 1) {
                                 final Set<PhpClass> parents = InterfacesExtractUtil.getCrawlInheritanceTree(resolvedClass, true);
                                 if (!parents.contains(classes.iterator().next())) {
-                                    holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageUnrelatedClass));
+                                    holder.registerProblem(
+                                            binary,
+                                            ReportingUtil.wrapReportedMessage(messageUnrelatedClass)
+                                    );
                                     result = true;
                                 }
                             }
@@ -75,7 +81,10 @@ final public class InstanceOfCorrectnessStrategy {
                     }
                 }
             } else {
-                holder.registerProblem(binary, ReportingUtil.wrapReportedMessage(messageNotObject));
+                holder.registerProblem(
+                        binary,
+                        ReportingUtil.wrapReportedMessage(messageNotObject)
+                );
                 result = true;
             }
         }

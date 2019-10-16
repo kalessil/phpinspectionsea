@@ -76,7 +76,10 @@ public class InsufficientTypesControlInspector extends PhpInspection {
                     if (isTarget && this.isFromRootNamespace(reference)) {
                         final PsiElement target = NamedElementUtil.getNameIdentifier(reference);
                         if (target != null) {
-                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(message));
+                            holder.registerProblem(
+                                    target,
+                                    ReportingUtil.wrapReportedMessage(message)
+                            );
                         }
                     }
                 }

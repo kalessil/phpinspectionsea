@@ -36,7 +36,10 @@ final public class ConstantConditionsIsNumericStrategy {
                     final boolean isTarget     = OpenapiTypesUtil.is(operation, PhpTokenTypes.opFLOAT_CAST) ||
                                                  OpenapiTypesUtil.is(operation, PhpTokenTypes.opINTEGER_CAST);
                     if (isTarget) {
-                        holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), reference.getText()));
+                        holder.registerProblem(
+                                reference,
+                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), reference.getText())
+                        );
                         return true;
                     }
                 } else if (argument instanceof FunctionReference) {
@@ -46,7 +49,10 @@ final public class ConstantConditionsIsNumericStrategy {
                         if (type != null && type.size() == 1) {
                             final boolean isTarget = type.equals(PhpType.INT) || type.equals(PhpType.FLOAT);
                             if (isTarget) {
-                                holder.registerProblem(reference, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), reference.getText()));
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), reference.getText())
+                                );
                                 return true;
                             }
                         }

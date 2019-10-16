@@ -79,7 +79,10 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                                 final boolean isTargetKeyType = keyType == null || "OPENSSL_KEYTYPE_RSA".equals(keyType.getName());
                                 if (isTargetKeyType) {
                                     if (keyLength == null) {
-                                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageLengthIsDefault));
+                                        holder.registerProblem(
+                                                reference,
+                                                ReportingUtil.wrapReportedMessage(messageLengthIsDefault)
+                                        );
                                         break;
                                     }
                                     if (OpenapiTypesUtil.isNumber(keyLength)) {
@@ -90,7 +93,10 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                                             isTarget = false;
                                         }
                                         if (isTarget) {
-                                            holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageLengthIsNoSufficient));
+                                            holder.registerProblem(
+                                                    reference,
+                                                    ReportingUtil.wrapReportedMessage(messageLengthIsNoSufficient)
+                                            );
                                             break;
                                         }
                                     }
@@ -98,7 +104,10 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                             }
                         }
                     } else {
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageLengthIsDefault));
+                        holder.registerProblem(
+                                reference,
+                                ReportingUtil.wrapReportedMessage(messageLengthIsDefault)
+                        );
                     }
                 }
             }

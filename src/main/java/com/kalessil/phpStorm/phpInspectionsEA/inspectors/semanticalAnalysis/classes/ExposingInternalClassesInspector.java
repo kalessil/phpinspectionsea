@@ -60,7 +60,10 @@ public class ExposingInternalClassesInspector extends PhpInspection {
                             for (final Parameter parameter: method.getParameters()) {
                                 final PhpType type = OpenapiResolveUtil.resolveDeclaredType(parameter);
                                 if (!type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
-                                    holder.registerProblem(parameter, ReportingUtil.wrapReportedMessage(message));
+                                    holder.registerProblem(
+                                            parameter,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
                                     continue methods;
                                 }
                             }
@@ -69,7 +72,10 @@ public class ExposingInternalClassesInspector extends PhpInspection {
                             if (returnTypeHint != null) {
                                 final PhpType type = method.getType();
                                 if (!type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
-                                    holder.registerProblem(returnTypeHint, ReportingUtil.wrapReportedMessage(message));
+                                    holder.registerProblem(
+                                            returnTypeHint,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
                                 }
                             }
                         }

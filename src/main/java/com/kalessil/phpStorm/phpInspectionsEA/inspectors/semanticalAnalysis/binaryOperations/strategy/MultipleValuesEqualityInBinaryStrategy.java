@@ -71,12 +71,18 @@ final public class MultipleValuesEqualityInBinaryStrategy {
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                         );
                                     } else {
-                                        holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), fragment.getText(), match.getText()));
+                                        holder.registerProblem(
+                                                match,
+                                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), fragment.getText(), match.getText())
+                                        );
                                     }
                                     result = true;
                                 } else if (isNoEffectCondition(current, next)) {
                                     if (isSameValue(current, next)) {
-                                        holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), fragment.getText(), match.getText()));
+                                        holder.registerProblem(
+                                                match,
+                                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), fragment.getText(), match.getText())
+                                        );
                                     } else {
                                         final PsiElement target = current.second ? match : fragment;
                                         holder.registerProblem(
@@ -96,12 +102,18 @@ final public class MultipleValuesEqualityInBinaryStrategy {
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                         );
                                     } else {
-                                        holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), fragment.getText(), match.getText()));
+                                        holder.registerProblem(
+                                                match,
+                                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), fragment.getText(), match.getText())
+                                        );
                                     }
                                     result = true;
                                 } else if (isNoEffectCondition(current, next)) {
                                     if (isSameValue(current, next)) {
-                                        holder.registerProblem(match, String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), fragment.getText(), match.getText()));
+                                        holder.registerProblem(
+                                                match,
+                                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), fragment.getText(), match.getText())
+                                        );
                                     } else {
                                         final PsiElement target = current.second ? fragment : match;
                                         holder.registerProblem(target,

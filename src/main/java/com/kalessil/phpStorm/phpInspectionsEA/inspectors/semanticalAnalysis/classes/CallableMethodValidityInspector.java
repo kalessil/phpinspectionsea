@@ -109,7 +109,10 @@ public class CallableMethodValidityInspector extends PhpInspection {
                         final boolean isTarget = OpenapiResolveUtil.resolveDeclaredType(parameters[0]).equals(new PhpType().add("\\Exception"));
                         if (isTarget) {
                             final PsiElement target = OpenapiTypesUtil.isLambda(argument) ? parameters[0] : argument;
-                            holder.registerProblem(target, ReportingUtil.wrapReportedMessage(messageUseThrowable));
+                            holder.registerProblem(
+                                    target,
+                                    ReportingUtil.wrapReportedMessage(messageUseThrowable)
+                            );
                         }
                     }
                 }
@@ -119,7 +122,10 @@ public class CallableMethodValidityInspector extends PhpInspection {
                 if (resolved instanceof Method) {
                     final Method method = (Method) resolved;
                     if (!method.getAccess().isPublic()) {
-                        holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(patternNotPublic), method.getName()));
+                        holder.registerProblem(
+                                target,
+                                String.format(ReportingUtil.wrapReportedMessage(patternNotPublic), method.getName())
+                        );
                     }
 
                     boolean needStatic = false;
@@ -147,7 +153,10 @@ public class CallableMethodValidityInspector extends PhpInspection {
                         }
                     }
                     if (needStatic) {
-                        holder.registerProblem(target, String.format(ReportingUtil.wrapReportedMessage(patternNotStatic), method.getName()));
+                        holder.registerProblem(
+                                target,
+                                String.format(ReportingUtil.wrapReportedMessage(patternNotStatic), method.getName())
+                        );
                     }
                 }
             }

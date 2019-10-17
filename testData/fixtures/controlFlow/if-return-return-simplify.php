@@ -84,4 +84,20 @@ class CasesHolder {
         }
         return $result;
     }
+
+    function ifAssignElseAssignWithBinary($x) {
+        <warning descr="[EA] The construct can be replaced with '$x = $x > 0">if</warning> ($x > 0) {
+            $x = true;
+        } else {
+            $x = false;
+        }
+    }
+
+    function ifAssignElseAssignWithCall($x) {
+        <warning descr="[EA] The construct can be replaced with '$x = !$this->ifNotReturnElseReturn($x)">if</warning> (!$this->ifNotReturnElseReturn($x)) {
+            $x = true;
+        } else {
+            $x = false;
+        }
+    }
 }

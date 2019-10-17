@@ -43,8 +43,7 @@ final public class OpensslRsaOraclePaddingStrategy {
         } else if (arguments.length == 4 && isTargetCall(reference)) {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(arguments[3]);
             if (!modeVariants.isEmpty()) {
-                /* OPENSSL_PKCS1_PADDING === 1 */
-                result = modeVariants.stream().filter(OpenapiTypesUtil::isNumber).anyMatch(variant -> variant.getText().equals("1") );
+                result = modeVariants.stream().filter(OpenapiTypesUtil::isNumber).anyMatch(OpensslRsaOraclePaddingStrategy::isTargetConstant);
                 if (result) {
                     holder.registerProblem(
                             reference,
@@ -55,6 +54,12 @@ final public class OpensslRsaOraclePaddingStrategy {
             }
         }
         return result;
+    }
+
+    static private boolean isTargetConstant(@NotNull PsiElement variant) {
+        final String value = variant.getText();
+        /* OPENSSL_PKCS1_PADDING=1, OPENSSL_SSLV23_PADDING=2, OPENSSL_NO_PADDING=3  */
+        return value.equals("1") || value.equals("2") || value.equals("3");
     }
 
     static private boolean isTargetCall(@NotNull FunctionReference reference) {

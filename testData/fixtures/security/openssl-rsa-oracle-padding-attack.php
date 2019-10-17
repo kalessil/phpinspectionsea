@@ -26,6 +26,8 @@ class Clazz
 
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_public_encrypt('', $encrypted, '')</error>;
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_public_encrypt('', $encrypted, '', OPENSSL_PKCS1_PADDING)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_public_encrypt('', $encrypted, '', OPENSSL_NO_PADDING)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_public_encrypt('', $encrypted, '', OPENSSL_SSLV23_PADDING)</error>;
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_public_encrypt('', $encrypted, '', self::PADDING)</error>;
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_public_encrypt('', $encrypted, '', $this->padding)</error>;
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_public_encrypt('', $encrypted, '', $optionalParameter)</error>;
@@ -41,6 +43,8 @@ class Clazz
 
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_private_decrypt('', $encrypted, '')</error>;
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_private_decrypt('', $encrypted, '', OPENSSL_PKCS1_PADDING)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_private_decrypt('', $encrypted, '', OPENSSL_NO_PADDING)</error>;
+        <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_private_decrypt('', $encrypted, '', OPENSSL_SSLV23_PADDING)</error>;
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_private_decrypt('', $encrypted, '', self::PADDING)</error>;
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_private_decrypt('', $encrypted, '', $this->padding)</error>;
         <error descr="[EA] This call is vulnerable to oracle padding attacks, use OPENSSL_PKCS1_OAEP_PADDING as 4th argument.">openssl_private_decrypt('', $encrypted, '', $optionalParameter)</error>;

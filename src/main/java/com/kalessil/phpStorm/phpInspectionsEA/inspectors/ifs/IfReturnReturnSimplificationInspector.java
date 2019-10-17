@@ -149,22 +149,6 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                                     }
                                 }
                             }
-                            /* if - assign - else - assign */
-                            else if (ifLast instanceof AssignmentExpression && elseLast instanceof AssignmentExpression) {
-                                final AssignmentExpression ifAssignment   = (AssignmentExpression) ifLast;
-                                final AssignmentExpression elseAssignment = (AssignmentExpression) elseLast;
-                                final PsiElement ifContainer              = ifAssignment.getVariable();
-                                final PsiElement elseContainer            = elseAssignment.getVariable();
-                                if (ifContainer instanceof Variable && elseContainer instanceof Variable) {
-                                    final boolean isTarget = OpenapiEquivalenceUtil.areEqual(ifContainer, elseContainer);
-                                    if (isTarget) {
-                                        result = new Couple<>(
-                                                new Couple<>(statement, statement),
-                                                new Couple<>(ifAssignment.getValue(), elseAssignment.getValue())
-                                        );
-                                    }
-                                }
-                            }
                         } else {
                             /* assign - if - assign - return */
                             if (ifPrevious instanceof AssignmentExpression && ifLast instanceof AssignmentExpression && ifNext instanceof PhpReturn) {

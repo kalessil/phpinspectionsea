@@ -42,8 +42,7 @@ final public class MustReturnSpecifiedTypeStrategy {
             final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
             final Project project       = holder.getProject();
             for (final PhpReturn expression : returns) {
-                PsiElement returnValue = ExpressionSemanticUtil.getReturnValue(expression);
-                returnValue            = ExpressionSemanticUtil.getExpressionTroughParenthesis(returnValue);
+                final PsiElement returnValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(expression));
                 if (returnValue instanceof PhpTypedElement) {
                     /* previously we had an issue with https://youtrack.jetbrains.com/issue/WI-31249 here */
                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) returnValue, project);

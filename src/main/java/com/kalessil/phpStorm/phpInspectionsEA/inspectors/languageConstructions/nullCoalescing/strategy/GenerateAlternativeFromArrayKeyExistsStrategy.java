@@ -44,10 +44,8 @@ final public class GenerateAlternativeFromArrayKeyExistsStrategy {
         }
 
         /* array_key_exists is valid only with null-alternatives */
-        PsiElement alternative = isInverted ? expression.getTrueVariant() : expression.getFalseVariant();
-        alternative            = ExpressionSemanticUtil.getExpressionTroughParenthesis(alternative);
-        PsiElement value       = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
-        value                  = ExpressionSemanticUtil.getExpressionTroughParenthesis(value);
+        final PsiElement alternative = ExpressionSemanticUtil.getExpressionTroughParenthesis(isInverted ? expression.getTrueVariant() : expression.getFalseVariant());
+        final PsiElement value       = ExpressionSemanticUtil.getExpressionTroughParenthesis(isInverted ? expression.getFalseVariant() : expression.getTrueVariant());
         if (!(value instanceof ArrayAccessExpression) || !PhpLanguageUtil.isNull(alternative)) {
             return null;
         }

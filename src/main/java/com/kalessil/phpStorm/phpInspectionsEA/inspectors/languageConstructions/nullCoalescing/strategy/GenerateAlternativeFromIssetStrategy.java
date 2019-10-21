@@ -40,15 +40,10 @@ final public class GenerateAlternativeFromIssetStrategy {
         }
 
         /* verify subject match and alternative availability */
-        final PsiElement subject = ExpressionSemanticUtil.getExpressionTroughParenthesis(isset.getVariables()[0]);
-        PsiElement value         = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
-        value                    = ExpressionSemanticUtil.getExpressionTroughParenthesis(value);
-        PsiElement alternative   = isInverted ? expression.getTrueVariant() : expression.getFalseVariant();
-        alternative              = ExpressionSemanticUtil.getExpressionTroughParenthesis(alternative);
-        if (
-            null == subject || null == value || null == alternative ||
-            !OpenapiEquivalenceUtil.areEqual(subject, value)
-        ) {
+        final PsiElement subject     = ExpressionSemanticUtil.getExpressionTroughParenthesis(isset.getVariables()[0]);
+        final PsiElement value       = ExpressionSemanticUtil.getExpressionTroughParenthesis(isInverted ? expression.getFalseVariant() : expression.getTrueVariant());
+        final PsiElement alternative = ExpressionSemanticUtil.getExpressionTroughParenthesis(isInverted ? expression.getTrueVariant() : expression.getFalseVariant());
+        if (null == subject || null == value || null == alternative || !OpenapiEquivalenceUtil.areEqual(subject, value)) {
             return null;
         }
 

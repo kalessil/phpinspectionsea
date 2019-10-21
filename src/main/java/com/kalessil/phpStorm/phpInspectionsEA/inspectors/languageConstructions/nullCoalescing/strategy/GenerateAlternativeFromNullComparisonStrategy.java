@@ -37,16 +37,11 @@ final public class GenerateAlternativeFromNullComparisonStrategy {
         }
 
         /* verify general expression structure */
-        final boolean isInverted        = operation == PhpTokenTypes.opNOT_IDENTICAL;
-        final PsiElement subject        = PhpLanguageUtil.isNull(right) ? left : right;
-        PsiElement value                = isInverted ? expression.getTrueVariant() : expression.getFalseVariant();
-        value                           = ExpressionSemanticUtil.getExpressionTroughParenthesis(value);
-        PsiElement alternative          = isInverted ? expression.getFalseVariant() : expression.getTrueVariant();
-        alternative                     = ExpressionSemanticUtil.getExpressionTroughParenthesis(alternative);
-        if (
-            null == subject || null == value || null == alternative ||
-            !OpenapiEquivalenceUtil.areEqual(subject, value)
-        ) {
+        final boolean isInverted     = operation == PhpTokenTypes.opNOT_IDENTICAL;
+        final PsiElement subject     = PhpLanguageUtil.isNull(right) ? left : right;
+        final PsiElement value       = ExpressionSemanticUtil.getExpressionTroughParenthesis(isInverted ? expression.getTrueVariant() : expression.getFalseVariant());
+        final PsiElement alternative = ExpressionSemanticUtil.getExpressionTroughParenthesis(isInverted ? expression.getFalseVariant() : expression.getTrueVariant());
+        if (null == subject || null == value || null == alternative || !OpenapiEquivalenceUtil.areEqual(subject, value)) {
             return null;
         }
 

@@ -411,8 +411,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                     if (variableCandidate instanceof UnaryExpression) {
                         final PsiElement notOperatorCandidate = ((UnaryExpression) variableCandidate).getOperation();
                         if (null != notOperatorCandidate && notOperatorCandidate.getNode().getElementType() == PhpTokenTypes.opNOT) {
-                            PsiElement invertedValue = ((UnaryExpression) variableCandidate).getValue();
-                            invertedValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(invertedValue);
+                            final PsiElement invertedValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) variableCandidate).getValue());
                             if (null == invertedValue) {
                                 continue;
                             }

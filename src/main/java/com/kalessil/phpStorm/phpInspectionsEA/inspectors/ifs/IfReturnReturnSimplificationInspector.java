@@ -78,9 +78,8 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                             String replacement;
                             if (isReverse) {
                                 if (condition instanceof UnaryExpression) {
-                                    PsiElement extracted = ((UnaryExpression) condition).getValue();
-                                    extracted            = ExpressionSemanticUtil.getExpressionTroughParenthesis(extracted);
-                                    replacement          = String.format("return %s", extracted == null ? "" : extracted.getText());
+                                    final PsiElement extracted = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) condition).getValue());
+                                    replacement                = String.format("return %s", extracted == null ? "" : extracted.getText());
                                 } else {
                                     replacement = String.format("return !(%s)", condition.getText());
                                 }

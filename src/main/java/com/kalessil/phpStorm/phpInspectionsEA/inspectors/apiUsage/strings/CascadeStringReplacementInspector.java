@@ -169,8 +169,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             @Nullable
             private FunctionReference getFunctionReference(@NotNull PhpReturn phpReturn) {
                 FunctionReference result = null;
-                final PsiElement value
-                    = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(phpReturn));
+                final PsiElement value   = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(phpReturn));
                 if (OpenapiTypesUtil.isFunctionReference(value)) {
                     final String functionName = ((FunctionReference) value).getName();
                     if (functionName != null && functionName.equals("str_replace")) {

@@ -158,9 +158,11 @@
     /* false-positive: nullable array */
     /** @return array */
     function returns_array() { return []; }
-    function assigning_nullable_array(array &$parameter, array $array = null) {
+    /** @param $arrayAnnotated array|null */
+    function assigning_nullable_array(array &$parameter, array $array = null, array $arrayAnnotated = null) {
         $parameter = $array ?? returns_array();
         $parameter = ($array ?? returns_array());
+        $parameter = ($arrayAnnotated ?? returns_array());
     }
 
     /* false-positive: iterable */

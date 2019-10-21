@@ -6,19 +6,19 @@ class ClassWithValidMethods extends MissingClass {
 }
 
 class ClassWithStaticMethods extends MissingClass {
-    public static function __wakeup() {
+    public static function <error descr="[EA] __wakeup cannot be static.">__wakeup</error>() {
     }
 }
 class ClassWithPrivateMethods extends MissingClass {
-    private function __wakeup() {
+    private function <error descr="[EA] __wakeup must be public.">__wakeup</error>() {
     }
 }
 class ClassWithParametrizedMethods extends MissingClass {
-    private function __wakeup($optional = '') {
+    public function <error descr="[EA] __wakeup cannot accept arguments.">__wakeup</error>($optional = '') {
     }
 }
 class ClassWithReturningMethods extends MissingClass {
-    private function __wakeup() {
-        return '...';
+    public function __wakeup() {
+        <error descr="[EA] __wakeup cannot return a value.">return '...';</error>
     }
 }

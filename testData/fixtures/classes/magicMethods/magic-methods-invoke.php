@@ -7,10 +7,10 @@ class ClassWithValidMethods extends MissingClass {
 }
 
 class ClassWithStaticMethods extends MissingClass {
-    public static function __invoke() {
+    public static function <error descr="[EA] __invoke cannot be static.">__invoke</error>() {
     }
 }
 class ClassWithPrivateMethods extends MissingClass {
-    private function __invoke() {
+    private function <error descr="[EA] __invoke must be public.">__invoke</error>() {
     }
 }

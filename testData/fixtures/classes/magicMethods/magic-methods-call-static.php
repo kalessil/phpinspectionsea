@@ -6,7 +6,7 @@ class ClassWithValidMethods extends MissingClass {
 }
 
 class ClassWithNonStaticMethods extends MissingClass {
-    public function __callStatic($name, $arguments) {
+    public function <error descr="[EA] __callStatic must be static.">__callStatic</error>($name, $arguments) {
     }
 }
 class ClassWithNonPrivateMethods extends MissingClass {

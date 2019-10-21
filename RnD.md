@@ -33,3 +33,5 @@ https://rules.sonarsource.com/php/RSPEC-4423: insecure SSL versions
     ? STREAM_CRYPTO_PROTO_SSLv3
     
     ? CURL_SSLVERSION_MAX_*
+    
+Infinity loop: the arguments are not modified, the call can be nested somewhere

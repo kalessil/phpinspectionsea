@@ -10,14 +10,14 @@ class ClassWithNonStaticMethods extends MissingClass {
     }
 }
 class ClassWithNonPrivateMethods extends MissingClass {
-    private static function __callStatic($name, $arguments) {
+    private static function <error descr="[EA] __callStatic must be public.">__callStatic</error>($name, $arguments) {
     }
 }
 class ClassWithParametersByReferenceMethods extends MissingClass {
-    private static function __callStatic(&$name, $arguments) {
+    public static function <error descr="[EA] __callStatic cannot accept arguments by reference.">__callStatic</error>(&$name, $arguments) {
     }
 }
 class ClassWithWrongAmountOfParametersMethods extends MissingClass {
-    private static function __callStatic($name) {
+    public static function <error descr="[EA] __callStatic accepts exactly 2 arguments.">__callStatic</error>($name) {
     }
 }

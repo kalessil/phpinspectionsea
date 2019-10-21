@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -27,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ElvisOperatorCanBeUsedInspector extends PhpInspection {
-    private static final String strProblemDescription = "' ... ?: ...' construction should be used instead.";
+    private static final String message = "' ... ?: ...' construction should be used instead.";
 
     @NotNull
     @Override
@@ -49,24 +48,21 @@ public class ElvisOperatorCanBeUsedInspector extends PhpInspection {
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
-                /* construction requirements */
-                final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                if (null == trueVariant) {
-                    return;
-                }
-                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                if (null == condition) {
-                    return;
-                }
-
-                /* if true variant is the object or expressions are not equals */
-                if (condition != trueVariant && OpenapiEquivalenceUtil.areEqual(condition, trueVariant)) {
-                    holder.registerProblem(
-                            expression.getTrueVariant(),
-                            ReportingUtil.wrapReportedMessage(strProblemDescription),
-                            ProblemHighlightType.WEAK_WARNING,
-                            new TheLocalFix()
-                    );
+                if (!expression.isShort()) {
+                    final PsiElement trueRaw       = expression.getTrueVariant();
+                    final PsiElement trueExtracted = ExpressionSemanticUtil.getExpressionTroughParenthesis(trueRaw);
+                    if (trueRaw != null && trueExtracted != null) {
+                        final PsiElement conditionExtracted = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                        if (conditionExtracted != null) {
+                            if (conditionExtracted != trueExtracted && OpenapiEquivalenceUtil.areEqual(conditionExtracted, trueExtracted)) {
+                                holder.registerProblem(
+                                        trueRaw,
+                                        ReportingUtil.wrapReportedMessage(message),
+                                        new TheLocalFix()
+                                );
+                            }
+                        }
+                    }
                 }
             }
         };
@@ -100,7 +96,6 @@ public class ElvisOperatorCanBeUsedInspector extends PhpInspection {
                 if (after instanceof PsiWhiteSpace) {
                     after.delete();
                 }
-
                 /* drop true expression */
                 target.delete();
             }

@@ -155,6 +155,16 @@
         $object = returns_nullable_object();
     }
 
+    /* false-positive: nullable array */
+    /** @return array */
+    function returns_array() { return []; }
+    /** @param $arrayAnnotated array|null */
+    function assigning_nullable_array(array &$parameter, array $array = null, array $arrayAnnotated = null) {
+        $parameter = $array ?? returns_array();
+        $parameter = ($array ?? returns_array());
+        $parameter = ($arrayAnnotated ?? returns_array());
+    }
+
     /* false-positive: iterable */
     function iterable_support(iterable $iterable = null) {
         $iterable = $iterable ?? [];

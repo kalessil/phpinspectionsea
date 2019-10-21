@@ -90,9 +90,7 @@ final public class ExpressionSemanticUtil {
             objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(objCondition);
         }
         if (objCondition instanceof UnaryExpression) {
-            objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(
-                    ((UnaryExpression) objCondition).getValue()
-            );
+            objCondition = ExpressionSemanticUtil.getExpressionTroughParenthesis(((UnaryExpression) objCondition).getValue());
         }
         if (null == objCondition) {
             return null;

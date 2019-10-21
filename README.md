@@ -38,13 +38,6 @@ Enhancing the experience
 ---
 Once you have accommodated with the analyzer and want move to further, check [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-) out.
 
-Sponsorship
----
-
-A big thank you to our platinum sponsor [IntelliShop AG](https://www.intellishop-software.com/) (Karlsruhe, Germany):
-
-<a href="https://www.intellishop-software.com/"><img src="https://github.com/kalessil/phpinspectionsea/blob/master/docs/images/isag_logo_1000px.png?raw=true" alt="IntelliShop AG" height="40"/></a>
-
 Crowdfunding
 ---
 

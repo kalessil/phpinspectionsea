@@ -164,7 +164,7 @@ final public class OpenapiResolveUtil {
                     /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
                     boolean hasFloat      = true;
                     boolean hasArray      = false;
-                    final PsiElement left = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
+                    final PsiElement left = binary.getLeftOperand();
                     if (left instanceof PhpTypedElement) {
                         final PhpType leftType = resolveType((PhpTypedElement) left, project);
                         if (leftType != null) {
@@ -174,7 +174,7 @@ final public class OpenapiResolveUtil {
                             hasArray = leftTypes.contains(Types.strArray);
                             leftTypes.clear();
                             if (!hasFloat || (!hasArray && operator == PhpTokenTypes.opPLUS)) {
-                                final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
+                                final PsiElement right = binary.getRightOperand();
                                 if (right instanceof PhpTypedElement) {
                                     final PhpType rightType = resolveType((PhpTypedElement) right, project);
                                     if (rightType != null) {
@@ -246,7 +246,12 @@ final public class OpenapiResolveUtil {
                     }
                 }
             } else if (expression instanceof AssignmentExpression && OpenapiTypesUtil.isAssignment((PsiElement) expression)) {
-                final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(((AssignmentExpression) expression).getValue());
+                final PsiElement value = ((AssignmentExpression) expression).getValue();
+                if (value instanceof PhpTypedElement) {
+                    result = resolveType((PhpTypedElement) value, project);
+                }
+            } else if (expression instanceof ParenthesizedExpression) {
+                final PsiElement value = ((ParenthesizedExpression) expression).getArgument();
                 if (value instanceof PhpTypedElement) {
                     result = resolveType((PhpTypedElement) value, project);
                 }

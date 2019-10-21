@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------
 Php Inspections (EA Ultimate) is a Static Code Analysis tool for PHP.
-Copyright (C) 2017-2018 Vladimir Reznichenko
+Copyright (C) 2017-2019 Vladimir Reznichenko
 ------------------------------------------------------------------------------
 
 Proprietary license. Redistribution of source code, binary files and derivative 

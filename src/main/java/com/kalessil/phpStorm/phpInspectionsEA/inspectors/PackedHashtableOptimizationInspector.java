@@ -66,39 +66,18 @@ final public class PackedHashtableOptimizationInspector extends BasePhpInspectio
                 }
 
                 /* step 1: collect indexes and verify array structure */
-                boolean isTarget                  = true;
                 final List<PhpPsiElement> indexes = new ArrayList<>();
                 for (final PsiElement pairCandidate : children) {
-                    /* inspect only associative arrays */
-                    if (!(pairCandidate instanceof ArrayHashElement)) {
-                        isTarget = false;
-                        break;
-                    }
-
-                    /* ensure key is available */
-                    final ArrayHashElement pair = (ArrayHashElement) pairCandidate;
-                    final PhpPsiElement key     = pair.getKey();
-                    if (null == key) {
-                        isTarget = false;
-                        break;
-                    }
-
-                    if (key instanceof StringLiteralExpression || OpenapiTypesUtil.isNumber(key)) {
-                        /* no injections expected */
-                        if (null != key.getFirstPsiChild()) {
-                            isTarget = false;
-                            break;
+                    if (pairCandidate instanceof ArrayHashElement) {
+                        final PhpPsiElement key = ((ArrayHashElement) pairCandidate).getKey();
+                        if ((key instanceof StringLiteralExpression && key.getFirstPsiChild() == null) || OpenapiTypesUtil.isNumber(key)) {
+                            indexes.add(key);
+                            continue;
                         }
-
-                        indexes.add(key);
-                        continue;
                     }
-
-                    /* key is not as expected, stop processing */
-                    isTarget = false;
                     break;
                 }
-                if (!isTarget) {
+                if (indexes.size() != children.length) {
                     indexes.clear();
                     return;
                 }

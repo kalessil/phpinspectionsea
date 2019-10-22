@@ -23,13 +23,12 @@ final public class ExpressionsCouplingCheckUtil {
         }
         if (!assign.isEmpty()) {
             /* extract all containers */
-            for (AssignmentExpression expression : assign) {
+            for (final AssignmentExpression expression : assign) {
                 if (expression instanceof MultiassignmentExpression) {
                     expressionsInFirst.addAll(((MultiassignmentExpression) expression).getVariables());
-                    continue;
+                } else {
+                    expressionsInFirst.add(expression.getVariable());
                 }
-
-                expressionsInFirst.add(expression.getVariable());
             }
             assign.clear();
 
@@ -46,7 +45,6 @@ final public class ExpressionsCouplingCheckUtil {
                         }
                         findings.clear();
                     }
-
                     /* inner loop found coupled expressions break this loop as well */
                     if (isCoupled) {
                         break;
@@ -62,11 +60,14 @@ final public class ExpressionsCouplingCheckUtil {
 
         /* Scenario 2: 2nd expression has array access, parts of which has been used in the 1st one */
         /* TODO: non-static method/property */
-        final Set<PsiElement> expressionsInSecond           = new HashSet<>();
-        final Collection<ArrayAccessExpression> arrayAccess = PsiTreeUtil.findChildrenOfType(second, ArrayAccessExpression.class);
-        if (!arrayAccess.isEmpty()) {
+        final Set<PsiElement> expressionsInSecond             = new HashSet<>();
+        final Collection<ArrayAccessExpression> arrayAccesses = PsiTreeUtil.findChildrenOfType(second, ArrayAccessExpression.class);
+        if (second instanceof ArrayAccessExpression) {
+            arrayAccesses.add((ArrayAccessExpression) second);
+        }
+        if (!arrayAccesses.isEmpty()) {
             /* extract array accesses, get unique variable expressions from them */
-            for (ArrayAccessExpression expression : arrayAccess) {
+            for (ArrayAccessExpression expression : arrayAccesses) {
                 /* if expression[], do not store it */
                 final PsiElement parent = expression.getParent();
                 if (parent instanceof ArrayAccessExpression && expression == ((ArrayAccessExpression) parent).getValue()) {
@@ -108,25 +109,32 @@ final public class ExpressionsCouplingCheckUtil {
                 expressionsInSecond.clear();
             }
 
-            arrayAccess.clear();
+            arrayAccesses.clear();
         }
         if (isCoupled) {
             return true;
         }
 
         /* Scenario 3: the first argument is isset */
-        final Set<String> dependencies = new HashSet<>();
-        PsiTreeUtil.findChildrenOfType(first, PhpIsset.class).forEach(
-            isset -> PsiTreeUtil.findChildrenOfType(isset, ArrayAccessExpression.class).forEach(array -> {
-                PsiElement container = array.getValue();
-                while (container instanceof ArrayAccessExpression) {
-                    container = ((ArrayAccessExpression) container).getValue();
-                }
-                if (container instanceof Variable) {
-                    dependencies.add(((Variable) container).getName());
-                }
-            })
-        );
+        final Set<String> dependencies    = new HashSet<>();
+        final Collection<PhpIsset> issets = PsiTreeUtil.findChildrenOfType(first, PhpIsset.class);
+        if (first instanceof PhpIsset) {
+            issets.add((PhpIsset) first);
+        }
+        if (!issets.isEmpty()) {
+            for (final PhpIsset isset : issets) {
+                PsiTreeUtil.findChildrenOfType(isset, ArrayAccessExpression.class).forEach(array -> {
+                    PsiElement container = array.getValue();
+                    while (container instanceof ArrayAccessExpression) {
+                        container = ((ArrayAccessExpression) container).getValue();
+                    }
+                    if (container instanceof Variable) {
+                        dependencies.add(((Variable) container).getName());
+                    }
+                });
+            }
+            issets.clear();
+        }
         /* check if second depends on any of them */
         if (!dependencies.isEmpty()) {
             isCoupled = PsiTreeUtil.findChildrenOfType(second, Variable.class).stream().anyMatch(v -> dependencies.contains(v.getName()));

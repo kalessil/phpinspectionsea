@@ -4,7 +4,6 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +70,7 @@ final public class ExpressionCostEstimateUtil {
         /* empty counts too much as empty, so it still sensitive overhead, but not add any factor */
         if (objExpression instanceof PhpEmpty) {
             int intArgumentsCost = 0;
-            for (PsiElement objParameter : ((PhpEmpty) objExpression).getVariables()) {
+            for (final PsiElement objParameter : ((PhpEmpty) objExpression).getVariables()) {
                 intArgumentsCost += getExpressionCost(objParameter, functionsSetToAllow);
             }
 
@@ -81,17 +80,7 @@ final public class ExpressionCostEstimateUtil {
         /* isset brings no additional costs, often used for aggressive optimization */
         if (objExpression instanceof PhpIsset) {
             int intArgumentsCost = 0;
-            for (PsiElement objParameter : ((PhpIsset) objExpression).getVariables()) {
-                intArgumentsCost += getExpressionCost(objParameter, functionsSetToAllow);
-            }
-
-            return intArgumentsCost;
-        }
-
-        /* didn't see anu usages in if, but who knows */
-        if (objExpression instanceof PhpUnset) {
-            int intArgumentsCost = 0;
-            for (PsiElement objParameter : ((PhpUnset) objExpression).getArguments()) {
+            for (final PsiElement objParameter : ((PhpIsset) objExpression).getVariables()) {
                 intArgumentsCost += getExpressionCost(objParameter, functionsSetToAllow);
             }
 
@@ -100,7 +89,7 @@ final public class ExpressionCostEstimateUtil {
 
         if (objExpression instanceof FunctionReference) {
             int intArgumentsCost = 0;
-            for (PsiElement objParameter : ((FunctionReference) objExpression).getParameters()) {
+            for (final PsiElement objParameter : ((FunctionReference) objExpression).getParameters()) {
                 intArgumentsCost += getExpressionCost(objParameter, functionsSetToAllow);
             }
 
@@ -109,11 +98,9 @@ final public class ExpressionCostEstimateUtil {
                 intArgumentsCost += getExpressionCost(((MethodReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
                 intArgumentsCost += 5;
             } else {
-                final String strFunctionName = ((FunctionReference) objExpression).getName();
-                /* type-check functions and rest functions */
-                if (!StringUtils.isEmpty(strFunctionName) && functionsSetToAllow.contains(strFunctionName)) {
-                    intArgumentsCost += 0;
-                } else {
+                /* type-check &co functions */
+                final String functionName = ((FunctionReference) objExpression).getName();
+                if (functionName == null || functionName.isEmpty() || ! functionsSetToAllow.contains(functionName)) {
                     intArgumentsCost += 5;
                 }
             }
@@ -133,7 +120,7 @@ final public class ExpressionCostEstimateUtil {
 
         if (objExpression instanceof ArrayCreationExpression) {
             int intCosts = 0;
-            for (ArrayHashElement objEntry : ((ArrayCreationExpression) objExpression).getHashElements()) {
+            for (final ArrayHashElement objEntry : ((ArrayCreationExpression) objExpression).getHashElements()) {
                 intCosts += getExpressionCost(objEntry.getKey(), functionsSetToAllow);
                 intCosts += getExpressionCost(objEntry.getValue(), functionsSetToAllow);
             }

@@ -34,6 +34,36 @@ final public class MagicMethodsValidityInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-autoload.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testCloneDestructMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-clone-destruct.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testCallStaticMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-call-static.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testInvokeMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-invoke.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testDebugInfoMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-debug-info.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testWakeUpMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-wake-up.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testSleepMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-sleep.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testMissingUnderscoreMethods() {
         myFixture.enableInspections(new MagicMethodsValidityInspector());
         myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-missing-underscore.php");

@@ -17,7 +17,6 @@ class ClassWithStaticMethods extends MissingClass {
         parent::__clone();
     }
 }
-
 class ClassWithReturningMethods extends MissingClass {
     public function __destruct() {
         parent::__destruct();
@@ -28,16 +27,11 @@ class ClassWithReturningMethods extends MissingClass {
         <error descr="[EA] __clone cannot return a value.">return '...';</error>
     }
 }
-
 class ClassWithParametrizedMethods extends MissingClass {
     public function <error descr="[EA] __destruct cannot accept arguments.">__destruct</error>($optional = '') {
         parent::__destruct();
     }
-    public function <error descr="[EA] __clone cannot accept arguments.">__clone</error>($optional = '') {
-        parent::__clone();
-    }
 }
-
 class ClassWithMissingParentMethodsCalls extends MissingClass {
     public function <error descr="[EA] __destruct cannot accept arguments.">__destruct</error>($optional = '') {
     }

@@ -8,5 +8,10 @@ final public class UnnecessaryUseAliasInspectorTest extends PhpCodeInsightFixtur
         myFixture.enableInspections(new UnnecessaryUseAliasInspector());
         myFixture.configureByFile("testData/fixtures/codeStyle/use-aliases.php");
         myFixture.testHighlighting(true, false, true);
+
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/codeStyle/use-aliases.fixed.php");
     }
 }

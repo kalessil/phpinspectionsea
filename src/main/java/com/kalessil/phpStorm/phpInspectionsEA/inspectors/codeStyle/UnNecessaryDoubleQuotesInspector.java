@@ -47,27 +47,21 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpStringLiteralExpression(@NotNull StringLiteralExpression expression) {
-                /* skip processing single-quoted and strings with injections */
-                if (expression.isSingleQuote() || expression.isHeredoc() || expression.getFirstPsiChild() != null) {
-                    return;
+                if (!expression.isSingleQuote() && !expression.isHeredoc() && expression.getFirstPsiChild() == null) {
+                    final PsiElement context = ExpressionSemanticUtil.getBlockScope(expression);
+                    if (! (context instanceof PhpDocComment)) {
+                        /* literals with escape sequences must not be analyzed */
+                        /* note: don't use PhpStringUtil.unescapeText as it simply strips escape sequences */
+                        final String contents = expression.getContents().replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\"", "\"");
+                        if (contents.indexOf('\'') == -1 && ! contents.contains("\\")) {
+                            holder.registerProblem(
+                                    expression,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    new TheLocalFix()
+                            );
+                        }
+                    }
                 }
-                /* annotation is doc-blocks must not be analyzed */
-                if (ExpressionSemanticUtil.getBlockScope(expression) instanceof PhpDocComment) {
-                    return;
-                }
-
-                /* literals with escape sequences must not be analyzed */
-                /* note: don't use PhpStringUtil.unescapeText as it simply strips escape sequences */
-                final String contents = expression.getContents().replaceAll("\\\\\\$", "\\$").replaceAll("\\\\\"", "\"");
-                if (contents.indexOf('\'') >= 0 || contents.contains("\\")) {
-                    return;
-                }
-
-                holder.registerProblem(
-                        expression,
-                        ReportingUtil.wrapReportedMessage(message),
-                        new TheLocalFix()
-                );
             }
         };
     }
@@ -91,13 +85,9 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement literal = descriptor.getPsiElement();
             if (literal instanceof StringLiteralExpression && !project.isDisposed()) {
-                final String rawText        = ((StringLiteralExpression) literal).getContents();
-                final String unescapedText  = PhpStringUtil.unescapeText(rawText, false);
-                final String textExpression = "'" + PhpStringUtil.escapeText(unescapedText, true) + "'";
-
-                final PhpPsiElement replacement
-                    = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, textExpression);
-                literal.replace(replacement);
+                final String unescapedText = PhpStringUtil.unescapeText(((StringLiteralExpression) literal).getContents(), false);
+                final String code          = "'" + PhpStringUtil.escapeText(unescapedText, true) + "'";
+                literal.replace(PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, code));
             }
         }
     }

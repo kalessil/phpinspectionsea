@@ -119,20 +119,26 @@ final public class ExpressionCostEstimateUtil {
         }
 
         if (objExpression instanceof ArrayCreationExpression) {
+            final ArrayCreationExpression access = (ArrayCreationExpression) objExpression;
             int intCosts = 0;
-            for (final ArrayHashElement objEntry : ((ArrayCreationExpression) objExpression).getHashElements()) {
-                intCosts += getExpressionCost(objEntry.getKey(), functionsSetToAllow);
-                intCosts += getExpressionCost(objEntry.getValue(), functionsSetToAllow);
+            for (final PsiElement child : access.getChildren()) {
+                if (child instanceof ArrayHashElement) {
+                    final ArrayHashElement pair = (ArrayHashElement) child;
+                    intCosts += getExpressionCost(pair.getKey(), functionsSetToAllow);
+                    intCosts += getExpressionCost(pair.getValue(), functionsSetToAllow);
+                } else {
+                    intCosts += getExpressionCost(child.getFirstChild(), functionsSetToAllow);
+                }
             }
             return intCosts;
         }
 
-        if (OpenapiTypesUtil.isNumber(objExpression)) {
-            return 0;
-        }
-
         if (objExpression instanceof AssignmentExpression) {
             return getExpressionCost(((AssignmentExpression) objExpression).getValue(), functionsSetToAllow);
+        }
+
+        if (OpenapiTypesUtil.isNumber(objExpression)) {
+            return 0;
         }
 
         return 10;

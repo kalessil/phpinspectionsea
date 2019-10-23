@@ -18,3 +18,8 @@
         isset($x[uniqid()]) &&
         <weak_warning descr="[EA] This condition execution costs less than the previous one.">$x</weak_warning>
     ) {}
+
+    /* edge cases */
+    if ([$element] || [trim($element)]) {}
+    if ([0 => $element] || [0 => trim($element)]) {}
+    if (($condition ? 'yes' : 'no') || $object->field || Clazz::STATE) {}

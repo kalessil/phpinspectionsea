@@ -222,11 +222,9 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                             }
                         }
                         intCountReadAccesses++;
-                        continue;
                     }
-
                     /* ++/-- operations */
-                    if (parent instanceof UnaryExpression) {
+                    else if (parent instanceof UnaryExpression) {
                         final PsiElement operation  = ((UnaryExpression) parent).getOperation();
                         if (
                             OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT) ||
@@ -244,10 +242,8 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                         if (!OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                             ++intCountReadAccesses;
                         }
-                        continue;
                     }
-
-                    if (parent instanceof SelfAssignmentExpression) {
+                    else if (parent instanceof SelfAssignmentExpression) {
                         final SelfAssignmentExpression selfAssignment = (SelfAssignmentExpression) parent;
                         final PsiElement sameVariableCandidate        = selfAssignment.getVariable();
                         if (sameVariableCandidate instanceof Variable) {
@@ -264,13 +260,11 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                 if (!OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                                     ++intCountReadAccesses;
                                 }
-                                continue;
                             }
                         }
                     }
-
                     /* if variable assigned with reference, we need to preserve this information for correct checks */
-                    if (parent instanceof AssignmentExpression) {
+                    else if (parent instanceof AssignmentExpression) {
                         /* ensure variable with the same name being written */
                         final AssignmentExpression referenceAssignmentCandidate = (AssignmentExpression) parent;
                         /* check if the target used as a container */
@@ -305,13 +299,11 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                             final Variable candidate = (Variable) assignmentValueCandidate;
                             if (candidate.getName().equals(parameterName)) {
                                 ++intCountReadAccesses;
-                                continue;
                             }
                         }
                     }
-
                     /* local variables access wrongly reported write in some cases, so rely on custom checks */
-                    if (
+                    else if (
                         parent instanceof ParameterList ||
                         parent instanceof PhpUseList ||
                         parent instanceof PhpUnset ||
@@ -320,17 +312,15 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                         parent instanceof ForeachStatement
                     ) {
                         intCountReadAccesses++;
-                        continue;
-                    }
-
-
-                    /* ok variable usage works well with openapi */
-                    final PhpAccessInstruction.Access instructionAccess = instruction.getAccess();
-                    if (instructionAccess.isWrite()) {
-                        targetExpressions.add(variable);
-                        ++intCountWriteAccesses;
-                    } else if (instructionAccess.isRead()) {
-                        ++intCountReadAccesses;
+                    } else {
+                        /* ok variable usage works well with openapi */
+                        final PhpAccessInstruction.Access instructionAccess = instruction.getAccess();
+                        if (instructionAccess.isWrite()) {
+                            targetExpressions.add(variable);
+                            ++intCountWriteAccesses;
+                        } else if (instructionAccess.isRead()) {
+                            ++intCountReadAccesses;
+                        }
                     }
                 }
 

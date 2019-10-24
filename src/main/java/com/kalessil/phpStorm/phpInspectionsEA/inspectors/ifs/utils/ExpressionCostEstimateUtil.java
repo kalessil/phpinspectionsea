@@ -36,19 +36,17 @@ final public class ExpressionCostEstimateUtil {
         objExpression = ExpressionSemanticUtil.getExpressionTroughParenthesis(objExpression);
 
         if (
-            null == objExpression ||
+            objExpression == null ||
             objExpression instanceof ConstantReference ||
             objExpression instanceof StringLiteralExpression ||
             objExpression instanceof ClassReference ||
-            objExpression instanceof Variable
+            objExpression instanceof Variable ||
+            objExpression instanceof ClassConstantReference ||
+            OpenapiTypesUtil.isNumber(objExpression)
         ) {
             return 0;
         }
 
-        /* additional factor is due to hash-maps internals not considered */
-        if (objExpression instanceof ClassConstantReference) {
-            return 0;
-        }
         if (objExpression instanceof FieldReference) {
             /* $x->y and $x->y->z to have the same cost. Because of magic methods, which are slower. */
             return getExpressionCost(((FieldReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
@@ -113,26 +111,37 @@ final public class ExpressionCostEstimateUtil {
         }
 
         if (objExpression instanceof BinaryExpression) {
-            return
-                getExpressionCost(((BinaryExpression) objExpression).getRightOperand(), functionsSetToAllow) +
-                getExpressionCost(((BinaryExpression) objExpression).getLeftOperand(), functionsSetToAllow);
+            final BinaryExpression binary = (BinaryExpression) objExpression;
+            return getExpressionCost(binary.getRightOperand(), functionsSetToAllow) +
+                   getExpressionCost(binary.getLeftOperand(), functionsSetToAllow);
         }
 
         if (objExpression instanceof ArrayCreationExpression) {
+            final ArrayCreationExpression access = (ArrayCreationExpression) objExpression;
             int intCosts = 0;
-            for (final ArrayHashElement objEntry : ((ArrayCreationExpression) objExpression).getHashElements()) {
-                intCosts += getExpressionCost(objEntry.getKey(), functionsSetToAllow);
-                intCosts += getExpressionCost(objEntry.getValue(), functionsSetToAllow);
+            for (final PsiElement child : access.getChildren()) {
+                if (child instanceof ArrayHashElement) {
+                    final ArrayHashElement pair = (ArrayHashElement) child;
+                    intCosts += getExpressionCost(pair.getKey(), functionsSetToAllow);
+                    intCosts += getExpressionCost(pair.getValue(), functionsSetToAllow);
+                } else {
+                    intCosts += getExpressionCost(child.getFirstChild(), functionsSetToAllow);
+                }
             }
             return intCosts;
         }
 
-        if (OpenapiTypesUtil.isNumber(objExpression)) {
-            return 0;
-        }
-
         if (objExpression instanceof AssignmentExpression) {
             return getExpressionCost(((AssignmentExpression) objExpression).getValue(), functionsSetToAllow);
+        }
+
+        if (objExpression instanceof TernaryExpression) {
+            final TernaryExpression ternary = (TernaryExpression) objExpression;
+            final int intConditionCost      = getExpressionCost(ternary.getCondition(), functionsSetToAllow);
+            return Math.max(
+                    intConditionCost + getExpressionCost(ternary.getTrueVariant(), functionsSetToAllow),
+                    intConditionCost + getExpressionCost(ternary.getFalseVariant(), functionsSetToAllow)
+            );
         }
 
         return 10;

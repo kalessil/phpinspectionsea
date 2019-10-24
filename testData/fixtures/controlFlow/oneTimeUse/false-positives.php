@@ -10,12 +10,12 @@ function &return_by_reference () {
     return $null;
 }
 
-$lambda = function () use (&$x, &$y) {
+$lambda = function () use (& $x, & $y) {
     $x = $y;
     return $x;
 };
 
-function parameter_by_reference (&$x, $y) {
+function parameter_by_reference (& $x, $y) {
     $x = $y;
     return $x;
 }

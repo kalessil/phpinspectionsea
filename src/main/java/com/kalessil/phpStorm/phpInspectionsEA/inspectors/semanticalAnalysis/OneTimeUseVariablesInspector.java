@@ -91,19 +91,17 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                             }
 
                             final List<Variable> useList = ExpressionSemanticUtil.getUseListVariables(function);
-                            if (null != useList) {
+                            if (useList != null && ! useList.isEmpty()) {
                                 for (final Variable param: useList) {
-                                    if (!param.getName().equals(variableName)) {
-                                        continue;
-                                    }
-
-                                    /* detect parameters by reference in use clause */
-                                    PsiElement ampersandCandidate = param.getPrevSibling();
-                                    if (ampersandCandidate instanceof PsiWhiteSpace) {
-                                        ampersandCandidate = ampersandCandidate.getPrevSibling();
-                                    }
-                                    if (null != ampersandCandidate && ampersandCandidate.getText().equals("&")) {
-                                        return;
+                                    if (param.getName().equals(variableName)) {
+                                        /* detect parameters by reference in use clause */
+                                        PsiElement ampersandCandidate = param.getPrevSibling();
+                                        if (ampersandCandidate instanceof PsiWhiteSpace) {
+                                            ampersandCandidate = ampersandCandidate.getPrevSibling();
+                                        }
+                                        if (OpenapiTypesUtil.is(ampersandCandidate, PhpTokenTypes.opBIT_AND)) {
+                                            return;
+                                        }
                                     }
                                 }
                                 useList.clear();
@@ -215,24 +213,18 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
 
             @Nullable
             private Variable getVariable(@Nullable PhpPsiElement expression) {
-                if (null == expression) {
-                    return null;
-                }
-
-                if (expression instanceof Variable) {
-                    return (Variable) expression;
-                }
-
-                if (expression instanceof FieldReference) {
-                    final FieldReference propertyAccess = (FieldReference) expression;
-                    if (propertyAccess.getFirstChild() instanceof Variable) {
-                        return (Variable) propertyAccess.getFirstChild();
+                if (expression != null) {
+                    if (expression instanceof Variable) {
+                        return (Variable) expression;
+                    } else if (expression instanceof FieldReference) {
+                        final FieldReference propertyAccess = (FieldReference) expression;
+                        if (propertyAccess.getFirstChild() instanceof Variable) {
+                            return (Variable) propertyAccess.getFirstChild();
+                        }
+                    } else if (OpenapiTypesUtil.isPhpExpressionImpl(expression)) {
+                        /* instanceof passes child classes as well, what isn't correct */
+                        return getVariable(expression.getFirstPsiChild());
                     }
-                }
-
-                /* instanceof passes child classes as well, what isn't correct */
-                if (OpenapiTypesUtil.isPhpExpressionImpl(expression)) {
-                    return getVariable(expression.getFirstPsiChild());
                 }
 
                 return null;

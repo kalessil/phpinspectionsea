@@ -273,7 +273,9 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                 if (!OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                                     ++intCountReadAccesses;
                                 }
+                                continue;
                             }
+                            ++intCountReadAccesses;
                         }
                     }
                     /* if variable assigned with reference, we need to preserve this information for correct checks */
@@ -315,14 +317,21 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                             }
                         }
                     }
+                    else if (parent instanceof ForeachStatement) {
+                        final ForeachStatement foreach = (ForeachStatement) parent;
+                        if (foreach.getArray() == variable) {
+                            ++intCountReadAccesses;
+                        } else {
+                            ++intCountWriteAccesses;
+                        }
+                    }
                     /* local variables access wrongly reported write in some cases, so rely on custom checks */
                     else if (
                         parent instanceof ParameterList ||
                         parent instanceof PhpUseList ||
                         parent instanceof PhpUnset ||
                         parent instanceof PhpEmpty ||
-                        parent instanceof PhpIsset ||
-                        (parent instanceof ForeachStatement && ((ForeachStatement) parent).getArray() == variable)
+                        parent instanceof PhpIsset
                     ) {
                         intCountReadAccesses++;
                     } else {

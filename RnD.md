@@ -35,3 +35,7 @@ https://rules.sonarsource.com/php/RSPEC-4423: insecure SSL versions
     ? CURL_SSLVERSION_MAX_*
     
 Infinity loop: the arguments are not modified, the call can be nested somewhere
+
+Suspicious binary expressions: (!x &&) || x
+
+Write only variables: foreach ($data as $item) { $item['...'] = ...;  /* $item is not used in read-context */ }

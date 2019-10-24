@@ -24,10 +24,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -77,6 +74,22 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                 this.analyzeFunction(function);
             }
 
+            @Override
+            public void visitPhpForeach(@NotNull ForeachStatement foreach) {
+                if (this.shouldSkipAnalysis(foreach, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
+
+                final Variable value = foreach.getValue();
+                if (value != null) {
+                    final String variableName = value.getName();
+                    if (! variableName.isEmpty()) {
+                        final Function scope = ExpressionSemanticUtil.getScope(foreach);
+                        if (scope != null) {
+                            this.analyzeAndReturnUsagesCount(variableName, scope, Collections.singletonList(value));
+                        }
+                    }
+                }
+            }
+
             private void analyzeFunction(@NotNull Function function) {
                 Arrays.stream(function.getParameters())
                         .filter(parameter  -> !parameter.getName().isEmpty() && !parameter.isPassByRef())
@@ -90,7 +103,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                 });
                             return !isObject;
                         })
-                        .forEach(parameter -> this.analyzeAndReturnUsagesCount(parameter.getName(), function));
+                        .forEach(parameter -> this.analyzeAndReturnUsagesCount(parameter.getName(), function, new ArrayList<>()));
 
                 final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(function);
                 if (variables != null) {
@@ -132,7 +145,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                 final List<Variable> uses   = ExpressionSemanticUtil.getUseListVariables(scope);
                                 final boolean isUseVariable = uses != null && uses.stream().anyMatch(u -> u.getName().equals(variableName));
                                 if (!isUseVariable) {
-                                    this.analyzeAndReturnUsagesCount(variableName, scope);
+                                    this.analyzeAndReturnUsagesCount(variableName, scope, new ArrayList<>());
                                 }
                             }
                         }
@@ -157,7 +170,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                 );
                             }
-                        } else if (this.analyzeAndReturnUsagesCount(parameterName, function) == 0) {
+                        } else if (this.analyzeAndReturnUsagesCount(parameterName, function, new ArrayList<>()) == 0) {
                             holder.registerProblem(
                                     variable,
                                     ReportingUtil.wrapReportedMessage(messageUnused),
@@ -168,10 +181,10 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                 }
             }
 
-            private int analyzeAndReturnUsagesCount(@NotNull String parameterName, @NotNull Function function) {
+            private int analyzeAndReturnUsagesCount(@NotNull String parameterName, @NotNull Function function, @NotNull List<PsiElement> skip) {
                 final PhpAccessVariableInstruction[] usages = this.getVariableUsages(parameterName, function);
-                if (usages.length == 0) {
-                    return usages.length;
+                if (usages.length == 0 || (usages.length == skip.size())) {
+                    return 0;
                 }
 
                 final List<PsiElement> targetExpressions = new ArrayList<>();
@@ -181,8 +194,8 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                 int intCountWriteAccesses = 0;
                 for (final PhpAccessVariableInstruction instruction : usages) {
                     final PsiElement variable = instruction.getAnchor();
-                    final PsiElement parent   = variable.getParent();
 
+                    final PsiElement parent   = variable.getParent();
                     if (parent instanceof ArrayAccessExpression) {
                         /* find out which expression is holder */
                         PsiElement objLastSemanticExpression = variable;
@@ -309,7 +322,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                         parent instanceof PhpUnset ||
                         parent instanceof PhpEmpty ||
                         parent instanceof PhpIsset ||
-                        parent instanceof ForeachStatement
+                        (parent instanceof ForeachStatement && ((ForeachStatement) parent).getArray() == variable)
                     ) {
                         intCountReadAccesses++;
                     } else {

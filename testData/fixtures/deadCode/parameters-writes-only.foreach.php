@@ -22,4 +22,8 @@ function false_positives_holder($object) {
     foreach ([] as & $array) {
         $array[] = '...';
     }
+
+    foreach ([] as & $array) {
+        $array += ['...'];
+    }
 }

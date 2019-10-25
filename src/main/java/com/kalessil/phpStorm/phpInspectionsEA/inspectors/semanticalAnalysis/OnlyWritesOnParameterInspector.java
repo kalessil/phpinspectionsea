@@ -227,11 +227,8 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                     }
                     /* ++/-- operations */
                     else if (parent instanceof UnaryExpression) {
-                        final PsiElement operation  = ((UnaryExpression) parent).getOperation();
-                        if (
-                            OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT) ||
-                            OpenapiTypesUtil.is(operation, PhpTokenTypes.opDECREMENT)
-                        ) {
+                        final PsiElement operation = ((UnaryExpression) parent).getOperation();
+                        if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT) || OpenapiTypesUtil.is(operation, PhpTokenTypes.opDECREMENT)) {
                             ++intCountWriteAccesses;
                             if (isReference) {
                                 /* when modifying the reference it's link READ and linked WRITE semantics */

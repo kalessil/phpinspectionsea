@@ -78,7 +78,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(foreach, StrictnessCategory.STRICTNESS_CATEGORY_UNUSED)) { return; }
 
                 final Variable value = foreach.getValue();
-                if (value != null) {
+                if (value != null && ! OpenapiTypesUtil.isByReference(value)) {
                     final String variableName = value.getName();
                     if (! variableName.isEmpty()) {
                         final Function scope = ExpressionSemanticUtil.getScope(foreach);

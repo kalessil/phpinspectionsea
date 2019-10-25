@@ -109,6 +109,29 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                 );
                                             }
                                         }
+                                    } else if (candidate instanceof BinaryExpression) {
+                                        final BinaryExpression binary = (BinaryExpression) candidate;
+                                        if (binary.getOperationType() == PhpTokenTypes.opIDENTICAL) {
+                                            PsiElement comparedValue = null;
+                                            final PsiElement left    = binary.getLeftOperand();
+                                            final PsiElement right   = binary.getRightOperand();
+                                            if (PhpLanguageUtil.isNull(right)) {
+                                                comparedValue = left;
+                                            } else if (PhpLanguageUtil.isNull(left)) {
+                                                comparedValue = right;
+                                            }
+                                            if (comparedValue instanceof Variable) {
+                                                final String comparedName = ((Variable) comparedValue).getName();
+                                                if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(comparedName))) {
+                                                    holder.registerProblem(
+                                                            expression,
+                                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), "'is_null'"),
+                                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                            new UseCallbackFix("'is_null'")
+                                                    );
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -121,7 +144,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
             private PsiElement getCandidate(@NotNull PsiElement last) {
                 if (last instanceof PhpReturn) {
                     final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
-                    if (candidate instanceof UnaryExpression || OpenapiTypesUtil.isFunctionReference(candidate)) {
+                    if (candidate instanceof UnaryExpression || candidate instanceof BinaryExpression || OpenapiTypesUtil.isFunctionReference(candidate)) {
                         return candidate;
                     }
                 } else if (OpenapiTypesUtil.isStatementImpl(last) && OpenapiTypesUtil.isAssignment(last.getFirstChild())) {

@@ -6,6 +6,7 @@ function cases_holder($array) {
     array_walk($array, 'trim');
     array_walk_recursive($array, 'trim');
     array_walk_recursive($array, 'trim');
+    array_walk_recursive($array, 'is_null');
 
     array_map('\trim', $array);
 

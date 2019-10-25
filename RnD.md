@@ -39,6 +39,6 @@ Infinity loop: the arguments are not modified, the call can be nested somewhere
 Suspicious binary expressions: (!x &&) || x
 
 array_filter($_, function ($value) { return $value != falsy-value; }); // unnecessary closure
-array_filter($_, function ($value) { return $value === null; });  // unnecessary closure
+
 array_reduce($_, 'array_merge', $init) // array_merge misused -> array_merge($init, ...$_)
 array_unique(array_filter($_) // needs to be swapped -> array_filter(array_unique($_))

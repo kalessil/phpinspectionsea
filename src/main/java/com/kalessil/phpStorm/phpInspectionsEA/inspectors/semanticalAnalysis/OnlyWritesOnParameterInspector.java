@@ -244,7 +244,8 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                     }
                     else if (parent instanceof SelfAssignmentExpression) {
                         final SelfAssignmentExpression selfAssignment = (SelfAssignmentExpression) parent;
-                        final PsiElement sameVariableCandidate        = selfAssignment.getVariable();
+                        /* check if the target used as a container */
+                        final PsiElement sameVariableCandidate = selfAssignment.getVariable();
                         if (sameVariableCandidate instanceof Variable) {
                             final Variable candidate = (Variable) sameVariableCandidate;
                             if (candidate.getName().equals(parameterName)) {
@@ -261,7 +262,14 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                 }
                                 continue;
                             }
-                            ++intCountReadAccesses;
+                        }
+                        /* check if the target used as a value */
+                        final PsiElement sameValueCandidate = selfAssignment.getValue();
+                        if (sameValueCandidate instanceof Variable) {
+                            final String sameValueName = ((Variable) sameValueCandidate).getName();
+                            if (sameValueName.equals(parameterName)) {
+                                ++intCountReadAccesses;
+                            }
                         }
                     }
                     /* if variable assigned with reference, we need to preserve this information for correct checks */

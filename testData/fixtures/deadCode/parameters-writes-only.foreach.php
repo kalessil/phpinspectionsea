@@ -23,7 +23,7 @@ function false_positives_holder($object) {
     }
     $object->property += $used1;
     $object['...'] += $used2;
-    $object['...']['...'] += $used2;
+    $object['...']['...'] += $used3;
 
     foreach ([] as & $array) {
         $array[] = '...';

@@ -20,5 +20,7 @@ function cases_holder($x) {
         $x = array_merge([], $x),
         $x = array_merge([&$x], $x),
         $x = array_merge(['key' => 'value'], $x),
+
+        <warning descr="[EA] 'array_merge(...)' would fit more here (it also faster).">array_reduce([$x], 'array_merge', [])</warning>,
     ];
 }

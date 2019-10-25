@@ -18,4 +18,8 @@ function false_positives_holder($object) {
         $used[] = '...';
     }
     $object->property += $used;
+
+    foreach ([] as & $array) {
+        $array[] = '...';
+    }
 }

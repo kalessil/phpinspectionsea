@@ -11,3 +11,11 @@ function cases_holder() {
         unset($used['...']);
     }
 }
+
+function false_positives_holder($object) {
+    $used = [];
+    foreach ([] as $v) {
+        $used[] = '...';
+    }
+    $object->property += $used;
+}

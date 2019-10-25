@@ -7,7 +7,6 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -33,7 +32,6 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
     private static final String messageUseArray     = "'[...]' would fit more here (it also much faster).";
     private static final String messageArrayUnshift = "'array_unshift(...)' would fit more here (it also faster).";
     private static final String messageArrayPush    = "'array_push(...)' would fit more here (it also faster).";
-    private static final String messageArrayMerge   = "'array_merge(...)' would fit more here (it also faster).";
     private static final String messageNestedMerge  = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
     @NotNull
@@ -57,108 +55,87 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null) {
-                    if (functionName.equals("array_merge")) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length > 0) {
-                            /* case 1: `array_merge([], ...)` - all arguments are arrays  */
-                            if (Arrays.stream(arguments).allMatch(a -> a instanceof ArrayCreationExpression)) {
-                                final List<String> fragments = new ArrayList<>();
-                                Arrays.stream(arguments).forEach(a -> Stream.of(a.getChildren()).forEach(c -> fragments.add(c.getText())));
-                                holder.registerProblem(
-                                        reference,
-                                        ReportingUtil.wrapReportedMessage(messageUseArray),
-                                        new UseArrayFixer(String.format("[%s]", String.join(", ", fragments)))
-                                );
-                                fragments.clear();
-                            }
+                if (functionName != null && functionName.equals("array_merge")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length > 0) {
+                        /* case 1: `array_merge([], ...)` - all arguments are arrays  */
+                        if (Arrays.stream(arguments).allMatch(a -> a instanceof ArrayCreationExpression)) {
+                            final List<String> fragments = new ArrayList<>();
+                            Arrays.stream(arguments).forEach(a -> Stream.of(a.getChildren()).forEach(c -> fragments.add(c.getText())));
+                            holder.registerProblem(
+                                    reference,
+                                    ReportingUtil.wrapReportedMessage(messageUseArray),
+                                    new UseArrayFixer(String.format("[%s]", String.join(", ", fragments)))
+                            );
+                            fragments.clear();
+                        }
 
-                            /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` - pushing items at front/back */
-                            if (arguments.length == 2 && (arguments[0] instanceof ArrayCreationExpression || arguments[1] instanceof ArrayCreationExpression)) {
-                                final PsiElement array       = arguments[0] instanceof ArrayCreationExpression ? arguments[0] : arguments[1];
-                                final PsiElement destination = arguments[0] instanceof ArrayCreationExpression ? arguments[1] : arguments[0];
-                                final PsiElement[] elements  = array.getChildren();
-                                if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
-                                    final PsiElement parent = reference.getParent();
-                                    if (OpenapiTypesUtil.isAssignment(parent)) {
-                                        final PsiElement container = ((AssignmentExpression) parent).getVariable();
-                                        if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
-                                            final List<String> fragments = new ArrayList<>();
-                                            if (arguments[0] instanceof ArrayCreationExpression) {
-                                                if (destination instanceof Variable) {
-                                                    final boolean hasByReference = Arrays.stream(elements)
-                                                            .filter(e -> e instanceof PhpPsiElement)
-                                                            .map(e -> ((PhpPsiElement) e).getFirstPsiChild())
-                                                            .anyMatch(ExpressionSemanticUtil::isByReference);
-                                                    if (!hasByReference) {
-                                                        fragments.add(destination.getText());
-                                                        Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
-                                                        holder.registerProblem(
-                                                                parent,
-                                                                ReportingUtil.wrapReportedMessage(messageArrayUnshift),
-                                                                new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
-                                                        );
-                                                    }
-                                                }
-                                            } else {
-                                                fragments.add(destination.getText());
-                                                Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
-                                                holder.registerProblem(
-                                                        parent,
-                                                        ReportingUtil.wrapReportedMessage(messageArrayPush),
-                                                        new UseArrayPushFixer(String.format("array_push(%s)", String.join(", ", fragments)))
-                                                );
-                                            }
-                                            fragments.clear();
-                                        }
-                                    }
-                                }
-                            }
-
-                            /* case 3: `array_merge(..., array_merge(), ...)` - nested calls can be inlined */
-                            for (final PsiElement argument : arguments) {
-                                if (OpenapiTypesUtil.isFunctionReference(argument)) {
-                                    final String innerFunctionName = ((FunctionReference) argument).getName();
-                                    if (innerFunctionName != null && innerFunctionName.equals("array_merge")) {
+                        /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` - pushing items at front/back */
+                        if (arguments.length == 2 && (arguments[0] instanceof ArrayCreationExpression || arguments[1] instanceof ArrayCreationExpression)) {
+                            final PsiElement array       = arguments[0] instanceof ArrayCreationExpression ? arguments[0] : arguments[1];
+                            final PsiElement destination = arguments[0] instanceof ArrayCreationExpression ? arguments[1] : arguments[0];
+                            final PsiElement[] elements  = array.getChildren();
+                            if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
+                                final PsiElement parent = reference.getParent();
+                                if (OpenapiTypesUtil.isAssignment(parent)) {
+                                    final PsiElement container = ((AssignmentExpression) parent).getVariable();
+                                    if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
                                         final List<String> fragments = new ArrayList<>();
-                                        for (final PsiElement fragment : arguments) {
-                                            if (OpenapiTypesUtil.isFunctionReference(fragment)) {
-                                                final FunctionReference innerCall = (FunctionReference) fragment;
-                                                if (innerFunctionName.equals(innerCall.getName())) {
-                                                    Arrays.stream(innerCall.getParameters()).forEach(p -> fragments.add(p.getText()));
-                                                    continue;
+                                        if (arguments[0] instanceof ArrayCreationExpression) {
+                                            if (destination instanceof Variable) {
+                                                final boolean hasByReference = Arrays.stream(elements)
+                                                        .filter(e -> e instanceof PhpPsiElement)
+                                                        .map(e -> ((PhpPsiElement) e).getFirstPsiChild())
+                                                        .anyMatch(ExpressionSemanticUtil::isByReference);
+                                                if (!hasByReference) {
+                                                    fragments.add(destination.getText());
+                                                    Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                                    holder.registerProblem(
+                                                            parent,
+                                                            ReportingUtil.wrapReportedMessage(messageArrayUnshift),
+                                                            new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
+                                                    );
                                                 }
                                             }
-                                            fragments.add(fragment.getText());
+                                        } else {
+                                            fragments.add(destination.getText());
+                                            Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                            holder.registerProblem(
+                                                    parent,
+                                                    ReportingUtil.wrapReportedMessage(messageArrayPush),
+                                                    new UseArrayPushFixer(String.format("array_push(%s)", String.join(", ", fragments)))
+                                            );
                                         }
-                                        holder.registerProblem(
-                                                reference,
-                                                ReportingUtil.wrapReportedMessage(messageNestedMerge),
-                                                new InlineNestedCallsFixer(String.format("array_merge(%s)", String.join(", ", fragments)))
-                                        );
                                         fragments.clear();
-                                        break;
                                     }
                                 }
                             }
                         }
-                    } else if (functionName.equals("array_reduce") && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP560)) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 3 && arguments[1] instanceof StringLiteralExpression) {
-                            final StringLiteralExpression callback = (StringLiteralExpression) arguments[1];
-                            final String callbackContent           = callback.getContents();
-                            if (callbackContent.replace("\\", "").equals("array_merge")) {
-                                final String replacement = String.format(
-                                        "%s(%s, ...%s)",
-                                        callbackContent,
-                                        arguments[2].getText(),
-                                        arguments[0].getText()
-                                );
-                                holder.registerProblem(
-                                        reference,
-                                        ReportingUtil.wrapReportedMessage(messageArrayMerge),
-                                        new UseArrayMergeFixer(replacement)
-                                );
+
+                        /* case 3: `array_merge(..., array_merge(), ...)` - nested calls can be inlined */
+                        for (final PsiElement argument : arguments) {
+                            if (OpenapiTypesUtil.isFunctionReference(argument)) {
+                                final String innerFunctionName = ((FunctionReference) argument).getName();
+                                if (innerFunctionName != null && innerFunctionName.equals("array_merge")) {
+                                    final List<String> fragments = new ArrayList<>();
+                                    for (final PsiElement fragment : arguments) {
+                                        if (OpenapiTypesUtil.isFunctionReference(fragment)) {
+                                            final FunctionReference innerCall = (FunctionReference) fragment;
+                                            if (innerFunctionName.equals(innerCall.getName())) {
+                                                Arrays.stream(innerCall.getParameters()).forEach(p -> fragments.add(p.getText()));
+                                                continue;
+                                            }
+                                        }
+                                        fragments.add(fragment.getText());
+                                    }
+                                    holder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(messageNestedMerge),
+                                            new InlineNestedCallsFixer(String.format("array_merge(%s)", String.join(", ", fragments)))
+                                    );
+                                    fragments.clear();
+                                    break;
+                                }
                             }
                         }
                     }
@@ -191,20 +168,6 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         }
 
         UseArrayUnshiftFixer(@NotNull String expression) {
-            super(expression);
-        }
-    }
-
-    private static final class UseArrayMergeFixer extends UseSuggestedReplacementFixer {
-        private static final String title = "Use array_merge(...) instead";
-
-        @NotNull
-        @Override
-        public String getName() {
-            return title;
-        }
-
-        UseArrayMergeFixer(@NotNull String expression) {
             super(expression);
         }
     }

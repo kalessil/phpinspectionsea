@@ -103,17 +103,8 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                             }
                             /* inlining is not possible when foreach value is a reference before PHP 5.5 */
                             final PsiElement targetContainer = ((ForeachStatement) construct).getValue();
-                            if (targetContainer != null) {
-                                PsiElement referenceCandidate = targetContainer.getPrevSibling();
-                                if (referenceCandidate instanceof PsiWhiteSpace) {
-                                    referenceCandidate = referenceCandidate.getPrevSibling();
-                                }
-                                if (
-                                    OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND) &&
-                                    PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP550)
-                                ) {
-                                    return;
-                                }
+                            if (OpenapiTypesUtil.isByReference(targetContainer) && PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP550)) {
+                                return;
                             }
                         }
 
@@ -201,16 +192,10 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                     /* if function returning reference, do not inspect returns */
                     final Function scope = ExpressionSemanticUtil.getScope(expression);
                     if (scope != null) {
+                        /* is defined like returning reference */
                         final PsiElement nameNode = NamedElementUtil.getNameIdentifier(scope);
-                        if (nameNode != null) {
-                            /* is defined like returning reference */
-                            PsiElement referenceCandidate = nameNode.getPrevSibling();
-                            if (referenceCandidate instanceof PsiWhiteSpace) {
-                                referenceCandidate = referenceCandidate.getPrevSibling();
-                            }
-                            if (OpenapiTypesUtil.is(referenceCandidate, PhpTokenTypes.opBIT_AND)) {
-                                return;
-                            }
+                        if (OpenapiTypesUtil.isByReference(nameNode)) {
+                            return;
                         }
                     }
 
@@ -457,9 +442,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                     final String variableName      = variable.getName();
                     final Optional<Variable> match = used.stream().filter(v -> v.getName().equals(variableName)).findFirst();
                     if (match.isPresent()) {
-                        final PsiElement previous  = match.get().getPrevSibling();
-                        final PsiElement candidate = previous instanceof PsiWhiteSpace ? previous.getPrevSibling() : previous;
-                        result                     = OpenapiTypesUtil.is(candidate, PhpTokenTypes.opBIT_AND);
+                        result = OpenapiTypesUtil.isByReference(match.get());
                     }
                     used.clear();
                 }

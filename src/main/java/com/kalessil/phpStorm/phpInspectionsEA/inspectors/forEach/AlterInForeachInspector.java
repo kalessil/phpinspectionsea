@@ -163,21 +163,15 @@ public class AlterInForeachInspector extends PhpInspection {
                 this.strategyKeyCanNotBeReference(foreach);
             }
 
-            private void strategyKeyCanNotBeReference(ForeachStatement foreach) {
+            private void strategyKeyCanNotBeReference(@NotNull ForeachStatement foreach) {
                 /* lookup for incorrect reference preceding key: foreach (... as &$key => ...) */
-                final Variable objForeachKey = foreach.getKey();
-                if (null != objForeachKey) {
-                    PsiElement prevElement = objForeachKey.getPrevSibling();
-                    if (prevElement instanceof PsiWhiteSpace) {
-                        prevElement = prevElement.getPrevSibling();
-                    }
-                    if (OpenapiTypesUtil.is(prevElement, PhpTokenTypes.opBIT_AND)) {
-                        holder.registerProblem(
-                                prevElement,
-                                ReportingUtil.wrapReportedMessage(messageKeyReference),
-                                ProblemHighlightType.ERROR
-                        );
-                    }
+                final Variable key = foreach.getKey();
+                if (OpenapiTypesUtil.isByReference(key)) {
+                    holder.registerProblem(
+                            key,
+                            ReportingUtil.wrapReportedMessage(messageKeyReference),
+                            ProblemHighlightType.ERROR
+                    );
                 }
             }
 

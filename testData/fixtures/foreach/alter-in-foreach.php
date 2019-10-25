@@ -3,7 +3,7 @@
 function cases_holder() {
     $source = array();
 
-    foreach ($source as <error descr="[EA] Provokes a PHP Fatal error (key element cannot be a reference).">&</error> $id => $element) {
+    foreach ($source as & <error descr="[EA] Provokes a PHP Fatal error (key element cannot be a reference).">$id</error> => $element) {
         <weak_warning descr="[EA] Can be refactored as '$element = ...' if $element is defined as a reference (ensure that array supplied). Suppress if causes memory mismatches.">$source[$id]</weak_warning>
             = $element + 1;
     }

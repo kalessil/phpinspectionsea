@@ -134,9 +134,7 @@ public class UselessReturnInspector extends PhpInspection {
                     final String variableName      = variable.getName();
                     final Optional<Variable> match = used.stream().filter(v -> v.getName().equals(variableName)).findFirst();
                     if (match.isPresent()) {
-                        final PsiElement previous  = match.get().getPrevSibling();
-                        final PsiElement candidate = previous instanceof PsiWhiteSpace ? previous.getPrevSibling() : previous;
-                        result                     = OpenapiTypesUtil.is(candidate, PhpTokenTypes.opBIT_AND);
+                        result = OpenapiTypesUtil.isByReference(match.get());
                     }
                     used.clear();
                 }

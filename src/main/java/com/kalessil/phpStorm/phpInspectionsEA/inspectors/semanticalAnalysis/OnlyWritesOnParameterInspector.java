@@ -157,12 +157,7 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                 for (final Variable variable : variables) {
                     final String parameterName = variable.getName();
                     if (!parameterName.isEmpty()) {
-                        PsiElement previous = variable.getPrevSibling();
-                        if (previous instanceof PsiWhiteSpace) {
-                            previous = previous.getPrevSibling();
-                        }
-
-                        if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
+                        if (OpenapiTypesUtil.isByReference(variable)) {
                             if (this.getVariableUsages(parameterName, function).length == 0) {
                                 holder.registerProblem(
                                         variable,

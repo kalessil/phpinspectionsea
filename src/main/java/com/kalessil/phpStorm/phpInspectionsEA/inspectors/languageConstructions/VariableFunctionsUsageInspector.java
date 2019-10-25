@@ -217,12 +217,7 @@ public class VariableFunctionsUsageInspector extends PhpInspection {
 
             @NotNull
             private String argumentAsString(@NotNull PsiElement argument) {
-                PsiElement previous = argument.getPrevSibling();
-                if (previous instanceof PsiWhiteSpace) {
-                    previous = previous.getPrevSibling();
-                }
-
-                if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
+                if (OpenapiTypesUtil.isByReference(argument)) {
                     return '&' + argument.getText();
                 } else if (OpenapiTypesUtil.is(argument.getPrevSibling(), PhpTokenTypes.opVARIADIC)) {
                     return "..." + argument.getText();

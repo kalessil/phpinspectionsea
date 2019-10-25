@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.utils;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -8,6 +9,15 @@ import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class OpenapiTypesUtil {
     final public static TokenSet tsCOMPARE_EQUALITY_OPS = TokenSet.create(
@@ -49,6 +59,15 @@ final public class OpenapiTypesUtil {
         if (operator != null) {
             final int characters = operator.getTextLength();
             return characters != 1 && operator.getText().replaceAll("\\s+", "").equals("=&");
+        }
+        return false;
+    }
+
+    static public boolean isByReference(@Nullable PsiElement expression) {
+        if (expression != null) {
+            final PsiElement candidate = expression.getPrevSibling();
+            final PsiElement previous  = candidate instanceof PsiWhiteSpace ? candidate.getPrevSibling() : candidate;
+            return OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND);
         }
         return false;
     }

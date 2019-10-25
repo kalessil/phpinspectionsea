@@ -16,9 +16,6 @@ pathinfo(..., CONSTANT-HERE)
 //filter_var()
 FILTER_VALIDATE_IP should probably come with FILTER_FLAG_NO_PRIV_RANGE, FILTER_FLAG_NO_RES_RANGE
 
-
-array_key_exists(0, $array) && $array[0] !== null -> isset($array[0])
-
 https://rules.sonarsource.com/php/RSPEC-4423: insecure SSL versions
     TLS 1, 1.1, 1.2 is insecure (FREAK, POODLE, BEAST, CRIME; https://www.acunetix.com/blog/articles/tls-ssl-cipher-hardening/)
     SSL 2, 3        is insecure (POODLE; https://www.acunetix.com/blog/articles/tls-ssl-cipher-hardening/)

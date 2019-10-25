@@ -33,4 +33,8 @@ https://rules.sonarsource.com/php/RSPEC-4423: insecure SSL versions
 
 Suspicious binary expressions: (!x &&) || x
 
-array_unique(array_filter($_) // needs to be swapped -> array_filter(array_unique($_))
+Unnecessary closures:
+array_filter($_, function ($value) { return !empty($value); });
+array_filter($_, function ($value) { return $value != falsy-value; });
+
+array_filter(array_unique($_) // needs to be swapped -> array_unique(array_filter($_))

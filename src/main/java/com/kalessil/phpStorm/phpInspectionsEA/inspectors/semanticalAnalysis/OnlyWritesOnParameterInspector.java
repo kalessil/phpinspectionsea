@@ -188,7 +188,6 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                 int intCountWriteAccesses = 0;
                 for (final PhpAccessVariableInstruction instruction : usages) {
                     final PsiElement variable = instruction.getAnchor();
-
                     final PsiElement parent   = variable.getParent();
                     if (parent instanceof ArrayAccessExpression) {
                         /* find out which expression is holder */
@@ -221,6 +220,10 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                                 ++intCountWriteAccesses;
                                 continue;
                             }
+                        } else if (objTopSemanticExpression instanceof PhpUnset) {
+                            targetExpressions.add(objLastSemanticExpression);
+                            ++intCountWriteAccesses;
+                            continue;
                         }
 
                         intCountReadAccesses++;

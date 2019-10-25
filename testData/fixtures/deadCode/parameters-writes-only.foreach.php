@@ -1,14 +1,14 @@
 <?php
 
 function cases_holder() {
-    foreach ([] as $unused) {
-        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused[]</weak_warning> = '...';
-        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused['...']</weak_warning> = '...';
+    foreach ([] as $unused1) {
+        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused1[]</weak_warning> = '...';
+        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused1['...']</weak_warning> = '...';
     }
 
-    foreach ([] as $used) {
-        $used['...'] = '...';
-        unset($used['...']);
+    foreach ([] as $unused2) {
+        <weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused2['...']</weak_warning> = '...';
+        unset(<weak_warning descr="[EA] Parameter/variable is overridden, but is never used or appears outside of the scope.">$unused2['...']</weak_warning>);
     }
 }
 

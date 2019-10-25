@@ -201,33 +201,28 @@ public class OnlyWritesOnParameterInspector extends PhpInspection {
                         }
 
                         /* estimate operation type */
-                        if (
-                            objTopSemanticExpression instanceof AssignmentExpression &&
-                            ((AssignmentExpression) objTopSemanticExpression).getVariable() == objLastSemanticExpression
-                        ) {
-                            intCountWriteAccesses++;
-                            if (isReference) {
-                                /* when modifying the reference it's link READ and linked WRITE semantics */
-                                intCountReadAccesses++;
-                            } else {
-                                /* when modifying non non-reference, register as write only access for reporting */
-                                targetExpressions.add(objLastSemanticExpression);
+                        if (objTopSemanticExpression instanceof AssignmentExpression) {
+                            final AssignmentExpression assignment = (AssignmentExpression) objTopSemanticExpression;
+                            if (assignment.getVariable() == objLastSemanticExpression) {
+                                intCountWriteAccesses++;
+                                if (isReference) {
+                                    /* when modifying the reference it's link READ and linked WRITE semantics */
+                                    intCountReadAccesses++;
+                                } else {
+                                    /* when modifying non non-reference, register as write only access for reporting */
+                                    targetExpressions.add(objLastSemanticExpression);
+                                }
+                                continue;
                             }
-                            continue;
-                        }
-
-                        if (objTopSemanticExpression instanceof UnaryExpression) {
+                        } else if (objTopSemanticExpression instanceof UnaryExpression) {
                             final PsiElement operation = ((UnaryExpression) objTopSemanticExpression).getOperation();
-                            if (
-                                OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT) ||
-                                OpenapiTypesUtil.is(operation, PhpTokenTypes.opDECREMENT)
-                            ) {
+                            if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT) || OpenapiTypesUtil.is(operation, PhpTokenTypes.opDECREMENT)) {
                                 targetExpressions.add(objLastSemanticExpression);
-
                                 ++intCountWriteAccesses;
                                 continue;
                             }
                         }
+
                         intCountReadAccesses++;
                     }
                     /* ++/-- operations */

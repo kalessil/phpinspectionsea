@@ -37,3 +37,8 @@ https://rules.sonarsource.com/php/RSPEC-4423: insecure SSL versions
 Infinity loop: the arguments are not modified, the call can be nested somewhere
 
 Suspicious binary expressions: (!x &&) || x
+
+array_filter([], function ($value) { return $value != falsy-value; }); // unnecessary closure
+array_filter([], function ($value) { return $value === null; })
+array_reduce($array, 'array_merge', $init) // array_merge misused -> array_merge($init, ...$array)
+array_unique(array_filter([]) // needs to be swapped -> array_filter(array_unique([])

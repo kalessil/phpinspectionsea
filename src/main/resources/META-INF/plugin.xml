@@ -150,7 +150,7 @@
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.MissingLoopTerminationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="ArrayUniqueMissUseInspection    "              displayName="'array_unique(...)' misused"
+        shortName="ArrayUniqueMissUseInspection"                  displayName="'array_unique(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayUniqueMissUseInspector"/>
 

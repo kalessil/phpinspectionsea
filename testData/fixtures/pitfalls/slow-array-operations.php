@@ -28,4 +28,6 @@ function cases_holder($object) {
         $result = array_merge($result, $collection);
         return;
     }
+
+    array_reduce([$object], <error descr="[EA] 'array_merge(...)' is used in a loop and is a resources greedy construction.">'array_merge'</error>, []);
 }

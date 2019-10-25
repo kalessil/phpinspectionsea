@@ -13,11 +13,17 @@ function cases_holder() {
 }
 
 function false_positives_holder($object) {
-    $used = [];
+    $used1 = [];
+    $used2 = [];
+    $used3 = [];
     foreach ([] as $v) {
-        $used[] = '...';
+        $used1[] = '...';
+        $used2[] = '...';
+        $used3[] = '...';
     }
-    $object->property += $used;
+    $object->property += $used1;
+    $object['...'] += $used2;
+    $object['...']['...'] += $used2;
 
     foreach ([] as & $array) {
         $array[] = '...';

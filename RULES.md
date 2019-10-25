@@ -300,3 +300,4 @@ Inspections Lists (Performance)
 | Performance          | ArrayMapMissUseInspection                       | 'array_map(...)' misused                                                                          | yes | yes | yes  | no  |
 | Performance          | FileGetContentsMissUseInspection                | 'file_get_contents(...)' misused                                                                  | yes | yes | yes  | no  |
 | Performance          | MissingLoopTerminationInspection                | Missing loop termination                                                                          | yes | yes | yes  | no  |
+| Performance          | ArrayUniqueMissUseInspection                    | 'array_unique(...)' misused                                                                       | yes | yes | yes  | no  |

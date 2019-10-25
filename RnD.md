@@ -36,5 +36,3 @@ Suspicious binary expressions: (!x &&) || x
 Unnecessary closures:
 array_filter($_, function ($value) { return !empty($value); });
 array_filter($_, function ($value) { return $value != falsy-value; });
-
-array_filter(array_unique($_) // needs to be swapped -> array_unique(array_filter($_))

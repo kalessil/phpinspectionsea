@@ -20,4 +20,5 @@ function cases_holder($array) {
     array_map(function ($value) { return (array) $value; }, []);
 
     array_filter([], <weak_warning descr="[EA] The closure can be dropped (reduces cognitive load).">function ($value) { return $value != ''; }</weak_warning>);
+    array_filter([], <weak_warning descr="[EA] The closure can be dropped (reduces cognitive load).">function ($value) { return !empty($value); }</weak_warning>);
 }

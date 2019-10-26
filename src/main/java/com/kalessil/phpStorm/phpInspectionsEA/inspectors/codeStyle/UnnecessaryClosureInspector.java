@@ -98,10 +98,10 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                     } else if (candidate instanceof UnaryExpression) {
                                         final UnaryExpression unary = (UnaryExpression) candidate;
                                         final PsiElement operation  = unary.getOperation();
-                                        final PsiElement value      = unary.getValue();
-                                        if (operation != null && value instanceof Variable) {
+                                        if (operation != null) {
                                             final IElementType operator = operation.getNode().getElementType();
-                                            if (castingsMapping.containsKey(operator)) {
+                                            final PsiElement value      = unary.getValue();
+                                            if (value instanceof Variable && castingsMapping.containsKey(operator)) {
                                                 final String valueName = ((Variable) value).getName();
                                                 if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(valueName))) {
                                                     final String replacement = String.format("'%s'", castingsMapping.get(operator));
@@ -111,6 +111,18 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                             new UseCallbackFix(replacement)
                                                     );
+                                                }
+                                            } else if (value instanceof PhpEmpty && operation == PhpTokenTypes.opNOT) {
+                                                final PsiElement[] emptyArguments = ((PhpEmpty) value).getVariables();
+                                                if (emptyArguments.length == 1 && emptyArguments[0] instanceof Variable) {
+                                                    final String checkedName = ((Variable) emptyArguments[0]).getName();
+                                                    if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(checkedName))) {
+                                                        holder.registerProblem(
+                                                                expression,
+                                                                ReportingUtil.wrapReportedMessage(messageDrop),
+                                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                                        );
+                                                    }
                                                 }
                                             }
                                         }

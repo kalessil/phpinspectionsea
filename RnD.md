@@ -32,7 +32,3 @@ https://rules.sonarsource.com/php/RSPEC-4423: insecure SSL versions
     ? CURL_SSLVERSION_MAX_*
 
 Suspicious binary expressions: (!x &&) || x
-
-Unnecessary closures:
-array_filter($_, function ($value) { return !empty($value); });
-array_filter($_, function ($value) { return $value != falsy-value; });

@@ -29,7 +29,8 @@ import java.util.Map;
  */
 
 public class UnnecessaryClosureInspector extends PhpInspection {
-    private static final String messagePattern = "The closure can be replaced with %s (reduces cognitive load).";
+    private static final String messageString = "The closure can be replaced with %s (reduces cognitive load).";
+    private static final String messageDrop   = "The closure can be dropped (reduces cognitive load).";
 
     final private static Map<String, Integer> closurePositions     = new HashMap<>();
     final private static Map<IElementType, String> castingsMapping = new HashMap<>();
@@ -89,7 +90,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     expression,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                    String.format(ReportingUtil.wrapReportedMessage(messageString), replacement),
                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                     new UseCallbackFix(replacement)
                                             );
@@ -106,7 +107,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                     final String replacement = String.format("'%s'", castingsMapping.get(operator));
                                                     holder.registerProblem(
                                                             expression,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                            String.format(ReportingUtil.wrapReportedMessage(messageString), replacement),
                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                             new UseCallbackFix(replacement)
                                                     );
@@ -115,7 +116,8 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                         }
                                     } else if (candidate instanceof BinaryExpression) {
                                         final BinaryExpression binary = (BinaryExpression) candidate;
-                                        if (binary.getOperationType() == PhpTokenTypes.opIDENTICAL) {
+                                        final IElementType operation  = binary.getOperationType();
+                                        if (operation == PhpTokenTypes.opIDENTICAL) {
                                             PsiElement comparedValue = null;
                                             final PsiElement left    = binary.getLeftOperand();
                                             final PsiElement right   = binary.getRightOperand();
@@ -129,10 +131,31 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                 if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(comparedName))) {
                                                     holder.registerProblem(
                                                             expression,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), "'is_null'"),
+                                                            String.format(ReportingUtil.wrapReportedMessage(messageString), "'is_null'"),
                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                             new UseCallbackFix("'is_null'")
                                                     );
+                                                }
+                                            }
+                                        } else if (operation == PhpTokenTypes.opNOT_EQUAL) {
+                                            if (functionName.equals("array_filter")) {
+                                                PsiElement comparedValue = null;
+                                                final PsiElement left    = binary.getLeftOperand();
+                                                final PsiElement right   = binary.getRightOperand();
+                                                if (PhpLanguageUtil.isFalsyValue(right)) {
+                                                    comparedValue = left;
+                                                } else if (PhpLanguageUtil.isFalsyValue(left)) {
+                                                    comparedValue = right;
+                                                }
+                                                if (comparedValue instanceof Variable) {
+                                                    final String comparedName = ((Variable) comparedValue).getName();
+                                                    if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(comparedName))) {
+                                                        holder.registerProblem(
+                                                                expression,
+                                                                ReportingUtil.wrapReportedMessage(messageDrop),
+                                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                                        );
+                                                    }
                                                 }
                                             }
                                         }

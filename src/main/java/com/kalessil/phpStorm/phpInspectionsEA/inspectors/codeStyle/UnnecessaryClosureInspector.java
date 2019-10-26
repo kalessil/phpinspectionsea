@@ -112,7 +112,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                             new UseCallbackFix(replacement)
                                                     );
                                                 }
-                                            } else if (value instanceof PhpEmpty && operation == PhpTokenTypes.opNOT) {
+                                            } else if (value instanceof PhpEmpty && operator == PhpTokenTypes.opNOT) {
                                                 final PsiElement[] emptyArguments = ((PhpEmpty) value).getVariables();
                                                 if (emptyArguments.length == 1 && emptyArguments[0] instanceof Variable) {
                                                     final String checkedName = ((Variable) emptyArguments[0]).getName();

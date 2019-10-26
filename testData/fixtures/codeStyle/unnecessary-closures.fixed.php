@@ -18,4 +18,7 @@ function cases_holder($array) {
     array_map('strval', []);
     array_map(function ($value) { return (string) trim($value); }, []);
     array_map(function ($value) { return (array) $value; }, []);
+
+    array_filter([], function ($value) { return $value != ''; });
+    array_filter([], function ($value) { return !empty($value); });
 }

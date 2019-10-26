@@ -97,16 +97,20 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                     } else if (candidate instanceof UnaryExpression) {
                                         final UnaryExpression unary = (UnaryExpression) candidate;
                                         final PsiElement operation  = unary.getOperation();
-                                        if (operation != null && unary.getValue() instanceof Variable) {
+                                        final PsiElement value      = unary.getValue();
+                                        if (operation != null && value instanceof Variable) {
                                             final IElementType operator = operation.getNode().getElementType();
                                             if (castingsMapping.containsKey(operator)) {
-                                                final String replacement = String.format("'%s'", castingsMapping.get(operator));
-                                                holder.registerProblem(
-                                                        expression,
-                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
-                                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                        new UseCallbackFix(replacement)
-                                                );
+                                                final String valueName = ((Variable) value).getName();
+                                                if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(valueName))) {
+                                                    final String replacement = String.format("'%s'", castingsMapping.get(operator));
+                                                    holder.registerProblem(
+                                                            expression,
+                                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                            new UseCallbackFix(replacement)
+                                                    );
+                                                }
                                             }
                                         }
                                     } else if (candidate instanceof BinaryExpression) {

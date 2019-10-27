@@ -113,15 +113,17 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                     );
                                                 }
                                             } else if (value instanceof PhpEmpty && operator == PhpTokenTypes.opNOT) {
-                                                final PsiElement[] emptyArguments = ((PhpEmpty) value).getVariables();
-                                                if (emptyArguments.length == 1 && emptyArguments[0] instanceof Variable) {
-                                                    final String checkedName = ((Variable) emptyArguments[0]).getName();
-                                                    if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(checkedName))) {
-                                                        holder.registerProblem(
-                                                                expression,
-                                                                ReportingUtil.wrapReportedMessage(messageDrop),
-                                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                                                        );
+                                                if (functionName.equals("array_filter")) {
+                                                    final PsiElement[] emptyArguments = ((PhpEmpty) value).getVariables();
+                                                    if (emptyArguments.length == 1 && emptyArguments[0] instanceof Variable) {
+                                                        final String checkedName = ((Variable) emptyArguments[0]).getName();
+                                                        if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(checkedName))) {
+                                                            holder.registerProblem(
+                                                                    expression,
+                                                                    ReportingUtil.wrapReportedMessage(messageDrop),
+                                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                                            );
+                                                        }
                                                     }
                                                 }
                                             }

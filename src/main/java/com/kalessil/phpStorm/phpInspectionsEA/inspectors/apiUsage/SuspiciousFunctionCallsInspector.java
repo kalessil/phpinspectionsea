@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -24,7 +25,7 @@ import java.util.Set;
  */
 
 public class SuspiciousFunctionCallsInspector extends PhpInspection {
-    private static final String message = "This call compares the same string with itself, this can not be right.";
+    private static final String message = "Identical arguments has been dispatched to this call, this can not be right.";
 
     private static final Set<String> targetFunctions = new HashSet<>();
     static {
@@ -36,6 +37,10 @@ public class SuspiciousFunctionCallsInspector extends PhpInspection {
         targetFunctions.add("strnatcasecmp");
         targetFunctions.add("substr_compare");
         targetFunctions.add("hash_equals");
+        targetFunctions.add("array_merge");
+        targetFunctions.add("array_merge_recursive");
+        targetFunctions.add("array_replace");
+        targetFunctions.add("array_replace_recursive");
     }
 
     @NotNull
@@ -53,7 +58,7 @@ public class SuspiciousFunctionCallsInspector extends PhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new GenericPhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
@@ -61,14 +66,22 @@ public class SuspiciousFunctionCallsInspector extends PhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && targetFunctions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length >= 2 && arguments[0] != null && arguments[1] != null) {
-                        final boolean isTarget = OpenapiEquivalenceUtil.areEqual(arguments[0], arguments[1]);
-                        if (isTarget) {
-                            holder.registerProblem(
-                                    reference,
-                                    ReportingUtil.wrapReportedMessage(message)
-                            );
+                    if (arguments.length > 1) {
+                        final Set<PsiElement> processed = new HashSet<>();
+                        iterate:
+                        for (final PsiElement argument : arguments) {
+                            processed.add(argument);
+                            for (final PsiElement candidate : arguments) {
+                                if (! processed.contains(candidate) && OpenapiEquivalenceUtil.areEqual(argument, candidate)) {
+                                    holder.registerProblem(
+                                            reference,
+                                            ReportingUtil.wrapReportedMessage(message)
+                                    );
+                                    break iterate;
+                                }
+                            }
                         }
+                        processed.clear();
                     }
                 }
             }

@@ -217,7 +217,8 @@ final public class MultipleValuesEqualityInBinaryStrategy {
     private static List<BinaryExpression> extractFragments(@NotNull BinaryExpression binary, @Nullable IElementType operator) {
         /* extract only binary expressions, ignore other condition parts */
         final List<BinaryExpression> result = new ArrayList<>();
-        if (binary.getOperationType() == operator) {
+        final IElementType binaryOperator   = binary.getOperationType();
+        if (binaryOperator == operator) {
             Stream.of(binary.getLeftOperand(), binary.getRightOperand())
                     .map(ExpressionSemanticUtil::getExpressionTroughParenthesis)
                     .forEach(expression -> {
@@ -226,7 +227,14 @@ final public class MultipleValuesEqualityInBinaryStrategy {
                         }
                     });
         } else {
-            result.add(binary);
+            if (operator == PhpTokenTypes.opOR && binaryOperator == PhpTokenTypes.opAND) {
+                final PsiElement left = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
+                if (left instanceof BinaryExpression) {
+                    result.add((BinaryExpression) left);
+                }
+            } else {
+                result.add(binary);
+            }
         }
         return result;
     }

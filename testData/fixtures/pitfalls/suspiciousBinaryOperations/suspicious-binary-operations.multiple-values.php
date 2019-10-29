@@ -11,6 +11,11 @@
     if ($x == 5 && <error descr="[EA] '$x != 6' seems to have no effect due to '$x == 5'.">$x != 6</error>) {}
 
     /* logical operands and multi-value edge-cases */
+    if (($x != 5 && $whatever) || <error descr="[EA] '$x != 5 || $x != 6' seems to be always true.">$x != 6</error>) {}
+    if (($x != 5 && $whatever) || <error descr="[EA] '$x != 5 || $x !== 6' seems to be always true.">$x !== 6</error>) {}
+    if (($x !== 5 && $whatever) || <error descr="[EA] '$x !== 5 || $x !== 6' seems to be always true.">$x !== 6</error>) {}
+    if ((<error descr="[EA] '$x == 5' seems to have no effect due to '$x != 6'.">$x == 5</error> && $whatever) || $x != 6) {}
+
     if ($x == 5 && <error descr="[EA] '$x == 5' seems to have no effect due to '$x == 5'.">$x == 5</error>) {}
     if ($x != 5 || <error descr="[EA] '$x != 5' seems to have no effect due to '$x != 5'.">$x != 5</error>) {}
     if ($x == 5 || <error descr="[EA] '$x == 5 || $x != 5' seems to be always true.">$x != 5</error>) {}

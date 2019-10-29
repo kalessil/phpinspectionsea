@@ -30,5 +30,3 @@ https://rules.sonarsource.com/php/RSPEC-4423: insecure SSL versions
     ? STREAM_CRYPTO_PROTO_SSLv3
     
     ? CURL_SSLVERSION_MAX_*
-
-Suspicious binary expressions: (!x &&) || x

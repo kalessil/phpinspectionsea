@@ -9,8 +9,11 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -47,18 +50,25 @@ public class ImplodeArgumentsOrderInspector extends PhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("implode")) {
                     final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length == 2 && arguments[1] instanceof StringLiteralExpression) {
-                        final String replacement = String.format(
-                                "%simplode(%s, %s)",
-                                reference.getImmediateNamespaceName(),
-                                arguments[1].getText(),
-                                arguments[0].getText()
-                        );
-                        holder.registerProblem(
-                                reference,
-                                ReportingUtil.wrapReportedMessage(message),
-                                new ReorderArgumentsFixer(replacement)
-                        );
+                    if (arguments.length == 2) {
+                        final Set<PsiElement> candidates = PossibleValuesDiscoveryUtil.discover(arguments[1]);
+                        if (candidates.size() == 1) {
+                            final PsiElement candidate = candidates.iterator().next();
+                            if (candidate instanceof StringLiteralExpression) {
+                                final String replacement = String.format(
+                                        "%simplode(%s, %s)",
+                                        reference.getImmediateNamespaceName(),
+                                        arguments[1].getText(),
+                                        arguments[0].getText()
+                                );
+                                holder.registerProblem(
+                                        reference,
+                                        ReportingUtil.wrapReportedMessage(message),
+                                        new ReorderArgumentsFixer(replacement)
+                                );
+                            }
+                        }
+                        candidates.clear();
                     }
                 }
             }

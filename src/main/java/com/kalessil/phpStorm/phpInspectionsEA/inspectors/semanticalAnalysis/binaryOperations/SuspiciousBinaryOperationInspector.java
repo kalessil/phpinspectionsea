@@ -65,6 +65,7 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));
                 /* constant conditions */
                 callbacks.add(() -> MultipleFalsyValuesCheckStrategy.apply(expression, holder));
+                callbacks.add(() -> SimplifyBooleansComparisonStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInBinaryStrategy.apply(expression, holder));
                 callbacks.add(() -> MultipleValuesEqualityInIfBodyStrategy.apply(expression, holder));
                 if (VERIFY_CONSTANTS_VALUES_CHECKS) {
@@ -73,7 +74,6 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 }
                 callbacks.add(() -> ConstantConditionsCountCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> TypesIntersectionStrategy.apply(expression, holder));
-                callbacks.add(() -> SimplifyBooleansComparisonStrategy.apply(expression, holder));
                 /* generic cases */
                 if (VERIFY_CONSTANTS_IN_CONDITIONS) {
                     callbacks.add(() -> HardcodedConstantValuesStrategy.apply(expression, holder));

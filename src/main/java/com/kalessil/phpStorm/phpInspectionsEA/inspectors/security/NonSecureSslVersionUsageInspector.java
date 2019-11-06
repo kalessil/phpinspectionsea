@@ -21,8 +21,8 @@ import java.util.Set;
  */
 
 public class NonSecureSslVersionUsageInspector extends PhpInspection {
-    private static final String messageSsl = "This SSL version is a weak one, please consider using newer version instead.";
-    private static final String messageTls = "This TLS version is a weak one, please consider using newer version instead.";
+    private static final String messageSsl = "This SSL version is weak, please consider using newer one.";
+    private static final String messageTls = "This TLS version is weak, please consider using newer one.";
 
     private static final Set<String> sslConstants = new HashSet<>();
     private static final Set<String> tlsConstants = new HashSet<>();

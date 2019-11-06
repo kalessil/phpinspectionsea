@@ -23,7 +23,7 @@ parse_url/pathinfo(...) + accessing only single element of the result:
         * query     -> PHP_URL_QUERY
         * fragment  -> PHP_URL_FRAGMENT    
     pathinfo
-        * dirname   -> PATHINFO_DIRNAME,
-        * basename  -> PATHINFO_BASENAME,
-        * extension -> PATHINFO_EXTENSION and
+        * dirname   -> PATHINFO_DIRNAME
+        * basename  -> PATHINFO_BASENAME
+        * extension -> PATHINFO_EXTENSION
         * filename  -> PATHINFO_FILENAME

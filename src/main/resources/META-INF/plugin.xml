@@ -659,6 +659,10 @@
          shortName="WeakRsaKeyGenerationInspection"                displayName="Insufficient RSA key length"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.WeakRsaKeyGenerationInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+         shortName="NonSecureSslVersionUsageInspection"            displayName="Insecure SSL/TLS version usage"
+         groupName="Security"                                      enabledByDefault="true" level="WARNING"
+         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureSslVersionUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

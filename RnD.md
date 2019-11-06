@@ -4,10 +4,11 @@ Loops:
     'array_column()':                           loop + index access
     'array_sum()':                              loop + summing up
     'array_product()':                          loop + multiplication
-    'implode()':                                loop + concatenation
     'array_filter()':                           loop + if + pushing to array
     'array_map()':                              loop + transforming value
+    'array_flip()':                             loop + swapping key-value pairs
     'in_array()/array_search()':                loop + comparison + break
+    'implode()':                                loop + concatenation
 
 // evaluate if parse_url() misused and can be narrowed down to
 parse_url(..., CONSTANT-HERE)

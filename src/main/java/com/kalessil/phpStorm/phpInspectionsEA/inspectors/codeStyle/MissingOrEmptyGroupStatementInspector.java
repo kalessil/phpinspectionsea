@@ -78,27 +78,26 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
                 this.checkBrackets(doWhileStatement);
             }
 
-            private void checkBrackets(@NotNull PhpPsiElement construct) {
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(construct);
+            private void checkBrackets(@NotNull PhpPsiElement expression) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
                 if (body != null) {
                     if (REPORT_EMPTY_BODY && ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
                         holder.registerProblem(
-                                construct.getFirstChild(),
+                                expression.getFirstChild(),
                                 ReportingUtil.wrapReportedMessage(messageEmptyBody)
                         );
                     }
-                    return;
+                } else {
+                    /* community feedback: do not report "else if" constructions */
+                    final boolean isElseIfCase = expression instanceof Else && expression.getLastChild() instanceof If;
+                    if (! isElseIfCase) {
+                        holder.registerProblem(
+                                expression.getFirstChild(),
+                                ReportingUtil.wrapReportedMessage(messageMissingBrackets),
+                                new WrapBodyFix()
+                        );
+                    }
                 }
-                /* community feedback: do not report "else if" constructions */
-                else if (construct instanceof Else && construct.getLastChild() instanceof If) {
-                    return;
-                }
-
-                holder.registerProblem(
-                        construct.getFirstChild(),
-                        ReportingUtil.wrapReportedMessage(messageMissingBrackets),
-                        new WrapBodyFix()
-                );
             }
         };
     }
@@ -135,8 +134,7 @@ public class MissingOrEmptyGroupStatementInspector extends BasePhpInspection {
 
             if (target != null && !project.isDisposed()) {
                 final String code        = String.format("if() { %s }", target.getText());
-                final If donor           = PhpPsiElementFactory.createPhpPsiFromText(project, If.class, code);
-                final PsiElement implant = donor.getStatement();
+                final PsiElement implant = PhpPsiElementFactory.createPhpPsiFromText(project, If.class, code).getStatement();
                 if (implant != null) {
                     target.replace(implant);
                 }

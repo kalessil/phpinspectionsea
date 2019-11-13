@@ -57,15 +57,15 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 final String methodName = reference.getName();
-                if (methodName != null && !methodName.startsWith("static") /* workaround for WI-33569 */) {
+                if (methodName != null && ! reference.isStatic() && ! methodName.startsWith("static") /* workaround for WI-33569 */) {
                     final PsiElement base = reference.getFirstChild();
-                    if (base != null && !(base instanceof FunctionReference)) {
+                    if (base != null && ! (base instanceof FunctionReference)) {
                         final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
                         if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
                             if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
                                 /* $this->static() */
                                 final Function scope = ExpressionSemanticUtil.getScope(reference);
-                                if (scope instanceof Method && !((Method) scope).isStatic()) {
+                                if (scope instanceof Method && ! ((Method) scope).isStatic()) {
                                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                                     if (resolved instanceof Method) {
                                         final Method method = (Method) resolved;
@@ -76,7 +76,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                                 }
                             } else {
                                 /* <expression>->static() */
-                                if (!(base instanceof Variable) || !this.isParameterOrUseVariable((Variable) base)) {
+                                if (! (base instanceof Variable) || ! this.isParameterOrUseVariable((Variable) base)) {
                                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                                     if (resolved instanceof Method && ((Method) resolved).isStatic()) {
                                         holder.registerProblem(
@@ -92,25 +92,22 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
             }
 
             private boolean isParameterOrUseVariable(@NotNull Variable variable) {
+                boolean result    = false;
                 final String name = variable.getName();
-                if (!name.isEmpty()) {
+                if (! name.isEmpty()) {
                     final Function scope = ExpressionSemanticUtil.getScope(variable);
                     if (scope != null) {
-                        if (Stream.of(scope.getParameters()).anyMatch(p -> name.equals(p.getName()))) {
-                            return true;
-                        }
-
-                        final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(scope);
-                        if (variables != null) {
-                            if (variables.stream().anyMatch(v -> name.equals(v.getName()))) {
+                        result = Stream.of(scope.getParameters()).anyMatch(p -> name.equals(p.getName()));
+                        if (! result) {
+                            final List<Variable> variables = ExpressionSemanticUtil.getUseListVariables(scope);
+                            if (variables != null && ! variables.isEmpty()) {
+                                result = variables.stream().anyMatch(v -> name.equals(v.getName()));
                                 variables.clear();
-                                return true;
                             }
-                            variables.clear();
                         }
                     }
                 }
-                return false;
+                return result;
             }
 
             private void handleLateStaticBinding(@NotNull PsiElement base, @NotNull PsiElement operator, @NotNull Method method) {

@@ -49,21 +49,18 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(statement, StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE)) { return; }
 
                 final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
-                if (!isBlade && statement.getChildren().length == 0) {
+                if (! isBlade && statement.getChildren().length == 0) {
                     final PsiElement parent = statement.getParent();
-                    if (
-                        parent instanceof If || parent instanceof ElseIf || parent instanceof Else ||
-                        OpenapiTypesUtil.isLoop(parent) ||
-                        OpenapiTypesUtil.is(parent.getFirstChild(), PhpTokenTypes.kwDECLARE)
-                    ) {
-                        return;
+                    final boolean skip      = parent instanceof If || parent instanceof ElseIf || parent instanceof Else ||
+                                              OpenapiTypesUtil.isLoop(parent) ||
+                                              OpenapiTypesUtil.is(parent.getFirstChild(), PhpTokenTypes.kwDECLARE);
+                    if (! skip) {
+                        holder.registerProblem(
+                                statement,
+                                ReportingUtil.wrapReportedMessage(message),
+                                new DropUnnecessarySemicolonFix()
+                        );
                     }
-
-                    holder.registerProblem(
-                            statement,
-                            ReportingUtil.wrapReportedMessage(message),
-                            new DropUnnecessarySemicolonFix()
-                    );
                 }
             }
 
@@ -71,7 +68,7 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
             public void visitPhpEchoStatement(@NotNull PhpEchoStatement echo) {
                 if (this.shouldSkipAnalysis(echo, StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE)) { return; }
 
-                if (!OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {
+                if (! OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {
                     final PsiElement last = echo.getLastChild();
                     if (OpenapiTypesUtil.is(last, PhpTokenTypes.opSEMICOLON)) {
                         holder.registerProblem(

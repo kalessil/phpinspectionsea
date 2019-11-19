@@ -76,7 +76,7 @@ final public class LicenseService {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final String latest = "ea-ultimate-20190515-1255";
+        final String latest = "ea-ultimate-20191119-0854";
         final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath().toAbsolutePath();
         final String path   = location.toString();
         if (!Files.exists(location)) {

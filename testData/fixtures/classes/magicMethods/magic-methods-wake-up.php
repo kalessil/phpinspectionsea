@@ -10,7 +10,7 @@ class ClassWithStaticMethods extends MissingClass {
     }
 }
 class ClassWithPrivateMethods extends MissingClass {
-    private function <error descr="[EA] __wakeup must be public.">__wakeup</error>() {
+    private function __wakeup() {
     }
 }
 class ClassWithParametrizedMethods extends MissingClass {

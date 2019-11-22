@@ -51,7 +51,7 @@ public class UnnecessaryVariableOverridesInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(assignment, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 final PsiElement parent = assignment.getParent();
-                if (OpenapiTypesUtil.isStatementImpl(parent)) {
+                if ( !OpenapiTypesUtil.isAssignmentByReference(assignment) && OpenapiTypesUtil.isStatementImpl(parent)) {
                     final PsiElement variable = assignment.getVariable();
                     if (variable instanceof Variable) {
                         /* find the override source, incl. via nested calls */

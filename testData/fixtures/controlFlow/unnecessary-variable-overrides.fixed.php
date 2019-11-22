@@ -12,4 +12,8 @@ function cases_holder() {
     /* false-positive: 2 and more parameters */
     $d = '';
     $d = str_replace('search', 'replace', $d);
+
+    /* false-positive: assignment by reference */
+    $e = &[];
+    $e = array_pop($e);
 }

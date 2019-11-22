@@ -77,13 +77,13 @@ Inspections Lists (Code style)
 ---
 | Group                | Short Name                                      | Full Name                                              | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :----------------------------------------------------- | --: | --: | ---: | --: |
-| Code Style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                              | yes | yes | yes  | no  |
-| Code Style           | MissingOrEmptyGroupStatementInspection          | Missing or empty conditionals group statement          | yes | yes | yes  | no  |
+| Code Style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                              | yes | yes | yes  | n/a |
+| Code Style           | MissingOrEmptyGroupStatementInspection          | Missing or empty conditionals group statement          | yes | yes | yes  | n/a |
 | Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                      | yes | yes | yes  | yes |
 | Code Style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                    | yes | yes | yes  | no  |
-| Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                     | yes | yes | yes  | no  |
-| Code Style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                    | yes | yes | yes  | no  |
-| Code Style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                                  | yes | yes | yes  | no  |
+| Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                     | yes | yes | yes  | n/a |
+| Code Style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                    | yes | yes | yes  | n/a |
+| Code Style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                                  | yes | yes | yes  | n/a |
 | Code Style           | UnnecessaryUseAliasInspection                   | Unnecessary use aliases                                | yes | yes | yes  | no  |
 | Code Style           | NestedNotOperatorsInspection                    | Nested not operators usage                             | yes | yes | yes  | no  |
 | Code Style           | IncrementDecrementOperationEquivalentInspection | Increment/decrement operation equivalent               | yes | yes | yes  | no  |

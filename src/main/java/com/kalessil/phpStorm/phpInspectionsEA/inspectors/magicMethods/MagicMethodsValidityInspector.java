@@ -152,7 +152,6 @@ public class MagicMethodsValidityInspector extends PhpInspection {
                         break;
                     case "__wakeup":
                         CanNotBeStaticStrategy.apply(method, holder);
-                        MustBePublicStrategy.apply(method, holder);
                         CanNotTakeArgumentsStrategy.apply(method, holder);
                         CanNotReturnTypeStrategy.apply(method, holder);
                         break;

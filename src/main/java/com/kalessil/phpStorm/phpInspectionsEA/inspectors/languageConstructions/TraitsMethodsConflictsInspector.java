@@ -77,9 +77,12 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                 for (final PsiElement child : clazz.getChildren()) {
                     if (child instanceof PhpUseList) {
                         for (final ClassReference reference : PsiTreeUtil.findChildrenOfType(child, ClassReference.class)) {
-                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                            if (resolved instanceof PhpClass) {
-                                traits.put((PhpClass) resolved, reference);
+                            final PsiElement context = reference.getParent();
+                            if (context instanceof PhpUse) {
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                if (resolved instanceof PhpClass) {
+                                    traits.put((PhpClass) resolved, reference);
+                                }
                             }
                         }
                     }

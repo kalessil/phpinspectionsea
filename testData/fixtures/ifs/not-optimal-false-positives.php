@@ -8,6 +8,7 @@ $in = [];
 if (is_array_indexed($in) && is_array($in[0])) {}
 
 /* interconnected statements: assigned variable case */
+if (($count = $counter->count()) && $count) {}
 if (($count = $counter->count()) && $count > 0) {}
 if (($count = $i = $counter->count()) && $count > 0) {}
 

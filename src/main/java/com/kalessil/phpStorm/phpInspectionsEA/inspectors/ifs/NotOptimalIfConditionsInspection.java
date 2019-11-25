@@ -107,7 +107,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                 }
 
-                for (ElseIf objElseIf : ifStatement.getElseIfBranches()) {
+                for (final ElseIf objElseIf : ifStatement.getElseIfBranches()) {
                     objConditionsFromStatement = this.inspectExpressionsOrder(objElseIf.getCondition(), arrOperationHolder);
                     if (objConditionsFromStatement != null) {
                         objAllConditions.addAll(objConditionsFromStatement);

@@ -62,6 +62,7 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                                 final PsiElement classCandidate = ExpressionSemanticUtil.getBlockScope(method);
                                 if (classCandidate instanceof PhpClass) {
                                     if (traitsMethods.containsKey(methodName)) {
+                                        /* this verification is not 1-to-1 with what PHP does, but good enough fo our purposes */
                                         final String origin    = traitsMethods.get(methodName).getFQN();
                                         final boolean isSolved = skipList.contains(method.getFQN()) || skipList.contains(origin + '.' + methodName);
                                         if (!isSolved) {

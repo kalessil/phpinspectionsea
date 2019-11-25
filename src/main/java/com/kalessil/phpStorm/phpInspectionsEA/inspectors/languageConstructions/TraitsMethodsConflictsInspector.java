@@ -62,12 +62,12 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                                 final PsiElement classCandidate = ExpressionSemanticUtil.getBlockScope(method);
                                 if (classCandidate instanceof PhpClass) {
                                     if (traitsMethods.containsKey(methodName)) {
-                                        final boolean isSolved = skipList.contains(method.getFQN()) ||
-                                                                 skipList.contains(traitsMethods.get(methodName).getFQN() + '.' + methodName);
-                                        if (! isSolved) {
+                                        final String origin    = traitsMethods.get(methodName).getFQN();
+                                        final boolean isSolved = skipList.contains(method.getFQN()) || skipList.contains(origin + '.' + methodName);
+                                        if (!isSolved) {
                                             holder.registerProblem(
                                                     pair.getValue(),
-                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), methodName, traitsMethods.get(methodName).getFQN())
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), methodName, origin)
                                             );
                                         }
                                     }

@@ -54,7 +54,8 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                             .collect(Collectors.toSet());
                     final Map<String, PhpClass> traitsMethods = new HashMap<>();
                     for (final Map.Entry<PhpClass, ClassReference> pair : this.extractTraits(clazz).entrySet()) {
-                        for (final Method method : pair.getKey().getOwnMethods()) {
+                        final PhpClass currentClass = pair.getKey();
+                        for (final Method method : currentClass.getOwnMethods()) {
                             final String methodName = method.getName();
                             if (! classMethods.contains(methodName) && ! method.isAbstract()) {
                                 final PsiElement classCandidate = ExpressionSemanticUtil.getBlockScope(method);
@@ -65,7 +66,7 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                                                 String.format(ReportingUtil.wrapReportedMessage(messagePattern), methodName, traitsMethods.get(methodName).getFQN())
                                         );
                                     }
-                                    traitsMethods.putIfAbsent(methodName, pair.getKey());
+                                    traitsMethods.putIfAbsent(methodName, currentClass);
                                 }
                             }
                         }

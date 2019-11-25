@@ -61,11 +61,15 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                             if (! classMethods.contains(methodName) && ! method.isAbstract()) {
                                 final PsiElement classCandidate = ExpressionSemanticUtil.getBlockScope(method);
                                 if (classCandidate instanceof PhpClass) {
-                                    if (! skipList.contains(method.getFQN()) && traitsMethods.containsKey(methodName)) {
-                                        holder.registerProblem(
-                                                pair.getValue(),
-                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), methodName, traitsMethods.get(methodName).getFQN())
-                                        );
+                                    if (traitsMethods.containsKey(methodName)) {
+                                        final boolean isSolved = skipList.contains(method.getFQN()) ||
+                                                                 skipList.contains(traitsMethods.get(methodName).getFQN() + '.' + methodName);
+                                        if (! isSolved) {
+                                            holder.registerProblem(
+                                                    pair.getValue(),
+                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), methodName, traitsMethods.get(methodName).getFQN())
+                                            );
+                                        }
                                     }
                                     traitsMethods.putIfAbsent(methodName, currentClass);
                                 }
@@ -86,22 +90,11 @@ public class TraitsMethodsConflictsInspector extends PhpInspection {
                     if (child instanceof PhpUseList) {
                         for (final PhpTraitUseRule rule : PsiTreeUtil.findChildrenOfType(child, PhpTraitUseRule.class)) {
                             final PsiElement[] arguments = rule.getChildren();
-                            if (arguments.length == 1) {
+                            if (arguments.length > 0) {
                                 if (arguments[0] instanceof MethodReference) {
                                     final PsiElement resolved = OpenapiResolveUtil.resolveReference((MethodReference) arguments[0]);
-                                    if (resolved instanceof MethodReference) {
-                                        solved.add(((MethodReference) resolved).getFQN());
-                                    }
-                                }
-                            } else if (arguments.length == 2) {
-                                if (arguments[0] instanceof MethodReference && arguments[1] instanceof ClassReference) {
-                                    final String methodName   = ((MethodReference) arguments[0]).getName();
-                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) arguments[1]);
-                                    if (resolved instanceof PhpClass && methodName != null) {
-                                        final Method method = OpenapiResolveUtil.resolveMethod((PhpClass) resolved, methodName);
-                                        if (method != null) {
-                                            solved.add(method.getFQN());
-                                        }
+                                    if (resolved instanceof Method) {
+                                        solved.add(((Method) resolved).getFQN());
                                     }
                                 }
                             }

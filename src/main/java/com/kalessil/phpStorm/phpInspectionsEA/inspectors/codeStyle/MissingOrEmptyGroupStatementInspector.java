@@ -94,23 +94,26 @@ public class MissingOrEmptyGroupStatementInspector extends PhpInspection {
             }
 
             private void checkBrackets(@NotNull PhpPsiElement expression) {
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
-                if (body != null) {
-                    if (REPORT_EMPTY_BODY && ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
-                        holder.registerProblem(
-                                expression.getFirstChild(),
-                                ReportingUtil.wrapReportedMessage(messageEmptyBody)
-                        );
-                    }
-                } else {
-                    /* community feedback: do not report "else if" constructions */
-                    final boolean isElseIfCase = expression instanceof Else && expression.getLastChild() instanceof If;
-                    if (! isElseIfCase) {
-                        holder.registerProblem(
-                                expression.getFirstChild(),
-                                ReportingUtil.wrapReportedMessage(messageMissingBrackets),
-                                new WrapBodyFix()
-                        );
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
+                    if (body != null) {
+                        if (REPORT_EMPTY_BODY && ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
+                            holder.registerProblem(
+                                    expression.getFirstChild(),
+                                    ReportingUtil.wrapReportedMessage(messageEmptyBody)
+                            );
+                        }
+                    } else {
+                        /* community feedback: do not report "else if" constructions */
+                        final boolean isElseIfCase = expression instanceof Else && expression.getLastChild() instanceof If;
+                        if (!isElseIfCase) {
+                            holder.registerProblem(
+                                    expression.getFirstChild(),
+                                    ReportingUtil.wrapReportedMessage(messageMissingBrackets),
+                                    new WrapBodyFix()
+                            );
+                        }
                     }
                 }
             }

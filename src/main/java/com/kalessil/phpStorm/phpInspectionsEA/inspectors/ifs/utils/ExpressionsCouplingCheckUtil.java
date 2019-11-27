@@ -10,6 +10,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final public class ExpressionsCouplingCheckUtil {
     public static boolean isSecondCoupledWithFirst(@NotNull PsiElement first, @NotNull PsiElement second) {
         boolean isCoupled = false;
@@ -35,8 +44,12 @@ final public class ExpressionsCouplingCheckUtil {
             if (!expressionsInFirst.isEmpty()) {
                 /* now find containers usage, we can perform same class search multiple time - perhaps improvements possible */
                 for (final PsiElement expression : expressionsInFirst) {
-                    final Collection<PsiElement> findings = PsiTreeUtil.findChildrenOfType(second, expression.getClass());
-                    if (!findings.isEmpty()) {
+                    final Class<? extends PsiElement> clazz = expression.getClass();
+                    final Collection<PsiElement> findings   = PsiTreeUtil.findChildrenOfType(second, clazz);
+                    if (second.getClass() == clazz) {
+                        findings.add(second);
+                    }
+                    if (! findings.isEmpty()) {
                         for (final PsiElement subject : findings) {
                             if (OpenapiEquivalenceUtil.areEqual(subject, expression)) {
                                 isCoupled = true;

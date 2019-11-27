@@ -3,15 +3,18 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -88,7 +91,53 @@ public class UriPartExtractionInspector extends PhpInspection {
                                 }
                             }
                         } else if (context instanceof AssignmentExpression) {
+                            final AssignmentExpression assignment = (AssignmentExpression) context;
+                            if (OpenapiTypesUtil.isAssignment(assignment)) {
+                                final PsiElement container = assignment.getVariable();
+                                if (container instanceof Variable) {
+                                    final Function scope = ExpressionSemanticUtil.getScope(reference);
+                                    if (scope != null) {
+                                        final String variableName            = ((Variable) container).getName();
+                                        final Collection<Variable> variables = PsiTreeUtil.findChildrenOfType(ExpressionSemanticUtil.getGroupStatement(scope), Variable.class).stream()
+                                                .filter(v -> v != container && variableName.equals(v.getName()))
+                                                .collect(Collectors.toList());
+                                        if (! variables.isEmpty() && variables.stream().allMatch(v -> v.getParent() instanceof ArrayAccessExpression)) {
+                                            final Set<String> indexes = new HashSet<>();
+                                            for (final Variable variable : variables) {
+                                                final ArrayIndex index = ((ArrayAccessExpression) variable.getParent()).getIndex();
+                                                if (index != null) {
+                                                    final PsiElement indexExpression = index.getValue();
+                                                    if (indexExpression instanceof StringLiteralExpression) {
+                                                        indexes.add(((StringLiteralExpression) indexExpression).getContents());
+                                                        continue;
+                                                    }
+                                                }
 
+                                                indexes.clear();
+                                                break;
+                                            }
+                                            if (indexes.size() == 1) {
+                                                final String indexContent = indexes.iterator().next();
+                                                if (mapping.containsKey(indexContent)) {
+                                                    final String replacement = String.format(
+                                                            "%s%s(%s, %s)",
+                                                            reference.getImmediateNamespaceName(),
+                                                            functionName,
+                                                            arguments[0].getText(),
+                                                            mapping.get(indexContent)
+                                                    );
+                                                    holder.registerProblem(
+                                                            reference,
+                                                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement))
+                                                    );
+                                                }
+                                            }
+                                            indexes.clear();
+                                            variables.clear();
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

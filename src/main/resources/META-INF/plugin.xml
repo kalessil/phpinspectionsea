@@ -295,6 +295,10 @@
         shortName="ExplodeLimitUsageInspection"                   displayName="'explode(...)' limit can be used"
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ExplodeLimitUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="UriPartExtractionInspection"                   displayName="URI parts extraction"
+        groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.UriPartExtractionInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

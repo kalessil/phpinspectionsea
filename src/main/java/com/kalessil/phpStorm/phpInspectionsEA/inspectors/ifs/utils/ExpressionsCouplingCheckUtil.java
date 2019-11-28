@@ -4,8 +4,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,9 +23,9 @@ import java.util.Set;
 
 final public class ExpressionsCouplingCheckUtil {
     private static Set<PsiElement> extractPotentiallyMutatedExpressions(@NotNull PsiElement expression) {
-        final Set<PsiElement> mutatable                    = new HashSet<>();
+        final Set<PsiElement> mutatable = new HashSet<>();
+        /* case 1: from assignments */
         final Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(expression, AssignmentExpression.class);
-        /* the util will return an empty collection when searching inside assignment, dealing with this */
         if (expression instanceof AssignmentExpression) {
             assignments.add((AssignmentExpression) expression);
         }
@@ -37,6 +39,29 @@ final public class ExpressionsCouplingCheckUtil {
                 }
             }
             assignments.clear();
+        }
+        /* case 2: from parameters by reference */
+        final Collection<FunctionReference> calls = PsiTreeUtil.findChildrenOfType(expression, FunctionReference.class);
+        if (expression instanceof FunctionReference) {
+            calls.add((FunctionReference) expression);
+        }
+        if (! calls.isEmpty()) {
+            for (final FunctionReference reference: calls) {
+                final PsiElement[] arguments = reference.getParameters();
+                if (arguments.length > 0 && Arrays.stream(arguments).anyMatch(a -> a instanceof Variable)) {
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                    if (resolved instanceof Function) {
+                        final Parameter[] parameters = ((Function) resolved).getParameters();
+                        final int limit              = Math.min(arguments.length, parameters.length);
+                        for (int position = 0; position < limit ; ++position) {
+                            if (arguments[position] instanceof Variable && parameters[position].isPassByRef()) {
+                                mutatable.add(arguments[position]);
+                            }
+                        }
+                    }
+                }
+            }
+            calls.clear();
         }
         return mutatable;
     }

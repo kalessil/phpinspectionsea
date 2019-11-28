@@ -20,31 +20,35 @@ import java.util.Set;
  */
 
 final public class ExpressionsCouplingCheckUtil {
+    private static Set<PsiElement> extractPotentiallyMutatedExpressions(@NotNull PsiElement expression) {
+        final Set<PsiElement> mutatable                    = new HashSet<>();
+        final Collection<AssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(expression, AssignmentExpression.class);
+        /* the util will return an empty collection when searching inside assignment, dealing with this */
+        if (expression instanceof AssignmentExpression) {
+            assignments.add((AssignmentExpression) expression);
+        }
+        if (! assignments.isEmpty()) {
+            /* extract all containers */
+            for (final AssignmentExpression assignment : assignments) {
+                if (assignment instanceof MultiassignmentExpression) {
+                    mutatable.addAll(((MultiassignmentExpression) assignment).getVariables());
+                } else {
+                    mutatable.add(assignment.getVariable());
+                }
+            }
+            assignments.clear();
+        }
+        return mutatable;
+    }
+
     public static boolean isSecondCoupledWithFirst(@NotNull PsiElement first, @NotNull PsiElement second) {
         boolean isCoupled = false;
 
         /* Scenario 1: 1st expression contains assignment */
-        final Set<PsiElement> expressionsInFirst      = new HashSet<>();
-        final Collection<AssignmentExpression> assign = PsiTreeUtil.findChildrenOfType(first, AssignmentExpression.class);
-        /* the util will return an empty collection when searching inside assignment, dealing with this */
-        if (first instanceof AssignmentExpression) {
-            assign.add((AssignmentExpression) first);
-        }
-        if (!assign.isEmpty()) {
-            /* extract all containers */
-            for (final AssignmentExpression expression : assign) {
-                if (expression instanceof MultiassignmentExpression) {
-                    expressionsInFirst.addAll(((MultiassignmentExpression) expression).getVariables());
-                } else {
-                    expressionsInFirst.add(expression.getVariable());
-                }
-            }
-            assign.clear();
-        }
-
-        if (!expressionsInFirst.isEmpty()) {
+        final Set<PsiElement> mutatable = extractPotentiallyMutatedExpressions(first);
+        if (! mutatable.isEmpty()) {
             /* now find containers usage, we can perform same class search multiple time - perhaps improvements possible */
-            for (final PsiElement expression : expressionsInFirst) {
+            for (final PsiElement expression : mutatable) {
                 final Class<? extends PsiElement> clazz = expression.getClass();
                 final Collection<PsiElement> findings   = PsiTreeUtil.findChildrenOfType(second, clazz);
                 if (second.getClass() == clazz) {
@@ -64,9 +68,8 @@ final public class ExpressionsCouplingCheckUtil {
                     break;
                 }
             }
-            expressionsInFirst.clear();
+            mutatable.clear();
         }
-
         if (isCoupled) {
             return true;
         }

@@ -12,6 +12,9 @@ if (($count = $counter->count()) && $count) {}
 if (($count = $counter->count()) && $count > 0) {}
 if (($count = $i = $counter->count()) && $count > 0) {}
 
+/* interconnected statements: parameters by reference */
+if (($first = array_shift($array)) && $array) {}
+
 /* interconnected statements: leading isset case */
 if (!isset($array[$index]) && !array_key_exists($index, $array)) {}
 if (!isset($array[trim($index)]) && !array_key_exists($index, $array)) {}

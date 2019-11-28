@@ -12,12 +12,15 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.InternalAnnotatedClassesIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -29,6 +32,9 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ExposingInternalClassesInspector extends PhpInspection {
+    // Inspection options.
+    public boolean CHECK_CONSTRUCTORS = true;
+
     private static final String message = "Exposes an @internal class, which should not be exposed via public methods.";
 
     @NotNull
@@ -51,31 +57,34 @@ public class ExposingInternalClassesInspector extends PhpInspection {
             public void visitPhpClass(@NotNull PhpClass clazz) {
                 if (this.shouldSkipAnalysis(clazz, StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE)) { return; }
 
-                if (!clazz.isInterface() && !clazz.isTrait() && !clazz.isInternal() && !this.isTestContext(clazz)) {
+                if (! clazz.isInterface() && ! clazz.isTrait() && ! clazz.isInternal() && ! this.isTestContext(clazz)) {
                     final FileBasedIndex index    = FileBasedIndex.getInstance();
                     final GlobalSearchScope scope = GlobalSearchScope.allScope(holder.getProject());
                     methods: for (final Method method : clazz.getOwnMethods()) {
                         if (method.getAccess().isPublic()) {
-                            /* case: parameter type declaration */
-                            for (final Parameter parameter: method.getParameters()) {
-                                final PhpType type = OpenapiResolveUtil.resolveDeclaredType(parameter);
-                                if (!type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
-                                    holder.registerProblem(
-                                            parameter,
-                                            ReportingUtil.wrapReportedMessage(message)
-                                    );
-                                    continue methods;
+                            final boolean skip = ! CHECK_CONSTRUCTORS && method.getName().equals("__construct");
+                            if (! skip) {
+                                /* case: parameter type declaration */
+                                for (final Parameter parameter: method.getParameters()) {
+                                    final PhpType type = OpenapiResolveUtil.resolveDeclaredType(parameter);
+                                    if (! type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
+                                        holder.registerProblem(
+                                                parameter,
+                                                ReportingUtil.wrapReportedMessage(message)
+                                        );
+                                        continue methods;
+                                    }
                                 }
-                            }
-                            /* case: return type declaration */
-                            final PsiElement returnTypeHint = OpenapiElementsUtil.getReturnType(method);
-                            if (returnTypeHint != null) {
-                                final PhpType type = method.getType();
-                                if (!type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
-                                    holder.registerProblem(
-                                            returnTypeHint,
-                                            ReportingUtil.wrapReportedMessage(message)
-                                    );
+                                /* case: return type declaration */
+                                final PsiElement returnTypeHint = OpenapiElementsUtil.getReturnType(method);
+                                if (returnTypeHint != null) {
+                                    final PhpType type = method.getType();
+                                    if (! type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
+                                        holder.registerProblem(
+                                                returnTypeHint,
+                                                ReportingUtil.wrapReportedMessage(message)
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -89,5 +98,11 @@ public class ExposingInternalClassesInspector extends PhpInspection {
                 );
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+                component.addCheckbox("Check constructors", CHECK_CONSTRUCTORS, (isSelected) -> CHECK_CONSTRUCTORS = isSelected)
+        );
     }
 }

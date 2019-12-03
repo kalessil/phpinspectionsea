@@ -4,7 +4,7 @@ Loops:
     'array_column()':                             loop + index access
     'array_sum()':                                loop + summing up
     'array_product()':                            loop + multiplication
-    'array_filter()':                             loop + if + pushing to array
+    'array_filter()':                             loop + if + pushing to array, loop + if + unset (in some cases even without closure)
     'array_map()':                                loop + transforming value
     'array_flip()':                               loop + swapping key-value pairs
     'in_array()/array_search()':                  loop + comparison + break

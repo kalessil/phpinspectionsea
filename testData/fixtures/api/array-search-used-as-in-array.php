@@ -31,7 +31,7 @@
     function cases_holder()
     {
         $key = array_search('', array());
-        if ($key === false) {
+        if (<warning descr="[EA] 'in_array(...)' would fit more here (clarifies intention, improves maintainability).">$key === false</warning>) {
             return;
         }
 

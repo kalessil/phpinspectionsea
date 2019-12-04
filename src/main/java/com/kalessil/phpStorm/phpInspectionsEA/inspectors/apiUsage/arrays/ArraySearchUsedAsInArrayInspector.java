@@ -8,20 +8,20 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -51,7 +51,7 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new GenericPhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
@@ -86,6 +86,42 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
                                                     ReportingUtil.wrapReportedMessage(messageUseInArray),
                                                     new TheLocalFix()
                                             );
+                                        }
+                                    }
+                                }
+                            } else if (OpenapiTypesUtil.isAssignment(parent)) {
+                                final PsiElement container = ((AssignmentExpression) parent).getVariable();
+                                if (container instanceof Variable) {
+                                    final Function scope = ExpressionSemanticUtil.getScope(parent);
+                                    if (scope != null) {
+                                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                                        if (body != null) {
+                                            final String containerName  = ((Variable) container).getName();
+                                            final List<Variable> usages = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream()
+                                                    .filter(v -> container != v && containerName.equals(v.getName()))
+                                                    .collect(Collectors.toList());
+                                            if (! usages.isEmpty()) {
+                                                final boolean isTarget = usages.stream().allMatch(v -> {
+                                                    final PsiElement context = v.getParent();
+                                                    if (context instanceof BinaryExpression) {
+                                                        final BinaryExpression binary = (BinaryExpression) context;
+                                                        final IElementType operation  = binary.getOperationType();
+                                                        if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
+                                                            return PhpLanguageUtil.isBoolean(OpenapiElementsUtil.getSecondOperand(binary, v));
+                                                        }
+                                                    }
+                                                    return false;
+                                                });
+                                                if (isTarget) {
+                                                    usages.forEach(v ->
+                                                            holder.registerProblem(
+                                                                    v.getParent(),
+                                                                    ReportingUtil.wrapReportedMessage(messageUseInArray)
+                                                            )
+                                                    );
+                                                }
+                                                usages.clear();
+                                            }
                                         }
                                     }
                                 }

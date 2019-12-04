@@ -73,6 +73,7 @@ public class ArrayKeysMissUseInspector extends PhpInspection {
                                                     new ReplaceFix(reference.getText())
                                             );
                                             break;
+                                        /* NOTE: "in_array" was checked, but it changes behaviour depending on strictness */
                                         /* NOTE: "array_slice" was checked, but it changes semantics */
                                         default:
                                             break;

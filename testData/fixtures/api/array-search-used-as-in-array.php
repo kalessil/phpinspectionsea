@@ -27,3 +27,16 @@
     $x = array_search('', []) ?: '...';
     $x = $x ?: array_search('', []);
     $x = $x ?? array_search('', []);
+
+    function cases_holder()
+    {
+        $key = array_search('', array());
+        if ($key === false) {
+            return;
+        }
+
+        $index = array_search('', $array = array());
+        if ($index !== false) {
+            unset($array[$index]);
+        }
+    }

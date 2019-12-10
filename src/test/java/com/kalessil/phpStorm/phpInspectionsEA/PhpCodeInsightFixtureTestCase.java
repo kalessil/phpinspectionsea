@@ -6,7 +6,15 @@ import com.intellij.testFramework.fixtures.*;
 import com.intellij.testFramework.fixtures.impl.ModuleFixtureBuilderImpl;
 import com.intellij.testFramework.fixtures.impl.ModuleFixtureImpl;
 
+import java.io.File;
+
 public abstract class PhpCodeInsightFixtureTestCase extends CodeInsightFixtureTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        myFixture.setTestDataPath((new File("testData/..")).getAbsolutePath());
+    }
+
     @Override
     protected Class getModuleBuilderClass() {
         return WebModuleFixtureBuilder.class;

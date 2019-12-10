@@ -201,6 +201,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | MissingArrayInitializationInspection            | Missing array initialization                              | n/a | yes | n/a  | no  |
 | Probable bugs        | DuplicateArrayKeysInspection                    | Duplicate array keys                                      | n/a | yes | n/a  | n/a |
 | Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |
+| Probable bugs        | PreloadingUsageCorrectnessInspection            | Preloading usage correctness                              | yes | yes | yes  | n/a |
 
 Inspections Lists (Security)
 ---

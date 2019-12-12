@@ -9,3 +9,6 @@ Loops:
     'array_flip()':                               loop + swapping key-value pairs
     'in_array()/array_search()':                  loop + comparison + break
     'implode()':                                  loop + concatenation
+
+    7.1: is_iterable($_)  = is_array($_) || $_ instanceof \Traversable;
+    7.3: is_countable($_) = is_array($_) || $_ instanceof \Countable;

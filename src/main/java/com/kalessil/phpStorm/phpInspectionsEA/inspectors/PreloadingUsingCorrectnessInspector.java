@@ -9,6 +9,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -46,7 +47,7 @@ public class PreloadingUsingCorrectnessInspector extends BasePhpInspection {
                     if (argument != null && OpenapiTypesUtil.isStatementImpl(include.getParent())) {
                         holder.registerProblem(
                                 include,
-                                message,
+                                ReportingUtil.wrapReportedMessage(message),
                                 new UseOpcacheCompileFileFix(String.format("opcache_compile_file(%s)", argument.getText()))
                         );
                     }

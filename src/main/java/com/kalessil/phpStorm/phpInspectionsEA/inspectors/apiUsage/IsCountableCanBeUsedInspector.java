@@ -55,7 +55,7 @@ public class IsCountableCanBeUsedInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("is_array")) {
-                    final boolean isTargetVersion = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP710);
+                    final boolean isTargetVersion = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740);
                     if (isTargetVersion) {
                         final PsiElement[] arguments = reference.getParameters();
                         final PsiElement parent      = reference.getParent();

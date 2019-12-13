@@ -3,10 +3,11 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.Include;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class PreloadingUsingCorrectnessInspector extends BasePhpInspection {
+public class PreloadingUsingCorrectnessInspector extends PhpInspection {
     private static final String message = "Perhaps it should be used 'opcache_compile_file()' here. See https://bugs.php.net/bug.php?id=78918 for details.";
 
     @NotNull
@@ -39,9 +40,11 @@ public class PreloadingUsingCorrectnessInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpInclude(@NotNull Include include) {
+                if (this.shouldSkipAnalysis(include, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
+
                 if (include.getContainingFile().getName().equals("preload.php")) {
                     final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(include.getArgument());
                     if (argument != null && OpenapiTypesUtil.isStatementImpl(include.getParent())) {

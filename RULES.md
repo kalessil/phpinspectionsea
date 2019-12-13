@@ -141,6 +141,8 @@ Inspections Lists (Language level migration)
 | Language level migration | DeprecatedIniOptionsInspection                  | Deprecated configuration options                    | n/a | yes | n/a  | n/a |
 | Language level migration | RandomApiMigrationInspection                    | Random API migration                                | yes | yes | yes  | n/a |
 | Language level migration | MktimeUsageInspection                           | 'gmmktime(...)'/'mktime(...)' usage                 | yes | yes | yes  | n/a |
+| Language level migration | IsIterableCanBeUsedInspection                   | 'is_iterable(...)' can be used                      | n/a | yes | n/a  | no  |
+| Language level migration | IsCountableCanBeUsedInspection                  | 'is_countable(...)' can be used                     | n/a | yes | n/a  | no  |
 
 Inspections Lists (Architecture)
 ---
@@ -232,6 +234,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | ExitUsageCorrectnessInspection                  | 'exit' usage correctness                                  | n/a | yes | n/a  | no  |
 | Probable bugs        | StringFragmentMisplacedInspection               | Incorrectly placed string fragment                        | yes | yes | yes  | no  |
 | Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |
+| Probable bugs        | PreloadingUsageCorrectnessInspection            | Preloading usage correctness                              | yes | yes | yes  | n/a |
 
 Inspections Lists (Security)
 ---

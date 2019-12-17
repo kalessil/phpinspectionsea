@@ -29,6 +29,8 @@ class Action {
             Prerequisites::class,
             Prerequisites::class,
             Prerequisites::class,
+            Prerequisites::class,
+            Prerequisites::class,
 
             Sub\Benefits::class,
 

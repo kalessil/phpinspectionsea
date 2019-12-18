@@ -1,10 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.PreloadingUsingCorrectnessInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.PreloadingUsageCorrectnessInspector;
 
-final public class PreloadingUsingCorrectnessInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class PreloadingUsageCorrectnessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testFindsAllPatterns() {
-        myFixture.enableInspections(new PreloadingUsingCorrectnessInspector());
+        myFixture.enableInspections(new PreloadingUsageCorrectnessInspector());
         myFixture.configureByFile("testData/fixtures/preload.php");
         myFixture.testHighlighting(true, false, true);
 

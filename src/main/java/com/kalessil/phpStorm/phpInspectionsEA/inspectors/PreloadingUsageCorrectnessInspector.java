@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class PreloadingUsingCorrectnessInspector extends PhpInspection {
+public class PreloadingUsageCorrectnessInspector extends PhpInspection {
     private static final String message = "Perhaps it should be used 'opcache_compile_file()' here. See https://bugs.php.net/bug.php?id=78918 for details.";
 
     @NotNull

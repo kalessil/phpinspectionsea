@@ -205,18 +205,17 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
 
                             /* cases: call makes no sense, violation of defined types set */
                             if (! isTypeAnnounced) {
-                                final PsiElement callParent = functionCall.getParent();
                                 boolean isReversedCheck     = false;
+                                final PsiElement callParent = functionCall.getParent();
                                 if (callParent instanceof UnaryExpression) {
-                                    final PsiElement operation = ((UnaryExpression) callParent).getOperation();
-                                    isReversedCheck            = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
+                                    isReversedCheck = OpenapiTypesUtil.is(((UnaryExpression) callParent).getOperation(), PhpTokenTypes.opNOT);
                                 }
                                 holder.registerProblem(
                                         functionCall,
                                         ReportingUtil.wrapReportedMessage(isReversedCheck ? messageNoSense : messageViolationInCheck)
                                 );
                             } else {
-                                if (hasTypeDeclared && parameterTypes.size() == 1 && !isClassCheck) {
+                                if (hasTypeDeclared && parameterTypes.size() == 1 && ! isClassCheck) {
                                     holder.registerProblem(
                                             functionCall,
                                             ReportingUtil.wrapReportedMessage(messageTypeHint)

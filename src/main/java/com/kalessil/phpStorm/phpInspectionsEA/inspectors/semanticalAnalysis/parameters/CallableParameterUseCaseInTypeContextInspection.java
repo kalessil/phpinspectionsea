@@ -172,29 +172,31 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                 case "is_callable":
                                     isTypeAnnounced =
                                         parameterTypes.contains(Types.strCallable) || parameterTypes.contains(Types.strArray) ||
-                                        parameterTypes.contains(Types.strString)   || parameterTypes.contains("\\Closure");
+                                        parameterTypes.contains(Types.strString)   || parameterTypes.stream().anyMatch(t -> t.equals("\\Closure"));
                                     break;
                                 case "is_object":
                                     isTypeAnnounced =
-                                        parameterTypes.contains(Types.strObject) || parameterTypes.contains(Types.strCallable) ||
-                                        parameterTypes.stream().anyMatch(t -> classReferences.contains(t) ||
-                                                                              (t.startsWith("\\") && !t.equals("\\Closure")));
+                                        parameterTypes.contains(Types.strCallable) ||
+                                        parameterTypes.contains(Types.strObject) || parameterTypes.stream().anyMatch(t -> classReferences.contains(t) || (t.startsWith("\\") && ! t.equals("\\Closure")));
                                     break;
                                 case "is_subclass_of":
                                 case "is_a":
                                     isClassCheck    = true;
                                     isTypeAnnounced =
-                                        parameterTypes.contains(Types.strObject) || parameterTypes.contains(Types.strString) ||
-                                        parameterTypes.stream().anyMatch(t ->
-                                            (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
-                                        );
+                                        parameterTypes.contains(Types.strString) ||
+                                        parameterTypes.contains(Types.strObject) || parameterTypes.stream().anyMatch(t -> classReferences.contains(t) || (t.startsWith("\\") && ! t.equals("\\Closure")));
                                     break;
                                 case "is_iterable":
+                                    /* here we allow all classes, while we should check \Traversable interface */
                                     isTypeAnnounced =
-                                        parameterTypes.contains(Types.strArray) || parameterTypes.contains(Types.strObject) ||
-                                        parameterTypes.stream().anyMatch(t ->
-                                            (t.startsWith("\\") && !t.equals("\\Closure")) || classReferences.contains(t)
-                                        );
+                                        parameterTypes.contains(Types.strArray) || parameterTypes.contains(Types.strIterable) ||
+                                        parameterTypes.contains(Types.strObject) || parameterTypes.stream().anyMatch(t -> classReferences.contains(t) || (t.startsWith("\\") && ! t.equals("\\Closure")));
+                                    break;
+                                case "is_countable":
+                                    /* here we allow all classes, while we should check \Countable interface */
+                                    isTypeAnnounced =
+                                        parameterTypes.contains(Types.strArray) ||
+                                        parameterTypes.contains(Types.strObject) || parameterTypes.stream().anyMatch(t -> classReferences.contains(t) || (t.startsWith("\\") && ! t.equals("\\Closure")));
                                     break;
 
                                 default:
@@ -202,7 +204,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                             }
 
                             /* cases: call makes no sense, violation of defined types set */
-                            if (!isTypeAnnounced) {
+                            if (! isTypeAnnounced) {
                                 final PsiElement callParent = functionCall.getParent();
                                 boolean isReversedCheck     = false;
                                 if (callParent instanceof UnaryExpression) {

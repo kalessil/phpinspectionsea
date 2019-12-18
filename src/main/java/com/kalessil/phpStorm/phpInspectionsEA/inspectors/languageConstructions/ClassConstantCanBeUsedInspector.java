@@ -4,12 +4,14 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -54,6 +56,11 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
         // Original regex: (\\(\\)?)?([a-zA-z0-9_]+\\(\\)?)?([a-zA-z0-9_]+)
         classNameRegex = Pattern.compile("(\\\\(\\\\)?)?([a-zA-z0-9_]+\\\\(\\\\)?)?([a-zA-z0-9_]+)");
     }
+
+    final private static Condition<PsiElement> PARENT_CLASS = new Condition<PsiElement>() {
+        public boolean value(PsiElement element) { return element instanceof PhpClass; }
+        public String toString()                 { return "Condition.PARENT_CLASS"; }
+    };
 
     @NotNull
     @Override
@@ -104,13 +111,25 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
                 if (!OpenapiTypesUtil.isString(expression) || expression.getFirstPsiChild() != null) {
                     return;
                 }
-                PsiElement parent = expression.getParent();
-                if (parent instanceof BinaryExpression || parent instanceof SelfAssignmentExpression) {
+                final PsiElement parent = expression.getParent();
+                if (parent instanceof BinaryExpression) {
+                    boolean process               = false;
+                    final BinaryExpression binary = (BinaryExpression) parent;
+                    final PsiElement left          = binary.getLeftOperand();
+                    if (binary.getOperationType() == PhpTokenTypes.opCONCAT && left instanceof ConstantReference) {
+                        final String constantName = ((ConstantReference) left).getName();
+                        process                   =  constantName != null && constantName.equals("__NAMESPACE__");
+                    }
+                    if (! process) {
+                        return;
+                    }
+                }
+                if (parent instanceof SelfAssignmentExpression) {
                     return;
                 }
 
                 /* Process if has no inline statements and at least 3 chars long (foo, bar and etc. are not a case) */
-                final String contents = expression.getContents();
+                final String contents = this.populateLiteralContent(expression, parent instanceof BinaryExpression);
                 if (contents.length() > 3 && classNameRegex.matcher(contents).matches()) {
                     /* do not process lowercase-only strings */
                     if (contents.indexOf('\\') == -1 && contents.toLowerCase().equals(contents)) {
@@ -119,7 +138,6 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
 
                     String normalizedContents = contents.replaceAll("\\\\\\\\", "\\\\");
 
-                    /* TODO: handle __NAMESPACE__.'\Class' */
                     final boolean isFull            = normalizedContents.charAt(0) == '\\';
                     final Set<String> namesToLookup = new HashSet<>();
                     if (isFull) {
@@ -139,17 +157,38 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
                         /* check resolved items */
                         if (!classes.isEmpty()) {
                             if (1 == classes.size() && classes.get(0).getFQN().equals(fqn)) {
-                                holder.registerProblem(
-                                        expression,
-                                        ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", normalizedContents)),
-                                        new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
-                                );
+                                if (parent instanceof BinaryExpression) {
+                                    normalizedContents = expression.getContents().replaceAll("\\\\\\\\", "\\\\").replaceAll("^\\\\", "");
+                                    holder.registerProblem(
+                                            parent,
+                                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", normalizedContents)),
+                                            new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
+                                    );
+                                } else {
+                                    holder.registerProblem(
+                                            expression,
+                                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", normalizedContents)),
+                                            new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
+                                    );
+                                }
                             }
                             classes.clear();
                         }
                     }
                     namesToLookup.clear();
                 }
+            }
+
+            @NotNull
+            private String populateLiteralContent(@NotNull StringLiteralExpression literal, boolean prependNamespace) {
+                String content = literal.getContents();
+                if (prependNamespace) {
+                    final PsiElement clazz = PsiTreeUtil.findFirstParent(literal, PARENT_CLASS);
+                    if (clazz != null) {
+                        content = ((PhpClass) clazz).getNamespaceName() + content.replaceAll("^\\\\", "");
+                    }
+                }
+                return content;
             }
         };
     }
@@ -198,7 +237,7 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof StringLiteralExpression && !project.isDisposed()) {
+            if (target != null && !project.isDisposed()) {
                 String classForReplacement = fqn;
                 String className           = classForReplacement.substring(1 + classForReplacement.lastIndexOf('\\'));
 
@@ -295,8 +334,7 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
                     }
                 }
 
-                final PsiElement replacement
-                        = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, classForReplacement + "::class");
+                final PsiElement replacement = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, classForReplacement + "::class");
                 if (replacement != null) {
                     target.replace(replacement);
                 }

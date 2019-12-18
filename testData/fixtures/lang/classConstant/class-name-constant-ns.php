@@ -28,6 +28,8 @@ class Action {
             <weak_warning descr="[EA] Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class.">'PhpInspections\EAExtended\Prerequisites'</weak_warning>,
             <weak_warning descr="[EA] Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class.">"\\PhpInspections\\EAExtended\\Prerequisites"</weak_warning>,
             <weak_warning descr="[EA] Perhaps this can be replaced with \PhpInspections\EAExtended\Prerequisites::class.">"PhpInspections\\EAExtended\\Prerequisites"</weak_warning>,
+            <weak_warning descr="[EA] Perhaps this can be replaced with Prerequisites::class.">__NAMESPACE__."\\Prerequisites"</weak_warning>,
+            <weak_warning descr="[EA] Perhaps this can be replaced with Prerequisites::class.">__NAMESPACE__.'\\Prerequisites'</weak_warning>,
 
             <weak_warning descr="[EA] Perhaps this can be replaced with \PhpInspections\EAExtended\Sub\Benefits::class.">'PhpInspections\EAExtended\Sub\Benefits'</weak_warning>,
 

@@ -370,7 +370,7 @@
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="PreloadingUsageCorrectnessInspection"          displayName="Preloading usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PreloadingUsingCorrectnessInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PreloadingUsageCorrectnessInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

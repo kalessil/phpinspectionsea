@@ -9,3 +9,6 @@ Loops:
     'array_flip()':                               loop + swapping key-value pairs
     'in_array()/array_search()':                  loop + comparison + break
     'implode()':                                  loop + concatenation
+
+Amount of traits
+Unused function result, but for generators

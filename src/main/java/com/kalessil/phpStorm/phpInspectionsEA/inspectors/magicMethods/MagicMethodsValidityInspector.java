@@ -153,7 +153,14 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                         CanNotTakeArgumentsStrategy.apply(method, holder);
                         CanNotReturnTypeStrategy.apply(method, holder);
                         break;
+                    case "__unserialize":
+                        CanNotBeStaticStrategy.apply(method, holder);
+                        MustBePublicStrategy.apply(method, holder);
+                        TakesExactAmountOfArgumentsStrategy.apply(1, method, holder);
+                        CanNotReturnTypeStrategy.apply(method, holder);
+                        break;
                     case "__sleep":
+                    case "__serialize":
                         CanNotBeStaticStrategy.apply(method, holder);
                         MustBePublicStrategy.apply(method, holder);
                         CanNotTakeArgumentsStrategy.apply(method, holder);

@@ -83,10 +83,11 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                             }
                         } else if (arguments.length == 2 && this.canApplyPositiveLimit(reference) && this.isFromRootNamespace(reference)) {
                             final String replacement = String.format(
-                                    "%sexplode(%s, %s, 2)",
+                                    "%sexplode(%s, %s, %s)",
                                     reference.getImmediateNamespaceName(),
                                     arguments[0].getText(),
-                                    arguments[1].getText()
+                                    arguments[1].getText(),
+                                    this.calculatePositiveLimit(reference)
                             );
                             holder.registerProblem(
                                     reference,
@@ -154,7 +155,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                                     reachedStartingPoint = reachedStartingPoint || match == variable;
                                     if (reachedStartingPoint && match != variable && variableName.equals(match.getName())) {
                                         final PsiElement context = match.getParent();
-                                        if (!(result = context instanceof ArrayAccessExpression && this.canApplyPositiveLimit(match))) {
+                                        if (! (result = context instanceof ArrayAccessExpression && this.canApplyPositiveLimit(match))) {
                                             break;
                                         }
                                     }
@@ -164,24 +165,49 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                         }
                     }
                 } else if (OpenapiTypesUtil.isPhpExpressionImpl(parent)) {
-                    final PsiElement grandParent = parent.getParent();
-                    if (grandParent instanceof MultiassignmentExpression) {
-                        final MultiassignmentExpression assignment = (MultiassignmentExpression) grandParent;
-                        if (assignment.getVariables().size() == 1) {
-                            int commasCount = 0;
-                            PsiElement child = assignment.getFirstChild();
-                            while (child != null && !OpenapiTypesUtil.is(child, PhpTokenTypes.opASGN)) {
-                                if (OpenapiTypesUtil.is(child, PhpTokenTypes.opCOMMA) && ++commasCount > 1) {
-                                    break;
-                                }
-                                child = child.getNextSibling();
-                            }
-                            return commasCount < 2;
-                        }
-                    }
+                    return parent.getParent() instanceof MultiassignmentExpression;
                 }
 
                 return false;
+            }
+
+            private int calculatePositiveLimit(@NotNull PsiElement expression) {
+                final PsiElement parent = expression.getParent();
+                if (OpenapiTypesUtil.isPhpExpressionImpl(parent)) {
+                    final PsiElement grandParent = parent.getParent();
+                    if (grandParent instanceof MultiassignmentExpression) {
+                        /* find assignment operation element */
+                        PsiElement sign  = null;
+                        PsiElement child = grandParent.getFirstChild();
+                        while (child != null) {
+                            if (OpenapiTypesUtil.is(child, PhpTokenTypes.opASGN)) {
+                                sign = child;
+                                break;
+                            }
+                            child = child.getNextSibling();
+                        }
+
+                        /* calculate limit */
+                        int commasToIgnore      = 0;
+                        int commasTotal         = 0;
+                        boolean reachedVariable = false;
+                        PsiElement current = sign.getPrevSibling();
+                        while (current != null) {
+                            reachedVariable = reachedVariable || current instanceof Variable;
+                            if (OpenapiTypesUtil.is(current, PhpTokenTypes.opCOMMA)) {
+                                if (! reachedVariable) {
+                                    ++commasToIgnore;
+                                }
+                                ++commasTotal;
+                            }
+                            current = current.getPrevSibling();
+                        }
+
+                        return (commasTotal - commasToIgnore) + 2;
+                    }
+                }
+
+                return 2;
             }
         };
     }

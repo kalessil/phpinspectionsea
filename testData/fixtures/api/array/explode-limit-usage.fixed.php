@@ -6,7 +6,9 @@ function cases_holder_positive_limit() {
 
     list($first,) = explode('/', '...', 2);
     list($first) = explode('/', '...', 2);
-    list($first, ,) = explode('/', '...');
+    list(, $second) = explode('/', '...', 3);
+    list(, $second,) = explode('/', '...', 3);
+    list($first, ,) = explode('/', '...', 2);
 
     return [
         explode('/', '...', 2)[0],

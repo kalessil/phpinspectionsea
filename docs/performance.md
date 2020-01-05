@@ -42,6 +42,9 @@ In order to reduce execution time we can modify the code and perform the merge o
 
     /* PHP 5.6+: more friendly to refactoring as less magic involved */
     $options = array_merge([], ...$options); // the empty array covers cases when no loops were made
+    
+    /* PHP 7.4+: array_merge now accepts to be called without arguments. It will work even if $options is empty */
+    $options = array_merge(...$options);
 ```
 
 ## Foreach variables reference usage correctness

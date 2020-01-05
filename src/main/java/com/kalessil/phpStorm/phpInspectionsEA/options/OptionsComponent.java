@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -63,6 +65,17 @@ public final class OptionsComponent {
         final AbstractButton createdCheckbox = new JCheckBox(label, defaultValue);
         createdCheckbox.addItemListener((itemEvent) -> updateConsumer.accept(createdCheckbox.isSelected()));
         optionsPanel.add(createdCheckbox, "wrap");
+    }
+
+    public void addTextField(
+        @NotNull final String label,
+        @NotNull final String defaultValue,
+        @NotNull final Consumer<String> updateConsumer
+    ) {
+        final JTextField createdInput = (new JTextField(label, 2));
+        createdInput.setText(defaultValue);
+        createdInput.addActionListener(e -> updateConsumer.accept(createdInput.getText()));
+        optionsPanel.add(createdInput, "wrap");
     }
 
     public void addSpinner(

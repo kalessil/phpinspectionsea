@@ -7,20 +7,25 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 
 public class LongInheritanceChainInspector extends BasePhpInspection {
     private static final String messagePattern = "Class has %c% parent classes, consider using appropriate design patterns.";
 
+    // Inspection options.
+    public int THRESHOLD = 3;
+
     private static final Set<String> showStoppers = new HashSet<>();
     static {
-        /* for future people: controller classes must not appear here - deal with you debts! */
+        /* for future people: controller classes must not appear here - deal with your debts! */
 
         /* allows to introduce own abstraction and test cases */
         showStoppers.add("\\PHPUnit_Framework_TestCase");
@@ -92,7 +97,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                     }
                 }
 
-                if (parentsCount >= 3 && !clazz.isDeprecated()) {
+                if (parentsCount >= THRESHOLD && !clazz.isDeprecated()) {
                     holder.registerProblem(
                             psiClassName,
                             ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", String.valueOf(parentsCount))),
@@ -101,5 +106,11 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create(component -> {
+            component.addTextField("Reporting threshold", String.valueOf(THRESHOLD), (value) -> { try { THRESHOLD = Integer.parseInt(value); } catch (final NumberFormatException error) { /* do nothing */ } });
+        });
     }
 }

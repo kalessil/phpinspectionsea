@@ -72,7 +72,7 @@ public final class OptionsComponent {
         @NotNull final String defaultValue,
         @NotNull final Consumer<String> updateConsumer
     ) {
-        final JTextField createdInput = (new JTextField(label, 2));
+        final JTextField createdInput = (new JTextField(label, Math.min(2, defaultValue.length())));
         createdInput.setText(defaultValue);
         createdInput.addActionListener(e -> updateConsumer.accept(createdInput.getText()));
         optionsPanel.add(createdInput, "wrap");

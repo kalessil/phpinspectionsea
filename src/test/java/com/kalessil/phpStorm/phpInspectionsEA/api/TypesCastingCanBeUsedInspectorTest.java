@@ -7,6 +7,7 @@ final public class TypesCastingCanBeUsedInspectorTest extends PhpCodeInsightFixt
     public void testIfFindsAllPatterns() {
         final TypesCastingCanBeUsedInspector inspector = new TypesCastingCanBeUsedInspector();
         inspector.REPORT_INLINES                       = true;
+        inspector.REPORT_TO_STRING_METHOD_CALLS        = true;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/api/type-casting-can-be-used.php");
         myFixture.testHighlighting(true, false, true);

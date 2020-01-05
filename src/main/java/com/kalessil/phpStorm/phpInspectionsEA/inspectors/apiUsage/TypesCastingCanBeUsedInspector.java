@@ -32,7 +32,8 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
     private static final String messageMagic    = "'%s' would express the intention here better.";
 
     // Inspection options.
-    public boolean REPORT_INLINES = true;
+    public boolean REPORT_INLINES                = true;
+    public boolean REPORT_TO_STRING_METHOD_CALLS = false;
 
     @NotNull
     @Override
@@ -145,16 +146,18 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
 
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                final String methodName = reference.getName();
-                if (methodName != null && methodName.equals("__toString")) {
-                    final PsiElement base = reference.getFirstChild();
-                    if (!(base instanceof ClassReference) || !base.getText().equals("parent")) {
-                        final String replacement = String.format("(string) %s", base.getText());
-                        holder.registerProblem(
-                                reference,
-                                String.format(ReportingUtil.wrapReportedMessage(messageMagic), replacement),
-                                new UseTypeCastingFix(replacement)
-                        );
+                if (REPORT_TO_STRING_METHOD_CALLS) {
+                    final String methodName = reference.getName();
+                    if (methodName != null && methodName.equals("__toString")) {
+                        final PsiElement base = reference.getFirstChild();
+                        if (!(base instanceof ClassReference) || !base.getText().equals("parent")) {
+                            final String replacement = String.format("(string) %s", base.getText());
+                            holder.registerProblem(
+                                    reference,
+                                    String.format(ReportingUtil.wrapReportedMessage(messageMagic), replacement),
+                                    new UseTypeCastingFix(replacement)
+                            );
+                        }
                     }
                 }
             }
@@ -162,9 +165,10 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create(component ->
-            component.addCheckbox("Report \"$inlined\" cases", REPORT_INLINES, (isSelected) -> REPORT_INLINES = isSelected)
-        );
+        return OptionsComponent.create(component -> {
+            component.addCheckbox("Report \"$inlined\" cases", REPORT_INLINES, (isSelected) -> REPORT_INLINES = isSelected);
+            component.addCheckbox("Report '->__toString()' calls", REPORT_TO_STRING_METHOD_CALLS, (isSelected) -> REPORT_TO_STRING_METHOD_CALLS = isSelected);
+        });
     }
 
     private static final class UseTypeCastingFix extends UseSuggestedReplacementFixer {

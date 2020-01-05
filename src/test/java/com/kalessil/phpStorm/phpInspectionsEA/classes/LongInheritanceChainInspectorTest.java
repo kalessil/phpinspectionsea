@@ -6,7 +6,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 final public class LongInheritanceChainInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         final LongInheritanceChainInspector inspector = new LongInheritanceChainInspector();
-        inspector.THRESHOLD                           = 3;
+        inspector.COMPLAIN_THRESHOLD = 3;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/classes/long-inheritance-chain.php");
         myFixture.testHighlighting(true, false, true);

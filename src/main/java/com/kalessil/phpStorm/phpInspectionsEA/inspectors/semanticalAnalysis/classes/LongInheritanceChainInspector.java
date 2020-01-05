@@ -21,7 +21,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
     private static final String messagePattern = "Class has %c% parent classes, consider using appropriate design patterns.";
 
     // Inspection options.
-    public int THRESHOLD = 3;
+    public int COMPLAIN_THRESHOLD = 3;
 
     private static final Set<String> showStoppers = new HashSet<>();
     static {
@@ -97,7 +97,7 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
                     }
                 }
 
-                if (parentsCount >= THRESHOLD && !clazz.isDeprecated()) {
+                if (parentsCount >= COMPLAIN_THRESHOLD && !clazz.isDeprecated()) {
                     holder.registerProblem(
                             psiClassName,
                             ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", String.valueOf(parentsCount))),
@@ -109,8 +109,8 @@ public class LongInheritanceChainInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create(component -> {
-            component.addTextField("Reporting threshold", String.valueOf(THRESHOLD), (value) -> { try { THRESHOLD = Integer.parseInt(value); } catch (final NumberFormatException error) { /* do nothing */ } });
-        });
+        return OptionsComponent.create(component ->
+                component.addSpinner("Complain threshold:", COMPLAIN_THRESHOLD, (input) -> COMPLAIN_THRESHOLD = input)
+        );
     }
 }

@@ -67,17 +67,6 @@ public final class OptionsComponent {
         optionsPanel.add(createdCheckbox, "wrap");
     }
 
-    public void addTextField(
-        @NotNull final String label,
-        @NotNull final String defaultValue,
-        @NotNull final Consumer<String> updateConsumer
-    ) {
-        final JTextField createdInput = (new JTextField(label, Math.min(2, defaultValue.length())));
-        createdInput.setText(defaultValue);
-        createdInput.addActionListener(e -> updateConsumer.accept(createdInput.getText()));
-        optionsPanel.add(createdInput, "wrap");
-    }
-
     public void addSpinner(
         @NotNull final String label,
         final Integer defaultValue,

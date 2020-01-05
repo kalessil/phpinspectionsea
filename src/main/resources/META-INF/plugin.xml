@@ -975,11 +975,11 @@
         shortName="MktimeUsageInspection"                         displayName="'gmmktime(...)'/'mktime(...)' usage"
         groupName="Language level migration"                      enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.deprecations.MktimeUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="IsIterableCanBeUsedInspection"                 displayName="'is_iterable(...)' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsIterableCanBeUsedInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="IsCountableCanBeUsedInspection"                displayName="'is_countable(...)' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsCountableCanBeUsedInspector"/>

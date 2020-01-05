@@ -2,21 +2,23 @@
 
 function cases_holder_positive_limit() {
     $skip = explode('/', '...');
-    $target = <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>;
+    $target = <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only some parts has been used).">explode('/', '...')</warning>;
 
-    list($first,) = <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>;
-    list($first) = <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>;
-    list($first, ,) = explode('/', '...');
+    list($first,) = <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only some parts has been used).">explode('/', '...')</warning>;
+    list($first) = <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only some parts has been used).">explode('/', '...')</warning>;
+    list(, $second) = <warning descr="[EA] 'explode('/', '...', 3)' could be used here (only some parts has been used).">explode('/', '...')</warning>;
+    list(, $second,) = <warning descr="[EA] 'explode('/', '...', 3)' could be used here (only some parts has been used).">explode('/', '...')</warning>;
+    list($first, ,) = <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only some parts has been used).">explode('/', '...')</warning>;
 
     return [
-        <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>[0],
+        <warning descr="[EA] 'explode('/', '...', 2)' could be used here (only some parts has been used).">explode('/', '...')</warning>[0],
         $target[0],
 
         explode('/', '...')[1],
         explode('/', '...'),
         $skip[1],
 
-        current(<warning descr="[EA] 'explode('/', '...', 2)' could be used here (only the first part has been used).">explode('/', '...')</warning>),
+        current(<warning descr="[EA] 'explode('/', '...', 2)' could be used here (only some parts has been used).">explode('/', '...')</warning>),
     ];
 }
 

@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ExplodeLimitUsageInspector extends PhpInspection {
-    private static final String messagePositiveLimitPattern = "'%s' could be used here (only the first part has been used).";
+    private static final String messagePositiveLimitPattern = "'%s' could be used here (only some parts has been used).";
     private static final String messageNegativeLimitPattern = "'%s' could be used here (following 'array_pop(...)' call to be dropped then).";
 
     @NotNull

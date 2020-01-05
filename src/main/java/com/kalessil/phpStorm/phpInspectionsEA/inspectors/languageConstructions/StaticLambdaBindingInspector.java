@@ -63,7 +63,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                             for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
                                 if (element instanceof Variable) {
                                     final Variable variable = (Variable) element;
-                                    if (variable.getName().equals("this")) {
+                                    if (variable.getName().equals("this") && function == ExpressionSemanticUtil.getScope(variable)) {
                                         holder.registerProblem(
                                                 variable,
                                                 ReportingUtil.wrapReportedMessage(messageThis),

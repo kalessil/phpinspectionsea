@@ -35,13 +35,25 @@ public class EAUpdateComponent implements ProjectComponent {
             }
 
             final NotificationGroup group = new NotificationGroup(plugin.getName(), NotificationDisplayType.STICKY_BALLOON, true);
-            ApplicationManager.getApplication().invokeLater(() ->
-                Notifications.Bus.notify(group.createNotification(
-                        "<b> "+ plugin.getName() + "</b> update v" + plugin.getVersion(),
-                        plugin.getChangeNotes(),
-                        NotificationType.INFORMATION,
-                        NotificationListener.URL_OPENING_LISTENER
-                )),
+            ApplicationManager.getApplication().invokeLater(() -> {
+                    final String pluginName = plugin.getName();
+                    /* release notes notification */
+                    Notifications.Bus.notify(group.createNotification(
+                            String.format("<b>%s</b> update v%s", pluginName, plugin.getVersion()),
+                            plugin.getChangeNotes(),
+                            NotificationType.INFORMATION,
+                            NotificationListener.URL_OPENING_LISTENER
+                    ));
+                    /* JS Inspections (EA Extended) announcements */
+                    Notifications.Bus.notify(group.createNotification(
+                            String.format("<b>%s</b>: important", pluginName),
+                            "Big news folks, new crowd-funding campaign starts 15 January 2020. " +
+                                "It'll fund JS Inspections (EA Extended) creation, and we need your support: when campaign starts, please share it in social networks. " +
+                                "Preview is available <a href='https://www.indiegogo.com/project/preview/a98db068'>here</a>!",
+                            NotificationType.INFORMATION,
+                            NotificationListener.URL_OPENING_LISTENER
+                    ));
+                },
                 ModalityState.NON_MODAL
             );
 

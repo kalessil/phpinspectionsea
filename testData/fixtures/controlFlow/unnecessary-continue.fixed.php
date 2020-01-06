@@ -26,7 +26,6 @@ function cases_holder() {
     foreach ([] as $value) {
         try {
         } catch (Exception $exception) {
-        } finally {
         }
     }
 

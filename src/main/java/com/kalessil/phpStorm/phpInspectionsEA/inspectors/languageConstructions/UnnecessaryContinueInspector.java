@@ -82,10 +82,13 @@ public class UnnecessaryContinueInspector extends PhpInspection {
                     lastStatements.add(lastStatement);
                 } else if (lastStatement instanceof Try) {
                     final Try tryStatement = (Try) lastStatement;
-                    /* skip finally statements processing - Fatal error: jump out of a finally block is disallowed */
+                    Stream.of(tryStatement)
+                            .filter(Objects::nonNull).map(ExpressionSemanticUtil::getGroupStatement)
+                            .filter(Objects::nonNull).forEach(block -> collectLastStatements(block, lastStatements));
                     Stream.of(tryStatement.getCatchClauses())
                             .filter(Objects::nonNull).map(ExpressionSemanticUtil::getGroupStatement)
                             .filter(Objects::nonNull).forEach(block -> collectLastStatements(block, lastStatements));
+                    /* skip finally statements processing - Fatal error: jump out of a finally block is disallowed */
                 } else if (lastStatement instanceof Catch) {
                     final GroupStatement block = ExpressionSemanticUtil.getGroupStatement(lastStatement);
                     if (block != null) {

@@ -37,7 +37,6 @@ function cases_holder() {
         } catch (Exception $exception) {
             <warning descr="[EA] It's not really makes sense placing continue here as loop will continue from here anyway.">continue;</warning>
         }
-        /* skip finally statements processing - Fatal error: jump out of a finally block is disallowed */
     }
 
     /* false-positives: switch-case context */

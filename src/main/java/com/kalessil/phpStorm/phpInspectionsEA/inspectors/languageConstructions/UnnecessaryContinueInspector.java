@@ -82,9 +82,7 @@ public class UnnecessaryContinueInspector extends PhpInspection {
                     lastStatements.add(lastStatement);
                 } else if (lastStatement instanceof Try) {
                     final Try tryStatement = (Try) lastStatement;
-                    Stream.of(tryStatement, tryStatement.getFinallyBlock())
-                            .filter(Objects::nonNull).map(ExpressionSemanticUtil::getGroupStatement)
-                            .filter(Objects::nonNull).forEach(block -> collectLastStatements(block, lastStatements));
+                    /* skip finally statements processing - Fatal error: jump out of a finally block is disallowed */
                     Stream.of(tryStatement.getCatchClauses())
                             .filter(Objects::nonNull).map(ExpressionSemanticUtil::getGroupStatement)
                             .filter(Objects::nonNull).forEach(block -> collectLastStatements(block, lastStatements));

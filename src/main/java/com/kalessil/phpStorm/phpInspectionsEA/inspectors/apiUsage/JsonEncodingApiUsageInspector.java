@@ -96,13 +96,23 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
                             final PsiElement[] arguments = reference.getParameters();
                             final boolean hasFlag        = arguments.length >= 2 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
                             if (!hasFlag && arguments.length > 0) {
-                                final String replacement = String.format(
-                                        "%sjson_encode(%s, %s, %s)",
-                                        reference.getImmediateNamespaceName(),
-                                        arguments[0].getText(),
-                                        arguments.length > 1 ? "JSON_THROW_ON_ERROR | " + arguments[1].getText() : "JSON_THROW_ON_ERROR",
-                                        arguments.length > 2 ? arguments[2].getText() : "512"
-                                );
+                                final String replacement;
+                                if (arguments.length > 2) {
+                                    replacement = String.format(
+                                            "%sjson_encode(%s, %s, %s)",
+                                            reference.getImmediateNamespaceName(),
+                                            arguments[0].getText(),
+                                            "JSON_THROW_ON_ERROR | " + arguments[1].getText(),
+                                            arguments[2].getText()
+                                    );
+                                } else {
+                                    replacement = String.format(
+                                            "%sjson_encode(%s, %s)",
+                                            reference.getImmediateNamespaceName(),
+                                            arguments[0].getText(),
+                                            arguments.length > 1 ? "JSON_THROW_ON_ERROR | " + arguments[1].getText() : "JSON_THROW_ON_ERROR"
+                                    );
+                                }
                                 holder.registerProblem(
                                         reference,
                                         ReportingUtil.wrapReportedMessage(messageErrorsHandling),

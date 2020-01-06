@@ -11,10 +11,10 @@ class CasesHolder extends ParentClass {
     public function method() {
         return [
             function() { return $this->property; },
-            <weak_warning descr="[EA] This closure can be declared as static (a micro-optimization).">function</weak_warning>() { return null; },
+            <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { return null; },
             static function() { return null; },
 
-            <weak_warning descr="[EA] This closure can be declared as static (a micro-optimization).">function</weak_warning>() { parent::staticMethod(); },
+            <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { parent::staticMethod(); },
             function() { parent::dynamicMethod(); },
         ];
     }

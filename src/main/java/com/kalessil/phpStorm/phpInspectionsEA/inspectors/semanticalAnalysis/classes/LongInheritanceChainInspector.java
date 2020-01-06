@@ -13,15 +13,19 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 
 public class LongInheritanceChainInspector extends PhpInspection {
     private static final String messagePattern = "Class has %c% parent classes, consider using appropriate design patterns.";
 
+    // Inspection options.
+    public int COMPLAIN_THRESHOLD = 3;
+
     private static final Set<String> showStoppers = new HashSet<>();
     static {
-        /* for future people: controller classes must not appear here - deal with you debts! */
+        /* for future people: controller classes must not appear here - deal with your debts! */
 
         /* allows to introduce own abstraction and test cases */
         showStoppers.add("\\PHPUnit_Framework_TestCase");
@@ -95,7 +99,7 @@ public class LongInheritanceChainInspector extends PhpInspection {
                     }
                 }
 
-                if (parentsCount >= 3 && !clazz.isDeprecated()) {
+                if (parentsCount >= COMPLAIN_THRESHOLD && !clazz.isDeprecated()) {
                     holder.registerProblem(
                             psiClassName,
                             ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", String.valueOf(parentsCount))),
@@ -104,5 +108,11 @@ public class LongInheritanceChainInspector extends PhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create(component ->
+                component.addSpinner("Complain threshold:", COMPLAIN_THRESHOLD, (input) -> COMPLAIN_THRESHOLD = input)
+        );
     }
 }

@@ -28,7 +28,7 @@ final public class OpenapiElementsUtil {
     private static Method functionReturnType;
     static {
         try {
-            functionReturnType = Function.class.getDeclaredMethod("getReturnType");
+            functionReturnType = Function.class.getMethod("getReturnType");
         } catch (final NoSuchMethodException failure) {
             functionReturnType = null;
         }
@@ -38,7 +38,7 @@ final public class OpenapiElementsUtil {
     private static Method phpInstructionPredecessors;
     static {
         try {
-            phpInstructionPredecessors = PhpInstruction.class.getDeclaredMethod("getPredecessors");
+            phpInstructionPredecessors = PhpInstruction.class.getMethod("getPredecessors");
         } catch (final NoSuchMethodException failure) {
             phpInstructionPredecessors = null;
         }
@@ -48,7 +48,7 @@ final public class OpenapiElementsUtil {
     private static Method fieldDeclaredType;
     static {
         try {
-            fieldDeclaredType = Field.class.getDeclaredMethod("getDeclaredType");
+            fieldDeclaredType = Field.class.getMethod("getDeclaredType");
         } catch (final NoSuchMethodException failure) {
             fieldDeclaredType = null;
         }

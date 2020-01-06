@@ -59,9 +59,19 @@ final public class MagicMethodsValidityInspectorTest extends PhpCodeInsightFixtu
         myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-wake-up.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testUnserializeMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-unserialize.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testSleepMethod() {
         myFixture.enableInspections(new MagicMethodsValidityInspector());
         myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-sleep.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+    public void testSerializeMethod() {
+        myFixture.enableInspections(new MagicMethodsValidityInspector());
+        myFixture.configureByFile("testData/fixtures/classes/magicMethods/magic-methods-serialize.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testMissingUnderscoreMethods() {

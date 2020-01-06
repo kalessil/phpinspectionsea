@@ -35,7 +35,8 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
     private static final String messageMultiplyOne = "Casting to int or float would be more performant here (up to 6x times faster).";
 
     // Inspection options.
-    public boolean REPORT_INLINES = true;
+    public boolean REPORT_INLINES                = true;
+    public boolean REPORT_TO_STRING_METHOD_CALLS = false;
 
     @NotNull
     @Override
@@ -173,16 +174,18 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
-                final String methodName = reference.getName();
-                if (methodName != null && methodName.equals("__toString")) {
-                    final PsiElement base = reference.getFirstChild();
-                    if (!(base instanceof ClassReference) || !base.getText().equals("parent")) {
-                        final String replacement = String.format("(string) %s", base.getText());
-                        holder.registerProblem(
-                                reference,
-                                String.format(ReportingUtil.wrapReportedMessage(messageMagic), replacement),
-                                new UseTypeCastingFix(replacement)
-                        );
+                if (REPORT_TO_STRING_METHOD_CALLS) {
+                    final String methodName = reference.getName();
+                    if (methodName != null && methodName.equals("__toString")) {
+                        final PsiElement base = reference.getFirstChild();
+                        if (!(base instanceof ClassReference) || !base.getText().equals("parent")) {
+                            final String replacement = String.format("(string) %s", base.getText());
+                            holder.registerProblem(
+                                    reference,
+                                    String.format(ReportingUtil.wrapReportedMessage(messageMagic), replacement),
+                                    new UseTypeCastingFix(replacement)
+                            );
+                        }
                     }
                 }
             }
@@ -190,9 +193,10 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create(component ->
-            component.addCheckbox("Report \"$inlined\" cases", REPORT_INLINES, (isSelected) -> REPORT_INLINES = isSelected)
-        );
+        return OptionsComponent.create(component -> {
+            component.addCheckbox("Report \"$inlined\" cases", REPORT_INLINES, (isSelected) -> REPORT_INLINES = isSelected);
+            component.addCheckbox("Report '->__toString()' calls", REPORT_TO_STRING_METHOD_CALLS, (isSelected) -> REPORT_TO_STRING_METHOD_CALLS = isSelected);
+        });
     }
 
     private static final class UseTypeCastingFix extends UseSuggestedReplacementFixer {

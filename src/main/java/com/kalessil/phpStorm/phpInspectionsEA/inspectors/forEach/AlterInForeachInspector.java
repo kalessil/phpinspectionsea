@@ -35,7 +35,6 @@ public class AlterInForeachInspector extends BasePhpInspection {
 
     private static final String patternSuggestReference = "Can be refactored as '$%c% = ...' if $%v% is defined as a reference (ensure that array supplied). Suppress if causes memory mismatches.";
     private static final String messageMissingUnset     = "This variable must be unset just after foreach to prevent possible side-effects.";
-    private static final String messageKeyReference     = "Provokes a PHP Fatal error (key element cannot be a reference).";
     private static final String patternAmbiguousUnset   = "Unsetting $%v% is not needed because it's not a reference.";
 
     @NotNull
@@ -154,26 +153,6 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                 }
                             }
                         }
-                    }
-                }
-
-                this.strategyKeyCanNotBeReference(foreach);
-            }
-
-            private void strategyKeyCanNotBeReference(ForeachStatement foreach) {
-                /* lookup for incorrect reference preceding key: foreach (... as &$key => ...) */
-                final Variable objForeachKey = foreach.getKey();
-                if (null != objForeachKey) {
-                    PsiElement prevElement = objForeachKey.getPrevSibling();
-                    if (prevElement instanceof PsiWhiteSpace) {
-                        prevElement = prevElement.getPrevSibling();
-                    }
-                    if (OpenapiTypesUtil.is(prevElement, PhpTokenTypes.opBIT_AND)) {
-                        holder.registerProblem(
-                                prevElement,
-                                ReportingUtil.wrapReportedMessage(messageKeyReference),
-                                ProblemHighlightType.ERROR
-                        );
                     }
                 }
             }

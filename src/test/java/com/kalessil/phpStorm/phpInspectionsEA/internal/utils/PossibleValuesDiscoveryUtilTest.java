@@ -57,7 +57,7 @@ final public class PossibleValuesDiscoveryUtilTest extends PhpCodeInsightFixture
     }
 
     public void testClassConstantReferenceDiscovery() {
-        String pattern   = "class test { const PROPERTY = 'default'; function say(){ echo self::PROPERTY; } }";
+        String pattern   = "class test { const PROPERTY = 'default'; function say(){ echo test::PROPERTY; } }";
         PsiElement clazz = PhpPsiElementFactory.createFromText(myFixture.getProject(), PhpClass.class, pattern);
         assertNotNull(clazz);
 

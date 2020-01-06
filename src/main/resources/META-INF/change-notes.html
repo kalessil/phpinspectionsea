@@ -1,17 +1,18 @@
 <html>
 New features release.<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/72699">v4.0.1.1</a><br/>
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/74166">v4.0.2</a> and <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/75467">v4.0.3</a><br/>
 <br/>
-- Insecure SSL/TLS version usage: implemented<br/>
-- Parameter/variable is not used: new patterns<br/>
-- RSA oracle padding vulnerability: new patterns<br/>
-- Slow array function used in loop: new patterns<br/>
-- Suspicious binary operations: new patterns<br/>
-- Suspicious function calls: new patterns<br/>
-- Unnecessary closures: new patterns<br/>
-- 'array_unique(...)' misused: implemented<br/>
-- 'implode(...)' arguments order: new patterns<br/>
+- Callable parameter usage violates definition: new patterns<br/>
+- URI parts extraction: implemented<br/>
+- 'array_search(...)' could be replaced by 'in_array(...)': new patterns<br/>
+<br/>
+- Backtick operator usage: bug-fixed code generation<br/>
+- Exposed @internal classes: new settings<br/>
+- JSON encoding API usage: bug-fixed code generation<br/>
+- Static lambdas binding: resolved a false-positive (nested lambdas)<br/>
+- Unnecessary variable overrides: resolved a false-positive (assignment by reference)<br/>
+- 'explode(...)' limit can be used: bug-fixed code generation<br/>
 <br/>
 <hr/>
 </html>

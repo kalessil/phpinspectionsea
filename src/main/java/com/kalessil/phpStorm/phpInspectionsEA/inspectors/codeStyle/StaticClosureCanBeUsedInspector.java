@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
-    private static final String message = "This closure can be declared as static (a micro-optimization).";
+    private static final String message = "This closure can be declared as static (better scoping; in some cases can improve performance).";
 
     @NotNull
     @Override

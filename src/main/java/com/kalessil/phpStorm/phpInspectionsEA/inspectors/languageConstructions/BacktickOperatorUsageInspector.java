@@ -46,8 +46,8 @@ public class BacktickOperatorUsageInspector extends PhpInspection {
 
                 final String raw = expression.getText();
                 if (raw.length() > 2) {
-                    final String command     = raw.substring(1, raw.length() - 1).replaceAll("\\\\`", "`");
-                    final String replacement = String.format("shell_exec(\"%s\")", PhpStringUtil.escapeText(command, false));
+                    final String command     = raw.substring(1, raw.length() - 1).replaceAll("\\\\`", "`").replaceAll("\\\\\"", "\"");
+                    final String replacement = String.format("shell_exec(\"%s\")", command.replaceAll("`", "\\\\`").replaceAll("\"", "\\\\\""));
                     holder.registerProblem(
                             expression,
                             ReportingUtil.wrapReportedMessage(message),

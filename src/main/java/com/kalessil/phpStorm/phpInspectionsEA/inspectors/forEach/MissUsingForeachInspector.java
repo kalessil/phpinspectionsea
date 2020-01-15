@@ -49,7 +49,7 @@ public class MissUsingForeachInspector extends PhpInspection {
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                     final PsiElement expression = ExpressionSemanticUtil.getLastStatement(body);
                     if (expression != null) {
-                        if (CanBeReplacedWithImplodeStrategy.apply(foreach, expression)) {
+                        if (CanBeReplacedWithImplodeStrategy.apply(foreach, expression, holder.getProject())) {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
                                     ReportingUtil.wrapReportedMessage(String.format(messagePattern, "implode"))

@@ -1,13 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.ForeachStatement;
-import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 final public class CanBeReplacedWithImplodeStrategy {
-    static public boolean apply(@NotNull ForeachStatement foreach, @NotNull PsiElement expression) {
+    static public boolean apply(@NotNull ForeachStatement foreach, @NotNull PsiElement expression, @NotNull Project project) {
         if (OpenapiTypesUtil.isStatementImpl(expression)) {
             final PsiElement candidate = expression.getFirstChild();
             if (candidate instanceof SelfAssignmentExpression) {
@@ -40,6 +41,15 @@ final public class CanBeReplacedWithImplodeStrategy {
                     /* now match */
                     final PsiElement loopValue = foreach.getValue();
                     if (loopValue != null && concatenateValue != null) {
+                        /* skip generators - the loop is performance-optimized */
+                        final PsiElement source = foreach.getArray();
+                        if (source instanceof PhpTypedElement) {
+                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) source, project);
+                            if (resolved != null && resolved.filterUnknown().getTypes().contains("\\Generator")) {
+                                return false;
+                            }
+                        }
+                        /* now match values */
                         return OpenapiEquivalenceUtil.areEqual(loopValue, concatenateValue);
                     }
                 }

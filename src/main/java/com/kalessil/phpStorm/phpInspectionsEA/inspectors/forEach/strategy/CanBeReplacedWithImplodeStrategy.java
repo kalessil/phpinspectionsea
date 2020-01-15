@@ -8,7 +8,6 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -40,7 +39,7 @@ final public class CanBeReplacedWithImplodeStrategy {
                     }
                     /* now match */
                     final PsiElement loopValue = foreach.getValue();
-                    if (loopValue != null && concatenateValue != null) {
+                    if (loopValue != null && concatenateValue != null && OpenapiEquivalenceUtil.areEqual(loopValue, concatenateValue)) {
                         /* skip generators - the loop is performance-optimized */
                         final PsiElement source = foreach.getArray();
                         if (source instanceof PhpTypedElement) {
@@ -49,13 +48,11 @@ final public class CanBeReplacedWithImplodeStrategy {
                                 return false;
                             }
                         }
-                        /* now match values */
-                        return OpenapiEquivalenceUtil.areEqual(loopValue, concatenateValue);
+                        return true;
                     }
                 }
             }
         }
-
         return false;
     }
 }

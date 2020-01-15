@@ -299,6 +299,10 @@
         shortName="UriPartExtractionInspection"                   displayName="URI parts extraction"
         groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.UriPartExtractionInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="MissUsingForeachInspection"                    displayName="Missused foreach constructs"
+        groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.MissUsingForeachInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

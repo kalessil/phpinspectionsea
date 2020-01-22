@@ -7,6 +7,8 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.CanBeReplacedWithArrayFlipStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.CanBeReplacedWithArrayProductStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.CanBeReplacedWithArraySumStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.CanBeReplacedWithImplodeStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -59,6 +61,16 @@ public class MissUsingForeachInspector extends PhpInspection {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
                                     ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_flip"))
+                            );
+                        } else if (CanBeReplacedWithArrayProductStrategy.apply(foreach, expression, holder.getProject())) {
+                            holder.registerProblem(
+                                    foreach.getFirstChild(),
+                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_product"))
+                            );
+                        } else if (CanBeReplacedWithArraySumStrategy.apply(foreach, expression, holder.getProject())) {
+                            holder.registerProblem(
+                                    foreach.getFirstChild(),
+                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_sum"))
                             );
                         }
                     }

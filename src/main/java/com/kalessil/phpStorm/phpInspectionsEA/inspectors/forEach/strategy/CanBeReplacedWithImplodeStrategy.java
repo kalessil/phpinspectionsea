@@ -25,7 +25,7 @@ final public class CanBeReplacedWithImplodeStrategy {
             final PsiElement candidate = expression.getFirstChild();
             if (candidate instanceof SelfAssignmentExpression) {
                 final SelfAssignmentExpression assignment = (SelfAssignmentExpression) candidate;
-                if (assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN) {
+                if (assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN && assignment.getVariable() instanceof Variable) {
                     /* concatenated value can be concatenation itself */
                     PsiElement concatenateValue = assignment.getValue();
                     if (concatenateValue instanceof BinaryExpression) {

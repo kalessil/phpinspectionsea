@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
+import com.jetbrains.php.lang.psi.elements.Variable;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -29,7 +30,7 @@ public class CanBeReplacedWithArraySumStrategy {
             if (candidate instanceof SelfAssignmentExpression) {
                 final SelfAssignmentExpression assignment = (SelfAssignmentExpression) candidate;
                 final IElementType operator               = assignment.getOperationType();
-                if (operator == PhpTokenTypes.opPLUS_ASGN) {
+                if (operator == PhpTokenTypes.opPLUS_ASGN && assignment.getVariable() instanceof Variable) {
                     final PsiElement accumulatedValue = assignment.getValue();
                     final PsiElement loopValue        = foreach.getValue();
                     if (loopValue != null && accumulatedValue != null && OpenapiEquivalenceUtil.areEqual(loopValue, accumulatedValue)) {

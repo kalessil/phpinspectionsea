@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MissUsingForeachInspector extends PhpInspection {
-    private static final String messagePattern = "Perhaps can be replaced with '%s(...)' call.";
+    private static final String messagePattern = "Perhaps can be replaced with '%s(...)' call (reduces cognitive load).";
 
     @NotNull
     @Override

@@ -6,10 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.ForeachStatement;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.CanBeReplacedWithArrayFlipStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.CanBeReplacedWithArrayProductStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.CanBeReplacedWithArraySumStrategy;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.CanBeReplacedWithImplodeStrategy;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -57,11 +54,6 @@ public class MissUsingForeachInspector extends PhpInspection {
                                     foreach.getFirstChild(),
                                     ReportingUtil.wrapReportedMessage(String.format(messagePattern, "implode"))
                             );
-                        } else if (CanBeReplacedWithArrayFlipStrategy.apply(foreach, expression, holder.getProject())) {
-                            holder.registerProblem(
-                                    foreach.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_flip"))
-                            );
                         } else if (CanBeReplacedWithArrayProductStrategy.apply(foreach, expression, holder.getProject())) {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
@@ -71,6 +63,16 @@ public class MissUsingForeachInspector extends PhpInspection {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
                                     ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_sum"))
+                            );
+                        } else if (CanBeReplacedWithArrayFlipStrategy.apply(foreach, expression, holder.getProject())) {
+                            holder.registerProblem(
+                                    foreach.getFirstChild(),
+                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_flip"))
+                            );
+                        } else if (CanBeReplacedWithArrayMapStrategy.apply(foreach, expression, holder.getProject())) {
+                            holder.registerProblem(
+                                    foreach.getFirstChild(),
+                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_map"))
                             );
                         }
                     }

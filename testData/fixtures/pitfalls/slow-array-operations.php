@@ -29,5 +29,13 @@ function cases_holder($object) {
         return;
     }
 
+    foreach ([] as $index => $collection) {
+        switch ($index) {
+            case $index:
+                $array = <error descr="[EA] 'array_merge(...)' is used in a loop and is a resources greedy construction.">array_merge($array, [])</error>;
+                break;
+        }
+    }
+
     array_reduce([$object], <error descr="[EA] 'array_merge(...)' is used in a loop and is a resources greedy construction.">'array_merge'</error>, []);
 }

@@ -143,8 +143,9 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                     if (OpenapiTypesUtil.isStatementImpl(statementCandidate)) {
                         final PsiElement groupCandidate = statementCandidate.getParent();
                         if (groupCandidate instanceof GroupStatement) {
-                            final PsiElement last = ExpressionSemanticUtil.getLastStatement((GroupStatement) groupCandidate);
-                            return !(last instanceof PhpBreak) && !(last instanceof PhpReturn);
+                            final PsiElement last      = ExpressionSemanticUtil.getLastStatement((GroupStatement) groupCandidate);
+                            final boolean isValidBreak = last instanceof PhpBreak && groupCandidate.getParent() instanceof PhpCase;
+                            return isValidBreak || (! (last instanceof PhpBreak) && ! (last instanceof PhpReturn));
                         }
                     }
                 }

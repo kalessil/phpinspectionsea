@@ -8,7 +8,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
@@ -83,11 +82,10 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                             }
                         } else if (arguments.length == 2 && this.canApplyPositiveLimit(reference) && this.isFromRootNamespace(reference)) {
                             final String replacement = String.format(
-                                    "%sexplode(%s, %s, %s)",
+                                    "%sexplode(%s, %s, 2)",
                                     reference.getImmediateNamespaceName(),
                                     arguments[0].getText(),
-                                    arguments[1].getText(),
-                                    this.calculatePositiveLimit(reference)
+                                    arguments[1].getText()
                             );
                             holder.registerProblem(
                                     reference,
@@ -164,50 +162,9 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                             }
                         }
                     }
-                } else if (OpenapiTypesUtil.isPhpExpressionImpl(parent)) {
-                    return parent.getParent() instanceof MultiassignmentExpression;
                 }
 
                 return false;
-            }
-
-            private int calculatePositiveLimit(@NotNull PsiElement expression) {
-                final PsiElement parent = expression.getParent();
-                if (OpenapiTypesUtil.isPhpExpressionImpl(parent)) {
-                    final PsiElement grandParent = parent.getParent();
-                    if (grandParent instanceof MultiassignmentExpression) {
-                        /* find assignment operation element */
-                        PsiElement sign  = null;
-                        PsiElement child = grandParent.getFirstChild();
-                        while (child != null) {
-                            if (OpenapiTypesUtil.is(child, PhpTokenTypes.opASGN)) {
-                                sign = child;
-                                break;
-                            }
-                            child = child.getNextSibling();
-                        }
-
-                        /* calculate limit */
-                        int commasToIgnore      = 0;
-                        int commasTotal         = 0;
-                        boolean reachedVariable = false;
-                        PsiElement current = sign.getPrevSibling();
-                        while (current != null) {
-                            reachedVariable = reachedVariable || current instanceof Variable;
-                            if (OpenapiTypesUtil.is(current, PhpTokenTypes.opCOMMA)) {
-                                if (! reachedVariable) {
-                                    ++commasToIgnore;
-                                }
-                                ++commasTotal;
-                            }
-                            current = current.getPrevSibling();
-                        }
-
-                        return (commasTotal - commasToIgnore) + 2;
-                    }
-                }
-
-                return 2;
             }
         };
     }

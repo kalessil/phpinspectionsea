@@ -4,11 +4,11 @@ function cases_holder_positive_limit() {
     $skip = explode('/', '...');
     $target = explode('/', '...', 2);
 
-    list($first,) = explode('/', '...', 2);
-    list($first) = explode('/', '...', 2);
-    list(, $second) = explode('/', '...', 3);
-    list(, $second,) = explode('/', '...', 3);
-    list($first, ,) = explode('/', '...', 2);
+    list($first,) = explode('/', '...');
+    list($first) = explode('/', '...');
+    list(, $second) = explode('/', '...');
+    list(, $second,) = explode('/', '...');
+    list($first, ,) = explode('/', '...');
 
     return [
         explode('/', '...', 2)[0],

@@ -1,14 +1,15 @@
 <?php
 
 function cases_holder_positive_limit() {
-    $skip = explode('/', '...');
-    $target = explode('/', '...', 2);
-
+    /* could be a case, but changes behaviour */
     list($first,) = explode('/', '...');
     list($first) = explode('/', '...');
     list(, $second) = explode('/', '...');
     list(, $second,) = explode('/', '...');
     list($first, ,) = explode('/', '...');
+
+    $skip = explode('/', '...');
+    $target = explode('/', '...', 2);
 
     return [
         explode('/', '...', 2)[0],

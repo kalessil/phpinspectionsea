@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.security;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -96,7 +95,6 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
                                 holder.registerProblem(
                                         reference,
                                         ReportingUtil.wrapReportedMessage(messageHarden),
-                                        ProblemHighlightType.GENERIC_ERROR,
                                         new EscapeAllQuotesFix(replacement)
                                 );
                             }

@@ -8,11 +8,14 @@ function cases_holder($object) {
         $result = <error descr="[EA] 'array_replace(...)' is used in a loop and is a resources greedy construction.">array_replace($result, $collection)</error>;
         $result = <error descr="[EA] 'array_replace_recursive(...)' is used in a loop and is a resources greedy construction.">array_replace_recursive($result, $collection)</error>;
 
+        $result = <error descr="[EA] 'array_merge(...)' is used in a loop and is a resources greedy construction.">array_unique(array_merge($result, $collection))</error>;
+
         /* false-positives: multiple targets patching */
         $result['...'] = array_merge($result['...'], $collection);
 
         /* case: slow function with objects API */
         $object->setArray(<error descr="[EA] 'array_merge(...)' is used in a loop and is a resources greedy construction.">array_merge($object->getArray(), $collection)</error>);
+        $object->setArray(<error descr="[EA] 'array_merge(...)' is used in a loop and is a resources greedy construction.">array_unique(array_merge($object->getArray(), $collection))</error>);
     }
 
     $result = array_merge($result, $collection);

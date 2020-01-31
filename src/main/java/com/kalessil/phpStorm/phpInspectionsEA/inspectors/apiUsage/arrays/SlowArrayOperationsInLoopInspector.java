@@ -48,9 +48,6 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
         functionsSet.add("array_merge_recursive");
         functionsSet.add("array_replace");
         functionsSet.add("array_replace_recursive");
-        functionsSet.add("count");
-        functionsSet.add("sizeof");
-        functionsSet.add("array_unique");
     }
 
     @Override
@@ -61,21 +58,29 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
 
-                final String functionName = reference.getName();
+                String functionName = reference.getName();
                 if (functionName != null) {
-                    if (functionsSet.contains(functionName)) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length > 1 && !(arguments[0] instanceof ArrayAccessExpression)) {
-                            final PsiElement parent  = reference.getParent();
-                            final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
-                            if (this.isTargetContext(context)) {
+                    /* array_unique argument needs to be un-boxed for proper patterns detection */
+                    final FunctionReference reportingTarget = reference;
+                    final PsiElement parent                 = reference.getParent();
+                    final PsiElement context                = parent instanceof ParameterList ? parent.getParent() : parent;
+                    PsiElement[] arguments                  = reference.getParameters();
+                    if (arguments.length == 1 && functionName.equals("array_unique") && OpenapiTypesUtil.isFunctionReference(arguments[0])) {
+                        reference    = (FunctionReference) arguments[0];
+                        arguments    = reference.getParameters();
+                        functionName = reference.getName();
+                    }
+
+                    if (functionName != null) {
+                        if (functionsSet.contains(functionName)) {
+                            if (arguments.length > 1 && ! (arguments[0] instanceof ArrayAccessExpression) && this.isTargetContext(context)) {
                                 PsiElement current = context.getParent();
                                 while (current != null && !(current instanceof PhpFile) && !(current instanceof Function)) {
                                     if (OpenapiTypesUtil.isLoop(current)) {
                                         if (context instanceof AssignmentExpression) {
                                             if (this.isTargetAssignment((AssignmentExpression) context, reference) && this.isFromRootNamespace(reference)) {
                                                 holder.registerProblem(
-                                                        reference,
+                                                        reportingTarget,
                                                         String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName)
                                                 );
                                             }
@@ -83,7 +88,7 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                                         } else if (context instanceof MethodReference) {
                                             if (this.isTargetReference((MethodReference) context, reference) && this.isFromRootNamespace(reference)) {
                                                 holder.registerProblem(
-                                                        reference,
+                                                        reportingTarget,
                                                         String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName)
                                                 );
                                             }
@@ -93,17 +98,16 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                                     current = current.getParent();
                                 }
                             }
-                        }
-                    } else if (functionName.equals("array_reduce")) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 3 && arguments[1] instanceof StringLiteralExpression) {
-                            final StringLiteralExpression callback = (StringLiteralExpression) arguments[1];
-                            final String callbackName              = callback.getContents().replace("\\", "");
-                            if (functionsSet.contains(callbackName)) {
-                                holder.registerProblem(
-                                        callback,
-                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), callbackName)
-                                );
+                        } else if (functionName.equals("array_reduce")) {
+                            if (arguments.length == 3 && arguments[1] instanceof StringLiteralExpression) {
+                                final StringLiteralExpression callback = (StringLiteralExpression) arguments[1];
+                                final String callbackName              = callback.getContents().replace("\\", "");
+                                if (functionsSet.contains(callbackName)) {
+                                    holder.registerProblem(
+                                            callback,
+                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), callbackName)
+                                    );
+                                }
                             }
                         }
                     }

@@ -553,6 +553,10 @@
         shortName="PreloadingUsageCorrectnessInspection"          displayName="Preloading usage correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PreloadingUsageCorrectnessInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StaticLambdaBindingInspection"                 displayName="Static lambdas binding"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.StaticLambdaBindingInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

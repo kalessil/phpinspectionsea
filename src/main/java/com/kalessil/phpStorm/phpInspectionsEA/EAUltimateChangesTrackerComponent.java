@@ -12,6 +12,8 @@ import com.intellij.openapi.vcs.changes.ChangeListAdapter;
 import com.intellij.openapi.vcs.changes.ChangeListListener;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ConcurrentHashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -39,7 +41,7 @@ public class EAUltimateChangesTrackerComponent extends AbstractProjectComponent 
 
         this.documentManager   = FileDocumentManager.getInstance();
         this.changeListManager = ChangeListManager.getInstance(project);
-        this.files             = new HashSet<>();
+        this.files             = ContainerUtil.newConcurrentSet();
 
         EditorFactory.getInstance().getEventMulticaster().addDocumentListener(this.documentListener = new DocumentAdapter() {
             @Override

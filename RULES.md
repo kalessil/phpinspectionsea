@@ -204,6 +204,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | DuplicateArrayKeysInspection                    | Duplicate array keys                                      | n/a | yes | n/a  | n/a |
 | Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |
 | Probable bugs        | PreloadingUsageCorrectnessInspection            | Preloading usage correctness                              | yes | yes | yes  | n/a |
+| Probable bugs        | StaticLambdaBindingInspection                   | Static lambdas binding                                    | yes | yes | yes  | no  |
 
 Inspections Lists (Security)
 ---

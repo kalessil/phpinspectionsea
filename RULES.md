@@ -48,6 +48,7 @@ Inspections Lists (Control flow)
 | Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | yes |
 | Control Flow         | ExplodeLimitUsageInspection                     | 'explode(...)' limit can be used                                                  | yes | yes | yes  | no  |
 | Control Flow         | UriPartExtractionInspection                     | URI parts extraction                                                              | n/a | yes | n/a  | no  |
+| Control Flow         | MissUsingForeachInspection                      | Missused foreach constructs                                                       | n/a | yes | n/a  | no  |
 
 Inspections Lists (PhpUnit)
 ---

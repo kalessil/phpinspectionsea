@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MissingHashElementArrowInspector extends PhpInspection {
-    private static final String message = "It's probably was intended to use ' => ' here.";
+    private static final String message = "It's probably was intended to use ' => ' here (tweak formatting if not).";
 
     @NotNull
     @Override

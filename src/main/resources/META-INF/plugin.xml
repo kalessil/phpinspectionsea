@@ -555,7 +555,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.PreloadingUsageCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="MissingHashElementArrowInspection"             displayName="Missing hash element arrow"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
+        groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.MissingHashElementArrowInspector"/>
 
 

@@ -2,7 +2,7 @@
 
     $array = [
         '...' => '',
-        '...'<error descr="[EA] It's probably was intended to use ' => ' here (tweak formatting if not).">,</error> '...'
+        '...'<warning descr="[EA] It's probably was intended to use ' => ' here (tweak formatting if not).">,</warning> '...'
     ];
 
     $array = [

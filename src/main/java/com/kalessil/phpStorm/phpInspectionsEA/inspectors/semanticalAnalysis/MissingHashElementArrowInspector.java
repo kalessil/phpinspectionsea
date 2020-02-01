@@ -47,20 +47,22 @@ public class MissingHashElementArrowInspector extends PhpInspection {
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
-                final ArrayHashElement element = expression.getHashElements().iterator().next();
-                if (element != null && element.getKey() instanceof StringLiteralExpression) {
-                    final PsiElement[] children = expression.getChildren();
-                    for (int position = 0; position < children.length; ++position) {
-                        final PsiElement current = children[position];
-                        if (! (current instanceof ArrayHashElement) && current.getFirstChild() instanceof StringLiteralExpression) {
-                            final PsiElement comma = current.getNextSibling();
-                            if (OpenapiTypesUtil.is(comma, PhpTokenTypes.opCOMMA)) {
-                                final PsiElement space = comma.getNextSibling();
-                                if (space instanceof PsiWhiteSpace && space.getText().equals(" ")) {
-                                    holder.registerProblem(
-                                            comma,
-                                            ReportingUtil.wrapReportedMessage(message)
-                                    );
+                final PsiElement[] children = expression.getChildren();
+                if (children.length > 2 && children[0] instanceof ArrayHashElement) {
+                    final ArrayHashElement element = (ArrayHashElement) children[0];
+                    if (element.getKey() instanceof StringLiteralExpression) {
+                        for (int position = 0; position < children.length - 1; ++position) {
+                            final PsiElement current = children[position];
+                            if (! (current instanceof ArrayHashElement) && current.getFirstChild() instanceof StringLiteralExpression) {
+                                final PsiElement comma = current.getNextSibling();
+                                if (OpenapiTypesUtil.is(comma, PhpTokenTypes.opCOMMA)) {
+                                    final PsiElement space = comma.getNextSibling();
+                                    if (space instanceof PsiWhiteSpace && space.getText().equals(" ")) {
+                                        holder.registerProblem(
+                                                comma,
+                                                ReportingUtil.wrapReportedMessage(message)
+                                        );
+                                    }
                                 }
                             }
                         }

@@ -150,11 +150,34 @@ final public class OpenapiResolveUtil {
                 }
             } else if (expression instanceof ArrayAccessExpression) {
                 /* `_GET[...] & co` gets resolved with missing string type */
-                final PsiElement globalCandidate = ((ArrayAccessExpression) expression).getValue();
+                final ArrayAccessExpression access = (ArrayAccessExpression) expression;
+                final PsiElement globalCandidate   = access.getValue();
                 if (globalCandidate instanceof Variable) {
                     final String variableName = ((Variable) globalCandidate).getName();
                     if (ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
-                        result = new PhpType().add(PhpType.STRING).add(PhpType.ARRAY);
+                        final ArrayIndex holder   = access.getIndex();
+                        final PhpPsiElement index = holder == null ? null : holder.getValue();
+                        if (variableName.equals("_SERVER") && index instanceof StringLiteralExpression) {
+                            switch (((StringLiteralExpression) index).getContents()) {
+                                case "argv":
+                                    result = new PhpType().add(PhpType.ARRAY);
+                                    break;
+                                case "argc":
+                                case "REQUEST_TIME":
+                                case "REMOTE_PORT":
+                                case "SERVER_PORT":
+                                    result = new PhpType().add(PhpType.INT);
+                                    break;
+                                case "REQUEST_TIME_FLOAT":
+                                    result = new PhpType().add(PhpType.FLOAT);
+                                    break;
+                                default:
+                                    result = new PhpType().add(PhpType.STRING);
+                                    break;
+                            }
+                        } else {
+                            result = new PhpType().add(PhpType.STRING).add(PhpType.ARRAY);
+                        }
                     }
                 }
             } else if (expression instanceof BinaryExpression) {

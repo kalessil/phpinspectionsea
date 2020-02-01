@@ -236,6 +236,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | StringFragmentMisplacedInspection               | Incorrectly placed string fragment                        | yes | yes | yes  | no  |
 | Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |
 | Probable bugs        | PreloadingUsageCorrectnessInspection            | Preloading usage correctness                              | yes | yes | yes  | n/a |
+| Probable bugs        | MissingHashElementArrowInspection               | Missing hash element arrow                                | n/a | yes | n/a  | n/a |
 
 Inspections Lists (Security)
 ---

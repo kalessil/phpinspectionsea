@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.semanticalAnalysis;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.UnusedFunctionResultInspector;
 
-public class UnusedFunctionResultInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class UnusedFunctionResultInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         final UnusedFunctionResultInspector inspector = new UnusedFunctionResultInspector();
         inspector.REPORT_ONLY_SCALARS                 = false;

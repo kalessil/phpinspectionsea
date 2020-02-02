@@ -38,6 +38,8 @@ namespace RootNamespace {
         public function unknownTypeParameter($unknownTypeParameter = null) { return $unknownTypeParameter; }
 
         public function <weak_warning descr="[EA] ': ?\Generator' can be declared as return type hint.">methodReturnsGenerator</weak_warning>() { yield from []; }
+
+        public function <weak_warning descr="[EA] ': array' can be declared as return type hint.">methodReturnsArray</weak_warning>($parameter) { if ($parameter) { throw new \RuntimeException('...'); } return [$parameter]; }
     }
 }
 

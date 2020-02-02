@@ -58,10 +58,13 @@ public class MissingHashElementArrowInspector extends PhpInspection {
                                 if (OpenapiTypesUtil.is(comma, PhpTokenTypes.opCOMMA)) {
                                     final PsiElement space = comma.getNextSibling();
                                     if (space instanceof PsiWhiteSpace && space.getText().equals(" ")) {
-                                        holder.registerProblem(
-                                                comma,
-                                                ReportingUtil.wrapReportedMessage(message)
-                                        );
+                                        final PsiElement previous = current.getPrevSibling();
+                                        if (previous instanceof PsiWhiteSpace && previous.getText().contains("\n")) {
+                                            holder.registerProblem(
+                                                    comma,
+                                                    ReportingUtil.wrapReportedMessage(message)
+                                            );
+                                        }
                                     }
                                 }
                             }

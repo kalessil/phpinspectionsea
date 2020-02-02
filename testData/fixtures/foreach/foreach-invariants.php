@@ -20,6 +20,10 @@ namespace NS {
             <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">while</warning> ($value = array_shift($array)) {
                 echo $value;
             }
+
+            while ($value = array_shift($this->property)) {
+                echo $value;
+            }
         }
 
         public function casesForLimits($array, $limit) {

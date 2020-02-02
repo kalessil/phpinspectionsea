@@ -19,6 +19,10 @@ namespace NS {
             foreach ($array as $value) {
                 echo $value;
             }
+
+            while ($value = array_shift($this->property)) {
+                echo $value;
+            }
         }
 
         public function casesForLimits($array, $limit) {

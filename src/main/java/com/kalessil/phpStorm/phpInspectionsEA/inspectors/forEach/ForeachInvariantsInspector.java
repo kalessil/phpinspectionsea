@@ -156,7 +156,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                             final String functionName         = reference.getName();
                             if (functionName != null && functionName.equals("array_shift")) {
                                 final PsiElement[] arguments = reference.getParameters();
-                                if (arguments.length == 1) {
+                                if (arguments.length == 1 && ! (arguments[0] instanceof FieldReference)) {
                                     final boolean sameSource = source == null || OpenapiEquivalenceUtil.areEqual(source, arguments[0]);
                                     if (sameSource) {
                                         return assignment;

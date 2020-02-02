@@ -12,10 +12,13 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -74,8 +77,8 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
                             );
                         }
                         if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
-                            final boolean hasFlag = arguments.length >= 4 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
-                            if (!hasFlag) {
+                            final boolean hasFlag = arguments.length >= 4 && this.hasThrowOnErrorFlag(arguments[3]);
+                            if (! hasFlag) {
                                 final String replacement = String.format(
                                         "%sjson_decode(%s, %s, %s, %s)",
                                         reference.getImmediateNamespaceName(),
@@ -94,7 +97,7 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
                     } else if (functionName.equals("json_encode") && this.isFromRootNamespace(reference)) {
                         if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
                             final PsiElement[] arguments = reference.getParameters();
-                            final boolean hasFlag        = arguments.length >= 2 && PsiTreeUtil.findChildrenOfType(reference, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
+                            final boolean hasFlag        = arguments.length >= 2 && this.hasThrowOnErrorFlag(arguments[1]);
                             if (!hasFlag && arguments.length > 0) {
                                 final String replacement;
                                 if (arguments.length > 2) {
@@ -122,6 +125,21 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean hasThrowOnErrorFlag(@NotNull PsiElement argument) {
+                boolean hasFlag = false;
+                final Set<PsiElement> options = PossibleValuesDiscoveryUtil.discover(argument);
+                if (options.size() == 1) {
+                    final PsiElement option = options.iterator().next();
+                    if (OpenapiTypesUtil.isNumber(option)) {
+                        hasFlag = option.getText().equals("4194304"); /* JSON_THROW_ON_ERROR constant */
+                    } else {
+                        hasFlag = PsiTreeUtil.findChildrenOfType(option, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
+                    }
+                    options.clear();
+                }
+                return hasFlag;
             }
         };
     }

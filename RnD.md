@@ -7,6 +7,3 @@ Loops:
 
 Amount of traits
 Unused function result, but for generators
-
-A typo-safe programming language is a language were the Levenstein distance between any two names in the same scope must be 2 or more.
- -> variables, properties and methods names

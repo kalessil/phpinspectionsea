@@ -69,7 +69,7 @@ public class TypoSafeNamingInspector extends PhpInspection {
                             if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {
                                 // setting allow getter-setter pairs enabled by default
                                 final boolean isGetterSetter = names[outer].replaceAll("^(set|get)", "").equals(names[inner].replaceAll("^(set|get)", ""));
-                                if (isGetterSetter) {
+                                if (! isGetterSetter) {
                                     final Method outerMethod = mapping.get(names[outer]);
                                     final Method innerMethod = mapping.get(names[inner]);
                                     if (outerMethod.getContainingClass() == clazz || innerMethod.getContainingClass() == clazz) {

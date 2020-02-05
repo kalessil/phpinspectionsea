@@ -9,11 +9,13 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,6 +30,9 @@ import java.util.stream.Collectors;
  */
 
 public class TypoSafeNamingInspector extends PhpInspection {
+    // Inspection options.
+    public boolean ALLOW_GETTER_SETTER_PAIRS = true;
+
     private static final String messagePatternMethod   = "Methods '%s' and '%s' naming is quite similar, consider renaming one for avoiding misuse.";
     private static final String messagePatternProperty = "Properties '%s' and '%s' naming is quite similar, consider renaming one for avoiding misuse.";
 
@@ -67,9 +72,8 @@ public class TypoSafeNamingInspector extends PhpInspection {
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
                             if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {
-                                // setting allow getter-setter pairs enabled by default
-                                final boolean isGetterSetter = names[outer].replaceAll("^(set|get)", "").equals(names[inner].replaceAll("^(set|get)", ""));
-                                if (! isGetterSetter) {
+                                final boolean check = ALLOW_GETTER_SETTER_PAIRS || ! names[outer].replaceAll("^(set|get)", "").equals(names[inner].replaceAll("^(set|get)", ""));
+                                if (check) {
                                     final Method outerMethod = mapping.get(names[outer]);
                                     final Method innerMethod = mapping.get(names[inner]);
                                     if (outerMethod.getContainingClass() == clazz || innerMethod.getContainingClass() == clazz) {
@@ -104,5 +108,11 @@ public class TypoSafeNamingInspector extends PhpInspection {
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Allow getter/setter pairs",  ALLOW_GETTER_SETTER_PAIRS, (isSelected) -> ALLOW_GETTER_SETTER_PAIRS = isSelected);
+        });
     }
 }

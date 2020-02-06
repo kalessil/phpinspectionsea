@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
 
 public class TypoSafeNamingInspector extends PhpInspection {
     // Inspection options.
-    public boolean ALLOW_GETTER_SETTER_PAIRS = true;
+    public boolean ALLOW_GETTER_SETTER_PAIRS   = true;
+    public boolean ALLOW_SINGULAR_PLURAL_PAIRS = true;
 
     private static final String messagePatternMethod   = "Methods '%s' and '%s' naming is quite similar, consider renaming one for avoiding misuse.";
     private static final String messagePatternProperty = "Properties '%s' and '%s' naming is quite similar, consider renaming one for avoiding misuse.";
@@ -72,7 +73,7 @@ public class TypoSafeNamingInspector extends PhpInspection {
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
                             if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {
-                                final boolean check = ALLOW_GETTER_SETTER_PAIRS || ! names[outer].replaceAll("^(set|get)", "").equals(names[inner].replaceAll("^(set|get)", ""));
+                                final boolean check = ! ALLOW_GETTER_SETTER_PAIRS && names[outer].replaceAll("^(set|get)", "").equals(names[inner].replaceAll("^(set|get)", ""));
                                 if (check) {
                                     final Method outerMethod = mapping.get(names[outer]);
                                     final Method innerMethod = mapping.get(names[inner]);
@@ -112,7 +113,8 @@ public class TypoSafeNamingInspector extends PhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.addCheckbox("Allow getter/setter pairs",  ALLOW_GETTER_SETTER_PAIRS, (isSelected) -> ALLOW_GETTER_SETTER_PAIRS = isSelected);
+            component.addCheckbox("Allow 'get.../set...' pattern",  ALLOW_GETTER_SETTER_PAIRS, (isSelected) -> ALLOW_GETTER_SETTER_PAIRS = isSelected);
+            component.addCheckbox("Allow '.../...s' pattern",  ALLOW_SINGULAR_PLURAL_PAIRS, (isSelected) -> ALLOW_SINGULAR_PLURAL_PAIRS = isSelected);
         });
     }
 }

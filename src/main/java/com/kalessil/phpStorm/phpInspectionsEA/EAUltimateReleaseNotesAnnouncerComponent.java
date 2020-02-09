@@ -55,18 +55,6 @@ public class EAUltimateReleaseNotesAnnouncerComponent implements ProjectComponen
                         NotificationType.INFORMATION,
                         NotificationListener.URL_OPENING_LISTENER
                 ));
-                /* marketplace migration and JS Inspections (EA Extended) announcements */
-                Notifications.Bus.notify(group.createNotification(
-                        String.format("<b>%s</b>: important", pluginName),
-                        "Two great news folks! First, new crowd-funding campaign starts 15 January 2020. " +
-                                "It'll fund JS Inspections (EA Extended) creation, and we need your support: when campaign starts, please share it in social networks. " +
-                                "Preview is available <a href='https://www.indiegogo.com/project/preview/a98db068'>here</a>!<br/>" +
-                                "Second, we are migrating to JetBrains Plugin Marketplace in Q1 2020. " +
-                                "More details follows, but in nutshell payments and license management will be part of your JetBrains account. " +
-                                "Please follow me on Twitter (@kalessil) for further updates and your feedback.<br/>",
-                        NotificationType.INFORMATION,
-                        NotificationListener.URL_OPENING_LISTENER
-                ));
             });
 
             final IdeaPluginDescriptor extendedPlugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));

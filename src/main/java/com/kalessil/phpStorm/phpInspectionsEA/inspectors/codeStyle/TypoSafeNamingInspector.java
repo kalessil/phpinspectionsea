@@ -73,14 +73,21 @@ public class TypoSafeNamingInspector extends PhpInspection {
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
                             if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {
-                                final boolean check = ! ALLOW_GETTER_SETTER_PAIRS && names[outer].replaceAll("^(set|get)", "").equals(names[inner].replaceAll("^(set|get)", ""));
-                                if (check) {
-                                    final Method outerMethod = mapping.get(names[outer]);
-                                    final Method innerMethod = mapping.get(names[inner]);
-                                    if (outerMethod.getContainingClass() == clazz || innerMethod.getContainingClass() == clazz) {
-                                        long outerMandatory = Arrays.stream(outerMethod.getParameters()).filter(p -> !p.isOptional()).count();
-                                        long innerMandatory = Arrays.stream(innerMethod.getParameters()).filter(p -> !p.isOptional()).count();
-                                        if (innerMandatory == outerMandatory) {
+                                final Method outerMethod = mapping.get(names[outer]);
+                                final Method innerMethod = mapping.get(names[inner]);
+                                if (outerMethod.getContainingClass() == clazz || innerMethod.getContainingClass() == clazz) {
+                                    long outerMandatory = Arrays.stream(outerMethod.getParameters()).filter(p -> !p.isOptional()).count();
+                                    long innerMandatory = Arrays.stream(innerMethod.getParameters()).filter(p -> !p.isOptional()).count();
+                                    if (innerMandatory == outerMandatory) {
+                                        if (names[outer].replaceAll("^(set|get)", "").equals(names[inner].replaceAll("^(set|get)", ""))) {
+                                            if (! ALLOW_GETTER_SETTER_PAIRS) {
+                                                holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]));
+                                            }
+                                        } else if (names[outer].replaceAll("s$", "").equals(names[inner].replaceAll("s$", ""))) {
+                                            if (! ALLOW_SINGULAR_PLURAL_PAIRS) {
+                                                holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]));
+                                            }
+                                        } else {
                                             holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]));
                                         }
                                     }
@@ -94,14 +101,20 @@ public class TypoSafeNamingInspector extends PhpInspection {
             private void analyzeFields(@NotNull PhpClass clazz, @NotNull Collection<Field> fields, @NotNull PsiElement nameNode) {
                 final String[] names = fields.stream().filter(f -> ! f.isConstant()).map(PhpNamedElement::getName).toArray(String[]::new);
                 if (names.length > 1) {
-                    final Map<String, Field> mapping = fields.stream().filter(f -> ! f.isConstant()).collect(Collectors.toMap(Field::getName, Function.identity()));
+                    final Map<String, Field> mapping = fields.stream().filter(f -> ! f.isConstant()).collect(Collectors.toMap(Field::getName, Function.identity(), (f1, f2) -> f1));
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
                             if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {
                                 final Field outerField = mapping.get(names[outer]);
                                 final Field innerField = mapping.get(names[inner]);
                                 if (outerField.getContainingClass() == clazz || innerField.getContainingClass() == clazz) {
-                                    holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternProperty, names[outer], names[inner]));
+                                    if (names[outer].replaceAll("s$", "").equals(names[inner].replaceAll("s$", ""))) {
+                                        if (! ALLOW_SINGULAR_PLURAL_PAIRS) {
+                                            holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternProperty, names[outer], names[inner]));
+                                        }
+                                    } else {
+                                        holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternProperty, names[outer], names[inner]));
+                                    }
                                 }
                             }
                         }

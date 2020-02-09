@@ -70,7 +70,7 @@ public class TypoSafeNamingInspector extends PhpInspection {
             private void analyzeMethods(@NotNull PhpClass clazz, @NotNull Collection<Method> methods, @NotNull PsiElement nameNode) {
                 final String[] names = methods.stream().map(PhpNamedElement::getName).toArray(String[]::new);
                 if (names.length > 1) {
-                    final Map<String, Method> mapping = methods.stream().collect(Collectors.toMap(Method::getName, Function.identity(), (f1, f2) -> f1, TreeMap::new));
+                    final Map<String, Method> mapping = methods.stream().collect(Collectors.toMap(Method::getName, Function.identity(), (m1, m2) -> m1, TreeMap::new));
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
                             if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {

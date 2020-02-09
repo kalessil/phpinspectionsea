@@ -1,18 +1,16 @@
 <html>
 New features release.<br/>
 <br/>
-- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/74166">v4.0.2</a> and <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/update/75467">v4.0.3</a><br/>
+- Missing hash element arrow: implemented<br/>
+- Missused foreach constructs: implemented<br/>
+- Slow array function used in loop: new patterns<br/>
+- Typo safe naming: implemented<br/>
 <br/>
-- Callable parameter usage violates definition: new patterns<br/>
-- URI parts extraction: implemented<br/>
-- 'array_search(...)' could be replaced by 'in_array(...)': new patterns<br/>
-<br/>
-- Backtick operator usage: bug-fixed code generation<br/>
-- Exposed @internal classes: new settings<br/>
-- JSON encoding API usage: bug-fixed code generation<br/>
-- Static lambdas binding: resolved a false-positive (nested lambdas)<br/>
-- Unnecessary variable overrides: resolved a false-positive (assignment by reference)<br/>
-- 'explode(...)' limit can be used: bug-fixed code generation<br/>
+- PhpStorm 2020.1 EAP compatibility fixes<br/>
+- Foreach usage possible: resolved a false-positive (class properties)<br/>
+- JSON encoding API usage: resolved a false-positive (local variables discovery)<br/>
+- Insecure 'htmlspecialchars(...)' usage (XSS attacks): respect verbosity settings<br/>
+- 'explode(...)' limit can be used: dropped multi-assignment pattern (changes behaviour)<br/>
 <br/>
 <hr/>
 </html>

@@ -1,6 +1,6 @@
 <?php
 
-class <weak_warning descr="[EA] Properties 'property2' and 'property1' naming is quite similar, consider renaming one for avoiding misuse.">ClazzWithProperties</weak_warning> {
+class <weak_warning descr="[EA] Properties 'property1' and 'property2' naming is quite similar, consider renaming one for avoiding misuse.">ClazzWithProperties</weak_warning> {
     private $property1;
     private $property2;
 

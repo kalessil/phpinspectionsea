@@ -105,6 +105,7 @@ public class TypoSafeNamingInspector extends PhpInspection {
                             }
                         }
                     }
+                    mapping.clear();
                 }
             }
 
@@ -135,6 +136,7 @@ public class TypoSafeNamingInspector extends PhpInspection {
                             }
                         }
                     }
+                    mapping.clear();
                 }
             }
         };

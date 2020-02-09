@@ -68,9 +68,9 @@ public class TypoSafeNamingInspector extends PhpInspection {
             }
 
             private void analyzeMethods(@NotNull PhpClass clazz, @NotNull Collection<Method> methods, @NotNull PsiElement nameNode) {
-                final String[] names = methods.stream().map(PhpNamedElement::getName).toArray(String[]::new);
+                final String[] names = methods.stream().map(PhpNamedElement::getName).sorted().toArray(String[]::new);
                 if (names.length > 1) {
-                    final Map<String, Method> mapping = methods.stream().collect(Collectors.toMap(Method::getName, Function.identity(), (m1, m2) -> m1, TreeMap::new));
+                    final Map<String, Method> mapping = methods.stream().collect(Collectors.toMap(Method::getName, Function.identity(), (m1, m2) -> m1));
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
                             if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {
@@ -109,9 +109,9 @@ public class TypoSafeNamingInspector extends PhpInspection {
             }
 
             private void analyzeFields(@NotNull PhpClass clazz, @NotNull Collection<Field> fields, @NotNull PsiElement nameNode) {
-                final String[] names = fields.stream().filter(f -> ! f.isConstant()).map(PhpNamedElement::getName).toArray(String[]::new);
+                final String[] names = fields.stream().filter(f -> ! f.isConstant()).map(PhpNamedElement::getName).sorted().toArray(String[]::new);
                 if (names.length > 1) {
-                    final Map<String, Field> mapping = fields.stream().filter(f -> ! f.isConstant()).collect(Collectors.toMap(Field::getName, Function.identity(), (f1, f2) -> f1, TreeMap::new));
+                    final Map<String, Field> mapping = fields.stream().filter(f -> ! f.isConstant()).collect(Collectors.toMap(Field::getName, Function.identity(), (f1, f2) -> f1));
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
                             if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {

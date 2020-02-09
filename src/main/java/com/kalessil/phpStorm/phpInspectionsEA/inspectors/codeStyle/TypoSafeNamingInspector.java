@@ -12,6 +12,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,14 +82,23 @@ public class TypoSafeNamingInspector extends PhpInspection {
                                     if (innerMandatory == outerMandatory) {
                                         if (names[outer].replaceAll("^(set|get)", "").equals(names[inner].replaceAll("^(set|get)", ""))) {
                                             if (! ALLOW_GETTER_SETTER_PAIRS) {
-                                                holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]));
+                                                holder.registerProblem(
+                                                        nameNode,
+                                                        ReportingUtil.wrapReportedMessage(String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]))
+                                                );
                                             }
                                         } else if (names[outer].replaceAll("s$", "").equals(names[inner].replaceAll("s$", ""))) {
                                             if (! ALLOW_SINGULAR_PLURAL_PAIRS) {
-                                                holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]));
+                                                holder.registerProblem(
+                                                        nameNode,
+                                                        ReportingUtil.wrapReportedMessage(String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]))
+                                                );
                                             }
                                         } else {
-                                            holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]));
+                                            holder.registerProblem(
+                                                    nameNode,
+                                                    ReportingUtil.wrapReportedMessage(String.format(TypoSafeNamingInspector.messagePatternMethod, names[outer], names[inner]))
+                                            );
                                         }
                                     }
                                 }
@@ -110,10 +120,16 @@ public class TypoSafeNamingInspector extends PhpInspection {
                                 if (outerField.getContainingClass() == clazz || innerField.getContainingClass() == clazz) {
                                     if (names[outer].replaceAll("s$", "").equals(names[inner].replaceAll("s$", ""))) {
                                         if (! ALLOW_SINGULAR_PLURAL_PAIRS) {
-                                            holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternProperty, names[outer], names[inner]));
+                                            holder.registerProblem(
+                                                    nameNode,
+                                                    ReportingUtil.wrapReportedMessage(String.format(TypoSafeNamingInspector.messagePatternProperty, names[outer], names[inner]))
+                                            );
                                         }
                                     } else {
-                                        holder.registerProblem(nameNode, String.format(TypoSafeNamingInspector.messagePatternProperty, names[outer], names[inner]));
+                                        holder.registerProblem(
+                                                nameNode,
+                                                ReportingUtil.wrapReportedMessage(String.format(TypoSafeNamingInspector.messagePatternProperty, names[outer], names[inner]))
+                                        );
                                     }
                                 }
                             }

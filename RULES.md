@@ -115,6 +115,7 @@ Inspections Lists (Code style)
 | Code Style           | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                     | yes | yes | yes  | yes |
 | Code Style           | TypeUnsafeComparisonInspection                  | Type unsafe comparison                                 | yes | yes | yes  | yes |
 | Code Style           | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search(...)' type unsafe usage | yes | yes | yes  | yes |
+| Code Style           | TypoSafeNamingInspection                        | Typo safe naming                                       | n/a | yes | n/a  | no  |
 
 Inspections Lists (Language level migration)
 ---

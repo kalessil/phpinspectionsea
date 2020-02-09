@@ -73,7 +73,7 @@ public class TypoSafeNamingInspector extends PhpInspection {
                     final Map<String, Method> mapping = methods.stream().collect(Collectors.toMap(Method::getName, Function.identity(), (m1, m2) -> m1));
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
-                            if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2 && ! names[outer].equals(names[inner])) {
+                            if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {
                                 final Method outerMethod = mapping.get(names[outer]);
                                 final Method innerMethod = mapping.get(names[inner]);
                                 if (outerMethod.getContainingClass() == clazz || innerMethod.getContainingClass() == clazz) {
@@ -115,7 +115,7 @@ public class TypoSafeNamingInspector extends PhpInspection {
                     final Map<String, Field> mapping = fields.stream().filter(f -> ! f.isConstant()).collect(Collectors.toMap(Field::getName, Function.identity(), (f1, f2) -> f1));
                     for (int outer = 0; outer < names.length; ++outer) {
                         for (int inner = outer + 1; inner < names.length; ++inner) {
-                            if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2 && ! names[outer].equals(names[inner])) {
+                            if (StringUtils.getLevenshteinDistance(names[outer], names[inner]) < 2) {
                                 final Field outerField = mapping.get(names[outer]);
                                 final Field innerField = mapping.get(names[inner]);
                                 if (outerField.getContainingClass() == clazz || innerField.getContainingClass() == clazz) {

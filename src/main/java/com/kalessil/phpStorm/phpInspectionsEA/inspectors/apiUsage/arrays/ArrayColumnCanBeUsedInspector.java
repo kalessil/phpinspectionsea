@@ -58,7 +58,8 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
                                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                                     final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
                                     if (last instanceof PhpReturn) {
-                                        final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
+                                        final boolean supportsObjects = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700);
+                                        final PsiElement candidate    = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
                                         if (candidate instanceof ArrayAccessExpression) {
                                             final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
                                             final PhpPsiElement value          = access.getValue();
@@ -79,7 +80,7 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
                                                         );
                                                 }
                                             }
-                                        } else if (candidate instanceof FieldReference) {
+                                        } else if (candidate instanceof FieldReference && supportsObjects) {
                                             final FieldReference fieldReference = (FieldReference) candidate;
                                             final PhpPsiElement value            = fieldReference.getFirstPsiChild();
                                             if (value instanceof Variable && parameters[0].getName().equals(value.getName())) {

@@ -20,10 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -247,21 +244,28 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                             /* false-positives: array push */
                             final boolean isPush = PsiTreeUtil.findChildrenOfType(positiveContainer, ArrayIndex.class).stream()
                                     .anyMatch(index -> index.getValue() == null);
-                            if (!isPush) {
+                            if (! isPush) {
+                                /* false-positives: assignment by value */
                                 final boolean isAnyByReference = OpenapiTypesUtil.isAssignmentByReference(positive) ||
                                                                  OpenapiTypesUtil.isAssignmentByReference(negative);
-                                if (!isAnyByReference) {
-                                    PsiElement extractedNegative = negativeValue;
-                                    while (extractedNegative != null && OpenapiTypesUtil.isAssignment(extractedNegative)) {
-                                        extractedNegative = ((AssignmentExpression) extractedNegative).getValue();
-                                    }
-                                    if (extractedNegative != null) {
-                                        return String.format(
-                                                "%s = %s ?? %s",
-                                                positiveContainer.getText(),
-                                                String.format(this.wrap(positiveValue) ? "(%s)" : "%s", positiveValue.getText()),
-                                                String.format(this.wrap(extractedNegative) ? "(%s)" : "%s", extractedNegative.getText())
-                                        );
+                                if (! isAnyByReference) {
+                                    /* false-positives: assignment of processed container value */
+                                    final boolean isContainerProcessing =
+                                            PsiTreeUtil.findChildrenOfType(positiveValue, positiveContainer.getClass()).stream().anyMatch(c -> OpenapiEquivalenceUtil.areEqual(c, positiveContainer)) ||
+                                            PsiTreeUtil.findChildrenOfType(negativeValue, negativeContainer.getClass()).stream().anyMatch(c -> OpenapiEquivalenceUtil.areEqual(c, negativeContainer));
+                                    if (! isContainerProcessing) {
+                                        PsiElement extractedNegative = negativeValue;
+                                        while (extractedNegative != null && OpenapiTypesUtil.isAssignment(extractedNegative)) {
+                                            extractedNegative = ((AssignmentExpression) extractedNegative).getValue();
+                                        }
+                                        if (extractedNegative != null) {
+                                            return String.format(
+                                                    "%s = %s ?? %s",
+                                                    positiveContainer.getText(),
+                                                    String.format(this.wrap(positiveValue) ? "(%s)" : "%s", positiveValue.getText()),
+                                                    String.format(this.wrap(extractedNegative) ? "(%s)" : "%s", extractedNegative.getText())
+                                            );
+                                        }
                                     }
                                 }
                             }

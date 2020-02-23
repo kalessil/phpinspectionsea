@@ -1,17 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
+import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -29,8 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class NestedNotOperatorsInspector extends BasePhpInspection {
-    private static final String messageUseBoolCasting = "Can be replaced with (bool)%e%.";
-    private static final String messageUseSingleNot   = "Can be replaced with !%e%.";
+    private static final String messagePattern = "Can be replaced with '%s'.";
 
     @NotNull
     @Override
@@ -83,28 +78,20 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
                 }
 
                 if (nestingLevel > 1) {
-                    final String message      = (nestingLevel % 2 == 0 ? messageUseBoolCasting : messageUseSingleNot).replace("%e%", value.getText());
-                    final LocalQuickFix fixer = nestingLevel % 2 == 0 ? new UseCastingLocalFix(holder.getProject(), value) : new UseSingleNotLocalFix(holder.getProject(), value);
+                    final String subject     = String.format(value instanceof BinaryExpression ? "(%s)" : "%s", value.getText());
+                    final String replacement = String.format(nestingLevel % 2 == 0 ? "(bool) %s" : "! %s", subject);
                     holder.registerProblem(
                             target,
-                            ReportingUtil.wrapReportedMessage(message),
-                            fixer
+                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement)),
+                            nestingLevel % 2 == 0 ? new UseCastingLocalFix(replacement) : new UseSingleNotLocalFix(replacement)
                     );
                 }
             }
         };
     }
 
-    private static final class UseSingleNotLocalFix implements LocalQuickFix {
+    private static final class UseSingleNotLocalFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use a single not operator";
-
-        final SmartPsiElementPointer<PsiElement> value;
-
-        UseSingleNotLocalFix(@NotNull Project project, @NotNull PsiElement value) {
-            super();
-
-            this.value = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(value);
-        }
 
         @NotNull
         @Override
@@ -112,32 +99,13 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
             return title;
         }
 
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return title;
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement expression = descriptor.getPsiElement();
-            final PsiElement value      = this.value.getElement();
-            if (value != null && expression instanceof UnaryExpression && !project.isDisposed()) {
-                ((UnaryExpression) expression).getValue().replace(value);
-            }
+        UseSingleNotLocalFix(@NotNull String expression) {
+            super(expression);
         }
     }
 
-    private static final class UseCastingLocalFix implements LocalQuickFix {
+    private static final class UseCastingLocalFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use boolean casting";
-
-        final SmartPsiElementPointer<PsiElement> value;
-
-        UseCastingLocalFix(@NotNull Project project, @NotNull PsiElement value) {
-            super();
-
-            this.value = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(value);
-        }
 
         @NotNull
         @Override
@@ -145,25 +113,8 @@ public class NestedNotOperatorsInspector extends BasePhpInspection {
             return title;
         }
 
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return title;
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            final PsiElement value = this.value.getElement();
-            if (value != null && !project.isDisposed()) {
-                final UnaryExpression replacement = PhpPsiElementFactory.createFromText(
-                        project,
-                        UnaryExpression.class,
-                        "(bool) " + value.getText()
-                );
-                if (replacement != null) {
-                    descriptor.getPsiElement().replace(replacement);
-                }
-            }
+        UseCastingLocalFix(@NotNull String expression) {
+            super(expression);
         }
     }
 }

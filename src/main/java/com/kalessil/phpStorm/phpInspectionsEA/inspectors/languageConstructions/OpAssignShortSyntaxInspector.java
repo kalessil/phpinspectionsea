@@ -97,10 +97,10 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                                 if (candidate != null && OpenapiEquivalenceUtil.areEqual(variable, candidate)) {
                                     final boolean canShorten = (fragments.size() == 1 || chainingSafeOperators.contains(operation)) && fragments.stream().noneMatch(f -> f instanceof BinaryExpression);
                                     if (canShorten) {
-                                        /* false-positives: string elements manipulation */
+                                        /* false-positives: string elements manipulation, causes a fatal error */
                                         boolean isStringManipulation = false;
-                                        if (value instanceof ArrayAccessExpression) {
-                                            final PsiElement stringCandidate = ((ArrayAccessExpression) value).getValue();
+                                        if (variable instanceof ArrayAccessExpression) {
+                                            final PsiElement stringCandidate = ((ArrayAccessExpression) variable).getValue();
                                             if (stringCandidate instanceof PhpTypedElement) {
                                                 final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) stringCandidate, holder.getProject());
                                                 if (resolved != null && ! resolved.hasUnknown()) {

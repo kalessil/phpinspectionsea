@@ -58,8 +58,7 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
                                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
                                     final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
                                     if (last instanceof PhpReturn) {
-                                        final boolean supportsObjects = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700);
-                                        final PsiElement candidate    = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
+                                        final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
                                         if (candidate instanceof ArrayAccessExpression) {
                                             final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
                                             final PhpPsiElement value          = access.getValue();
@@ -80,30 +79,33 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
                                                         );
                                                 }
                                             }
-                                        } else if (candidate instanceof FieldReference && supportsObjects) {
-                                            final FieldReference fieldReference = (FieldReference) candidate;
-                                            final PhpPsiElement value            = fieldReference.getFirstPsiChild();
-                                            if (value instanceof Variable && parameters[0].getName().equals(value.getName())) {
-                                                final String columnForReplacement;
-                                                final String fieldName = fieldReference.getName();
-                                                if (fieldName != null && !fieldName.isEmpty()) {
-                                                    columnForReplacement = String.format("'%s'", fieldName);
-                                                } else {
-                                                    final PsiElement dynamicFieldName = value.getNextPsiSibling();
-                                                    columnForReplacement = dynamicFieldName instanceof Variable ? dynamicFieldName.getText() : null;
-                                                }
-                                                if (columnForReplacement != null) {
-                                                    final String replacement = String.format(
-                                                            "%sarray_column(%s, %s)",
-                                                            reference.getImmediateNamespaceName(),
-                                                            arguments[1].getText(),
-                                                            columnForReplacement
-                                                    );
-                                                    holder.registerProblem(
-                                                            reference,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
-                                                            new UseArrayColumnFixer(replacement)
-                                                    );
+                                        } else if (candidate instanceof FieldReference) {
+                                            final boolean supportsObjects = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700);
+                                            if (supportsObjects) {
+                                                final FieldReference fieldReference = (FieldReference) candidate;
+                                                final PhpPsiElement value           = fieldReference.getFirstPsiChild();
+                                                if (value instanceof Variable && parameters[0].getName().equals(value.getName())) {
+                                                    final String columnForReplacement;
+                                                    final String fieldName = fieldReference.getName();
+                                                    if (fieldName != null && !fieldName.isEmpty()) {
+                                                        columnForReplacement = String.format("'%s'", fieldName);
+                                                    } else {
+                                                        final PsiElement dynamicFieldName = value.getNextPsiSibling();
+                                                        columnForReplacement = dynamicFieldName instanceof Variable ? dynamicFieldName.getText() : null;
+                                                    }
+                                                    if (columnForReplacement != null) {
+                                                        final String replacement = String.format(
+                                                                "%sarray_column(%s, %s)",
+                                                                reference.getImmediateNamespaceName(),
+                                                                arguments[1].getText(),
+                                                                columnForReplacement
+                                                        );
+                                                        holder.registerProblem(
+                                                                reference,
+                                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                                new UseArrayColumnFixer(replacement)
+                                                        );
+                                                    }
                                                 }
                                             }
                                         }

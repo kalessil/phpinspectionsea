@@ -116,7 +116,7 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
 
     @Override
     public void projectClosed() {
-        if (isInstantiated()) {
+        if (this.isInstantiated() && ! this.myProject.isDisposed()) {
             windowManager.unregisterToolWindow(TOOL_WINDOW_ID);
         }
     }

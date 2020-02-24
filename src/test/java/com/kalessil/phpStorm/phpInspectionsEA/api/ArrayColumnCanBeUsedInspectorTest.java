@@ -7,8 +7,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayCo
 
 final public class ArrayColumnCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        final ArrayColumnCanBeUsedInspector inspector = new ArrayColumnCanBeUsedInspector();
+        inspector.REPORT_PROPERTIES_MAPPING           = true;
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
-        myFixture.enableInspections(new ArrayColumnCanBeUsedInspector());
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/api/array/array-column.php");
         myFixture.testHighlighting(true, false, true);
 

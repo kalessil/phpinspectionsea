@@ -8,11 +8,14 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -25,6 +28,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArrayColumnCanBeUsedInspector extends PhpInspection {
     private static final String messagePattern = "'%s' would fit more here (it also faster, but loses original keys).";
+
+    // Inspection options.
+    public boolean REPORT_PROPERTIES_MAPPING = false;
 
     @NotNull
     @Override
@@ -80,7 +86,7 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
                                                 }
                                             }
                                         } else if (candidate instanceof FieldReference) {
-                                            final boolean supportsObjects = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700);
+                                            final boolean supportsObjects = REPORT_PROPERTIES_MAPPING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700);
                                             if (supportsObjects) {
                                                 final FieldReference fieldReference = (FieldReference) candidate;
                                                 final PhpPsiElement value           = fieldReference.getFirstPsiChild();
@@ -131,5 +137,11 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
         UseArrayColumnFixer(@NotNull String expression) {
             super(expression);
         }
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Report properties mapping (refactoring unfriendly)", REPORT_PROPERTIES_MAPPING, (isSelected) -> REPORT_PROPERTIES_MAPPING = isSelected)
+        );
     }
 }

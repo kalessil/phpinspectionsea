@@ -7,3 +7,4 @@ Loops:
 
 Amount of traits
 Unused function result, but for generators
+[EA] prefix for QF titles

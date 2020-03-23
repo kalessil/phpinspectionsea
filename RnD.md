@@ -8,3 +8,4 @@ Loops:
 Amount of traits
 Unused function result, but for generators
 [EA] prefix for QF titles
+array_shift(explode('...', $string)) -> explode limit can be applied

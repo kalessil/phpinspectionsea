@@ -4,6 +4,7 @@ daysUntilClose: 21
 exemptLabels:
   - bug / false-positive
   - internal
+  - in review
 staleLabel: wontfix
 markComment: >
   Bebo beep, the StaleBot is here. For one year nothing have happened here.

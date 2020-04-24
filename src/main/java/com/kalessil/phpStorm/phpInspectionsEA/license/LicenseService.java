@@ -57,15 +57,21 @@ final public class LicenseService {
     }
 
     public boolean shouldCheckPluginLicense() {
+        /*
+         * Specific cases:
+         * - headless:   allow unlicensed usage
+         * - EAP:        disallow unlicensed usage
+         * - Evaluation: allow unlicensed usage
+         */
         if (this.shouldCheckLicense == null) {
-            boolean result = false;
+            boolean result                = false;
             final Application application = ApplicationManager.getApplication();
-            if (!application.isHeadlessEnvironment()) {
+            if (! application.isHeadlessEnvironment()) {
                 final LicensingFacade facade = LicensingFacade.getInstance();
-                result = application.isEAP() || (facade != null && !facade.isEvaluationLicense());
+                result = application.isEAP() || (facade != null && ! facade.isEvaluationLicense());
             }
             this.shouldCheckLicense = result;
-            shouldAllowUsage        = !result || shouldAllowUsage;
+            shouldAllowUsage        = ! result || shouldAllowUsage;
         }
         return this.shouldCheckLicense;
     }

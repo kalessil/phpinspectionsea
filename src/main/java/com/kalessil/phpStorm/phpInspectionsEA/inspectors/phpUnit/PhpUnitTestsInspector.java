@@ -232,7 +232,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         if (PROMOTE_PHPUNIT_API) {
                             callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
-                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION));
                             callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertCountStrategy.apply(methodName, reference, holder));

@@ -45,6 +45,7 @@ import java.util.function.BooleanSupplier;
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
+    public PhpUnitVersion PHP_UNIT_VERSION       = PhpUnitVersion.PHPUNIT7;
     public boolean SUGGEST_TO_USE_ASSERTSAME     = false;
     public boolean SUGGEST_TO_USE_NAMED_DATASETS = false;
     public boolean PROMOTE_PHPUNIT_API           = true;
@@ -56,6 +57,25 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     private final static String messageDepends       = "@depends referencing to a non-existing or inappropriate entity.";
     private final static String messageCovers        = "@covers referencing to a non-existing entity '%s'";
     private final static String messageTest          = "@test is ambiguous because method name starts with 'test'.";
+
+    private enum PhpUnitVersion {
+        /* Note from March 2020: versions according current PhpUnit documentation versiosn */
+        PHPUNIT7("7.x"),
+        PHPUNIT8("8.x"),
+        PHPUNIT9("9.x");
+
+        @NotNull
+        private final String version;
+
+        PhpUnitVersion(@NotNull String version) {
+            this.version = version;
+        }
+
+        @Override
+        public String toString() {
+            return this.version;
+        }
+    }
 
     @NotNull
     @Override
@@ -263,6 +283,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
+            component.addDropDown("PHPUnit version", PhpUnitVersion.PHPUNIT7, (version) -> PHP_UNIT_VERSION = (PhpUnitVersion) version);
             component.addCheckbox("Promote dedicated asserts", PROMOTE_PHPUNIT_API, (isSelected) -> PROMOTE_PHPUNIT_API = isSelected);
             component.addCheckbox("Promote ->once()", PROMOTE_MOCKING_ONCE, (isSelected) -> PROMOTE_MOCKING_ONCE = isSelected);
             component.addCheckbox("Promote ->willReturn*(...)", PROMOTE_MOCKING_WILL_RETURN, (isSelected) -> PROMOTE_MOCKING_WILL_RETURN = isSelected);

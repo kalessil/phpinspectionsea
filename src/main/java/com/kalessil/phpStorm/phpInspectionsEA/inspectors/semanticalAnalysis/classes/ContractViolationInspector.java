@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
@@ -15,10 +16,14 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ContractViolationInspector extends PhpInspection {
+    // Inspection options.
+    public boolean REPORT_STATIC_METHODS = false;
+
     private static final String messagePattern = "Some of public methods (%s) are not part of the class contracts. Perhaps a contract is incomplete.";
 
     @NotNull
@@ -43,7 +48,7 @@ public class ContractViolationInspector extends PhpInspection {
 
                 if (!clazz.isInterface() && !clazz.isTrait() && !this.isTestContext(clazz)) {
                     final List<String> ownMethods = Arrays.stream(clazz.getOwnMethods())
-                            .filter(method -> method.getAccess().isPublic())
+                            .filter(method -> method.getAccess().isPublic() && (! method.isStatic() || REPORT_STATIC_METHODS))
                             .filter(method -> ExpressionSemanticUtil.getBlockScope(method) == clazz)
                             .map(PhpNamedElement::getName)
                             .filter(name -> !name.startsWith("__"))
@@ -101,5 +106,11 @@ public class ContractViolationInspector extends PhpInspection {
                 return methods;
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Report static methods", REPORT_STATIC_METHODS, (isSelected) -> REPORT_STATIC_METHODS = isSelected);
+        });
     }
 }

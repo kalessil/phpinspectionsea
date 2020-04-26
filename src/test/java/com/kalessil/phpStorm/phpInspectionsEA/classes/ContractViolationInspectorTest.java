@@ -5,7 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.clas
 
 final public class ContractViolationInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsPatterns() {
-        myFixture.enableInspections(new ContractViolationInspector());
+        final ContractViolationInspector inspector = new ContractViolationInspector();
+        inspector.REPORT_STATIC_METHODS            = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/classes/contracts-violations.php");
         myFixture.testHighlighting(true, false, true);
     }

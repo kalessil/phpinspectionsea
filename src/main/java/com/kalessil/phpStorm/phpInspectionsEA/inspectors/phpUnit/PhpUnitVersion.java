@@ -30,6 +30,10 @@ public enum PhpUnitVersion {
         return this.compareTo(version) >= 0;
     }
 
+    public boolean below(@NotNull PhpUnitVersion version) {
+        return this.compareTo(version) < 0;
+    }
+
     @Override
     public String toString() {
         return this.version;

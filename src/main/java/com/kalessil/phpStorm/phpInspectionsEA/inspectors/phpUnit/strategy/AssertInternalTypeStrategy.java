@@ -73,7 +73,7 @@ final public class AssertInternalTypeStrategy {
                             if (assertionArguments.length > 1) {
                                 suggestedArguments[2] = assertionArguments[1].getText();
                             }
-                            message               = String.format(ReportingUtil.wrapReportedMessage(messagePatternInternalType), suggestedAssertion, suggestedType);
+                            message               = String.format(messagePatternInternalType, suggestedAssertion, suggestedType);
                         } else {
                             /* internal type assertions were deprecated */
                             suggestedAssertion = String.format(
@@ -86,13 +86,13 @@ final public class AssertInternalTypeStrategy {
                             if (assertionArguments.length > 1) {
                                 suggestedArguments[1] = assertionArguments[1].getText();
                             }
-                            message               = String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion);
+                            message               = String.format(messagePattern, suggestedAssertion);
 
                         }
                         /* register an issue */
                         holder.registerProblem(
                                 reference,
-                                message,
+                                ReportingUtil.wrapReportedMessage(message),
                                 new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                         );
                         result = true;

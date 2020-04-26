@@ -109,8 +109,8 @@ public class ContractViolationInspector extends PhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) -> {
-            component.addCheckbox("Report static methods", REPORT_STATIC_METHODS, (isSelected) -> REPORT_STATIC_METHODS = isSelected);
-        });
+        return OptionsComponent.create((component) ->
+            component.addCheckbox("Report static methods", REPORT_STATIC_METHODS, (isSelected) -> REPORT_STATIC_METHODS = isSelected)
+        );
     }
 }

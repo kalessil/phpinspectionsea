@@ -173,11 +173,16 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                             (null == fieldDefault && PhpLanguageUtil.isNull(value)) ||
                             (null != fieldDefault && OpenapiEquivalenceUtil.areEqual(value, fieldDefault))
                         ) {
-                            holder.registerProblem(
-                                    expression,
-                                    ReportingUtil.wrapReportedMessage(messageSenselessWrite),
-                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                            );
+                            /* false-positives: typed properties */
+                            final Field field      = OpenapiResolveUtil.resolveField(clazz, overriddenProperty);
+                            final PhpType resolved = field == null ? null : OpenapiResolveUtil.resolveDeclaredType(field).filterNull();
+                            if (resolved != null && resolved.isEmpty()) {
+                                holder.registerProblem(
+                                        expression,
+                                        ReportingUtil.wrapReportedMessage(messageSenselessWrite),
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                );
+                            }
                             continue;
                         }
                         if (null == fieldDefault) {

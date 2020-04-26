@@ -1,5 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.PropertyInitializationFlawsInspector;
 
@@ -18,18 +20,23 @@ final public class PropertyInitializationFlawsInspectorTest extends PhpCodeInsig
     }
     public void testPropertyOverridePatterns() {
         final PropertyInitializationFlawsInspector inspector = new PropertyInitializationFlawsInspector();
-        inspector.REPORT_INIT_FLAWS                          = true;
-        inspector.REPORT_DEFAULTS_FLAWS                      = true;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/codeStyle/property-initialization-override.php");
         myFixture.testHighlighting(true, false, true);
     }
     public void testClassReferenceResolvingPatterns() {
         final PropertyInitializationFlawsInspector inspector = new PropertyInitializationFlawsInspector();
-        inspector.REPORT_INIT_FLAWS                          = true;
-        inspector.REPORT_DEFAULTS_FLAWS                      = true;
         myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/codeStyle/property-initialization-class-references.php");
         myFixture.testHighlighting(true, false, true);
+    }
+    public void testTypedPropertiesPatterns() {
+        final PhpLanguageLevel level = PhpLanguageLevel.parse("7.4");
+        if (level != null && level.getVersionString().equals("7.4")) {
+            PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
+            myFixture.enableInspections(new PropertyInitializationFlawsInspector());
+            myFixture.configureByFile("testData/fixtures/codeStyle/property-initialization-typed-properties.php");
+            myFixture.testHighlighting(true, false, true);
+        }
     }
 }

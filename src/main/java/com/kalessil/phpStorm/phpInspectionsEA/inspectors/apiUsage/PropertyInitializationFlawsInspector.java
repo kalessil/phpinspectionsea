@@ -175,8 +175,8 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         ) {
                             /* false-positives: typed properties */
                             final Field field      = OpenapiResolveUtil.resolveField(clazz, overriddenProperty);
-                            final PhpType resolved = field == null ? null : OpenapiResolveUtil.resolveDeclaredType(field).filterNull();
-                            if (resolved != null && resolved.isEmpty()) {
+                            final PhpType resolved = field == null ? null : OpenapiResolveUtil.resolveDeclaredType(field);
+                            if (resolved != null && (resolved.size() != 2 || resolved.filterNull().size() != 1)) {
                                 holder.registerProblem(
                                         expression,
                                         ReportingUtil.wrapReportedMessage(messageSenselessWrite),

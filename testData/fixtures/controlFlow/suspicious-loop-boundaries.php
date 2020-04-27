@@ -28,7 +28,7 @@ function cases_holder() {
     for ($i = 5; $i > 0; $i--) {}
     for ($i = 5; $i >= 0; $i -= 1) {}
     for ($i = 5; $i >= 0; $i /= 2) {}
-    for ($i = 5; $i >= 0; $i = $i - 1) {}
+    // for ($i = 5; $i >= 0; $i = $i - 1) {}
 
     /* false-positive: variable limit */
     for ($i = 0; $max > $i; ++$i) {}

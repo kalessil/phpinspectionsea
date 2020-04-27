@@ -1,14 +1,18 @@
 <html>
-New features release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Magic methods validity: new patterns<br/>
-- ::class can be used: new patterns<br/>
-- 'is_countable(...)' can be used: implemented<br/>
-- 'is_iterable(...)' can be used: implemented<br/>
+- PhpStorm 2020.1 compatibility fixes<br/>
+- Static lambdas binding: implemented<br/>
 <br/>
 - Class property initialization flaws: resolved a false-positive (typed properties)<br/>
-- Long inheritance chain: new settings<br/>
-- Type casting can be used: new settings<br/>
+- JSON encoding API usag: resolved a false-positive (local variables discovery)<br/>
+- Nested not operators usage: code generation bug-fixes<br/>
+- Null coalescing operator can be used: resolved a false-positive (target container reuse)<br/>
+- PhpUnit: API deprecations - added settings (PhpUnit version)<br/>
+- PhpUnit: bugs and best practices - added settings (PhpUnit version)<br/>
+- PhpUnit: bugs and best practices - resolved false-positives (multiple cases)<br/>
+- Short syntax for applied operation: resolved a false-positive (string manipulation)<br/>
+- 'null === ...' can be used: disabled by default<br/>
 <br/>
 <hr/>
 </html>

@@ -10,12 +10,13 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -71,8 +72,7 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
 
                     if (PhpLanguageUtil.isNull(fieldDefault)) {
                         /* false-positives: typed properties PS will take care of them */
-                        final PhpType resolved = OpenapiResolveUtil.resolveDeclaredType(field).filterNull();
-                        if (resolved.isEmpty()) {
+                        if (! this.isTypedProperty(field)) {
                             holder.registerProblem(
                                     fieldDefault,
                                     ReportingUtil.wrapReportedMessage(messageDefaultNull),
@@ -105,6 +105,14 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean isTypedProperty(@Nullable Field field) {
+                if (field != null && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740)) {
+                    /* in 2019.1 environment this is not working properly, IDE returns nonsense */
+                    return OpenapiResolveUtil.resolveDeclaredType(field).size() == 2;
+                }
+                return false;
             }
 
             @NotNull
@@ -178,11 +186,14 @@ public class PropertyInitializationFlawsInspector extends PhpInspection {
                             (null == fieldDefault && PhpLanguageUtil.isNull(value)) ||
                             (null != fieldDefault && OpenapiEquivalenceUtil.areEqual(value, fieldDefault))
                         ) {
-                            holder.registerProblem(
-                                    expression,
-                                    ReportingUtil.wrapReportedMessage(messageSenselessWrite),
-                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                            );
+                            /* false-positives: typed properties */
+                            if (! this.isTypedProperty(OpenapiResolveUtil.resolveField(clazz, overriddenProperty))) {
+                                holder.registerProblem(
+                                        expression,
+                                        ReportingUtil.wrapReportedMessage(messageSenselessWrite),
+                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                );
+                            }
                             continue;
                         }
                         if (null == fieldDefault) {

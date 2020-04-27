@@ -4,12 +4,14 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -20,9 +22,12 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class PhpUnitDeprecationsInspector extends PhpInspection {
+public class PhpUnitDeprecationsInspector extends BasePhpInspection {
+    // Inspection options.
+    public PhpUnitVersion PHP_UNIT_VERSION = PhpUnitVersion.PHPUNIT80;
+
     private final static String messageDeprecated = "%s is deprecated in favor of %s() since PhpUnit 8.";
-    private final static String messageRemoved    = "%s is deprecated since PhpUnit 8.";
+    private final static String messageRemoved = "%s is deprecated since PhpUnit 8.";
 
     @NotNull
     @Override
@@ -44,41 +49,49 @@ public class PhpUnitDeprecationsInspector extends PhpInspection {
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PHPUNIT)) { return; }
 
-                final String methodName = reference.getName();
-                if (methodName != null && (methodName.equals("assertEquals") || methodName.equals("assertNotEquals"))) {
-                    final PsiElement[] arguments = reference.getParameters();
-                    if (arguments.length > 3) {
-                        if (arguments.length >= 4 && !arguments[3].getText().isEmpty()) {
-                            holder.registerProblem(
-                                    arguments[3],
-                                    ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$delta", methodName + "WithDelta")),
-                                    ProblemHighlightType.LIKE_DEPRECATED
-                            );
-                        }
-                        if (arguments.length >= 5 && !arguments[4].getText().isEmpty()) {
-                            holder.registerProblem(
-                                    arguments[4],
-                                    ReportingUtil.wrapReportedMessage(String.format(messageRemoved, "$maxDepth")),
-                                    ProblemHighlightType.LIKE_DEPRECATED
-                            );
-                        }
-                        if (arguments.length >= 6 && !arguments[5].getText().isEmpty()) {
-                            holder.registerProblem(
-                                    arguments[5],
-                                    ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$canonicalize", methodName + "Canonicalizing")),
-                                    ProblemHighlightType.LIKE_DEPRECATED
-                            );
-                        }
-                        if (arguments.length >= 7 && !arguments[6].getText().isEmpty()) {
-                            holder.registerProblem(
-                                    arguments[6],
-                                    ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$ignoreCase", methodName + "IgnoringCase")),
-                                    ProblemHighlightType.LIKE_DEPRECATED
-                            );
+                if (PHP_UNIT_VERSION.atLeast(PhpUnitVersion.PHPUNIT80)) {
+                    final String methodName = reference.getName();
+                    if (methodName != null && (methodName.equals("assertEquals") || methodName.equals("assertNotEquals"))) {
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length > 3) {
+                            if (arguments.length >= 4 && !arguments[3].getText().isEmpty()) {
+                                holder.registerProblem(
+                                        arguments[3],
+                                        ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$delta", methodName + "WithDelta")),
+                                        ProblemHighlightType.LIKE_DEPRECATED
+                                );
+                            }
+                            if (arguments.length >= 5 && !arguments[4].getText().isEmpty()) {
+                                holder.registerProblem(
+                                        arguments[4],
+                                        ReportingUtil.wrapReportedMessage(String.format(messageRemoved, "$maxDepth")),
+                                        ProblemHighlightType.LIKE_DEPRECATED
+                                );
+                            }
+                            if (arguments.length >= 6 && !arguments[5].getText().isEmpty()) {
+                                holder.registerProblem(
+                                        arguments[5],
+                                        ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$canonicalize", methodName + "Canonicalizing")),
+                                        ProblemHighlightType.LIKE_DEPRECATED
+                                );
+                            }
+                            if (arguments.length >= 7 && !arguments[6].getText().isEmpty()) {
+                                holder.registerProblem(
+                                        arguments[6],
+                                        ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$ignoreCase", methodName + "IgnoringCase")),
+                                        ProblemHighlightType.LIKE_DEPRECATED
+                                );
+                            }
                         }
                     }
                 }
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+            component.addDropDown("PHPUnit version", PhpUnitVersion.PHPUNIT80, (version) -> PHP_UNIT_VERSION = (PhpUnitVersion) version)
+        );
     }
 }

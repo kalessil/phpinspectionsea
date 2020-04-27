@@ -25,6 +25,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+<<<<<<<HEAD
+=======
+        >>>>>>>master
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -235,6 +239,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
             }
 
             @Nullable
+<<<<<<< HEAD
             private PsiElement getTargetCondition(@NotNull PsiElement condition) {
                 /* un-wrap inverted conditions */
                 if (condition instanceof UnaryExpression) {
@@ -307,6 +312,47 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                                 new Couple<>(statement, statement),
                                                 new Couple<>(ifAssignment.getValue(), elseAssignment.getValue())
                                         );
+=======
+            private String generateReplacement(
+                    @NotNull PsiElement argument,
+                    @NotNull AssignmentExpression positive,
+                    @NotNull AssignmentExpression negative
+            ) {
+                final PsiElement negativeContainer = negative.getVariable();
+                final PsiElement negativeValue     = negative.getValue();
+                if (negativeContainer != null && negativeValue != null) {
+                    final PsiElement positiveContainer = positive.getVariable();
+                    final PsiElement positiveValue     = positive.getValue();
+                    if (positiveContainer != null && positiveValue != null) {
+                        final boolean matching = OpenapiEquivalenceUtil.areEqual(positiveContainer, negativeContainer) &&
+                                                 OpenapiEquivalenceUtil.areEqual(argument, positiveValue);
+                        if (matching) {
+                            /* false-positives: array push */
+                            final boolean isPush = PsiTreeUtil.findChildrenOfType(positiveContainer, ArrayIndex.class).stream()
+                                    .anyMatch(index -> index.getValue() == null);
+                            if (! isPush) {
+                                /* false-positives: assignment by value */
+                                final boolean isAnyByReference = OpenapiTypesUtil.isAssignmentByReference(positive) ||
+                                                                 OpenapiTypesUtil.isAssignmentByReference(negative);
+                                if (! isAnyByReference) {
+                                    /* false-positives: assignment of processed container value */
+                                    final boolean isContainerProcessing =
+                                            PsiTreeUtil.findChildrenOfType(positiveValue, positiveContainer.getClass()).stream().anyMatch(c -> OpenapiEquivalenceUtil.areEqual(c, positiveContainer)) ||
+                                            PsiTreeUtil.findChildrenOfType(negativeValue, negativeContainer.getClass()).stream().anyMatch(c -> OpenapiEquivalenceUtil.areEqual(c, negativeContainer));
+                                    if (! isContainerProcessing) {
+                                        PsiElement extractedNegative = negativeValue;
+                                        while (extractedNegative != null && OpenapiTypesUtil.isAssignment(extractedNegative)) {
+                                            extractedNegative = ((AssignmentExpression) extractedNegative).getValue();
+                                        }
+                                        if (extractedNegative != null) {
+                                            return String.format(
+                                                    "%s = %s ?? %s",
+                                                    positiveContainer.getText(),
+                                                    String.format(this.wrap(positiveValue) ? "(%s)" : "%s", positiveValue.getText()),
+                                                    String.format(this.wrap(extractedNegative) ? "(%s)" : "%s", extractedNegative.getText())
+                                            );
+                                        }
+>>>>>>> master
                                     }
                                 }
                             }

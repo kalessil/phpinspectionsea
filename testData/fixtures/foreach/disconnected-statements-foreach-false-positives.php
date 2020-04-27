@@ -74,7 +74,7 @@ foreach ($files as & $file9) {
 /* loop with unpacking array into multiple variables */
 foreach ([[], [], []] as list($a, $b, $c)) {
     if ($b === $count) {
-        $c->save();
+        unset($a, $b, $c);
     }
 }
 

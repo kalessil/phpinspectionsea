@@ -3,10 +3,23 @@
 function cases_holder_isset_implicit() {
     $container = $value ?? 'default';
 
-    /* false-positives: value or container mismatches, assignment by reference */
-    $container = 'default';   if (isset($value)) { $container = trim($value); }
-    $container = 'default';   if (isset($value)) { $value = $value; }
-    $container = &$reference; if (isset($value)) { $container = $value; }
+    /* false-positives: value or container mismatches, assignment by reference, container processing */
+    $container = 'default';
+    if (isset($value)) {
+        $container = trim($value);
+    }
+    $container = 'default';
+    if (isset($value)) {
+        $value = $value;
+    }
+    $container = &$reference;
+    if (isset($value)) {
+        $value = $value;
+    }
+    $container = trim($container);
+    if (isset($array[$container])) {
+        $container = $array[$container];
+    }
 
     $container = $value ?? 'default';
 

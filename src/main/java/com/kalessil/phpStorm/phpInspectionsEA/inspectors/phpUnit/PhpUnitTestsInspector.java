@@ -46,6 +46,7 @@ import java.util.function.BooleanSupplier;
 
 public class PhpUnitTestsInspector extends PhpInspection {
     // Inspection options.
+    public PhpUnitVersion PHP_UNIT_VERSION       = PhpUnitVersion.PHPUNIT80;
     public boolean SUGGEST_TO_USE_ASSERTSAME     = false;
     public boolean SUGGEST_TO_USE_NAMED_DATASETS = false;
     public boolean PROMOTE_PHPUNIT_API           = true;
@@ -191,7 +192,7 @@ public class PhpUnitTestsInspector extends PhpInspection {
                                 }
                             }
 
-                            final boolean callableNeeded = referenceText.contains("::");
+                            final boolean callableNeeded = referenceText.contains("::") && ! referenceText.contains("::<");
                             if ((callableNeeded && !hasCallableReference) || (!callableNeeded && !hasClassReference)) {
                                 holder.registerProblem(
                                         nameNode,
@@ -236,11 +237,11 @@ public class PhpUnitTestsInspector extends PhpInspection {
                         if (PROMOTE_PHPUNIT_API) {
                             callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
-                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION));
                             callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertCountStrategy.apply(methodName, reference, holder));
-                            callbacks.add(() -> AssertContainsStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertContainsStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION));
                             callbacks.add(() -> AssertRegexStrategy.apply(methodName, reference, holder));
                             /* AssertFileEqualsStrategy and AssertStringEqualsFileStrategy order is important */
                             callbacks.add(() -> AssertFileEqualsStrategy.apply(methodName, reference, holder));
@@ -268,6 +269,7 @@ public class PhpUnitTestsInspector extends PhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
+            component.addDropDown("PHPUnit version", PhpUnitVersion.PHPUNIT80, (version) -> PHP_UNIT_VERSION = (PhpUnitVersion) version);
             component.addCheckbox("Promote dedicated asserts", PROMOTE_PHPUNIT_API, (isSelected) -> PROMOTE_PHPUNIT_API = isSelected);
             component.addCheckbox("Promote ->once()", PROMOTE_MOCKING_ONCE, (isSelected) -> PROMOTE_MOCKING_ONCE = isSelected);
             component.addCheckbox("Promote ->willReturn*(...)", PROMOTE_MOCKING_WILL_RETURN, (isSelected) -> PROMOTE_MOCKING_WILL_RETURN = isSelected);

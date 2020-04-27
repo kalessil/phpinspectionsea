@@ -2,8 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.settings;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ex.Settings;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.SeparatorFactory;
 import net.miginfocom.swing.MigLayout;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -114,16 +115,38 @@ public final class OptionsComponent {
         optionsPanel.add(createdHyperlink, "wrap");
     }
 
-    public void addHyperlink(@NotNull String label, @NotNull Class<?extends Configurable> component) {
-        addHyperlink(label, event ->
-                DataManager.getInstance().getDataContextFromFocus().doWhenDone((com.intellij.util.Consumer<DataContext>) context -> {
-                    if (context != null) {
-                        final Settings settings = Settings.KEY.getData(context);
-                        if (settings != null) {
-                            settings.select(settings.find(component));
-                        }
+    public void addDropDown(
+            @NotNull final String label,
+            @NotNull final Enum defaultValue,
+            @NotNull final Consumer<Enum> updateConsumer
+    ) {
+        final JComboBox<Enum> createdDropDown = new ComboBox<>(defaultValue.getClass().getEnumConstants());
+        createdDropDown.addItemListener(event -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                updateConsumer.accept((Enum) event.getItem());
+            }
+        });
+
+        final JPanel aggregate = new JPanel();
+        aggregate.add(new JLabel(label), "");
+        aggregate.add(createdDropDown, "");
+
+        optionsPanel.add(aggregate, "wrap");
+    }
+
+    public void addHyperlink(
+        @NotNull final String label,
+        @NotNull final Class configurableClass
+    ) {
+        addHyperlink(label, hyperlinkEvent ->
+            DataManager.getInstance().getDataContextFromFocus().doWhenDone((com.intellij.util.Consumer<DataContext>) context -> {
+                if (context != null) {
+                    final Settings settings = Settings.KEY.getData(context);
+                    if (settings != null) {
+                        settings.select(settings.find(configurableClass));
                     }
-                })
+                }
+            })
         );
     }
 

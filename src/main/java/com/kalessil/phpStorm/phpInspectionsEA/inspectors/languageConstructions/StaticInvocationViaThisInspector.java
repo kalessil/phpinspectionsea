@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 
 public class StaticInvocationViaThisInspector extends PhpInspection {
     // Inspection options.
-    public boolean RESPECT_PHPUNIT_STANDARDS = true;
+    public boolean EXCEPT_PHPUNIT_ASSERTIONS = true;
 
     private static final String messageThisUsed       = "'self::%s(...)' should be used instead.";
     private static final String messageExpressionUsed = "'...::%s(...)' should be used instead.";
@@ -114,7 +114,7 @@ public class StaticInvocationViaThisInspector extends PhpInspection {
             }
 
             private void handleLateStaticBinding(@NotNull PsiElement base, @NotNull PsiElement operator, @NotNull Method method) {
-                if (RESPECT_PHPUNIT_STANDARDS) {
+                if (EXCEPT_PHPUNIT_ASSERTIONS) {
                     final String fqn = method.getFQN();
                     if (fqn.startsWith("\\PHPUnit")) {
                         final String normalized = fqn.indexOf('_') == -1 ? fqn : fqn.replaceAll("_", "\\\\");
@@ -174,7 +174,7 @@ public class StaticInvocationViaThisInspector extends PhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
-            component.addCheckbox("Follow PHPUnit standards", RESPECT_PHPUNIT_STANDARDS, (isSelected) -> RESPECT_PHPUNIT_STANDARDS = isSelected)
+            component.addCheckbox("Except PHPUnit assertions", EXCEPT_PHPUNIT_ASSERTIONS, (isSelected) -> EXCEPT_PHPUNIT_ASSERTIONS = isSelected)
         );
     }
 }

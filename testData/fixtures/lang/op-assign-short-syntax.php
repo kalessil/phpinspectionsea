@@ -1,5 +1,6 @@
 <?php
 
+function cases_holder(int $i, string $string) {
     <weak_warning descr="[EA] Can be safely refactored as '$i += 2'.">$i = $i + 2</weak_warning>;
     <weak_warning descr="[EA] Can be safely refactored as '$i -= 2'.">$i = $i - 2</weak_warning>;
     <weak_warning descr="[EA] Can be safely refactored as '$i *= 2'.">$i = $i * 2</weak_warning>;
@@ -38,3 +39,7 @@
     $i = $i << $number << $number;
     $i = $i >> $number >> $number;
     $i = $i % $number % $number;
+
+    /* false-positives: string manipulation */
+    $string[0] = $string[0] + 1;
+}

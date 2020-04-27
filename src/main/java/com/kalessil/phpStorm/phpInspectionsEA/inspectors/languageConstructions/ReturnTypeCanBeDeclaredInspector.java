@@ -166,16 +166,22 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                     final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType) || suggestedType.equals("self");
                     final boolean isLegitVoid  = !isLegitBasic && supportNullableTypes && suggestedType.equals(Types.strVoid);
                     if (isLegitBasic || isLegitVoid) {
-                        final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
-                        final String message      = messagePattern
-                            .replace("%t%", suggestedType)
-                            .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
-                        ;
-                        holder.registerProblem(
-                                target,
-                                ReportingUtil.wrapReportedMessage(message),
-                                fixer
-                        );
+                        /* false-positive: '@return static' which is gets resolved into current class since 2019.2 */
+                        final PhpDocComment docBlock = method.getDocComment();
+                        final PhpDocReturnTag tag    = docBlock == null ? null : docBlock.getReturnTag();
+                        final boolean skip           = tag != null && Arrays.stream(tag.getChildren()).map(PsiElement::getText).filter(t -> ! t.isEmpty()).allMatch(t -> t.equals("static"));
+                        if (! skip) {
+                            final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
+                            final String message      = messagePattern
+                                .replace("%t%", suggestedType)
+                                .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
+                            ;
+                            holder.registerProblem(
+                                    target,
+                                    ReportingUtil.wrapReportedMessage(message),
+                                    fixer
+                            );
+                        }
                     }
                 }
                 /* case 3: offer using nullable type */

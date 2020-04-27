@@ -5,8 +5,10 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitVersion;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -36,6 +38,7 @@ final public class AssertInternalTypeStrategy {
         targetFunctionMapping.put("is_string",   "string");
         targetFunctionMapping.put("is_scalar",   "scalar");
         targetFunctionMapping.put("is_callable", "callable");
+        targetFunctionMapping.put("is_iterable", "iterable");
 
         targetMapping.put("assertTrue",     "assertInternalType");
         targetMapping.put("assertNotFalse", "assertInternalType");
@@ -43,9 +46,10 @@ final public class AssertInternalTypeStrategy {
         targetMapping.put("assertNotTrue",  "assertNotInternalType");
     }
 
-    private final static String messagePattern = "'%s('%s', ...)' would fit more here.";
+    private final static String messagePatternInternalType = "'%s('%s', ...)' would fit more here.";
+    private final static String messagePattern             = "'%s(...)' would fit more here.";
 
-    static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder, @NotNull PhpUnitVersion level) {
         boolean result = false;
         if (targetMapping.containsKey(methodName)) {
             final PsiElement[] assertionArguments = reference.getParameters();
@@ -56,18 +60,39 @@ final public class AssertInternalTypeStrategy {
                     final PsiElement[] functionArguments = functionReference.getParameters();
                     if (functionArguments.length > 0) {
                         /* generate QF arguments */
-                        final String suggestedAssertion   = targetMapping.get(methodName);
-                        final String suggestedType        = targetFunctionMapping.get(functionName);
-                        final String[] suggestedArguments = new String[assertionArguments.length + 1];
-                        suggestedArguments[0] = String.format("'%s'", suggestedType);
-                        suggestedArguments[1] = functionArguments[0].getText();
-                        if (assertionArguments.length > 1) {
-                            suggestedArguments[2] = assertionArguments[1].getText();
+                        final String suggestedAssertion;
+                        final String suggestedType;
+                        final String[] suggestedArguments;
+                        final String message;
+                        if (level.below(PhpUnitVersion.PHPUNIT80)) {
+                            suggestedAssertion    = targetMapping.get(methodName);
+                            suggestedType         = targetFunctionMapping.get(functionName);
+                            suggestedArguments    = new String[assertionArguments.length + 1];
+                            suggestedArguments[0] = String.format("'%s'", suggestedType);
+                            suggestedArguments[1] = functionArguments[0].getText();
+                            if (assertionArguments.length > 1) {
+                                suggestedArguments[2] = assertionArguments[1].getText();
+                            }
+                            message               = String.format(messagePatternInternalType, suggestedAssertion, suggestedType);
+                        } else {
+                            /* internal type assertions were deprecated */
+                            suggestedAssertion = String.format(
+                                    targetMapping.get(methodName).replace("InternalType", "Is%s").replace("NotIs", "IsNot"),
+                                    StringUtils.capitalize(targetFunctionMapping.get(functionName))
+                            );
+                            suggestedType         = null;
+                            suggestedArguments    = new String[assertionArguments.length];
+                            suggestedArguments[0] = functionArguments[0].getText();
+                            if (assertionArguments.length > 1) {
+                                suggestedArguments[1] = assertionArguments[1].getText();
+                            }
+                            message               = String.format(messagePattern, suggestedAssertion);
+
                         }
                         /* register an issue */
                         holder.registerProblem(
                                 reference,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion, suggestedType),
+                                ReportingUtil.wrapReportedMessage(message),
                                 new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                         );
                         result = true;

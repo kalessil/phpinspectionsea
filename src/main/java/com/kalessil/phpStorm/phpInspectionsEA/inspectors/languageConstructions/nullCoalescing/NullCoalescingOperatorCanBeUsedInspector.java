@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
@@ -319,13 +320,19 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                 final PsiElement ifContainer                  = ifAssignment.getVariable();
                                 if (previousContainer instanceof Variable && ifContainer instanceof Variable) {
                                     final boolean isTarget = OpenapiEquivalenceUtil.areEqual(previousContainer, ifContainer);
-                                    if (isTarget && !OpenapiTypesUtil.isAssignmentByReference(previousAssignment)) {
+                                    /* false-positives: assignment by value */
+                                    if (isTarget && ! OpenapiTypesUtil.isAssignmentByReference(previousAssignment)) {
                                         final PsiElement previousValue = previousAssignment.getValue();
                                         if (!(previousValue instanceof AssignmentExpression)) {
-                                            result = new Couple<>(
-                                                    new Couple<>(ifPrevious.getParent(), statement),
-                                                    new Couple<>(ifAssignment.getValue(), previousValue)
-                                            );
+                                            /* false-positives: assignment of processed container value */
+                                            final boolean isContainerProcessing = PsiTreeUtil.findChildrenOfType(previousValue, previousContainer.getClass()).stream()
+                                                    .anyMatch(c -> OpenapiEquivalenceUtil.areEqual(c, previousContainer));
+                                            if (! isContainerProcessing) {
+                                                result = new Couple<>(
+                                                        new Couple<>(ifPrevious.getParent(), statement),
+                                                        new Couple<>(ifAssignment.getValue(), previousValue)
+                                                );
+                                            }
                                         }
                                     }
                                 }

@@ -10,3 +10,5 @@ Unused function result, but for generators
 [EA] prefix for QF titles
 array_shift(explode('...', $string)) -> explode limit can be applied
 in_array(, * -> array_keys()) -> array_key_exists()
+PHP v8: str_contains, str_starts_with, str_ends_with
+PhpUnit -> PHPUnit

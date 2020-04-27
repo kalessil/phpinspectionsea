@@ -189,7 +189,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 }
                             }
 
-                            final boolean callableNeeded = referenceText.contains("::");
+                            final boolean callableNeeded = referenceText.contains("::") && ! referenceText.contains("::<");
                             if ((callableNeeded && !hasCallableReference) || (!callableNeeded && !hasClassReference)) {
                                 holder.registerProblem(
                                         nameNode,

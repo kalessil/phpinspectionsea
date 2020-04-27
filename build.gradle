@@ -33,7 +33,6 @@ intellij {
                 'java-i18n',
                 'properties',
                 'yaml',
-                "PsiViewer:${psiViewerPluginVersion}",
         ]
     } else {
         plugins = [
@@ -42,7 +41,6 @@ intellij {
                 'java-i18n',
                 'properties',
                 'yaml',
-                "PsiViewer:${psiViewerPluginVersion}",
         ]
     }
 }

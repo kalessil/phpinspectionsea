@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.settings;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ex.Settings;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.HyperlinkLabel;
@@ -136,7 +137,7 @@ public final class OptionsComponent {
 
     public void addHyperlink(
         @NotNull final String label,
-        @NotNull final Class configurableClass
+        @NotNull final Class<?extends Configurable> configurableClass
     ) {
         addHyperlink(label, hyperlinkEvent ->
             DataManager.getInstance().getDataContextFromFocus().doWhenDone((com.intellij.util.Consumer<DataContext>) context -> {

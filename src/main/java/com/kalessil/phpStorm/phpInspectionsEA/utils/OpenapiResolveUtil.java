@@ -39,6 +39,7 @@ final public class OpenapiResolveUtil {
         functionReturnTypes.put("strstr", new PhpType().add(PhpType.STRING).add(PhpType.BOOLEAN));
         functionReturnTypes.put("get_class", new PhpType().add(PhpType.STRING));
         functionReturnTypes.put("explode", new PhpType().add(PhpType.ARRAY).add(PhpType.BOOLEAN));
+        functionReturnTypes.put("array_unique", new PhpType().add(PhpType.ARRAY));
 
         functionToNarrow.put("str_replace", 2);
         functionToNarrow.put("str_ireplace", 2);
@@ -127,7 +128,7 @@ final public class OpenapiResolveUtil {
                         ? ((Function) function).getType().global(project)
                         : new PhpType();
 
-                if (!result.isEmpty() && !(function instanceof Method)) {
+                if (! (function instanceof Method)) {
                     final String name = reference.getName();
                     /* override signatures if we specified custom signatures */
                     if (name != null && functionReturnTypes.containsKey(name)) {

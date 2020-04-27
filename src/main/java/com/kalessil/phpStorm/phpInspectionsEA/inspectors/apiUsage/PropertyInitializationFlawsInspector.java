@@ -12,9 +12,11 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -68,8 +70,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
                     if (PhpLanguageUtil.isNull(fieldDefault)) {
                         /* false-positives: typed properties PS will take care of them */
-                        final PhpType resolved = OpenapiResolveUtil.resolveDeclaredType(field).filterNull();
-                        if (resolved.isEmpty()) {
+                        if (! this.isTypedProperty(field)) {
                             holder.registerProblem(
                                     fieldDefault,
                                     ReportingUtil.wrapReportedMessage(messageDefaultNull),
@@ -102,6 +103,13 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean isTypedProperty(@Nullable Field field) {
+                if (field != null && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740)) {
+                    return OpenapiResolveUtil.resolveDeclaredType(field).size() == 2;
+                }
+                return false;
             }
 
             @NotNull
@@ -174,9 +182,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                             (null != fieldDefault && OpenapiEquivalenceUtil.areEqual(value, fieldDefault))
                         ) {
                             /* false-positives: typed properties */
-                            final Field field      = OpenapiResolveUtil.resolveField(clazz, overriddenProperty);
-                            final PhpType resolved = field == null ? null : OpenapiResolveUtil.resolveDeclaredType(field);
-                            if (resolved != null && (resolved.size() != 2 || resolved.filterNull().size() != 1)) {
+                            if (! this.isTypedProperty(OpenapiResolveUtil.resolveField(clazz, overriddenProperty))) {
                                 holder.registerProblem(
                                         expression,
                                         ReportingUtil.wrapReportedMessage(messageSenselessWrite),

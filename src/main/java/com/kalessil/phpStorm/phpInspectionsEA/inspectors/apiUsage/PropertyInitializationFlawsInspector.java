@@ -106,6 +106,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
             private boolean isTypedProperty(@Nullable Field field) {
                 if (field != null && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740)) {
+                    /* in 2019.1 environment this is not working properly, IDE returns nonsense */
                     return OpenapiResolveUtil.resolveDeclaredType(field).size() == 2;
                 }
                 return false;

@@ -3,14 +3,17 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.NewCoreApiPolyfillsIndexer;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -51,15 +54,17 @@ public class IsCountableCanBeUsedInspector extends PhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
-        return new GenericPhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("is_array")) {
-                    final boolean isTargetVersion = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740);
-                    if (isTargetVersion) {
+                    final FileBasedIndex index    = FileBasedIndex.getInstance();
+                    final GlobalSearchScope scope = GlobalSearchScope.allScope(holder.getProject());
+                    final boolean hasPolyfill     = ! index.getValues(NewCoreApiPolyfillsIndexer.identity, "\\is_countable", scope).isEmpty();
+                    if (hasPolyfill || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740)) {
                         final PsiElement[] arguments = reference.getParameters();
                         final PsiElement parent      = reference.getParent();
                         if (parent instanceof BinaryExpression && arguments.length == 1) {

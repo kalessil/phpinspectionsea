@@ -125,7 +125,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseStrposFix(@NotNull String expression) {

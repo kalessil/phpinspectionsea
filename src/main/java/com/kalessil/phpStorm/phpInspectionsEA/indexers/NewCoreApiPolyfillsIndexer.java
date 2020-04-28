@@ -48,7 +48,7 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
                         if (functions.contains(name)) {
                             final String fqn = element.getFQN();
                             if (fqn.equals("\\" + name)) {
-                                result.put(fqn, "");
+                                result.put(fqn, psiFile.getVirtualFile().getCanonicalPath());
                             }
                         }
                     }
@@ -73,7 +73,7 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 
     @NotNull

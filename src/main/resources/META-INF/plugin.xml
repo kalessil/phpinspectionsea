@@ -519,7 +519,7 @@
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnNecessaryDoubleQuotesInspection"             displayName="Unnecessary double quotes"
-        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnNecessaryDoubleQuotesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MissingOrEmptyGroupStatementInspection"        displayName="Missing or empty conditionals group statement"

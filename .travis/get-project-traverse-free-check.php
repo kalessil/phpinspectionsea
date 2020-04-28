@@ -1,5 +1,7 @@
 <?php
 
+    /* getting project on a deeply nested node causes heavy AST traversal */
+
     $basePath    = realpath(__DIR__ . '/..');
     $sourcesPath = $basePath . '/src/main/java';
 

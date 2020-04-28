@@ -43,6 +43,7 @@ before_install:
 
 script:
   - php .travis/rules-list-check.php
+  - php .travis/verify-manifest-group-paths.php
   - php .travis/orphaned-fixtures-check.php
   - php .travis/fixer-verifies-disposed-project-check.php
   - php .travis/missing-toggles-check.php

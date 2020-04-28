@@ -47,7 +47,7 @@ public class PhpUnitDeprecationsInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(@NotNull MethodReference reference) {
-                if (PHP_UNIT_VERSION.atLeast(PhpUnitVersion.PHPUNIT80)) {
+                if ((PHP_UNIT_VERSION == null ? PhpUnitVersion.PHPUNIT80 : PHP_UNIT_VERSION).atLeast(PhpUnitVersion.PHPUNIT80)) {
                     final String methodName = reference.getName();
                     if (methodName != null && (methodName.equals("assertEquals") || methodName.equals("assertNotEquals"))) {
                         final PsiElement[] arguments = reference.getParameters();
@@ -89,7 +89,7 @@ public class PhpUnitDeprecationsInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
-            component.addDropDown("PHPUnit version", PhpUnitVersion.PHPUNIT80, (version) -> PHP_UNIT_VERSION = (PhpUnitVersion) version)
+            component.addDropDown("PHPUnit version", PHP_UNIT_VERSION == null ? PhpUnitVersion.PHPUNIT80 : PHP_UNIT_VERSION, (version) -> PHP_UNIT_VERSION = (PhpUnitVersion) version)
         );
     }
 }

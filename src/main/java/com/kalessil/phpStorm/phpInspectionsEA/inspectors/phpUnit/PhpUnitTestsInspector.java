@@ -232,11 +232,11 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         if (PROMOTE_PHPUNIT_API) {
                             callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
-                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION));
+                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION == null ? PhpUnitVersion.PHPUNIT80 : PHP_UNIT_VERSION));
                             callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertCountStrategy.apply(methodName, reference, holder));
-                            callbacks.add(() -> AssertContainsStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION));
+                            callbacks.add(() -> AssertContainsStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION == null ? PhpUnitVersion.PHPUNIT80 : PHP_UNIT_VERSION));
                             callbacks.add(() -> AssertRegexStrategy.apply(methodName, reference, holder));
                             /* AssertFileEqualsStrategy and AssertStringEqualsFileStrategy order is important */
                             callbacks.add(() -> AssertFileEqualsStrategy.apply(methodName, reference, holder));
@@ -264,7 +264,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.addDropDown("PHPUnit version", PhpUnitVersion.PHPUNIT80, (version) -> PHP_UNIT_VERSION = (PhpUnitVersion) version);
+            component.addDropDown("PHPUnit version", PHP_UNIT_VERSION == null ? PhpUnitVersion.PHPUNIT80 : PHP_UNIT_VERSION, (version) -> PHP_UNIT_VERSION = (PhpUnitVersion) version);
             component.addCheckbox("Promote dedicated asserts", PROMOTE_PHPUNIT_API, (isSelected) -> PROMOTE_PHPUNIT_API = isSelected);
             component.addCheckbox("Promote ->once()", PROMOTE_MOCKING_ONCE, (isSelected) -> PROMOTE_MOCKING_ONCE = isSelected);
             component.addCheckbox("Promote ->willReturn*(...)", PROMOTE_MOCKING_WILL_RETURN, (isSelected) -> PROMOTE_MOCKING_WILL_RETURN = isSelected);

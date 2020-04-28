@@ -4,13 +4,13 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.FunctionsPolyfillsIndexer;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class StrStartsWithCanBeUsedInspector extends BasePhpInspection {
+public class StrStartsWithCanBeUsedInspector extends PhpInspection {
     private static final String message = "Can be replaced by '%s' (improves maintainability).";
 
     @NotNull
@@ -43,13 +43,13 @@ public class StrStartsWithCanBeUsedInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
                 if (functionName != null && (functionName.equals("strpos") || functionName.equals("mb_strpos"))) {
-                    final boolean isTargetVersion = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP800);
-                    if (isTargetVersion) {
+                    final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
+                    if (isAvailable) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 2) {
                             final PsiElement context = reference.getParent();

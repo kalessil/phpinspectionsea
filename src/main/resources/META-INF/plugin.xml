@@ -996,7 +996,7 @@
         shortName="StrContainsCanBeUsedInspection"                displayName="'str_contains(...)' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrContainsCanBeUsedInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="StrStartsWithCanBeUsedInspection"              displayName="'str_starts_with(...)' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrStartsWithCanBeUsedInspector"/>

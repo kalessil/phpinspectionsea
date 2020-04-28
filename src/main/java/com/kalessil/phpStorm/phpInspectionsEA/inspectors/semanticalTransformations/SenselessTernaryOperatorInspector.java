@@ -83,7 +83,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         SimplifyFix(@NotNull String expression) {

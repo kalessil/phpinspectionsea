@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -26,13 +27,13 @@ final public class PhpUnitAssertFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getName() {
-        return title;
+        return ReportingUtil.wrapReportedMessage(title);
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return title;
+        return getName();
     }
 
     public PhpUnitAssertFixer (@NotNull String suggestedAssertion, @NotNull String[] arguments) {

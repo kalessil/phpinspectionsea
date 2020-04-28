@@ -83,13 +83,13 @@ final public class AssertBoolOfComparisonStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title + " (assert same or equal)";
+            return getName() + " (assert same or equal)";
         }
 
         @Override

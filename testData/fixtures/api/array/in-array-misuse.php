@@ -42,6 +42,9 @@ function cases_holder() {
     $y =  <warning descr="[EA] 'array_key_exists('0', ['item'])' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.">in_array('0', array_keys(['item']), true)</warning>;
     $y =  <warning descr="[EA] 'array_key_exists('0', ['item'])' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.">in_array('0', array_keys(['item']))</warning>;
 
+    /* array_key_exists equivalent cases with values discovery */
+    $keys = array_keys(['item']);
+    $y    = <warning descr="[EA] 'array_key_exists('0', ['item'])' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.">in_array('0', $keys)</warning>;
 
     /* false-positives */
     $x = in_array('1', array(), true);

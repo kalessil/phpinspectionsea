@@ -42,6 +42,9 @@ function cases_holder() {
     $y = array_key_exists('0', ['item']);
     $y = array_key_exists('0', ['item']);
 
+    /* array_key_exists equivalent cases with values discovery */
+    $keys = array_keys(['item']);
+    $y    = in_array('0', $keys);
 
     /* false-positives */
     $x = in_array('1', array(), true);

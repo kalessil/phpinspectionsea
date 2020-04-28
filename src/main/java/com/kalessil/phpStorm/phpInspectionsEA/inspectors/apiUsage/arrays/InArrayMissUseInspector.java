@@ -11,11 +11,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -59,9 +58,12 @@ public class InArrayMissUseInspector extends PhpInspection {
                     return;
                 }
 
+                final Set<PsiElement> possibleValues = PossibleValuesDiscoveryUtil.discover(arguments[1]);
+                final PsiElement discoveredValue     = possibleValues.size() == 1 ? possibleValues.iterator().next() : null;
+
                 /* pattern: array_key_exists equivalence */
-                if (OpenapiTypesUtil.isFunctionReference(arguments[1])) {
-                    final FunctionReference nestedCall = (FunctionReference) arguments[1];
+                if (OpenapiTypesUtil.isFunctionReference(discoveredValue)) {
+                    final FunctionReference nestedCall = (FunctionReference) discoveredValue;
                     final String nestedFunctionName    = nestedCall.getName();
                     if (nestedFunctionName != null && nestedFunctionName.equals("array_keys")) {
                         /* ensure the nested call is a complete expression */
@@ -70,19 +72,20 @@ public class InArrayMissUseInspector extends PhpInspection {
                             final String replacement = "array_key_exists(%k%, %a%)"
                                     .replace("%a%", nestedCallParams[0].getText())
                                     .replace("%k%", arguments[0].getText());
+                            final boolean provideFix = discoveredValue == arguments[1];
                             holder.registerProblem(
                                     reference,
                                     ReportingUtil.wrapReportedMessage(String.format(patternKeyExists, replacement)),
-                                    new UseArrayKeyExistsFix(replacement)
+                                    provideFix ? new UseArrayKeyExistsFix(replacement) : null
                             );
                         }
                     }
                 }
                 /* pattern: comparison equivalence */
-                else if (arguments[1] instanceof ArrayCreationExpression) {
+                else if (discoveredValue instanceof ArrayCreationExpression) {
                     int itemsCount      = 0;
                     PsiElement lastItem = null;
-                    for (final PsiElement oneItem : arguments[1].getChildren()) {
+                    for (final PsiElement oneItem : discoveredValue.getChildren()) {
                         if (oneItem instanceof PhpPsiElement) {
                             ++itemsCount;
                             lastItem = oneItem;
@@ -126,10 +129,11 @@ public class InArrayMissUseInspector extends PhpInspection {
                         final String replacement = holder.getProject().getComponent(EAUltimateProjectSettings.class).isPreferringYodaComparisonStyle()
                                                    ? String.format("%s %s %s", lastItem.getText(), comparison, arguments[0].getText())
                                                    : String.format("%s %s %s", arguments[0].getText(), comparison, lastItem.getText());
+                        final boolean provideFix = discoveredValue == arguments[1];
                         holder.registerProblem(
                                 target,
                                 ReportingUtil.wrapReportedMessage(String.format(patternComparison, replacement)),
-                                new UseComparisonFix(replacement)
+                                provideFix ? new UseComparisonFix(replacement) : null
                         );
                     }
                 }

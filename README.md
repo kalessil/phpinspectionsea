@@ -22,7 +22,7 @@ It covers:
 - validation of exception handling workflow
 - compatibility issues
 - variety of time-consuming bugs
-- PhpUnit API usage
+- PHPUnit API usage
 - security issues
 
 Some of inspections are expecting conditional statements (e.g. "if") to use group statement for wrapping body 
@@ -44,7 +44,7 @@ Crowdfunding
 It's also possible to support the project on [Patreon](https://www.patreon.com/kalessil) or by buying a 
 [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-) license.
 
-This funding is used for maintaining the project and adding new features into Code Style, PhpUnit and similar inspections 
+This funding is used for maintaining the project and adding new features into Code Style, PHPUnit and similar inspections 
 groups of Php Inspections (EA Extended).
 
 Acknowledgments

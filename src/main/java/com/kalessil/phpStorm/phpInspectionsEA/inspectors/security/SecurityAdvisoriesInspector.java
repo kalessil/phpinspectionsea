@@ -43,7 +43,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
 
         /* Not included: webmozart/assert, beberlei/assert - can be used in production */
 
-        /* PhpUnit */
+        /* PHPUnit */
         developmentPackages.add("phpunit/phpunit");
         developmentPackages.add("johnkary/phpunit-speedtrap");
         developmentPackages.add("brianium/paratest");

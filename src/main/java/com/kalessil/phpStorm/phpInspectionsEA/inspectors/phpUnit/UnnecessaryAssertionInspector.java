@@ -57,7 +57,7 @@ public class UnnecessaryAssertionInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "PhpUnit: unnecessary assertion";
+        return "PHPUnit: unnecessary assertion";
     }
 
     @Override

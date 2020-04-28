@@ -41,7 +41,7 @@ public class MockingMethodsCorrectnessInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "PhpUnit: methods mocking issues";
+        return "PHPUnit: methods mocking issues";
     }
 
     @Override

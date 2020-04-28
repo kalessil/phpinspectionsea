@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 import org.jetbrains.annotations.NotNull;
 
 public enum PhpUnitVersion {
-    /* Note from March 2020: versions according current PhpUnit documentation versiosn */
+    /* Note from March 2020: versions according current PHPUnit documentation versiosn */
     PHPUNIT70("7.0"),
     PHPUNIT71("7.1"),
     PHPUNIT72("7.2"),

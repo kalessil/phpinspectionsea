@@ -37,7 +37,7 @@ public class ClassMockingCorrectnessInspector extends PhpInspection {
 
     private final static Map<String, String> methods = new HashMap<>();
     static {
-        /* PhpUnit-related */
+        /* PHPUnit-related */
         methods.put("\\PHPUnit_Framework_TestCase.getMockBuilder",            "getMockBuilder");
         methods.put("\\PHPUnit_Framework_TestCase.getMock",                   "getMock");
         methods.put("\\PHPUnit_Framework_TestCase.getMockClass",              "getMockClass");

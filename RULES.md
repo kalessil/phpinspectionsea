@@ -147,6 +147,7 @@ Inspections Lists (Language level migration)
 | Language level migration | IsIterableCanBeUsedInspection                   | 'is_iterable(...)' can be used                      | n/a | yes | n/a  | no  |
 | Language level migration | IsCountableCanBeUsedInspection                  | 'is_countable(...)' can be used                     | n/a | yes | n/a  | no  |
 | Language level migration | StrContainsCanBeUsedInspection                  | 'str_contains(...)' can be used                     | yes | yes | yes  | no  |
+| Language level migration | StrStartsWithCanBeUsedInspection                | 'str_starts_with(...)' can be used                  | yes | yes | yes  | no  |
 
 Inspections Lists (Architecture)
 ---

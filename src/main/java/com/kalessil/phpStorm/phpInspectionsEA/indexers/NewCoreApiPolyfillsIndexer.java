@@ -24,11 +24,11 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
 
     private static final Map<String, PhpLanguageLevel> functions = new HashMap<>();
     static {
-        functions.put("is_iterable",     PhpLanguageLevel.PHP710);
-        functions.put("is_countable",    PhpLanguageLevel.PHP740);
-        functions.put("str_contains",    PhpLanguageLevel.PHP800);
-        functions.put("str_starts_with", PhpLanguageLevel.PHP800);
-        functions.put("str_ends_with",   PhpLanguageLevel.PHP800);
+        functions.put("\\is_iterable",     PhpLanguageLevel.PHP710);
+        functions.put("\\is_countable",    PhpLanguageLevel.PHP740);
+        functions.put("\\str_contains",    PhpLanguageLevel.PHP800);
+        functions.put("\\str_starts_with", PhpLanguageLevel.PHP800);
+        functions.put("\\str_ends_with",   PhpLanguageLevel.PHP800);
     }
 
     @NotNull
@@ -46,15 +46,12 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
                 final Map<String, String> result = new THashMap<>();
                 for (final PhpNamedElement element : ((PhpFile) psiFile).getTopLevelDefs().values()) {
                     if (element instanceof Function) {
-                        final String name = element.getName();
-                        if (functions.containsKey(name)) {
-                            final String fqn = element.getFQN();
-                            if (fqn.equals("\\" + name)) {
-                                final String location  = file.getFile().getCanonicalPath();
-                                final boolean isTarget = location != null && ! location.contains(".jar!") && ! location.contains("/stubs/");
-                                if (isTarget) {
-                                    result.put(fqn, location);
-                                }
+                        final String fqn = element.getFQN();
+                        if (functions.containsKey(fqn)) {
+                            final String location  = file.getFile().getCanonicalPath();
+                            final boolean isTarget = location != null && ! location.contains(".jar!") && ! location.contains("/stubs/");
+                            if (isTarget) {
+                                result.put(fqn, location);
                             }
                         }
                     }
@@ -87,7 +84,7 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
 
     @Override
     public int getVersion() {
-        return 5;
+        return 6;
     }
 
     @NotNull

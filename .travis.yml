@@ -49,5 +49,6 @@ script:
   - php .travis/verify-visitors-stubs.php
   - php .travis/verify-visitors-definitions.php
   - php .travis/verify-messages-prefixing.php
+  - php .travis/verify-qickfix-title-prefixing.php
   - php .travis/fix-short-and-display-names.php
   - ./gradlew check buildPlugin

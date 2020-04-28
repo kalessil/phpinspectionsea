@@ -1,5 +1,4 @@
 <?php
-// ;
 
     $basePath    = realpath(__DIR__ . '/..');
     $sourcesPath = $basePath . '/src/main/java/com/kalessil/phpStorm/phpInspectionsEA';

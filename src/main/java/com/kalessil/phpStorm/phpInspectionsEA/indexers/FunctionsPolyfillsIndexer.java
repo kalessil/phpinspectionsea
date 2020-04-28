@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FunctionsPolyfillsIndexer extends FileBasedIndexExtension<String, String> {
-    public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.new_core_api_polyfills");
+    public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.functions_polyfills");
     private final KeyDescriptor<String> descriptor  = new EnumeratorStringDescriptor();
 
     private static final Map<String, PhpLanguageLevel> functions = new HashMap<>();

@@ -7,3 +7,7 @@ Loops:
 
 Amount of traits
 Unused function result, but for generators
+
+- is_iterable, is_countable, str_contains, str_starts_with, str_ends_with
+    - recognize polyfills (global scope)
+    - Ultimate

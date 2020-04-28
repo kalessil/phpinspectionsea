@@ -25,7 +25,8 @@ public enum PhpLanguageLevel {
     PHP710("7.1"),
     PHP720("7.2"),
     PHP730("7.3"),
-    PHP740("7.4");
+    PHP740("7.4"),
+    PHP800("8.0");
 
     @NotNull
     private final String version;

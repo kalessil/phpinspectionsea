@@ -20,6 +20,7 @@ function cases_holder_positive_limit() {
         $skip[1],
 
         current(<warning descr="[EA] 'explode('/', '...', 2)' could be used here (only some parts has been used).">explode('/', '...')</warning>),
+        array_shift(<warning descr="[EA] 'explode('/', '...', 2)' could be used here (only some parts has been used).">explode('/', '...')</warning>),
     ];
 }
 

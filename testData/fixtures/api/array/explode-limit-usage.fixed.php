@@ -20,6 +20,7 @@ function cases_holder_positive_limit() {
         $skip[1],
 
         current(explode('/', '...', 2)),
+        array_shift(explode('/', '...', 2)),
     ];
 }
 

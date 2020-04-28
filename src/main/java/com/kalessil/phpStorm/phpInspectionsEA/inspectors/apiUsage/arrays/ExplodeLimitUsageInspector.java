@@ -130,7 +130,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                     final PsiElement grandParent = parent.getParent();
                     if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
                         final String functionName = ((FunctionReference) grandParent).getName();
-                        return functionName != null && functionName.equals("current");
+                        return functionName != null && (functionName.equals("current") || functionName.equals("array_shift"));
                     }
                 } else if (parent instanceof ArrayAccessExpression) {
                     final ArrayIndex index = ((ArrayAccessExpression) parent).getIndex();

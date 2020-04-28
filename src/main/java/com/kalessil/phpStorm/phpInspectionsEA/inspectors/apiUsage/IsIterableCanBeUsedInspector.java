@@ -64,7 +64,7 @@ public class IsIterableCanBeUsedInspector extends PhpInspection {
                     final FileBasedIndex index    = FileBasedIndex.getInstance();
                     final GlobalSearchScope scope = GlobalSearchScope.allScope(holder.getProject());
                     final boolean hasPolyfill     = ! index.getValues(NewCoreApiPolyfillsIndexer.identity, "\\is_iterable", scope).isEmpty();
-                    if (hasPolyfill || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740)) {
+                    if (hasPolyfill || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP710)) {
                         final PsiElement[] arguments = reference.getParameters();
                         final PsiElement parent      = reference.getParent();
                         if (parent instanceof BinaryExpression && arguments.length == 1) {

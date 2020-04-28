@@ -147,7 +147,7 @@ Inspections Lists (Language level migration)
 | Language level migration | UnsupportedEmptyListAssignmentsInspection       | Unsupported empty list assignments                  | n/a | yes | n/a  | no  |
 | Language level migration | IsIterableCanBeUsedInspection                   | 'is_iterable(...)' can be used                      | n/a | yes | n/a  | no  |
 | Language level migration | IsCountableCanBeUsedInspection                  | 'is_countable(...)' can be used                     | n/a | yes | n/a  | no  |
-| Language level migration | StrContainsCanBeUsedInspector                   | 'str_contains(...)' can be used                     | yes | yes | yes  | no  |
+| Language level migration | StrContainsCanBeUsedInspection                  | 'str_contains(...)' can be used                     | yes | yes | yes  | no  |
 
 Inspections Lists (Architecture)
 ---

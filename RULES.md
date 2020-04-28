@@ -116,6 +116,7 @@ Inspections Lists (Code style)
 | Code Style           | TypeUnsafeComparisonInspection                  | Type unsafe comparison                                 | yes | yes | yes  | yes |
 | Code Style           | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search(...)' type unsafe usage | yes | yes | yes  | yes |
 | Code Style           | TypoSafeNamingInspection                        | Typo safe naming                                       | n/a | yes | n/a  | no  |
+| Code Style           | IsNullFunctionUsageInspection                   | 'null === ...' can be used                             | yes | yes | yes  | no  |
 
 Inspections Lists (Language level migration)
 ---
@@ -125,7 +126,6 @@ Inspections Lists (Language level migration)
 | Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes | yes | yes  | no  |
 | Language level migration | TypesCastingCanBeUsedInspection                 | Type casting can be used                            | yes | yes | yes  | no  |
 | Language level migration | DirectoryConstantCanBeUsedInspection            | __DIR__ constant can be used                        | yes | yes | yes  | no  |
-| Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes | yes | yes  | no  |
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes | yes | yes  | no  |
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes | yes | yes  | yes |

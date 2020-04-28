@@ -890,6 +890,10 @@
         shortName="TypoSafeNamingInspection"                      displayName="Typo safe naming"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.TypoSafeNamingInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
+        shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
@@ -912,10 +916,6 @@
         shortName="ConstantCanBeUsedInspection"                   displayName="A constant can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ConstantCanBeUsedInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
-        groupName="Language level migration"                      enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ShortListSyntaxCanBeUsedInspection"            displayName="Short list syntax can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"

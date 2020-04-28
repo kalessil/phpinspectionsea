@@ -26,7 +26,7 @@
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageDependenciesIndexer"/>
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer"/>
     <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.InternalAnnotatedClassesIndexer"   />
-    <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.NewCoreApiPolyfillsIndexer"        />
+    <fileBasedIndex implementation="com.kalessil.phpStorm.phpInspectionsEA.indexers.FunctionsPolyfillsIndexer"         />
 
     <!-- inspections -->
 

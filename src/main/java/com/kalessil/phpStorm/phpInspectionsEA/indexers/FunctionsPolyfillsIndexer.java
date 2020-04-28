@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, String> {
+public class FunctionsPolyfillsIndexer extends FileBasedIndexExtension<String, String> {
     public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.new_core_api_polyfills");
     private final KeyDescriptor<String> descriptor  = new EnumeratorStringDescriptor();
 
@@ -84,7 +84,7 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
 
     @Override
     public int getVersion() {
-        return 6;
+        return 1;
     }
 
     @NotNull

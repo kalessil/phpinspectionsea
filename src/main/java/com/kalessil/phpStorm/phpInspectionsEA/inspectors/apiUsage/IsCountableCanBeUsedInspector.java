@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.indexers.NewCoreApiPolyfillsIndexer;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.FunctionsPolyfillsIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
@@ -58,7 +58,7 @@ public class IsCountableCanBeUsedInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("is_array")) {
-                    final boolean isAvailable = NewCoreApiPolyfillsIndexer.isFunctionAvailable("\\is_countable", holder.getProject());
+                    final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\is_countable", holder.getProject());
                     if (isAvailable) {
                         final PsiElement[] arguments = reference.getParameters();
                         final PsiElement parent      = reference.getParent();

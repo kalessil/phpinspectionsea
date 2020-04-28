@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.indexers.NewCoreApiPolyfillsIndexer;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.FunctionsPolyfillsIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
@@ -51,7 +51,7 @@ public class StrContainsCanBeUsedInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null && (functionName.equals("strpos") || functionName.equals("mb_strpos"))) {
-                    final boolean isAvailable = NewCoreApiPolyfillsIndexer.isFunctionAvailable("\\str_contains", holder.getProject());
+                    final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_contains", holder.getProject());
                     if (isAvailable) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 2) {

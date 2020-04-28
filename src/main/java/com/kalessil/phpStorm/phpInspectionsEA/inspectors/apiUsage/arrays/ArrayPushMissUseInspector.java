@@ -116,7 +116,7 @@ public class ArrayPushMissUseInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseElementPushFix(@NotNull String expression) {

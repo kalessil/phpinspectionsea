@@ -210,7 +210,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseConstantFix(@NotNull String expression) {

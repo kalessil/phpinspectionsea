@@ -177,7 +177,7 @@ public class TypesCastingCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseTypeCastingFix(@NotNull String expression) {

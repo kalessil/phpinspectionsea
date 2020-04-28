@@ -83,13 +83,13 @@ public class ObGetCleanCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         SimplifyFixer(@NotNull Project project, @NotNull PsiElement drop) {

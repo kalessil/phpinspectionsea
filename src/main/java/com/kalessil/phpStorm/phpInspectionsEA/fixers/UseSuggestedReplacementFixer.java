@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -25,7 +26,7 @@ public class UseSuggestedReplacementFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getName() {
-        return title;
+        return ReportingUtil.wrapReportedMessage(title);
     }
 
     @NotNull

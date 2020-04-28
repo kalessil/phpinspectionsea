@@ -111,7 +111,7 @@ public class GetTypeMissUseInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseSuggestedFunctionFix(@NotNull String expression) {

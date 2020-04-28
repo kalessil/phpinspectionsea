@@ -3,14 +3,18 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.indexing.FileBasedIndex;
+import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.indexers.NewCoreApiPolyfillsIndexer;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
@@ -25,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class StrContainsCanBeUsedInspector extends BasePhpInspection {
+public class StrContainsCanBeUsedInspector extends PhpInspection {
     private static final String message = "Can be replaced by '%s' (improves maintainability).";
 
     @NotNull
@@ -43,13 +47,17 @@ public class StrContainsCanBeUsedInspector extends BasePhpInspection {
     @Override
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
-        return new BasePhpElementVisitor() {
+        return new FeaturedPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
+                if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
+
                 final String functionName = reference.getName();
                 if (functionName != null && (functionName.equals("strpos") || functionName.equals("mb_strpos"))) {
-                    final boolean isTargetVersion = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP800);
-                    if (isTargetVersion) {
+                    final FileBasedIndex index    = FileBasedIndex.getInstance();
+                    final GlobalSearchScope scope = GlobalSearchScope.allScope(holder.getProject());
+                    final boolean hasPolyfill     = ! index.getValues(NewCoreApiPolyfillsIndexer.identity, "\\str_contains", scope).isEmpty();
+                    if (hasPolyfill || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP800)) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 2) {
                             final PsiElement context = reference.getParent();

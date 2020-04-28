@@ -679,20 +679,20 @@
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        shortName="PhpUnitTestsInspection"                        displayName="PHPUnit: bugs and best practices"
+        groupName="PHPUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="UnnecessaryAssertionInspection"                displayName="PhpUnit: unnecessary assertion"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        shortName="UnnecessaryAssertionInspection"                displayName="PHPUnit: unnecessary assertion"
+        groupName="PHPUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.UnnecessaryAssertionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="MockingMethodsCorrectnessInspection"           displayName="PhpUnit: methods mocking issues"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
+        shortName="MockingMethodsCorrectnessInspection"           displayName="PHPUnit: methods mocking issues"
+        groupName="PHPUnit"                                       enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingMethodsCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="PhpUnitDeprecationsInspection"                 displayName="PhpUnit: API deprecations"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        shortName="PhpUnitDeprecationsInspection"                 displayName="PHPUnit: API deprecations"
+        groupName="PHPUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitDeprecationsInspector"/>
 
 

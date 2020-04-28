@@ -3,9 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
@@ -13,7 +11,6 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.NewCoreApiPolyfillsIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
@@ -54,10 +51,8 @@ public class StrContainsCanBeUsedInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null && (functionName.equals("strpos") || functionName.equals("mb_strpos"))) {
-                    final FileBasedIndex index    = FileBasedIndex.getInstance();
-                    final GlobalSearchScope scope = GlobalSearchScope.allScope(holder.getProject());
-                    final boolean hasPolyfill     = ! index.getValues(NewCoreApiPolyfillsIndexer.identity, "\\str_contains", scope).isEmpty();
-                    if (hasPolyfill || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP800)) {
+                    final boolean isAvailable = NewCoreApiPolyfillsIndexer.isFunctionAvailable("\\str_contains", holder.getProject());
+                    if (isAvailable) {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 2) {
                             final PsiElement context = reference.getParent();

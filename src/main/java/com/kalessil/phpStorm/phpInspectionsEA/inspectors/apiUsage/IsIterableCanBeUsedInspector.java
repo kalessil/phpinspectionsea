@@ -3,9 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
@@ -14,7 +12,6 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.NewCoreApiPolyfillsIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
-import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
@@ -61,10 +58,8 @@ public class IsIterableCanBeUsedInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("is_array")) {
-                    final FileBasedIndex index    = FileBasedIndex.getInstance();
-                    final GlobalSearchScope scope = GlobalSearchScope.allScope(holder.getProject());
-                    final boolean hasPolyfill     = ! index.getValues(NewCoreApiPolyfillsIndexer.identity, "\\is_iterable", scope).isEmpty();
-                    if (hasPolyfill || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP710)) {
+                    final boolean isAvailable = NewCoreApiPolyfillsIndexer.isFunctionAvailable("\\is_iterable", holder.getProject());
+                    if (isAvailable) {
                         final PsiElement[] arguments = reference.getParameters();
                         final PsiElement parent      = reference.getParent();
                         if (parent instanceof BinaryExpression && arguments.length == 1) {

@@ -1,6 +1,8 @@
 package com.kalessil.phpStorm.phpInspectionsEA.indexers;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -9,24 +11,24 @@ import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, String> {
     public static final ID<String, String> identity = ID.create("kalessil.phpStorm.phpInspectionsEA.new_core_api_polyfills");
     private final KeyDescriptor<String> descriptor  = new EnumeratorStringDescriptor();
 
-    private static final Set<String> functions      = new HashSet<>();
+    private static final Map<String, PhpLanguageLevel> functions = new HashMap<>();
     static {
-        functions.add("is_iterable");
-        functions.add("is_countable");
-        functions.add("str_contains");
-        functions.add("str_starts_with");
-        functions.add("str_ends_with");
+        functions.put("is_iterable",     PhpLanguageLevel.PHP710);
+        functions.put("is_countable",    PhpLanguageLevel.PHP740);
+        functions.put("str_contains",    PhpLanguageLevel.PHP800);
+        functions.put("str_starts_with", PhpLanguageLevel.PHP800);
+        functions.put("str_ends_with",   PhpLanguageLevel.PHP800);
     }
 
     @NotNull
@@ -45,7 +47,7 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
                 for (final PhpNamedElement element : ((PhpFile) psiFile).getTopLevelDefs().values()) {
                     if (element instanceof Function) {
                         final String name = element.getName();
-                        if (functions.contains(name)) {
+                        if (functions.containsKey(name)) {
                             final String fqn = element.getFQN();
                             if (fqn.equals("\\" + name)) {
                                 final String location  = file.getFile().getCanonicalPath();
@@ -61,6 +63,14 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
             }
             return new THashMap<>();
         };
+    }
+
+    public static boolean isFunctionAvailable(@NotNull String fqn, @NotNull Project project) {
+        if (functions.containsKey(fqn)) {
+            return PhpLanguageLevel.get(project).atLeast(functions.get(fqn)) ||
+                   ! FileBasedIndex.getInstance().getValues(identity, fqn, GlobalSearchScope.allScope(project)).isEmpty();
+        }
+        return false;
     }
 
     @NotNull

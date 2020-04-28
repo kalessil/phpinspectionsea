@@ -38,7 +38,7 @@ public class PhpUnitDeprecationsInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "PhpUnit: API deprecations";
+        return "PHPUnit: API deprecations";
     }
 
     @Override

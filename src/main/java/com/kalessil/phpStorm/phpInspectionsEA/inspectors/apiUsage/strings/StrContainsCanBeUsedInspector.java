@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class StrContainsCanBeUsedInspector extends BasePhpInspection {
-    private static final String message = "Can be replaced by 'str_contains(...)' (improves maintainability).";
+    private static final String message = "Can be replaced by '%s' (improves maintainability).";
 
     @NotNull
     @Override
@@ -54,17 +55,19 @@ public class StrContainsCanBeUsedInspector extends BasePhpInspection {
                             final PsiElement context = reference.getParent();
                             if (context instanceof BinaryExpression) {
                                 final BinaryExpression binary = (BinaryExpression) context;
-                                final boolean isTarget        = binary.getOperationType() == PhpTokenTypes.opNOT_IDENTICAL &&
+                                final IElementType operation  = binary.getOperationType();
+                                final boolean isTarget        = (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) &&
                                                                 PhpLanguageUtil.isFalse(OpenapiElementsUtil.getSecondOperand(binary, reference));
                                 if (isTarget) {
                                     final String replacement = String.format(
-                                            "%sstr_contains(%s, %s)",
+                                            "%s%sstr_contains(%s, %s)",
+                                            operation == PhpTokenTypes.opIDENTICAL ? "! " : "",
                                             reference.getImmediateNamespaceName(),
                                             arguments[0].getText(),
                                             arguments[1].getText()
                                     );
                                     holder.registerProblem(
-                                            reference,
+                                            binary,
                                             String.format(ReportingUtil.wrapReportedMessage(message), replacement),
                                             new UseStrContainsFix(replacement)
                                     );

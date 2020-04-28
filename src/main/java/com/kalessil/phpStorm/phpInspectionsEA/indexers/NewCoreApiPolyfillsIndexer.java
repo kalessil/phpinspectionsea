@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.indexers;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
@@ -49,7 +48,11 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
                         if (functions.contains(name)) {
                             final String fqn = element.getFQN();
                             if (fqn.equals("\\" + name)) {
-                                result.put(fqn, file.getFile().getCanonicalPath());
+                                final String location  = file.getFile().getCanonicalPath();
+                                final boolean isTarget = location != null && ! location.contains(".jar!") && ! location.contains("/stubs/");
+                                if (isTarget) {
+                                    result.put(fqn, location);
+                                }
                             }
                         }
                     }
@@ -74,7 +77,7 @@ public class NewCoreApiPolyfillsIndexer extends FileBasedIndexExtension<String, 
 
     @Override
     public int getVersion() {
-        return 4;
+        return 5;
     }
 
     @NotNull

@@ -95,7 +95,7 @@ public class MissUsingParentKeywordInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         NormalizeClassReferenceFix(@NotNull String expression) {

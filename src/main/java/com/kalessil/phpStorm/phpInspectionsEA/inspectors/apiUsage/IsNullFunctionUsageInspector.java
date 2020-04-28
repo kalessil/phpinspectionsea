@@ -100,7 +100,7 @@ public class IsNullFunctionUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         CompareToNullFix(@NotNull String expression) {

@@ -47,14 +47,14 @@ Inspections Lists (Control flow)
 | Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | yes |
 | Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | yes |
 
-Inspections Lists (PhpUnit)
+Inspections Lists (PHPUnit)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | --:  | --: |
-| PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes | yes | yes  | n/a |
-| PhpUnit              | UnnecessaryAssertionInspection                  | PhpUnit: unnecessary assertion                      | yes | yes | yes  | n/a |
-| PhpUnit              | MockingMethodsCorrectnessInspection             | PhpUnit: methods mocking issues                     | yes | yes | yes  | n/a |
-| PhpUnit              | PhpUnitDeprecationsInspection                   | PhpUnit: API deprecations                           | n/a | yes | n/a  | n/a |
+| PHPUnit              | PhpUnitTestsInspection                          | PHPUnit: bugs and best practices                    | yes | yes | yes  | n/a |
+| PHPUnit              | UnnecessaryAssertionInspection                  | PHPUnit: unnecessary assertion                      | yes | yes | yes  | n/a |
+| PHPUnit              | MockingMethodsCorrectnessInspection             | PHPUnit: methods mocking issues                     | yes | yes | yes  | n/a |
+| PHPUnit              | PhpUnitDeprecationsInspection                   | PHPUnit: API deprecations                           | n/a | yes | n/a  | n/a |
 
 Inspections Lists (Unused)
 ---

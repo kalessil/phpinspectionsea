@@ -161,7 +161,7 @@ Php Inspection (EA Extended) suggests adding the firewall only if third-party co
 composer.json declares "name" property as "your-company/product" all non-dev packages not starting with "your-company/" 
 are considered third-party.
 
-Php Inspection (EA Extended) also checks if dev-packages (e.g. PhpUnit) have been defined in "require" section instead of 
+Php Inspection (EA Extended) also checks if dev-packages (e.g. PHPUnit) have been defined in "require" section instead of 
 "require-dev".
 
 ## RSA oracle padding vulnerability

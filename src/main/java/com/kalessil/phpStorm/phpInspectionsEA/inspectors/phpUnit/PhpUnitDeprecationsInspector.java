@@ -26,8 +26,8 @@ public class PhpUnitDeprecationsInspector extends BasePhpInspection {
     // Inspection options.
     public PhpUnitVersion PHP_UNIT_VERSION = PhpUnitVersion.PHPUNIT80;
 
-    private final static String messageDeprecated = "%s is deprecated in favor of %s() since PhpUnit 8.";
-    private final static String messageRemoved = "%s is deprecated since PhpUnit 8.";
+    private final static String messageDeprecated = "%s is deprecated in favor of %s() since PHPUnit 8.";
+    private final static String messageRemoved = "%s is deprecated since PHPUnit 8.";
 
     @NotNull
     @Override

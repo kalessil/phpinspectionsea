@@ -67,7 +67,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "PhpUnit: bugs and best practices";
+        return "PHPUnit: bugs and best practices";
     }
 
     @Override

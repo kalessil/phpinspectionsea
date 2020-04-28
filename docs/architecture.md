@@ -37,7 +37,7 @@ class WhichRedeclaresProperties extends BaseClass {
 
 ## Long inheritance chain
 
-> Note: the inspection is context aware and also takes into account Zend Framework 2+, PhpUnit and Yii 2+ specific.
+> Note: the inspection is context aware and also takes into account Zend Framework 2+, PHPUnit and Yii 2+ specific.
 
 In OOP, inheritance is one of the basic principles which allows to design and build well-structured components. As any other principle, inheritance might be applied in contexts where it's not suitable. In this case, we often can see long inheritance chains leading to class coupling within the hierarchy.
 

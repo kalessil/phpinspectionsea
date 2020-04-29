@@ -73,7 +73,7 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
 
     @Override
     public int getVersion() {
-        return 3;
+        return 4;
     }
 
     @NotNull
@@ -84,6 +84,6 @@ final public class ComposerPackageRelationIndexer extends FileBasedIndexExtensio
 
     @Override
     public boolean dependsOnFileContent() {
-        return true;
+        return false;
     }
 }

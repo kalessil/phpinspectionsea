@@ -1,16 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.fileSystem;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
@@ -58,7 +55,7 @@ public class DirectoryConstantCanBeUsedInspector extends PhpInspection {
                                     reference,
                                     ReportingUtil.wrapReportedMessage(message),
                                     ProblemHighlightType.LIKE_DEPRECATED,
-                                    new TheLocalFix()
+                                    new UseDirConstantFix()
                             );
                         }
                     }
@@ -67,27 +64,17 @@ public class DirectoryConstantCanBeUsedInspector extends PhpInspection {
         };
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static final class UseDirConstantFix extends UseSuggestedReplacementFixer {
         private static final String title = "Replace by __DIR__";
 
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return title;
-        }
-
-        @Override
-        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            PsiElement target = descriptor.getPsiElement();
-            if (target instanceof FunctionReference && !project.isDisposed()) {
-                target.replace(PhpPsiElementFactory.createConstantReference(project, "__DIR__"));
-            }
+        UseDirConstantFix() {
+            super("__DIR__");
         }
     }
 }

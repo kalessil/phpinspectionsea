@@ -110,7 +110,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         NoSortFix(@NotNull String expression) {
@@ -124,7 +124,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         OptimizeDirectoriesFilteringFix(@NotNull String expression) {

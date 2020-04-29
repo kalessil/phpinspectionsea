@@ -150,7 +150,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseArrayPushFixer(@NotNull String expression) {
@@ -164,7 +164,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseArrayUnshiftFixer(@NotNull String expression) {
@@ -178,7 +178,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         InlineNestedCallsFixer(@NotNull String expression) {
@@ -192,7 +192,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseArrayFixer(@NotNull String expression) {

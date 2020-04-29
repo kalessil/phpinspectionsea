@@ -74,7 +74,7 @@ public class ArrayFlipCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseArrayFlipFixer(@NotNull String expression) {

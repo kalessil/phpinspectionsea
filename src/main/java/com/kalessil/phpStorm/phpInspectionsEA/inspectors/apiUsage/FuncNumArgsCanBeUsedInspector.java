@@ -70,7 +70,7 @@ public class FuncNumArgsCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseAlternativeFix(@NotNull String expression) {

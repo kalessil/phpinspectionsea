@@ -122,7 +122,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseCurrentMethodFix(@NotNull String expression) {
@@ -136,7 +136,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseArgumentMethodFix(@NotNull String expression) {

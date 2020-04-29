@@ -121,13 +121,13 @@ public class UnnecessaryVariableOverridesInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         MergeCallsFix(@NotNull Project project, @NotNull PsiElement target, @NotNull PsiElement value, @NotNull PsiElement absolete) {

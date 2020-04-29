@@ -69,7 +69,7 @@ public class IteratorToArrayKeysCollisionInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         IgnoreOriginalKeysFix(@NotNull String expression) {

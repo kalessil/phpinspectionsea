@@ -159,7 +159,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseFileHashFix(@NotNull String expression) {
@@ -173,7 +173,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseCopyFix(@NotNull String expression) {

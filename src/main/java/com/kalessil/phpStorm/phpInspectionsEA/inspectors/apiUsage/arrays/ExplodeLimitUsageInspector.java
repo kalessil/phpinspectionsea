@@ -175,7 +175,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         AddPositiveLimitArgumentFixer(@NotNull String expression) {
@@ -191,7 +191,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull

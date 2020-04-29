@@ -47,7 +47,7 @@ public class IsNullFunctionUsageInspector extends PhpInspection {
         return new GenericPhpElementVisitor() {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
-                if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
+                if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE)) { return; }
 
                 final String functionName = reference.getName();
                 if (functionName != null && functionName.equals("is_null")) {

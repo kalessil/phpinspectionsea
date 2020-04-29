@@ -233,7 +233,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseCallbackFix(@NotNull String expression) {

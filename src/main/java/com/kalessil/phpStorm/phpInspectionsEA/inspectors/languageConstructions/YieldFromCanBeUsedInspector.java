@@ -111,7 +111,7 @@ public class YieldFromCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull

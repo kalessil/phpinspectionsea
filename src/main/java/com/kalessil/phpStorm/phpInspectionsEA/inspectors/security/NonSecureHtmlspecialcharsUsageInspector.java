@@ -122,7 +122,7 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         EscapeAllQuotesFix (@NotNull String expression) {

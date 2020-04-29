@@ -125,7 +125,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         AddMissingSprintfFix(@NotNull String expression) {
@@ -139,13 +139,13 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override
@@ -170,13 +170,13 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

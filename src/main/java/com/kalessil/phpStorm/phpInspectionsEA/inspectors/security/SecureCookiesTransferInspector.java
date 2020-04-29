@@ -107,7 +107,7 @@ public class SecureCookiesTransferInspector extends LocalInspectionTool {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         AddArgumentsFix(@NotNull String expression) {

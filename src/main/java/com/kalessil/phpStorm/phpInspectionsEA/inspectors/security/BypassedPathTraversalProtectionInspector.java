@@ -94,7 +94,7 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UsePregReplaceFix(@NotNull String expression) {

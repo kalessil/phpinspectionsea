@@ -4,9 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
@@ -57,6 +55,43 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
                                     String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                     new UseStringKeyFix(replacement)
                             );
+                        }
+                    } else if (key instanceof StringLiteralExpression) {
+                        final StringLiteralExpression literal = (StringLiteralExpression) key;
+                        if (literal.getFirstPsiChild() == null) {
+                            final String content = literal.getContents();
+                            if (! content.isEmpty() && ! content.trim().equals(content)) {
+                                final String replacement = String.format("'%s'", content.trim());
+                                holder.registerProblem(
+                                        key,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
+                                        new UseStringKeyFix(replacement)
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void visitPhpArrayAccessExpression(@NotNull ArrayAccessExpression expression) {
+                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
+
+                final ArrayIndex index = expression.getIndex();
+                if (index != null) {
+                    final PsiElement key = index.getValue();
+                    if (key instanceof StringLiteralExpression) {
+                        final StringLiteralExpression literal = (StringLiteralExpression) key;
+                        if (literal.getFirstPsiChild() == null) {
+                            final String content = literal.getContents();
+                            if (! content.isEmpty() && ! content.trim().equals(content)) {
+                                final String replacement = String.format("'%s'", content.trim());
+                                holder.registerProblem(
+                                        key,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
+                                        new UseStringKeyFix(replacement)
+                                );
+                            }
                         }
                     }
                 }

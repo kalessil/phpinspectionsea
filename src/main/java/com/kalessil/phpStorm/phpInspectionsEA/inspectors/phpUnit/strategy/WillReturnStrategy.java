@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -41,7 +41,7 @@ final public class WillReturnStrategy {
                         final String suggestedAssertion = methodsMapping.get(innerMethodName);
                         holder.registerProblem(
                                 reference,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), suggestedAssertion),
                                 new PhpUnitAssertFixer(suggestedAssertion, new String[]{innerArguments[0].getText()})
                         );
                     }

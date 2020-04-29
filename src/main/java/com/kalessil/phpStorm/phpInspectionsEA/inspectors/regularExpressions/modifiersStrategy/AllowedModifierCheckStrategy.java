@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,7 @@ public class AllowedModifierCheckStrategy {
                 if ("eimsuxADJSUX".indexOf(modifier) == -1) {
                     holder.registerProblem(
                             target,
-                            String.format(ReportingUtil.wrapReportedMessage(message), String.valueOf(modifier)),
+                            String.format(MessagesPresentationUtil.prefixWithEa(message), String.valueOf(modifier)),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }

@@ -129,7 +129,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                         if (null == loopInterrupter && isVariablesUsed) {
                                             holder.registerProblem(
                                                     reportingTarget,
-                                                    ReportingUtil.wrapReportedMessage(messageDisconnected)
+                                                    MessagesPresentationUtil.prefixWithEa(messageDisconnected)
                                             );
                                         }
                                     }
@@ -138,7 +138,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                 if (SUGGEST_USING_CLONE && (ExpressionType.DOM_ELEMENT_CREATE == target || ExpressionType.NEW == target)) {
                                     holder.registerProblem(
                                             oneInstruction,
-                                            ReportingUtil.wrapReportedMessage(messageUseClone)
+                                            MessagesPresentationUtil.prefixWithEa(messageUseClone)
                                     );
                                 }
                             }

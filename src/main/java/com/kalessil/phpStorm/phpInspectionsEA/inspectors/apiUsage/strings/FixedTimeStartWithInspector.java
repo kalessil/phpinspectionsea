@@ -12,8 +12,8 @@ import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -78,7 +78,7 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
                                         );
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                 new UseFirstCharactersCompareFix(replacement)
                                         );
                                     }
@@ -97,7 +97,7 @@ public class FixedTimeStartWithInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseFirstCharactersCompareFix(@NotNull String expression) {

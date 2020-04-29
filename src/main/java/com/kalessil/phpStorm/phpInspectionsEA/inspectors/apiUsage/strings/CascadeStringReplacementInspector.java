@@ -15,9 +15,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +96,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                             ) {
                                 holder.registerProblem(
                                         functionCall,
-                                        ReportingUtil.wrapReportedMessage(messageCascading),
+                                        MessagesPresentationUtil.prefixWithEa(messageCascading),
                                         new MergeStringReplaceCallsFix(holder.getProject(), functionCall, previousCall, USE_SHORT_ARRAYS_SYNTAX)
                                 );
                             }
@@ -131,7 +131,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 if (replacements.size() == 1) {
                     holder.registerProblem(
                             candidate,
-                            ReportingUtil.wrapReportedMessage(messageReplacements),
+                            MessagesPresentationUtil.prefixWithEa(messageReplacements),
                             ProblemHighlightType.WEAK_WARNING,
                             new SimplifyReplacementFix(replacements.iterator().next())
                     );
@@ -146,7 +146,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     if (functionName != null && functionName.equals("str_replace")) {
                         holder.registerProblem(
                                 callCandidate,
-                                ReportingUtil.wrapReportedMessage(messageNesting),
+                                MessagesPresentationUtil.prefixWithEa(messageNesting),
                                 new MergeStringReplaceCallsFix(project, parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
                         );
                     }
@@ -218,7 +218,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         SimplifyReplacementFix(@NotNull String expression) {
@@ -245,7 +245,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

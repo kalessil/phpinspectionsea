@@ -11,8 +11,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -64,7 +64,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
                                         final String replacement = falseVariant.getText();
                                         holder.registerProblem(
                                                 expression,
-                                                String.format(ReportingUtil.wrapReportedMessage(patternUseOperands), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(patternUseOperands), replacement),
                                                 new SimplifyFix(replacement)
                                         );
                                     }
@@ -83,7 +83,7 @@ public class SenselessTernaryOperatorInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         SimplifyFix(@NotNull String expression) {

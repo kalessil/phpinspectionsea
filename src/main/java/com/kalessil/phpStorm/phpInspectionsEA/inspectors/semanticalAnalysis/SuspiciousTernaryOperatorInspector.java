@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -74,7 +74,7 @@ public class SuspiciousTernaryOperatorInspector extends BasePhpInspection {
                 if (trueVariant != null && falseVariant != null && OpenapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
                     holder.registerProblem(
                             expression,
-                            ReportingUtil.wrapReportedMessage(messageVariantsIdentical),
+                            MessagesPresentationUtil.prefixWithEa(messageVariantsIdentical),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }
@@ -85,7 +85,7 @@ public class SuspiciousTernaryOperatorInspector extends BasePhpInspection {
                     if (operator != null && !safeOperations.contains(operator)) {
                         holder.registerProblem(
                                 condition,
-                                ReportingUtil.wrapReportedMessage(messagePriorities),
+                                MessagesPresentationUtil.prefixWithEa(messagePriorities),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     }
@@ -98,7 +98,7 @@ public class SuspiciousTernaryOperatorInspector extends BasePhpInspection {
                     if (binary.getRightOperand() == expression && PhpTokenTypes.tsLIT_OPS.contains(binary.getOperationType())) {
                         holder.registerProblem(
                                 binary,
-                                ReportingUtil.wrapReportedMessage(messagePriorities),
+                                MessagesPresentationUtil.prefixWithEa(messagePriorities),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     }

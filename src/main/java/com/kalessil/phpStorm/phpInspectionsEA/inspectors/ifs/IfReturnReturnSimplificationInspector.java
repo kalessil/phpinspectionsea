@@ -13,8 +13,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -92,7 +92,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                                     final String replacement = String.format(isReverse ? "return !(%s)" : "return %s", cond.getText());
                                     holder.registerProblem(
                                             statement.getFirstChild(),
-                                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement)),
+                                            MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, replacement)),
                                             new SimplifyFix(holder.getProject(), statement, elseBranch == null ? second : statement, replacement)
                                     );
                                 }
@@ -123,7 +123,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

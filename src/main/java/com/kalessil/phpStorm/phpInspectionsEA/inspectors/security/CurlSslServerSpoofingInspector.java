@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -72,7 +72,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                                     if (this.isHostVerifyDisabled(value)) {
                                         holder.registerProblem(
                                                 parent,
-                                                ReportingUtil.wrapReportedMessage(messageVerifyHost),
+                                                MessagesPresentationUtil.prefixWithEa(messageVerifyHost),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );
                                     }
@@ -80,7 +80,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                                     if (this.isPeerVerifyDisabled(value)) {
                                         holder.registerProblem(
                                                 parent,
-                                                ReportingUtil.wrapReportedMessage(messageVerifyPeer),
+                                                MessagesPresentationUtil.prefixWithEa(messageVerifyPeer),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );
                                     }
@@ -95,7 +95,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                             if (this.isHostVerifyDisabled(value)) {
                                 holder.registerProblem(
                                         parent,
-                                        ReportingUtil.wrapReportedMessage(messageVerifyHost),
+                                        MessagesPresentationUtil.prefixWithEa(messageVerifyHost),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }
@@ -103,7 +103,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                             if (this.isPeerVerifyDisabled(value)) {
                                 holder.registerProblem(
                                         parent,
-                                        ReportingUtil.wrapReportedMessage(messageVerifyPeer),
+                                        MessagesPresentationUtil.prefixWithEa(messageVerifyPeer),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }
@@ -121,7 +121,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                                 if (this.isHostVerifyDisabled(value)) {
                                     holder.registerProblem(
                                             context,
-                                            ReportingUtil.wrapReportedMessage(messageVerifyHost),
+                                            MessagesPresentationUtil.prefixWithEa(messageVerifyHost),
                                             ProblemHighlightType.GENERIC_ERROR
                                     );
                                 }
@@ -129,7 +129,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                                 if (this.isPeerVerifyDisabled(value)) {
                                     holder.registerProblem(
                                             context,
-                                            ReportingUtil.wrapReportedMessage(messageVerifyPeer),
+                                            MessagesPresentationUtil.prefixWithEa(messageVerifyPeer),
                                             ProblemHighlightType.GENERIC_ERROR
                                     );
                                 }

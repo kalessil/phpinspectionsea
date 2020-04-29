@@ -203,7 +203,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                 }
                                 holder.registerProblem(
                                         functionCall,
-                                        ReportingUtil.wrapReportedMessage(isReversedCheck ? messageNoSense : messageViolationInCheck)
+                                        MessagesPresentationUtil.prefixWithEa(isReversedCheck ? messageNoSense : messageViolationInCheck)
                                 );
                             }
                             continue;
@@ -301,7 +301,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
                                         if (isViolation) {
                                             holder.registerProblem(
                                                     value,
-                                                    String.format(ReportingUtil.wrapReportedMessage(patternViolationInAssignment), type)
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(patternViolationInAssignment), type)
                                             );
                                             break;
                                         }

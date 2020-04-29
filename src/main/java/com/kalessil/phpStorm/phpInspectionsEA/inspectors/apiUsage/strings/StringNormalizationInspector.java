@@ -8,8 +8,8 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -94,7 +94,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
                                         final String replacement  = innerCall.getText().replace(theString, newInnerCall);
                                         holder.registerProblem(
                                                 reference,
-                                                ReportingUtil.wrapReportedMessage(String.format(patternInvertedNesting, replacement)),
+                                                MessagesPresentationUtil.prefixWithEa(String.format(patternInvertedNesting, replacement)),
                                                 new NormalizationFix(replacement)
                                         );
                                     }
@@ -102,7 +102,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
                                     if (functionName.equals(innerCallName)) {
                                         holder.registerProblem(
                                                 innerCall,
-                                                ReportingUtil.wrapReportedMessage(String.format(patternSenselessNesting, innerCallName)),
+                                                MessagesPresentationUtil.prefixWithEa(String.format(patternSenselessNesting, innerCallName)),
                                                 new NormalizationFix(innerArguments[0].getText())
                                         );
                                     } else if (!innerCaseManipulation.contains(innerCallName)) {
@@ -111,7 +111,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
                                         if (isTarget) {
                                             holder.registerProblem(
                                                     innerCall,
-                                                    ReportingUtil.wrapReportedMessage(String.format(patternSenselessNesting, innerCallName)),
+                                                    MessagesPresentationUtil.prefixWithEa(String.format(patternSenselessNesting, innerCallName)),
                                                     new NormalizationFix(innerArguments[0].getText())
                                             );
                                         }
@@ -131,7 +131,7 @@ public class StringNormalizationInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         NormalizationFix(@NotNull String expression) {

@@ -11,8 +11,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy.*
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -171,7 +171,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                         CanNotReturnTypeStrategy.apply(method, holder);
                         holder.registerProblem(
                                 nameNode,
-                                ReportingUtil.wrapReportedMessage(messageUseSplAutoloading),
+                                MessagesPresentationUtil.prefixWithEa(messageUseSplAutoloading),
                                 ProblemHighlightType.LIKE_DEPRECATED
                         );
                         break;
@@ -179,7 +179,7 @@ public class MagicMethodsValidityInspector extends BasePhpInspection {
                         if (methodName.startsWith("__") && !knownNonMagic.contains(methodName)) {
                             holder.registerProblem(
                                     nameNode,
-                                    ReportingUtil.wrapReportedMessage(messageNotMagic)
+                                    MessagesPresentationUtil.prefixWithEa(messageNotMagic)
                             );
                         } else {
                             MissingUnderscoreStrategy.apply(method, holder);

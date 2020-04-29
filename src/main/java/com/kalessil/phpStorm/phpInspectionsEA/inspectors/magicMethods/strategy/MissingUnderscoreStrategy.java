@@ -9,8 +9,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Method;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -53,7 +53,7 @@ final public class MissingUnderscoreStrategy {
             if (target != null) {
                 holder.registerProblem(
                         target,
-                        ReportingUtil.wrapReportedMessage(String.format(messagePattern, methodName, methodName)),
+                        MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, methodName, methodName)),
                         ProblemHighlightType.WEAK_WARNING,
                         new NameFix()
                 );
@@ -67,7 +67,7 @@ final public class MissingUnderscoreStrategy {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

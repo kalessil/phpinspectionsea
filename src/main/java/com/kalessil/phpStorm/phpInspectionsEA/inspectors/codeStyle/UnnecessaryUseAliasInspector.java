@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -48,7 +48,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
                     if (alias != null && !alias.isEmpty() && expression.getFQN().endsWith('\\' + alias)) {
                         holder.registerProblem(
                                 expression.getLastChild(),
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), alias),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), alias),
                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                 new TheLocalFix()
                         );
@@ -64,7 +64,7 @@ public class UnnecessaryUseAliasInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

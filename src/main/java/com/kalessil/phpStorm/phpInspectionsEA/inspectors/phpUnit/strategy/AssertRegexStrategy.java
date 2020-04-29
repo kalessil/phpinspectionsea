@@ -7,8 +7,8 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -54,7 +54,7 @@ public class AssertRegexStrategy {
                             }
                             holder.registerProblem(
                                     reference,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), suggestedAssertion),
                                     new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                             );
                             result = true;
@@ -88,7 +88,7 @@ public class AssertRegexStrategy {
                                     }
                                     holder.registerProblem(
                                             reference,
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), suggestedAssertion),
                                             new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                                     );
                                     result = true;

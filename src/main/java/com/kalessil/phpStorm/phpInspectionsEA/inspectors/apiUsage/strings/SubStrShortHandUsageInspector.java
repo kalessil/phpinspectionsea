@@ -16,9 +16,9 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -85,7 +85,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                                             /* case: third parameter is not needed at all */
                                             holder.registerProblem(
                                                     arguments[2],
-                                                    String.format(ReportingUtil.wrapReportedMessage(patternDropLength), arguments[2].getText()),
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(patternDropLength), arguments[2].getText()),
                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                     new DropThirdParameterFix(holder.getProject(), reference)
                                             );
@@ -96,14 +96,14 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
                                                     /* case: third parameter can be simplified */
                                                     holder.registerProblem(
                                                             binary,
-                                                            String.format(ReportingUtil.wrapReportedMessage(patternSimplifyLength), offset),
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(patternSimplifyLength), offset),
                                                             new SimplifyFix(String.valueOf(offset))
                                                     );
                                                 } else {
                                                     /* case: third parameter is not needed at all */
                                                     holder.registerProblem(
                                                             arguments[2],
-                                                            String.format(ReportingUtil.wrapReportedMessage(patternDropLength), arguments[2].getText()),
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(patternDropLength), arguments[2].getText()),
                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                             new DropThirdParameterFix(holder.getProject(), reference)
                                                     );
@@ -135,7 +135,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
@@ -174,7 +174,7 @@ public class SubStrShortHandUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         SimplifyFix(@NotNull String expression) {

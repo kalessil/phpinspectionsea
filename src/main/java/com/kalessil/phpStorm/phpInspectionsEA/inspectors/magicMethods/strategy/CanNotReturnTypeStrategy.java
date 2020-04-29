@@ -7,8 +7,8 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpExpression;
 import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 
 import java.util.Collection;
 
@@ -25,7 +25,7 @@ public class CanNotReturnTypeStrategy {
                 if (null != returnValue && method == ExpressionSemanticUtil.getScope(returnExpression)) {
                     holder.registerProblem(
                             returnExpression,
-                            ReportingUtil.wrapReportedMessage(message),
+                            MessagesPresentationUtil.prefixWithEa(message),
                             ProblemHighlightType.ERROR
                     );
                 }

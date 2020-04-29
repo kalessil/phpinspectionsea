@@ -118,7 +118,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
                                             );
                                             holder.registerProblem(
                                                     assignment,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                     new UseShorthandOperatorFix(replacement)
                                             );
                                         }
@@ -143,7 +143,7 @@ public class OpAssignShortSyntaxInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
     }
 }

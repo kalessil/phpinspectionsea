@@ -16,7 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -69,7 +69,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                                 if (!isCorrectlyPlaced) {
                                     holder.registerProblem(
                                             arguments[1],
-                                            ReportingUtil.wrapReportedMessage(messageMisplacedBinaryMode),
+                                            MessagesPresentationUtil.prefixWithEa(messageMisplacedBinaryMode),
                                             ProblemHighlightType.GENERIC_ERROR,
                                             new TheLocalFix(holder.getProject(), mode)
                                     );
@@ -78,7 +78,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                                 if (ENFORCE_BINARY_MODIFIER_USAGE) {
                                     holder.registerProblem(
                                             arguments[1],
-                                            ReportingUtil.wrapReportedMessage(messageReplaceWithBinaryMode),
+                                            MessagesPresentationUtil.prefixWithEa(messageReplaceWithBinaryMode),
                                             new TheLocalFix(holder.getProject(), mode)
                                     );
                                 }
@@ -86,7 +86,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
                                 if (ENFORCE_BINARY_MODIFIER_USAGE) {
                                     holder.registerProblem(
                                             arguments[1],
-                                            ReportingUtil.wrapReportedMessage(messageUseBinaryMode),
+                                            MessagesPresentationUtil.prefixWithEa(messageUseBinaryMode),
                                             new TheLocalFix(holder.getProject(), mode)
                                     );
                                 }
@@ -112,7 +112,7 @@ public class FopenBinaryUnsafeUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

@@ -72,7 +72,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                             if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
                                 holder.registerProblem(
                                         operation,
-                                        ReportingUtil.wrapReportedMessage(messageConcatenate),
+                                        MessagesPresentationUtil.prefixWithEa(messageConcatenate),
                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                         new ReplaceWithArgumentFix()
                                 );
@@ -85,7 +85,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                             if (assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN) {
                                 holder.registerProblem(
                                         operation,
-                                        ReportingUtil.wrapReportedMessage(messageConcatenate),
+                                        MessagesPresentationUtil.prefixWithEa(messageConcatenate),
                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                         new ReplaceWithArgumentFix()
                                 );
@@ -102,7 +102,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                                 if (isTarget) {
                                     holder.registerProblem(
                                             operation,
-                                            ReportingUtil.wrapReportedMessage(messageGeneric),
+                                            MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                             new ReplaceWithArgumentFix()
                                     );
@@ -176,7 +176,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

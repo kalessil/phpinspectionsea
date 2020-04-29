@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ public class DeprecatedModifiersCheckStrategy {
         if (!StringUtils.isEmpty(modifiers) && modifiers.indexOf('e') >= 0) {
             holder.registerProblem(
                     target,
-                    ReportingUtil.wrapReportedMessage(message),
+                    MessagesPresentationUtil.prefixWithEa(message),
                     ProblemHighlightType.GENERIC_ERROR
             );
         }

@@ -18,8 +18,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -71,7 +71,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                         if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
                             holder.registerProblem(
                                     methodName,
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, method.getName())),
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, method.getName())),
                                     new MemberVisibilityFix(holder.getProject(), modifiers)
                             );
                         }
@@ -89,7 +89,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             if (ANALYZE_CONSTANTS && checkConstantVisibility && field.getPrevPsiSibling() == null) {
                                 holder.registerProblem(
                                         fieldName,
-                                        ReportingUtil.wrapReportedMessage(String.format(messagePattern, field.getName())),
+                                        MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, field.getName())),
                                         new ConstantVisibilityFix(holder.getProject(), field)
                                 );
                             }
@@ -98,7 +98,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
                                 holder.registerProblem(
                                         fieldName,
-                                        ReportingUtil.wrapReportedMessage(String.format(messagePattern, field.getName())),
+                                        MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, field.getName())),
                                         new MemberVisibilityFix(holder.getProject(), modifiers)
                                 );
                             }
@@ -124,7 +124,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
@@ -165,7 +165,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

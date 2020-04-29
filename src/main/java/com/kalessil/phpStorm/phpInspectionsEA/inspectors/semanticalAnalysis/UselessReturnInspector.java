@@ -15,8 +15,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -69,7 +69,7 @@ public class UselessReturnInspector extends BasePhpInspection {
                                 final String replacement = String.format("return %s;", assignmentValue.getText());
                                 holder.registerProblem(
                                         expression,
-                                        ReportingUtil.wrapReportedMessage(messageConfusing),
+                                        MessagesPresentationUtil.prefixWithEa(messageConfusing),
                                         new SimplifyFix(replacement)
                                 );
                             }
@@ -98,7 +98,7 @@ public class UselessReturnInspector extends BasePhpInspection {
                     if (returnValue == null) {
                         holder.registerProblem(
                                 lastStatement,
-                                ReportingUtil.wrapReportedMessage(messageSenseless),
+                                MessagesPresentationUtil.prefixWithEa(messageSenseless),
                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                         );
                     }
@@ -166,7 +166,7 @@ public class UselessReturnInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

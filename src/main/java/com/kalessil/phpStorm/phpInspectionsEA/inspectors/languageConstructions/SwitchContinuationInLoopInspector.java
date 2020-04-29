@@ -14,8 +14,8 @@ import com.jetbrains.php.lang.psi.elements.PhpContinue;
 import com.jetbrains.php.lang.psi.elements.PhpSwitch;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class SwitchContinuationInLoopInspector extends BasePhpInspection {
@@ -62,7 +62,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
                         if (isSwitch) {
                             holder.registerProblem(
                                     continueStatement,
-                                    ReportingUtil.wrapReportedMessage(message),
+                                    MessagesPresentationUtil.prefixWithEa(message),
                                     ProblemHighlightType.GENERIC_ERROR,
                                     new UseContinue2LocalFix()
                             );
@@ -83,7 +83,7 @@ public class SwitchContinuationInLoopInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

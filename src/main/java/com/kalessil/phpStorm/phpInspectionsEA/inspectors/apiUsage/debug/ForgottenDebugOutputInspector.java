@@ -11,9 +11,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -206,7 +206,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                                 if (clazz != null && match.getFirst().equals(clazz.getFQN()) && !this.isInDebugFunction(reference)) {
                                     holder.registerProblem(
                                             reference,
-                                            ReportingUtil.wrapReportedMessage(message)
+                                            MessagesPresentationUtil.prefixWithEa(message)
                                     );
                                     return;
                                 }
@@ -226,7 +226,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
                         if (!isValidContext) {
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(message)
+                                    MessagesPresentationUtil.prefixWithEa(message)
                             );
                         }
                     }

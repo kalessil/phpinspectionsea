@@ -7,8 +7,8 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.TypesSemanticsUtil;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ final public class ClassInStringContextStrategy {
             if (OpenapiResolveUtil.resolveMethod(clazz, "__toString") == null) {
                 holder.registerProblem(
                         expression,
-                        ReportingUtil.wrapReportedMessage(classHasNoToStringMessage.replace("%class%", clazz.getFQN())),
+                        MessagesPresentationUtil.prefixWithEa(classHasNoToStringMessage.replace("%class%", clazz.getFQN())),
                         ProblemHighlightType.ERROR
                 );
                 break;

@@ -15,7 +15,7 @@ import com.jetbrains.php.lang.psi.elements.PhpGotoLabel;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -70,7 +70,7 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
                     /* TODO: marks as unused instead, see https://youtrack.jetbrains.com/issue/WI-34508 */
                     holder.registerProblem(
                             label,
-                            ReportingUtil.wrapReportedMessage(message),
+                            MessagesPresentationUtil.prefixWithEa(message),
                             ProblemHighlightType.LIKE_DEPRECATED,
                             new TheLocalFix()
                     );
@@ -85,7 +85,7 @@ public class UnusedGotoLabelInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

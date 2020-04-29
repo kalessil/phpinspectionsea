@@ -72,7 +72,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         if (! this.isTypedProperty(field)) {
                             holder.registerProblem(
                                     fieldDefault,
-                                    ReportingUtil.wrapReportedMessage(messageDefaultNull),
+                                    MessagesPresentationUtil.prefixWithEa(messageDefaultNull),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                     new DropFieldDefaultValueFix()
                             );
@@ -95,7 +95,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                             if (report) {
                                 holder.registerProblem(
                                         fieldDefault,
-                                        ReportingUtil.wrapReportedMessage(messageSenselessWrite),
+                                        MessagesPresentationUtil.prefixWithEa(messageSenselessWrite),
                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                 );
                             }
@@ -185,7 +185,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                             if (! this.isTypedProperty(OpenapiResolveUtil.resolveField(clazz, overriddenProperty))) {
                                 holder.registerProblem(
                                         expression,
-                                        ReportingUtil.wrapReportedMessage(messageSenselessWrite),
+                                        MessagesPresentationUtil.prefixWithEa(messageSenselessWrite),
                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                 );
                             }
@@ -207,7 +207,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                         if (!isPropertyReused && REPORT_DEFAULTS_FLAWS) {
                             holder.registerProblem(
                                     fieldDefault,
-                                    ReportingUtil.wrapReportedMessage(messageDefaultOverride),
+                                    MessagesPresentationUtil.prefixWithEa(messageDefaultOverride),
                                     new DropFieldDefaultValueFix()
                             );
                         }
@@ -231,7 +231,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

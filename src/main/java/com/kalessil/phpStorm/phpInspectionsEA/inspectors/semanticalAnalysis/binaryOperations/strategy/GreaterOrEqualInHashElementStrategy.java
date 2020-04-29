@@ -6,7 +6,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -37,7 +37,7 @@ final public class GreaterOrEqualInHashElementStrategy {
         if (null != parent && parent.getParent() instanceof ArrayCreationExpression) {
             holder.registerProblem(
                     operation,
-                    ReportingUtil.wrapReportedMessage(message)
+                    MessagesPresentationUtil.prefixWithEa(message)
             );
             return true;
         }

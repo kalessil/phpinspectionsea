@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +43,7 @@ final public class MissingUnicodeModifierStrategy {
             if (unicodeCharactersPattern.matcher(pattern).matches()) {
                 holder.registerProblem(
                         target,
-                        ReportingUtil.wrapReportedMessage(messageCharacters),
+                        MessagesPresentationUtil.prefixWithEa(messageCharacters),
                         ProblemHighlightType.GENERIC_ERROR
                 );
             } else {
@@ -51,7 +51,7 @@ final public class MissingUnicodeModifierStrategy {
                 if (unicodeCodepointsPattern.matcher(normalized).matches()) {
                     holder.registerProblem(
                             target,
-                            ReportingUtil.wrapReportedMessage(messageCodepoints),
+                            MessagesPresentationUtil.prefixWithEa(messageCodepoints),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }

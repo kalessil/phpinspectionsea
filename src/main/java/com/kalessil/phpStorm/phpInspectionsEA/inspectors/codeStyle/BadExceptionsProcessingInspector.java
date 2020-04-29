@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.Variable;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +51,7 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                 if (expressionsCount > 3) {
                     holder.registerProblem(
                             tryStatement.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", String.valueOf(expressionsCount)))
+                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%c%", String.valueOf(expressionsCount)))
                     );
                 }
             }
@@ -74,12 +74,12 @@ public class BadExceptionsProcessingInspector extends BasePhpInspection {
                             if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
                                 holder.registerProblem(
                                         variable,
-                                        ReportingUtil.wrapReportedMessage(messageFailSilently)
+                                        MessagesPresentationUtil.prefixWithEa(messageFailSilently)
                                 );
                             } else {
                                 holder.registerProblem(
                                         variable,
-                                        ReportingUtil.wrapReportedMessage(messageChainedException)
+                                        MessagesPresentationUtil.prefixWithEa(messageChainedException)
                                 );
                             }
                         }

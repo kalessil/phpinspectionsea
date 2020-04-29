@@ -13,10 +13,10 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,7 +87,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     final String messagePattern       = (context instanceof If ? binary : patternDirectCall);
                     holder.registerProblem(
                             context instanceof If ? target : context,
-                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, String.join(", ", fixerArguments))),
+                            MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, String.join(", ", fixerArguments))),
                             context instanceof If ? new HardenConditionFix(arguments[0], fixerArguments, searchResult.isInverted) : new ThrowExceptionFix(arguments[0], fixerArguments)
                     );
                 }
@@ -131,7 +131,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                         final String messagePattern       = (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(binary.getOperationType()) ? patternFailAndCondition : patternFailOrCondition);
                          holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(String.format(messagePattern, String.join(", ", fixerArguments), arguments[0].getText())),
+                                MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, String.join(", ", fixerArguments), arguments[0].getText())),
                                 new HardenConditionFix(arguments[0], fixerArguments, searchResult.isInverted)
                         );
                     }
@@ -204,7 +204,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
@@ -249,7 +249,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

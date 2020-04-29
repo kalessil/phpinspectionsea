@@ -135,14 +135,14 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             if (this.getVariableUsages(parameterName, function).length == 0) {
                                 holder.registerProblem(
                                         variable,
-                                        ReportingUtil.wrapReportedMessage(messageUnused),
+                                        MessagesPresentationUtil.prefixWithEa(messageUnused),
                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                 );
                             }
                         } else if (this.analyzeAndReturnUsagesCount(parameterName, function) == 0) {
                             holder.registerProblem(
                                     variable,
-                                    ReportingUtil.wrapReportedMessage(messageUnused),
+                                    MessagesPresentationUtil.prefixWithEa(messageUnused),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL
                             );
                         }
@@ -273,7 +273,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                 if (usages.length == 2 && usages[0].getAnchor() == usages[1].getAnchor()) {
                                     holder.registerProblem(
                                             assignmentVariableCandidate,
-                                            ReportingUtil.wrapReportedMessage(messageUnused),
+                                            MessagesPresentationUtil.prefixWithEa(messageUnused),
                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                     );
                                     return 1;
@@ -323,7 +323,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         for (final PsiElement targetExpression : new HashSet<>(targetExpressions)) {
                             holder.registerProblem(
                                     targetExpression,
-                                    ReportingUtil.wrapReportedMessage(messageOnlyWrites),
+                                    MessagesPresentationUtil.prefixWithEa(messageOnlyWrites),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL
                             );
                         }

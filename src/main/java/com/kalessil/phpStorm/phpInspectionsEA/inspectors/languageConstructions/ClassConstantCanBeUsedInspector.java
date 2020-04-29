@@ -19,9 +19,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,7 +86,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         if (arguments.length == 0) {
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(messageUseStatic),
+                                    MessagesPresentationUtil.prefixWithEa(messageUseStatic),
                                     new UseStaticFix()
                             );
                         }
@@ -156,13 +156,13 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                                     normalizedContents = expression.getContents().replaceAll("\\\\\\\\", "\\\\").replaceAll("^\\\\", "");
                                     holder.registerProblem(
                                             parent,
-                                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", normalizedContents)),
+                                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%c%", normalizedContents)),
                                             new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
                                     );
                                 } else {
                                     holder.registerProblem(
                                             expression,
-                                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", normalizedContents)),
+                                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%c%", normalizedContents)),
                                             new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
                                     );
                                 }
@@ -194,7 +194,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStaticFix() {
@@ -212,7 +212,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

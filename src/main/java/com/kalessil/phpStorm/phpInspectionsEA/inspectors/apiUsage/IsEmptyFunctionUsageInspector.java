@@ -86,7 +86,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                             final PsiElement target  = isInverted ? parent : emptyExpression;
                             holder.registerProblem(
                                     target,
-                                    String.format(ReportingUtil.wrapReportedMessage(patternAlternative), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(patternAlternative), replacement),
                                     new UseCountFix(replacement)
                             );
                         }
@@ -113,7 +113,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                                                            : String.format("null %s %s", comparision, subject.getText());
                                 holder.registerProblem(
                                         isInverted ? parent : emptyExpression,
-                                        String.format(ReportingUtil.wrapReportedMessage(patternAlternative), replacement),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(patternAlternative), replacement),
                                         new CompareToNullFix(replacement)
                                 );
                             }
@@ -129,7 +129,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 if (REPORT_EMPTY_USAGE) {
                     holder.registerProblem(
                             emptyExpression,
-                            ReportingUtil.wrapReportedMessage(messageDoNotUse),
+                            MessagesPresentationUtil.prefixWithEa(messageDoNotUse),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }
@@ -168,7 +168,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         CompareToNullFix(@NotNull String expression) {
@@ -182,7 +182,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseCountFix(@NotNull String expression) {

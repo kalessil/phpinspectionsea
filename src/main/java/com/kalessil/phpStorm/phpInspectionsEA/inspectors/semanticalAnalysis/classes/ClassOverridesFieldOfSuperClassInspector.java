@@ -12,9 +12,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -88,7 +88,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                             if (REPORT_PRIVATE_REDEFINITION) {
                                 holder.registerProblem(
                                         fieldNameNode,
-                                        ReportingUtil.wrapReportedMessage(patternProtectedCandidate.replace("%c%", parentFieldHolder.getFQN())),
+                                        MessagesPresentationUtil.prefixWithEa(patternProtectedCandidate.replace("%c%", parentFieldHolder.getFQN())),
                                         ProblemHighlightType.WEAK_WARNING
                                 );
                             }
@@ -100,7 +100,7 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                            /* fire common warning */
                             holder.registerProblem(
                                     fieldNameNode,
-                                    ReportingUtil.wrapReportedMessage(patternShadows.replace("%p%", ownFieldName).replace("%c%", parentFieldHolder.getFQN())),
+                                    MessagesPresentationUtil.prefixWithEa(patternShadows.replace("%p%", ownFieldName).replace("%c%", parentFieldHolder.getFQN())),
                                     ProblemHighlightType.WEAK_WARNING
                             );
                         }

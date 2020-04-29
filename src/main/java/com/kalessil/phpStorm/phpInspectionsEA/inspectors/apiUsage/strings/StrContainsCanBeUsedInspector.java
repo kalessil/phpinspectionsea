@@ -11,9 +11,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -68,7 +68,7 @@ public class StrContainsCanBeUsedInspector extends BasePhpInspection {
                                     );
                                     holder.registerProblem(
                                             binary,
-                                            String.format(ReportingUtil.wrapReportedMessage(message), replacement),
+                                            String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
                                             new UseStrContainsFix(replacement)
                                     );
                                 }
@@ -86,7 +86,7 @@ public class StrContainsCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStrContainsFix(@NotNull String expression) {

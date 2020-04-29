@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -27,7 +27,7 @@ final public class PhpUnitAssertFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getName() {
-        return ReportingUtil.wrapReportedMessage(title);
+        return MessagesPresentationUtil.prefixWithEa(title);
     }
 
     @NotNull

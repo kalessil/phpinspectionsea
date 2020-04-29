@@ -11,8 +11,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -60,7 +60,7 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
                         if (classFqn.equals("\\Exception")) {
                             holder.registerProblem(
                                     classReference,
-                                    ReportingUtil.wrapReportedMessage(messageRawException),
+                                    MessagesPresentationUtil.prefixWithEa(messageRawException),
                                     new TheLocalFix()
                             );
                         } else if (REPORT_MISSING_ARGUMENTS && newExpression.getParameters().length == 0) {
@@ -68,7 +68,7 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
                             if (resolved instanceof PhpClass && this.isTarget((PhpClass) resolved)) {
                                 holder.registerProblem(
                                         newExpression,
-                                        ReportingUtil.wrapReportedMessage(messageNoArguments)
+                                        MessagesPresentationUtil.prefixWithEa(messageNoArguments)
                                 );
                             }
                         }
@@ -96,7 +96,7 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

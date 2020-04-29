@@ -6,8 +6,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,14 +46,14 @@ final public class HardcodedConstantValuesStrategy {
             if (PhpLanguageUtil.isFalse(operand) || PhpLanguageUtil.isNull(operand)) {
                 holder.registerProblem(
                         operand,
-                        ReportingUtil.wrapReportedMessage(messageEnforces)
+                        MessagesPresentationUtil.prefixWithEa(messageEnforces)
                 );
                 return true;
             }
             if (PhpLanguageUtil.isTrue(operand)) {
                 holder.registerProblem(
                         operand,
-                        ReportingUtil.wrapReportedMessage(messageSenseless),
+                        MessagesPresentationUtil.prefixWithEa(messageSenseless),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                 );
                 return true;
@@ -71,14 +71,14 @@ final public class HardcodedConstantValuesStrategy {
             if (PhpLanguageUtil.isTrue(operand)) {
                 holder.registerProblem(
                         operand,
-                        ReportingUtil.wrapReportedMessage(messageEnforces)
+                        MessagesPresentationUtil.prefixWithEa(messageEnforces)
                 );
                 return true;
             }
             if (PhpLanguageUtil.isFalse(operand) || PhpLanguageUtil.isNull(operand)) {
                 holder.registerProblem(
                         operand,
-                        ReportingUtil.wrapReportedMessage(messageSenseless),
+                        MessagesPresentationUtil.prefixWithEa(messageSenseless),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                 );
                 return true;

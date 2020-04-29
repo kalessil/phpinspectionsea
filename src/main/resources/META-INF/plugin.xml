@@ -422,10 +422,6 @@
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureAlgorithmsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="NonSecureCryptUsageInspection"                 displayName="Insecure 'crypt(...)' usage (Cryptographically weak algorithms)"
-         groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureCryptUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="HostnameSubstitutionInspection"                displayName="Hostname substitution"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HostnameSubstitutionInspector"/>

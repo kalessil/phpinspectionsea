@@ -124,13 +124,13 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         MemberVisibilityFix(@NotNull Project project, @NotNull PhpModifierList modifiers) {
@@ -165,13 +165,13 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         ConstantVisibilityFix(@NotNull Project project, @NotNull Field constField) {

@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.ElseIf;
 import com.jetbrains.php.lang.psi.elements.GroupStatement;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 final public class UnnecessaryElseFixer implements LocalQuickFix {
@@ -19,13 +20,13 @@ final public class UnnecessaryElseFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getName() {
-        return title;
+        return ReportingUtil.wrapReportedMessage(title);
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return title;
+        return getName();
     }
 
     @Override

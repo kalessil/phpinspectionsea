@@ -204,13 +204,13 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         ThrowExceptionFix(@Nullable PsiElement directory, @NotNull List<String> arguments) {
@@ -249,13 +249,13 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         HardenConditionFix(@Nullable PsiElement directory, @NotNull List<String> arguments, boolean isInverted) {

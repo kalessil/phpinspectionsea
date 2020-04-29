@@ -7,7 +7,7 @@
     /* @var \SplFileInfo $file */
     foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($sourcesPath)) as $file) {
         if ($file->getExtension() === 'java') {
-            $matches = preg_match('/public String getName\(\)\s*{\s*return\s+title;\s*}/ims', file_get_contents($file->getPathname()));
+            $matches = preg_match('/\s+return\s+title;\s+/ims', file_get_contents($file->getPathname()));
             if ($matches) {
                 $missingPrefixes []= $file->getFilename();
             }

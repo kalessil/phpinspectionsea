@@ -62,7 +62,7 @@ public class PreloadingUsageCorrectnessInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseOpcacheCompileFileFix(@NotNull String expression) {

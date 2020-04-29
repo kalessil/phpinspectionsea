@@ -251,7 +251,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseStringReplaceFix(@NotNull String expression) {
@@ -265,7 +265,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseStringPositionFix(@NotNull String expression) {
@@ -279,7 +279,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseStringComparisonFix(@NotNull String expression) {
@@ -293,7 +293,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseTrimFix(@NotNull String expression) {
@@ -307,7 +307,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseExplodeFix(@NotNull String expression) {

@@ -104,13 +104,13 @@ final public class MisplacedOperatorStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         MisplacedOperatorFix(@NotNull Project project, @NotNull String expression, @NotNull PsiElement call) {

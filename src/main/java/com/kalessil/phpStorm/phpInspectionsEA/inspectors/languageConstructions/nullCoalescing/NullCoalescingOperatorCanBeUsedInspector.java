@@ -291,13 +291,13 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         ReplaceMultipleConstructsFix(@NotNull Project project, @NotNull PsiElement from, @NotNull PsiElement to, @NotNull String replacement) {
@@ -352,7 +352,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         ReplaceSingleConstructFix(@NotNull String expression) {

@@ -14,8 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageAutoloadin
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.ComposerPackageRelationIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,7 +102,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                                         if (classNameNode != null) {
                                             holder.registerProblem(
                                                     classNameNode,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messagePath), String.join(",", possibleFileLocations), "*/" + fileLocationFromFqn)
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePath), String.join(",", possibleFileLocations), "*/" + fileLocationFromFqn)
                                             );
                                         }
                                     }
@@ -122,7 +122,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                     if (classNameNode != null) {
                         holder.registerProblem(
                                 classNameNode,
-                                ReportingUtil.wrapReportedMessage(messageName)
+                                MessagesPresentationUtil.prefixWithEa(messageName)
                         );
                     }
                 }
@@ -135,7 +135,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                     if (classNameNode != null) {
                         holder.registerProblem(
                                 classNameNode,
-                                ReportingUtil.wrapReportedMessage(messageName)
+                                MessagesPresentationUtil.prefixWithEa(messageName)
                         );
                     }
                 }

@@ -11,9 +11,9 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +72,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
                                         );
                                         holder.registerProblem(
                                                 parent,
-                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                 new UseCurrentMethodFix(replacement)
                                         );
                                     }
@@ -84,7 +84,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
                                 final String replacement = arguments[0].getText();
                                 holder.registerProblem(
                                         reference,
-                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                         new UseArgumentMethodFix(replacement)
                                 );
                             }
@@ -122,7 +122,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseCurrentMethodFix(@NotNull String expression) {
@@ -136,7 +136,7 @@ public class IteratorToArrayMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseArgumentMethodFix(@NotNull String expression) {

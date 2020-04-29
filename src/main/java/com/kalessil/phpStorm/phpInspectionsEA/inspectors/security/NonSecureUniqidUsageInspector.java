@@ -16,7 +16,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class NonSecureUniqidUsageInspector extends PhpInspection {
                         if (arguments.length < 2 && this.isFromRootNamespace(reference)) {
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(message),
+                                    MessagesPresentationUtil.prefixWithEa(message),
                                     ProblemHighlightType.GENERIC_ERROR,
                                     new AddMissingParametersFix()
                             );
@@ -88,7 +88,7 @@ public class NonSecureUniqidUsageInspector extends PhpInspection {
                                 if (callback.equals("uniqid")) {
                                     holder.registerProblem(
                                             arguments[callbackPosition],
-                                            ReportingUtil.wrapReportedMessage(message),
+                                            MessagesPresentationUtil.prefixWithEa(message),
                                             ProblemHighlightType.GENERIC_ERROR,
                                             new UseLambdaFix()
                                     );
@@ -107,7 +107,7 @@ public class NonSecureUniqidUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseLambdaFix () {
@@ -121,7 +121,7 @@ public class NonSecureUniqidUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

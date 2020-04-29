@@ -15,9 +15,9 @@ import com.jetbrains.php.lang.psi.elements.FieldReference;
 import com.jetbrains.php.lang.psi.elements.PhpIsset;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class UnnecessaryIssetArgumentsInspector extends PhpInspection {
                                             if (canSkip) {
                                                 holder.registerProblem(
                                                         match,
-                                                        ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                        MessagesPresentationUtil.prefixWithEa(message), ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                         new DropArgumentFix()
                                                 );
                                                 reported.add(match);
@@ -105,7 +105,7 @@ public class UnnecessaryIssetArgumentsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

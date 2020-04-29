@@ -122,7 +122,7 @@ public class InstanceofCanBeUsedInspector extends PhpInspection {
                     );
                     holder.registerProblem(
                             context,
-                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                             new UseInstanceofFix(replacement)
                     );
                 }
@@ -175,7 +175,7 @@ public class InstanceofCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
     }
 }

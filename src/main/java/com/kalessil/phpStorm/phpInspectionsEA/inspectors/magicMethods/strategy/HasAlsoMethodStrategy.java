@@ -5,9 +5,9 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -29,7 +29,7 @@ final public class HasAlsoMethodStrategy {
             if (nameNode != null) {
                 holder.registerProblem(
                         nameNode,
-                        ReportingUtil.wrapReportedMessage(String.format(messagePattern, method.getName(), companion)),
+                        MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, method.getName(), companion)),
                         ProblemHighlightType.GENERIC_ERROR
                 );
             }

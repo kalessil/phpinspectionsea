@@ -7,9 +7,9 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -53,7 +53,7 @@ public class StreamSelectUsageInspector extends PhpInspection {
                                         if (Long.parseLong(threshold.getText()) < 200000) {
                                             holder.registerProblem(
                                                     microseconds,
-                                                    ReportingUtil.wrapReportedMessage(message)
+                                                    MessagesPresentationUtil.prefixWithEa(message)
                                             );
                                         }
                                     } catch (final NumberFormatException failure) {

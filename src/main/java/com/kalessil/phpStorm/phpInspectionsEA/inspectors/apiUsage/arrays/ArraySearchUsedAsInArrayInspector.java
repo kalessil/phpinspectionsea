@@ -61,7 +61,7 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
                         if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(messageUseInArray),
+                                    MessagesPresentationUtil.prefixWithEa(messageUseInArray),
                                     new TheLocalFix()
                             );
                         } else {
@@ -75,13 +75,13 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
                                         if (PhpLanguageUtil.isTrue(second)) {
                                             holder.registerProblem(
                                                     second,
-                                                    ReportingUtil.wrapReportedMessage(messageComparingWithTrue),
+                                                    MessagesPresentationUtil.prefixWithEa(messageComparingWithTrue),
                                                     ProblemHighlightType.GENERIC_ERROR
                                             );
                                         } else {
                                             holder.registerProblem(
                                                     binary,
-                                                    ReportingUtil.wrapReportedMessage(messageUseInArray),
+                                                    MessagesPresentationUtil.prefixWithEa(messageUseInArray),
                                                     new TheLocalFix()
                                             );
                                         }
@@ -114,7 +114,7 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
                                                     usages.forEach(v ->
                                                             holder.registerProblem(
                                                                     v.getParent(),
-                                                                    ReportingUtil.wrapReportedMessage(messageUseInArray)
+                                                                    MessagesPresentationUtil.prefixWithEa(messageUseInArray)
                                                             )
                                                     );
                                                 }
@@ -137,7 +137,7 @@ public class ArraySearchUsedAsInArrayInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

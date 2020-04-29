@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -72,7 +72,7 @@ public class SuspiciousReturnInspector extends PhpInspection {
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
                     holder.registerProblem(
                             statement,
-                            ReportingUtil.wrapReportedMessage(messageFinally)
+                            MessagesPresentationUtil.prefixWithEa(messageFinally)
                     );
                 }
             }
@@ -86,7 +86,7 @@ public class SuspiciousReturnInspector extends PhpInspection {
                         if (hasYields) {
                             holder.registerProblem(
                                     statement,
-                                    ReportingUtil.wrapReportedMessage(messageYield)
+                                    MessagesPresentationUtil.prefixWithEa(messageYield)
                             );
                         }
                     }

@@ -14,9 +14,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -75,7 +75,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                                     );
                                     holder.registerProblem(
                                             reference,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageNegativeLimitPattern), replacement),
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageNegativeLimitPattern), replacement),
                                             new AddPNegativeLimitArgumentFixer(replacement)
                                     );
                                 }
@@ -89,7 +89,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
                             );
                             holder.registerProblem(
                                     reference,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePositiveLimitPattern), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePositiveLimitPattern), replacement),
                                     new AddPositiveLimitArgumentFixer(replacement)
                             );
                         }
@@ -175,7 +175,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         AddPositiveLimitArgumentFixer(@NotNull String expression) {
@@ -191,7 +191,7 @@ public class ExplodeLimitUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

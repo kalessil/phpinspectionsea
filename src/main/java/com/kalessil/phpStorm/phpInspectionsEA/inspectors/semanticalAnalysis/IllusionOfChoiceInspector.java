@@ -17,9 +17,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -136,7 +136,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
                         final String replacement = String.format("return %s", falseVariant.getText());
                         holder.registerProblem(
                                 falseVariant,
-                                ReportingUtil.wrapReportedMessage(messageSameValueConditional),
+                                MessagesPresentationUtil.prefixWithEa(messageSameValueConditional),
                                 new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
                         );
                     }
@@ -160,7 +160,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
                                 final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
                                 holder.registerProblem(
                                         falseValue,
-                                        ReportingUtil.wrapReportedMessage(isConditional ? messageDegradedConditional : messageDegradedTernary),
+                                        MessagesPresentationUtil.prefixWithEa(isConditional ? messageDegradedConditional : messageDegradedTernary),
                                         new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
                                 );
                             }
@@ -190,7 +190,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

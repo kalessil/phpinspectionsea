@@ -7,9 +7,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,7 +134,7 @@ final public class SequentialAssignmentsStrategy {
                     if (!isUsed) {
                         holder.registerProblem(
                                 container.getParent(),
-                                String.format(ReportingUtil.wrapReportedMessage(patternConditional), container.getText())
+                                String.format(MessagesPresentationUtil.prefixWithEa(patternConditional), container.getText())
                         );
                     }
                 }
@@ -171,7 +171,7 @@ final public class SequentialAssignmentsStrategy {
 
             holder.registerProblem(
                     container,
-                    String.format(ReportingUtil.wrapReportedMessage(patternGeneral), container.getText())
+                    String.format(MessagesPresentationUtil.prefixWithEa(patternGeneral), container.getText())
             );
         }
     }

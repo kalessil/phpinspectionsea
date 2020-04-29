@@ -87,7 +87,7 @@ public class UnnecessaryAssertionInspector extends PhpInspection {
                         if (innerMethodName != null && innerMethodName.equals("any")) {
                             holder.registerProblem(
                                     innerReference,
-                                    ReportingUtil.wrapReportedMessage(messageExpectsAny),
+                                    MessagesPresentationUtil.prefixWithEa(messageExpectsAny),
                                     new RemoveExpectsAssertionFixer(holder.getProject(), reference, reference.getFirstChild())
                             );
                         }
@@ -131,12 +131,12 @@ public class UnnecessaryAssertionInspector extends PhpInspection {
                                             if (expected == null) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageReturnType)
+                                                        MessagesPresentationUtil.prefixWithEa(messageReturnType)
                                                 );
                                             } else if (resolved.getTypes().stream().anyMatch(t -> Types.getType(t).equals(expected))) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageReturnType)
+                                                        MessagesPresentationUtil.prefixWithEa(messageReturnType)
                                                 );
                                             }
 
@@ -160,7 +160,7 @@ public class UnnecessaryAssertionInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

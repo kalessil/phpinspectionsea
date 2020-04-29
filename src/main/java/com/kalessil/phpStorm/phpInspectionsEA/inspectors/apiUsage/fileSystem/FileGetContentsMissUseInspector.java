@@ -12,8 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -92,7 +92,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                 );
                                                 holder.registerProblem(
                                                         outerCall,
-                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                         new UseCopyFix(replacement)
                                                 );
                                             }
@@ -108,7 +108,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                 );
                                                 holder.registerProblem(
                                                         outerCall,
-                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                         new UseFileHashFix(replacement)
                                                 );
                                             }
@@ -125,7 +125,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                 );
                                                 holder.registerProblem(
                                                         outerCall,
-                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                         new UseFileHashFix(replacement)
                                                 );
                                             }
@@ -138,7 +138,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     outerCall,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                     new UseFileHashFix(replacement)
                                             );
                                         }
@@ -159,7 +159,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseFileHashFix(@NotNull String expression) {
@@ -173,7 +173,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseCopyFix(@NotNull String expression) {

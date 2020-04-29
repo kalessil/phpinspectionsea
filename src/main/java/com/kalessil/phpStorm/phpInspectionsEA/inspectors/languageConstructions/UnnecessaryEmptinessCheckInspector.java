@@ -104,7 +104,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                             final String replacement = String.format("%s ?? %s", arguments[0].getText(), alternative.getText());
                             holder.registerProblem(
                                     parent,
-                                    String.format(ReportingUtil.wrapReportedMessage(messageUseCoalescing), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageUseCoalescing), replacement),
                                     ProblemHighlightType.WEAK_WARNING
                             );
                         }
@@ -170,7 +170,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                                     if (reported.add(node)) {
                                                         holder.registerProblem(
                                                                 node,
-                                                                ReportingUtil.wrapReportedMessage(messageAlwaysTrue)
+                                                                MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue)
                                                         );
                                                     }
                                                 }
@@ -181,7 +181,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                                 if (reported.add(node)) {
                                                     holder.registerProblem(
                                                             node,
-                                                            ReportingUtil.wrapReportedMessage(messageControversialNull)
+                                                            MessagesPresentationUtil.prefixWithEa(messageControversialNull)
                                                     );
                                                 }
                                             }
@@ -191,7 +191,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                                 if (reported.add(node)) {
                                                     holder.registerProblem(
                                                             node,
-                                                            ReportingUtil.wrapReportedMessage(messageControversialFalsy)
+                                                            MessagesPresentationUtil.prefixWithEa(messageControversialFalsy)
                                                     );
                                                 }
                                             }
@@ -201,7 +201,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                                 if (reported.add(node)) {
                                                     holder.registerProblem(
                                                             node,
-                                                            ReportingUtil.wrapReportedMessage(messageControversialIsset)
+                                                            MessagesPresentationUtil.prefixWithEa(messageControversialIsset)
                                                     );
                                                 }
                                             }
@@ -249,21 +249,21 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                                 if (reported.add(binary)) {
                                                     holder.registerProblem(
                                                             binary,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messageEmptyArrayCount), argument.getText(), argument.getText())
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(messageEmptyArrayCount), argument.getText(), argument.getText())
                                                     );
                                                 }
                                             } else if (operator == PhpTokenTypes.opNOT_EQUAL || operator == PhpTokenTypes.opNOT_IDENTICAL) {
                                                 if (reported.add(binary)) {
                                                     holder.registerProblem(
                                                             binary,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messageNotEmptyArrayCount), argument.getText(), argument.getText())
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(messageNotEmptyArrayCount), argument.getText(), argument.getText())
                                                     );
                                                 }
                                             } else if (operator == PhpTokenTypes.opGREATER) {
                                                 if (reported.add(binary)) {
                                                     holder.registerProblem(
                                                             binary,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messageNotEmptyArrayCount), argument.getText(), argument.getText())
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(messageNotEmptyArrayCount), argument.getText(), argument.getText())
                                                     );
                                                 }
                                             }
@@ -280,7 +280,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                         final String message = this.isInverted(call) ? messageEmptyArrayCount : messageNotEmptyArrayCount;
                                         holder.registerProblem(
                                                 call,
-                                                String.format(ReportingUtil.wrapReportedMessage(message), argument.getText(), argument.getText())
+                                                String.format(MessagesPresentationUtil.prefixWithEa(message), argument.getText(), argument.getText())
                                         );
                                     }
                                     break;
@@ -310,7 +310,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (reported.add(node)) {
                                     holder.registerProblem(
                                             node,
-                                            ReportingUtil.wrapReportedMessage(messageAlwaysTrue)
+                                            MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue)
                                     );
                                 }
                             } else if (!isIssetInverted && isEmptyInverted) {
@@ -319,7 +319,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (reported.add(node)) {
                                     holder.registerProblem(
                                             node,
-                                            ReportingUtil.wrapReportedMessage(messageIssetCanBeDropped)
+                                            MessagesPresentationUtil.prefixWithEa(messageIssetCanBeDropped)
                                     );
                                 }
                             }
@@ -332,7 +332,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (reported.add(node)) {
                                     holder.registerProblem(
                                             node,
-                                            ReportingUtil.wrapReportedMessage(messageIssetCanBeDropped)
+                                            MessagesPresentationUtil.prefixWithEa(messageIssetCanBeDropped)
                                     );
                                 }
                             } else if (!isIssetInverted && isEmptyInverted) {
@@ -341,7 +341,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (reported.add(node)) {
                                     holder.registerProblem(
                                             node,
-                                            ReportingUtil.wrapReportedMessage(messageAlwaysFalse)
+                                            MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse)
                                     );
                                 }
                             }
@@ -376,7 +376,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                     if (reported.add(node)) {
                                         holder.registerProblem(
                                                 node,
-                                                ReportingUtil.wrapReportedMessage(targetMessage)
+                                                MessagesPresentationUtil.prefixWithEa(targetMessage)
                                         );
                                     }
                                     break;
@@ -404,7 +404,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (reported.add(node)) {
                                     holder.registerProblem(
                                             node,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageNotEmpty), argument.getText())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageNotEmpty), argument.getText())
                                     );
                                 }
                             }
@@ -414,7 +414,7 @@ public class UnnecessaryEmptinessCheckInspector extends PhpInspection {
                                 if (reported.add(node)) {
                                     holder.registerProblem(
                                             node,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageEmpty), argument.getText())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageEmpty), argument.getText())
                                     );
                                 }
                             }

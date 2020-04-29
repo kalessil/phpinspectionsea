@@ -9,9 +9,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -68,14 +68,14 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                         case "sizeof":
                                             holder.registerProblem(
                                                     reference,
-                                                    ReportingUtil.wrapReportedMessage(messageCount),
+                                                    MessagesPresentationUtil.prefixWithEa(messageCount),
                                                     new ReplaceFix(innerArguments[0].getText())
                                             );
                                             break;
                                         case "in_array":
                                             holder.registerProblem(
                                                     reference,
-                                                    ReportingUtil.wrapReportedMessage(messageInArray),
+                                                    MessagesPresentationUtil.prefixWithEa(messageInArray),
                                                     new ReplaceFix(innerArguments[0].getText())
                                             );
                                             break;
@@ -85,7 +85,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                         case "implode":
                                             holder.registerProblem(
                                                     reference,
-                                                    ReportingUtil.wrapReportedMessage(messageGeneric),
+                                                    MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                                     new ReplaceFix(innerArguments[0].getText())
                                             );
                                             break;
@@ -96,7 +96,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                             if (replaceArguments.length >= 3 && replaceArguments[1] == reference) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageGeneric),
+                                                        MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                                         new ReplaceFix(innerArguments[0].getText())
                                                 );
                                             }
@@ -106,7 +106,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                             if (sliceArguments.length < 4) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageGeneric),
+                                                        MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                                         new ReplaceFix(innerArguments[0].getText())
                                                 );
                                             }
@@ -123,7 +123,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                             if (foreach.getKey() == null && !foreach.getVariables().isEmpty()) {
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageGeneric),
+                                        MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                         new ReplaceFix(innerArguments[0].getText())
                                 );
                             }
@@ -139,7 +139,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                     if (argumentArguments.length == 2) {
                                         holder.registerProblem(
                                                 reference,
-                                                ReportingUtil.wrapReportedMessage(messageGeneric),
+                                                MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                                 new ReplaceFix(argument.getText())
                                         );
                                     }
@@ -148,13 +148,13 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                     if (argumentArguments.length < 4) {
                                         holder.registerProblem(
                                                 reference,
-                                                ReportingUtil.wrapReportedMessage(messageGeneric),
+                                                MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                                 new ReplaceFix(argument.getText())
                                         );
                                     } else if (argumentArguments.length == 4 && PhpLanguageUtil.isFalse(argumentArguments[3])) {
                                         holder.registerProblem(
                                                 reference,
-                                                ReportingUtil.wrapReportedMessage(messageGeneric),
+                                                MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                                 new ReplaceFix(argument.getText())
                                         );
                                     }
@@ -164,7 +164,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                         final String replacement = String.format("%sarray_keys(%s)", reference.getImmediateNamespaceName(), argumentArguments[0].getText());
                                         holder.registerProblem(
                                                 reference,
-                                                ReportingUtil.wrapReportedMessage(messageKeys),
+                                                MessagesPresentationUtil.prefixWithEa(messageKeys),
                                                 new ReplaceFix(replacement)
                                         );
                                     }
@@ -181,7 +181,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
                                 if (isTarget) {
                                     holder.registerProblem(
                                             reference,
-                                            ReportingUtil.wrapReportedMessage(messageGeneric),
+                                            MessagesPresentationUtil.prefixWithEa(messageGeneric),
                                             new ReplaceFix(innerArguments[0].getText())
                                     );
                                 }
@@ -199,7 +199,7 @@ public class ArrayValuesMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         ReplaceFix(@NotNull String expression) {

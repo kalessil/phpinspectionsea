@@ -13,8 +13,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +65,7 @@ public class UnnecessaryContinueInspector extends PhpInspection {
                             if (lastStatements.stream().anyMatch(statement -> continueStatement == statement)) {
                                 holder.registerProblem(
                                         continueStatement,
-                                        ReportingUtil.wrapReportedMessage(message),
+                                        MessagesPresentationUtil.prefixWithEa(message),
                                         new RemoveUnnecessaryStatementFix()
                                 );
                             }
@@ -134,7 +134,7 @@ public class UnnecessaryContinueInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

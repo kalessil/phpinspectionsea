@@ -112,7 +112,7 @@ public class UnsupportedStringOffsetOperationsInspector extends PhpInspection {
                             if (isTarget) {
                                 holder.registerProblem(
                                         target,
-                                        ReportingUtil.wrapReportedMessage(message),
+                                        MessagesPresentationUtil.prefixWithEa(message),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }

@@ -50,7 +50,7 @@ final public class SimplifyBooleansComparisonStrategy {
                                             holder.registerProblem(
                                                     match,
                                                     String.format(
-                                                            ReportingUtil.wrapReportedMessage(messagePattern),
+                                                            MessagesPresentationUtil.prefixWithEa(messagePattern),
                                                             fragment.getText(),
                                                             match.getText(),
                                                             current.first.first.getText(),

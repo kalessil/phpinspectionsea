@@ -67,7 +67,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                     if (isTarget) {
                                         holder.registerProblem(
                                                 reference,
-                                                ReportingUtil.wrapReportedMessage(messageSprintf)
+                                                MessagesPresentationUtil.prefixWithEa(messageSprintf)
                                         );
                                     }
                                 }
@@ -79,7 +79,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                 if (isTarget) {
                                     holder.registerProblem(
                                             reference,
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), values[0].getText())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), values[0].getText())
                                     );
                                 }
                             }
@@ -103,7 +103,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                                 );
                                                 holder.registerProblem(
                                                         reference,
-                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                         new UseAlternativeFix(replacement)
                                                 );
                                             }
@@ -119,7 +119,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                                                     );
                                                     holder.registerProblem(
                                                             reference,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                             new UseAlternativeFix(replacement)
                                                     );
                                                 }
@@ -138,7 +138,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
                             if (glue.equals("&") || glue.equals("&amp;")) {
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageBuildQuery)
+                                        MessagesPresentationUtil.prefixWithEa(messageBuildQuery)
                                 );
                             }
                         }
@@ -169,7 +169,7 @@ public class ImplodeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseAlternativeFix(@NotNull String expression) {

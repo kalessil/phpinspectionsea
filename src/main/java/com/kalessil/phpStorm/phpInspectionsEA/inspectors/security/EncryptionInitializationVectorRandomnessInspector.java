@@ -86,7 +86,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends PhpInspec
                             final String ivFunction = functionName.startsWith("openssl_") ? "openssl_random_pseudo_bytes" : "mcrypt_create_iv";
                             holder.registerProblem(
                                     arguments[4],
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, ivFunction, String.join(", ", reporting))),
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, ivFunction, String.join(", ", reporting))),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                         }

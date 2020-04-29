@@ -8,7 +8,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -33,7 +33,7 @@ final public class MakePrivateFixer implements LocalQuickFix {
     @NotNull
     @Override
     public String getName() {
-        return ReportingUtil.wrapReportedMessage(title);
+        return MessagesPresentationUtil.prefixWithEa(title);
     }
 
     @NotNull

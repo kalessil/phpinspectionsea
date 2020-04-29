@@ -15,9 +15,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -70,7 +70,7 @@ public class ArrayPushMissUseInspector extends PhpInspection {
                             final String replacement = String.format("%s[] = %s", arguments[0].getText(), arguments[1].getText());
                             holder.registerProblem(
                                     reference,
-                                    String.format(ReportingUtil.wrapReportedMessage(messageMisuse), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageMisuse), replacement),
                                     new UseElementPushFix(replacement)
                             );
                         }
@@ -100,7 +100,7 @@ public class ArrayPushMissUseInspector extends PhpInspection {
                                             if (container != null && OpenapiEquivalenceUtil.areEqual(container, arguments[0])) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageUnneeded),
+                                                        MessagesPresentationUtil.prefixWithEa(messageUnneeded),
                                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                                 );
                                             }
@@ -121,7 +121,7 @@ public class ArrayPushMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseElementPushFix(@NotNull String expression) {

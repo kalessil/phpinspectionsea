@@ -13,8 +13,8 @@ import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -63,7 +63,7 @@ public class FilePutContentsRaceConditionInspector extends PhpInspection {
                         if (!REDUCED_SCOPE || this.match(arguments[0], ".php") || this.match(arguments[1], "<?php")) {
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(message),
+                                    MessagesPresentationUtil.prefixWithEa(message),
                                     new AddLockExFlagFix()
                             );
                         }
@@ -96,7 +96,7 @@ public class FilePutContentsRaceConditionInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

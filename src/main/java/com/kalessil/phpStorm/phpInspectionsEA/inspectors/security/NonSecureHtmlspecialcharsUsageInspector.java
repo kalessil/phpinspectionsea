@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -94,7 +94,7 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
                                 final String replacement = String.format("%shtmlspecialchars(%s)", reference.getImmediateNamespaceName(), String.join(", ", updatedArguments));
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageHarden),
+                                        MessagesPresentationUtil.prefixWithEa(messageHarden),
                                         new EscapeAllQuotesFix(replacement)
                                 );
                             }
@@ -106,7 +106,7 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
                             if (callback.equals("htmlspecialchars")) {
                                 holder.registerProblem(
                                         arguments[0],
-                                        ReportingUtil.wrapReportedMessage(messageCallback)
+                                        MessagesPresentationUtil.prefixWithEa(messageCallback)
                                 );
                             }
                         }
@@ -122,7 +122,7 @@ public class NonSecureHtmlspecialcharsUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         EscapeAllQuotesFix (@NotNull String expression) {

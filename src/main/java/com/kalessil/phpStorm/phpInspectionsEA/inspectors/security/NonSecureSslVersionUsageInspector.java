@@ -6,7 +6,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -67,9 +67,9 @@ public class NonSecureSslVersionUsageInspector extends PhpInspection {
                 final String constantName = reference.getName();
                 if (constantName != null && ! constantName.isEmpty()) {
                     if (sslConstants.contains(constantName)) {
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageSsl));
+                        holder.registerProblem(reference, MessagesPresentationUtil.prefixWithEa(messageSsl));
                     } else if (tlsConstants.contains(constantName)) {
-                        holder.registerProblem(reference, ReportingUtil.wrapReportedMessage(messageTls));
+                        holder.registerProblem(reference, MessagesPresentationUtil.prefixWithEa(messageTls));
                     }
                 }
             }

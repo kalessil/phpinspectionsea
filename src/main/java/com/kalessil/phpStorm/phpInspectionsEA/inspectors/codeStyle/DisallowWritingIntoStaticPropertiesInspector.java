@@ -9,8 +9,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +62,7 @@ public class DisallowWritingIntoStaticPropertiesInspector extends PhpInspection 
                         if (!ALLOW_WRITE_FROM_SOURCE_CLASS) {
                             holder.registerProblem(
                                     assignmentExpression,
-                                    ReportingUtil.wrapReportedMessage(messageDisallowAnyWrites)
+                                    MessagesPresentationUtil.prefixWithEa(messageDisallowAnyWrites)
                             );
                             return;
                         }
@@ -77,14 +77,14 @@ public class DisallowWritingIntoStaticPropertiesInspector extends PhpInspection 
                                 if (referencedField != null && caller != ((Field) referencedField).getContainingClass()) {
                                     holder.registerProblem(
                                             assignmentExpression,
-                                            ReportingUtil.wrapReportedMessage(messageDisallowExternalWrites)
+                                            MessagesPresentationUtil.prefixWithEa(messageDisallowExternalWrites)
                                     );
                                 }
                             } else {
                                 /* global, late static bind and function contexts */
                                 holder.registerProblem(
                                         assignmentExpression,
-                                        ReportingUtil.wrapReportedMessage(messageDisallowExternalWrites)
+                                        MessagesPresentationUtil.prefixWithEa(messageDisallowExternalWrites)
                                 );
                             }
                         }

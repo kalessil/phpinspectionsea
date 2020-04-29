@@ -9,8 +9,8 @@ import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -74,7 +74,7 @@ public class ArrayMapMissUseInspector extends PhpInspection {
                                         arguments.clear();
                                         holder.registerProblem(
                                                 outerCall,
-                                                ReportingUtil.wrapReportedMessage(message),
+                                                MessagesPresentationUtil.prefixWithEa(message),
                                                 new ReplaceFix(replacement)
                                         );
                                     }
@@ -93,7 +93,7 @@ public class ArrayMapMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         ReplaceFix(@NotNull String expression) {

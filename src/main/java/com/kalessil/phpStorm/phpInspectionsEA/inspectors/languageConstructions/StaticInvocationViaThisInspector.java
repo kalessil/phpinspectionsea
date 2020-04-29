@@ -84,7 +84,7 @@ public class StaticInvocationViaThisInspector extends PhpInspection {
                                     if (resolved instanceof Method && ((Method) resolved).isStatic()) {
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageExpressionUsed), methodName)
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageExpressionUsed), methodName)
                                         );
                                     }
                                 }
@@ -125,7 +125,7 @@ public class StaticInvocationViaThisInspector extends PhpInspection {
                 }
                 holder.registerProblem(
                         base,
-                        String.format(ReportingUtil.wrapReportedMessage(messageThisUsed), method.getName()),
+                        String.format(MessagesPresentationUtil.prefixWithEa(messageThisUsed), method.getName()),
                         new TheLocalFix(holder.getProject(), base, operator)
                 );
             }
@@ -149,7 +149,7 @@ public class StaticInvocationViaThisInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

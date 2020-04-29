@@ -148,7 +148,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                         if (!(value instanceof NewExpression) || PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540)) {
                             holder.registerProblem(
                                     assignVariable,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), variableName),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), variableName),
                                     new InlineValueFix(holder.getProject(), assign.getParent(), argument, value)
                             );
                         }
@@ -175,7 +175,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                             if (!typeAnnotated) {
                                 holder.registerProblem(
                                         container,
-                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), variableName),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), variableName),
                                         new InlineValueFix(holder.getProject(), assignment.getParent(), argument, value)
                                 );
                             }
@@ -377,7 +377,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
                                     if (targetUsageInLoop == targetUsageInScope) {
                                         holder.registerProblem(
                                                 target,
-                                                ReportingUtil.wrapReportedMessage(messageRename),
+                                                MessagesPresentationUtil.prefixWithEa(messageRename),
                                                 new RenameLoopVariableFix(holder.getProject(), targetAssignment, subject, targetVariable)
                                         );
                                     }
@@ -494,7 +494,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
@@ -534,7 +534,7 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

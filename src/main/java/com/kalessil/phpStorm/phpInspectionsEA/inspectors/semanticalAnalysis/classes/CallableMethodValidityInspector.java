@@ -111,7 +111,7 @@ public class CallableMethodValidityInspector extends PhpInspection {
                             final PsiElement target = OpenapiTypesUtil.isLambda(argument) ? parameters[0] : argument;
                             holder.registerProblem(
                                     target,
-                                    ReportingUtil.wrapReportedMessage(messageUseThrowable)
+                                    MessagesPresentationUtil.prefixWithEa(messageUseThrowable)
                             );
                         }
                     }
@@ -124,7 +124,7 @@ public class CallableMethodValidityInspector extends PhpInspection {
                     if (!method.getAccess().isPublic()) {
                         holder.registerProblem(
                                 target,
-                                String.format(ReportingUtil.wrapReportedMessage(patternNotPublic), method.getName())
+                                String.format(MessagesPresentationUtil.prefixWithEa(patternNotPublic), method.getName())
                         );
                     }
 
@@ -155,7 +155,7 @@ public class CallableMethodValidityInspector extends PhpInspection {
                     if (needStatic) {
                         holder.registerProblem(
                                 target,
-                                String.format(ReportingUtil.wrapReportedMessage(patternNotStatic), method.getName())
+                                String.format(MessagesPresentationUtil.prefixWithEa(patternNotStatic), method.getName())
                         );
                     }
                 }

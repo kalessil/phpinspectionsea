@@ -17,8 +17,8 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -63,7 +63,7 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
                     ) {
                         holder.registerProblem(
                                 condition,
-                                ReportingUtil.wrapReportedMessage(message), ProblemHighlightType.GENERIC_ERROR,
+                                MessagesPresentationUtil.prefixWithEa(message), ProblemHighlightType.GENERIC_ERROR,
                                 new TheLocalFix(holder.getProject(), forStatement, condition)
                         );
                     }
@@ -89,7 +89,7 @@ public class CallableInLoopTerminationConditionInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

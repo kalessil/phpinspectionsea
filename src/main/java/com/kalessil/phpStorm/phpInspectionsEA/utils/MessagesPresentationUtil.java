@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class ReportingUtil {
-    static public String wrapReportedMessage(@NotNull String message) {
+final public class MessagesPresentationUtil {
+    static public String prefixWithEa(@NotNull String message) {
         return "[EA] " + message;
     }
 }

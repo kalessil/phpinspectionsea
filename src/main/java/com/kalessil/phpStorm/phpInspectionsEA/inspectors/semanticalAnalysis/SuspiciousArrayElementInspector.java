@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.psi.elements.Variable;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -54,7 +54,7 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
                             final String replacement = String.format("'%s'", ((Variable) key).getName());
                             holder.registerProblem(
                                     key,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                     new UseStringKeyFix(replacement)
                             );
                         }
@@ -70,7 +70,7 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStringKeyFix(@NotNull String expression) {

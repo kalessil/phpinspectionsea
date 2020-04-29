@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -53,7 +53,7 @@ public class MktimeUsageInspector extends PhpInspection {
                         if (this.isFromRootNamespace(reference)) {
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(messageUseTime),
+                                    MessagesPresentationUtil.prefixWithEa(messageUseTime),
                                     new UseTimeFunctionLocalFix()
                             );
                         }
@@ -61,7 +61,7 @@ public class MktimeUsageInspector extends PhpInspection {
                         if (this.isFromRootNamespace(reference)) {
                             holder.registerProblem(
                                     arguments[6],
-                                    ReportingUtil.wrapReportedMessage(messageParameterDeprecated),
+                                    MessagesPresentationUtil.prefixWithEa(messageParameterDeprecated),
                                     ProblemHighlightType.LIKE_DEPRECATED
                             );
                         }
@@ -77,7 +77,7 @@ public class MktimeUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseTimeFunctionLocalFix() {

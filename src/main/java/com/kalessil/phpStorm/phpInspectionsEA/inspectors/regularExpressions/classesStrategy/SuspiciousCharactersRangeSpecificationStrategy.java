@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.cla
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +66,7 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
 
                         holder.registerProblem(
                                 target,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), range, match),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), range, match),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     }
@@ -77,13 +77,13 @@ public class SuspiciousCharactersRangeSpecificationStrategy {
                 if (pattern.contains("а-я") && !pattern.contains("ё")) {
                     holder.registerProblem(
                             target,
-                            String.format(ReportingUtil.wrapReportedMessage(messageMissingCyrillic), "а-я", "ёа-я"),
+                            String.format(MessagesPresentationUtil.prefixWithEa(messageMissingCyrillic), "а-я", "ёа-я"),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 } else if (pattern.contains("А-Я") && !pattern.contains("Ё")) {
                     holder.registerProblem(
                             target,
-                            String.format(ReportingUtil.wrapReportedMessage(messageMissingCyrillic), "А-Я", "ЁА-Я"),
+                            String.format(MessagesPresentationUtil.prefixWithEa(messageMissingCyrillic), "А-Я", "ЁА-Я"),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }

@@ -212,13 +212,13 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                 }
                                 holder.registerProblem(
                                         functionCall,
-                                        ReportingUtil.wrapReportedMessage(isReversedCheck ? messageNoSense : messageViolationInCheck)
+                                        MessagesPresentationUtil.prefixWithEa(isReversedCheck ? messageNoSense : messageViolationInCheck)
                                 );
                             } else {
                                 if (hasTypeDeclared && parameterTypes.size() == 1 && ! isClassCheck) {
                                     holder.registerProblem(
                                             functionCall,
-                                            ReportingUtil.wrapReportedMessage(messageTypeHint)
+                                            MessagesPresentationUtil.prefixWithEa(messageTypeHint)
                                     );
                                 }
                             }
@@ -317,7 +317,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                         if (isViolation) {
                                             holder.registerProblem(
                                                     value,
-                                                    String.format(ReportingUtil.wrapReportedMessage(patternViolationInAssignment), type)
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(patternViolationInAssignment), type)
                                             );
                                             break;
                                         }
@@ -369,12 +369,12 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                         if (operator == PhpTokenTypes.opIDENTICAL && parameterTypes.stream().noneMatch(requiredTypes::contains)) {
                                             holder.registerProblem(
                                                     binary,
-                                                    ReportingUtil.wrapReportedMessage(messageViolationInCheck)
+                                                    MessagesPresentationUtil.prefixWithEa(messageViolationInCheck)
                                             );
                                         } else if (operator == PhpTokenTypes.opNOT_IDENTICAL && parameterTypes.stream().noneMatch(requiredTypes::contains)) {
                                             holder.registerProblem(
                                                     binary,
-                                                    ReportingUtil.wrapReportedMessage(messageNoSense)
+                                                    MessagesPresentationUtil.prefixWithEa(messageNoSense)
                                             );
                                         }
                                         requiredTypes.clear();
@@ -388,12 +388,12 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                             if (operator == PhpTokenTypes.opIDENTICAL) {
                                                 holder.registerProblem(
                                                         binary,
-                                                        ReportingUtil.wrapReportedMessage(messageViolationInCheck)
+                                                        MessagesPresentationUtil.prefixWithEa(messageViolationInCheck)
                                                 );
                                             } else if (operator == PhpTokenTypes.opNOT_IDENTICAL) {
                                                 holder.registerProblem(
                                                         binary,
-                                                        ReportingUtil.wrapReportedMessage(messageNoSense)
+                                                        MessagesPresentationUtil.prefixWithEa(messageNoSense)
                                                 );
                                             }
                                         }

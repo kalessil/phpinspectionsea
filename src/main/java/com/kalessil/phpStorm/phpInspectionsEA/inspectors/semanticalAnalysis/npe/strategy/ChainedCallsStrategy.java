@@ -64,7 +64,7 @@ final public class ChainedCallsStrategy {
                             if (!isNullTested) {
                                 holder.registerProblem(
                                         operator,
-                                        ReportingUtil.wrapReportedMessage(message)
+                                        MessagesPresentationUtil.prefixWithEa(message)
                                 );
                                 break;
                             }

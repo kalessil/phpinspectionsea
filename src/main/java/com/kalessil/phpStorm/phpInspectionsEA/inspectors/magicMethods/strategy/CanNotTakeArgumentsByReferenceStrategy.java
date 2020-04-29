@@ -5,8 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.Parameter;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 
 public class CanNotTakeArgumentsByReferenceStrategy {
     private static final String strProblemDescription = "%m% cannot accept arguments by reference.";
@@ -18,7 +18,7 @@ public class CanNotTakeArgumentsByReferenceStrategy {
                 if (nameNode != null) {
                     holder.registerProblem(
                             nameNode,
-                            ReportingUtil.wrapReportedMessage(strProblemDescription.replace("%m%", method.getName())),
+                            MessagesPresentationUtil.prefixWithEa(strProblemDescription.replace("%m%", method.getName())),
                             ProblemHighlightType.ERROR
                     );
                     return;

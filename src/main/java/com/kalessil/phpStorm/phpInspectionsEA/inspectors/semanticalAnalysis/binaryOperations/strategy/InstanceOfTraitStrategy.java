@@ -7,8 +7,8 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ClassConstantReference;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -65,7 +65,7 @@ final public class InstanceOfTraitStrategy {
         if (resolved instanceof PhpClass && ((PhpClass) resolved).isTrait()) {
             holder.registerProblem(
                     expression,
-                    ReportingUtil.wrapReportedMessage(message)
+                    MessagesPresentationUtil.prefixWithEa(message)
             );
             return true;
         }

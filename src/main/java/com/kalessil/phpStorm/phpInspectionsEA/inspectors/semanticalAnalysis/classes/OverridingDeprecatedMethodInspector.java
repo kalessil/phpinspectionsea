@@ -67,7 +67,7 @@ public class OverridingDeprecatedMethodInspector extends PhpInspection {
                                         if (nameNode != null ) {
                                             holder.registerProblem(
                                                     nameNode,
-                                                    String.format(ReportingUtil.wrapReportedMessage(patternMissingDeprecationTag), method.getName())
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(patternMissingDeprecationTag), method.getName())
                                             );
                                         }
                                     }
@@ -102,13 +102,13 @@ public class OverridingDeprecatedMethodInspector extends PhpInspection {
                                     if (!isMethodDeprecated && contractMethod.isDeprecated()) {
                                         holder.registerProblem(
                                                 nameNode,
-                                                String.format(ReportingUtil.wrapReportedMessage(patternNeedsDeprecation), methodName)
+                                                String.format(MessagesPresentationUtil.prefixWithEa(patternNeedsDeprecation), methodName)
                                         );
                                         return;
                                     } else if (isMethodDeprecated && !contractMethod.isDeprecated()) {
                                         holder.registerProblem(
                                                 nameNode,
-                                                String.format(ReportingUtil.wrapReportedMessage(patternDeprecateParent), methodName)
+                                                String.format(MessagesPresentationUtil.prefixWithEa(patternDeprecateParent), methodName)
                                         );
                                         return;
                                     }

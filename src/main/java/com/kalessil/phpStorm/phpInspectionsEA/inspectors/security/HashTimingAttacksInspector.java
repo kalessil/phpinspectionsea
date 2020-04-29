@@ -86,14 +86,14 @@ public class HashTimingAttacksInspector extends PhpInspection {
                     if (second != null && this.isTarget((BinaryExpression) context, second)) {
                         holder.registerProblem(
                                 context,
-                                ReportingUtil.wrapReportedMessage(message)
+                                MessagesPresentationUtil.prefixWithEa(message)
                         );
                     }
                 } else if (OpenapiTypesUtil.isFunctionReference(context)) {
                     if (this.isTarget((FunctionReference) context)) {
                         holder.registerProblem(
                                 context,
-                                ReportingUtil.wrapReportedMessage(message)
+                                MessagesPresentationUtil.prefixWithEa(message)
                         );
                     }
                 } else if (OpenapiTypesUtil.isAssignment(context)) {
@@ -115,7 +115,7 @@ public class HashTimingAttacksInspector extends PhpInspection {
                                             if (second != null && this.isTarget((BinaryExpression) parent, second)) {
                                                 holder.registerProblem(
                                                         parent,
-                                                        ReportingUtil.wrapReportedMessage(message)
+                                                        MessagesPresentationUtil.prefixWithEa(message)
                                                 );
                                                 break;
                                             }
@@ -124,7 +124,7 @@ public class HashTimingAttacksInspector extends PhpInspection {
                                             if (OpenapiTypesUtil.isFunctionReference(grandParent) && this.isTarget((FunctionReference) grandParent)) {
                                                 holder.registerProblem(
                                                         grandParent,
-                                                        ReportingUtil.wrapReportedMessage(message)
+                                                        MessagesPresentationUtil.prefixWithEa(message)
                                                 );
                                                 break;
                                             }

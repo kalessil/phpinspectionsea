@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -83,13 +83,13 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
                                             if (!candidate.startsWith("^") && regexProtocolCheck.matcher(candidate).find()) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageProtocol)
+                                                        MessagesPresentationUtil.prefixWithEa(messageProtocol)
                                                 );
                                             }
                                             if (!candidate.endsWith("$") && regexFileExtensionCheck.matcher(candidate).find()) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageExtension)
+                                                        MessagesPresentationUtil.prefixWithEa(messageExtension)
                                                 );
                                             }
                                             break;
@@ -107,7 +107,7 @@ public class BypassedUrlValidationInspector extends LocalInspectionTool {
                             if (isTarget) {
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageFilterVar)
+                                        MessagesPresentationUtil.prefixWithEa(messageFilterVar)
                                 );
                             }
                         }

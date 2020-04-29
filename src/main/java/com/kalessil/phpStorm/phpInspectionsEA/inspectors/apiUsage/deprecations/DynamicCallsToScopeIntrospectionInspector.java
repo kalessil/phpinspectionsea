@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -93,7 +93,7 @@ public class DynamicCallsToScopeIntrospectionInspector extends PhpInspection {
                                 if (targetCalls.containsKey(callback)) {
                                     holder.registerProblem(
                                             target,
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), callback)
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), callback)
                                     );
                                 }
                             }

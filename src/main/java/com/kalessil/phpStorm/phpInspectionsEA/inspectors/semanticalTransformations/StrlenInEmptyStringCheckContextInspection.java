@@ -111,7 +111,7 @@ public class StrlenInEmptyStringCheckContextInspection extends PhpInspection {
                             );
                             holder.registerProblem(
                                     target,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                     new CompareToEmptyStringFix(replacement)
                             );
                         }
@@ -137,7 +137,7 @@ public class StrlenInEmptyStringCheckContextInspection extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         CompareToEmptyStringFix(@NotNull String expression) {

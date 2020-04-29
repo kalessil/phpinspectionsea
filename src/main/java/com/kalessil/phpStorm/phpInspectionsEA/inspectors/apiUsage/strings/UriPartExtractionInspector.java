@@ -9,8 +9,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -85,7 +85,7 @@ public class UriPartExtractionInspector extends PhpInspection {
                                         );
                                         holder.registerProblem(
                                                 context,
-                                                ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement))
+                                                MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, replacement))
                                         );
                                     }
                                 }
@@ -128,7 +128,7 @@ public class UriPartExtractionInspector extends PhpInspection {
                                                     );
                                                     holder.registerProblem(
                                                             reference,
-                                                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement))
+                                                            MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, replacement))
                                                     );
                                                 }
                                             }

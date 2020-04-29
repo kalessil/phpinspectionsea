@@ -79,7 +79,7 @@ public class UnnecessaryBooleanCheckInspector extends PhpInspection {
                                 final String replacement  = (invertValue ? "!" : "") + value.getText();
                                 holder.registerProblem(
                                         expression,
-                                        String.format(ReportingUtil.wrapReportedMessage(message), replacement),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
                                         new SimplifyFix(replacement)
                                 );
                             }
@@ -107,7 +107,7 @@ public class UnnecessaryBooleanCheckInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         SimplifyFix(@NotNull String expression) {

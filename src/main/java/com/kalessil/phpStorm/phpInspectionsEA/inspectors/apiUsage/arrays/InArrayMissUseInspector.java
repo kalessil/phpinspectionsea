@@ -75,7 +75,7 @@ public class InArrayMissUseInspector extends PhpInspection {
                             final boolean provideFix = discoveredValue == arguments[1];
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(String.format(patternKeyExists, replacement)),
+                                    MessagesPresentationUtil.prefixWithEa(String.format(patternKeyExists, replacement)),
                                     provideFix ? new UseArrayKeyExistsFix(replacement) : null
                             );
                         }
@@ -132,7 +132,7 @@ public class InArrayMissUseInspector extends PhpInspection {
                         final boolean provideFix = discoveredValue == arguments[1];
                         holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(String.format(patternComparison, replacement)),
+                                MessagesPresentationUtil.prefixWithEa(String.format(patternComparison, replacement)),
                                 provideFix ? new UseComparisonFix(replacement) : null
                         );
                     }
@@ -147,7 +147,7 @@ public class InArrayMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseArrayKeyExistsFix(@NotNull String expression) {
@@ -161,7 +161,7 @@ public class InArrayMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseComparisonFix(@NotNull String expression) {

@@ -154,7 +154,7 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                                 .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
                         holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 fixer
                         );
                     }
@@ -178,7 +178,7 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                             ;
                             holder.registerProblem(
                                     target,
-                                    ReportingUtil.wrapReportedMessage(message),
+                                    MessagesPresentationUtil.prefixWithEa(message),
                                     fixer
                             );
                         }
@@ -202,7 +202,7 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                         ;
                         holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 fixer
                         );
                     }
@@ -339,7 +339,7 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

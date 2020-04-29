@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +65,7 @@ public class OffsetOperationsInspector extends PhpInspection {
                 if (!isContainerSupportsArrayAccess(holder.getProject(), expression, allowedIndexTypes) && !allowedIndexTypes.isEmpty()) {
                     holder.registerProblem(
                             expression,
-                            String.format(ReportingUtil.wrapReportedMessage(patternNoOffsetSupport), expression.getValue().getText(), allowedIndexTypes.toString())
+                            String.format(MessagesPresentationUtil.prefixWithEa(patternNoOffsetSupport), expression.getValue().getText(), allowedIndexTypes.toString())
                     );
 
                     allowedIndexTypes.clear();
@@ -86,7 +86,7 @@ public class OffsetOperationsInspector extends PhpInspection {
                                 if (!indexTypes.isEmpty()) {
                                     holder.registerProblem(
                                             indexValue,
-                                            String.format(ReportingUtil.wrapReportedMessage(patternInvalidIndex), indexTypes.toString(), allowedIndexTypes.toString())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(patternInvalidIndex), indexTypes.toString(), allowedIndexTypes.toString())
                                     );
                                     indexTypes.clear();
                                 }

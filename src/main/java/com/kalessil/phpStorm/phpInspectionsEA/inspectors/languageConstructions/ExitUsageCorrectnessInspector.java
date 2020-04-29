@@ -7,9 +7,9 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.PhpExit;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -64,7 +64,7 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
                                 if (isTarget) {
                                     holder.registerProblem(
                                             statement,
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), code)
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), code)
                                     );
                                     break;
                                 }

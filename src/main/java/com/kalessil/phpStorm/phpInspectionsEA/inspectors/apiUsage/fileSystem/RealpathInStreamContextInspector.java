@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +65,7 @@ public class RealpathInStreamContextInspector extends PhpInspection {
                     final String replacement = this.generateReplacement(subject);
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement)),
+                            MessagesPresentationUtil.prefixWithEa(replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement)),
                             replacement == null ? null : new SecureRealpathFix(replacement)
                     );
                     return;
@@ -77,7 +77,7 @@ public class RealpathInStreamContextInspector extends PhpInspection {
                         final String replacement = this.generateReplacement(subject);
                         holder.registerProblem(
                                 reference,
-                                ReportingUtil.wrapReportedMessage(replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement)),
+                                MessagesPresentationUtil.prefixWithEa(replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement)),
                                 replacement == null ? null : new SecureRealpathFix(replacement)
                         );
                         break;
@@ -124,7 +124,7 @@ public class RealpathInStreamContextInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         SecureRealpathFix(@NotNull String expression) {

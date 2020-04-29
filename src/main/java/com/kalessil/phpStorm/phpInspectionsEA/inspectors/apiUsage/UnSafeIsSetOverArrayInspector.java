@@ -126,7 +126,7 @@ public class UnSafeIsSetOverArrayInspector extends PhpInspection {
                             final String replacement = String.join(" ", fragments);
                             holder.registerProblem(
                                     issetInverted ? issetExpression.getParent() : issetExpression,
-                                    String.format(ReportingUtil.wrapReportedMessage(patternUseNullComparison), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(patternUseNullComparison), replacement),
                                     ProblemHighlightType.WEAK_WARNING,
                                     new CompareToNullFix(replacement)
                             );
@@ -139,7 +139,7 @@ public class UnSafeIsSetOverArrayInspector extends PhpInspection {
                 if (REPORT_CONCATENATION_IN_INDEXES && !isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
                     holder.registerProblem(
                             argument,
-                            ReportingUtil.wrapReportedMessage(messageConcatenationInIndex)
+                            MessagesPresentationUtil.prefixWithEa(messageConcatenationInIndex)
                     );
                     return;
                 }
@@ -147,7 +147,7 @@ public class UnSafeIsSetOverArrayInspector extends PhpInspection {
                 if (SUGGEST_TO_USE_ARRAY_KEY_EXISTS && !isArrayAccess((ArrayAccessExpression) argument)) {
                     holder.registerProblem(
                             argument,
-                            ReportingUtil.wrapReportedMessage(messageUseArrayKeyExists),
+                            MessagesPresentationUtil.prefixWithEa(messageUseArrayKeyExists),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }
@@ -231,7 +231,7 @@ public class UnSafeIsSetOverArrayInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         CompareToNullFix(@NotNull String expression) {

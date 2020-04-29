@@ -12,9 +12,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +81,7 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
                                 stopAnalysis = true;
                                 holder.registerProblem(
                                         multiassignmentExpression,
-                                        ReportingUtil.wrapReportedMessage(messageImplicitList)
+                                        MessagesPresentationUtil.prefixWithEa(messageImplicitList)
                                 );
                                 break;
                             }
@@ -129,7 +129,7 @@ public class MultiAssignmentUsageInspector extends PhpInspection {
                     if (previousContainer != null && OpenapiEquivalenceUtil.areEqual(ownContainer, previousContainer)) {
                         holder.registerProblem(
                                 assignmentExpression,
-                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%a%", ownContainer.getText()))
+                                MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%a%", ownContainer.getText()))
                         );
                     }
                 }

@@ -8,8 +8,8 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,7 +76,7 @@ public class StringCaseManipulationInspector extends PhpInspection {
                             .replace("%f%", functions.get(functionName));
                         holder.registerProblem(
                                 reference,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                 new SimplifyFix(replacement)
                         );
                     }
@@ -108,7 +108,7 @@ public class StringCaseManipulationInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         SimplifyFix(@NotNull String expression) {

@@ -9,9 +9,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -81,7 +81,7 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                                             if (this.isTargetAssignment((AssignmentExpression) context, reference) && this.isFromRootNamespace(reference)) {
                                                 holder.registerProblem(
                                                         reportingTarget,
-                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName)
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), functionName)
                                                 );
                                             }
                                             return;
@@ -89,7 +89,7 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                                             if (this.isTargetReference((MethodReference) context, reference) && this.isFromRootNamespace(reference)) {
                                                 holder.registerProblem(
                                                         reportingTarget,
-                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName)
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), functionName)
                                                 );
                                             }
                                             return;
@@ -105,7 +105,7 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                                 if (functionsSet.contains(callbackName)) {
                                     holder.registerProblem(
                                             callback,
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), callbackName)
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), callbackName)
                                     );
                                 }
                             }

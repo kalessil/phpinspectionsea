@@ -9,9 +9,9 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -71,7 +71,7 @@ public class BasenameCallsContextInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     reference,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                     new UseSecondArgumentFix(replacement)
                                             );
                                             break;
@@ -93,7 +93,7 @@ public class BasenameCallsContextInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseSecondArgumentFix(@NotNull String expression) {

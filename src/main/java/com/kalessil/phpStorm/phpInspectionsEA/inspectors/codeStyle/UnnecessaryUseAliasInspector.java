@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -56,7 +56,7 @@ public class UnnecessaryUseAliasInspector extends PhpInspection {
                         if (symbol.endsWith('\\' + alias)) {
                             holder.registerProblem(
                                     expression.getLastChild(),
-                                    String.format(ReportingUtil.wrapReportedMessage(messageAlias), alias),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageAlias), alias),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                     new TheLocalFix()
                             );
@@ -68,7 +68,7 @@ public class UnnecessaryUseAliasInspector extends PhpInspection {
                                         if (definition != expression) {
                                             holder.registerProblem(
                                                     expression.getFirstChild(),
-                                                    ReportingUtil.wrapReportedMessage(messageImport)
+                                                    MessagesPresentationUtil.prefixWithEa(messageImport)
                                             );
                                             break;
                                         }
@@ -88,7 +88,7 @@ public class UnnecessaryUseAliasInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

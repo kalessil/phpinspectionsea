@@ -11,8 +11,8 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,12 +83,12 @@ public class InterfacesAsConstructorDependenciesInspector extends PhpInspection 
                     if (!contracts.isEmpty()) {
                         holder.registerProblem(
                                 parameter,
-                                ReportingUtil.wrapReportedMessage(messageUseContract)
+                                MessagesPresentationUtil.prefixWithEa(messageUseContract)
                         );
                     } else if (!TOLERATE_MISSING_CONTRACTS) {
                         holder.registerProblem(
                                 parameter,
-                                ReportingUtil.wrapReportedMessage(messageMissingContract)
+                                MessagesPresentationUtil.prefixWithEa(messageMissingContract)
                         );
                     }
                     contracts.clear();

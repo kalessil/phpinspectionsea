@@ -10,9 +10,9 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,14 +60,14 @@ public class ClassMethodNameMatchesFieldNameInspector extends PhpInspection {
                             if (knownType.isEmpty()) {
                                 holder.registerProblem(
                                         nameNode,
-                                        ReportingUtil.wrapReportedMessage(messageFieldType)
+                                        MessagesPresentationUtil.prefixWithEa(messageFieldType)
                                 );
                             } else {
                                 final boolean isCallable = knownType.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strCallable));
                                 if (isCallable) {
                                     holder.registerProblem(
                                             nameNode,
-                                            ReportingUtil.wrapReportedMessage(messageMatches)
+                                            MessagesPresentationUtil.prefixWithEa(messageMatches)
                                     );
                                 }
                             }

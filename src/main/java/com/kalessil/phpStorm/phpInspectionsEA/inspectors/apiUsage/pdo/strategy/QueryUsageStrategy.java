@@ -13,9 +13,9 @@ import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.Statement;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.pdo.utils.MethodIdentityUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -62,7 +62,7 @@ final public class QueryUsageStrategy {
                 if (variableAssigned != null && variableUsed != null && OpenapiEquivalenceUtil.areEqual(variableAssigned, variableUsed)) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(message),
+                            MessagesPresentationUtil.prefixWithEa(message),
                             new UseQueryFix(holder.getProject(), precedingReference)
                     );
                 }
@@ -85,7 +85,7 @@ final public class QueryUsageStrategy {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

@@ -11,8 +11,8 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -111,7 +111,7 @@ public class AliasFunctionsUsageInspector extends PhpInspection {
                             final String original = relevantAliases.get(functionName);
                             holder.registerProblem(
                                     target,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName, original),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), functionName, original),
                                     ProblemHighlightType.LIKE_DEPRECATED,
                                     new TheLocalFix(original)
                             );
@@ -121,7 +121,7 @@ public class AliasFunctionsUsageInspector extends PhpInspection {
                         if (target != null) {
                             holder.registerProblem(
                                     target,
-                                    ReportingUtil.wrapReportedMessage(deprecatedAliases.get(functionName))
+                                    MessagesPresentationUtil.prefixWithEa(deprecatedAliases.get(functionName))
                             );
                         }
                     }
@@ -143,7 +143,7 @@ public class AliasFunctionsUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

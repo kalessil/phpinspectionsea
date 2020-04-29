@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +76,7 @@ public class ClassExistenceCheckInspector extends PhpInspection {
                             if (types != null && types.getTypes().stream().anyMatch(t -> Types.getType(t).equals(Types.strString))) {
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageString)
+                                        MessagesPresentationUtil.prefixWithEa(messageString)
                                 );
                             }
                         }
@@ -94,7 +94,7 @@ public class ClassExistenceCheckInspector extends PhpInspection {
                             if (resolved instanceof PhpClass && !callbacks.get(functionName).apply((PhpClass) resolved)) {
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageMismatch)
+                                        MessagesPresentationUtil.prefixWithEa(messageMismatch)
                                 );
                             }
                         }

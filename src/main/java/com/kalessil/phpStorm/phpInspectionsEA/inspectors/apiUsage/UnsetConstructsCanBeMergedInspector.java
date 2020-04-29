@@ -14,7 +14,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.PhpUnset;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
                 if (previous instanceof PhpUnset) {
                     holder.registerProblem(
                             unsetStatement,
-                            ReportingUtil.wrapReportedMessage(message),
+                            MessagesPresentationUtil.prefixWithEa(message),
                             new TheLocalFix(holder.getProject(), unsetStatement)
                     );
                 }
@@ -77,7 +77,7 @@ public class UnsetConstructsCanBeMergedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

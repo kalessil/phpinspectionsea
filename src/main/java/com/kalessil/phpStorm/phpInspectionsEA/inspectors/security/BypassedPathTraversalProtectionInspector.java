@@ -11,7 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -62,7 +62,7 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
                                 final String replacement   = String.format("preg_replace('/\\.+[\\/\\\\]+/', '', %s)", arguments[2].getText());
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageFilterVar),
+                                        MessagesPresentationUtil.prefixWithEa(messageFilterVar),
                                         withQuickFix ? new UsePregReplaceFix(replacement) : null
                                 );
                             }
@@ -94,7 +94,7 @@ public class BypassedPathTraversalProtectionInspector extends LocalInspectionToo
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UsePregReplaceFix(@NotNull String expression) {

@@ -104,7 +104,7 @@ public class ReferencingObjectsInspector extends PhpInspection {
                         .forEach(parameter ->
                                 holder.registerProblem(
                                         parameter,
-                                        String.format(ReportingUtil.wrapReportedMessage(messageParameter), parameter.getName()),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageParameter), parameter.getName()),
                                         new ParameterLocalFix(holder.getProject(), parameter)
                                 )
                         );
@@ -119,7 +119,7 @@ public class ReferencingObjectsInspector extends PhpInspection {
                 if (parent instanceof AssignmentExpression && OpenapiTypesUtil.isAssignmentByReference((AssignmentExpression) parent)) {
                     holder.registerProblem(
                             expression,
-                            ReportingUtil.wrapReportedMessage(messageAssignment),
+                            MessagesPresentationUtil.prefixWithEa(messageAssignment),
                             new InstantiationLocalFix()
                     );
                 }
@@ -133,7 +133,7 @@ public class ReferencingObjectsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
@@ -171,7 +171,7 @@ public class ReferencingObjectsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

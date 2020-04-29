@@ -16,8 +16,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -83,7 +83,7 @@ public class YieldFromCanBeUsedInspector extends PhpInspection {
                                             final String replacement = String.format("yield from %s", source.getText());
                                             holder.registerProblem(
                                                     statement.getFirstChild(),
-                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    MessagesPresentationUtil.prefixWithEa(message),
                                                     new UseYieldFromFix(replacement)
                                             );
                                         }
@@ -111,7 +111,7 @@ public class YieldFromCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

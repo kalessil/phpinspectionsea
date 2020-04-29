@@ -14,8 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.indexers.FunctionsPolyfillsIndexer
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,7 +94,7 @@ public class IsCountableCanBeUsedInspector extends PhpInspection {
                                                             final String argument = subject.getText();
                                                             holder.registerProblem(
                                                                     reference,
-                                                                    String.format(ReportingUtil.wrapReportedMessage(message), argument, argument, argument)
+                                                                    String.format(MessagesPresentationUtil.prefixWithEa(message), argument, argument, argument)
                                                             );
                                                             break;
                                                         }

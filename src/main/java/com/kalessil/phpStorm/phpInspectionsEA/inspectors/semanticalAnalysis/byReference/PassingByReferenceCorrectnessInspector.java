@@ -102,14 +102,14 @@ public class PassingByReferenceCorrectnessInspector extends PhpInspection {
                                     if (!ExpressionSemanticUtil.isByReference(name)) {
                                         holder.registerProblem(
                                                 argument,
-                                                ReportingUtil.wrapReportedMessage(message)
+                                                MessagesPresentationUtil.prefixWithEa(message)
                                         );
                                     }
                                 }
                             } else if (argument instanceof NewExpression) {
                                 holder.registerProblem(
                                         argument,
-                                        ReportingUtil.wrapReportedMessage(message)
+                                        MessagesPresentationUtil.prefixWithEa(message)
                                 );
                             }
                         }

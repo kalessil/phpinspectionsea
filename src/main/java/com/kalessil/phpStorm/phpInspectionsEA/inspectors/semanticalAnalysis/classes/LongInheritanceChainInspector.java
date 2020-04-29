@@ -9,9 +9,9 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -103,7 +103,7 @@ public class LongInheritanceChainInspector extends PhpInspection {
                 if (parentsCount >= COMPLAIN_THRESHOLD && !clazz.isDeprecated()) {
                     holder.registerProblem(
                             psiClassName,
-                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", String.valueOf(parentsCount))),
+                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%c%", String.valueOf(parentsCount))),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }

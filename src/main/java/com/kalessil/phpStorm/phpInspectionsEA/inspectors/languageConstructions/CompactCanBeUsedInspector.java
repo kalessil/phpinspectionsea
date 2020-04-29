@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class CompactCanBeUsedInspector extends PhpInspection {
                     final String replacement = String.format("compact(%s)", String.join(", ", variables));
                     holder.registerProblem(
                             expression.getFirstChild(),
-                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                             new UseCompactFix(replacement)
                     );
                 }
@@ -93,7 +93,7 @@ public class CompactCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

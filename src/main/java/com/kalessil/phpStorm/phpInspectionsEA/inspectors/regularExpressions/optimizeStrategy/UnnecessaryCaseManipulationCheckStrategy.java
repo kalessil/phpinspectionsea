@@ -3,8 +3,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opt
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +37,7 @@ final public class UnnecessaryCaseManipulationCheckStrategy {
                     final boolean isCaseInsensitive = modifiers != null && modifiers.indexOf('i') != -1;
                     holder.registerProblem(
                             arguments[1],
-                            ReportingUtil.wrapReportedMessage(isCaseInsensitive ? messageUnnecessary : messageNotOptimal)
+                            MessagesPresentationUtil.prefixWithEa(isCaseInsensitive ? messageUnnecessary : messageNotOptimal)
                     );
                 }
             }

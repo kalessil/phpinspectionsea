@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.PhpShellCommandExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -49,7 +49,7 @@ public class BacktickOperatorUsageInspector extends PhpInspection {
                     final String replacement = String.format("shell_exec(\"%s\")", command.replaceAll("`", "\\\\`").replaceAll("\"", "\\\\\""));
                     holder.registerProblem(
                             expression,
-                            ReportingUtil.wrapReportedMessage(message),
+                            MessagesPresentationUtil.prefixWithEa(message),
                             new UseShellExecFix(replacement)
                     );
                 }
@@ -63,7 +63,7 @@ public class BacktickOperatorUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseShellExecFix(@NotNull String expression) {

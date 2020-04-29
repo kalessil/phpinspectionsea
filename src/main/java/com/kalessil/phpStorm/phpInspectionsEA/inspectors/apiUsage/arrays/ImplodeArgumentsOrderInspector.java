@@ -9,8 +9,8 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -63,7 +63,7 @@ public class ImplodeArgumentsOrderInspector extends PhpInspection {
                                 );
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(message),
+                                        MessagesPresentationUtil.prefixWithEa(message),
                                         new ReorderArgumentsFixer(replacement)
                                 );
                             }
@@ -81,7 +81,7 @@ public class ImplodeArgumentsOrderInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         ReorderArgumentsFixer(@NotNull String expression) {

@@ -14,9 +14,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -86,7 +86,7 @@ public class GetTypeMissUseInspector extends PhpInspection {
                                         if (!type.equals("unknown type") && !type.equals("resource (closed)")) {
                                             holder.registerProblem(
                                                     value,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messageInvalidPattern), type),
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messageInvalidPattern), type),
                                                     ProblemHighlightType.GENERIC_ERROR
                                             );
                                         }
@@ -95,7 +95,7 @@ public class GetTypeMissUseInspector extends PhpInspection {
                                         final String replacement = String.format("%s%s(%s)", isInverted ? "!" : "", mapping.get(type), arguments[0].getText());
                                         holder.registerProblem(
                                                 parent,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageUseFunctionPattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageUseFunctionPattern), replacement),
                                                 new UseSuggestedFunctionFix(replacement)
                                         );
                                     }
@@ -114,7 +114,7 @@ public class GetTypeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseSuggestedFunctionFix(@NotNull String expression) {

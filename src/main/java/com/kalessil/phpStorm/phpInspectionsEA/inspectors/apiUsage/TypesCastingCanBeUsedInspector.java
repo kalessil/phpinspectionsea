@@ -11,9 +11,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -93,7 +93,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                                 );
                                 holder.registerProblem(
                                         reference,
-                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                         ProblemHighlightType.LIKE_DEPRECATED,
                                         new UseTypeCastingFix(replacement)
                                 );
@@ -116,7 +116,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                             );
                             holder.registerProblem(
                                     reference,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                     ProblemHighlightType.LIKE_DEPRECATED,
                                     new UseTypeCastingFix(replacement)
                             );
@@ -143,7 +143,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                             );
                             holder.registerProblem(
                                     literal,
-                                    String.format(ReportingUtil.wrapReportedMessage(messageInlining), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageInlining), replacement),
                                     new UseTypeCastingFix(replacement)
                             );
                         }
@@ -163,7 +163,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                         if (number != null && OpenapiTypesUtil.isNumber(number) && number.getText().equals("1")) {
                             holder.registerProblem(
                                     expression,
-                                    ReportingUtil.wrapReportedMessage(messageMultiplyOne)
+                                    MessagesPresentationUtil.prefixWithEa(messageMultiplyOne)
                             );
                         }
                     }
@@ -182,7 +182,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
                             final String replacement = String.format("(string) %s", base.getText());
                             holder.registerProblem(
                                     reference,
-                                    String.format(ReportingUtil.wrapReportedMessage(messageMagic), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageMagic), replacement),
                                     new UseTypeCastingFix(replacement)
                             );
                         }
@@ -205,7 +205,7 @@ public class TypesCastingCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseTypeCastingFix(@NotNull String expression) {

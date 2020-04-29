@@ -8,8 +8,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.fixers.MakePrivateFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.lowerAccessLevel.utils.ModifierExtractionUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -113,7 +113,7 @@ final public class PropertyUsedInPrivateContextStrategy {
                             if (modifier != null) {
                                 holder.registerProblem(
                                         modifier,
-                                        ReportingUtil.wrapReportedMessage(message),
+                                        MessagesPresentationUtil.prefixWithEa(message),
                                         new MakePrivateFixer(holder.getProject(), modifier)
                                 );
                             }

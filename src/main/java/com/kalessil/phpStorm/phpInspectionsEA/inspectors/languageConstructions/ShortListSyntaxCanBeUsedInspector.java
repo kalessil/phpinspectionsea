@@ -13,8 +13,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -61,7 +61,7 @@ public class ShortListSyntaxCanBeUsedInspector extends PhpInspection {
                         if (OpenapiTypesUtil.is(listKeyword, PhpTokenTypes.kwLIST)) {
                             holder.registerProblem(
                                     listKeyword,
-                                    ReportingUtil.wrapReportedMessage(messageAssign),
+                                    MessagesPresentationUtil.prefixWithEa(messageAssign),
                                     new TheLocalFix(holder.getProject(), assignment)
                             );
                         }
@@ -82,7 +82,7 @@ public class ShortListSyntaxCanBeUsedInspector extends PhpInspection {
                             if (OpenapiTypesUtil.is(childNode, PhpTokenTypes.kwLIST)) {
                                 holder.registerProblem(
                                         childNode,
-                                        ReportingUtil.wrapReportedMessage(messageForeach),
+                                        MessagesPresentationUtil.prefixWithEa(messageForeach),
                                         new TheLocalFix(holder.getProject(), foreach)
                                 );
                                 break;
@@ -103,7 +103,7 @@ public class ShortListSyntaxCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

@@ -10,9 +10,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -99,7 +99,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                     if (matcher.matches() && !this.isChecked(substitutedExpression)) {
                         holder.registerProblem(
                                 substitutedExpression,
-                                ReportingUtil.wrapReportedMessage(messageNaming)
+                                MessagesPresentationUtil.prefixWithEa(messageNaming)
                         );
                     }
                 }
@@ -121,7 +121,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                     if (containsAt && !this.isChecked(substitutedExpression)) {
                         holder.registerProblem(
                                 right,
-                                String.format(ReportingUtil.wrapReportedMessage(patternGeneral), attribute)
+                                String.format(MessagesPresentationUtil.prefixWithEa(patternGeneral), attribute)
                         );
                     }
                 }
@@ -144,7 +144,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                                 if (matcher.matches()) {
                                     holder.registerProblem(
                                             substitutedExpression,
-                                            ReportingUtil.wrapReportedMessage(messageNaming)
+                                            MessagesPresentationUtil.prefixWithEa(messageNaming)
                                     );
                                 }
                             }
@@ -158,7 +158,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                         if (matcher.matches() && !this.isChecked(substitutedExpression)) {
                             holder.registerProblem(
                                     substitutedExpression,
-                                    ReportingUtil.wrapReportedMessage(messageNaming)
+                                    MessagesPresentationUtil.prefixWithEa(messageNaming)
                             );
                         }
                     }
@@ -186,7 +186,7 @@ public class HostnameSubstitutionInspector extends PhpInspection {
                             if (matcher.matches() && !this.isChecked(substitutedExpression)) {
                                 holder.registerProblem(
                                         substitutedExpression,
-                                        ReportingUtil.wrapReportedMessage(messageNaming)
+                                        MessagesPresentationUtil.prefixWithEa(messageNaming)
                                 );
                             }
                         }

@@ -13,9 +13,9 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -96,7 +96,7 @@ public class UnnecessaryVariableOverridesInspector extends PhpInspection {
 
                                             holder.registerProblem(
                                                     candidate,
-                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    MessagesPresentationUtil.prefixWithEa(message),
                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                     new MergeCallsFix(holder.getProject(), value, candidateValue, previous.getParent())
                                             );
@@ -121,7 +121,7 @@ public class UnnecessaryVariableOverridesInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

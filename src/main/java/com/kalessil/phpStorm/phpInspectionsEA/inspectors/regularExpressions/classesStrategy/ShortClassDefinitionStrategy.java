@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.cla
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ public class ShortClassDefinitionStrategy {
                 if (patternAdapted.contains(wildcard)) {
                     holder.registerProblem(
                             target,
-                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%p%", wildcard).replace("%r%", replacement.getValue()).replace("%h%", safetyHint)),
+                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%p%", wildcard).replace("%r%", replacement.getValue()).replace("%h%", safetyHint)),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }

@@ -9,8 +9,8 @@ import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -62,14 +62,14 @@ public class ArrayKeysMissUseInspector extends PhpInspection {
                                         case "sizeof":
                                             holder.registerProblem(
                                                     reference,
-                                                    ReportingUtil.wrapReportedMessage(messageCount),
+                                                    MessagesPresentationUtil.prefixWithEa(messageCount),
                                                     new ReplaceFix(innerArguments[0].getText())
                                             );
                                             break;
                                         case "array_unique":
                                             holder.registerProblem(
                                                     outerCall,
-                                                    ReportingUtil.wrapReportedMessage(messageArrayUnique),
+                                                    MessagesPresentationUtil.prefixWithEa(messageArrayUnique),
                                                     new ReplaceFix(reference.getText())
                                             );
                                             break;
@@ -93,7 +93,7 @@ public class ArrayKeysMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         ReplaceFix(@NotNull String expression) {

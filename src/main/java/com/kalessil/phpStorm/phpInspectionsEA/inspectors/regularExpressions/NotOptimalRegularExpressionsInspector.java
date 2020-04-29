@@ -23,7 +23,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.opti
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -111,7 +111,7 @@ public class NotOptimalRegularExpressionsInspector extends PhpInspection {
                                 if (!hasDelimiters && !functionName.equals("preg_quote")) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageNoDelimiters)
+                                            MessagesPresentationUtil.prefixWithEa(messageNoDelimiters)
                                     );
                                 }
                             }

@@ -122,13 +122,13 @@ public class ExplodeMissUseInspector extends PhpInspection {
                                         if (innerCall == targetArgument) {
                                             holder.registerProblem(
                                                     target,
-                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    MessagesPresentationUtil.prefixWithEa(message),
                                                     new UseAlternativeFix(replacement)
                                             );
                                         } else {
                                             holder.registerProblem(
                                                     target,
-                                                    ReportingUtil.wrapReportedMessage(message)
+                                                    MessagesPresentationUtil.prefixWithEa(message)
                                             );
                                         }
                                     }
@@ -163,7 +163,7 @@ public class ExplodeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseAlternativeFix(@NotNull String expression) {

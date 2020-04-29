@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +31,7 @@ public class UselessDollarEndOnlyModifierStrategy {
             if (modifiers.indexOf('m') != -1) {
                 holder.registerProblem(
                         target,
-                        ReportingUtil.wrapReportedMessage(messageIgnored),
+                        MessagesPresentationUtil.prefixWithEa(messageIgnored),
                         ProblemHighlightType.WEAK_WARNING
                 );
             }
@@ -41,7 +41,7 @@ public class UselessDollarEndOnlyModifierStrategy {
                 if (countEnds == 0) {
                     holder.registerProblem(
                             target,
-                            ReportingUtil.wrapReportedMessage(messageAmbiguous),
+                            MessagesPresentationUtil.prefixWithEa(messageAmbiguous),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }

@@ -11,8 +11,8 @@ import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.jetbrains.php.lang.psi.elements.PhpUseList;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,7 +72,7 @@ public class ClassReusesParentTraitInspector extends PhpInspection {
                                                 if (target != null) {
                                                     holder.registerProblem(
                                                             target,
-                                                            String.format(ReportingUtil.wrapReportedMessage(patternDirectDuplication), candidate)
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(patternDirectDuplication), candidate)
                                                     );
                                                 }
                                             }
@@ -87,7 +87,7 @@ public class ClassReusesParentTraitInspector extends PhpInspection {
                                                 if (target != null) {
                                                     holder.registerProblem(
                                                             target,
-                                                            String.format(ReportingUtil.wrapReportedMessage(patternIndirectDuplication), candidate, subject.getFQN())
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(patternIndirectDuplication), candidate, subject.getFQN())
                                                     );
                                                 }
                                             }

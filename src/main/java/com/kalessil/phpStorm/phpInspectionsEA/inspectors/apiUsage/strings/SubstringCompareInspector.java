@@ -13,8 +13,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -118,7 +118,7 @@ public class SubstringCompareInspector extends PhpInspection {
                                         final String replacement = String.valueOf(givenOffset > 0 ? stringLength : -stringLength);
                                         holder.registerProblem(
                                                 offset,
-                                                ReportingUtil.wrapReportedMessage(message),
+                                                MessagesPresentationUtil.prefixWithEa(message),
                                                 new LengthFix(replacement)
                                         );
                                     }
@@ -137,7 +137,7 @@ public class SubstringCompareInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         LengthFix(@NotNull String expression) {

@@ -14,8 +14,8 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -67,14 +67,14 @@ public class ComparisonOperandsOrderInspector extends PhpInspection {
                             if (isRightConstant && !isRegular) {
                                 holder.registerProblem(
                                         expression,
-                                        ReportingUtil.wrapReportedMessage(messageUseYoda),
+                                        MessagesPresentationUtil.prefixWithEa(messageUseYoda),
                                         new TheLocalFix()
                                 );
                             }
                             if (isLeftConstant && isRegular) {
                                 holder.registerProblem(
                                         expression,
-                                        ReportingUtil.wrapReportedMessage(messageUseRegular),
+                                        MessagesPresentationUtil.prefixWithEa(messageUseRegular),
                                         new TheLocalFix()
                                 );
                             }
@@ -91,7 +91,7 @@ public class ComparisonOperandsOrderInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

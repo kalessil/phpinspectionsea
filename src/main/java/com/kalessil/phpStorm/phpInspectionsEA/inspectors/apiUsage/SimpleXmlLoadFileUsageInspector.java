@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -59,7 +59,7 @@ public class SimpleXmlLoadFileUsageInspector extends PhpInspection {
                         final String replacement  = String.format("simplexml_load_string(file_get_contents(%s)%s)", file, xmlArguments);
                         holder.registerProblem(
                                 reference,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new LoadStringFix(replacement)
                         );
                     }
@@ -74,7 +74,7 @@ public class SimpleXmlLoadFileUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         LoadStringFix(@NotNull String expression) {

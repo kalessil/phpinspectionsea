@@ -6,10 +6,10 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,12 +42,12 @@ final public class TypesIntersectionStrategy {
                         if (operation == PhpTokenTypes.opIDENTICAL) {
                             holder.registerProblem(
                                     expression,
-                                    String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), expression.getText())
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), expression.getText())
                             );
                         } else {
                             holder.registerProblem(
                                     expression,
-                                    String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), expression.getText())
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), expression.getText())
                             );
                         }
                     }

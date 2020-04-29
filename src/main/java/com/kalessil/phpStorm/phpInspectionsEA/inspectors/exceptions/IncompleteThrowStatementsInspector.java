@@ -12,9 +12,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +63,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
                         if (startsWithUppercase && OpenapiResolveUtil.resolveReference(call) == null) {
                             holder.registerProblem(
                                     argument,
-                                    ReportingUtil.wrapReportedMessage(messageNew),
+                                    MessagesPresentationUtil.prefixWithEa(messageNew),
                                     new AddMissingNewFix()
                             );
                         }
@@ -85,7 +85,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
                             final String replacement = "sprintf(" + params[0].getText() + ", )";
                             holder.registerProblem(
                                     params[0],
-                                    ReportingUtil.wrapReportedMessage(messageSprintf),
+                                    MessagesPresentationUtil.prefixWithEa(messageSprintf),
                                     new AddMissingSprintfFix(replacement)
                             );
                         }
@@ -94,7 +94,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
                     if (OpenapiTypesUtil.isStatementImpl(expression.getParent()) && this.isExceptionClass(argument)) {
                         holder.registerProblem(
                                 expression,
-                                ReportingUtil.wrapReportedMessage(messageThrow),
+                                MessagesPresentationUtil.prefixWithEa(messageThrow),
                                 new AddMissingThrowFix()
                         );
                     }
@@ -125,7 +125,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         AddMissingSprintfFix(@NotNull String expression) {
@@ -139,7 +139,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
@@ -170,7 +170,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

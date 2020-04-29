@@ -125,7 +125,7 @@ public class UnusedFunctionResultInspector extends PhpInspection {
                                     if (!skip) {
                                         holder.registerProblem(
                                                 target,
-                                                ReportingUtil.wrapReportedMessage(message)
+                                                MessagesPresentationUtil.prefixWithEa(message)
                                         );
                                     }
                                 } else {
@@ -146,7 +146,7 @@ public class UnusedFunctionResultInspector extends PhpInspection {
                                     if (!skip) {
                                         holder.registerProblem(
                                                 target,
-                                                ReportingUtil.wrapReportedMessage(message)
+                                                MessagesPresentationUtil.prefixWithEa(message)
                                         );
                                     }
                                 }

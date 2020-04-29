@@ -12,9 +12,9 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -70,13 +70,13 @@ public class MultipleReturnStatementsInspector extends PhpInspection {
                     if (returnsCount >= SCREAM_THRESHOLD) {
                         holder.registerProblem(
                                 nameIdentifier,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), returnsCount),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), returnsCount),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     } else if (returnsCount >= COMPLAIN_THRESHOLD) {
                         holder.registerProblem(
                                 nameIdentifier,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), returnsCount),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), returnsCount),
                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                         );
                     }

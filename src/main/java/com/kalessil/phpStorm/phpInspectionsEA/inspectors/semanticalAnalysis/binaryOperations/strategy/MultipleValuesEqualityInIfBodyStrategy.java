@@ -62,24 +62,24 @@ final public class MultipleValuesEqualityInIfBodyStrategy {
                                 if (isSameValue(current, next)) {
                                     holder.registerProblem(
                                             match,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), match.getText())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), match.getText())
                                     );
                                 } else {
                                     holder.registerProblem(
                                             match,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), match.getText())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), match.getText())
                                     );
                                 }
                             } else {
                                 if (isSameValue(current, next)) {
                                     holder.registerProblem(
                                             match,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), match.getText())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), match.getText())
                                     );
                                 } else {
                                     holder.registerProblem(
                                             match,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), match.getText())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), match.getText())
                                     );
                                 }
                             }

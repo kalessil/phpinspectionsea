@@ -14,8 +14,8 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -63,7 +63,7 @@ public class ObGetCleanCanBeUsedInspector extends PhpInspection {
                                         if (this.isFromRootNamespace(reference) && this.isFromRootNamespace(call)) {
                                             holder.registerProblem(
                                                     call,
-                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    MessagesPresentationUtil.prefixWithEa(message),
                                                     new SimplifyFixer(holder.getProject(), parent)
                                             );
                                         }
@@ -86,7 +86,7 @@ public class ObGetCleanCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

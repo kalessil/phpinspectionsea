@@ -7,9 +7,9 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                                     if (keyLength == null) {
                                         holder.registerProblem(
                                                 reference,
-                                                ReportingUtil.wrapReportedMessage(messageLengthIsDefault)
+                                                MessagesPresentationUtil.prefixWithEa(messageLengthIsDefault)
                                         );
                                         break;
                                     }
@@ -95,7 +95,7 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                                         if (isTarget) {
                                             holder.registerProblem(
                                                     reference,
-                                                    ReportingUtil.wrapReportedMessage(messageLengthIsNoSufficient)
+                                                    MessagesPresentationUtil.prefixWithEa(messageLengthIsNoSufficient)
                                             );
                                             break;
                                         }
@@ -106,7 +106,7 @@ public class WeakRsaKeyGenerationInspector extends LocalInspectionTool {
                     } else {
                         holder.registerProblem(
                                 reference,
-                                ReportingUtil.wrapReportedMessage(messageLengthIsDefault)
+                                MessagesPresentationUtil.prefixWithEa(messageLengthIsDefault)
                         );
                     }
                 }

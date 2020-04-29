@@ -67,13 +67,13 @@ final public class MultipleValuesEqualityInBinaryStrategy {
                                     if (isSameValue(current, next)) {
                                         holder.registerProblem(
                                                 match,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageNoEffect), match.getText(), fragment.getText()),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageNoEffect), match.getText(), fragment.getText()),
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                         );
                                     } else {
                                         holder.registerProblem(
                                                 match,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), fragment.getText(), match.getText())
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), fragment.getText(), match.getText())
                                         );
                                     }
                                     result = true;
@@ -81,13 +81,13 @@ final public class MultipleValuesEqualityInBinaryStrategy {
                                     if (isSameValue(current, next)) {
                                         holder.registerProblem(
                                                 match,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), fragment.getText(), match.getText())
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), fragment.getText(), match.getText())
                                         );
                                     } else {
                                         final PsiElement target = current.second ? match : fragment;
                                         holder.registerProblem(
                                                 target,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageNoEffect), target.getText(), (target == fragment ? match : fragment).getText()),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageNoEffect), target.getText(), (target == fragment ? match : fragment).getText()),
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                         );
                                     }
@@ -98,13 +98,13 @@ final public class MultipleValuesEqualityInBinaryStrategy {
                                     if (isSameValue(current, next)) {
                                         holder.registerProblem(
                                                 match,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageNoEffect), match.getText(), fragment.getText()),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageNoEffect), match.getText(), fragment.getText()),
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                         );
                                     } else {
                                         holder.registerProblem(
                                                 match,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), fragment.getText(), match.getText())
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), fragment.getText(), match.getText())
                                         );
                                     }
                                     result = true;
@@ -112,12 +112,12 @@ final public class MultipleValuesEqualityInBinaryStrategy {
                                     if (isSameValue(current, next)) {
                                         holder.registerProblem(
                                                 match,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysFalse), fragment.getText(), match.getText())
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), fragment.getText(), match.getText())
                                         );
                                     } else {
                                         final PsiElement target = current.second ? fragment : match;
                                         holder.registerProblem(target,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageNoEffect), target.getText(), (target == fragment ? match : fragment).getText()),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageNoEffect), target.getText(), (target == fragment ? match : fragment).getText()),
                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                         );
                                     }

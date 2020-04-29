@@ -9,8 +9,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -58,14 +58,14 @@ public class ArrayUniqueCanBeUsedInspector extends PhpInspection {
                                         final String replacement = "array_values(array_unique(%a%))".replace("%a%", arguments[0].getText());
                                         holder.registerProblem(
                                                 context,
-                                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%e%", replacement)),
+                                                MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%e%", replacement)),
                                                 new ReplaceFix(replacement)
                                         );
                                     } else if (parentFunctionName.equals("count")) {
                                         final String replacement = "count(array_unique(%a%))".replace("%a%", arguments[0].getText());
                                         holder.registerProblem(
                                                 context,
-                                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%e%", replacement)),
+                                                MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%e%", replacement)),
                                                 new ReplaceFix(replacement)
                                         );
                                     }
@@ -84,7 +84,7 @@ public class ArrayUniqueCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         ReplaceFix(@NotNull String expression) {

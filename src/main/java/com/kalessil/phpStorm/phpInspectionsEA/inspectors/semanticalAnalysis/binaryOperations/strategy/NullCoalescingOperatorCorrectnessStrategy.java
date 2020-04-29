@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -34,7 +34,7 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                     if (result = (operator == PhpTokenTypes.opNOT || PhpTokenTypes.tsCAST_OPS.contains(operator))) {
                         holder.registerProblem(
                                 left,
-                                String.format(ReportingUtil.wrapReportedMessage(messageLeft), left.getText())
+                                String.format(MessagesPresentationUtil.prefixWithEa(messageLeft), left.getText())
                         );
                     }
                 }
@@ -43,7 +43,7 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                 if (result = (operator != PhpTokenTypes.opCOALESCE)) {
                     holder.registerProblem(
                             left,
-                            String.format(ReportingUtil.wrapReportedMessage(messageLeft), left.getText())
+                            String.format(MessagesPresentationUtil.prefixWithEa(messageLeft), left.getText())
                     );
                 }
             }
@@ -53,7 +53,7 @@ final public class NullCoalescingOperatorCorrectnessStrategy {
                 if (result = (operator != PhpTokenTypes.opCOALESCE)) {
                     holder.registerProblem(
                             right,
-                            ReportingUtil.wrapReportedMessage(messageRight)
+                            MessagesPresentationUtil.prefixWithEa(messageRight)
                     );
                 }
             }

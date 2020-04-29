@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -55,7 +55,7 @@ public class IteratorToArrayKeysCollisionInspector extends PhpInspection {
                         );
                         holder.registerProblem(
                                 reference,
-                                ReportingUtil.wrapReportedMessage(messagePattern),
+                                MessagesPresentationUtil.prefixWithEa(messagePattern),
                                 new IgnoreOriginalKeysFix(replacement)
                         );
                     }
@@ -69,7 +69,7 @@ public class IteratorToArrayKeysCollisionInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         IgnoreOriginalKeysFix(@NotNull String expression) {

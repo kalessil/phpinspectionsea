@@ -8,8 +8,8 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +83,7 @@ public class ClassMockingCorrectnessInspector extends PhpInspection {
                                 if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
                                     holder.registerProblem(
                                             typeCandidate,
-                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
                                     );
                                 }
                             }
@@ -107,12 +107,12 @@ public class ClassMockingCorrectnessInspector extends PhpInspection {
                                 if (referencedClass.isTrait()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageTrait)
+                                            MessagesPresentationUtil.prefixWithEa(messageTrait)
                                     );
                                 } else if (referencedClass.isFinal()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
                                     );
                                 }
                             } else if (methodName.equals("getMockBuilder")) {
@@ -126,20 +126,20 @@ public class ClassMockingCorrectnessInspector extends PhpInspection {
                                     if (parentName == null) {
                                         holder.registerProblem(
                                                 arguments[0],
-                                                ReportingUtil.wrapReportedMessage(messageMockAbstract)
+                                                MessagesPresentationUtil.prefixWithEa(messageMockAbstract)
                                         );
                                     }
                                 } else if (referencedClass.isTrait()) {
                                     if (parentName == null) {
                                         holder.registerProblem(
                                                 arguments[0],
-                                                ReportingUtil.wrapReportedMessage(messageMockTrait)
+                                                MessagesPresentationUtil.prefixWithEa(messageMockTrait)
                                         );
                                     }
                                 } else if (referencedClass.isFinal()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
                                     );
                                 }
                                 /* constructor might require arguments */
@@ -150,7 +150,7 @@ public class ClassMockingCorrectnessInspector extends PhpInspection {
                                         if (needsArguments) {
                                             holder.registerProblem(
                                                     arguments[0],
-                                                    ReportingUtil.wrapReportedMessage(messageMockConstructor)
+                                                    MessagesPresentationUtil.prefixWithEa(messageMockConstructor)
                                             );
                                         }
                                     }
@@ -159,21 +159,21 @@ public class ClassMockingCorrectnessInspector extends PhpInspection {
                                 if (!referencedClass.isTrait()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageNeedsTrait)
+                                            MessagesPresentationUtil.prefixWithEa(messageNeedsTrait)
                                     );
                                 }
                             } else if (methodName.equals("getMockForAbstractClass")) {
                                 if (!referencedClass.isAbstract()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageNeedsAbstract)
+                                            MessagesPresentationUtil.prefixWithEa(messageNeedsAbstract)
                                     );
                                 }
                             } else {
                                 if (referencedClass.isFinal()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
                                     );
                                 }
                             }

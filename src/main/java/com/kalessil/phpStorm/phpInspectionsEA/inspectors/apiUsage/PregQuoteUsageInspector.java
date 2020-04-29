@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,14 +51,14 @@ public class PregQuoteUsageInspector extends PhpInspection {
                     if (arguments.length == 1) {
                         holder.registerProblem(
                                 reference,
-                                ReportingUtil.wrapReportedMessage(messageMissing)
+                                MessagesPresentationUtil.prefixWithEa(messageMissing)
                         );
                     } else if (arguments.length == 2) {
                         final PsiElement escaped = arguments[1];
                         if (escaped instanceof ConstantReference && escaped.getText().equals("DIRECTORY_SEPARATOR")) {
                             holder.registerProblem(
                                     escaped,
-                                    ReportingUtil.wrapReportedMessage(messageSeparator),
+                                    MessagesPresentationUtil.prefixWithEa(messageSeparator),
                                     new UseSlashSeparatorFix("'/'")
                             );
                         }
@@ -74,7 +74,7 @@ public class PregQuoteUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseSlashSeparatorFix(@NotNull String expression) {

@@ -6,8 +6,8 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -45,7 +45,7 @@ final public class IdenticalOperandsStrategy {
             if (left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, right)) {
                 holder.registerProblem(
                         expression,
-                        ReportingUtil.wrapReportedMessage(message)
+                        MessagesPresentationUtil.prefixWithEa(message)
                 );
                 return true;
             }

@@ -130,13 +130,13 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
                     if (ownMethod.getAccess().equals(overriddenMethod.getAccess())) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePatternIdentical), ownMethod.getName(), overriddenMethod.getFQN().replace(".", "::")),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePatternIdentical), ownMethod.getName(), overriddenMethod.getFQN().replace(".", "::")),
                                 canFix ? new DropMethodFix() : null
                         );
                     } else if (canUseProxy) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePatternProxy), ownMethod.getName()),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePatternProxy), ownMethod.getName()),
                                 canFix ? new ProxyCallFix() : null
                         );
                     }
@@ -184,7 +184,7 @@ public class SenselessMethodDuplicationInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

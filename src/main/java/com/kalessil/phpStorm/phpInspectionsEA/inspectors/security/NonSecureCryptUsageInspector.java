@@ -21,8 +21,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +66,7 @@ public class NonSecureCryptUsageInspector extends PhpInspection {
                 if (arguments.length == 1) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messageWeakSalt)
+                            MessagesPresentationUtil.prefixWithEa(messageWeakSalt)
                     );
                     return;
                 }
@@ -81,7 +81,7 @@ public class NonSecureCryptUsageInspector extends PhpInspection {
                 if (saltValue.startsWith("$2a$")) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messageInsecureSalt),
+                            MessagesPresentationUtil.prefixWithEa(messageInsecureSalt),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                     return;
@@ -92,7 +92,7 @@ public class NonSecureCryptUsageInspector extends PhpInspection {
                 if (isBlowfish && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messagePasswordHash),
+                            MessagesPresentationUtil.prefixWithEa(messagePasswordHash),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }

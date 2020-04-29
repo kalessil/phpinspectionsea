@@ -8,8 +8,8 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -78,7 +78,7 @@ public class InsufficientTypesControlInspector extends PhpInspection {
                         if (target != null) {
                             holder.registerProblem(
                                     target,
-                                    ReportingUtil.wrapReportedMessage(message)
+                                    MessagesPresentationUtil.prefixWithEa(message)
                             );
                         }
                     }

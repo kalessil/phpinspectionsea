@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -71,7 +71,7 @@ public class ClassConstantUsageCorrectnessInspector extends PhpInspection {
                                 if (variants.stream().noneMatch(referencedQn::equals)) {
                                     holder.registerProblem(
                                             reference,
-                                            ReportingUtil.wrapReportedMessage(message)
+                                            MessagesPresentationUtil.prefixWithEa(message)
                                     );
                                 }
                                 variants.clear();

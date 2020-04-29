@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -63,7 +63,7 @@ public class StrtotimeUsageInspector extends PhpInspection {
                         if (pattern.getContents().equalsIgnoreCase("now")) {
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(messageUseTime),
+                                    MessagesPresentationUtil.prefixWithEa(messageUseTime),
                                     new UseTimeFunctionLocalFix()
                             );
                         }
@@ -77,7 +77,7 @@ public class StrtotimeUsageInspector extends PhpInspection {
                             final String replacement = "strtotime(%a%)".replace("%a%", arguments[0].getText());
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(messageDropTime),
+                                    MessagesPresentationUtil.prefixWithEa(messageDropTime),
                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                     new DropTimeFunctionCallLocalFix(replacement)
                             );
@@ -94,7 +94,7 @@ public class StrtotimeUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseTimeFunctionLocalFix() {
@@ -108,7 +108,7 @@ public class StrtotimeUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         DropTimeFunctionCallLocalFix(@NotNull String expression) {

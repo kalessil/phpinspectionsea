@@ -6,9 +6,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -38,7 +38,7 @@ public class NormallyCallsParentMethodStrategy {
                     if (nameNode != null) {
                         holder.registerProblem(
                                 nameNode,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), methodName, parentMethodHolder.getName(), methodName)
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), methodName, parentMethodHolder.getName(), methodName)
                         );
                     }
 

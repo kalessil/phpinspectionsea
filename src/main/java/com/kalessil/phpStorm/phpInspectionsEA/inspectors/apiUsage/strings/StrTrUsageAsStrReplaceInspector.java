@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
@@ -80,7 +80,7 @@ public class StrTrUsageAsStrReplaceInspector extends PhpInspection {
                                     );
                                     holder.registerProblem(
                                             reference,
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                             new UseStringReplaceFix(replacement)
                                     );
                                 }
@@ -98,7 +98,7 @@ public class StrTrUsageAsStrReplaceInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStringReplaceFix(@NotNull String expression) {

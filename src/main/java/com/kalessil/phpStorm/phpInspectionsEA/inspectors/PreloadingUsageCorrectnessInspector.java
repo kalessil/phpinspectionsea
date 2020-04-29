@@ -9,8 +9,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -50,7 +50,7 @@ public class PreloadingUsageCorrectnessInspector extends PhpInspection {
                     if (argument != null && OpenapiTypesUtil.isStatementImpl(include.getParent())) {
                         holder.registerProblem(
                                 include,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new UseOpcacheCompileFileFix(String.format("opcache_compile_file(%s)", argument.getText()))
                         );
                     }
@@ -65,7 +65,7 @@ public class PreloadingUsageCorrectnessInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseOpcacheCompileFileFix(@NotNull String expression) {

@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -74,7 +74,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
                                         );
                                         holder.registerProblem(
                                                 outerCall,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageUnboxGlobPattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageUnboxGlobPattern), replacement),
                                                 new OptimizeDirectoriesFilteringFix(replacement)
                                         );
                                         return;
@@ -95,7 +95,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
                         );
                         holder.registerProblem(
                                 reference,
-                                String.format(ReportingUtil.wrapReportedMessage(messageSortsByDefaultPattern), functionName),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messageSortsByDefaultPattern), functionName),
                                 new NoSortFix(replacement)
                         );
                     }
@@ -110,7 +110,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         NoSortFix(@NotNull String expression) {
@@ -124,7 +124,7 @@ public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         OptimizeDirectoriesFilteringFix(@NotNull String expression) {

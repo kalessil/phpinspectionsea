@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.PhpShellCommandExpression;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -48,7 +48,7 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
                     if (isTarget) {
                         holder.registerProblem(
                                 literal,
-                                ReportingUtil.wrapReportedMessage(message)
+                                MessagesPresentationUtil.prefixWithEa(message)
                         );
                     }
                 }
@@ -65,7 +65,7 @@ public class CommandExecutionAsSuperUserInspector extends LocalInspectionTool {
                     if (isTarget) {
                         holder.registerProblem(
                                 expression,
-                                ReportingUtil.wrapReportedMessage(message)
+                                MessagesPresentationUtil.prefixWithEa(message)
                         );
                     }
                 }

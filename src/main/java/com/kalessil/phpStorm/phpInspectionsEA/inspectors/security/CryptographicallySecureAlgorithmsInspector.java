@@ -6,7 +6,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -84,7 +84,7 @@ public class CryptographicallySecureAlgorithmsInspector extends PhpInspection {
                 if (constantName != null && constants.containsKey(constantName) && !this.isTestContext(reference)) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(constants.get(constantName))
+                            MessagesPresentationUtil.prefixWithEa(constants.get(constantName))
                     );
                 }
             }

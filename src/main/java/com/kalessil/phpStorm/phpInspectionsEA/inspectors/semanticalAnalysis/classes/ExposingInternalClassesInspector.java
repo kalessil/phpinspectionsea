@@ -14,9 +14,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.indexers.InternalAnnotatedClassesI
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +70,7 @@ public class ExposingInternalClassesInspector extends PhpInspection {
                                     if (! type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
                                         holder.registerProblem(
                                                 parameter,
-                                                ReportingUtil.wrapReportedMessage(message)
+                                                MessagesPresentationUtil.prefixWithEa(message)
                                         );
                                         continue methods;
                                     }
@@ -82,7 +82,7 @@ public class ExposingInternalClassesInspector extends PhpInspection {
                                     if (! type.isEmpty() && this.isReferencingInternal(type, index, scope)) {
                                         holder.registerProblem(
                                                 returnTypeHint,
-                                                ReportingUtil.wrapReportedMessage(message)
+                                                MessagesPresentationUtil.prefixWithEa(message)
                                         );
                                     }
                                 }

@@ -14,8 +14,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -78,7 +78,7 @@ public class SelfClassReferencingInspector extends PhpInspection {
                                         final String replacement = "__CLASS__";
                                         problemsHolder.registerProblem(
                                                 parent,
-                                                ReportingUtil.wrapReportedMessage(String.format(messagePattern, parent.getText(), replacement)),
+                                                MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, parent.getText(), replacement)),
                                                 new NormalizeReferenceFix(replacement)
                                         );
                                         return;
@@ -88,7 +88,7 @@ public class SelfClassReferencingInspector extends PhpInspection {
                                 if (!(parent instanceof ExtendsList)) {
                                     problemsHolder.registerProblem(
                                             reference,
-                                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, targetReference, targetReplacement)),
+                                            MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, targetReference, targetReplacement)),
                                             new NormalizeReferenceFix(targetReplacement)
                                     );
                                 }
@@ -104,7 +104,7 @@ public class SelfClassReferencingInspector extends PhpInspection {
                                     final String replacement = targetReplacement + "::class";
                                     problemsHolder.registerProblem(
                                             reference,
-                                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, reference.getText(), replacement)),
+                                            MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, reference.getText(), replacement)),
                                             new NormalizeReferenceFix(replacement)
                                     );
                                 });
@@ -132,7 +132,7 @@ public class SelfClassReferencingInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

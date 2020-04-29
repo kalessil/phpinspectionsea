@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -66,7 +66,7 @@ public class DateTimeConstantsUsageInspector extends PhpInspection {
                         if (constant.isConstant() && targetClassConstants.contains(constant.getFQN())) {
                             holder.registerProblem(
                                     constantReference,
-                                    ReportingUtil.wrapReportedMessage(messageClassConstant),
+                                    MessagesPresentationUtil.prefixWithEa(messageClassConstant),
                                     new TheLocalFix()
                             );
                         }
@@ -82,7 +82,7 @@ public class DateTimeConstantsUsageInspector extends PhpInspection {
                 if (constantName != null && constantName.equals("DATE_ISO8601")) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messageConstant),
+                            MessagesPresentationUtil.prefixWithEa(messageConstant),
                             new TheLocalFix()
                     );
                 }
@@ -96,7 +96,7 @@ public class DateTimeConstantsUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

@@ -9,9 +9,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                             Arrays.stream(arguments).forEach(a -> Stream.of(a.getChildren()).forEach(c -> fragments.add(c.getText())));
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(messageUseArray),
+                                    MessagesPresentationUtil.prefixWithEa(messageUseArray),
                                     new UseArrayFixer(String.format("[%s]", String.join(", ", fragments)))
                             );
                             fragments.clear();
@@ -92,7 +92,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                                     Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
                                                     holder.registerProblem(
                                                             parent,
-                                                            ReportingUtil.wrapReportedMessage(messageArrayUnshift),
+                                                            MessagesPresentationUtil.prefixWithEa(messageArrayUnshift),
                                                             new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
                                                     );
                                                 }
@@ -102,7 +102,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                             Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
                                             holder.registerProblem(
                                                     parent,
-                                                    ReportingUtil.wrapReportedMessage(messageArrayPush),
+                                                    MessagesPresentationUtil.prefixWithEa(messageArrayPush),
                                                     new UseArrayPushFixer(String.format("array_push(%s)", String.join(", ", fragments)))
                                             );
                                         }
@@ -130,7 +130,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                     }
                                     holder.registerProblem(
                                             reference,
-                                            ReportingUtil.wrapReportedMessage(messageNestedMerge),
+                                            MessagesPresentationUtil.prefixWithEa(messageNestedMerge),
                                             new InlineNestedCallsFixer(String.format("array_merge(%s)", String.join(", ", fragments)))
                                     );
                                     fragments.clear();
@@ -150,7 +150,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseArrayPushFixer(@NotNull String expression) {
@@ -164,7 +164,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseArrayUnshiftFixer(@NotNull String expression) {
@@ -178,7 +178,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         InlineNestedCallsFixer(@NotNull String expression) {
@@ -192,7 +192,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseArrayFixer(@NotNull String expression) {

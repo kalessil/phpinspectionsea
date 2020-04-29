@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -40,7 +40,7 @@ final public class AndOrWordsUsageStrategy {
                 if (operator.equalsIgnoreCase("and")) {
                     holder.registerProblem(
                             operation,
-                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%o%", "&&")),
+                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%o%", "&&")),
                             ProblemHighlightType.WEAK_WARNING
                     );
 
@@ -50,7 +50,7 @@ final public class AndOrWordsUsageStrategy {
                 if (operator.equalsIgnoreCase("or")) {
                     holder.registerProblem(
                             operation,
-                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%o%", "||")),
+                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%o%", "||")),
                             ProblemHighlightType.WEAK_WARNING
                     );
                     //continue;

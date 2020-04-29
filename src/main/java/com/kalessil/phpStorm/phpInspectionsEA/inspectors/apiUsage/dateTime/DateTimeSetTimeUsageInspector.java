@@ -11,8 +11,8 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -56,7 +56,7 @@ public class DateTimeSetTimeUsageInspector extends PhpInspection {
                             if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\DateTime.setTime")) {
                                 holder.registerProblem(
                                         arguments[3],
-                                        ReportingUtil.wrapReportedMessage(message)
+                                        MessagesPresentationUtil.prefixWithEa(message)
                                 );
                             }
                         }
@@ -75,7 +75,7 @@ public class DateTimeSetTimeUsageInspector extends PhpInspection {
                         if (arguments.length == 5 && this.isFromRootNamespace(reference)) {
                             holder.registerProblem(
                                     arguments[4],
-                                    ReportingUtil.wrapReportedMessage(message)
+                                    MessagesPresentationUtil.prefixWithEa(message)
                             );
                         }
                     }

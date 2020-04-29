@@ -68,7 +68,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                                 if (container != null && this.isLimitFor(limit, container)) {
                                         holder.registerProblem(
                                                 expression.getFirstChild(),
-                                                ReportingUtil.wrapReportedMessage(foreachInvariant),
+                                                MessagesPresentationUtil.prefixWithEa(foreachInvariant),
                                                 new UseForeachFix(holder.getProject(), expression, indexVariable, null, container, limit)
                                         );
                                 }
@@ -112,7 +112,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                             if (!isContainerUsed) {
                                 holder.registerProblem(
                                         whileStatement.getFirstChild(),
-                                        ReportingUtil.wrapReportedMessage(foreachInvariant),
+                                        MessagesPresentationUtil.prefixWithEa(foreachInvariant),
                                         new UseForeachFix(holder.getProject(), whileStatement, null, assignment.getVariable(), container, null)
                                 );
                             }
@@ -201,7 +201,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
                                 if (!isContainerUsed) {
                                     holder.registerProblem(
                                             parent.getFirstChild(),
-                                            ReportingUtil.wrapReportedMessage(eachFunctionUsed),
+                                            MessagesPresentationUtil.prefixWithEa(eachFunctionUsed),
                                             ProblemHighlightType.GENERIC_ERROR,
                                             fixer
                                     );
@@ -312,7 +312,7 @@ public class ForeachInvariantsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

@@ -11,8 +11,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -80,7 +80,7 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
                                                         );
                                                         holder.registerProblem(
                                                                 reference,
-                                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                                 new UseArrayColumnFixer(replacement)
                                                         );
                                                 }
@@ -108,7 +108,7 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
                                                         );
                                                         holder.registerProblem(
                                                                 reference,
-                                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                                 new UseArrayColumnFixer(replacement)
                                                         );
                                                     }
@@ -131,7 +131,7 @@ public class ArrayColumnCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseArrayColumnFixer(@NotNull String expression) {

@@ -68,7 +68,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends PhpInspection {
                             if (left instanceof FunctionReference) {
                                 holder.registerProblem(
                                         binary,
-                                        String.format(ReportingUtil.wrapReportedMessage(messageSimplify), left.getText()),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageSimplify), left.getText()),
                                         new UseLeftOperandFix(left.getText())
                                 );
                             }
@@ -88,7 +88,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends PhpInspection {
                                         if (!complimentary && !this.areRelated(rightTypes, leftTypes)) {
                                             holder.registerProblem(
                                                     binary,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messageMismatch), leftTypes.toString(), rightTypes.toString())
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messageMismatch), leftTypes.toString(), rightTypes.toString())
                                             );
                                         }
                                         rightTypes.clear();
@@ -155,7 +155,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseLeftOperandFix(@NotNull String expression) {

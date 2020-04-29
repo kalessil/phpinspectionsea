@@ -8,8 +8,8 @@ import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ final public class InstanceOfCorrectnessStrategy {
                         if (typesCount == 1) {
                             holder.registerProblem(
                                     binary,
-                                    ReportingUtil.wrapReportedMessage(messageSameClass)
+                                    MessagesPresentationUtil.prefixWithEa(messageSameClass)
                             );
                             result = true;
                         } else if (typesCount == 2 && parameterTypes.contains(Types.strNull)) {
@@ -56,7 +56,7 @@ final public class InstanceOfCorrectnessStrategy {
                             final String replacement = String.format("%s %s null", left.getText(), binary == target ? "!==" : "===");
                             holder.registerProblem(
                                     target,
-                                    String.format(ReportingUtil.wrapReportedMessage(patternCompareNull), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(patternCompareNull), replacement),
                                     new CompareToNullFix(replacement)
                             );
                             result = true;
@@ -72,7 +72,7 @@ final public class InstanceOfCorrectnessStrategy {
                                 if (!parents.contains(classes.iterator().next())) {
                                     holder.registerProblem(
                                             binary,
-                                            ReportingUtil.wrapReportedMessage(messageUnrelatedClass)
+                                            MessagesPresentationUtil.prefixWithEa(messageUnrelatedClass)
                                     );
                                     result = true;
                                 }
@@ -83,7 +83,7 @@ final public class InstanceOfCorrectnessStrategy {
             } else {
                 holder.registerProblem(
                         binary,
-                        ReportingUtil.wrapReportedMessage(messageNotObject)
+                        MessagesPresentationUtil.prefixWithEa(messageNotObject)
                 );
                 result = true;
             }
@@ -97,7 +97,7 @@ final public class InstanceOfCorrectnessStrategy {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         CompareToNullFix(@NotNull String expression) {

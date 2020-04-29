@@ -66,7 +66,7 @@ public class MockingMethodsCorrectnessInspector extends PhpInspection {
                                     if (nameNode != null) {
                                         holder.registerProblem(
                                                 nameNode,
-                                                ReportingUtil.wrapReportedMessage(messageWillMethod),
+                                                MessagesPresentationUtil.prefixWithEa(messageWillMethod),
                                                 new UseWillMethodFix()
                                         );
                                     }
@@ -127,13 +127,13 @@ public class MockingMethodsCorrectnessInspector extends PhpInspection {
                                             if (method == null) {
                                                 holder.registerProblem(
                                                         methodName,
-                                                        ReportingUtil.wrapReportedMessage(messageUnresolvedMethod),
+                                                        MessagesPresentationUtil.prefixWithEa(messageUnresolvedMethod),
                                                         ProblemHighlightType.GENERIC_ERROR
                                                 );
                                             } else if (method.isFinal()) {
                                                 holder.registerProblem(
                                                         methodName,
-                                                        ReportingUtil.wrapReportedMessage(messageFinalMethod),
+                                                        MessagesPresentationUtil.prefixWithEa(messageFinalMethod),
                                                         ProblemHighlightType.GENERIC_ERROR
                                                 );
                                             }
@@ -155,7 +155,7 @@ public class MockingMethodsCorrectnessInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

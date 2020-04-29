@@ -79,7 +79,7 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
                                     final String replacement = this.generateReplacement(condition, invert);
                                     holder.registerProblem(
                                             expression,
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                             new SimplifyFix(replacement)
                                     );
                                 }
@@ -152,7 +152,7 @@ public class TernaryOperatorSimplifyInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         SimplifyFix(@NotNull String expression) {

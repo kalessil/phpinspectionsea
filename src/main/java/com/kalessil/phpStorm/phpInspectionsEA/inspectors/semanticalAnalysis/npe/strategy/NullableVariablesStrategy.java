@@ -251,7 +251,7 @@ final public class NullableVariablesStrategy {
                 if (variable == container && processed.add(variable)) {
                     holder.registerProblem(
                             variable,
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
@@ -287,7 +287,7 @@ final public class NullableVariablesStrategy {
                     if (processed.add(subject)) {
                         holder.registerProblem(
                                 subject,
-                                ReportingUtil.wrapReportedMessage(message)
+                                MessagesPresentationUtil.prefixWithEa(message)
                         );
                     }
                 }
@@ -297,7 +297,7 @@ final public class NullableVariablesStrategy {
                 if (processed.add(variable)) {
                     holder.registerProblem(
                             variable,
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
@@ -306,7 +306,7 @@ final public class NullableVariablesStrategy {
                 if (OpenapiTypesUtil.is(((UnaryExpression) parent).getOperation(), PhpTokenTypes.kwCLONE) && processed.add(variable)) {
                     holder.registerProblem(
                             variable,
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
@@ -339,7 +339,7 @@ final public class NullableVariablesStrategy {
                         if (isObject && processed.add(variable)) {
                             holder.registerProblem(
                                     variable,
-                                    ReportingUtil.wrapReportedMessage(message)
+                                    MessagesPresentationUtil.prefixWithEa(message)
                             );
                         }
                     }

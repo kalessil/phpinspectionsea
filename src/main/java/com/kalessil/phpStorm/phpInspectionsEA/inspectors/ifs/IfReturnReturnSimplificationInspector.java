@@ -96,7 +96,7 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
                             }
                             holder.registerProblem(
                                     statement.getFirstChild(),
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                     new SimplifyFix(holder.getProject(), fragments.first.first, fragments.first.second, replacement)
                             );
                         }
@@ -268,7 +268,7 @@ public class IfReturnReturnSimplificationInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

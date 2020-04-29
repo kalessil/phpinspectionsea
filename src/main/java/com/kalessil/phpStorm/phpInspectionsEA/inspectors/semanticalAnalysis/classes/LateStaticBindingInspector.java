@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -60,7 +60,7 @@ public class LateStaticBindingInspector extends PhpInspection {
                                 if (clazz != null && !clazz.isFinal()) {
                                     holder.registerProblem(
                                             base,
-                                            ReportingUtil.wrapReportedMessage(messagePrivateMethod),
+                                            MessagesPresentationUtil.prefixWithEa(messagePrivateMethod),
                                             new UseSelfFix()
                                     );
                                 }
@@ -78,7 +78,7 @@ public class LateStaticBindingInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

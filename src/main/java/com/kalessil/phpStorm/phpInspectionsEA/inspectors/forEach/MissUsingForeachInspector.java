@@ -10,7 +10,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -52,27 +52,27 @@ public class MissUsingForeachInspector extends PhpInspection {
                         if (CanBeReplacedWithImplodeStrategy.apply(foreach, expression, holder.getProject())) {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "implode"))
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "implode"))
                             );
                         } else if (CanBeReplacedWithArrayProductStrategy.apply(foreach, expression, holder.getProject())) {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_product"))
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_product"))
                             );
                         } else if (CanBeReplacedWithArraySumStrategy.apply(foreach, expression, holder.getProject())) {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_sum"))
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_sum"))
                             );
                         } else if (CanBeReplacedWithArrayFlipStrategy.apply(foreach, expression, holder.getProject())) {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_flip"))
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_flip"))
                             );
                         } else if (CanBeReplacedWithArrayMapStrategy.apply(foreach, expression, holder.getProject())) {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, "array_map"))
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_map"))
                             );
                         }
                     }

@@ -47,13 +47,13 @@ final public class MultipleFalsyValuesCheckStrategy {
             if (operator == PhpTokenTypes.opAND) {
                 holder.registerProblem(
                         target,
-                        String.format(ReportingUtil.wrapReportedMessage(isFalsySame ? messageAlwaysTrue : messageAlwaysFalse), target.getText()),
+                        String.format(MessagesPresentationUtil.prefixWithEa(isFalsySame ? messageAlwaysTrue : messageAlwaysFalse), target.getText()),
                         isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                 );
             } else {
                 holder.registerProblem(
                         target,
-                        String.format(ReportingUtil.wrapReportedMessage(isFalsySame ? messageAlwaysFalse : messageAlwaysTrue), target.getText()),
+                        String.format(MessagesPresentationUtil.prefixWithEa(isFalsySame ? messageAlwaysFalse : messageAlwaysTrue), target.getText()),
                         isFalsySame ? ProblemHighlightType.LIKE_UNUSED_SYMBOL : ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                 );
             }

@@ -34,7 +34,7 @@ final public class MustReturnSpecifiedTypeStrategy {
                 final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
                 holder.registerProblem(
                         nameNode,
-                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), method.getName(), withoutStatic.toString()),
+                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString()),
                         ProblemHighlightType.ERROR
                 );
             }
@@ -60,7 +60,7 @@ final public class MustReturnSpecifiedTypeStrategy {
                 }
                 holder.registerProblem(
                         expression,
-                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), method.getName(), withoutStatic.toString()),
+                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString()),
                         ProblemHighlightType.ERROR
                 );
             }

@@ -10,9 +10,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public class ContractViolationInspector extends PhpInspection {
                                             Collections.sort(violations);
                                             holder.registerProblem(
                                                     nameNode,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), String.join(", ", violations))
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), String.join(", ", violations))
                                             );
                                         }
                                         violations.clear();

@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -72,7 +72,7 @@ public class StringFragmentMisplacedInspector extends PhpInspection {
                             if (isTarget) {
                                 holder.registerProblem(
                                         fragment,
-                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), fragment.getText()),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), fragment.getText()),
                                         new ReorderArgumentsFix()
                                 );
                             }
@@ -89,7 +89,7 @@ public class StringFragmentMisplacedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

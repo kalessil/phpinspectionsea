@@ -13,8 +13,8 @@ import com.jetbrains.php.lang.psi.elements.ControlStatement;
 import com.jetbrains.php.lang.psi.elements.Include;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -54,7 +54,7 @@ public class UsingInclusionOnceReturnValueInspector extends PhpInspection {
                     if (include.getArgument() != null && include.getFirstChild().getText().endsWith("_once")) {
                         holder.registerProblem(
                                 include,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new TheLocalFix()
                         );
                     }
@@ -69,7 +69,7 @@ public class UsingInclusionOnceReturnValueInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

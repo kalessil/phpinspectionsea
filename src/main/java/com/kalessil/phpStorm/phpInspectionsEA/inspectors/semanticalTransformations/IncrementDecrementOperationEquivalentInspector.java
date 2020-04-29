@@ -12,9 +12,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +87,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
                             final String replacement = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
                             holder.registerProblem(
                                     expression,
-                                    ReportingUtil.wrapReportedMessage(patternMessage.replace("%e%", replacement)),
+                                    MessagesPresentationUtil.prefixWithEa(patternMessage.replace("%e%", replacement)),
                                     new UseIncrementFix(replacement)
                             );
                         }
@@ -96,7 +96,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
                             final String replacement = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
                             holder.registerProblem(
                                     expression,
-                                    ReportingUtil.wrapReportedMessage(patternMessage.replace("%e%", replacement)),
+                                    MessagesPresentationUtil.prefixWithEa(patternMessage.replace("%e%", replacement)),
                                     new UseDecrementFix(replacement)
                             );
                         }
@@ -130,7 +130,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
                                 final String replacement = PREFER_PREFIX_STYLE ? ("++" + variable.getText()) : (variable.getText() + "++");
                                 holder.registerProblem(
                                         assignmentExpression,
-                                        ReportingUtil.wrapReportedMessage(patternMessage.replace("%e%", replacement)),
+                                        MessagesPresentationUtil.prefixWithEa(patternMessage.replace("%e%", replacement)),
                                         new UseIncrementFix(replacement)
                                 );
                             }
@@ -145,7 +145,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
                             final String replacement = PREFER_PREFIX_STYLE ? ("--" + variable.getText()) : (variable.getText() + "--");
                             holder.registerProblem(
                                     assignmentExpression,
-                                    ReportingUtil.wrapReportedMessage(patternMessage.replace("%e%", replacement)),
+                                    MessagesPresentationUtil.prefixWithEa(patternMessage.replace("%e%", replacement)),
                                     new UseDecrementFix(replacement)
                             );
                         }
@@ -169,7 +169,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseIncrementFix(@NotNull String expression) {
@@ -183,7 +183,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseDecrementFix(@NotNull String expression) {

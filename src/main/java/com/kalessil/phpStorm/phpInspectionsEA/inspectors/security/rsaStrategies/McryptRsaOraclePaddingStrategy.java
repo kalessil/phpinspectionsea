@@ -5,8 +5,8 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -33,7 +33,7 @@ final public class McryptRsaOraclePaddingStrategy {
                 if (result) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
                 modeVariants.clear();

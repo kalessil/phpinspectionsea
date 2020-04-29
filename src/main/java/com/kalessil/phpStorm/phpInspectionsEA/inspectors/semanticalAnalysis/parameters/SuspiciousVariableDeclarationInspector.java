@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -70,7 +70,7 @@ public class SuspiciousVariableDeclarationInspector extends PhpInspection {
                         if (hasParameters && parameters.stream().anyMatch(p -> variableName.equals(p.getName()))) {
                             holder.registerProblem(
                                     variable,
-                                    String.format(ReportingUtil.wrapReportedMessage(messageSameParameter), variableName)
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageSameParameter), variableName)
                             );
                         }
                     }
@@ -99,14 +99,14 @@ public class SuspiciousVariableDeclarationInspector extends PhpInspection {
                                 if (hasParameters && parameters.stream().anyMatch(parameter -> variableName.equals(parameter.getName()))) {
                                     holder.registerProblem(
                                             declared,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageSameParameter), variableName)
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageSameParameter), variableName)
                                     );
                                 }
                                 /* pattern: static variable matches a use-variable */
                                 if (hasUseVariables && useVariables.stream().anyMatch(variable -> variableName.equals(variable.getName()))) {
                                     holder.registerProblem(
                                             declared,
-                                            String.format(ReportingUtil.wrapReportedMessage(messageSameUse), variableName)
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageSameUse), variableName)
                                     );
                                 }
                             }

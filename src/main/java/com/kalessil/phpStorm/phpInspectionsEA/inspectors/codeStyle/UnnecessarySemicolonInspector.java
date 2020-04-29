@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -57,7 +57,7 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
                     if (! skip) {
                         holder.registerProblem(
                                 statement,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new DropUnnecessarySemicolonFix()
                         );
                     }
@@ -73,7 +73,7 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
                     if (OpenapiTypesUtil.is(last, PhpTokenTypes.opSEMICOLON)) {
                         holder.registerProblem(
                                 last,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new DropUnnecessarySemicolonFix()
                         );
                     }
@@ -88,7 +88,7 @@ public class UnnecessarySemicolonInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.elements.MultiassignmentExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -69,7 +69,7 @@ public class UnsupportedEmptyListAssignmentsInspector extends PhpInspection {
                         if (isTarget) {
                             holder.registerProblem(
                                     current,
-                                    ReportingUtil.wrapReportedMessage(message),
+                                    MessagesPresentationUtil.prefixWithEa(message),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                         }
@@ -91,7 +91,7 @@ public class UnsupportedEmptyListAssignmentsInspector extends PhpInspection {
                         if (isTarget) {
                             holder.registerProblem(
                                     first,
-                                    ReportingUtil.wrapReportedMessage(message),
+                                    MessagesPresentationUtil.prefixWithEa(message),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                         }

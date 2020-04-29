@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.PhpCase;
 import com.jetbrains.php.lang.psi.elements.PhpSwitch;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -49,19 +49,19 @@ public class DegradedSwitchInspector extends PhpInspection {
                     if (expression.getDefaultCase() != null) {
                         holder.registerProblem(
                                 expression.getFirstChild(),
-                                ReportingUtil.wrapReportedMessage(messageOnlyDefault)
+                                MessagesPresentationUtil.prefixWithEa(messageOnlyDefault)
                         );
                     }
                 } else if (cases.length == 1) {
                     if (expression.getDefaultCase() == null) {
                         holder.registerProblem(
                                 expression.getFirstChild(),
-                                ReportingUtil.wrapReportedMessage(messageIf)
+                                MessagesPresentationUtil.prefixWithEa(messageIf)
                         );
                     } else {
                         holder.registerProblem(
                                 expression.getFirstChild(),
-                                ReportingUtil.wrapReportedMessage(messageIfElse)
+                                MessagesPresentationUtil.prefixWithEa(messageIfElse)
                         );
                     }
                 }

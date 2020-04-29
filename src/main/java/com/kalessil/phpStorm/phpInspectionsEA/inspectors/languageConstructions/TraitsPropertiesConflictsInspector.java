@@ -79,7 +79,7 @@ public class TraitsPropertiesConflictsInspector extends PhpInspection {
                                     if (!isError && ownFieldNameNode != null) {
                                         holder.registerProblem(
                                                 ownFieldNameNode,
-                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), clazz.getName(), trait.getName(), ownFieldName),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), clazz.getName(), trait.getName(), ownFieldName),
                                                 ProblemHighlightType.WEAK_WARNING
                                         );
                                     }
@@ -131,7 +131,7 @@ public class TraitsPropertiesConflictsInspector extends PhpInspection {
                                     if (reportTarget != null) {
                                         holder.registerProblem(
                                                 reportTarget,
-                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), clazz.getName(), trait.getName(), parentFieldName),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), clazz.getName(), trait.getName(), parentFieldName),
                                                 isError ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.WEAK_WARNING
                                         );
                                     }

@@ -68,7 +68,7 @@ public class CryptographicallySecureRandomnessInspector extends PhpInspection {
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) { // PHP7 and newer
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messageUseRandomBytes),
+                            MessagesPresentationUtil.prefixWithEa(messageUseRandomBytes),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }
@@ -79,7 +79,7 @@ public class CryptographicallySecureRandomnessInspector extends PhpInspection {
                 if (!hasSecondArgument) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(isOpenSSL ? messageOpenssl2ndArgumentNotDefined : messageMcrypt2ndArgumentNotDefined),
+                            MessagesPresentationUtil.prefixWithEa(isOpenSSL ? messageOpenssl2ndArgumentNotDefined : messageMcrypt2ndArgumentNotDefined),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }
@@ -104,7 +104,7 @@ public class CryptographicallySecureRandomnessInspector extends PhpInspection {
                 if (!resultVerified) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messageVerifyBytes),
+                            MessagesPresentationUtil.prefixWithEa(messageVerifyBytes),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }
@@ -120,7 +120,7 @@ public class CryptographicallySecureRandomnessInspector extends PhpInspection {
                     if (!reliableSource) {
                         holder.registerProblem(
                                 arguments[1],
-                                ReportingUtil.wrapReportedMessage(messageMcrypt2ndArgumentNotSecure),
+                                MessagesPresentationUtil.prefixWithEa(messageMcrypt2ndArgumentNotSecure),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                         return;
@@ -130,7 +130,7 @@ public class CryptographicallySecureRandomnessInspector extends PhpInspection {
                     if (!isCheckedForFalse(arguments[1]) && arguments[1].getTextLength() > 0) {
                         holder.registerProblem(
                                 arguments[1],
-                                ReportingUtil.wrapReportedMessage(messageOpenssl2ndArgumentNotVerified),
+                                MessagesPresentationUtil.prefixWithEa(messageOpenssl2ndArgumentNotVerified),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     }

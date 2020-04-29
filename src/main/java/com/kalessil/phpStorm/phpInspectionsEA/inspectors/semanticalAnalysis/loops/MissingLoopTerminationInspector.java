@@ -16,9 +16,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -122,19 +122,19 @@ public class MissingLoopTerminationInspector extends PhpInspection {
                                     if (isContinueContext) {
                                         holder.registerProblem(
                                                 loop.getFirstChild(),
-                                                ReportingUtil.wrapReportedMessage(messageBreak),
+                                                MessagesPresentationUtil.prefixWithEa(messageBreak),
                                                 new ReplaceBreakFix(holder.getProject(), last)
                                         );
                                     } else if (isReturnContext) {
                                         holder.registerProblem(
                                                 loop.getFirstChild(),
-                                                ReportingUtil.wrapReportedMessage(messageReturn),
+                                                MessagesPresentationUtil.prefixWithEa(messageReturn),
                                                 new AddReturnFix(holder.getProject(), last, next)
                                         );
                                     } else {
                                         holder.registerProblem(
                                                 loop.getFirstChild(),
-                                                ReportingUtil.wrapReportedMessage(messageBreak),
+                                                MessagesPresentationUtil.prefixWithEa(messageBreak),
                                                 new AddBreakFix(holder.getProject(), last)
                                         );
                                     }
@@ -155,7 +155,7 @@ public class MissingLoopTerminationInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
@@ -186,7 +186,7 @@ public class MissingLoopTerminationInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
@@ -218,7 +218,7 @@ public class MissingLoopTerminationInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

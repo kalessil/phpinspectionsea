@@ -74,7 +74,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                 if (replacement != null) {
                                     holder.registerProblem(
                                             expression,
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                             new ReplaceSingleConstructFix(replacement)
                                     );
                                 }
@@ -105,7 +105,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                         final String replacement = String.format("return %s", coalescing);
                                         holder.registerProblem(
                                                 statement.getFirstChild(),
-                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                 new ReplaceMultipleConstructFix(project, fragments.first.first, fragments.first.second, replacement)
                                         );
                                     } else if (context instanceof AssignmentExpression) {
@@ -113,7 +113,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                                         final String replacement   = String.format("%s = %s", container.getText(), coalescing);
                                         holder.registerProblem(
                                                 statement.getFirstChild(),
-                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                 new ReplaceMultipleConstructFix(project, fragments.first.first, fragments.first.second, replacement)
                                         );
                                     }
@@ -392,7 +392,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         ReplaceSingleConstructFix(@NotNull String expression) {
@@ -419,7 +419,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

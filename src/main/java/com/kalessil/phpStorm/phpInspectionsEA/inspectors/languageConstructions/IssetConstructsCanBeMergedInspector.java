@@ -19,7 +19,7 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,7 +85,7 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
                                         fragments.remove(fragment);
                                         holder.registerProblem(
                                                 fragment,
-                                                ReportingUtil.wrapReportedMessage(messageIsset),
+                                                MessagesPresentationUtil.prefixWithEa(messageIsset),
                                                 new MergeConstructsFix(holder.getProject(), expression, fragments, (PhpIsset) firstHit, (PhpIsset) fragment, operator)
                                         );
                                         break;
@@ -106,7 +106,7 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
                                             fragments.remove(fragment);
                                             holder.registerProblem(
                                                     candidate,
-                                                    ReportingUtil.wrapReportedMessage(messageIvertedIsset),
+                                                    MessagesPresentationUtil.prefixWithEa(messageIvertedIsset),
                                                     new MergeConstructsFix(holder.getProject(), expression, fragments, (PhpIsset) firstHit, (PhpIsset) candidate, operator)
                                             );
                                             break;
@@ -155,7 +155,7 @@ public class IssetConstructsCanBeMergedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

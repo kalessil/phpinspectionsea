@@ -7,10 +7,10 @@ import com.jetbrains.php.lang.psi.elements.Function;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -38,7 +38,7 @@ final public class ConstantConditionsIsNumericStrategy {
                     if (isTarget) {
                         holder.registerProblem(
                                 reference,
-                                String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), reference.getText())
+                                String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), reference.getText())
                         );
                         return true;
                     }
@@ -51,7 +51,7 @@ final public class ConstantConditionsIsNumericStrategy {
                             if (isTarget) {
                                 holder.registerProblem(
                                         reference,
-                                        String.format(ReportingUtil.wrapReportedMessage(messageAlwaysTrue), reference.getText())
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), reference.getText())
                                 );
                                 return true;
                             }

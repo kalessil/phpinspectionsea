@@ -73,7 +73,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
 
                     holder.registerProblem(
                             loop.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
@@ -85,7 +85,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
@@ -97,7 +97,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
@@ -109,7 +109,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
                 if (this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }

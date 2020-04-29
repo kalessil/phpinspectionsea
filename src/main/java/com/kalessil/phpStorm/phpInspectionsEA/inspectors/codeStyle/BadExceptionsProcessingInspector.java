@@ -9,8 +9,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -54,7 +54,7 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                     if (expressionsCount > 3) {
                         holder.registerProblem(
                                 tryStatement.getFirstChild(),
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), String.valueOf(expressionsCount))
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), String.valueOf(expressionsCount))
                         );
                     }
                 }
@@ -75,12 +75,12 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                                 if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {
                                     holder.registerProblem(
                                             variable,
-                                            ReportingUtil.wrapReportedMessage(messageFailSilently)
+                                            MessagesPresentationUtil.prefixWithEa(messageFailSilently)
                                     );
                                 } else {
                                     holder.registerProblem(
                                             variable,
-                                            ReportingUtil.wrapReportedMessage(messageChainedException)
+                                            MessagesPresentationUtil.prefixWithEa(messageChainedException)
                                     );
                                 }
                             } else if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
@@ -93,7 +93,7 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                                         if (argument != null && OpenapiEquivalenceUtil.areEqual(argument, variable)) {
                                             holder.registerProblem(
                                                     variable,
-                                                    ReportingUtil.wrapReportedMessage(messageRethrown)
+                                                    MessagesPresentationUtil.prefixWithEa(messageRethrown)
                                             );
                                         }
                                     }

@@ -7,9 +7,9 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -49,7 +49,7 @@ final public class ConstantConditionsConstantsValuesStrategy {
                             final boolean match  = operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opEQUAL;
                             holder.registerProblem(
                                     expression,
-                                    String.format(ReportingUtil.wrapReportedMessage(match ? messageAlwaysFalse : messageAlwaysTrue), expression.getText())
+                                    String.format(MessagesPresentationUtil.prefixWithEa(match ? messageAlwaysFalse : messageAlwaysTrue), expression.getText())
                             );
                             result = true;
                         }

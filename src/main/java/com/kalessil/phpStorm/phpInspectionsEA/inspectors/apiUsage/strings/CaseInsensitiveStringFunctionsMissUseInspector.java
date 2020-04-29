@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,7 +80,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspectio
                     final String replacementFunctionName = mapping.get(functionName);
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%f%", replacementFunctionName)),
+                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%f%", replacementFunctionName)),
                             ProblemHighlightType.WEAK_WARNING,
                             new TheLocalFix(replacementFunctionName)
                     );
@@ -102,7 +102,7 @@ public class CaseInsensitiveStringFunctionsMissUseInspector extends PhpInspectio
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

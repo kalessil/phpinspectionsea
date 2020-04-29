@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -81,7 +81,7 @@ public class CompactArgumentsInspector extends PhpInspection {
                                     if (!found) {
                                         holder.registerProblem(
                                                 argument,
-                                                String.format(ReportingUtil.wrapReportedMessage(patternStringExpected), argumentName),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(patternStringExpected), argumentName),
                                                 ProblemHighlightType.WEAK_WARNING
                                         );
                                     }
@@ -105,7 +105,7 @@ public class CompactArgumentsInspector extends PhpInspection {
                                     if (!declaredVariables.contains(subject)) {
                                         holder.registerProblem(
                                                 compactedVariables.get(subject),
-                                                String.format(ReportingUtil.wrapReportedMessage(patternUnknownVariable), subject),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(patternUnknownVariable), subject),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );
                                     }

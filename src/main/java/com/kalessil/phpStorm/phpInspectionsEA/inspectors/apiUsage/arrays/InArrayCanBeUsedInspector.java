@@ -75,7 +75,7 @@ public class InArrayCanBeUsedInspector extends PhpInspection {
                                     final String alternative = String.format("%sin_array(..., [...])", operator == PhpTokenTypes.opOR ? "" : "!");
                                     holder.registerProblem(
                                             values.get(values.size() - 1).getParent(),
-                                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), alternative)
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), alternative)
                                     );
                                 }
                             }

@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -58,28 +58,28 @@ public class PhpUnitDeprecationsInspector extends PhpInspection {
                             if (arguments.length >= 4 && !arguments[3].getText().isEmpty()) {
                                 holder.registerProblem(
                                         arguments[3],
-                                        ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$delta", methodName + "WithDelta")),
+                                        MessagesPresentationUtil.prefixWithEa(String.format(messageDeprecated, "$delta", methodName + "WithDelta")),
                                         ProblemHighlightType.LIKE_DEPRECATED
                                 );
                             }
                             if (arguments.length >= 5 && !arguments[4].getText().isEmpty()) {
                                 holder.registerProblem(
                                         arguments[4],
-                                        ReportingUtil.wrapReportedMessage(String.format(messageRemoved, "$maxDepth")),
+                                        MessagesPresentationUtil.prefixWithEa(String.format(messageRemoved, "$maxDepth")),
                                         ProblemHighlightType.LIKE_DEPRECATED
                                 );
                             }
                             if (arguments.length >= 6 && !arguments[5].getText().isEmpty()) {
                                 holder.registerProblem(
                                         arguments[5],
-                                        ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$canonicalize", methodName + "Canonicalizing")),
+                                        MessagesPresentationUtil.prefixWithEa(String.format(messageDeprecated, "$canonicalize", methodName + "Canonicalizing")),
                                         ProblemHighlightType.LIKE_DEPRECATED
                                 );
                             }
                             if (arguments.length >= 7 && !arguments[6].getText().isEmpty()) {
                                 holder.registerProblem(
                                         arguments[6],
-                                        ReportingUtil.wrapReportedMessage(String.format(messageDeprecated, "$ignoreCase", methodName + "IgnoringCase")),
+                                        MessagesPresentationUtil.prefixWithEa(String.format(messageDeprecated, "$ignoreCase", methodName + "IgnoringCase")),
                                         ProblemHighlightType.LIKE_DEPRECATED
                                 );
                             }

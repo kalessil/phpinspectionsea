@@ -12,8 +12,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -85,7 +85,7 @@ public class NestedNotOperatorsInspector extends PhpInspection {
                     final String replacement = String.format(nestingLevel % 2 == 0 ? "(bool) %s" : "! %s", subject);
                     holder.registerProblem(
                             target,
-                            ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement)),
+                            MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, replacement)),
                             nestingLevel % 2 == 0 ? new UseCastingLocalFix(replacement) : new UseSingleNotLocalFix(replacement)
                     );
                 }
@@ -99,7 +99,7 @@ public class NestedNotOperatorsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseSingleNotLocalFix(@NotNull String expression) {
@@ -113,7 +113,7 @@ public class NestedNotOperatorsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseCastingLocalFix(@NotNull String expression) {

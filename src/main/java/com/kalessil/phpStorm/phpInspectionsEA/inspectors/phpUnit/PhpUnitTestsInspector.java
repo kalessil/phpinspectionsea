@@ -23,9 +23,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -113,7 +113,7 @@ public class PhpUnitTestsInspector extends PhpInspection {
                                                 if (!isNamedDataset) {
                                                     holder.registerProblem(
                                                             nameNode,
-                                                            ReportingUtil.wrapReportedMessage(messageNamedProvider)
+                                                            MessagesPresentationUtil.prefixWithEa(messageNamedProvider)
                                                     );
                                                 }
                                             }
@@ -122,14 +122,14 @@ public class PhpUnitTestsInspector extends PhpInspection {
                                 } else {
                                     holder.registerProblem(
                                             nameNode,
-                                            ReportingUtil.wrapReportedMessage(messageDataProvider),
+                                            MessagesPresentationUtil.prefixWithEa(messageDataProvider),
                                             ProblemHighlightType.GENERIC_ERROR
                                     );
                                 }
                             } else {
                                 holder.registerProblem(
                                         nameNode,
-                                        ReportingUtil.wrapReportedMessage(messageDataProvider),
+                                        MessagesPresentationUtil.prefixWithEa(messageDataProvider),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }
@@ -148,7 +148,7 @@ public class PhpUnitTestsInspector extends PhpInspection {
                                         if (docBlock == null || docBlock.getTagElementsByName("@test").length == 0) {
                                             holder.registerProblem(
                                                     nameNode,
-                                                    ReportingUtil.wrapReportedMessage(messageDepends),
+                                                    MessagesPresentationUtil.prefixWithEa(messageDepends),
                                                     ProblemHighlightType.GENERIC_ERROR
                                             );
                                         }
@@ -156,14 +156,14 @@ public class PhpUnitTestsInspector extends PhpInspection {
                                 } else {
                                     holder.registerProblem(
                                             nameNode,
-                                            ReportingUtil.wrapReportedMessage(messageDepends),
+                                            MessagesPresentationUtil.prefixWithEa(messageDepends),
                                             ProblemHighlightType.GENERIC_ERROR
                                     );
                                 }
                             } else {
                                 holder.registerProblem(
                                         nameNode,
-                                        ReportingUtil.wrapReportedMessage(messageDepends),
+                                        MessagesPresentationUtil.prefixWithEa(messageDepends),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }
@@ -196,7 +196,7 @@ public class PhpUnitTestsInspector extends PhpInspection {
                             if ((callableNeeded && !hasCallableReference) || (!callableNeeded && !hasClassReference)) {
                                 holder.registerProblem(
                                         nameNode,
-                                        ReportingUtil.wrapReportedMessage(String.format(messageCovers, referenceText)),
+                                        MessagesPresentationUtil.prefixWithEa(String.format(messageCovers, referenceText)),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }
@@ -205,7 +205,7 @@ public class PhpUnitTestsInspector extends PhpInspection {
                         if (isMethodNamedAsTest && this.isAnnotation(tag)) {
                             holder.registerProblem(
                                     tag.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(messageTest),
+                                    MessagesPresentationUtil.prefixWithEa(messageTest),
                                     ProblemHighlightType.LIKE_DEPRECATED,
                                     new AmbiguousTestAnnotationLocalFix()
                             );
@@ -284,7 +284,7 @@ public class PhpUnitTestsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

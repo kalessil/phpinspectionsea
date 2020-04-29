@@ -9,8 +9,8 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.If;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -38,7 +38,7 @@ final public class UnclearOperationsPriorityStrategy {
                         final String replacement = '(' + expression.getText() + ')';
                         holder.registerProblem(
                                 expression,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new WrapItAsItIsFix(replacement)
                         );
                         return true;
@@ -50,7 +50,7 @@ final public class UnclearOperationsPriorityStrategy {
                 final String replacement = '(' + expression.getText() + ')';
                 holder.registerProblem(
                         expression,
-                        ReportingUtil.wrapReportedMessage(message),
+                        MessagesPresentationUtil.prefixWithEa(message),
                         new WrapItAsItIsFix(replacement)
                 );
                 return true;
@@ -64,7 +64,7 @@ final public class UnclearOperationsPriorityStrategy {
                     final String replacement = assignment.getText().replace(value, '(' + value + ')');
                     holder.registerProblem(
                             parent,
-                            ReportingUtil.wrapReportedMessage(message),
+                            MessagesPresentationUtil.prefixWithEa(message),
                             new WrapItAsItIsFix(replacement)
                     );
                     return true;
@@ -82,7 +82,7 @@ final public class UnclearOperationsPriorityStrategy {
                         final String replacement = expression.getText().replace(value, '(' + value + ')');
                         holder.registerProblem(
                                 expression,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new WrapItAsItIsFix(replacement)
                         );
                         return true;
@@ -99,7 +99,7 @@ final public class UnclearOperationsPriorityStrategy {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         WrapItAsItIsFix(@NotNull String replacement) {

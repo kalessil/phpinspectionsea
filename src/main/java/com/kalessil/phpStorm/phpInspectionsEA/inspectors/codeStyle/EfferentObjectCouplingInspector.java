@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -62,7 +62,7 @@ public class EfferentObjectCouplingInspector extends PhpInspection {
                     if (count >= optionCouplingLimit) {
                         holder.registerProblem(
                                 nameIdentifier,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), count)
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), count)
                         );
                     }
                 }

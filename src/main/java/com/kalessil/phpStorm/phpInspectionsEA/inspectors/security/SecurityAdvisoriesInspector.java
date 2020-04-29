@@ -11,7 +11,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -235,7 +235,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                         if (REPORT_MISPLACED_DEPENDENCIES && optionConfiguration.contains(packageName)) {
                             holder.registerProblem(
                                     pair.getKey().getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(useRequireDev)
+                                    MessagesPresentationUtil.prefixWithEa(useRequireDev)
                             );
                         }
                         /* identify usage of third party components */
@@ -262,7 +262,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                                     if (!packageVersion.equals("dev-master")) {
                                         holder.registerProblem(
                                                 pair.getValue(),
-                                                ReportingUtil.wrapReportedMessage(useMaster)
+                                                MessagesPresentationUtil.prefixWithEa(useMaster)
                                         );
                                     }
                                     isSecured = true;
@@ -277,7 +277,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                 if (!isSecured && hasThirdPartyPackages) {
                     holder.registerProblem(
                             productionRequire.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message),
+                            MessagesPresentationUtil.prefixWithEa(message),
                             new AddAdvisoriesFix(holder.getProject(), productionRequire, developmentRequire)
                     );
                 }

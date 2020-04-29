@@ -10,9 +10,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public class NonSecureOpensslVerifyUsageInspector extends PhpInspection {
                                     if (second != null && OpenapiTypesUtil.isNumber(second) && !second.getText().equals("1")) {
                                         holder.registerProblem(
                                                 target,
-                                                ReportingUtil.wrapReportedMessage(messageHarden),
+                                                MessagesPresentationUtil.prefixWithEa(messageHarden),
                                                 ProblemHighlightType.GENERIC_ERROR
                                         );
                                     }
@@ -93,13 +93,13 @@ public class NonSecureOpensslVerifyUsageInspector extends PhpInspection {
                         } else if (parent instanceof PhpReturn) {
                             holder.registerProblem(
                                     target,
-                                    ReportingUtil.wrapReportedMessage(messageReturn),
+                                    MessagesPresentationUtil.prefixWithEa(messageReturn),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                         } else if (ExpressionSemanticUtil.isUsedAsLogicalOperand(target)) {
                             holder.registerProblem(
                                     target,
-                                    ReportingUtil.wrapReportedMessage(messageHarden),
+                                    MessagesPresentationUtil.prefixWithEa(messageHarden),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                         }

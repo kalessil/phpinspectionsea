@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -132,7 +132,7 @@ public class DeprecatedIniOptionsInspector extends PhpInspection {
                                 holder.registerProblem(
                                         arguments[0],
                                         String.format(
-                                                ReportingUtil.wrapReportedMessage(alternative == null ? patternRemoved : patternRemovedWithAlternative),
+                                                MessagesPresentationUtil.prefixWithEa(alternative == null ? patternRemoved : patternRemovedWithAlternative),
                                                 directive,
                                                 removalVersion.getVersion(),
                                                 alternative
@@ -143,7 +143,7 @@ public class DeprecatedIniOptionsInspector extends PhpInspection {
                                 holder.registerProblem(
                                         arguments[0],
                                         String.format(
-                                                ReportingUtil.wrapReportedMessage(alternative == null ? patternDeprecated : patternDeprecatedWithAlternative),
+                                                MessagesPresentationUtil.prefixWithEa(alternative == null ? patternDeprecated : patternDeprecatedWithAlternative),
                                                 directive,
                                                 deprecationVersion.getVersion(),
                                                 alternative

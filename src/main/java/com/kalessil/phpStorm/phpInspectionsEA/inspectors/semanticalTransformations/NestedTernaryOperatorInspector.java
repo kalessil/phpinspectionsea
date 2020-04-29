@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -47,14 +47,14 @@ public class NestedTernaryOperatorInspector extends PhpInspection {
                 if (condition instanceof TernaryExpression) {
                     holder.registerProblem(
                             condition,
-                            ReportingUtil.wrapReportedMessage(messageNested)
+                            MessagesPresentationUtil.prefixWithEa(messageNested)
                     );
                 }
                 final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
                 if (trueVariant instanceof TernaryExpression) {
                     holder.registerProblem(
                             trueVariant,
-                            ReportingUtil.wrapReportedMessage(messageNested)
+                            MessagesPresentationUtil.prefixWithEa(messageNested)
                     );
                 }
                 final PsiElement falseVariant        = expression.getFalseVariant();
@@ -66,7 +66,7 @@ public class NestedTernaryOperatorInspector extends PhpInspection {
                     if (!allow) {
                         holder.registerProblem(
                                 unboxedFalseVariant,
-                                ReportingUtil.wrapReportedMessage(messageNested)
+                                MessagesPresentationUtil.prefixWithEa(messageNested)
                         );
                     }
                 }

@@ -14,8 +14,8 @@ import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DeprecatedConstructorStyleInspector extends PhpInspection {
@@ -51,7 +51,7 @@ public class DeprecatedConstructorStyleInspector extends PhpInspection {
                 if (className.equals(method.getName()) && null == clazz.findOwnMethodByName("__construct")) {
                     holder.registerProblem(
                             nameNode,
-                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%s%", className)),
+                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%s%", className)),
                             ProblemHighlightType.LIKE_DEPRECATED,
                             new TheLocalFix()
                     );
@@ -66,7 +66,7 @@ public class DeprecatedConstructorStyleInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

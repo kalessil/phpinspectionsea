@@ -237,7 +237,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
 
                                     holder.registerProblem(
                                             instanceOfExpression,
-                                            ReportingUtil.wrapReportedMessage(messageInstanceOfAmbiguous),
+                                            MessagesPresentationUtil.prefixWithEa(messageInstanceOfAmbiguous),
                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                     );
                                     break;
@@ -285,7 +285,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                                 ) {
                                     holder.registerProblem(
                                             expression,
-                                            ReportingUtil.wrapReportedMessage(messageInstanceOfComplementarity),
+                                            MessagesPresentationUtil.prefixWithEa(messageInstanceOfComplementarity),
                                             ProblemHighlightType.WEAK_WARNING
                                     );
                                 }
@@ -325,7 +325,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                             if (innerLoopExpression != null && OpenapiEquivalenceUtil.areEqual(innerLoopExpression, expression)) {
                                 holder.registerProblem(
                                         innerLoopExpression,
-                                        ReportingUtil.wrapReportedMessage(messageDuplicateConditionPart)
+                                        MessagesPresentationUtil.prefixWithEa(messageDuplicateConditionPart)
                                 );
                                 callsExtracted.set(callsExtracted.indexOf(innerLoopExpression), null);
                             }
@@ -455,7 +455,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
 
                             holder.registerProblem(
                                     innerLoopExpression,
-                                    ReportingUtil.wrapReportedMessage(messageDuplicateConditions)
+                                    MessagesPresentationUtil.prefixWithEa(messageDuplicateConditions)
                             );
                             conditions.set(conditions.indexOf(innerLoopExpression), null);
                         }
@@ -466,7 +466,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                         if (objOuterScopeExpression != null && OpenapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression)) {
                             holder.registerProblem(
                                     objExpression,
-                                    ReportingUtil.wrapReportedMessage(messageDuplicateConditions)
+                                    MessagesPresentationUtil.prefixWithEa(messageDuplicateConditions)
                             );
                             objParentConditions.set(objParentConditions.indexOf(objOuterScopeExpression), null);
                         }
@@ -503,7 +503,7 @@ public class NotOptimalIfConditionsInspection extends PhpInspection {
                     ) {
                         holder.registerProblem(
                                 condition,
-                                ReportingUtil.wrapReportedMessage(messageOrdering),
+                                MessagesPresentationUtil.prefixWithEa(messageOrdering),
                                 ProblemHighlightType.WEAK_WARNING
                         );
                     }

@@ -90,7 +90,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     expression,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messageString), replacement),
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messageString), replacement),
                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                     new UseCallbackFix(replacement)
                                             );
@@ -107,7 +107,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                     final String replacement = String.format("'%s'", castingsMapping.get(operator));
                                                     holder.registerProblem(
                                                             expression,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messageString), replacement),
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(messageString), replacement),
                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                             new UseCallbackFix(replacement)
                                                     );
@@ -120,7 +120,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                         if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(checkedName))) {
                                                             holder.registerProblem(
                                                                     expression,
-                                                                    ReportingUtil.wrapReportedMessage(messageDrop),
+                                                                    MessagesPresentationUtil.prefixWithEa(messageDrop),
                                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                                             );
                                                         }
@@ -145,7 +145,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                 if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(comparedName))) {
                                                     holder.registerProblem(
                                                             expression,
-                                                            String.format(ReportingUtil.wrapReportedMessage(messageString), "'is_null'"),
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(messageString), "'is_null'"),
                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                                             new UseCallbackFix("'is_null'")
                                                     );
@@ -166,7 +166,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                     if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(comparedName))) {
                                                         holder.registerProblem(
                                                                 expression,
-                                                                ReportingUtil.wrapReportedMessage(messageDrop),
+                                                                MessagesPresentationUtil.prefixWithEa(messageDrop),
                                                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                                         );
                                                     }
@@ -233,7 +233,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseCallbackFix(@NotNull String expression) {

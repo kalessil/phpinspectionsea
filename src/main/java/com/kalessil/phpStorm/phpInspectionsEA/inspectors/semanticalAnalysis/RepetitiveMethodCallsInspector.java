@@ -11,9 +11,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -177,7 +177,7 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                                     if (!depends) {
                                         holder.registerProblem(
                                                 currentBase,
-                                                ReportingUtil.wrapReportedMessage(messageLoop)
+                                                MessagesPresentationUtil.prefixWithEa(messageLoop)
                                         );
                                     }
                                     variables.clear();
@@ -191,7 +191,7 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                                 if (OpenapiEquivalenceUtil.areEqual(currentBase, previousBase)) {
                                     holder.registerProblem(
                                             currentBase,
-                                            ReportingUtil.wrapReportedMessage(messageSequential)
+                                            MessagesPresentationUtil.prefixWithEa(messageSequential)
                                     );
                                 }
                             }
@@ -239,7 +239,7 @@ public class RepetitiveMethodCallsInspector extends PhpInspection {
                                 if (matches) {
                                     holder.registerProblem(
                                             second,
-                                            ReportingUtil.wrapReportedMessage(messageSequential)
+                                            MessagesPresentationUtil.prefixWithEa(messageSequential)
                                     );
                                     break iterate;
                                 }

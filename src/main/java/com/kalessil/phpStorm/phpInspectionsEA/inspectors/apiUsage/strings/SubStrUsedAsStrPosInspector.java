@@ -90,7 +90,7 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
                                                 final String replacement = String.format("strpos(%s, %s) === 0", container.getText(), literal.getText());
                                                 holder.registerProblem(
                                                         parent,
-                                                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                         new UseStringSearchFix(replacement)
                                                 );
                                             }
@@ -166,7 +166,7 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
                                             );
                                             holder.registerProblem(
                                                     parentExpression,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                     new UseStringSearchFix(replacement)
                                             );
                                         }
@@ -186,7 +186,7 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStringSearchFix(@NotNull String expression) {

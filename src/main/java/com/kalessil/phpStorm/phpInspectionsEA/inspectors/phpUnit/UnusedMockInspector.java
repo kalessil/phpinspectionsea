@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -74,7 +74,7 @@ public class UnusedMockInspector extends PhpInspection {
                                         if (!isUsed) {
                                             holder.registerProblem(
                                                     container,
-                                                    ReportingUtil.wrapReportedMessage(message),
+                                                    MessagesPresentationUtil.prefixWithEa(message),
                                                     ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                             );
                                         }

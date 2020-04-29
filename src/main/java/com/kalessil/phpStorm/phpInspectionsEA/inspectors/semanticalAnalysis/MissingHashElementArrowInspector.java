@@ -11,8 +11,8 @@ import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -62,7 +62,7 @@ public class MissingHashElementArrowInspector extends PhpInspection {
                                         if (previous instanceof PsiWhiteSpace && previous.getText().contains("\n")) {
                                             holder.registerProblem(
                                                     comma,
-                                                    ReportingUtil.wrapReportedMessage(message)
+                                                    MessagesPresentationUtil.prefixWithEa(message)
                                             );
                                         }
                                     }

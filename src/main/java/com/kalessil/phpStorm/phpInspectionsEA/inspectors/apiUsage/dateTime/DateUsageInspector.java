@@ -13,8 +13,8 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -60,7 +60,7 @@ public class DateUsageInspector extends PhpInspection {
                             if (innerName != null && innerName.equals("time") && inner.getParameters().length == 0) {
                                 holder.registerProblem(
                                         inner,
-                                        ReportingUtil.wrapReportedMessage(messageDropTime),
+                                        MessagesPresentationUtil.prefixWithEa(messageDropTime),
                                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                         new DropTimeFunctionCallLocalFix(holder.getProject(), arguments[0], arguments[1])
                                 );
@@ -81,7 +81,7 @@ public class DateUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return ReportingUtil.wrapReportedMessage(title);
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull

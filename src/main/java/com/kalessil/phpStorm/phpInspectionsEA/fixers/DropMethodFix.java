@@ -8,7 +8,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 final public class DropMethodFix implements LocalQuickFix {
@@ -17,7 +17,7 @@ final public class DropMethodFix implements LocalQuickFix {
     @NotNull
     @Override
     public String getName() {
-        return ReportingUtil.wrapReportedMessage(title);
+        return MessagesPresentationUtil.prefixWithEa(title);
     }
 
     @NotNull

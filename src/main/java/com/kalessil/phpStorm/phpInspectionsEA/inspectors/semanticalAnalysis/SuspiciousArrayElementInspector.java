@@ -79,13 +79,17 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
                     final StringLiteralExpression literal = (StringLiteralExpression) key;
                     if (literal.getFirstPsiChild() == null) {
                         final String content = literal.getContents();
-                        if (!content.isEmpty() && !content.trim().equals(content)) {
-                            final String replacement = String.format("'%s'", content.trim());
-                            holder.registerProblem(
-                                    key,
-                                    String.format(MessagesPresentationUtil.prefixWithEa(messageSpacesPattern), replacement),
-                                    new UseStringKeyFix(replacement)
-                            );
+                        final String trimmed = content.trim();
+                        if (! trimmed.isEmpty() && ! trimmed.equals(content)) {
+                            final boolean skip = content.startsWith(" ") && content.endsWith(" ");
+                            if (! skip) {
+                                final String replacement = String.format("'%s'", content.trim());
+                                holder.registerProblem(
+                                        key,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageSpacesPattern), replacement),
+                                        new UseStringKeyFix(replacement)
+                                );
+                            }
                         }
                     }
                 }

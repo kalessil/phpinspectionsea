@@ -8,6 +8,8 @@
         $source[<warning descr="[EA] There is chance that it should be 'indexWithTrailingSpace' here (without leading/trailing space).">'indexWithTrailingSpace '</warning>],
     ];
 
+    $array = [' ' => '...'];
+    $array = [' and ' => '...'];
     $array = ['variable' => $variable];
     $array = [$variable];
     $array = ['variable'];

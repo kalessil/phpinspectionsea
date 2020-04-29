@@ -98,7 +98,7 @@ public class StrTrUsageAsStrReplaceInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseStringReplaceFix(@NotNull String expression) {

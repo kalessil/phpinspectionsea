@@ -79,7 +79,7 @@ final public class NotOperatorLackingTypeCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         NullableArgumentComparisonFix(@NotNull String expression) {

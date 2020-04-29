@@ -89,7 +89,7 @@ public class StrContainsCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseStrContainsFix(@NotNull String expression) {

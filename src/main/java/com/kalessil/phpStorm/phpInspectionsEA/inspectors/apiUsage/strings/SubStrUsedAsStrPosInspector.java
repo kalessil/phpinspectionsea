@@ -186,7 +186,7 @@ public class SubStrUsedAsStrPosInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseStringSearchFix(@NotNull String expression) {

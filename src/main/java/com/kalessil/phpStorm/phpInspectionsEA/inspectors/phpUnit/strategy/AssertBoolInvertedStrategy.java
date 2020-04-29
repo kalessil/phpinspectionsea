@@ -64,13 +64,13 @@ final public class AssertBoolInvertedStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title + " (assert not boolean)";
+            return getName() + " (assert not boolean)";
         }
 
         @Override

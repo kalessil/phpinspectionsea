@@ -233,7 +233,7 @@ public class VariableFunctionsUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         ReplaceFix(@NotNull String expression) {
@@ -247,7 +247,7 @@ public class VariableFunctionsUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         InlineFix(@NotNull String expression) {

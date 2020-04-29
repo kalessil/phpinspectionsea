@@ -91,7 +91,7 @@ public class StringsFirstCharactersCompareInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         LengthFix(@NotNull String expression) {

@@ -99,7 +99,7 @@ public class NestedNotOperatorsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseSingleNotLocalFix(@NotNull String expression) {
@@ -113,7 +113,7 @@ public class NestedNotOperatorsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseCastingLocalFix(@NotNull String expression) {

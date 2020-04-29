@@ -171,7 +171,7 @@ public class IsEmptyFunctionUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         CompareToNullFix(@NotNull String expression) {
@@ -185,7 +185,7 @@ public class IsEmptyFunctionUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseCountFix(@NotNull String expression) {

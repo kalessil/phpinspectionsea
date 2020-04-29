@@ -99,7 +99,7 @@ final public class UnclearOperationsPriorityStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         WrapItAsItIsFix(@NotNull String replacement) {

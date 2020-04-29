@@ -134,7 +134,7 @@ public class StringNormalizationInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         NormalizationFix(@NotNull String expression) {

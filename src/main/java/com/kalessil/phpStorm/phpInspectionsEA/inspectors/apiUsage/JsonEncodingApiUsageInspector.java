@@ -161,7 +161,7 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         DecodeIntoArrayFix(@NotNull String expression) {
@@ -175,7 +175,7 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         HardenErrorsHandlingFix(@NotNull String expression) {
@@ -189,7 +189,7 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         DecodeIntoObjectFix(@NotNull String expression) {

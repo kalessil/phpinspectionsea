@@ -90,7 +90,7 @@ public class SubStrUsedAsArrayAccessInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         TheLocalFix(@NotNull String expression) {

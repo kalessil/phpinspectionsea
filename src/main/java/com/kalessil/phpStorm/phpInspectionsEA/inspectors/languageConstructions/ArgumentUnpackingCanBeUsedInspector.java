@@ -81,7 +81,7 @@ public class ArgumentUnpackingCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UnpackFix(@NotNull String expression) {

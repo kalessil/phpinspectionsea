@@ -166,13 +166,13 @@ public class TypeUnsafeComparisonInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         CompareStrictFix(@NotNull String operator) {

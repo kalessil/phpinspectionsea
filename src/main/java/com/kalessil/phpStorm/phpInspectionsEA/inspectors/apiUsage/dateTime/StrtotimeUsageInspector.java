@@ -94,7 +94,7 @@ public class StrtotimeUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseTimeFunctionLocalFix() {
@@ -108,7 +108,7 @@ public class StrtotimeUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         DropTimeFunctionCallLocalFix(@NotNull String expression) {

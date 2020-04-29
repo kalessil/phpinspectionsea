@@ -155,7 +155,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseLeftOperandFix(@NotNull String expression) {

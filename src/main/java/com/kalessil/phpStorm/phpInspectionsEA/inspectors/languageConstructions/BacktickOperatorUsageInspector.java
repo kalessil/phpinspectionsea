@@ -63,7 +63,7 @@ public class BacktickOperatorUsageInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseShellExecFix(@NotNull String expression) {

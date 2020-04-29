@@ -131,13 +131,13 @@ public class NestedPositiveIfStatementsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title + " (else)";
+            return getName() + " (else)";
         }
 
         MergeIntoParentElseFix(@NotNull Project project, @NotNull If target, @NotNull Else parent) {
@@ -170,13 +170,13 @@ public class NestedPositiveIfStatementsInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title + " (if)";
+            return getName() + " (if)";
         }
 
         MergeIntoParentIfFix(@NotNull Project project, @NotNull If target, @NotNull If parent) {

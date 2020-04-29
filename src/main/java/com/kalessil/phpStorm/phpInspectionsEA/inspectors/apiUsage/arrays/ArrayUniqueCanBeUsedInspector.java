@@ -84,7 +84,7 @@ public class ArrayUniqueCanBeUsedInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         ReplaceFix(@NotNull String expression) {

@@ -169,7 +169,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseIncrementFix(@NotNull String expression) {
@@ -183,7 +183,7 @@ public class IncrementDecrementOperationEquivalentInspector extends PhpInspectio
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseDecrementFix(@NotNull String expression) {

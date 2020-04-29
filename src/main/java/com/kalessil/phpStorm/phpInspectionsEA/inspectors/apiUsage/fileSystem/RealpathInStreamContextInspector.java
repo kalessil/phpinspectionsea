@@ -124,7 +124,7 @@ public class RealpathInStreamContextInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         SecureRealpathFix(@NotNull String expression) {

@@ -147,7 +147,7 @@ public class InArrayMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseArrayKeyExistsFix(@NotNull String expression) {
@@ -161,7 +161,7 @@ public class InArrayMissUseInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return ReportingUtil.wrapReportedMessage(title);
         }
 
         UseComparisonFix(@NotNull String expression) {

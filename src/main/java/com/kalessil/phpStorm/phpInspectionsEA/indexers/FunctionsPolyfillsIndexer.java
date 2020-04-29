@@ -47,7 +47,7 @@ public class FunctionsPolyfillsIndexer extends FileBasedIndexExtension<String, S
                 for (final PhpNamedElement element : ((PhpFile) psiFile).getTopLevelDefs().values()) {
                     if (element instanceof Function) {
                         final String fqn = element.getFQN();
-                        if (functions.containsKey(fqn)) {
+                        if (functions.containsKey(fqn) && ! element.isDeprecated()) {
                             final String location  = file.getFile().getCanonicalPath();
                             final boolean isTarget = location != null && ! location.contains(".jar!") && ! location.contains("/stubs/");
                             if (isTarget) {
@@ -84,7 +84,7 @@ public class FunctionsPolyfillsIndexer extends FileBasedIndexExtension<String, S
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 
     @NotNull

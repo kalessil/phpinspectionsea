@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -22,7 +23,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SuspiciousArrayElementInspector extends PhpInspection {
-    private static final String messagePattern = "There is chance that it should be %s here.";
+    private static final String messageGenericPattern = "There is chance that it should be %s here.";
+    private static final String messageSpacesPattern  = "There is chance that it should be %s here (without leading/trailing space).";
 
     @NotNull
     @Override
@@ -52,23 +54,12 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
                             final String replacement = String.format("'%s'", ((Variable) key).getName());
                             holder.registerProblem(
                                     key,
-                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageGenericPattern), replacement),
                                     new UseStringKeyFix(replacement)
                             );
                         }
                     } else if (key instanceof StringLiteralExpression) {
-                        final StringLiteralExpression literal = (StringLiteralExpression) key;
-                        if (literal.getFirstPsiChild() == null) {
-                            final String content = literal.getContents();
-                            if (! content.isEmpty() && ! content.trim().equals(content)) {
-                                final String replacement = String.format("'%s'", content.trim());
-                                holder.registerProblem(
-                                        key,
-                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
-                                        new UseStringKeyFix(replacement)
-                                );
-                            }
-                        }
+                        this.checkSpaces(key);
                     }
                 }
             }
@@ -79,19 +70,22 @@ public class SuspiciousArrayElementInspector extends PhpInspection {
 
                 final ArrayIndex index = expression.getIndex();
                 if (index != null) {
-                    final PsiElement key = index.getValue();
-                    if (key instanceof StringLiteralExpression) {
-                        final StringLiteralExpression literal = (StringLiteralExpression) key;
-                        if (literal.getFirstPsiChild() == null) {
-                            final String content = literal.getContents();
-                            if (! content.isEmpty() && ! content.trim().equals(content)) {
-                                final String replacement = String.format("'%s'", content.trim());
-                                holder.registerProblem(
-                                        key,
-                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
-                                        new UseStringKeyFix(replacement)
-                                );
-                            }
+                    this.checkSpaces(index.getValue());
+                }
+            }
+
+            private void checkSpaces(@Nullable PsiElement key) {
+                if (key instanceof StringLiteralExpression) {
+                    final StringLiteralExpression literal = (StringLiteralExpression) key;
+                    if (literal.getFirstPsiChild() == null) {
+                        final String content = literal.getContents();
+                        if (!content.isEmpty() && !content.trim().equals(content)) {
+                            final String replacement = String.format("'%s'", content.trim());
+                            holder.registerProblem(
+                                    key,
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messageSpacesPattern), replacement),
+                                    new UseStringKeyFix(replacement)
+                            );
                         }
                     }
                 }

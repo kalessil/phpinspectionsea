@@ -149,6 +149,13 @@ final public class OpenapiResolveUtil {
                                 }
                             }
                         }
+                    } else if (name != null && name.equals("explode")) {
+                        /* explode return false if delimiter is an empty string */
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length >= 2 && arguments[0] instanceof StringLiteralExpression) {
+                            final String content = ((StringLiteralExpression) arguments[0]).getContents();
+                            result = new PhpType().add(content.isEmpty() ? PhpType.BOOLEAN : PhpType.ARRAY);
+                        }
                     }
                 }
             } else if (expression instanceof ArrayAccessExpression) {

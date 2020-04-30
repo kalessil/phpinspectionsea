@@ -21,6 +21,7 @@ namespace {
                 $one ?? $two,
                 $two ?? $one,
                 <weak_warning descr="[EA] Resolved operands types are not complimentary, while they should be ([\ClazzOne] vs [\ClazzThree]).">$one ?? $three</weak_warning>,
+                (string) ($one ?? $three),
 
                 $string ?? null,
             ];

@@ -64,7 +64,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
 
                     /* discover and inspect possible values */
                     final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[4]);
-                    if (!values.isEmpty()) {
+                    if (! values.isEmpty()) {
                         /* check all possible values */
                         final List<String> reporting = new ArrayList<>();
                         for (final PsiElement source : values) {
@@ -88,10 +88,9 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                         }
-
                         reporting.clear();
-                        values.clear();
                     }
+                    values.clear();
                 }
             }
 

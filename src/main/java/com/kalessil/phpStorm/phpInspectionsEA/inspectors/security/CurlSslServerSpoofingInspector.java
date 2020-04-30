@@ -143,7 +143,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                 boolean result = false;
 
                 final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(value);
-                if (!discovered.isEmpty()) {
+                if (! discovered.isEmpty()) {
                     int countDisables = 0;
                     int countEnables  = 0;
 
@@ -166,10 +166,9 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                             }
                         }
                     }
-                    discovered.clear();
-
                     result = countDisables > 0 && countEnables == 0;
                 }
+                discovered.clear();
 
                 return result;
             }
@@ -178,7 +177,7 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                 boolean result = false;
 
                 final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(value);
-                if (!discovered.isEmpty()) {
+                if (! discovered.isEmpty()) {
                     int countDisables = 0;
                     int countEnables  = 0;
 
@@ -207,10 +206,9 @@ public class CurlSslServerSpoofingInspector extends LocalInspectionTool {
                         }
                         /* other expressions are not supported currently */
                     }
-                    discovered.clear();
-
                     result = countDisables > 0 && countEnables == 0;
                 }
+                discovered.clear();
 
                 return result;
             }

@@ -61,6 +61,8 @@ if ($a ?: $b && $c) {}
 if ($a ?: $b || $c) {}
 if ($a ?? <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}
 if ($a ?? <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b || $c</error>) {}
+if ($x ?: <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$y ?? $z</error>) {}
+if ($x ?? <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$y ?: $z</error>) {}
 
 /* nullable/falsy values comparison cases */
 $nullable = null;

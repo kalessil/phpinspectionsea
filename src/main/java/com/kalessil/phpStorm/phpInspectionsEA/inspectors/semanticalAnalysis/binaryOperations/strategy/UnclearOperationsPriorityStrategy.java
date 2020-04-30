@@ -4,10 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.If;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -88,6 +85,24 @@ final public class UnclearOperationsPriorityStrategy {
                         return true;
                     }
                 }
+            }
+        } else if (operator == PhpTokenTypes.opCOALESCE) {
+            final PsiElement right = expression.getRightOperand();
+            if (right instanceof TernaryExpression && ((TernaryExpression) right).isShort()) {
+                holder.registerProblem(
+                        right,
+                        MessagesPresentationUtil.prefixWithEa(message),
+                        new WrapItAsItIsFix('(' + right.getText() + ')')
+                );
+                return true;
+            }
+            if (parent instanceof TernaryExpression && ((TernaryExpression) parent).isShort()) {
+                holder.registerProblem(
+                        expression,
+                        MessagesPresentationUtil.prefixWithEa(message),
+                        new WrapItAsItIsFix('(' + expression.getText() + ')')
+                );
+                return true;
             }
         }
         return false;

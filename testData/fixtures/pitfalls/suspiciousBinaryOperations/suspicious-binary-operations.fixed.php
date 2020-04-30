@@ -61,6 +61,8 @@ if ($a ?: $b && $c) {}
 if ($a ?: $b || $c) {}
 if ($a ?? $b && $c) {}
 if ($a ?? $b || $c) {}
+if ($x ?: ($y ?? $z)) {}
+if ($x ?? ($y ?: $z)) {}
 
 /* nullable/falsy values comparison cases */
 $nullable = null;

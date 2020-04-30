@@ -146,15 +146,15 @@ public class HardcodedCredentialsInspector extends PhpInspection {
 
             private void analyzeTarget(@NotNull PsiElement target) {
                 final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(target);
-                if (!values.isEmpty()) {
+                if (! values.isEmpty()) {
                     if (values.stream().anyMatch(candidate -> candidate instanceof StringLiteralExpression)) {
                         holder.registerProblem(
                                 target,
                                 MessagesPresentationUtil.prefixWithEa(message)
                         );
                     }
-                    values.clear();
                 }
+                values.clear();
             }
 
             private void analyzeCall(@NotNull FunctionReference reference) {

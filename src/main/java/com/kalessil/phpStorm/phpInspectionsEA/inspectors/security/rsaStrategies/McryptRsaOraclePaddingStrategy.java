@@ -27,7 +27,7 @@ final public class McryptRsaOraclePaddingStrategy {
         boolean result = false;
         if (isTargetCall(reference)) {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(reference.getParameters()[3]);
-            if (!modeVariants.isEmpty()) {
+            if (! modeVariants.isEmpty()) {
                 /* MCRYPT_MODE_CBC === 'cbc' */
                 result = modeVariants.stream().filter(variant -> variant instanceof StringLiteralExpression).anyMatch(variant -> ((StringLiteralExpression) variant).getContents().equals("cbc"));
                 if (result) {
@@ -36,8 +36,8 @@ final public class McryptRsaOraclePaddingStrategy {
                             MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
-                modeVariants.clear();
             }
+            modeVariants.clear();
         }
         return result;
     }

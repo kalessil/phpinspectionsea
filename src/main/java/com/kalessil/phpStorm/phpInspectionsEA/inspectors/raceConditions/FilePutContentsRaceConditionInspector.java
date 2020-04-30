@@ -74,10 +74,10 @@ public class FilePutContentsRaceConditionInspector extends PhpInspection {
             private boolean match(@NotNull PsiElement argument, @NotNull String fragment) {
                 boolean result = false;
                 final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(argument);
-                if (!variants.isEmpty()) {
+                if (! variants.isEmpty()) {
                     result = variants.stream().anyMatch(variant -> variant.getText().contains(fragment));
-                    variants.clear();
                 }
+                variants.clear();
                 return result;
             }
         };

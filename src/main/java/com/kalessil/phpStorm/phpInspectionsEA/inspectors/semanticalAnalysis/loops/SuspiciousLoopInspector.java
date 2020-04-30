@@ -392,18 +392,16 @@ public class SuspiciousLoopInspector extends PhpInspection {
                         final PsiElement limit = left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, index) ? right : left;
                         if (limit != null) {
                             final Set<PsiElement> limitVariants = PossibleValuesDiscoveryUtil.discover(limit);
-                            if (!limitVariants.isEmpty()) {
-                                if (limitVariants.size() == 1) {
-                                    final PsiElement limitValue = limitVariants.iterator().next();
-                                    if (this.isTargetCall(limitValue)) {
-                                        holder.registerProblem(
-                                                forStatement.getFirstChild(),
-                                                MessagesPresentationUtil.prefixWithEa(messageLoopBoundariesCheck)
-                                        );
-                                    }
+                            if (limitVariants.size() == 1) {
+                                final PsiElement limitValue = limitVariants.iterator().next();
+                                if (this.isTargetCall(limitValue)) {
+                                    holder.registerProblem(
+                                            forStatement.getFirstChild(),
+                                            MessagesPresentationUtil.prefixWithEa(messageLoopBoundariesCheck)
+                                    );
                                 }
-                                limitVariants.clear();
                             }
+                            limitVariants.clear();
                         }
                     }
                 } else if (checkOperator == PhpTokenTypes.opGREATER_OR_EQUAL) {
@@ -423,18 +421,16 @@ public class SuspiciousLoopInspector extends PhpInspection {
                         final PsiElement limit = left != null && right != null && OpenapiEquivalenceUtil.areEqual(left, index) ? right : left;
                         if (limit != null) {
                             final Set<PsiElement> limitVariants = PossibleValuesDiscoveryUtil.discover(limit);
-                            if (!limitVariants.isEmpty()) {
-                                if (limitVariants.size() == 1) {
-                                    final PsiElement limitValue = limitVariants.iterator().next();
-                                    if (OpenapiTypesUtil.isNumber(limitValue) && limitValue.getText().equals("0")) {
-                                        holder.registerProblem(
-                                                forStatement.getFirstChild(),
-                                                MessagesPresentationUtil.prefixWithEa(messageLoopBoundariesCheck)
-                                        );
-                                    }
+                            if (limitVariants.size() == 1) {
+                                final PsiElement limitValue = limitVariants.iterator().next();
+                                if (OpenapiTypesUtil.isNumber(limitValue) && limitValue.getText().equals("0")) {
+                                    holder.registerProblem(
+                                            forStatement.getFirstChild(),
+                                            MessagesPresentationUtil.prefixWithEa(messageLoopBoundariesCheck)
+                                    );
                                 }
-                                limitVariants.clear();
                             }
+                            limitVariants.clear();
                         }
                     }
                 }

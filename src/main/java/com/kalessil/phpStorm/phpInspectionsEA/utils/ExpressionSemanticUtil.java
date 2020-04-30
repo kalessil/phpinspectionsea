@@ -227,7 +227,7 @@ final public class ExpressionSemanticUtil {
         final Set<String> result = new HashSet<>();
         if (expression != null) {
             final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(expression);
-            if (!variants.isEmpty()) {
+            if (! variants.isEmpty()) {
                 for (final PsiElement variant : variants) {
                     if (variant instanceof StringLiteralExpression) {
                         final StringLiteralExpression literal = (StringLiteralExpression) variant;
@@ -281,8 +281,8 @@ final public class ExpressionSemanticUtil {
                         }
                     }
                 }
-                variants.clear();
             }
+            variants.clear();
         }
         return result;
     }

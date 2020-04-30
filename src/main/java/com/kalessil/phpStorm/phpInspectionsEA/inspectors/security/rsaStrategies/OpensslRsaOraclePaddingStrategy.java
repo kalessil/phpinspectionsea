@@ -42,7 +42,7 @@ final public class OpensslRsaOraclePaddingStrategy {
             result = true;
         } else if (arguments.length == 4 && isTargetCall(reference)) {
             final Set<PsiElement> modeVariants = PossibleValuesDiscoveryUtil.discover(arguments[3]);
-            if (!modeVariants.isEmpty()) {
+            if (! modeVariants.isEmpty()) {
                 result = modeVariants.stream().filter(OpenapiTypesUtil::isNumber).anyMatch(OpensslRsaOraclePaddingStrategy::isTargetConstant);
                 if (result) {
                     holder.registerProblem(
@@ -50,8 +50,8 @@ final public class OpensslRsaOraclePaddingStrategy {
                             MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
-                modeVariants.clear();
             }
+            modeVariants.clear();
         }
         return result;
     }
@@ -68,12 +68,12 @@ final public class OpensslRsaOraclePaddingStrategy {
             final PsiElement name = reference.getFirstPsiChild();
             if (name != null) {
                 final Set<PsiElement> nameVariants = PossibleValuesDiscoveryUtil.discover(name);
-                if (!nameVariants.isEmpty()) {
+                if (! nameVariants.isEmpty()) {
                     result = nameVariants.stream()
                             .filter(variant   -> variant instanceof StringLiteralExpression)
                             .anyMatch(variant -> functions.contains(((StringLiteralExpression) variant).getContents().replace("\\", "")));
-                    nameVariants.clear();
                 }
+                nameVariants.clear();
             }
         } else {
             result = functions.contains(reference.getName());

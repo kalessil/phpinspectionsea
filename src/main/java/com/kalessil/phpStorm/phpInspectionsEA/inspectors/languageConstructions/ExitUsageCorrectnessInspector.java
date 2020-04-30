@@ -49,7 +49,7 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
                 final PsiElement argument = statement.getArgument();
                 if (argument != null) {
                     final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(argument);
-                    if (!values.isEmpty()) {
+                    if (! values.isEmpty()) {
                         for (final PsiElement value : values) {
                             if (OpenapiTypesUtil.isNumber(value)) {
                                 boolean isTarget;
@@ -70,8 +70,8 @@ public class ExitUsageCorrectnessInspector extends PhpInspection {
                                 }
                             }
                         }
-                        values.clear();
                     }
+                    values.clear();
                 }
             }
         };

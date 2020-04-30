@@ -60,6 +60,7 @@ public class InArrayMissUseInspector extends PhpInspection {
 
                 final Set<PsiElement> possibleValues = PossibleValuesDiscoveryUtil.discover(arguments[1]);
                 final PsiElement discoveredValue     = possibleValues.size() == 1 ? possibleValues.iterator().next() : null;
+                possibleValues.clear();
 
                 /* pattern: array_key_exists equivalence */
                 if (OpenapiTypesUtil.isFunctionReference(discoveredValue)) {

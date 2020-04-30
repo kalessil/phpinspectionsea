@@ -102,15 +102,15 @@ public class NonSecureCryptUsageInspector extends PhpInspection {
             private String resolveSalt(@NotNull PsiElement expression) {
                 /* collect possible value for further analysis */
                 final Set<PsiElement> discovered = PossibleValuesDiscoveryUtil.discover(expression);
-                if (discovered.size() != 1) {
-                    discovered.clear();
+                final PsiElement saltExpression  = discovered.size() == 1 ? discovered.iterator().next() : null;
+                discovered.clear();
+
+                if (saltExpression == null) {
                     return null;
                 }
 
                 /* simplify workflow by handling one expression */
-                final PsiElement saltExpression       = discovered.iterator().next();
                 final StringBuilder resolvedSaltValue = new StringBuilder();
-                discovered.clear();
 
                 /*  resolve string literals and concatenations */
                 PsiElement current = saltExpression;

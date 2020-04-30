@@ -207,16 +207,16 @@ final public class ExpressionSemanticUtil {
         StringLiteralExpression result = expression instanceof StringLiteralExpression ? (StringLiteralExpression) expression : null;
         if (result == null && expression != null) {
             final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(expression);
-            if (!variants.isEmpty()) {
+            if (! variants.isEmpty()) {
                 final List<PsiElement> literals = variants.stream()
                         .filter(variant -> variant instanceof StringLiteralExpression)
                         .collect(Collectors.toList());
-                variants.clear();
                 if (literals.size() == 1) {
                     result = (StringLiteralExpression) literals.get(0);
                 }
                 literals.clear();
             }
+            variants.clear();
         }
         return result;
     }

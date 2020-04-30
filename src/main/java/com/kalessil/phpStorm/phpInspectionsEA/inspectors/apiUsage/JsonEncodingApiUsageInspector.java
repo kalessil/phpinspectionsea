@@ -137,8 +137,8 @@ public class JsonEncodingApiUsageInspector extends PhpInspection {
                     } else {
                         hasFlag = PsiTreeUtil.findChildrenOfType(option, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
                     }
-                    options.clear();
                 }
+                options.clear();
                 return hasFlag;
             }
         };

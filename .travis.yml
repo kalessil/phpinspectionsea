@@ -52,6 +52,7 @@ script:
   - php .travis/verify-visitors-definitions.php
   - php .travis/verify-messages-prefixing.php
   - php .travis/verify-qickfix-title-prefixing.php
+  - php .travis/verify-discovered-values-cleanup.php
   - php .travis/fix-short-and-display-names.php
   - ./gradlew check buildPlugin
   - wget -O src/main/resources/META-INF/plugin.master.xml https://raw.githubusercontent.com/kalessil/phpinspectionsea/master/src/main/resources/META-INF/plugin.xml

@@ -127,7 +127,7 @@ final public class OpenapiResolveUtil {
                         ? ((Function) function).getType().global(project)
                         : new PhpType();
 
-                if (!result.isEmpty() && !(function instanceof Method)) {
+                if (! (function instanceof Method)) {
                     final String name = reference.getName();
                     /* override signatures if we specified custom signatures */
                     if (name != null && functionReturnTypes.containsKey(name)) {
@@ -146,6 +146,15 @@ final public class OpenapiResolveUtil {
                                 if (argumentType.getTypes().stream().noneMatch(t -> Types.getType(t).equals(Types.strString))) {
                                     result.getTypes().removeIf(t -> Types.getType(t).equals(Types.strString));
                                 }
+                            }
+                        }
+                    } else if (name != null && name.equals("explode")) {
+                        /* explode return false if delimiter is an empty string */
+                        final PsiElement[] arguments = reference.getParameters();
+                        if (arguments.length >= 2 && arguments[0] instanceof StringLiteralExpression) {
+                            final String content = ((StringLiteralExpression) arguments[0]).getContents();
+                            if (content.isEmpty()) {
+                                result = new PhpType().add(PhpType.BOOLEAN);
                             }
                         }
                     }

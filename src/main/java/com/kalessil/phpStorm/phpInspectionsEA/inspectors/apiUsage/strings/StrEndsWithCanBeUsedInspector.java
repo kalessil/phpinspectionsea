@@ -13,12 +13,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.FunctionsPolyfillsIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class StrEndsWithCanBeUsedInspector extends PhpInspection {
     private static final String message = "Can be replaced by '%s' (improves maintainability).";
@@ -83,15 +82,22 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                     final UnaryExpression unary = (UnaryExpression) expression;
                     if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opMINUS)) {
                         final PsiElement argument = unary.getValue();
-                        if (OpenapiTypesUtil.isFunctionReference(argument)) {
-                            final FunctionReference reference = (FunctionReference) argument;
-                            final String functionName         = reference.getName();
-                            if (functionName != null && (functionName.equals("strlen") || functionName.equals("mb_strlen"))) {
-                                final PsiElement[] arguments = reference.getParameters();
-                                if (arguments.length == 1) {
-                                    return arguments[0];
+                        if (argument != null) {
+                            final Set<PsiElement> possibleValues = PossibleValuesDiscoveryUtil.discover(argument);
+                            if (possibleValues.size() == 1) {
+                                final PsiElement candidate = possibleValues.iterator().next();
+                                if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                                    final FunctionReference reference = (FunctionReference) candidate;
+                                    final String functionName         = reference.getName();
+                                    if (functionName != null && (functionName.equals("strlen") || functionName.equals("mb_strlen"))) {
+                                        final PsiElement[] arguments = reference.getParameters();
+                                        if (arguments.length == 1) {
+                                            return arguments[0];
+                                        }
+                                    }
                                 }
                             }
+                            possibleValues.clear();
                         }
                     }
                 }

@@ -32,13 +32,13 @@
             $strContainer[0] = 'a';
             $strContainer{0} = 'a';
             $strContainer
-                [<error descr="[EA] Resolved index type ([bool, array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('...', '')</error>] = 'a';
+                [<error descr="[EA] Resolved index type ([array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('...', '')</error>] = 'a';
             $strContainer[]= 'a';
 
             $arrContainer = array();
             $arrContainer[0] = 'a';
             $arrContainer
-                [<error descr="[EA] Resolved index type ([bool, array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('...', '')</error>] = 'a';
+                [<error descr="[EA] Resolved index type ([array]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('...', '')</error>] = 'a';
             $arrContainer[]= 'a';
 
             $boolContainer = false;

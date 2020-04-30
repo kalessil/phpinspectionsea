@@ -153,9 +153,7 @@ final public class OpenapiResolveUtil {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length >= 2 && arguments[0] instanceof StringLiteralExpression) {
                             final String content = ((StringLiteralExpression) arguments[0]).getContents();
-                            if (content.isEmpty()) {
-                                result = new PhpType().add(PhpType.BOOLEAN);
-                            }
+                            result = new PhpType().add(content.isEmpty() ? PhpType.BOOLEAN : PhpType.ARRAY);
                         }
                     }
                 }

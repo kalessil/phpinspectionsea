@@ -176,6 +176,8 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
 
             @Override
             public void visitPhpFor(@NotNull For forStatement) {
+                if (this.shouldSkipAnalysis(forStatement, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
+
                 final Set<FunctionReference> references = new HashSet<>();
                 Arrays.stream(forStatement.getConditionalExpressions()).forEach(c -> {
                     if (c instanceof BinaryExpression) {

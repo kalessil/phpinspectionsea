@@ -3,11 +3,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.TernaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrContainsCanBeUsedInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
@@ -15,8 +13,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.

@@ -11,8 +11,9 @@ Loops:
 - if (not empty check) { foreach() {} } -> if is not needed at all
     - not empty contexts (incl. methods)
     - count/size check (incl. methods)
-- https://github.com/symfony/symfony/issues/36493
 - SlowArrayOperationsInLoopInspector: counting in while/do-while loops + recognize containers modification
 - LowPerformingDirectoryOperationsInspection -> LowPerformingFilesystemsOperationsInspection
+    - https://github.com/symfony/symfony/issues/36493
     - file_exists($file) '&&'|'||' is_file|is_dir|is_link($file): file_exists on left/right is not needed
     - file_exists($file|dir|directory|folder): is_file|is_dir($...) - faster because of caching
+- foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)

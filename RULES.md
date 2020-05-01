@@ -149,6 +149,7 @@ Inspections Lists (Language level migration)
 | Language level migration | StrContainsCanBeUsedInspection                  | 'str_contains(...)' can be used                     | yes | yes | yes  | no  |
 | Language level migration | StrStartsWithCanBeUsedInspection                | 'str_starts_with(...)' can be used                  | yes | yes | yes  | no  |
 | Language level migration | StrEndsWithCanBeUsedInspection                  | 'str_ends_with(...)' can be used                    | yes | yes | yes  | no  |
+| Language level migration | GetDebugTypeCanBeUsedInspection                 | 'get_debug_type(...)' can be used                   | yes | yes | yes  | no  |
 
 Inspections Lists (Architecture)
 ---
@@ -281,8 +282,7 @@ Inspections Lists (Performance)
 | Group                | Short Name                                      | Full Name                                                                                         | QF  | UTs | QFTs | Doc |
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------------ | --: | --: | ---: | --: |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                      | n/a | yes | n/a  | yes |
-| Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                                     | n/a | yes | n/a  | no  |
-| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | n/a | yes | n/a  | yes |
+| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | yes | yes | yes  | yes |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | yes  | no  |
 | Performance          | AlterInForeachInspection                        | Foreach variables reference usage correctness                                                     | n/a | yes | n/a  | yes |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused                                                                         | yes | yes | yes  | no  |

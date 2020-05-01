@@ -29,6 +29,7 @@ public class FunctionsPolyfillsIndexer extends FileBasedIndexExtension<String, S
         functions.put("\\str_contains",    PhpLanguageLevel.PHP800);
         functions.put("\\str_starts_with", PhpLanguageLevel.PHP800);
         functions.put("\\str_ends_with",   PhpLanguageLevel.PHP800);
+        functions.put("\\get_debug_type",  PhpLanguageLevel.PHP800);
     }
 
     @NotNull
@@ -84,7 +85,7 @@ public class FunctionsPolyfillsIndexer extends FileBasedIndexExtension<String, S
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 
     @NotNull

@@ -131,9 +131,9 @@
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ImplodeMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="LowPerformingDirectoryOperationsInspection"    displayName="Low performing directory operations"
+        shortName="LowPerformingFilesystemsOperationsInspection"  displayName="Low performing directory operations"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformingDirectoryOperationsInspector"/>
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformingFilesystemsOperationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
         shortName="ArrayMapMissUseInspection"                     displayName="'array_map(...)' misused"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"

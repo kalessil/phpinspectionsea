@@ -25,14 +25,14 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-public class LowPerformingDirectoryOperationsInspector extends PhpInspection {
+public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
     private static final String messageSortsByDefaultPattern = "'%s(...)' sorts results by default, please provide second argument for specifying the intention.";
     private static final String messageUnboxGlobPattern      = "'%s' would be more performing here (reduces amount of file system interactions).";
 
     @NotNull
     @Override
     public String getShortName() {
-        return "LowPerformingDirectoryOperationsInspection";
+        return "LowPerformingFilesystemsOperationInspection";
     }
 
     @NotNull

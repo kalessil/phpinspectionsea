@@ -74,6 +74,11 @@ public class MissUsingForeachInspector extends PhpInspection {
                                     foreach.getFirstChild(),
                                     MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_map"))
                             );
+                        } else if (CanBeReplacedWithArrayColumnStrategy.apply(foreach, expression, holder.getProject())) {
+                            holder.registerProblem(
+                                    foreach.getFirstChild(),
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_column"))
+                            );
                         }
                     }
                 }

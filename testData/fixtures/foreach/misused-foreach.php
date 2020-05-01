@@ -31,7 +31,7 @@
         $accumulator []= $value->property;
     }
     foreach ([] as $index => $value) {
-        $accumulator[$index] = trim($value);
+        $accumulator[$index] = $value['...'];
     }
 
     <warning descr="[EA] Perhaps can be replaced with 'array_map(...)' call (reduces cognitive load).">foreach</warning> ([] as $index => $value) {

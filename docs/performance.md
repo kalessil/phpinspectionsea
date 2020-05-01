@@ -47,6 +47,23 @@ In order to reduce execution time we can modify the code and perform the merge o
     $options = array_merge(...$options);
 ```
 
+The second case demonstration:
+
+```php
+    for ($index = 0; $index < count($array); ++$index) {
+        /* something happens here */
+    }
+```
+
+Here `count($array)` is executed in each loop cycle and cause performance issues when counting big arrays.
+Instead, we can introduce a local variable, so the count operation gets executed only once:
+
+```php
+    for ($index = 0, $count = count($array); $index < $count; ++$index) {
+        /* something happens here */
+    }
+```
+
 ## Foreach variables reference usage correctness
 
 > Note: this inspection has settings.

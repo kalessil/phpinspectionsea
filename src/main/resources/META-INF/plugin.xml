@@ -714,6 +714,10 @@
         shortName="StrEndsWithCanBeUsedInspection"                displayName="'str_ends_with(...)' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrEndsWithCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="GetDebugTypeCanBeUsedInspection"               displayName="'get_debug_type(...)' can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.GetDebugTypeCanBeUsedInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

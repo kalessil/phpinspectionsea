@@ -150,6 +150,7 @@ Inspections Lists (Language level migration)
 | Language level migration | StrContainsCanBeUsedInspection                  | 'str_contains(...)' can be used                     | yes | yes | yes  | no  |
 | Language level migration | StrStartsWithCanBeUsedInspection                | 'str_starts_with(...)' can be used                  | yes | yes | yes  | no  |
 | Language level migration | StrEndsWithCanBeUsedInspection                  | 'str_ends_with(...)' can be used                    | yes | yes | yes  | no  |
+| Language level migration | GetDebugTypeCanBeUsedInspection                 | 'get_debug_type(...)' can be used                   | yes | yes | yes  | no  |
 
 Inspections Lists (Architecture)
 ---

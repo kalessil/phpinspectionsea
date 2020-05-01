@@ -100,6 +100,18 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
                         );
                     }
                 }
+
+                if (functionName != null && functionName.equals("file_exists")) {
+                    /*
+                        strategy 1: from vocabulary
+                            - file_exists($file|dir|directory|dirname()|folder|image|picture|img|thumb): is_file|is_dir($...) - faster because of caching
+                        strategy 2: scan argument usages
+                            - file_exists + is_readable|is_writable|is_executable|file_get_contents|file_put_contents|unlink|filesize|file -> is_file
+                            - file_exists + mkdir|rmdir|glob|scandir  -> is_dir
+                        special:
+                            - file_exists($file) '&&'|'||' is_file|is_dir|is_link($file): file_exists on left/right is not needed at all
+                     */
+                }
             }
         };
     }

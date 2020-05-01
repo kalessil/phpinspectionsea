@@ -17,3 +17,5 @@ Loops:
     - file_exists($file) '&&'|'||' is_file|is_dir|is_link($file): file_exists on left/right is not needed
     - file_exists($file|dir|directory|folder): is_file|is_dir($...) - faster because of caching
 - foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
+- explode misuse:
+    - explode("\n", file_get_contents('...')) -> file('...', FILE_IGNORE_NEW_LINES)

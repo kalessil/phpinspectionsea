@@ -166,15 +166,20 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                                         if (context != reference && OpenapiTypesUtil.isFunctionReference(context)) {
                                             final FunctionReference outerReference = (FunctionReference) context;
                                             final String outerName                 = outerReference.getName();
-                                            if (directoriesRelatedFunctions.contains(outerName)) {
-                                                if (! directoryContext) {
-                                                    directoryContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
-                                                                       this.isFromRootNamespace(outerReference);
-                                                }
-                                            } else if (filesRelatedFunctions.contains(outerName)) {
-                                                if (! fileContext) {
-                                                    fileContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
-                                                                  this.isFromRootNamespace(outerReference);
+                                            if (outerName != null) {
+                                                if (directoriesRelatedFunctions.contains(outerName)) {
+                                                    if (! directoryContext) {
+                                                        directoryContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
+                                                                           this.isFromRootNamespace(outerReference);
+                                                    }
+                                                } else if (filesRelatedFunctions.contains(outerName)) {
+                                                    if (! fileContext) {
+                                                        fileContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
+                                                                      this.isFromRootNamespace(outerReference);
+                                                    }
+                                                } else if (outerName.equals("is_link")) {
+                                                    /* show stopper */
+                                                    return;
                                                 }
                                             }
                                         } else if (parent instanceof Include) {

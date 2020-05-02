@@ -131,7 +131,7 @@
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ImplodeMissUseInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"
-        shortName="LowPerformingFilesystemsOperationsInspection"  displayName="Low performing filesystem operations"
+        shortName="LowPerformingFilesystemsOperationInspection"   displayName="Low performing filesystem operations"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformingFilesystemsOperationInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Ultimate)"

@@ -63,6 +63,7 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
         filesRelatedFunctions.add("unlink");
         filesRelatedFunctions.add("filesize");
         filesRelatedFunctions.add("is_file");
+        filesRelatedFunctions.add("copy");
 
         directoriesRelatedFunctions.add("mkdir");
         directoriesRelatedFunctions.add("rmdir");
@@ -152,38 +153,7 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                                                             ? ((AssignmentExpression) arguments[0]).getVariable()
                                                             : arguments[0];
                         if (valueHolder != null) {
-                            /* strategy 1: guess by subject name (clean coders will benefit in performance) */
-                            final String stringToGuess = this.extractNameToGuess(valueHolder);
-                            if (stringToGuess != null) {
-                                final LocalQuickFix fixer;
-                                final String alternative;
-                                if (filesRelatedNaming.contains(stringToGuess)) {
-                                    alternative = "is_file";
-                                    fixer       = new UseIsFileInsteadFixer();
-                                } else if (directoriesRelatedNaming.contains(stringToGuess)) {
-                                    alternative = "is_dir";
-                                    fixer       = new UseIsDirInsteadFixer();
-                                } else {
-                                    alternative = null;
-                                    fixer       = null;
-                                }
-                                if (alternative != null && this.isFromRootNamespace(reference)) {
-                                    final String replacement = String.format(
-                                            "%s%s(%s)",
-                                            reference.getImmediateNamespaceName(),
-                                            alternative,
-                                            arguments[0].getText()
-                                    );
-                                    holder.registerProblem(
-                                            reference,
-                                            String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement),
-                                            fixer
-                                    );
-                                    return;
-                                }
-                            }
-
-                            /* strategy 2: scan scope for usage in function calls (slow strategy) */
+                            /* strategy 1: scan scope for usage in function calls (slow, but reliable strategy) */
                             final Function scope = ExpressionSemanticUtil.getScope(reference);
                             if (scope != null) {
                                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
@@ -235,6 +205,37 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                                         );
                                         return;
                                     }
+                                }
+                            }
+
+                            /* strategy 2: fallback, guess by subject name (clean coders will benefit here) */
+                            final String stringToGuess = this.extractNameToGuess(valueHolder);
+                            if (stringToGuess != null) {
+                                final LocalQuickFix fixer;
+                                final String alternative;
+                                if (filesRelatedNaming.contains(stringToGuess)) {
+                                    alternative = "is_file";
+                                    fixer       = new UseIsFileInsteadFixer();
+                                } else if (directoriesRelatedNaming.contains(stringToGuess)) {
+                                    alternative = "is_dir";
+                                    fixer       = new UseIsDirInsteadFixer();
+                                } else {
+                                    alternative = null;
+                                    fixer       = null;
+                                }
+                                if (alternative != null && this.isFromRootNamespace(reference)) {
+                                    final String replacement = String.format(
+                                            "%s%s(%s)",
+                                            reference.getImmediateNamespaceName(),
+                                            alternative,
+                                            arguments[0].getText()
+                                    );
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement),
+                                            fixer
+                                    );
+                                    return;
                                 }
                             }
                         }

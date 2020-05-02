@@ -15,11 +15,11 @@
     glob('*', GLOB_ONLYDIR);
     glob('*', GLOB_NOSORT | GLOB_ONLYDIR);
 
-    file_exists($file);
-    file_exists($file = '...');
-    file_exists($directory);
-    file_exists($array['file']);
-    file_exists($object->file);
+    is_file($file);
+    is_file($file = '...');
+    is_dir($directory);
+    is_file($array['file']);
+    is_file($object->file);
 
     file_exists($_file);
     file_exists($_directory);

@@ -1,6 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -127,13 +130,17 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
                         /* strategy 1: guess by subject name (clean coders will benefit in performance) */
                         final String stringToGuess = this.extractNameToGuess(arguments[0]);
                         if (stringToGuess != null) {
+                            final LocalQuickFix fixer;
                             final String alternative;
                             if (filesRelatedNaming.contains(stringToGuess)) {
                                 alternative = "is_file";
+                                fixer       = new UseIsFileInsteadFixer();
                             } else if (directoriesRelatedNaming.contains(stringToGuess)) {
                                 alternative = "is_dir";
+                                fixer       = new UseIsDirInsteadFixer();
                             } else {
                                 alternative = null;
+                                fixer       = null;
                             }
                             if (alternative != null && this.isFromRootNamespace(reference)) {
                                 final String replacement = String.format(
@@ -144,7 +151,8 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
                                 );
                                 holder.registerProblem(
                                         reference,
-                                        String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement)
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement),
+                                        fixer
                                 );
                                 return;
                             }
@@ -210,6 +218,62 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
 
         OptimizeDirectoriesFilteringFix(@NotNull String expression) {
             super(expression);
+        }
+    }
+
+    private static final class UseIsFileInsteadFixer implements LocalQuickFix {
+        private static final String title = "Use 'is_file()' instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return MessagesPresentationUtil.prefixWithEa(title);
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        UseIsFileInsteadFixer() {
+            super();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement reference = descriptor.getPsiElement();
+            if (reference instanceof FunctionReference && !project.isDisposed()) {
+                ((FunctionReference) reference).handleElementRename("is_file");
+            }
+        }
+    }
+
+    private static final class UseIsDirInsteadFixer implements LocalQuickFix {
+        private static final String title = "Use 'is_dir()' instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return MessagesPresentationUtil.prefixWithEa(title);
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        UseIsDirInsteadFixer() {
+            super();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement reference = descriptor.getPsiElement();
+            if (reference instanceof FunctionReference && !project.isDisposed()) {
+                ((FunctionReference) reference).handleElementRename("is_dir");
+            }
         }
     }
 }

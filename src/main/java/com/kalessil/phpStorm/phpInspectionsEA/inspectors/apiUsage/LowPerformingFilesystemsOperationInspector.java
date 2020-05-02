@@ -12,7 +12,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,13 +36,15 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
     private static final String messageUnboxGlobPattern      = "'%s' would be more performing here (reduces amount of file system interactions).";
     private static final String messageFileExistsPattern     = "'%s' would be more performing here (uses builtin caches).";
 
-    private static final Set<String> filesRelatedNaming       = new HashSet<>();
-    private static final Set<String> directoriesRelatedNaming = new HashSet<>();
+    private static final Set<String> filesRelatedNaming          = new HashSet<>();
+    private static final Set<String> filesRelatedFunctions       = new HashSet<>();
+    private static final Set<String> directoriesRelatedNaming    = new HashSet<>();
+    private static final Set<String> directoriesRelatedFunctions = new HashSet<>();
     static {
         directoriesRelatedNaming.add("dir");
         directoriesRelatedNaming.add("directory");
         directoriesRelatedNaming.add("folder");
-        directoriesRelatedNaming.add("dirname");
+        directoriesRelatedNaming.add("dirname"); // file_exists(dirname(...));
 
         filesRelatedNaming.add("file");
         filesRelatedNaming.add("filename");
@@ -50,6 +54,22 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
         filesRelatedNaming.add("pic");
         filesRelatedNaming.add("thumbnail");
         filesRelatedNaming.add("thumb");
+
+        filesRelatedFunctions.add("file_get_contents");
+        filesRelatedFunctions.add("file_put_contents");
+        filesRelatedFunctions.add("file");
+        filesRelatedFunctions.add("fopen");
+        filesRelatedFunctions.add("touch");
+        filesRelatedFunctions.add("unlink");
+        filesRelatedFunctions.add("filesize");
+        filesRelatedFunctions.add("is_file");
+
+        directoriesRelatedFunctions.add("mkdir");
+        directoriesRelatedFunctions.add("rmdir");
+        directoriesRelatedFunctions.add("glob");
+        directoriesRelatedFunctions.add("scandir");
+        directoriesRelatedFunctions.add("tempnam");
+        directoriesRelatedFunctions.add("is_dir");
     }
 
     @NotNull
@@ -128,53 +148,102 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
                 if (functionName != null && functionName.equals("file_exists")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
-                        /* strategy 1: guess by subject name (clean coders will benefit in performance) */
-                        final String stringToGuess = this.extractNameToGuess(arguments[0]);
-                        if (stringToGuess != null) {
-                            final LocalQuickFix fixer;
-                            final String alternative;
-                            if (filesRelatedNaming.contains(stringToGuess)) {
-                                alternative = "is_file";
-                                fixer       = new UseIsFileInsteadFixer();
-                            } else if (directoriesRelatedNaming.contains(stringToGuess)) {
-                                alternative = "is_dir";
-                                fixer       = new UseIsDirInsteadFixer();
-                            } else {
-                                alternative = null;
-                                fixer       = null;
+                        final PsiElement valueHolder = OpenapiTypesUtil.isAssignment(arguments[0])
+                                                            ? ((AssignmentExpression) arguments[0]).getVariable()
+                                                            : arguments[0];
+                        if (valueHolder != null) {
+                            /* strategy 1: guess by subject name (clean coders will benefit in performance) */
+                            final String stringToGuess = this.extractNameToGuess(valueHolder);
+                            if (stringToGuess != null) {
+                                final LocalQuickFix fixer;
+                                final String alternative;
+                                if (filesRelatedNaming.contains(stringToGuess)) {
+                                    alternative = "is_file";
+                                    fixer       = new UseIsFileInsteadFixer();
+                                } else if (directoriesRelatedNaming.contains(stringToGuess)) {
+                                    alternative = "is_dir";
+                                    fixer       = new UseIsDirInsteadFixer();
+                                } else {
+                                    alternative = null;
+                                    fixer       = null;
+                                }
+                                if (alternative != null && this.isFromRootNamespace(reference)) {
+                                    final String replacement = String.format(
+                                            "%s%s(%s)",
+                                            reference.getImmediateNamespaceName(),
+                                            alternative,
+                                            arguments[0].getText()
+                                    );
+                                    holder.registerProblem(
+                                            reference,
+                                            String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement),
+                                            fixer
+                                    );
+                                    return;
+                                }
                             }
-                            if (alternative != null && this.isFromRootNamespace(reference)) {
-                                final String replacement = String.format(
-                                        "%s%s(%s)",
-                                        reference.getImmediateNamespaceName(),
-                                        alternative,
-                                        arguments[0].getText()
-                                );
-                                holder.registerProblem(
-                                        reference,
-                                        String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement),
-                                        fixer
-                                );
-                                return;
+
+                            /* strategy 2: scan scope for usage in function calls (slow strategy) */
+                            final Function scope = ExpressionSemanticUtil.getScope(reference);
+                            if (scope != null) {
+                                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(scope);
+                                if (body != null) {
+                                    boolean directoryContext = false;
+                                    boolean fileContext      = false;
+                                    for (final PsiElement candidate: PsiTreeUtil.findChildrenOfType(body, valueHolder.getClass())) {
+                                        final PsiElement parent  = candidate.getParent();
+                                        final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
+                                        if (OpenapiTypesUtil.isFunctionReference(context)) {
+                                            final FunctionReference outerReference = (FunctionReference) context;
+                                            final String outerName                 = outerReference.getName();
+                                            if (! directoryContext && directoriesRelatedFunctions.contains(outerName)) {
+                                                directoryContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
+                                                                   this.isFromRootNamespace(outerReference);
+
+                                            }
+                                            if (! fileContext && filesRelatedFunctions.contains(outerName)) {
+                                                fileContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
+                                                              this.isFromRootNamespace(outerReference);
+                                            }
+                                            /* once clear that it both, stop looping */
+                                            if (directoryContext && fileContext) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (directoryContext != fileContext) {
+                                        LocalQuickFix fixer = null;
+                                        String alternative  = null;
+                                        if (fileContext) {
+                                            alternative = "is_file";
+                                            fixer       = new UseIsFileInsteadFixer();
+                                        }
+                                        if (directoryContext) {
+                                            alternative = "is_dir";
+                                            fixer       = new UseIsDirInsteadFixer();
+                                        }
+                                        final String replacement = String.format(
+                                                "%s%s(%s)",
+                                                reference.getImmediateNamespaceName(),
+                                                alternative,
+                                                arguments[0].getText()
+                                        );
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement),
+                                                fixer
+                                        );
+                                        return;
+                                    }
+                                }
                             }
                         }
                     }
-                    /*
-                        strategy 2: scan argument usages (slow strategy)
-                            - file_exists + file_get_contents|file_put_contents|unlink|filesize|file|fopen -> is_file
-                            - file_exists + mkdir|rmdir|glob|scandir -> is_dir
-                        special:
-                            - file_exists($file) '&&'|'||' is_file|is_dir|is_link($file): file_exists on left/right is not needed at all
-                     */
                 }
             }
 
             @Nullable
             private String extractNameToGuess(@NotNull PsiElement subject) {
-                /* the subject can be hidden in assignment and array access expressions */
-                if (OpenapiTypesUtil.isAssignment(subject)) {
-                    subject = ((AssignmentExpression) subject).getVariable();
-                }
                 if (subject instanceof ArrayAccessExpression) {
                     final ArrayIndex index = ((ArrayAccessExpression) subject).getIndex();
                     if (index != null) {

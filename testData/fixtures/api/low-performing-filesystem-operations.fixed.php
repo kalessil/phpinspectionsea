@@ -26,3 +26,15 @@
     file_exists($_directory);
     file_exists($array['_file']);
     file_exists($object->_file);
+
+    function cases_holder() {
+        if (is_dir('directory')) {
+            rmdir('directory');
+        }
+        if (is_file('file')) {
+            unlink('file');
+        }
+        if (file_exists('link')) {
+            unlink(realpath('link'));
+        }
+    }

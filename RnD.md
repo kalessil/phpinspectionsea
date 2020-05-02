@@ -15,3 +15,7 @@ Loops:
 - foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
 - explode misuse:
     - explode("\n", file_get_contents('...')) -> file('...', FILE_IGNORE_NEW_LINES)
+    
+- evaluate:
+    - (directoryContext || fileContext) && (directoryContext != fileContext) getting reported
+

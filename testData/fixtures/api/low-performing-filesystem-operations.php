@@ -28,13 +28,16 @@
     file_exists($object->_file);
 
     function cases_holder() {
-        if (<warning descr="[EA] 'is_dir('directory')' would be more performing here (uses builtin caches).">file_exists('directory')</warning>) {
-            rmdir('directory');
+        if (<warning descr="[EA] 'is_dir('/tmp')' would be more performing here (uses builtin caches).">file_exists('/tmp')</warning>) {
+            rmdir('/tmp');
         }
-        if (<warning descr="[EA] 'is_file('file')' would be more performing here (uses builtin caches).">file_exists('file')</warning>) {
-            unlink('file');
+        if (<warning descr="[EA] 'is_file('/tmp/process.lock')' would be more performing here (uses builtin caches).">file_exists('/tmp/process.lock')</warning>) {
+            unlink('/tmp/process.lock');
         }
-        if (file_exists('link')) {
-            unlink(realpath('link'));
+        if (file_exists('/tmp/symlink/system.log')) {
+            unlink(realpath('/tmp/symlink/system.log'));
+        }
+        if (<warning descr="[EA] 'is_file('clazz.php')' would be more performing here (uses builtin caches).">file_exists('clazz.php')</warning>) {
+            include_once 'clazz.php';
         }
     }

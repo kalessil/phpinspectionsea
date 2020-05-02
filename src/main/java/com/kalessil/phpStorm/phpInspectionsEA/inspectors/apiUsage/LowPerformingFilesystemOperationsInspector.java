@@ -179,6 +179,8 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                                             if (directoryContext && fileContext) {
                                                 break;
                                             }
+                                        } else if (context instanceof Include) {
+                                            fileContext = true;
                                         }
                                     }
                                     if (directoryContext != fileContext) {

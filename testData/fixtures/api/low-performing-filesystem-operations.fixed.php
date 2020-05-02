@@ -28,13 +28,16 @@
     file_exists($object->_file);
 
     function cases_holder() {
-        if (is_dir('directory')) {
-            rmdir('directory');
+        if (is_dir('/tmp')) {
+            rmdir('/tmp');
         }
-        if (is_file('file')) {
-            unlink('file');
+        if (is_file('/tmp/process.lock')) {
+            unlink('/tmp/process.lock');
         }
-        if (file_exists('link')) {
-            unlink(realpath('link'));
+        if (file_exists('/tmp/symlink/system.log')) {
+            unlink(realpath('/tmp/symlink/system.log'));
+        }
+        if (is_file('clazz.php')) {
+            include_once 'clazz.php';
         }
     }

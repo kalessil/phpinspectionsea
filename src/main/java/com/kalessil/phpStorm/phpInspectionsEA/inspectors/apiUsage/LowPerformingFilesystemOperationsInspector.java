@@ -163,24 +163,28 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                                     for (final PsiElement candidate: PsiTreeUtil.findChildrenOfType(body, valueHolder.getClass())) {
                                         final PsiElement parent  = candidate.getParent();
                                         final PsiElement context = parent instanceof ParameterList ? parent.getParent() : parent;
-                                        if (OpenapiTypesUtil.isFunctionReference(context)) {
+                                        if (context != reference && OpenapiTypesUtil.isFunctionReference(context)) {
                                             final FunctionReference outerReference = (FunctionReference) context;
                                             final String outerName                 = outerReference.getName();
-                                            if (! directoryContext && directoriesRelatedFunctions.contains(outerName)) {
-                                                directoryContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
-                                                                   this.isFromRootNamespace(outerReference);
-
+                                            if (directoriesRelatedFunctions.contains(outerName)) {
+                                                if (! directoryContext) {
+                                                    directoryContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
+                                                                       this.isFromRootNamespace(outerReference);
+                                                }
+                                            } else if (filesRelatedFunctions.contains(outerName)) {
+                                                if (! fileContext) {
+                                                    fileContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
+                                                                  this.isFromRootNamespace(outerReference);
+                                                }
                                             }
-                                            if (! fileContext && filesRelatedFunctions.contains(outerName)) {
-                                                fileContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder) &&
-                                                              this.isFromRootNamespace(outerReference);
+                                        } else if (parent instanceof Include) {
+                                            if (! fileContext) {
+                                                fileContext = OpenapiEquivalenceUtil.areEqual(candidate, valueHolder);
                                             }
-                                            /* once clear that it both, stop looping */
-                                            if (directoryContext && fileContext) {
-                                                break;
-                                            }
-                                        } else if (context instanceof Include) {
-                                            fileContext = true;
+                                        }
+                                        /* once clear that it both, abort analysis */
+                                        if (directoryContext && fileContext) {
+                                            break;
                                         }
                                     }
                                     if (directoryContext != fileContext) {
@@ -247,18 +251,18 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
 
             @Nullable
             private String extractNameToGuess(@NotNull PsiElement subject) {
+                String stringToGuess = null;
                 if (subject instanceof ArrayAccessExpression) {
                     final ArrayIndex index = ((ArrayAccessExpression) subject).getIndex();
                     if (index != null) {
-                        subject = index.getValue();
+                        final PsiElement key = index.getValue();
+                        if (key instanceof StringLiteralExpression) {
+                            final StringLiteralExpression literal = (StringLiteralExpression) key;
+                            stringToGuess = literal.getFirstPsiChild() == null ? literal.getContents() : null;
+                        }
                     }
-                }
-                String stringToGuess = null;
-                if (subject instanceof Variable || subject instanceof FieldReference || subject instanceof FunctionReference) {
+                } else if (subject instanceof Variable || subject instanceof FieldReference || subject instanceof FunctionReference) {
                     stringToGuess = ((PhpReference) subject).getName();
-                } else if (subject instanceof StringLiteralExpression) {
-                    final StringLiteralExpression literal = (StringLiteralExpression) subject;
-                    stringToGuess = literal.getFirstPsiChild() == null ? literal.getContents() : null;
                 }
                 return stringToGuess == null || stringToGuess.isEmpty() ? null : stringToGuess.toLowerCase();
             }

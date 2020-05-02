@@ -1,11 +1,11 @@
 package com.kalessil.phpStorm.phpInspectionsEA.api;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
-import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformingFilesystemsOperationInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformingFilesystemOperationsInspector;
 
-final public class LowPerformingDirectoryOperationsInspectorTest extends PhpCodeInsightFixtureTestCase {
+final public class LowPerformingFilesystemOperationsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new LowPerformingFilesystemsOperationInspector());
+        myFixture.enableInspections(new LowPerformingFilesystemOperationsInspector());
         myFixture.configureByFile("testData/fixtures/api/low-performing-filesystem-operations.php");
         myFixture.testHighlighting(true, false, true);
 

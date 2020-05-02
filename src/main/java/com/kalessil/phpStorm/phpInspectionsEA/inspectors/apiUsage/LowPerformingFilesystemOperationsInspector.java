@@ -31,7 +31,7 @@ import java.util.Set;
  * file that was distributed with this source code.
  */
 
-public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
+public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
     private static final String messageSortsByDefaultPattern = "'%s(...)' sorts results by default, please provide second argument for specifying the intention.";
     private static final String messageUnboxGlobPattern      = "'%s' would be more performing here (reduces amount of file system interactions).";
     private static final String messageFileExistsPattern     = "'%s' would be more performing here (uses builtin caches).";
@@ -75,7 +75,7 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
     @NotNull
     @Override
     public String getShortName() {
-        return "LowPerformingFilesystemsOperationInspection";
+        return "LowPerformingFilesystemOperationsInspection";
     }
 
     @NotNull

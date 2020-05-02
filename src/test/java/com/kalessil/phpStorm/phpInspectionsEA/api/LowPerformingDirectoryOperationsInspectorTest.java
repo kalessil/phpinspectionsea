@@ -6,11 +6,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformingF
 final public class LowPerformingDirectoryOperationsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.enableInspections(new LowPerformingFilesystemsOperationInspector());
-        myFixture.configureByFile("testData/fixtures/api/low-performing-directory-operations.php");
+        myFixture.configureByFile("testData/fixtures/api/low-performing-filesystem-operations.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("testData/fixtures/api/low-performing-directory-operations.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/api/low-performing-filesystem-operations.fixed.php");
     }
 }

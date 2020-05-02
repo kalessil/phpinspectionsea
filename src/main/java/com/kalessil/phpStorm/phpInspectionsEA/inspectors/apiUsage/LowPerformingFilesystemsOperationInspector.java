@@ -5,16 +5,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.ParameterList;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -28,6 +29,24 @@ import org.jetbrains.annotations.NotNull;
 public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
     private static final String messageSortsByDefaultPattern = "'%s(...)' sorts results by default, please provide second argument for specifying the intention.";
     private static final String messageUnboxGlobPattern      = "'%s' would be more performing here (reduces amount of file system interactions).";
+    private static final String messageFileExistsPattern     = "'%s' would be more performing here (uses builtin caches).";
+
+    private static final Set<String> filesRelatedNaming       = new HashSet<>();
+    private static final Set<String> directoriesRelatedNaming = new HashSet<>();
+    static {
+        directoriesRelatedNaming.add("dir");
+        directoriesRelatedNaming.add("directory");
+        directoriesRelatedNaming.add("folder");
+
+        filesRelatedNaming.add("file");
+        filesRelatedNaming.add("filename");
+        filesRelatedNaming.add("image");
+        filesRelatedNaming.add("img");
+        filesRelatedNaming.add("picture");
+        filesRelatedNaming.add("pic");
+        filesRelatedNaming.add("thumbnail");
+        filesRelatedNaming.add("thumb");
+    }
 
     @NotNull
     @Override
@@ -38,7 +57,7 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Low performing directory operations";
+        return "Low performing filesystem operations";
     }
 
     @Override
@@ -98,20 +117,70 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
                                 String.format(MessagesPresentationUtil.prefixWithEa(messageSortsByDefaultPattern), functionName),
                                 new NoSortFix(replacement)
                         );
+                        return;
                     }
                 }
 
                 if (functionName != null && functionName.equals("file_exists")) {
+                    final PsiElement[] arguments = reference.getParameters();
+                    if (arguments.length == 1) {
+                        /* strategy 1: guess by subject name (clean coders will benefit in performance) */
+                        final String stringToGuess = this.extractNameToGuess(arguments[0]);
+                        if (stringToGuess != null) {
+                            final String alternative;
+                            if (filesRelatedNaming.contains(stringToGuess)) {
+                                alternative = "is_file";
+                            } else if (directoriesRelatedNaming.contains(stringToGuess)) {
+                                alternative = "is_dir";
+                            } else {
+                                alternative = null;
+                            }
+                            if (alternative != null && this.isFromRootNamespace(reference)) {
+                                final String replacement = String.format(
+                                        "%s%s(%s)",
+                                        reference.getImmediateNamespaceName(),
+                                        alternative,
+                                        arguments[0].getText()
+                                );
+                                holder.registerProblem(
+                                        reference,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement)
+                                );
+                                return;
+                            }
+                        }
+                    }
                     /*
-                        strategy 1: from vocabulary
-                            - file_exists($file|dir|directory|dirname()|folder|image|picture|img|thumb): is_file|is_dir($...) - faster because of caching
-                        strategy 2: scan argument usages
-                            - file_exists + is_readable|is_writable|is_executable|file_get_contents|file_put_contents|unlink|filesize|file -> is_file
-                            - file_exists + mkdir|rmdir|glob|scandir  -> is_dir
+                        strategy 2: scan argument usages (slow strategy)
+                            - file_exists + is_readable|is_writable|is_executable|file_get_contents|file_put_contents|unlink|filesize|file|fopen -> is_file
+                            - file_exists + mkdir|rmdir|glob|scandir -> is_dir
                         special:
                             - file_exists($file) '&&'|'||' is_file|is_dir|is_link($file): file_exists on left/right is not needed at all
+                            - file_exists(dirname())
                      */
                 }
+            }
+
+            @Nullable
+            private String extractNameToGuess(@NotNull PsiElement subject) {
+                /* the subject can be hidden in assignment and array access expressions */
+                if (OpenapiTypesUtil.isAssignment(subject)) {
+                    subject = ((AssignmentExpression) subject).getVariable();
+                }
+                if (subject instanceof ArrayAccessExpression) {
+                    final ArrayIndex index = ((ArrayAccessExpression) subject).getIndex();
+                    if (index != null) {
+                        subject = index.getValue();
+                    }
+                }
+                String stringToGuess = null;
+                if (subject instanceof Variable || subject instanceof FieldReference) {
+                    stringToGuess = ((PhpReference) subject).getName();
+                } else if (subject instanceof StringLiteralExpression) {
+                    final StringLiteralExpression literal = (StringLiteralExpression) subject;
+                    stringToGuess = literal.getFirstPsiChild() == null ? literal.getContents() : null;
+                }
+                return stringToGuess == null || stringToGuess.isEmpty() ? null : stringToGuess.toLowerCase();
             }
         };
     }

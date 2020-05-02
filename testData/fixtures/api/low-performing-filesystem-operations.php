@@ -20,6 +20,7 @@
     <warning descr="[EA] 'is_dir($directory)' would be more performing here (uses builtin caches).">file_exists($directory)</warning>;
     <warning descr="[EA] 'is_file($array['file'])' would be more performing here (uses builtin caches).">file_exists($array['file'])</warning>;
     <warning descr="[EA] 'is_file($object->file)' would be more performing here (uses builtin caches).">file_exists($object->file)</warning>;
+    <warning descr="[EA] 'is_dir(dirname('...'))' would be more performing here (uses builtin caches).">file_exists(dirname('...'))</warning>;
 
     file_exists($_file);
     file_exists($_directory);

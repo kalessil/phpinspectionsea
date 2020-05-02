@@ -40,6 +40,7 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
         directoriesRelatedNaming.add("dir");
         directoriesRelatedNaming.add("directory");
         directoriesRelatedNaming.add("folder");
+        directoriesRelatedNaming.add("dirname");
 
         filesRelatedNaming.add("file");
         filesRelatedNaming.add("filename");
@@ -160,11 +161,10 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
                     }
                     /*
                         strategy 2: scan argument usages (slow strategy)
-                            - file_exists + is_readable|is_writable|is_executable|file_get_contents|file_put_contents|unlink|filesize|file|fopen -> is_file
+                            - file_exists + file_get_contents|file_put_contents|unlink|filesize|file|fopen -> is_file
                             - file_exists + mkdir|rmdir|glob|scandir -> is_dir
                         special:
                             - file_exists($file) '&&'|'||' is_file|is_dir|is_link($file): file_exists on left/right is not needed at all
-                            - file_exists(dirname())
                      */
                 }
             }
@@ -182,7 +182,7 @@ public class LowPerformingFilesystemsOperationInspector extends PhpInspection {
                     }
                 }
                 String stringToGuess = null;
-                if (subject instanceof Variable || subject instanceof FieldReference) {
+                if (subject instanceof Variable || subject instanceof FieldReference || subject instanceof FunctionReference) {
                     stringToGuess = ((PhpReference) subject).getName();
                 } else if (subject instanceof StringLiteralExpression) {
                     final StringLiteralExpression literal = (StringLiteralExpression) subject;

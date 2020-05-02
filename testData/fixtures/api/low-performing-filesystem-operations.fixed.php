@@ -20,6 +20,7 @@
     is_dir($directory);
     is_file($array['file']);
     is_file($object->file);
+    is_dir(dirname('...'));
 
     file_exists($_file);
     file_exists($_directory);

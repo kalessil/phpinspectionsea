@@ -1,8 +1,19 @@
 <?php
 
-class ClassWithValidMethods extends MissingClass {
+class ClassWithValidMethods_First extends MissingClass {
     public function __sleep() {
-        return [];
+        return [ 'item' ];
+    }
+}
+class ClassWithValidMethods_Second extends MissingClass {
+    public function __sleep(): array {
+        return [ 'item' ];
+    }
+}
+class ClassWithValidMethods_Third extends MissingClass {
+    /** @return string[] */
+    public function __sleep(): array {
+        return [ 'item' ];
     }
 }
 

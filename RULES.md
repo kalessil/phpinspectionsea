@@ -242,6 +242,7 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |
 | Probable bugs        | PreloadingUsageCorrectnessInspection            | Preloading usage correctness                              | yes | yes | yes  | n/a |
 | Probable bugs        | MissingHashElementArrowInspection               | Missing hash element arrow                                | n/a | yes | n/a  | n/a |
+| Probable bugs        | GetClassMissUseInspection                       | 'get_class(...)' misused                                  | n/a | yes | n/a  | n/a |
 
 Inspections Lists (Security)
 ---

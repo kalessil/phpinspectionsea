@@ -5,7 +5,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.LowPerformingF
 
 final public class LowPerformingFilesystemOperationsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
-        myFixture.enableInspections(new LowPerformingFilesystemOperationsInspector());
+        final LowPerformingFilesystemOperationsInspector inspector = new LowPerformingFilesystemOperationsInspector();
+        inspector.FILE_EXISTS_GUESS                                = true;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/api/low-performing-filesystem-operations.php");
         myFixture.testHighlighting(true, false, true);
 

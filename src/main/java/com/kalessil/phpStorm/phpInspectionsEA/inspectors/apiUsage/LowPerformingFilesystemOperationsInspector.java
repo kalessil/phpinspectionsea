@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
@@ -19,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,9 +34,13 @@ import java.util.Set;
  */
 
 public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
-    private static final String messageSortsByDefaultPattern = "'%s(...)' sorts results by default, please provide second argument for specifying the intention.";
-    private static final String messageUnboxGlobPattern      = "'%s' would be more performing here (reduces amount of file system interactions).";
-    private static final String messageFileExistsPattern     = "'%s' would be more performing here (uses builtin caches).";
+    // Inspection options.
+    public boolean FILE_EXISTS_GUESS = false;
+
+    private static final String messageSortsByDefaultPattern    = "'%s(...)' sorts results by default, please provide second argument for specifying the intention.";
+    private static final String messageUnboxGlobPattern         = "'%s' would be more performing here (reduces amount of file system interactions).";
+    private static final String messageFileExistsGenericPattern = "'%s' (discovered from workflow) would be more performing here (uses builtin caches).";
+    private static final String messageFileExistsGuessedPattern = "'%s' (guessed) would be more performing here (uses builtin caches).";
 
     private static final Set<String> filesRelatedNaming          = new HashSet<>();
     private static final Set<String> filesRelatedFunctions       = new HashSet<>();
@@ -94,7 +100,7 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null && (functionName.equals("scandir") || functionName.equals("glob"))) {
+                if (functionName != null && (functionName.equals("scandir") || functionName.equals("glob"))  && ! this.isTestContext(reference)) {
                     final PsiElement[] arguments = reference.getParameters();
 
                     /* case: glob call results passed thru is_dir */
@@ -146,7 +152,7 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                     }
                 }
 
-                if (functionName != null && functionName.equals("file_exists")) {
+                if (functionName != null && functionName.equals("file_exists") && ! this.isTestContext(reference)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length == 1) {
                         final PsiElement valueHolder = OpenapiTypesUtil.isAssignment(arguments[0])
@@ -211,7 +217,7 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                                         );
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsGenericPattern), replacement),
                                                 fixer
                                         );
                                         return;
@@ -220,33 +226,35 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                             }
 
                             /* strategy 2: fallback, guess by subject name (clean coders will benefit here) */
-                            final String stringToGuess = this.extractNameToGuess(valueHolder);
-                            if (stringToGuess != null) {
-                                final LocalQuickFix fixer;
-                                final String alternative;
-                                if (filesRelatedNaming.contains(stringToGuess)) {
-                                    alternative = "is_file";
-                                    fixer       = new UseIsFileInsteadFixer();
-                                } else if (directoriesRelatedNaming.contains(stringToGuess)) {
-                                    alternative = "is_dir";
-                                    fixer       = new UseIsDirInsteadFixer();
-                                } else {
-                                    alternative = null;
-                                    fixer       = null;
-                                }
-                                if (alternative != null && this.isFromRootNamespace(reference)) {
-                                    final String replacement = String.format(
-                                            "%s%s(%s)",
-                                            reference.getImmediateNamespaceName(),
-                                            alternative,
-                                            arguments[0].getText()
-                                    );
-                                    holder.registerProblem(
-                                            reference,
-                                            String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsPattern), replacement),
-                                            fixer
-                                    );
-                                    return;
+                            if (FILE_EXISTS_GUESS) {
+                                final String stringToGuess = this.extractNameToGuess(valueHolder);
+                                if (stringToGuess != null) {
+                                    final LocalQuickFix fixer;
+                                    final String alternative;
+                                    if (filesRelatedNaming.contains(stringToGuess)) {
+                                        alternative = "is_file";
+                                        fixer       = new UseIsFileInsteadFixer();
+                                    } else if (directoriesRelatedNaming.contains(stringToGuess)) {
+                                        alternative = "is_dir";
+                                        fixer       = new UseIsDirInsteadFixer();
+                                    } else {
+                                        alternative = null;
+                                        fixer       = null;
+                                    }
+                                    if (alternative != null && this.isFromRootNamespace(reference)) {
+                                        final String replacement = String.format(
+                                                "%s%s(%s)",
+                                                reference.getImmediateNamespaceName(),
+                                                alternative,
+                                                arguments[0].getText()
+                                        );
+                                        holder.registerProblem(
+                                                reference,
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageFileExistsGuessedPattern), replacement),
+                                                fixer
+                                        );
+                                        return;
+                                    }
                                 }
                             }
                         }
@@ -272,6 +280,12 @@ public class LowPerformingFilesystemOperationsInspector extends PhpInspection {
                 return stringToGuess == null || stringToGuess.isEmpty() ? null : stringToGuess.toLowerCase();
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+                component.addCheckbox("file_exists: fallback to guess", FILE_EXISTS_GUESS, (isSelected) -> FILE_EXISTS_GUESS = isSelected)
+        );
     }
 
     private static final class NoSortFix extends UseSuggestedReplacementFixer {

@@ -15,12 +15,12 @@
     <warning descr="[EA] 'glob('*', GLOB_ONLYDIR)' would be more performing here (reduces amount of file system interactions).">array_filter(glob('*', GLOB_ONLYDIR), 'is_dir')</warning>;
     <warning descr="[EA] 'glob('*', GLOB_NOSORT | GLOB_ONLYDIR)' would be more performing here (reduces amount of file system interactions).">array_filter(glob('*', GLOB_NOSORT | GLOB_ONLYDIR), 'is_dir')</warning>;
 
-    <warning descr="[EA] 'is_file($file)' would be more performing here (uses builtin caches).">file_exists($file)</warning>;
-    <warning descr="[EA] 'is_file($file = '...')' would be more performing here (uses builtin caches).">file_exists($file = '...')</warning>;
-    <warning descr="[EA] 'is_dir($directory)' would be more performing here (uses builtin caches).">file_exists($directory)</warning>;
-    <warning descr="[EA] 'is_file($array['file'])' would be more performing here (uses builtin caches).">file_exists($array['file'])</warning>;
-    <warning descr="[EA] 'is_file($object->file)' would be more performing here (uses builtin caches).">file_exists($object->file)</warning>;
-    <warning descr="[EA] 'is_dir(dirname('...'))' would be more performing here (uses builtin caches).">file_exists(dirname('...'))</warning>;
+    <warning descr="[EA] 'is_file($file)' (guessed) would be more performing here (uses builtin caches).">file_exists($file)</warning>;
+    <warning descr="[EA] 'is_file($file = '...')' (guessed) would be more performing here (uses builtin caches).">file_exists($file = '...')</warning>;
+    <warning descr="[EA] 'is_dir($directory)' (guessed) would be more performing here (uses builtin caches).">file_exists($directory)</warning>;
+    <warning descr="[EA] 'is_file($array['file'])' (guessed) would be more performing here (uses builtin caches).">file_exists($array['file'])</warning>;
+    <warning descr="[EA] 'is_file($object->file)' (guessed) would be more performing here (uses builtin caches).">file_exists($object->file)</warning>;
+    <warning descr="[EA] 'is_dir(dirname('...'))' (guessed) would be more performing here (uses builtin caches).">file_exists(dirname('...'))</warning>;
 
     file_exists($_file);
     file_exists($_directory);
@@ -28,16 +28,16 @@
     file_exists($object->_file);
 
     function cases_holder() {
-        if (<warning descr="[EA] 'is_dir('/tmp')' would be more performing here (uses builtin caches).">file_exists('/tmp')</warning>) {
+        if (<warning descr="[EA] 'is_dir('/tmp')' (discovered from workflow) would be more performing here (uses builtin caches).">file_exists('/tmp')</warning>) {
             rmdir('/tmp');
         }
-        if (<warning descr="[EA] 'is_file('/tmp/process.lock')' would be more performing here (uses builtin caches).">file_exists('/tmp/process.lock')</warning>) {
+        if (<warning descr="[EA] 'is_file('/tmp/process.lock')' (discovered from workflow) would be more performing here (uses builtin caches).">file_exists('/tmp/process.lock')</warning>) {
             unlink('/tmp/process.lock');
         }
         if (file_exists('/tmp/symlink/system.log')) {
             unlink(realpath('/tmp/symlink/system.log'));
         }
-        if (<warning descr="[EA] 'is_file('clazz.php')' would be more performing here (uses builtin caches).">file_exists('clazz.php')</warning>) {
+        if (<warning descr="[EA] 'is_file('clazz.php')' (discovered from workflow) would be more performing here (uses builtin caches).">file_exists('clazz.php')</warning>) {
             include_once 'clazz.php';
         }
     }

@@ -4,8 +4,6 @@ Loops:
     'array_filter()':                             loop + if + pushing to array, loop + if + unset (in some cases even without closure)
     'in_array()/array_search()':                  loop + comparison + break
 
-- (bugs) switch (get_class()) -> will be failing when checking child classes
-
 - (performance) while ($i < count($array)) { ... } -> SlowArrayOperationsInLoopInspector
     - SlowArrayOperationsInLoopInspector: counting in while/do-while loops + recognize containers modification
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)

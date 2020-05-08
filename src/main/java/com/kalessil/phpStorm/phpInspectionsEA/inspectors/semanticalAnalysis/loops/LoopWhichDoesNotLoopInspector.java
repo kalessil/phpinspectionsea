@@ -55,7 +55,8 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
             public void visitPhpForeach(@NotNull ForeachStatement loop) {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                if (this.isNotLooping(loop)) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade && this.isNotLooping(loop)) {
                     /* false-positive: return first element from generator, iterable and co */
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                     final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
@@ -82,7 +83,8 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
             public void visitPhpFor(@NotNull For loop) {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                if (this.isNotLooping(loop)) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade && this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
                             MessagesPresentationUtil.prefixWithEa(message)
@@ -94,7 +96,8 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
             public void visitPhpWhile(@NotNull While loop) {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                if (this.isNotLooping(loop)) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade && this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
                             MessagesPresentationUtil.prefixWithEa(message)
@@ -106,7 +109,8 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
             public void visitPhpDoWhile(@NotNull DoWhile loop) {
                 if (this.shouldSkipAnalysis(loop, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                if (this.isNotLooping(loop)) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade && this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
                             MessagesPresentationUtil.prefixWithEa(message)

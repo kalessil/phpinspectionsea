@@ -1,8 +1,19 @@
 <?php
 
-class ClassWithValidMethods extends MissingClass {
+class ClassWithValidMethods_First extends MissingClass {
     public function __sleep() {
-        return [];
+        return [ 'item' ];
+    }
+}
+class ClassWithValidMethods_Second extends MissingClass {
+    public function __sleep(): array {
+        return [ 'item' ];
+    }
+}
+class ClassWithValidMethods_Third extends MissingClass {
+    /** @return string[] */
+    public function __sleep(): array {
+        return [ 'item' ];
     }
 }
 
@@ -23,6 +34,6 @@ class ClassWithParametrizedMethods extends MissingClass {
 }
 class ClassWithWronglyReturningMethods extends MissingClass {
     public function __sleep() {
-        <error descr="[EA] __sleep must return array.">return '...';</error>
+        <error descr="[EA] __sleep must return array (resolved: 'string').">return '...';</error>
     }
 }

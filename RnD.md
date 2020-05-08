@@ -9,7 +9,7 @@ Loops:
 - (performance) while ($i < count($array)) { ... } -> SlowArrayOperationsInLoopInspector
     - SlowArrayOperationsInLoopInspector: counting in while/do-while loops + recognize containers modification
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
-- (performance)explode misuse: explode("\n", file_get_contents('...')) -> file('...', FILE_IGNORE_NEW_LINES)
+- (performance) explode misuse: explode("\n", file_get_contents('...')) -> file('...', FILE_IGNORE_NEW_LINES)
 
 - Amount of traits
 - Unused function result, but for generators
@@ -17,6 +17,6 @@ Loops:
 - if (not empty check) { foreach() {} } -> if is not needed at all
     - not empty contexts (incl. methods)
     - count/size check (incl. methods)
-- ($first || $second) && ($first != $second) for boolean types
+- ($first || $second) && ($first != $second) for boolean types -> ($first != $second)
 - evaluate: short functions and unnecessary closure
 

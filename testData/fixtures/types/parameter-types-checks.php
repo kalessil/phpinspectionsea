@@ -171,7 +171,10 @@
     }
 
     /* false-positives: issues with proper binary expression types identification */
-    function binary_expression_types(int $parameter) {
+    function binary_expression_types(int $parameter, int $lifetime) {
         $parameter = 1 * $parameter * 1;
         $parameter = <warning descr="[EA] New value type (float) is not matching the resolved parameter type and might introduce types-related false-positives.">1 * 1.0 * $parameter * 1</warning>;
+
+        $rounded  = (int) (ceil(time() / $lifetime) * $lifetime);
+        $lifetime = $rounded - time();
     }

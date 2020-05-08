@@ -10,7 +10,6 @@ namespace NamespaceWithAliasedNamespaceImport {
             return [
                 AliasedNamespace\Clazz::class,
                 <error descr="[EA] ::class result and the class qualified name are not identical (case mismatch).">AliasedNamespace\clazz</error>::class,
-                <error descr="[EA] ::class result and the class qualified name are not identical (case mismatch).">aliasednamespace\Clazz</error>::class,
             ];
         }
     }

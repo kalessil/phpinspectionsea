@@ -105,7 +105,7 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                     if (referenceText.contains("\\")) {
                         /* RQN specified, check if resolved class in the same NS */
                         final String NsFqn = namespace == null ? null : namespace.getFQN();
-                        if (NsFqn != null && !NsFqn.equals("\\")) {
+                        if (NsFqn != null && ! NsFqn.equals("\\")) {
                             final String classFqnLowercase = classFqn.toLowerCase();
                             if (
                                 classFqnLowercase.startsWith(NsFqn.toLowerCase()) ||

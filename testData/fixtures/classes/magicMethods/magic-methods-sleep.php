@@ -34,6 +34,6 @@ class ClassWithParametrizedMethods extends MissingClass {
 }
 class ClassWithWronglyReturningMethods extends MissingClass {
     public function __sleep() {
-        <error descr="[EA] __sleep must return array.">return '...';</error>
+        <error descr="[EA] __sleep must return array (resolved: 'string').">return '...';</error>
     }
 }

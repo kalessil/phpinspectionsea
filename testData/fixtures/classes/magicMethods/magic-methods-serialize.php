@@ -23,6 +23,6 @@ class ClassWithParametrizedMethods extends MissingClass {
 }
 class ClassWithWronglyReturningMethods extends MissingClass {
     public function __serialize() {
-        <error descr="[EA] __serialize must return array.">return '...';</error>
+        <error descr="[EA] __serialize must return array (resolved: 'string').">return '...';</error>
     }
 }

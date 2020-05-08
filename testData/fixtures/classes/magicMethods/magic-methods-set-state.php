@@ -8,13 +8,13 @@ class ClassWithValidSetState {
 
 
 class ClassWithNoReturnSetState {
-    public static function <error descr="[EA] __set_state must return \ClassWithNoReturnSetState.">__set_state</error> ($array) {
+    public static function <error descr="[EA] __set_state must return \ClassWithNoReturnSetState (resolved: '').">__set_state</error> ($array) {
     }
 }
 
 class ClassWithInvalidReturnSetState {
     public static function __set_state($array) {
-        <error descr="[EA] __set_state must return \ClassWithInvalidReturnSetState.">return new stdClass();</error>
+        <error descr="[EA] __set_state must return \ClassWithInvalidReturnSetState (resolved: '\stdClass').">return new stdClass();</error>
     }
 }
 

@@ -26,6 +26,6 @@ class ClassToStringReturnTypes {
             /* false-positives: type is not resolved at all */
             return $this->property;
         }
-        <error descr="[EA] __toString must return string.">return [];</error>
+        <error descr="[EA] __toString must return string (resolved: 'array').">return [];</error>
     }
 }

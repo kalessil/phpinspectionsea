@@ -23,6 +23,6 @@ class ClassWithPrivateMethods extends MissingClass {
 }
 class ClassWithWronglyReturningMethods extends MissingClass {
     public function __debugInfo() {
-        <error descr="[EA] __debugInfo must return array|null.">return '...';</error>
+        <error descr="[EA] __debugInfo must return array|null (resolved: 'string').">return '...';</error>
     }
 }

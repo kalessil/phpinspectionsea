@@ -178,3 +178,10 @@
         $rounded  = (int) (ceil(time() / $lifetime) * $lifetime);
         $lifetime = $rounded - time();
     }
+
+    /* false-positives: parse_url behaviour */
+    function parse_url_behaviour(string $string, int $int, array $array) {
+        $array  = <warning descr="[EA] New value type (bool) is not matching the resolved parameter type and might introduce types-related false-positives.">parse_url($string) ?: []</warning>;
+        $int    = parse_url($string, PHP_URL_PORT) ?: 80;
+        $string = parse_url($string, PHP_URL_PATH) ?: '/';
+    }

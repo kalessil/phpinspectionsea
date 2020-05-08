@@ -295,6 +295,18 @@ final public class OpenapiResolveUtil {
                 if (value instanceof PhpTypedElement) {
                     result = resolveType((PhpTypedElement) value, project);
                 }
+            } else if (expression instanceof FieldReference) {
+                final FieldReference reference = (FieldReference) expression;
+                final PsiElement base          = reference.getClassReference();
+                if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
+                    final PsiElement resolvedField = OpenapiResolveUtil.resolveReference(reference);
+                    if (resolvedField instanceof Field) {
+                        final PhpType declaredType = resolveDeclaredType((Field) resolvedField);
+                        if (! declaredType.isEmpty()) {
+                            result = declaredType;
+                        }
+                    }
+                }
             } else if (expression instanceof ParenthesizedExpression) {
                 final PsiElement value = ((ParenthesizedExpression) expression).getArgument();
                 if (value instanceof PhpTypedElement) {

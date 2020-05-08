@@ -40,6 +40,7 @@ final public class OpenapiResolveUtil {
         functionReturnTypes.put("get_class", new PhpType().add(PhpType.STRING));
         functionReturnTypes.put("explode", new PhpType().add(PhpType.ARRAY).add(PhpType.BOOLEAN));
         functionReturnTypes.put("array_unique", new PhpType().add(PhpType.ARRAY));
+        functionReturnTypes.put("parse_url", new PhpType().add(PhpType.ARRAY).add(PhpType.BOOLEAN));
 
         functionToNarrow.put("str_replace", 2);
         functionToNarrow.put("str_ireplace", 2);
@@ -149,12 +150,24 @@ final public class OpenapiResolveUtil {
                                 }
                             }
                         }
-                    } else if (name != null && name.equals("explode")) {
-                        /* explode return false if delimiter is an empty string */
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length >= 2 && arguments[0] instanceof StringLiteralExpression) {
-                            final String content = ((StringLiteralExpression) arguments[0]).getContents();
-                            result = new PhpType().add(content.isEmpty() ? PhpType.BOOLEAN : PhpType.ARRAY);
+                    } else if (name != null) {
+                        if (name.equals("explode")) {
+                            /* explode return false if delimiter is an empty string */
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length >= 2 && arguments[0] instanceof StringLiteralExpression) {
+                                final String content = ((StringLiteralExpression) arguments[0]).getContents();
+                                result = new PhpType().add(content.isEmpty() ? PhpType.BOOLEAN : PhpType.ARRAY);
+                            }
+                        } else if (name.equals("parse_url")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 2 && arguments[1] instanceof ConstantReference) {
+                                final String constantName = ((ConstantReference) arguments[1]).getName();
+                                if (constantName != null && constantName.equals("PHP_URL_PORT")) {
+                                    result = new PhpType().add(PhpType.INT).add(PhpType.NULL);
+                                } else {
+                                    result = new PhpType().add(PhpType.STRING).add(PhpType.NULL);
+                                }
+                            }
                         }
                     }
                 }
@@ -282,6 +295,18 @@ final public class OpenapiResolveUtil {
                 final PsiElement value = ((AssignmentExpression) expression).getValue();
                 if (value instanceof PhpTypedElement) {
                     result = resolveType((PhpTypedElement) value, project);
+                }
+            } else if (expression instanceof FieldReference) {
+                final FieldReference reference = (FieldReference) expression;
+                final PsiElement base          = reference.getClassReference();
+                if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
+                    final PsiElement resolvedField = OpenapiResolveUtil.resolveReference(reference);
+                    if (resolvedField instanceof Field) {
+                        final PhpType declaredType = resolveDeclaredType((Field) resolvedField);
+                        if (! declaredType.isEmpty()) {
+                            result = declaredType;
+                        }
+                    }
                 }
             } else if (expression instanceof ParenthesizedExpression) {
                 final PsiElement value = ((ParenthesizedExpression) expression).getArgument();

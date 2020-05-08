@@ -27,7 +27,8 @@ final public class UselessDotAllModifierCheckStrategy {
             @NotNull  ProblemsHolder holder
     ) {
         if (modifiers != null && pattern != null && !pattern.isEmpty() && modifiers.indexOf('s') != -1) {
-            final String normalized = pattern.replaceAll("\\[[^\\]]+\\]", "");
+            final String normalized = pattern.replaceAll("\\\\[\\.\\[\\]]", "")
+                                             .replaceAll("\\[[^]]+\\]", "");
             if (StringUtils.countMatches(normalized, ".") - StringUtils.countMatches(normalized, "\\.") == 0) {
                 holder.registerProblem(
                         target,

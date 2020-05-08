@@ -35,10 +35,10 @@ import java.util.stream.Collectors;
  */
 
 public class CallableParameterUseCaseInTypeContextInspection extends PhpInspection {
-    private static final String messageNoSense               = "Makes no sense, because it's always true according to annotations.";
+    private static final String messageNoSense               = "Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.";
     private static final String messageTypeHint              = "Makes no sense, because of parameter type declaration.";
-    private static final String messageViolationInCheck      = "Makes no sense, because this type is not defined in annotations.";
-    private static final String patternViolationInAssignment = "New value type (%s) is not in annotated types.";
+    private static final String messageViolationInCheck      = "Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.";
+    private static final String patternViolationInAssignment = "New value type (%s) is not matching the resolved parameter type and might introduce types-related false-positives.";
 
     private static final Set<String> classReferences = new HashSet<>();
     static {

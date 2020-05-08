@@ -7,13 +7,13 @@
             is_array($iterable) ||
             is_array($stringsArray) ||
 
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_int($array)</warning> ||
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_int($iterable)</warning> ||
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_int($stringsArray)</warning> ||
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_int($array)</warning> ||
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_int($iterable)</warning> ||
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_int($stringsArray)</warning> ||
 
-            !<warning descr="[EA] Makes no sense, because it's always true according to annotations.">is_int($array)</warning> ||
-            !<warning descr="[EA] Makes no sense, because it's always true according to annotations.">is_int($iterable)</warning> ||
-            !<warning descr="[EA] Makes no sense, because it's always true according to annotations.">is_int($stringsArray)</warning>
+            !<warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">is_int($array)</warning> ||
+            !<warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">is_int($iterable)</warning> ||
+            !<warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">is_int($stringsArray)</warning>
         ;
     };
 
@@ -70,10 +70,10 @@
             $first = new Clazz();
         }
 
-        $second = <warning descr="[EA] New value type (\Clazz) is not in annotated types.">$second ?? new Clazz()</warning>;
-        $second = <warning descr="[EA] New value type (\Clazz) is not in annotated types.">$second ?: new Clazz()</warning>;
+        $second = <warning descr="[EA] New value type (\Clazz) is not matching the resolved parameter type and might introduce types-related false-positives.">$second ?? new Clazz()</warning>;
+        $second = <warning descr="[EA] New value type (\Clazz) is not matching the resolved parameter type and might introduce types-related false-positives.">$second ?: new Clazz()</warning>;
         if (null === $second) {
-            $second = <warning descr="[EA] New value type (\Clazz) is not in annotated types.">new Clazz()</warning>;
+            $second = <warning descr="[EA] New value type (\Clazz) is not matching the resolved parameter type and might introduce types-related false-positives.">new Clazz()</warning>;
         }
 
         return [ $first, $second ];
@@ -112,7 +112,7 @@
             $parameter = $this->returnStatic();
             $parameter = $this->returnStatic()->returnStatic();
 
-            $parameter = <warning descr="[EA] New value type (null) is not in annotated types.">null</warning>;
+            $parameter = <warning descr="[EA] New value type (null) is not matching the resolved parameter type and might introduce types-related false-positives.">null</warning>;
         }
 
         public function class_types(IndirectClassReference $parameter) {
@@ -131,7 +131,7 @@
     /* false-positive: incomplete types influenced by null as default value */
     function incomplete_types($one = null, $two = []) {
         $one = '';
-        $two = <warning descr="[EA] New value type (string) is not in annotated types.">''</warning>;
+        $two = <warning descr="[EA] New value type (string) is not matching the resolved parameter type and might introduce types-related false-positives.">''</warning>;
     }
 
     /* false-positive: core functions returning string|false, string|null */
@@ -171,7 +171,17 @@
     }
 
     /* false-positives: issues with proper binary expression types identification */
-    function binary_expression_types(int $parameter) {
+    function binary_expression_types(int $parameter, int $lifetime) {
         $parameter = 1 * $parameter * 1;
-        $parameter = <warning descr="[EA] New value type (float) is not in annotated types.">1 * 1.0 * $parameter * 1</warning>;
+        $parameter = <warning descr="[EA] New value type (float) is not matching the resolved parameter type and might introduce types-related false-positives.">1 * 1.0 * $parameter * 1</warning>;
+
+        $rounded  = (int) (ceil(time() / $lifetime) * $lifetime);
+        $lifetime = $rounded - time();
+    }
+
+    /* false-positives: parse_url behaviour */
+    function parse_url_behaviour(string $string, int $int, array $array) {
+        $array  = <warning descr="[EA] New value type (bool) is not matching the resolved parameter type and might introduce types-related false-positives.">parse_url($string) ?: []</warning>;
+        $int    = parse_url($string, PHP_URL_PORT) ?: 80;
+        $string = parse_url($string, PHP_URL_PATH) ?: '/';
     }

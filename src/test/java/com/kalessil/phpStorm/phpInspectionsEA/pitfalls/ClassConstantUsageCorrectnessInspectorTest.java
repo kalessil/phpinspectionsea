@@ -11,4 +11,9 @@ final public class ClassConstantUsageCorrectnessInspectorTest extends PhpCodeIns
         myFixture.configureByFile("testData/fixtures/pitfalls/class-constant-cases-mismatch.import-and-alias.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsNamespacesImportCases() {
+        myFixture.enableInspections(new ClassConstantUsageCorrectnessInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/class-constant-cases-mismatch.aliased-namespaces.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

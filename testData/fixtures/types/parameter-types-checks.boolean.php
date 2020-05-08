@@ -14,12 +14,12 @@ abstract class CasesHolder {
             $second !== false,
 
             /* target cases */
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">$third === false</warning>,
-            <warning descr="[EA] Makes no sense, because it's always true according to annotations.">$third !== false</warning>,
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">$third === self::BOOL_CONST</warning>,
-            <warning descr="[EA] Makes no sense, because it's always true according to annotations.">$third !== self::BOOL_CONST</warning>,
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">$third === $this->returnsBool()</warning>,
-            <warning descr="[EA] Makes no sense, because it's always true according to annotations.">$third !== $this->returnsBool()</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">$third === false</warning>,
+            <warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">$third !== false</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">$third === self::BOOL_CONST</warning>,
+            <warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">$third !== self::BOOL_CONST</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">$third === $this->returnsBool()</warning>,
+            <warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">$third !== $this->returnsBool()</warning>,
 
             /* weakly typed comparison is not handled */
             $third == false,
@@ -27,7 +27,7 @@ abstract class CasesHolder {
 
             is_bool($first),
             is_bool($second),
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_bool($third)</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_bool($third)</warning>,
             <warning descr="[EA] Makes no sense, because of parameter type declaration.">is_bool($boolean)</warning>,
         ];
     }

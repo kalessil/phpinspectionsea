@@ -10,27 +10,27 @@ class CasesHolder {
             $second !== 0,
 
             /* target cases */
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">$third === 0</warning>,
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">$third === .0</warning>,
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">$third === 0.0</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">$third === 0</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">$third === .0</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">$third === 0.0</warning>,
             /* target cases */
-            <warning descr="[EA] Makes no sense, because it's always true according to annotations.">$third !== 0.0</warning>,
-            <warning descr="[EA] Makes no sense, because it's always true according to annotations.">$third !== .0</warning>,
-            <warning descr="[EA] Makes no sense, because it's always true according to annotations.">$third !== 0</warning>,
+            <warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">$third !== 0.0</warning>,
+            <warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">$third !== .0</warning>,
+            <warning descr="[EA] Makes no sense, because it's always true according to resolved type. Ensure the parameter is not reused.">$third !== 0</warning>,
 
             /* weakly typed comparison is not handled */
             $third == 0,
             $third != 0,
 
             is_int($first),
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_int($second)</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_int($second)</warning>,
 
             is_float($second),
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_float($third)</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_float($third)</warning>,
 
             is_numeric($first),
             is_numeric($second),
-            <warning descr="[EA] Makes no sense, because this type is not defined in annotations.">is_numeric($third)</warning>,
+            <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_numeric($third)</warning>,
         ];
     }
 

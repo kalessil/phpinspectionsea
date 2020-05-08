@@ -48,7 +48,7 @@ final public class MustReturnSpecifiedTypeStrategy {
                     /* previously we had an issue with https://youtrack.jetbrains.com/issue/WI-31249 here */
                     final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) returnValue, project);
                     if (resolved != null) {
-                        normalizedType = resolved.filterUnknown();
+                        resolved.filterUnknown().getTypes().forEach(t -> normalizedType.add(Types.getType(t)));
                         /* case: resolve has failed or resolved types are compatible */
                         if (normalizedType.isEmpty() || PhpType.isSubType(normalizedType, allowedTypes)) {
                             continue;

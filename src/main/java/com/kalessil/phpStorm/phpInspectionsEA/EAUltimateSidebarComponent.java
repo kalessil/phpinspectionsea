@@ -72,7 +72,7 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
         return OptionsComponent.create(component -> {
             final EAUltimateProjectSettings s = myProject.getComponent(EAUltimateProjectSettings.class);
             component.addPanel("License information",                           panel -> {
-                String message               = "Licensing information is not available";
+                String message               = "Obtaining license information...";
                 final LicenseService service = EAUltimateApplicationComponent.getLicenseService();
                 if (service != null && service.shouldCheckPluginLicense()) {
                     try {
@@ -83,7 +83,9 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
                         } else {
                             message = "Not activated (partially suspended features)";
                         }
-                    } catch (final Exception failure) { /* do nothing */ }
+                    } catch (final Exception failure) {
+                        message = String.format("Licensing information is not available (error: %s)", failure.getMessage());
+                    }
                 }
                 panel.addText("", 12);
                 panel.addText(message + ", as of IDE start.");

@@ -12,7 +12,7 @@ Loops:
 - Amount of traits
 - Unused function result, but for generators
 - suspicious loops: termination condition variables are not changing while looping
-- if (not empty check) { foreach() {} } -> if is not needed at all
+- if (not empty check) { foreach() {} } -> not needed at all
     - not empty contexts (incl. methods)
     - count/size check (incl. methods)
 - ($first || $second) && ($first != $second) for boolean types -> ($first != $second)

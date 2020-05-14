@@ -38,6 +38,14 @@ public class DeprecatedConstructorStyleInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
+                // Dont visit static method and block static function with the same as of the class to be visited:
+                // class Foo {
+                // public static function Foo() {}
+                // }
+                if (method.isStatic()) {
+                    return;
+                }
+                
                 final PhpClass clazz      = method.getContainingClass();
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
                 if (null == clazz || null == nameNode || clazz.isTrait() || clazz.isInterface()) {

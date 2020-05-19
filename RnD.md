@@ -15,6 +15,5 @@ Loops:
 - if (not empty check) { foreach() {} } -> not needed at all
     - not empty contexts (incl. methods)
     - count/size check (incl. methods)
-- ($first || $second) && ($first != $second) for boolean types -> ($first != $second)
 - evaluate: short functions and unnecessary closure
 

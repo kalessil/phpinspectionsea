@@ -34,22 +34,18 @@ final public class MistypedLogicalOperatorsStrategy {
             final PsiElement left   = expression.getLeftOperand();
             final PsiElement right  = expression.getRightOperand();
             if (left != null && right != null) {
-                // constants, array accesses
-                final boolean hasNumber    = OpenapiTypesUtil.isNumber(right) || OpenapiTypesUtil.isNumber(left);
-                final boolean hasConstants = (right instanceof ConstantReference || left instanceof ConstantReference);
-                final boolean isTarget     = ! hasNumber && ! hasConstants && (! isIntegerType(left, holder) || ! isIntegerType(right, holder));
-                if (isTarget) {
-                    /* false-positives: array accesses */
-                    final boolean hasArrayAccesses = (right instanceof ArrayAccessExpression || left instanceof ArrayAccessExpression);
-                    if (! hasArrayAccesses) {
-                        final PsiElement targetExpression = expression.getOperation();
-                        if (targetExpression != null) {
-                            result = true;
-                            holder.registerProblem(
-                                    targetExpression,
-                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
-                            );
-                        }
+                final boolean hasNumber       = OpenapiTypesUtil.isNumber(right) || OpenapiTypesUtil.isNumber(left);
+                final boolean hasConstants    = (right instanceof ConstantReference || left instanceof ConstantReference);
+                final boolean hasArrayAccess  = (right instanceof ArrayAccessExpression || left instanceof ArrayAccessExpression);
+                final boolean isTargetContext = ! hasNumber && ! hasConstants && ! hasArrayAccess;
+                if (isTargetContext && (! isIntegerType(left, holder) || ! isIntegerType(right, holder))) {
+                    final PsiElement targetExpression = expression.getOperation();
+                    if (targetExpression != null) {
+                        result = true;
+                        holder.registerProblem(
+                                targetExpression,
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
+                        );
                     }
                 }
             }

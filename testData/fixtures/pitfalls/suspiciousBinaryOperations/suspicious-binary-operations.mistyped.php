@@ -27,4 +27,8 @@ function cases_holder(string $string, int $int)
     if ($string & 0x0) {}
     if ($string & 0.0) {}
     if ($string & 0b0) {}
+
+    /* false-positives: an operand is a constant or array access */
+    if ($string & $string[0]) {}
+    if ($string & JSON_THROW_ON_ERROR) {}
 }

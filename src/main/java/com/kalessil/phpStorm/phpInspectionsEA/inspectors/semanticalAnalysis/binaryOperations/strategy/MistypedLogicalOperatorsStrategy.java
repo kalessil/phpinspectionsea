@@ -4,7 +4,9 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
@@ -32,16 +34,22 @@ final public class MistypedLogicalOperatorsStrategy {
             final PsiElement left   = expression.getLeftOperand();
             final PsiElement right  = expression.getRightOperand();
             if (left != null && right != null) {
-                final boolean hasNumber = OpenapiTypesUtil.isNumber(right) || OpenapiTypesUtil.isNumber(left);
-                final boolean isTarget  = !hasNumber && (!isIntegerType(left, holder) || !isIntegerType(right, holder));
+                // constants, array accesses
+                final boolean hasNumber    = OpenapiTypesUtil.isNumber(right) || OpenapiTypesUtil.isNumber(left);
+                final boolean hasConstants = (right instanceof ConstantReference || left instanceof ConstantReference);
+                final boolean isTarget     = ! hasNumber && ! hasConstants && (! isIntegerType(left, holder) || ! isIntegerType(right, holder));
                 if (isTarget) {
-                    final PsiElement targetExpression = expression.getOperation();
-                    if (targetExpression != null) {
-                        result = true;
-                        holder.registerProblem(
-                                targetExpression,
-                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
-                        );
+                    /* false-positives: array accesses */
+                    final boolean hasArrayAccesses = (right instanceof ArrayAccessExpression || left instanceof ArrayAccessExpression);
+                    if (! hasArrayAccesses) {
+                        final PsiElement targetExpression = expression.getOperation();
+                        if (targetExpression != null) {
+                            result = true;
+                            holder.registerProblem(
+                                    targetExpression,
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), operator == PhpTokenTypes.opBIT_AND ? "&&" : "||")
+                            );
+                        }
                     }
                 }
             }

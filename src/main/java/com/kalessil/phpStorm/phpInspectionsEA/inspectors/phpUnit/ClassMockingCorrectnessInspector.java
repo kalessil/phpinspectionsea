@@ -75,13 +75,16 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                     for (final Method method : clazz.getOwnMethods()) {
                         for (final Parameter parameter : method.getParameters()) {
                             final PsiElement typeCandidate = parameter.getFirstPsiChild();
-                            if (typeCandidate instanceof ClassReference) {
-                                final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) typeCandidate);
-                                if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
-                                    holder.registerProblem(
-                                            typeCandidate,
-                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
-                                    );
+                            if (typeCandidate instanceof PhpTypeDeclaration) {
+                                for (ClassReference classReference : ((PhpTypeDeclaration) typeCandidate).getClassReferences()) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(classReference);
+                                    if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
+                                        holder.registerProblem(
+                                                classReference,
+                                                MessagesPresentationUtil.prefixWithEa(messageFinal)
+                                        );
+                                    }
+
                                 }
                             }
                         }

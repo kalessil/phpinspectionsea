@@ -75,13 +75,17 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
                 String message               = "Obtaining license information...";
                 final LicenseService service = EAUltimateApplicationComponent.getLicenseService();
                 if (service != null && service.shouldCheckPluginLicense()) {
+                    final int total = 260;
+                    final int basic = 115;
                     try {
                         if (service.isActivatedLicense()) {
-                            message = "Activated (running all features)";
+                            message = String.format("Activated (running all features: %s inspections)", total);
                         } else if (service.isTrialLicense()) {
-                            message = service.isActiveTrialLicense() ? "Active trial (running all features)." : "Expired trial (partially suspended features)";
+                            message = service.isActiveTrialLicense()
+                                    ? String.format("Active trial (running all features: %s inspections).", total)
+                                    : String.format("Expired trial (running basic features: %s of %s inspections)", basic, total);
                         } else {
-                            message = "Not activated (partially suspended features)";
+                            message = String.format("Not activated (running basic features: %s of %s inspections)", basic, total);
                         }
                     } catch (final Exception failure) {
                         message = String.format("Licensing information is not available (error: %s)", failure.getMessage());

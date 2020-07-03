@@ -92,7 +92,7 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
                     }
                 }
                 panel.addText("", 12);
-                panel.addText(message + ", as of IDE start.");
+                panel.addText(message);
             });
             component.addPanel("Settings management",                            panel -> {
                 panel.addText("", 12);

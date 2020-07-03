@@ -140,7 +140,7 @@ final public class LicenseService {
         if (isGenuine) {
             licenseDaysRemaining = client.GenuineDays(14, 7, new BoolRef());
         }
-        /* positive when  check succeeded or network error occurred and license activated */
+        /* positive when check succeeded or network error occurred and license activated */
         final boolean isActive = isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());
         shouldAllowUsage       = isActive || shouldAllowUsage;
         return isActive;

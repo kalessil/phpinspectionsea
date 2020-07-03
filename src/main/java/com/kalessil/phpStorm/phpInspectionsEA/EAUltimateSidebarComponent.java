@@ -55,7 +55,7 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
             final PsiManager files             = PsiManager.getInstance(myProject);
             for (final VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
                 final PsiFile psi = files.findFile(file);
-                if (psi instanceof PhpFile) {
+                if (psi != null) {
                     /* psi.subtreeChanged hangs and does nothing, hence hammer-scenario */
                     final Document document = documents.getDocument(psi);
                     if (document != null) {

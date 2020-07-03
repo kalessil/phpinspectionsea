@@ -7,6 +7,13 @@ class ClassWithDeprecatedConstructor
     }
 }
 
+class ClassWithSameStaticMethodName
+{
+    static public function ClassWithSameStaticMethodName()
+    {
+    }
+}
+
 class ClassWithBakCompatibleConstructor
 {
     public function __construct()

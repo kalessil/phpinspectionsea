@@ -70,6 +70,8 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                     if (!variableName.isEmpty()) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(catchStatement);
                         if (body != null) {
+                            // TODO: rework workflow
+
                             boolean isVariableUsed = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream().anyMatch(v -> variableName.equals(v.getName()));
                             if (!isVariableUsed) {
                                 if (ExpressionSemanticUtil.countExpressionsInGroup(body) == 0) {

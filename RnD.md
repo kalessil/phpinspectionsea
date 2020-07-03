@@ -16,4 +16,5 @@ Loops:
     - not empty contexts (incl. methods)
     - count/size check (incl. methods)
 - evaluate: short functions and unnecessary closure
+- marker traits -> marker interfaces: no methods, checked via class_uses(...)
 

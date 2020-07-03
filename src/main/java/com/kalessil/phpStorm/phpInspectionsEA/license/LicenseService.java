@@ -82,7 +82,7 @@ final public class LicenseService {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final String latest = "ea-ultimate-20191119-0854";
+        final String latest = "php-inspections-ea-ultimate-20200703-1828";
         final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath().toAbsolutePath();
         final String path   = location.toString();
         if (!Files.exists(location)) {
@@ -109,7 +109,7 @@ final public class LicenseService {
             if (directories != null) {
                 final String cleanupPath = cleanupDirectory.toString();
                 Arrays.stream(directories)
-                        .filter(name  -> !name.equals(latest) && name.startsWith("ea-ultimate-"))
+                        .filter(name  -> !name.equals(latest) && name.startsWith("php-inspections-ea-ultimate-"))
                         .forEach(name -> {
                             try {
                                 Files.walk(Paths.get(cleanupPath + File.separator + name))

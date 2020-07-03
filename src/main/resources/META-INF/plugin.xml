@@ -1114,18 +1114,14 @@
   </project-components>
 
   <actions>
-      <group id="EaUltimateLicensing" text="Php Inspections (EA Ultimate)" popup="true">
+      <group id="php-inspections-ea-ultimate" text="Php Inspections (EA Ultimate)" popup="true">
           <add-to-group group-id="RegistrationActions" anchor="first"/>
           <action
-              class="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseMenuAction"
-              id="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseMenuAction"
-              text="Release the Key (for Reuse)"
-          />
+              id="php-inspections-ea-ultimate:license-deactivate" text="Release the Key (for Reuse)"
+              class="com.kalessil.phpStorm.phpInspectionsEA.license.DeactivateLicenseMenuAction"/>
           <action
-              class="com.kalessil.phpStorm.phpInspectionsEA.license.ActivateLicenseMenuAction"
-              id="com.kalessil.phpStorm.phpInspectionsEA.license.ActivateLicenseMenuAction"
-              text="Activate with a Product Key"
-          />
+              id="php-inspections-ea-ultimate:license-activate" text="Activate with a Product Key"
+              class="com.kalessil.phpStorm.phpInspectionsEA.license.ActivateLicenseMenuAction"  />
       </group>
   </actions>
 

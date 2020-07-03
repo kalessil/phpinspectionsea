@@ -135,10 +135,10 @@ final public class LicenseService {
 
     public boolean isActiveLicense() throws TurboActivateException {
         client.SetCustomProxy(this.getProxy());
-        final IsGenuineResult result = client.IsGenuine(90, 14, true, false);
+        final IsGenuineResult result = client.IsGenuine(30, 7, true, false);
         final boolean isGenuine      = result == IsGenuineResult.Genuine || result == IsGenuineResult.GenuineFeaturesChanged;
         if (isGenuine) {
-            licenseDaysRemaining = client.GenuineDays(90, 14, new BoolRef());
+            licenseDaysRemaining = client.GenuineDays(30, 7, new BoolRef());
         }
         /* positive when  check succeeded or network error occurred and license activated */
         final boolean isActive = isGenuine || (result == IsGenuineResult.InternetError && client.IsActivated());

@@ -289,14 +289,14 @@ content is not changing the semantic.
 
 ```php
     /* before */
-    if (! $rule->valudate()) {
+    if (! $rule->validate()) {
         /* failed validation logic here */
     } else {
         /* passed validation logic here */
     }
 
     /* after */
-    if ($rule->valudate()) {
+    if ($rule->validate()) {
         /* passed validation logic here */
     } else {
         /* failed validation logic here */

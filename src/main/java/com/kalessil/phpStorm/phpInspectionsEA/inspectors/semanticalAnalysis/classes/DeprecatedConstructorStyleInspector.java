@@ -18,8 +18,17 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class DeprecatedConstructorStyleInspector extends PhpInspection {
-    private static final String messagePattern = "%s% has a deprecated constructor.";
+    private static final String messagePattern = "'%s' has a deprecated constructor.";
 
     @NotNull
     @Override
@@ -41,26 +50,26 @@ public class DeprecatedConstructorStyleInspector extends PhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 if (this.shouldSkipAnalysis(method, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
-                final PhpClass clazz      = method.getContainingClass();
-                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-                if (null == clazz || null == nameNode || clazz.isTrait() || clazz.isInterface()) {
-                    return;
-                }
-
-                final String className = clazz.getName();
-                if (className.equals(method.getName()) && null == clazz.findOwnMethodByName("__construct")) {
-                    holder.registerProblem(
-                            nameNode,
-                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%s%", className)),
-                            ProblemHighlightType.LIKE_DEPRECATED,
-                            new TheLocalFix()
-                    );
+                if (! method.isStatic()) {
+                    final PhpClass clazz      = method.getContainingClass();
+                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                    if (clazz != null && nameNode != null && ! clazz.isTrait() && ! clazz.isInterface()) {
+                        final String className = clazz.getName();
+                        if (className.equals(method.getName()) && clazz.findOwnMethodByName("__construct") == null) {
+                            holder.registerProblem(
+                                    nameNode,
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, className)),
+                                    ProblemHighlightType.LIKE_DEPRECATED,
+                                    new RenameConstructorFix()
+                            );
+                        }
+                    }
                 }
             }
         };
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static final class RenameConstructorFix implements LocalQuickFix {
         private static final String title = "Rename to __construct";
 
         @NotNull
@@ -79,9 +88,8 @@ public class DeprecatedConstructorStyleInspector extends PhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement reportingTarget = descriptor.getPsiElement();
             final PsiElement expression      = reportingTarget.getParent();
-            if (expression instanceof Method && !project.isDisposed()) {
-                PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "__construct");
-                reportingTarget.replace(replacement);
+            if (expression instanceof Method && ! project.isDisposed()) {
+                reportingTarget.replace(PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "__construct"));
             }
         }
     }

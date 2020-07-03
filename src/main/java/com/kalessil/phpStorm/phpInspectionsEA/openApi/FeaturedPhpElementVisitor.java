@@ -17,6 +17,6 @@ import org.jetbrains.annotations.NotNull;
 public abstract class FeaturedPhpElementVisitor extends GenericPhpElementVisitor {
     @Override
     protected boolean shouldSkipAnalysis(@NotNull PsiElement target, @NotNull StrictnessCategory category) {
-        return !EAUltimateApplicationComponent.areFeaturesEnabled() || super.shouldSkipAnalysis(target, category);
+        return ! EAUltimateApplicationComponent.areFeaturesEnabled() || super.shouldSkipAnalysis(target, category);
     }
 }

@@ -148,9 +148,7 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
             /* skip un-changed files is we analyze only modified once */
             if (settings.isAnalyzingOnlyModifiedFiles()) {
                 final EAUltimateChangesTrackerComponent tracker = project.getComponent(EAUltimateChangesTrackerComponent.class);
-                if (tracker != null) {
-                    return !tracker.isChanged(file.getVirtualFile());
-                }
+                return tracker != null && ! tracker.isChanged(file.getVirtualFile());
             }
         }
 

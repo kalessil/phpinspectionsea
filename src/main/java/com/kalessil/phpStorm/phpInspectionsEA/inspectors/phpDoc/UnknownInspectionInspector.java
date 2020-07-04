@@ -33,7 +33,8 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     final private static Set<String> inspectionsNames;
     private static int minInspectionNameLength;
     static {
-        inspectionsNames = collectAllAvailableInspections();
+        /* collect all available inspections names, add some special cases */
+        inspectionsNames = Arrays.stream(LOCAL_INSPECTION.getExtensions()).map(InspectionEP::getShortName).collect(Collectors.toSet());
         inspectionsNames.add("phpinspectionsea");
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
@@ -82,10 +83,5 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 }
             }
         };
-    }
-
-    @NotNull
-    private static Set<String> collectAllAvailableInspections() {
-        return Arrays.stream(LOCAL_INSPECTION.getExtensions()).map(InspectionEP::getShortName).collect(Collectors.toSet());
     }
 }

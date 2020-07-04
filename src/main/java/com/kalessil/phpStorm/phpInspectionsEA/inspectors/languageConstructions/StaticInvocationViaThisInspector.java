@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 
 public class StaticInvocationViaThisInspector extends PhpInspection {
     // Inspection options.
-    public boolean EXCEPT_PHPUNIT_ASSERTIONS = true;
+    public boolean EXCEPT_PHPUNIT_ASSERTIONS = false;
 
     private static final String messageThisUsed       = "'self::%s(...)' should be used instead.";
     private static final String messageExpressionUsed = "'...::%s(...)' should be used instead.";

@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,15 +76,20 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                 if (parent != null && parent.getFQN().equals("\\PhpSpec\\ObjectBehavior")) {
                     for (final Method method : clazz.getOwnMethods()) {
                         for (final Parameter parameter : method.getParameters()) {
-                            final PsiElement typeCandidate = parameter.getFirstPsiChild();
-                            if (typeCandidate instanceof ClassReference) {
-                                final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) typeCandidate);
-                                if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
-                                    holder.registerProblem(
-                                            typeCandidate,
-                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
-                                    );
+                            /* Since PS 2020.2 union types are introduced (BC-incompatible PSI-changes). Hence traversing node. */
+                            final Collection<ClassReference> references = PsiTreeUtil.findChildrenOfType(parameter, ClassReference.class);
+                            if (! references.isEmpty()) {
+                                for (final ClassReference reference : references) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
+                                        holder.registerProblem(
+                                                reference,
+                                                MessagesPresentationUtil.prefixWithEa(messageFinal)
+                                        );
+                                        break;
+                                    }
                                 }
+                                references.clear();
                             }
                         }
                     }

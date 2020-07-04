@@ -1,9 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpDoc;
 
-import com.intellij.codeInspection.LocalInspectionEP;
+import com.intellij.codeInspection.InspectionEP;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -11,14 +9,13 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
-import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.intellij.codeInspection.LocalInspectionEP.LOCAL_INSPECTION;
 
@@ -37,11 +34,8 @@ public class UnknownInspectionInspector extends PhpInspection {
     final private static Set<String> inspectionsNames;
     private static int minInspectionNameLength;
     static {
-        inspectionsNames = collectPhpRelatedInspections();
+        inspectionsNames = collectAllAvailableInspections();
         inspectionsNames.add("phpinspectionsea");
-        inspectionsNames.add("SpellCheckingInspection");
-        inspectionsNames.add("PhpUnused");
-        inspectionsNames.add("DuplicatedCode");
 
         /* shortest length is a threshold for separating inspections and comments mixed in */
         minInspectionNameLength = Integer.MAX_VALUE;
@@ -76,18 +70,16 @@ public class UnknownInspectionInspector extends PhpInspection {
                 if (tag.getName().equals("@noinspection")) {
                     final String[] candidates = tag.getTagValue().replaceAll("[^\\p{L}\\p{Nd}]+", " ").trim().split("\\s+");
                     if (candidates.length > 0) {
-                        final List<String> inspections = Arrays.stream(candidates)
-                                .filter(candidate -> candidate.length() >= minInspectionNameLength && !inspectionsNames.contains(candidate) && ! candidate.startsWith("Sql"))
-                                .collect(Collectors.toList());
-                        if (!inspections.isEmpty()) {
+                        final List<String> unknown = Stream.of(candidates[0]).filter(c -> ! inspectionsNames.contains(c)).collect(Collectors.toList());
+                        if (! unknown.isEmpty()) {
                             final PsiElement target = tag.getFirstChild();
                             if (target != null) {
                                 holder.registerProblem(
                                         target,
-                                        String.format(MessagesPresentationUtil.prefixWithEa(message), String.join(", ", inspections))
+                                        String.format(MessagesPresentationUtil.prefixWithEa(message), String.join(", ", unknown))
                                 );
                             }
-                            inspections.clear();
+                            unknown.clear();
                         }
                     }
                 }
@@ -95,17 +87,8 @@ public class UnknownInspectionInspector extends PhpInspection {
         };
     }
 
-    private static Set<String> collectPhpRelatedInspections() {
-        final Set<String> names = new HashSet<>();
-
-        final PluginId phpPlugin = PluginId.getId("com.jetbrains.php");
-        for (final LocalInspectionEP inspection : LOCAL_INSPECTION.getExtensions()) {
-            final IdeaPluginDescriptor plugin = (IdeaPluginDescriptor) inspection.getPluginDescriptor();
-            if (phpPlugin.equals(plugin.getPluginId()) || ArrayUtils.contains(plugin.getDependentPluginIds(), phpPlugin)) {
-                names.add(inspection.getShortName());
-            }
-        }
-
-        return names;
+    @NotNull
+    private static Set<String> collectAllAvailableInspections() {
+        return Arrays.stream(LOCAL_INSPECTION.getExtensions()).map(InspectionEP::getShortName).collect(Collectors.toSet());
     }
 }

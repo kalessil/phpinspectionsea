@@ -30,8 +30,8 @@ import java.util.stream.Stream;
 
 public class ArrayMergeMissUseInspector extends PhpInspection {
     private static final String messageUseArray     = "'[...]' would fit more here (it also much faster).";
-    private static final String messageArrayUnshift = "'array_unshift(...)' would fit more here (it also faster).";
-    private static final String messageArrayPush    = "'array_push(...)' would fit more here (it also faster).";
+    private static final String messageArrayUnshift = "'array_unshift(%s, ...)' would fit more here (it also faster).";
+    private static final String messageArrayPush    = "'array_push(%s, ...)' would fit more here (it also faster).";
     private static final String messageNestedMerge  = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
     @NotNull
@@ -70,7 +70,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                             fragments.clear();
                         }
 
-                        /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` - pushing items at front/back */
+                        /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` - pushing items into array */
                         if (arguments.length == 2 && (arguments[0] instanceof ArrayCreationExpression || arguments[1] instanceof ArrayCreationExpression)) {
                             final PsiElement array       = arguments[0] instanceof ArrayCreationExpression ? arguments[0] : arguments[1];
                             final PsiElement destination = arguments[0] instanceof ArrayCreationExpression ? arguments[1] : arguments[0];
@@ -92,7 +92,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                                     Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
                                                     holder.registerProblem(
                                                             parent,
-                                                            MessagesPresentationUtil.prefixWithEa(messageArrayUnshift),
+                                                            MessagesPresentationUtil.prefixWithEa(String.format(messageArrayUnshift, destination.getText())),
                                                             new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
                                                     );
                                                 }
@@ -102,7 +102,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                                             Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
                                             holder.registerProblem(
                                                     parent,
-                                                    MessagesPresentationUtil.prefixWithEa(messageArrayPush),
+                                                    MessagesPresentationUtil.prefixWithEa(String.format(messageArrayPush, destination.getText())),
                                                     new UseArrayPushFixer(String.format("array_push(%s)", String.join(", ", fragments)))
                                             );
                                         }

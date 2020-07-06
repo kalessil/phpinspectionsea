@@ -76,38 +76,53 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                             final PsiElement array       = arguments[0] instanceof ArrayCreationExpression ? arguments[0] : arguments[1];
                             final PsiElement destination = arguments[0] instanceof ArrayCreationExpression ? arguments[1] : arguments[0];
                             final PsiElement[] elements  = array.getChildren();
-                            if (elements.length > 0 && Arrays.stream(elements).anyMatch(e -> !(e instanceof ArrayHashElement))) {
+                            if (elements.length > 0) {
                                 final PsiElement parent = reference.getParent();
                                 if (OpenapiTypesUtil.isAssignment(parent)) {
                                     final PsiElement container = ((AssignmentExpression) parent).getVariable();
                                     if (container != null && OpenapiEquivalenceUtil.areEqual(container, destination)) {
-                                        final List<String> fragments = new ArrayList<>();
-                                        if (arguments[0] instanceof ArrayCreationExpression) {
-                                            if (destination instanceof Variable) {
-                                                final boolean hasByReference = Arrays.stream(elements)
-                                                        .filter(e -> e instanceof PhpPsiElement)
-                                                        .map(e -> ((PhpPsiElement) e).getFirstPsiChild())
-                                                        .anyMatch(ExpressionSemanticUtil::isByReference);
-                                                if (!hasByReference) {
-                                                    fragments.add(destination.getText());
-                                                    Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                        if (Arrays.stream(elements).anyMatch(e -> ! (e instanceof ArrayHashElement))) {
+                                            final List<String> fragments = new ArrayList<>();
+                                            if (arguments[0] instanceof ArrayCreationExpression) {
+                                                if (destination instanceof Variable) {
+                                                    final boolean hasByReference = Arrays.stream(elements)
+                                                            .filter(e -> e instanceof PhpPsiElement)
+                                                            .map(e -> ((PhpPsiElement) e).getFirstPsiChild())
+                                                            .anyMatch(ExpressionSemanticUtil::isByReference);
+                                                    if (! hasByReference) {
+                                                        fragments.add(destination.getText());
+                                                        Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                                        holder.registerProblem(
+                                                                parent,
+                                                                MessagesPresentationUtil.prefixWithEa(String.format(messageArrayUnshift, destination.getText())),
+                                                                new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
+                                                        );
+                                                    }
+                                                }
+                                            } else {
+                                                fragments.add(destination.getText());
+                                                Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
+                                                holder.registerProblem(
+                                                        parent,
+                                                        MessagesPresentationUtil.prefixWithEa(String.format(messageArrayPush, destination.getText())),
+                                                        new UseArrayPushFixer(String.format("array_push(%s)", String.join(", ", fragments)))
+                                                );
+                                            }
+                                            fragments.clear();
+                                        } else {
+                                            if (elements.length == 1 && destination == arguments[0]) {
+                                                final ArrayHashElement hash = (ArrayHashElement) elements[0];
+                                                final PsiElement key        = hash.getKey();
+                                                final PsiElement value      = hash.getValue();
+                                                if (key != null && value != null) {
                                                     holder.registerProblem(
                                                             parent,
-                                                            MessagesPresentationUtil.prefixWithEa(String.format(messageArrayUnshift, destination.getText())),
-                                                            new UseArrayUnshiftFixer(String.format("array_unshift(%s)", String.join(", ", fragments)))
+                                                            MessagesPresentationUtil.prefixWithEa(String.format(messageArraySetItem, destination.getText())),
+                                                            new UseArrayElementAssignmentFixer(String.format("%s[%s] = %s", destination.getText(), key.getText(), value.getText()))
                                                     );
                                                 }
                                             }
-                                        } else {
-                                            fragments.add(destination.getText());
-                                            Arrays.stream(elements).forEach(e -> fragments.add(e.getText()));
-                                            holder.registerProblem(
-                                                    parent,
-                                                    MessagesPresentationUtil.prefixWithEa(String.format(messageArrayPush, destination.getText())),
-                                                    new UseArrayPushFixer(String.format("array_push(%s)", String.join(", ", fragments)))
-                                            );
                                         }
-                                        fragments.clear();
                                     }
                                 }
                             }
@@ -197,6 +212,20 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
         }
 
         UseArrayFixer(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static final class UseArrayElementAssignmentFixer extends UseSuggestedReplacementFixer {
+        private static final String title = "Replace with array element assignment";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return MessagesPresentationUtil.prefixWithEa(title);
+        }
+
+        UseArrayElementAssignmentFixer(@NotNull String expression) {
             super(expression);
         }
     }

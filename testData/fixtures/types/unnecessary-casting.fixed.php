@@ -92,7 +92,7 @@
 
     function cases_argument_specific_return() {
         return [
-            (int) microtime(true),
+            (int) (microtime(true) * 1000),
             (microtime() * 1),
             (microtime(false) * 1),
         ];

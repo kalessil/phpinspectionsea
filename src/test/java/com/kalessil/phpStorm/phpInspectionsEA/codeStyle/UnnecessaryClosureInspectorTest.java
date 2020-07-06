@@ -1,9 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
+import com.jetbrains.php.config.PhpLanguageFeature;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryClosureInspector;
+
+import java.util.Arrays;
 
 final public class UnnecessaryClosureInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
@@ -18,10 +21,14 @@ final public class UnnecessaryClosureInspectorTest extends PhpCodeInsightFixture
     public void testIfFindsArrowFunctionPatterns() {
         final PhpLanguageLevel level = PhpLanguageLevel.parse("7.4");
         if (level != null && level.getVersionString().equals("7.4")) {
-            PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
-            myFixture.enableInspections(new UnnecessaryClosureInspector());
-            myFixture.configureByFile("testData/fixtures/codeStyle/unnecessary-closures.php74.php");
-            myFixture.testHighlighting(true, false, true);
+            /* looks like 7.4 feature were introduced in multiple batches */
+            final boolean hasArrowFunctions = Arrays.stream(PhpLanguageFeature.values()).anyMatch(f -> f.name().equals("ARROW_FUNCTION_SYNTAX"));
+            if (hasArrowFunctions) {
+                PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
+                myFixture.enableInspections(new UnnecessaryClosureInspector());
+                myFixture.configureByFile("testData/fixtures/codeStyle/unnecessary-closures.php74.php");
+                myFixture.testHighlighting(true, false, true);
+            }
         }
     }
 }

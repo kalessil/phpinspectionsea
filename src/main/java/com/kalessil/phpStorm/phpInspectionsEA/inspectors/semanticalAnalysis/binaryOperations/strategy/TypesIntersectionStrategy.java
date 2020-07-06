@@ -42,13 +42,11 @@ final public class TypesIntersectionStrategy {
                             holder.registerProblem(
                                     expression,
                                     String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), expression.getText())
-                                        + String.format(" (%s vs %s)", leftTypes.toString(), right.toString())
                             );
                         } else {
                             holder.registerProblem(
                                     expression,
                                     String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), expression.getText())
-                                        + String.format(" (%s vs %s)", leftTypes.toString(), right.toString())
                             );
                         }
                     }

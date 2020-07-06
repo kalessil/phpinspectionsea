@@ -92,9 +92,9 @@
 
     function cases_argument_specific_return() {
         return [
-            (int) microtime(true),
-            (int) microtime(),
-            (int) microtime(false),
+            (int) (microtime(true) * 1000),
+            <weak_warning descr="[EA] This type casting is not necessary, as the argument is of needed type.">(int)</weak_warning> (microtime() * 1),
+            <weak_warning descr="[EA] This type casting is not necessary, as the argument is of needed type.">(int)</weak_warning> (microtime(false) * 1),
         ];
     }
 

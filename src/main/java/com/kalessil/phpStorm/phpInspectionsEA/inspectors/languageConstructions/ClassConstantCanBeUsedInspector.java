@@ -50,6 +50,7 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
 
     private static final String messagePattern   = "Perhaps this can be replaced with %c%::class.";
     private static final String messageUseStatic = "'static::class' can be used instead.";
+    private static final String messageUseParent = "'parent::class' can be used instead.";
 
     final static private Pattern classNameRegex;
     static {
@@ -84,14 +85,25 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
 
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
                     final String functionName = reference.getName();
-                    if (functionName != null && functionName.equals("get_called_class")) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 0) {
-                            holder.registerProblem(
-                                    reference,
-                                    MessagesPresentationUtil.prefixWithEa(messageUseStatic),
-                                    new UseStaticFix()
-                            );
+                    if (functionName != null) {
+                        if (functionName.equals("get_called_class")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 0) {
+                                holder.registerProblem(
+                                        reference,
+                                        MessagesPresentationUtil.prefixWithEa(messageUseStatic),
+                                        new UseStaticClassConstantFix()
+                                );
+                            }
+                        } else if (functionName.equals("get_parent_class")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
+                                holder.registerProblem(
+                                        reference,
+                                        MessagesPresentationUtil.prefixWithEa(messageUseParent),
+                                        new UseParentClassConstantFix()
+                                );
+                            }
                         }
                     }
                 }
@@ -193,7 +205,7 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
         };
     }
 
-    private static final class UseStaticFix extends UseSuggestedReplacementFixer {
+    private static final class UseStaticClassConstantFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use static::class instead";
 
         @NotNull
@@ -202,8 +214,22 @@ public class ClassConstantCanBeUsedInspector extends PhpInspection {
             return MessagesPresentationUtil.prefixWithEa(title);
         }
 
-        UseStaticFix() {
+        UseStaticClassConstantFix() {
             super("static::class");
+        }
+    }
+
+    private static final class UseParentClassConstantFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use parent::class instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return MessagesPresentationUtil.prefixWithEa(title);
+        }
+
+        UseParentClassConstantFix() {
+            super("parent::class");
         }
     }
 

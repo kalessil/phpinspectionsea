@@ -21,6 +21,7 @@ class Action {
             'Prerequisites',
 
             <weak_warning descr="[EA] 'static::class' can be used instead.">get_called_class()</weak_warning>,
+            <weak_warning descr="[EA] 'parent::class' can be used instead.">get_parent_class()</weak_warning>,
 
             <weak_warning descr="[EA] Perhaps this can be replaced with \stdClass::class.">'\stdClass'</weak_warning>,
             <weak_warning descr="[EA] Perhaps this can be replaced with \stdClass::class.">'stdClass'</weak_warning>,

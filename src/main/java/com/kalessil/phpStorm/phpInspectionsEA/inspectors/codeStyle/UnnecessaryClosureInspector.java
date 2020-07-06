@@ -75,69 +75,96 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                         final Function closure       = (Function) (expression instanceof Function ? expression : expression.getFirstChild());
                         final Parameter[] parameters = closure.getParameters();
                         if (parameters.length > 0 && Arrays.stream(parameters).noneMatch(Parameter::isPassByRef)) {
-                            final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(closure);
-                            if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
-                                final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
-                                if (last != null) {
-                                    final PsiElement candidate = this.getCandidate(last);
-                                    if (candidate instanceof FunctionReference) {
-                                        final FunctionReference callback = (FunctionReference) candidate;
-                                        if (this.canInline(callback, closure)) {
-                                            final String replacement = String.format(
-                                                    "'%s%s'",
-                                                    callback.getImmediateNamespaceName(),
-                                                    callback.getName()
-                                            );
-                                            holder.registerProblem(
-                                                    expression,
-                                                    String.format(MessagesPresentationUtil.prefixWithEa(messageString), replacement),
-                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                    new UseCallbackFix(replacement)
-                                            );
-                                        }
-                                    } else if (candidate instanceof UnaryExpression) {
-                                        final UnaryExpression unary = (UnaryExpression) candidate;
-                                        final PsiElement operation  = unary.getOperation();
-                                        if (operation != null) {
-                                            final IElementType operator = operation.getNode().getElementType();
-                                            final PsiElement value      = unary.getValue();
-                                            if (value instanceof Variable && castingsMapping.containsKey(operator)) {
-                                                final String valueName = ((Variable) value).getName();
-                                                if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(valueName))) {
-                                                    final String replacement = String.format("'%s'", castingsMapping.get(operator));
-                                                    holder.registerProblem(
-                                                            expression,
-                                                            String.format(MessagesPresentationUtil.prefixWithEa(messageString), replacement),
-                                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                            new UseCallbackFix(replacement)
-                                                    );
-                                                }
-                                            } else if (value instanceof PhpEmpty && operator == PhpTokenTypes.opNOT) {
-                                                if (functionName.equals("array_filter")) {
-                                                    final PsiElement[] emptyArguments = ((PhpEmpty) value).getVariables();
-                                                    if (emptyArguments.length == 1 && emptyArguments[0] instanceof Variable) {
-                                                        final String checkedName = ((Variable) emptyArguments[0]).getName();
-                                                        if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(checkedName))) {
-                                                            holder.registerProblem(
-                                                                    expression,
-                                                                    MessagesPresentationUtil.prefixWithEa(messageDrop),
-                                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                                                            );
-                                                        }
+                            final boolean isArrowFunction = ! OpenapiTypesUtil.is(closure.getFirstChild(), PhpTokenTypes.kwFUNCTION);
+                            final PsiElement last;
+                            if (isArrowFunction) {
+                                last = closure.getLastChild();
+                            } else {
+                                final GroupStatement body     = ExpressionSemanticUtil.getGroupStatement(closure);
+                                final boolean isTargetClosure = body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1;
+                                last                          = isTargetClosure ? ExpressionSemanticUtil.getLastStatement(body) : null;
+                            }
+                            if (last != null) {
+                                final PsiElement candidate = isArrowFunction ? last : this.getCandidateFromClassicClosure(last);
+                                if (candidate instanceof FunctionReference) {
+                                    final FunctionReference callback = (FunctionReference) candidate;
+                                    if (this.canInline(callback, closure)) {
+                                        final String replacement = String.format(
+                                                "'%s%s'",
+                                                callback.getImmediateNamespaceName(),
+                                                callback.getName()
+                                        );
+                                        holder.registerProblem(
+                                                expression,
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageString), replacement),
+                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                new UseCallbackFix(replacement)
+                                        );
+                                    }
+                                } else if (candidate instanceof UnaryExpression) {
+                                    final UnaryExpression unary = (UnaryExpression) candidate;
+                                    final PsiElement operation  = unary.getOperation();
+                                    if (operation != null) {
+                                        final IElementType operator = operation.getNode().getElementType();
+                                        final PsiElement value      = unary.getValue();
+                                        if (value instanceof Variable && castingsMapping.containsKey(operator)) {
+                                            final String valueName = ((Variable) value).getName();
+                                            if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(valueName))) {
+                                                final String replacement = String.format("'%s'", castingsMapping.get(operator));
+                                                holder.registerProblem(
+                                                        expression,
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messageString), replacement),
+                                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                        new UseCallbackFix(replacement)
+                                                );
+                                            }
+                                        } else if (value instanceof PhpEmpty && operator == PhpTokenTypes.opNOT) {
+                                            if (functionName.equals("array_filter")) {
+                                                final PsiElement[] emptyArguments = ((PhpEmpty) value).getVariables();
+                                                if (emptyArguments.length == 1 && emptyArguments[0] instanceof Variable) {
+                                                    final String checkedName = ((Variable) emptyArguments[0]).getName();
+                                                    if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(checkedName))) {
+                                                        holder.registerProblem(
+                                                                expression,
+                                                                MessagesPresentationUtil.prefixWithEa(messageDrop),
+                                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                                        );
                                                     }
                                                 }
                                             }
                                         }
-                                    } else if (candidate instanceof BinaryExpression) {
-                                        final BinaryExpression binary = (BinaryExpression) candidate;
-                                        final IElementType operation  = binary.getOperationType();
-                                        if (operation == PhpTokenTypes.opIDENTICAL) {
+                                    }
+                                } else if (candidate instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) candidate;
+                                    final IElementType operation  = binary.getOperationType();
+                                    if (operation == PhpTokenTypes.opIDENTICAL) {
+                                        PsiElement comparedValue = null;
+                                        final PsiElement left    = binary.getLeftOperand();
+                                        final PsiElement right   = binary.getRightOperand();
+                                        if (PhpLanguageUtil.isNull(right)) {
+                                            comparedValue = left;
+                                        } else if (PhpLanguageUtil.isNull(left)) {
+                                            comparedValue = right;
+                                        }
+                                        if (comparedValue instanceof Variable) {
+                                            final String comparedName = ((Variable) comparedValue).getName();
+                                            if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(comparedName))) {
+                                                holder.registerProblem(
+                                                        expression,
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(messageString), "'is_null'"),
+                                                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                        new UseCallbackFix("'is_null'")
+                                                );
+                                            }
+                                        }
+                                    } else if (operation == PhpTokenTypes.opNOT_EQUAL) {
+                                        if (functionName.equals("array_filter")) {
                                             PsiElement comparedValue = null;
                                             final PsiElement left    = binary.getLeftOperand();
                                             final PsiElement right   = binary.getRightOperand();
-                                            if (PhpLanguageUtil.isNull(right)) {
+                                            if (PhpLanguageUtil.isFalsyValue(right)) {
                                                 comparedValue = left;
-                                            } else if (PhpLanguageUtil.isNull(left)) {
+                                            } else if (PhpLanguageUtil.isFalsyValue(left)) {
                                                 comparedValue = right;
                                             }
                                             if (comparedValue instanceof Variable) {
@@ -145,31 +172,9 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                                                 if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(comparedName))) {
                                                     holder.registerProblem(
                                                             expression,
-                                                            String.format(MessagesPresentationUtil.prefixWithEa(messageString), "'is_null'"),
-                                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                            new UseCallbackFix("'is_null'")
+                                                            MessagesPresentationUtil.prefixWithEa(messageDrop),
+                                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                                     );
-                                                }
-                                            }
-                                        } else if (operation == PhpTokenTypes.opNOT_EQUAL) {
-                                            if (functionName.equals("array_filter")) {
-                                                PsiElement comparedValue = null;
-                                                final PsiElement left    = binary.getLeftOperand();
-                                                final PsiElement right   = binary.getRightOperand();
-                                                if (PhpLanguageUtil.isFalsyValue(right)) {
-                                                    comparedValue = left;
-                                                } else if (PhpLanguageUtil.isFalsyValue(left)) {
-                                                    comparedValue = right;
-                                                }
-                                                if (comparedValue instanceof Variable) {
-                                                    final String comparedName = ((Variable) comparedValue).getName();
-                                                    if (Arrays.stream(closure.getParameters()).anyMatch(p -> p.getName().equals(comparedName))) {
-                                                        holder.registerProblem(
-                                                                expression,
-                                                                MessagesPresentationUtil.prefixWithEa(messageDrop),
-                                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                                                        );
-                                                    }
                                                 }
                                             }
                                         }
@@ -182,7 +187,7 @@ public class UnnecessaryClosureInspector extends PhpInspection {
             }
 
             @Nullable
-            private PsiElement getCandidate(@NotNull PsiElement last) {
+            private PsiElement getCandidateFromClassicClosure(@NotNull PsiElement last) {
                 if (last instanceof PhpReturn) {
                     final PsiElement candidate = ExpressionSemanticUtil.getReturnValue((PhpReturn) last);
                     if (candidate instanceof UnaryExpression || candidate instanceof BinaryExpression || OpenapiTypesUtil.isFunctionReference(candidate)) {

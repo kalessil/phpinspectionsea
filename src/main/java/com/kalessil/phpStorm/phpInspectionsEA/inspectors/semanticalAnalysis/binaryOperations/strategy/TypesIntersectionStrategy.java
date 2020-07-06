@@ -6,14 +6,12 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -33,24 +31,29 @@ final public class TypesIntersectionStrategy {
         final IElementType operation = expression.getOperationType();
         if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
             final PhpType left = extract(expression.getLeftOperand(), holder);
-            if (!left.isEmpty() && !left.hasUnknown()) {
+            if (! left.isEmpty() && ! left.hasUnknown()) {
                 final PhpType right = extract(expression.getRightOperand(), holder);
-                if (!right.isEmpty() && !right.hasUnknown()) {
-                    final Set<String> leftTypes  = left.getTypes();
-                    final boolean isIntersecting = right.getTypes().stream().anyMatch(leftTypes::contains);
-                    if (result = !isIntersecting) {
+                if (! right.isEmpty() && ! right.hasUnknown()) {
+                    final Set<String> leftTypes  = left.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
+                    final Set<String> rightTypes = right.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
+                    final boolean isIntersecting = rightTypes.stream().anyMatch(leftTypes::contains);
+                    if (result = ! isIntersecting) {
                         if (operation == PhpTokenTypes.opIDENTICAL) {
                             holder.registerProblem(
                                     expression,
                                     String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), expression.getText())
+                                        + String.format(" (%s vs %s)", leftTypes.toString(), right.toString())
                             );
                         } else {
                             holder.registerProblem(
                                     expression,
                                     String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), expression.getText())
+                                        + String.format(" (%s vs %s)", leftTypes.toString(), right.toString())
                             );
                         }
                     }
+                    leftTypes.clear();
+                    rightTypes.clear();
                 }
             }
         }
@@ -69,7 +72,7 @@ final public class TypesIntersectionStrategy {
                 }
             } else if (expression instanceof FieldReference) {
                 final PsiElement resolved = OpenapiResolveUtil.resolveReference((FieldReference) expression);
-                if (resolved instanceof Field && !OpenapiResolveUtil.resolveDeclaredType((Field) resolved).isEmpty()) {
+                if (resolved instanceof Field && ! OpenapiResolveUtil.resolveDeclaredType((Field) resolved).isEmpty()) {
                     final PhpType type = OpenapiResolveUtil.resolveType((FieldReference) expression, holder.getProject());
                     if (type != null) {
                         return type;

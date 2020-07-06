@@ -167,6 +167,13 @@ final public class OpenapiResolveUtil {
                                     result = new PhpType().add(PhpType.STRING).add(PhpType.NULL);
                                 }
                             }
+                        } else if (name.equals("microtime")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 1 && ! PhpLanguageUtil.isFalse(arguments[0])) {
+                                result = new PhpType().add(PhpType.FLOAT);
+                            } else {
+                                result = new PhpType().add(PhpType.INT);
+                            }
                         }
                     }
                 }

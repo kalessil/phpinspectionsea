@@ -90,6 +90,14 @@
         ];
     }
 
+    function cases_argument_specific_return() {
+        return [
+            (int) microtime(true),
+            microtime(),
+            microtime(false),
+        ];
+    }
+
     /* false-positives: untyped properties in ternaries/elvis operators */
     class UntypedPropertyConsumer extends UntypedPropertyHolder {
         public function method() {

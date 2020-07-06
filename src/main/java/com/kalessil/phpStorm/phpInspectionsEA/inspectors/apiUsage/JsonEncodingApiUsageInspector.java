@@ -125,13 +125,18 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
             }
 
             private boolean hasThrowOnErrorFlag(@NotNull PsiElement argument) {
-                boolean hasFlag = false;
+                boolean hasFlag               = false;
                 final Set<PsiElement> options = PossibleValuesDiscoveryUtil.discover(argument);
                 if (options.size() == 1) {
                     final PsiElement option = options.iterator().next();
                     if (OpenapiTypesUtil.isNumber(option)) {
-                        hasFlag = option.getText().equals("4194304"); /* JSON_THROW_ON_ERROR constant */
+                        /* JSON_THROW_ON_ERROR constant value gets resolved */
+                        hasFlag = option.getText().equals("4194304");
+                    } else if (option instanceof ConstantReference) {
+                        /* JSON_THROW_ON_ERROR constant values is not getting resolved (no clue why, but happens) */
+                        hasFlag = "JSON_THROW_ON_ERROR".equals(((ConstantReference) option).getName());
                     } else {
+                        /* a complex case like local variable or implicit flags combination */
                         hasFlag = PsiTreeUtil.findChildrenOfType(option, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
                     }
                 }

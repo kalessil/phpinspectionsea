@@ -34,6 +34,9 @@ import java.util.stream.Stream;
  * file that was distributed with this source code.
  */
 
+// DisconnectedForeachInstructionInspector -> can be moved to outer scope inspections
+//        + https://github.com/kalessil/phpinspectionsea/issues/1529
+
 public class DisconnectedForeachInstructionInspector extends PhpInspection {
     // Inspection options.
     public boolean SUGGEST_USING_CLONE = false;

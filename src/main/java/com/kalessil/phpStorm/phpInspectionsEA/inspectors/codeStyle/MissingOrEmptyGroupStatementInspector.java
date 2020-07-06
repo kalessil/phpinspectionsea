@@ -31,7 +31,7 @@ public class MissingOrEmptyGroupStatementInspector extends PhpInspection {
     // Inspection options.
     public boolean REPORT_EMPTY_BODY = true;
 
-    private static final String messageMissingBrackets = "Wrap constructs' body within a block (PSR-2 recommendations).";
+    private static final String messageMissingBrackets = "Wrap constructs' body within a block (PSR-12 recommendations).";
     private static final String messageEmptyBody       = "Statement has empty block.";
 
     @NotNull

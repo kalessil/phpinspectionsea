@@ -90,6 +90,14 @@
         ];
     }
 
+    function cases_argument_specific_return() {
+        return [
+            (int) (microtime(true) * 1000),
+            <weak_warning descr="[EA] This type casting is not necessary, as the argument is of needed type.">(int)</weak_warning> (microtime() * 1),
+            <weak_warning descr="[EA] This type casting is not necessary, as the argument is of needed type.">(int)</weak_warning> (microtime(false) * 1),
+        ];
+    }
+
     /* false-positives: untyped properties in ternaries/elvis operators */
     class UntypedPropertyConsumer extends UntypedPropertyHolder {
         public function method() {

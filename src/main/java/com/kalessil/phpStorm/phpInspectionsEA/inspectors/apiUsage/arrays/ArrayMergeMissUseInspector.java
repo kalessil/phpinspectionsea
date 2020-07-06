@@ -32,6 +32,7 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
     private static final String messageUseArray     = "'[...]' would fit more here (it also much faster).";
     private static final String messageArrayUnshift = "'array_unshift(%s, ...)' would fit more here (it also faster).";
     private static final String messageArrayPush    = "'array_push(%s, ...)' would fit more here (it also faster).";
+    private static final String messageArraySetItem = "'%s[...] = ...' would fit more here (it also faster).";
     private static final String messageNestedMerge  = "Inlining nested 'array_merge(...)' in arguments is possible here (it also faster).";
 
     @NotNull

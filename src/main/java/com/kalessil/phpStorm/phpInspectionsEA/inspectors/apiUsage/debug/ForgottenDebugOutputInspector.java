@@ -163,6 +163,8 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         list.add("xdebug_stop_trace");
         list.add("xdebug_time_index");
         list.add("xdebug_var_dump");
+        /* Wordpress related functions */
+        list.add("wp_die");
 
         return list;
     }

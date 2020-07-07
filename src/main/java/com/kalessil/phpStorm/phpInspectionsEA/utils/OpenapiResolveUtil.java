@@ -38,6 +38,7 @@ final public class OpenapiResolveUtil {
         functionReturnTypes.put("preg_replace_callback_array", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
         functionReturnTypes.put("strstr", new PhpType().add(PhpType.STRING).add("false"));
         functionReturnTypes.put("get_class", new PhpType().add(PhpType.STRING));
+        functionReturnTypes.put("get_parent_class", new PhpType().add(PhpType.STRING));
         functionReturnTypes.put("explode", new PhpType().add(PhpType.ARRAY).add("false"));
         functionReturnTypes.put("array_unique", new PhpType().add(PhpType.ARRAY));
         functionReturnTypes.put("parse_url", new PhpType().add(PhpType.ARRAY).add("false"));
@@ -178,58 +179,8 @@ final public class OpenapiResolveUtil {
                                     result = new PhpType().add(PhpType.INT);
                                 }
                                 break;
-                            /* array functions return types are assuming missing keys information */
-                            /* Skipped: array_keys([]) -> key-type[], array_search() -> false|key-type */
-                            case "array_unique":
-                            case "array_slice":
-                            case "array_diff":
-                            case "array_diff_assoc":
-                            case "array_intersect":
-                            case "array_intersect_assoc":
-                            case "array_reverse":
-                            case "array_filter":
-                            case "array_values":
-                                if (arguments.length > 0 && arguments[0] instanceof PhpTypedElement) {
-                                    result = resolveType((PhpTypedElement) arguments[0], project);
-                                }
-                                break;
-                            case "array_shift":
-                            case "array_pop":
-                                if (arguments.length > 0 && arguments[0] instanceof PhpTypedElement) {
-                                    final PhpType argumentType = resolveType((PhpTypedElement) arguments[0], project);
-                                    if (argumentType != null && argumentType.size() == 1 && ! argumentType.hasUnknown()) {
-                                        final String candidate = argumentType.getTypes().iterator().next();
-                                        if (candidate.endsWith("[]")) {
-                                            result = new PhpType().add(PhpType.NULL).add(candidate.replace("[]", ""));
-                                        }
-                                    }
-                                }
-                                break;
-                            case "current":
-                            case "next":
-                            case "prev":
-                            case "end":
-                                if (arguments.length > 0 && arguments[0] instanceof PhpTypedElement) {
-                                    final PhpType argumentType = resolveType((PhpTypedElement) arguments[0], project);
-                                    if (argumentType != null && argumentType.size() == 1 && ! argumentType.hasUnknown()) {
-                                        final String candidate = argumentType.getTypes().iterator().next();
-                                        if (candidate.endsWith("[]")) {
-                                            result = new PhpType().add("false").add(candidate.replace("[]", ""));
-                                        }
-                                    }
-                                }
-                                break;
+                            /* Some functions are covered by PhpStorm meta (2020.1): see php.jar!/stubs/meta/.phpstorm.meta.php */
                         }
-                        /*
-                            Further improvements:
-                                --
-                                    // array_merge(),             // argument-type|argument-type|?
-                                    // array_merge_recursive(),   // argument-type|argument-type|?
-                                    // array_replace(),           // argument-type|argument-type|?
-                                    // array_replace_recursive(), // argument-type|argument-type|?
-                                    // array_column([], ''),      // column-type[]
-                                    // array_map('...', []),      // callback-type[]
-                         */
                     }
                 }
             } else if (expression instanceof ArrayAccessExpression) {

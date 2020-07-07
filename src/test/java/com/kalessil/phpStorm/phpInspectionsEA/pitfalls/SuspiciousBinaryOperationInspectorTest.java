@@ -76,9 +76,4 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/suspicious-binary-operations.simplify-boolean-comparison.php");
         myFixture.testHighlighting(true, false, true);
     }
-    public void testImprovedCoreFunctionsTypesResolving() {
-        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
-        myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/improved-types-resolving.php");
-        myFixture.testHighlighting(true, false, true);
-    }
 }

@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.bin
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
@@ -30,9 +31,9 @@ final public class TypesIntersectionStrategy {
         boolean result               = false;
         final IElementType operation = expression.getOperationType();
         if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-            final PhpType left = extract(expression.getLeftOperand(), holder);
+            final PhpType left = extract(expression.getLeftOperand(), holder).filterMixed();
             if (! left.isEmpty() && ! left.hasUnknown()) {
-                final PhpType right = extract(expression.getRightOperand(), holder);
+                final PhpType right = extract(expression.getRightOperand(), holder).filterMixed();
                 if (! right.isEmpty() && ! right.hasUnknown()) {
                     final Set<String> leftTypes  = left.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
                     final Set<String> rightTypes = right.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
@@ -58,14 +59,28 @@ final public class TypesIntersectionStrategy {
         return result;
     }
 
+    @NotNull
     private static PhpType extract(@Nullable PsiElement expression, @NotNull ProblemsHolder holder) {
         if (expression instanceof PhpTypedElement) {
             if (expression instanceof FunctionReference) {
-                final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) expression);
-                if (resolved instanceof Function && OpenapiElementsUtil.getReturnType((Function) resolved) != null) {
-                    final PhpType type = OpenapiResolveUtil.resolveType((FunctionReference) expression, holder.getProject());
-                    if (type != null) {
-                        return type;
+                final FunctionReference reference = (FunctionReference) expression;
+                final PsiElement resolved         = OpenapiResolveUtil.resolveReference(reference);
+                if (resolved instanceof Function) {
+                    final Function function = (Function) resolved;
+                    /* rely on implicitly declared return types */
+                    if (OpenapiElementsUtil.getReturnType(function) != null) {
+                        final PhpType type = OpenapiResolveUtil.resolveType(reference, holder.getProject());
+                        if (type != null) {
+                            return type;
+                        }
+                    }
+                    /* rely on narrowing types in our types resolving layer (PhpDoc is required) */
+                    final PhpDocComment annotations = function.getDocComment();
+                    if (annotations != null && annotations.getReturnTag() != null) {
+                        final PhpType type = OpenapiResolveUtil.resolveType(reference, holder.getProject());
+                        if (type != null) {
+                            return type;
+                        }
                     }
                 }
             } else if (expression instanceof FieldReference) {

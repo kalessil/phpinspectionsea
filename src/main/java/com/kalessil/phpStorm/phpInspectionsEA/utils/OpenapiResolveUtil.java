@@ -36,11 +36,12 @@ final public class OpenapiResolveUtil {
         functionReturnTypes.put("substr_replace", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
         functionReturnTypes.put("preg_filter", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
         functionReturnTypes.put("preg_replace_callback_array", new PhpType().add(PhpType.STRING).add(PhpType.ARRAY));
-        functionReturnTypes.put("strstr", new PhpType().add(PhpType.STRING).add(PhpType.BOOLEAN));
+        functionReturnTypes.put("strstr", new PhpType().add(PhpType.STRING).add("false"));
         functionReturnTypes.put("get_class", new PhpType().add(PhpType.STRING));
-        functionReturnTypes.put("explode", new PhpType().add(PhpType.ARRAY).add(PhpType.BOOLEAN));
+        functionReturnTypes.put("explode", new PhpType().add(PhpType.ARRAY).add("false"));
         functionReturnTypes.put("array_unique", new PhpType().add(PhpType.ARRAY));
-        functionReturnTypes.put("parse_url", new PhpType().add(PhpType.ARRAY).add(PhpType.BOOLEAN));
+        functionReturnTypes.put("parse_url", new PhpType().add(PhpType.ARRAY).add("false"));
+        functionReturnTypes.put("array_count_values", new PhpType().add("int[]"));
 
         functionToNarrow.put("str_replace", 2);
         functionToNarrow.put("str_ireplace", 2);
@@ -151,31 +152,84 @@ final public class OpenapiResolveUtil {
                             }
                         }
                     } else if (name != null) {
-                        if (name.equals("explode")) {
-                            /* explode return false if delimiter is an empty string */
-                            final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length >= 2 && arguments[0] instanceof StringLiteralExpression) {
-                                final String content = ((StringLiteralExpression) arguments[0]).getContents();
-                                result = new PhpType().add(content.isEmpty() ? PhpType.BOOLEAN : PhpType.ARRAY);
-                            }
-                        } else if (name.equals("parse_url")) {
-                            final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length == 2 && arguments[1] instanceof ConstantReference) {
-                                final String constantName = ((ConstantReference) arguments[1]).getName();
-                                if (constantName != null && constantName.equals("PHP_URL_PORT")) {
-                                    result = new PhpType().add(PhpType.INT).add(PhpType.NULL);
-                                } else {
-                                    result = new PhpType().add(PhpType.STRING).add(PhpType.NULL);
+                        final PsiElement[] arguments = reference.getParameters();
+                        switch (name) {
+                            case "explode":
+                                /* explode return false if delimiter is an empty string */
+                                if (arguments.length >= 2 && arguments[0] instanceof StringLiteralExpression) {
+                                    final String content = ((StringLiteralExpression) arguments[0]).getContents();
+                                    result = new PhpType().add(content.isEmpty() ? new PhpType().add("false") : PhpType.ARRAY);
                                 }
-                            }
-                        } else if (name.equals("microtime")) {
-                            final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length == 1 && ! PhpLanguageUtil.isFalse(arguments[0])) {
-                                result = new PhpType().add(PhpType.FLOAT);
-                            } else {
-                                result = new PhpType().add(PhpType.INT);
-                            }
+                                break;
+                            case "parse_url":
+                                if (arguments.length == 2 && arguments[1] instanceof ConstantReference) {
+                                    final String constantName = ((ConstantReference) arguments[1]).getName();
+                                    if (constantName != null && constantName.equals("PHP_URL_PORT")) {
+                                        result = new PhpType().add(PhpType.INT).add(PhpType.NULL);
+                                    } else {
+                                        result = new PhpType().add(PhpType.STRING).add(PhpType.NULL);
+                                    }
+                                }
+                                break;
+                            case "microtime":
+                                if (arguments.length == 1 && ! PhpLanguageUtil.isFalse(arguments[0])) {
+                                    result = new PhpType().add(PhpType.FLOAT);
+                                } else {
+                                    result = new PhpType().add(PhpType.INT);
+                                }
+                                break;
+                            /* array functions return types are assuming missing keys information */
+                            /* Skipped: array_keys([]) -> key-type[], array_search() -> false|key-type */
+                            case "array_unique":
+                            case "array_slice":
+                            case "array_diff":
+                            case "array_diff_assoc":
+                            case "array_intersect":
+                            case "array_intersect_assoc":
+                            case "array_reverse":
+                            case "array_filter":
+                            case "array_values":
+                                if (arguments.length > 0 && arguments[0] instanceof PhpTypedElement) {
+                                    result = resolveType((PhpTypedElement) arguments[0], project);
+                                }
+                                break;
+                            case "array_shift":
+                            case "array_pop":
+                                if (arguments.length > 0 && arguments[0] instanceof PhpTypedElement) {
+                                    final PhpType argumentType = resolveType((PhpTypedElement) arguments[0], project);
+                                    if (argumentType != null && argumentType.size() == 1 && ! argumentType.hasUnknown()) {
+                                        final String candidate = argumentType.getTypes().iterator().next();
+                                        if (candidate.endsWith("[]")) {
+                                            result = new PhpType().add(PhpType.NULL).add(candidate.replace("[]", ""));
+                                        }
+                                    }
+                                }
+                                break;
+                            case "current":
+                            case "next":
+                            case "prev":
+                            case "end":
+                                if (arguments.length > 0 && arguments[0] instanceof PhpTypedElement) {
+                                    final PhpType argumentType = resolveType((PhpTypedElement) arguments[0], project);
+                                    if (argumentType != null && argumentType.size() == 1 && ! argumentType.hasUnknown()) {
+                                        final String candidate = argumentType.getTypes().iterator().next();
+                                        if (candidate.endsWith("[]")) {
+                                            result = new PhpType().add("false").add(candidate.replace("[]", ""));
+                                        }
+                                    }
+                                }
+                                break;
                         }
+                        /*
+                            Further improvements:
+                                --
+                                    // array_merge(),             // argument-type|argument-type|?
+                                    // array_merge_recursive(),   // argument-type|argument-type|?
+                                    // array_replace(),           // argument-type|argument-type|?
+                                    // array_replace_recursive(), // argument-type|argument-type|?
+                                    // array_column([], ''),      // column-type[]
+                                    // array_map('...', []),      // callback-type[]
+                         */
                     }
                 }
             } else if (expression instanceof ArrayAccessExpression) {
@@ -226,7 +280,7 @@ final public class OpenapiResolveUtil {
                             hasFloat = leftTypes.isEmpty() || leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
                             hasArray = leftTypes.contains(Types.strArray);
                             leftTypes.clear();
-                            if (!hasFloat || (!hasArray && operator == PhpTokenTypes.opPLUS)) {
+                            if (! hasFloat || (! hasArray && operator == PhpTokenTypes.opPLUS)) {
                                 final PsiElement right = binary.getRightOperand();
                                 if (right instanceof PhpTypedElement) {
                                     final PhpType rightType = resolveType((PhpTypedElement) right, project);
@@ -235,7 +289,7 @@ final public class OpenapiResolveUtil {
                                         rightType.filterUnknown().getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
                                         hasFloat = hasFloat ||
                                                    rightTypes.isEmpty() || rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
-                                        hasArray = (hasArray && !OpenapiTypesUtil.isNumber(right)) ||
+                                        hasArray = (hasArray && ! OpenapiTypesUtil.isNumber(right)) ||
                                                    rightTypes.contains(Types.strArray);
                                         rightTypes.clear();
                                     }
@@ -256,9 +310,9 @@ final public class OpenapiResolveUtil {
                     result                 = PhpType.EMPTY;
                     if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
                         final PhpType leftType = resolveType((PhpTypedElement) left, project);
-                        if (leftType != null && !leftType.filterUnknown().isEmpty()) {
+                        if (leftType != null && ! leftType.filterUnknown().isEmpty()) {
                             final PhpType rightType = resolveType((PhpTypedElement) right, project);
-                            if (rightType != null && !rightType.filterUnknown().isEmpty()) {
+                            if (rightType != null && ! rightType.filterUnknown().isEmpty()) {
                                 result = new PhpType().add(leftType.filterNull()).add(rightType);
                             }
                         }
@@ -270,9 +324,9 @@ final public class OpenapiResolveUtil {
                 final PsiElement right          = ternary.getFalseVariant();
                 if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
                     final PhpType leftType = resolveType((PhpTypedElement) left, project);
-                    if (leftType != null && !leftType.filterUnknown().isEmpty()) {
+                    if (leftType != null && ! leftType.filterUnknown().isEmpty()) {
                         final PhpType rightType = resolveType((PhpTypedElement) right, project);
-                        if (rightType != null && !rightType.filterUnknown().isEmpty()) {
+                        if (rightType != null && ! rightType.filterUnknown().isEmpty()) {
                             result = ternary.isShort()
                                     ? new PhpType().add(leftType.filterNull()).add(rightType)
                                     : new PhpType().add(leftType).add(rightType);
@@ -292,7 +346,7 @@ final public class OpenapiResolveUtil {
                         final PsiElement argument = unary.getValue();
                         if (argument instanceof PhpTypedElement) {
                             final PhpType argumentType = resolveType((PhpTypedElement) argument, project);
-                            if (argumentType != null && !argumentType.isEmpty()) {
+                            if (argumentType != null && ! argumentType.isEmpty()) {
                                 result = new PhpType().add(argumentType.filterPrimitives());
                             }
                         }

@@ -183,7 +183,7 @@ public class UnSafeIsSetOverArrayInspector extends PhpInspection {
                 final Set<String> containerTypes = new HashSet<>();
                 final PhpType resolved           = OpenapiResolveUtil.resolveType((PhpTypedElement) container, holder.getProject());
                 if (resolved != null) {
-                    resolved.filterUnknown().getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
+                    resolved.filterUnknown().filterNull().filterMixed().getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
                 }
                 /* failed to resolve, don't try to guess anything */
                 if (containerTypes.isEmpty()) {
@@ -192,15 +192,6 @@ public class UnSafeIsSetOverArrayInspector extends PhpInspection {
 
                 boolean supportsOffsets = false;
                 for (final String typeToCheck : containerTypes) {
-                    /* assume is just null-ble declaration or we shall just rust to mixed */
-                    if (typeToCheck.equals(Types.strNull)) {
-                        continue;
-                    }
-                    if (typeToCheck.equals(Types.strMixed)) {
-                        supportsOffsets = true;
-                        continue;
-                    }
-
                     /* some of possible types are scalars, what's wrong */
                     if (!StringUtils.isEmpty(typeToCheck) && typeToCheck.charAt(0) != '\\') {
                         supportsOffsets = false;

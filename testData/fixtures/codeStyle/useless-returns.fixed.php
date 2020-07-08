@@ -31,3 +31,11 @@ function static_variables($parameter) {
         return $two = $parameter;
     }
 }
+
+function used_in_finally() {
+    try {
+        return $variable = '...';
+    } finally {
+        hook($variable);
+    }
+}

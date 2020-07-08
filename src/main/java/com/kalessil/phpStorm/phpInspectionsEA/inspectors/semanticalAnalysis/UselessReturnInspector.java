@@ -62,9 +62,10 @@ public class UselessReturnInspector extends BasePhpInspection {
                         final Function scope = ExpressionSemanticUtil.getScope(expression);
                         if (scope != null) {
                             final Variable variable = (Variable) assignmentVariable;
-                            final boolean isTarget  = !this.isArgumentReference(variable, scope) &&
-                                                      !this.isBoundReference(variable, scope) &&
-                                                      !this.isStaticVariable(variable, scope);
+                            final boolean isTarget  = ! this.isArgumentReference(variable, scope) &&
+                                                      ! this.isBoundReference(variable, scope) &&
+                                                      ! this.isStaticVariable(variable, scope) &&
+                                                      ! this.isUsedInFinally(variable, scope);
                             if (isTarget) {
                                 final String replacement = String.format("return %s;", assignmentValue.getText());
                                 holder.registerProblem(
@@ -129,6 +130,20 @@ public class UselessReturnInspector extends BasePhpInspection {
                         result                     = OpenapiTypesUtil.is(candidate, PhpTokenTypes.opBIT_AND);
                     }
                     used.clear();
+                }
+                return result;
+            }
+
+            private boolean isUsedInFinally(@NotNull Variable variable, @NotNull Function function) {
+                boolean result     = false;
+                final Try tryScope = PsiTreeUtil.getParentOfType(variable, Try.class, false, Function.class);
+                if (tryScope != null) {
+                    final Finally finallyScope = tryScope.getFinallyBlock();
+                    final GroupStatement body  = finallyScope == null ? null :  ExpressionSemanticUtil.getGroupStatement(finallyScope);
+                    if (body != null) {
+                        final String variableName = variable.getName();
+                        result = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream().anyMatch(v -> variableName.equals(v.getName()));
+                    }
                 }
                 return result;
             }

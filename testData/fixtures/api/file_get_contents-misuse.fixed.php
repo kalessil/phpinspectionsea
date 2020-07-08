@@ -6,6 +6,7 @@
     sha1_file($from);
     hash_file('...', $from);
     hash_hmac_file('...', $from, 'key');
+    file('...', FILE_IGNORE_NEW_LINES);
 
     /* false-positives: php streams */
     file_put_contents($to, file_get_contents('php://...'));

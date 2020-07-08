@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
@@ -38,6 +39,7 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
         functionsMapping.put("hash", "hash_file");
         functionsMapping.put("hash_hmac", "hash_hmac_file");
         functionsMapping.put("file_put_contents", "copy");
+        functionsMapping.put("explode", "file");
     }
 
     @NotNull
@@ -129,6 +131,26 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
                                                         new UseFileHashFix(replacement)
                                                 );
                                             }
+                                        } else if (outerName.equals("explode")) {
+                                            final PsiElement[] outerArguments = outerCall.getParameters();
+                                            if (outerArguments.length == 2 && outerArguments[0] instanceof StringLiteralExpression) {
+                                                final StringLiteralExpression split = (StringLiteralExpression) outerArguments[0];
+                                                if (! split.isSingleQuote() && split.getContents().equals("\\n")) {
+                                                    final String replacement = String.format(
+                                                            "%s%s(%s, %sFILE_IGNORE_NEW_LINES)",
+                                                            outerCall.getImmediateNamespaceName(),
+                                                            functionsMapping.get(outerName),
+                                                            arguments[0].getText(),
+                                                            outerCall.getImmediateNamespaceName()
+                                                    );
+                                                    holder.registerProblem(
+                                                            outerCall,
+                                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
+                                                            new UseFileFix(replacement)
+                                                    );
+                                                }
+                                            }
+
                                         } else {
                                             final String replacement = String.format(
                                                     "%s%s(%s)",
@@ -177,6 +199,20 @@ public class FileGetContentsMissUseInspector extends PhpInspection {
         }
 
         UseCopyFix(@NotNull String expression) {
+            super(expression);
+        }
+    }
+
+    private static final class UseFileFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use file(...) instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return MessagesPresentationUtil.prefixWithEa(title);
+        }
+
+        UseFileFix(@NotNull String expression) {
             super(expression);
         }
     }

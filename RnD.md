@@ -7,7 +7,6 @@ Loops:
 - (performance) while ($i < count($array)) { ... } -> SlowArrayOperationsInLoopInspector
     - SlowArrayOperationsInLoopInspector: counting in while/do-while loops + recognize containers modification
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
-- (performance) explode misuse: explode("\n", file_get_contents('...')) -> file('...', FILE_IGNORE_NEW_LINES)
 
 - Amount of traits
 - Unused function result, but for generators

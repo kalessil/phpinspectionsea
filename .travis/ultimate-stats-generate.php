@@ -73,7 +73,21 @@
     if (($descriptionContent = file_get_contents($descriptionFile)) === false) {
         throw new \RuntimeException('Could not load plugin description');
     }
-    if (strpos($descriptionContent, $statsInDescription) === false) {
+    if (substr_count($descriptionContent, $statsInDescription) !== 2) {
         echo sprintf('description.html is outdated ("%s" is missing)', $statsInDescription), PHP_EOL;
+        exit(1);
+    }
+
+    /* ensure sidebar component provides correct numbers */
+    $totalInspectionsCount = count($ultimateDefinitions);
+    $basicInspectionsCount = $totalInspectionsCount - ($totalNew + $totalEnhanced);
+    $sidebarComponentFile  = $basePath . '/src/main/java/com/kalessil/phpStorm/phpInspectionsEA/EAUltimateSidebarComponent.java';
+    if (($sidebarComponentContent = file_get_contents($sidebarComponentFile)) === false) {
+        throw new \RuntimeException('Could not load sidebar component content');
+    }
+    $sidebarComponentOutdated = strpos($sidebarComponentContent, sprintf('final int total = %s', $totalInspectionsCount)) === false ||
+                                strpos($sidebarComponentContent, sprintf('final int basic = %s', $basicInspectionsCount)) === false;
+    if ($sidebarComponentOutdated) {
+        echo sprintf('EAUltimateSidebarComponent is outdated (total should be %s, basic should be %s)', $totalInspectionsCount, $basicInspectionsCount), PHP_EOL;
         exit(1);
     }

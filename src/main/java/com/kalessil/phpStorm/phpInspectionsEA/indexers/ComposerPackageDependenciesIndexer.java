@@ -45,11 +45,11 @@ public class ComposerPackageDependenciesIndexer extends FileBasedIndexExtension<
             final List<String> dependencies = new ArrayList<>();
 
             PsiElement content;
-            try {
+//            try {
                 content = file.getPsiFile().getFirstChild();
-            } catch (Throwable failure) {
-                content = null;
-            }
+//            } catch (Throwable failure) {
+//                content = null;
+//            }
             if (content instanceof JsonObject) {
                 final JsonObject manifest = (JsonObject) content;
 

@@ -45,37 +45,40 @@ public class ComposerPackageDependenciesIndexer extends FileBasedIndexExtension<
             final List<String> packages     = new ArrayList<>();
             final List<String> dependencies = new ArrayList<>();
 
-            if (this.getInputFilter().acceptInput(file.getFile())) {
-                final PsiElement content = file.getPsiFile().getFirstChild();
-                if (content instanceof JsonObject) {
-                    final JsonObject manifest = (JsonObject) content;
+            PsiElement content;
+            try {
+                content = file.getPsiFile().getFirstChild();
+            } catch (Throwable failure) {
+                content = null;
+            }
+            if (content instanceof JsonObject) {
+                final JsonObject manifest = (JsonObject) content;
 
-                    /* extract package name */
-                    final JsonProperty nameProperty = manifest.findProperty("name");
-                    if (nameProperty != null) {
-                        final JsonValue name = nameProperty.getValue();
-                        if (name instanceof JsonStringLiteral) {
-                            packageName = ((JsonStringLiteral) name).getValue();
-                        }
+                /* extract package name */
+                final JsonProperty nameProperty = manifest.findProperty("name");
+                if (nameProperty != null) {
+                    final JsonValue name = nameProperty.getValue();
+                    if (name instanceof JsonStringLiteral) {
+                        packageName = ((JsonStringLiteral) name).getValue();
                     }
+                }
 
-                    /* extract packages */
-                    packages.add(packageName);
-                    Stream.of("require", "require-dev", "replace").forEach(sectionName -> {
-                        final JsonProperty property = manifest.findProperty(sectionName);
-                        if (property != null) {
-                            final JsonValue value = property.getValue();
-                            if (value instanceof JsonObject) {
-                                final List<JsonProperty> list = ((JsonObject) value).getPropertyList();
-                                if (sectionName.equals("replace")) {
-                                    list.forEach(entry -> packages.add(entry.getName()));
-                                } else {
-                                    list.forEach(entry -> dependencies.add(entry.getName()));
-                                }
+                /* extract packages */
+                packages.add(packageName);
+                Stream.of("require", "require-dev", "replace").forEach(sectionName -> {
+                    final JsonProperty property = manifest.findProperty(sectionName);
+                    if (property != null) {
+                        final JsonValue value = property.getValue();
+                        if (value instanceof JsonObject) {
+                            final List<JsonProperty> list = ((JsonObject) value).getPropertyList();
+                            if (sectionName.equals("replace")) {
+                                list.forEach(entry -> packages.add(entry.getName()));
+                            } else {
+                                list.forEach(entry -> dependencies.add(entry.getName()));
                             }
                         }
-                    });
-                }
+                    }
+                });
             }
 
             final String key = file.getFile().getCanonicalPath();
@@ -108,7 +111,7 @@ public class ComposerPackageDependenciesIndexer extends FileBasedIndexExtension<
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 
     @NotNull

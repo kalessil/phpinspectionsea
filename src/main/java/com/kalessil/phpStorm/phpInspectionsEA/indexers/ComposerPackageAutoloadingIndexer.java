@@ -40,52 +40,55 @@ public class ComposerPackageAutoloadingIndexer extends FileBasedIndexExtension<S
         return file -> {
             final List<String> autoloading = new ArrayList<>();
 
-            if (this.getInputFilter().acceptInput(file.getFile())) {
-                final PsiElement content = file.getPsiFile().getFirstChild();
-                if (content instanceof JsonObject) {
-                    final JsonObject manifest = (JsonObject) content;
+            PsiElement content;
+            try {
+                content = file.getPsiFile().getFirstChild();
+            } catch (Throwable failure) {
+                content = null;
+            }
+            if (content instanceof JsonObject) {
+                final JsonObject manifest = (JsonObject) content;
 
-                    /* extract autoloading information */
-                    Stream.of("autoload", "autoload-dev").forEach(sectionName -> {
-                        final JsonProperty property = manifest.findProperty(sectionName);
-                        if (property != null) {
-                            final JsonValue value = property.getValue();
-                            if (value instanceof JsonObject) {
-                                /* iterate autoloading types and pick uot psr-0 and psr-4 */
-                                ((JsonObject) value).getPropertyList().forEach(type -> {
-                                    final String typeName = type.getName().toLowerCase();
-                                    if (typeName.equals("psr-4") || typeName.equals("psr-0")) {
-                                        final JsonValue mapping = type.getValue();
-                                        if (mapping instanceof JsonObject) {
-                                            /* iterate namespaces and extract possible locations */
-                                            ((JsonObject) mapping).getPropertyList().forEach(mappingEntry -> {
-                                                final String namespace = mappingEntry.getName();
-                                                if (!namespace.isEmpty()) {
-                                                    final List<String> extractedLocations = new ArrayList<>();
-                                                    final JsonValue locations             = mappingEntry.getValue();
-                                                    if (locations instanceof JsonStringLiteral) {
-                                                        extractedLocations.add(((JsonStringLiteral) locations).getValue());
-                                                    } else if (locations instanceof JsonArray) {
-                                                        ((JsonArray) locations).getValueList().stream()
-                                                                .filter(location  -> location instanceof JsonStringLiteral)
-                                                                .forEach(location -> extractedLocations.add(((JsonStringLiteral) location).getValue()));
-                                                    }
+                /* extract autoloading information */
+                Stream.of("autoload", "autoload-dev").forEach(sectionName -> {
+                    final JsonProperty property = manifest.findProperty(sectionName);
+                    if (property != null) {
+                        final JsonValue value = property.getValue();
+                        if (value instanceof JsonObject) {
+                            /* iterate autoloading types and pick uot psr-0 and psr-4 */
+                            ((JsonObject) value).getPropertyList().forEach(type -> {
+                                final String typeName = type.getName().toLowerCase();
+                                if (typeName.equals("psr-4") || typeName.equals("psr-0")) {
+                                    final JsonValue mapping = type.getValue();
+                                    if (mapping instanceof JsonObject) {
+                                        /* iterate namespaces and extract possible locations */
+                                        ((JsonObject) mapping).getPropertyList().forEach(mappingEntry -> {
+                                            final String namespace = mappingEntry.getName();
+                                            if (!namespace.isEmpty()) {
+                                                final List<String> extractedLocations = new ArrayList<>();
+                                                final JsonValue locations             = mappingEntry.getValue();
+                                                if (locations instanceof JsonStringLiteral) {
+                                                    extractedLocations.add(((JsonStringLiteral) locations).getValue());
+                                                } else if (locations instanceof JsonArray) {
+                                                    ((JsonArray) locations).getValueList().stream()
+                                                            .filter(location  -> location instanceof JsonStringLiteral)
+                                                            .forEach(location -> extractedLocations.add(((JsonStringLiteral) location).getValue()));
+                                                }
+                                                if (!extractedLocations.isEmpty()) {
+                                                    extractedLocations.removeIf(String::isEmpty);
                                                     if (!extractedLocations.isEmpty()) {
-                                                        extractedLocations.removeIf(String::isEmpty);
-                                                        if (!extractedLocations.isEmpty()) {
-                                                            autoloading.add(String.format("%s:%s", namespace, String.join(",", extractedLocations)));
-                                                            extractedLocations.clear();
-                                                        }
+                                                        autoloading.add(String.format("%s:%s", namespace, String.join(",", extractedLocations)));
+                                                        extractedLocations.clear();
                                                     }
                                                 }
-                                            });
-                                        }
+                                            }
+                                        });
                                     }
-                                });
-                            }
+                                }
+                            });
                         }
-                    });
-                }
+                    }
+                });
             }
 
             final String key = file.getFile().getCanonicalPath();
@@ -116,7 +119,7 @@ public class ComposerPackageAutoloadingIndexer extends FileBasedIndexExtension<S
 
     @Override
     public int getVersion() {
-        return 4;
+        return 5;
     }
 
     @NotNull

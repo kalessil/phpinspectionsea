@@ -7,4 +7,5 @@ use PhpInspections\EAExtended\Clazz;
 return [
     Clazz::class,
     Clazz::class,
+    class_alias('...', '\PhpInspections\EAExtended\Clazz'),
 ];

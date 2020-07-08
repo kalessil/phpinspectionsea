@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.indexers;
 
-import com.intellij.json.JsonFileType;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
@@ -117,7 +116,7 @@ public class ComposerPackageDependenciesIndexer extends FileBasedIndexExtension<
     @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
-        return file -> file.getName().equals("composer.json") && file.getFileType() == JsonFileType.INSTANCE;
+        return file -> file.getName().equals("composer.json");
     }
 
     @Override

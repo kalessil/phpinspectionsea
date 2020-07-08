@@ -20,6 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.apache.commons.lang.StringUtils;
@@ -131,7 +132,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         return;
                     }
                 }
-                if (parent instanceof SelfAssignmentExpression) {
+                if (parent instanceof SelfAssignmentExpression || this.isClassAlias(expression)) {
                     return;
                 }
 
@@ -196,6 +197,23 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                     }
                 }
                 return content;
+            }
+
+            private boolean isClassAlias(@NotNull StringLiteralExpression literal) {
+                boolean result          = false;
+                final PsiElement parent = literal.getParent();
+                if (parent instanceof ParameterList) {
+                    final PsiElement grandParent = parent.getParent();
+                    if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                        final FunctionReference reference = (FunctionReference) grandParent;
+                        final String functionName         = reference.getName();
+                        if (functionName != null && functionName.equals("class_alias")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            result = arguments.length == 2 && arguments[1] == literal;
+                        }
+                    }
+                }
+                return result;
             }
         };
     }

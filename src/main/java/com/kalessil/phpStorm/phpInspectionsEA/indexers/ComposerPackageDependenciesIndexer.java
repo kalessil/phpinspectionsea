@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.indexers;
 
+import com.intellij.json.JsonFileType;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
@@ -44,35 +45,37 @@ public class ComposerPackageDependenciesIndexer extends FileBasedIndexExtension<
             final List<String> packages     = new ArrayList<>();
             final List<String> dependencies = new ArrayList<>();
 
-            final PsiElement content = file.getPsiFile().getFirstChild();
-            if (content instanceof JsonObject) {
-                final JsonObject manifest = (JsonObject) content;
+            if (this.getInputFilter().acceptInput(file.getFile())) {
+                final PsiElement content = file.getPsiFile().getFirstChild();
+                if (content instanceof JsonObject) {
+                    final JsonObject manifest = (JsonObject) content;
 
-                /* extract package name */
-                final JsonProperty nameProperty = manifest.findProperty("name");
-                if (nameProperty != null) {
-                    final JsonValue name = nameProperty.getValue();
-                    if (name instanceof JsonStringLiteral) {
-                        packageName = ((JsonStringLiteral) name).getValue();
-                    }
-                }
-
-                /* extract packages */
-                packages.add(packageName);
-                Stream.of("require", "require-dev", "replace").forEach(sectionName -> {
-                    final JsonProperty property = manifest.findProperty(sectionName);
-                    if (property != null) {
-                        final JsonValue value = property.getValue();
-                        if (value instanceof JsonObject) {
-                            final List<JsonProperty> list = ((JsonObject) value).getPropertyList();
-                            if (sectionName.equals("replace")) {
-                                list.forEach(entry -> packages.add(entry.getName()));
-                            } else {
-                                list.forEach(entry -> dependencies.add(entry.getName()));
-                            }
+                    /* extract package name */
+                    final JsonProperty nameProperty = manifest.findProperty("name");
+                    if (nameProperty != null) {
+                        final JsonValue name = nameProperty.getValue();
+                        if (name instanceof JsonStringLiteral) {
+                            packageName = ((JsonStringLiteral) name).getValue();
                         }
                     }
-                });
+
+                    /* extract packages */
+                    packages.add(packageName);
+                    Stream.of("require", "require-dev", "replace").forEach(sectionName -> {
+                        final JsonProperty property = manifest.findProperty(sectionName);
+                        if (property != null) {
+                            final JsonValue value = property.getValue();
+                            if (value instanceof JsonObject) {
+                                final List<JsonProperty> list = ((JsonObject) value).getPropertyList();
+                                if (sectionName.equals("replace")) {
+                                    list.forEach(entry -> packages.add(entry.getName()));
+                                } else {
+                                    list.forEach(entry -> dependencies.add(entry.getName()));
+                                }
+                            }
+                        }
+                    });
+                }
             }
 
             final String key = file.getFile().getCanonicalPath();
@@ -105,13 +108,13 @@ public class ComposerPackageDependenciesIndexer extends FileBasedIndexExtension<
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 
     @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
-        return file -> file.getName().equals("composer.json");
+        return file -> file.getName().equals("composer.json") && file.getFileType() == JsonFileType.INSTANCE;
     }
 
     @Override

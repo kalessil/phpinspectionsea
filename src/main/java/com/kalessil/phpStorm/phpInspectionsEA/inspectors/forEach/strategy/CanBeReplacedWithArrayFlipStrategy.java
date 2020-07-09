@@ -23,28 +23,23 @@ final public class CanBeReplacedWithArrayFlipStrategy {
         if (OpenapiTypesUtil.isStatementImpl(expression)) {
             final PsiElement candidate = expression.getFirstChild();
             if (OpenapiTypesUtil.isAssignment(candidate)) {
-                final AssignmentExpression assignment = (AssignmentExpression) candidate;
-                final PsiElement assignmentValue      = assignment.getValue();
-                final PsiElement loopIndex            = foreach.getKey();
-                if (loopIndex != null && assignmentValue != null && OpenapiEquivalenceUtil.areEqual(loopIndex, assignmentValue)) {
-                    final PsiElement container = assignment.getVariable();
-                    if (container instanceof ArrayAccessExpression) {
-                        final ArrayAccessExpression storage = (ArrayAccessExpression) container;
-                        final ArrayIndex storageIndex       = storage.getIndex();
-                        if (storageIndex != null) {
-                            final PsiElement usedIndex = storageIndex.getValue();
-                            final PsiElement loopValue = foreach.getValue();
-                            if (loopValue != null && usedIndex != null && OpenapiEquivalenceUtil.areEqual(usedIndex, loopValue)) {
-                                /* skip generators - the loop is performance-optimized */
-                                final PsiElement source = foreach.getArray();
-                                if (source instanceof PhpTypedElement) {
-                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) source, project);
-                                    if (resolved != null && resolved.filterUnknown().getTypes().contains("\\Generator")) {
-                                        return false;
-                                    }
-                                }
-                                return true;
+                final PsiElement loopSource = foreach.getArray();
+                final PsiElement loopIndex  = foreach.getKey();
+                final PsiElement loopValue  = foreach.getValue();
+                if (loopSource != null && loopIndex != null && loopValue != null) {
+                    final AssignmentExpression assignment = (AssignmentExpression) candidate;
+                    final PsiElement assignmentStorage    = assignment.getVariable();
+                    final PsiElement assignmentValue      = assignment.getValue();
+                    if (assignmentValue != null && assignmentStorage instanceof ArrayAccessExpression && OpenapiEquivalenceUtil.areEqual(loopIndex, assignmentValue)) {
+                        final ArrayIndex keyHolder = ((ArrayAccessExpression) assignmentStorage).getIndex();
+                        final PsiElement key       = keyHolder == null ? null : keyHolder.getValue();
+                        if (key != null && OpenapiEquivalenceUtil.areEqual(key, loopValue)) {
+                            /* false-positives: generators */
+                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) loopSource, project);
+                            if (resolved != null && resolved.filterUnknown().getTypes().contains("\\Generator")) {
+                                return false;
                             }
+                            return true;
                         }
                     }
                 }

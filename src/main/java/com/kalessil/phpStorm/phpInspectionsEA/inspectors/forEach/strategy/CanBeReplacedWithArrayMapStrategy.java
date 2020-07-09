@@ -24,46 +24,43 @@ final public class CanBeReplacedWithArrayMapStrategy {
         if (OpenapiTypesUtil.isStatementImpl(expression)) {
             final PsiElement candidate = expression.getFirstChild();
             if (OpenapiTypesUtil.isAssignment(candidate)) {
-                final AssignmentExpression assignment = (AssignmentExpression) candidate;
-                final PsiElement assignmentValue      = assignment.getValue();
-                PsiElement usedValue                  = null;
-                /* extract if value gets type casted or processed with a call */
-                if (OpenapiTypesUtil.isFunctionReference(assignmentValue)) {
-                    final PsiElement[] arguments = ((FunctionReference) assignmentValue).getParameters();
-                    if (arguments.length == 1) {
-                        usedValue = arguments[0];
-                    }
-                } else if (assignmentValue instanceof UnaryExpression) {
-                    final UnaryExpression unary = (UnaryExpression) assignmentValue;
-                    final PsiElement operator   = unary.getOperation();
-                    if (
-                            OpenapiTypesUtil.is(operator, PhpTokenTypes.opINTEGER_CAST) ||
-                            OpenapiTypesUtil.is(operator, PhpTokenTypes.opFLOAT_CAST) ||
-                            OpenapiTypesUtil.is(operator, PhpTokenTypes.opSTRING_CAST) ||
-                            OpenapiTypesUtil.is(operator, PhpTokenTypes.opBOOLEAN_CAST)
-                    ) {
-                        usedValue = unary.getValue();
-                    }
-                }
-                /* now match */
-                if (usedValue != null) {
-                    final PsiElement loopValue = foreach.getValue();
-                    if (loopValue != null && OpenapiEquivalenceUtil.areEqual(usedValue, loopValue)) {
-                        final PsiElement assignmentContainer = assignment.getVariable();
-                        if (assignmentContainer instanceof ArrayAccessExpression) {
-                            final ArrayIndex indexHolder = ((ArrayAccessExpression) assignmentContainer).getIndex();
-                            final PsiElement index       = indexHolder == null ? null : indexHolder.getValue();
-                            final PsiElement loopIndex   = foreach.getKey();
-                            if (index != null && loopIndex != null && OpenapiEquivalenceUtil.areEqual(index, loopIndex)) {
-                                /* skip generators - the loop is performance-optimized */
-                                final PsiElement source = foreach.getArray();
-                                if (source instanceof PhpTypedElement) {
-                                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) source, project);
-                                    if (resolved != null && resolved.filterUnknown().getTypes().contains("\\Generator")) {
-                                        return false;
-                                    }
+                final PsiElement loopSource = foreach.getArray();
+                final PsiElement loopIndex  = foreach.getKey();
+                final PsiElement loopValue  = foreach.getValue();
+                if (loopSource != null && loopIndex != null && loopValue != null) {
+                    final AssignmentExpression assignment = (AssignmentExpression) candidate;
+                    final PsiElement assignedValue        = assignment.getValue();
+                    final PsiElement assignmentStorage    = assignment.getVariable();
+                    if (assignedValue != null && assignmentStorage instanceof ArrayAccessExpression) {
+                        PsiElement extractedValue = null;
+                        if (OpenapiTypesUtil.isFunctionReference(assignedValue)) {
+                            final PsiElement[] arguments = ((FunctionReference) assignedValue).getParameters();
+                            if (arguments.length == 1) {
+                                extractedValue = arguments[0];
+                            }
+                        } else if (assignedValue instanceof UnaryExpression) {
+                            final UnaryExpression unary = (UnaryExpression) assignedValue;
+                            final PsiElement operator   = unary.getOperation();
+                            if (
+                                    OpenapiTypesUtil.is(operator, PhpTokenTypes.opINTEGER_CAST) ||
+                                    OpenapiTypesUtil.is(operator, PhpTokenTypes.opFLOAT_CAST) ||
+                                    OpenapiTypesUtil.is(operator, PhpTokenTypes.opSTRING_CAST) ||
+                                    OpenapiTypesUtil.is(operator, PhpTokenTypes.opBOOLEAN_CAST)
+                            ) {
+                                extractedValue = unary.getValue();
+                            }
+                        }
+                        /* now match */
+                        if (extractedValue != null) {
+                            final ArrayIndex keyHolder = ((ArrayAccessExpression) assignmentStorage).getIndex();
+                            final PsiElement key       = keyHolder == null ? null : keyHolder.getValue();
+                            if (key != null && OpenapiEquivalenceUtil.areEqual(key, loopIndex)) {
+                                /* false-positives: generators */
+                                final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) loopSource, project);
+                                if (resolved != null && resolved.filterUnknown().getTypes().contains("\\Generator")) {
+                                    return false;
                                 }
-                                return true;
+                                return isArrayElement(extractedValue, loopSource, loopIndex) || isArrayValue(extractedValue, loopValue);
                             }
                         }
                     }
@@ -71,5 +68,22 @@ final public class CanBeReplacedWithArrayMapStrategy {
             }
         }
         return false;
+    }
+
+    static private boolean isArrayElement(@NotNull PsiElement candidate, @NotNull PsiElement source, @NotNull PsiElement index) {
+        if (candidate instanceof ArrayAccessExpression) {
+            final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
+            final PsiElement base              = access.getValue();
+            final ArrayIndex keyHolder         = access.getIndex();
+            final PsiElement key               = keyHolder == null ? null : keyHolder.getValue();
+            if (base != null && key != null) {
+                return OpenapiEquivalenceUtil.areEqual(base, source) && OpenapiEquivalenceUtil.areEqual(key, index);
+            }
+        }
+        return false;
+    }
+
+    static private boolean isArrayValue(@NotNull PsiElement candidate, @NotNull PsiElement value) {
+        return OpenapiEquivalenceUtil.areEqual(candidate, value);
     }
 }

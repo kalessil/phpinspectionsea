@@ -10,8 +10,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -24,18 +22,16 @@ import java.util.List;
 final public class CanBeReplacedWithArrayFilterStrategy {
     static public boolean apply(@NotNull ForeachStatement foreach, @NotNull PsiElement expression, @NotNull Project project) {
         if (expression instanceof If && ! ExpressionSemanticUtil.hasAlternativeBranches((If) expression)) {
-            final PsiElement loopSource        = foreach.getArray();
-            final List<Variable> loopVariables = foreach.getVariables();
-            if (loopVariables.size() == 2 && loopSource != null) {
+            final PsiElement loopSource = foreach.getArray();
+            final PsiElement loopIndex  = foreach.getKey();
+            final PsiElement loopValue  = foreach.getValue();
+            if (loopSource != null && loopIndex != null && loopValue != null) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(expression);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) == 1) {
-                    final Variable loopIndex = loopVariables.get(0);
-                    final Variable loopValue = loopVariables.get(1);
                     final PsiElement last    = ExpressionSemanticUtil.getLastStatement(body);
                     if (last instanceof PhpUnset) {
                         /* case: if (empty-check($value|$array[$index])) unset($array[$index]); */
-                        final PhpUnset unset         = (PhpUnset) last;
-                        final PsiElement[] arguments = unset.getArguments();
+                        final PsiElement[] arguments = ((PhpUnset) last).getArguments();
                         if (arguments.length == 1 && isArrayElement(arguments[0], loopSource, loopIndex)) {
                             final PsiElement condition = ((If) expression).getCondition();
                             return condition != null && isEmptyCheck(condition, loopSource, loopIndex, loopValue);
@@ -45,17 +41,14 @@ final public class CanBeReplacedWithArrayFilterStrategy {
                         final PsiElement candidate = last.getFirstChild();
                         if (candidate instanceof AssignmentExpression && OpenapiTypesUtil.isAssignment(candidate)) {
                             final AssignmentExpression assignment = (AssignmentExpression) candidate;
-                            final PsiElement storedValue          = assignment.getValue();
-                            if (storedValue != null && (isArrayElement(storedValue, loopSource, loopIndex) || isArrayValue(storedValue, loopValue))) {
-                                final PsiElement storage = assignment.getVariable();
-                                if (storage instanceof ArrayAccessExpression) {
-                                    final ArrayAccessExpression storageAssignment = (ArrayAccessExpression) storage;
-                                    final ArrayIndex storageKeyHolder             = storageAssignment.getIndex();
-                                    final PsiElement storageKey                   = storageKeyHolder == null ? null : storageKeyHolder.getValue();
-                                    if (storageKey != null && OpenapiEquivalenceUtil.areEqual(storageKey, loopIndex)) {
-                                        final PsiElement condition = ((If) expression).getCondition();
-                                        return condition != null && isNotEmptyCheck(condition, loopSource, loopIndex, loopValue);
-                                    }
+                            final PsiElement assignedValue        = assignment.getValue();
+                            final PsiElement assignmentStorage    = assignment.getVariable();
+                            if (assignedValue != null && assignmentStorage instanceof ArrayAccessExpression && (isArrayElement(assignedValue, loopSource, loopIndex) || isArrayValue(assignedValue, loopValue))) {
+                                final ArrayIndex storageKeyHolder = ((ArrayAccessExpression) assignmentStorage).getIndex();
+                                final PsiElement storageKey       = storageKeyHolder == null ? null : storageKeyHolder.getValue();
+                                if (storageKey != null && OpenapiEquivalenceUtil.areEqual(storageKey, loopIndex)) {
+                                    final PsiElement condition = ((If) expression).getCondition();
+                                    return condition != null && isNotEmptyCheck(condition, loopSource, loopIndex, loopValue);
                                 }
                             }
                         }

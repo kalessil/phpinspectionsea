@@ -1,11 +1,9 @@
 Loops:
+    'array_filter()':                             loop + if + pushing to array, loop + if + unset (in some cases even without closure)
     'array_merge()/array_fill()/array_combine()': loop + pushing to array
     'array_chunk()':                              loop + array_slice()
-    'array_filter()':                             loop + if + pushing to array, loop + if + unset (in some cases even without closure)
     'in_array()/array_search()':                  loop + comparison + break
 
-- (performance) while ($i < count($array)) { ... } -> SlowArrayOperationsInLoopInspector
-    - SlowArrayOperationsInLoopInspector: counting in while/do-while loops + recognize containers modification
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
 
 - Amount of traits

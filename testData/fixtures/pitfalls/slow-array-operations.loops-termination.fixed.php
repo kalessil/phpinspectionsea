@@ -15,3 +15,7 @@ for ($i = 0, $loopsMax = count($values); $loopsMax >= get($i); $i++) {}
 
 // Warning (case #3).
 for ($iMax = count($values); $iMax >= $i; $i++) {}
+
+// Warning (case #4, no QFs).
+while ($i < count($array)) {}
+do {} while ($i < count($array));

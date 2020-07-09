@@ -15,3 +15,7 @@ for ($i = 0; <error descr="[EA] 'count(...)' is used in a loop and is a low perf
 
 // Warning (case #3).
 for (; <error descr="[EA] 'count(...)' is used in a loop and is a low performing construction.">count($values) >= $i</error>; $i++) {}
+
+// Warning (case #4, no QFs).
+while (<error descr="[EA] 'count(...)' is used in a loop and is a low performing construction.">$i < count($array)</error>) {}
+do {} while (<error descr="[EA] 'count(...)' is used in a loop and is a low performing construction.">$i < count($array)</error>);

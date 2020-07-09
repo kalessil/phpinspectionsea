@@ -175,11 +175,26 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
             }
 
             @Override
+            public void visitPhpWhile(@NotNull While whileStatement) {
+                if (this.shouldSkipAnalysis(whileStatement, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
+                this.analyzeLoopConditions(whileStatement, new PhpPsiElement[]{ whileStatement.getCondition() });
+            }
+
+            @Override
+            public void visitPhpDoWhile(@NotNull DoWhile doWhileStatement) {
+                if (this.shouldSkipAnalysis(doWhileStatement, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
+                this.analyzeLoopConditions(doWhileStatement, new PhpPsiElement[]{ doWhileStatement.getCondition() });
+            }
+
+            @Override
             public void visitPhpFor(@NotNull For forStatement) {
                 if (this.shouldSkipAnalysis(forStatement, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
+                this.analyzeLoopConditions(forStatement, forStatement.getConditionalExpressions());
+            }
 
+            private void analyzeLoopConditions(@NotNull PsiElement loop, @NotNull PhpPsiElement[] conditions) {
                 final Set<FunctionReference> references = new HashSet<>();
-                Arrays.stream(forStatement.getConditionalExpressions()).forEach(c -> {
+                Arrays.stream(conditions).forEach(c -> {
                     if (c instanceof BinaryExpression) {
                         final BinaryExpression binary = (BinaryExpression) c;
                         Stream.of(binary.getLeftOperand(), binary.getRightOperand())
@@ -197,7 +212,7 @@ public class SlowArrayOperationsInLoopInspector extends PhpInspection {
                                         condition,
                                         String.format(MessagesPresentationUtil.prefixWithEa(messageSlowPattern), functionName),
                                         ProblemHighlightType.GENERIC_ERROR,
-                                        new ReduceRepetitiveCallsInForFix(holder.getProject(), forStatement, condition)
+                                        loop instanceof For ? new ReduceRepetitiveCallsInForFix(holder.getProject(), (For) loop, condition) : null
                                 );
                             }
                         });

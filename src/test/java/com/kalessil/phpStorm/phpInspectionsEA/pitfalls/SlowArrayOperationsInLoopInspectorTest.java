@@ -11,11 +11,11 @@ final public class SlowArrayOperationsInLoopInspectorTest extends PhpCodeInsight
     }
     public void testIfFindsAllSlowPatterns() {
         myFixture.enableInspections(new SlowArrayOperationsInLoopInspector());
-        myFixture.configureByFile("testData/fixtures/pitfalls/slow-array-operations.for-termination.php");
+        myFixture.configureByFile("testData/fixtures/pitfalls/slow-array-operations.loops-termination.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
-        myFixture.checkResultByFile("testData/fixtures/pitfalls/slow-array-operations.for-termination.fixed.php");
+        myFixture.checkResultByFile("testData/fixtures/pitfalls/slow-array-operations.loops-termination.fixed.php");
     }
 }

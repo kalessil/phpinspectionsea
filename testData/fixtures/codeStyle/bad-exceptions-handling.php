@@ -6,7 +6,7 @@
         /* fail silently */
     } catch (Exception <weak_warning descr="[EA] The exception being ignored, please log it or use chained exceptions.">$chainedCalls</weak_warning>) {
         throw new RuntimeException('...');
-    } catch (Throwable <weak_warning descr="[EA] The exception being re-throws without any processing.">$rethrown</weak_warning>) {
+    } catch (Throwable <weak_warning descr="[EA] The exception being re-throws without any processing, please drop catch-statement or use chained exceptions.">$rethrown</weak_warning>) {
         throw $rethrown;
     }
 

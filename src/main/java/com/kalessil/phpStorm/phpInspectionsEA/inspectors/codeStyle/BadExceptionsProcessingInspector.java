@@ -26,7 +26,7 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
     private static final String messagePattern          = "Consider moving non-related statements (%s in total) outside the try-block or refactoring the try-body into a function/method.";
     private static final String messageFailSilently     = "The exception being ignored, please don't fail silently and at least log it.";
     private static final String messageChainedException = "The exception being ignored, please log it or use chained exceptions.";
-    private static final String messageRethrown         = "The exception being re-throws without any processing.";
+    private static final String messageRethrown         = "The exception being re-throws without any processing, please drop catch-statement or use chained exceptions.";
 
     @NotNull
     @Override

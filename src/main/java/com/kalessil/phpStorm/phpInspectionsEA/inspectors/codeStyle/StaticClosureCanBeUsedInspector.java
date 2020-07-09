@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
+import clojure.lang.Var;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -19,6 +20,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -51,7 +55,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunction(@NotNull Function function) {
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
-                    final boolean isTarget = !OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
+                    final boolean isTarget = ! OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
                     if (isTarget && this.canBeStatic(function)) {
                         holder.registerProblem(
                                 function.getFirstChild(),
@@ -65,6 +69,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
             private boolean canBeStatic(@NotNull Function function) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
                 if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                    /* check if $this or parent:: being used */
                     for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
                         if (element instanceof Variable) {
                             final Variable variable = (Variable) element;
@@ -76,11 +81,48 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                             final PsiElement base           = reference.getFirstChild();
                             if (base instanceof ClassReference && base.getText().equals("parent")) {
                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                if (resolved instanceof Method && !((Method) resolved).isStatic()) {
+                                if (resolved instanceof Method && ! ((Method) resolved).isStatic()) {
                                     return false;
                                 }
                             }
                         }
+                    }
+                    /* check usages: perhaps bound to closure or returned -> then we can not promote */
+                    final PsiElement parent       = function.getParent();
+                    final List<PsiElement> usages = new ArrayList<>();
+                    if (parent instanceof ParameterList || parent instanceof PhpReturn) {
+                        usages.add(parent);
+                    } else if (OpenapiTypesUtil.isAssignment(parent)) {
+                        final PsiElement assignmentStorage = ((AssignmentExpression) parent).getVariable();
+                        if (assignmentStorage instanceof Variable) {
+                            final String variableName = ((Variable) assignmentStorage).getName();
+                            for (final Variable usage : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
+                                if (variableName.equals(usage.getName())) {
+                                    usages.add(usage.getParent());
+                                }
+                            }
+                        }
+                    }
+                    if (! usages.isEmpty()) {
+                        for (final PsiElement context : usages) {
+                            if (context instanceof PhpReturn) {
+                                return false;
+                            }
+                            if (context instanceof ParameterList) {
+                                final PsiElement bindCandidate = context.getParent();
+                                if (bindCandidate instanceof MethodReference) {
+                                    final MethodReference reference = (MethodReference) bindCandidate;
+                                    final String methodName         = reference.getName();
+                                    if (methodName != null && methodName.equals("bind")) {
+                                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                        if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure::bind")) {
+                                            return false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        usages.clear();
                     }
                 }
                 return body != null;
@@ -106,7 +148,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement functionKeyword = descriptor.getPsiElement();
-            if (functionKeyword != null && !project.isDisposed()) {
+            if (functionKeyword != null && ! project.isDisposed()) {
                 final PsiElement implant = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, "static");
                 if (implant != null) {
                     functionKeyword.getParent().addBefore(implant, functionKeyword);

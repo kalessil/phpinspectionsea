@@ -4,10 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.ForeachStatement;
-import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
-import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.Variable;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -28,25 +25,42 @@ public class CanBeReplacedWithArraySumStrategy {
         if (OpenapiTypesUtil.isStatementImpl(expression)) {
             final PsiElement candidate = expression.getFirstChild();
             if (candidate instanceof SelfAssignmentExpression) {
-                final SelfAssignmentExpression assignment = (SelfAssignmentExpression) candidate;
-                final IElementType operator               = assignment.getOperationType();
-                if (operator == PhpTokenTypes.opPLUS_ASGN && assignment.getVariable() instanceof Variable) {
-                    final PsiElement accumulatedValue = assignment.getValue();
-                    final PsiElement loopValue        = foreach.getValue();
-                    if (loopValue != null && accumulatedValue != null && OpenapiEquivalenceUtil.areEqual(loopValue, accumulatedValue)) {
-                        /* skip generators - the loop is performance-optimized */
-                        final PsiElement source = foreach.getArray();
-                        if (source instanceof PhpTypedElement) {
-                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) source, project);
-                            if (resolved != null && resolved.filterUnknown().getTypes().contains("\\Generator")) {
-                                return false;
-                            }
+                final PsiElement loopSource = foreach.getArray();
+                final PsiElement loopIndex  = foreach.getKey();
+                final PsiElement loopValue  = foreach.getValue();
+                if (loopSource != null && loopValue != null) {
+                    final SelfAssignmentExpression assignment = (SelfAssignmentExpression) candidate;
+                    final PsiElement assignmentStorage        = assignment.getValue();
+                    final PsiElement assignedValue            = assignment.getValue();
+                    if (assignedValue != null && assignmentStorage != null && assignment.getOperationType() == PhpTokenTypes.opPLUS_ASGN) {
+                        /* false-positive: generators */
+                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) loopSource, project);
+                        if (resolved != null && resolved.filterUnknown().getTypes().contains("\\Generator")) {
+                            return false;
                         }
-                        return true;
+                        return isArrayValue(assignedValue, loopValue) || (loopIndex != null && isArrayElement(assignedValue, loopSource, loopIndex));
                     }
                 }
             }
         }
         return false;
+    }
+
+
+    static private boolean isArrayElement(@NotNull PsiElement candidate, @NotNull PsiElement source, @NotNull PsiElement index) {
+        if (candidate instanceof ArrayAccessExpression) {
+            final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
+            final PsiElement base              = access.getValue();
+            final ArrayIndex keyHolder         = access.getIndex();
+            final PsiElement key               = keyHolder == null ? null : keyHolder.getValue();
+            if (base != null && key != null) {
+                return OpenapiEquivalenceUtil.areEqual(base, source) && OpenapiEquivalenceUtil.areEqual(key, index);
+            }
+        }
+        return false;
+    }
+
+    static private boolean isArrayValue(@NotNull PsiElement candidate, @NotNull PsiElement value) {
+        return OpenapiEquivalenceUtil.areEqual(candidate, value);
     }
 }

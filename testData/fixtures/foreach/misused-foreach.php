@@ -37,3 +37,41 @@
     <warning descr="[EA] Perhaps can be replaced with 'array_map(...)' call (reduces cognitive load).">foreach</warning> ([] as $index => $value) {
         $accumulator[$index] = (int) $value;
     }
+
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if (empty($value)) { unset($array[$index]); }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if (! $value) { unset($array[$index]); }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if ($value == '') { unset($array[$index]); }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if (empty($array[$index])) { unset($array[$index]); }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if (! $array[$index]) { unset($array[$index]); }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if ($array[$index] == '') { unset($array[$index]); }
+    }
+
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if (! empty($value)) { $storage[$index] = $array[$index]; }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if ($value) { $storage[$index] = $array[$index]; }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if ($value != '') { $storage[$index] = $array[$index]; }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if (! empty($array[$index])) { $storage[$index] = $array[$index]; }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if ($array[$index]) { $storage[$index] = $array[$index]; }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if ($array[$index] != '') { $storage[$index] = $array[$index]; }
+    }

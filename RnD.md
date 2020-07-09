@@ -1,5 +1,4 @@
 Loops:
-    'array_filter()':                             loop + if + pushing to array, loop + if + unset (in some cases even without closure)
     'array_merge()/array_fill()/array_combine()': loop + pushing to array
     'array_chunk()':                              loop + array_slice()
     'in_array()/array_search()':                  loop + comparison + break

@@ -88,51 +88,59 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                         }
                     }
                     /* check usages: perhaps bound to closure or returned -> then we can not promote */
-                    final Function scope = ExpressionSemanticUtil.getScope(function);
-                    if (scope != null) {
-                        final GroupStatement scopeBody = ExpressionSemanticUtil.getGroupStatement(scope);
-                        if (scopeBody != null) {
-                            final PsiElement parent          = function.getParent();
-                            final PsiElement extractedParent = OpenapiTypesUtil.is(parent, PhpElementTypes.CLOSURE) ? parent.getParent() : parent;
-                            final List<PsiElement> usages = new ArrayList<>();
-                            if (extractedParent instanceof ParameterList || extractedParent instanceof PhpReturn) {
-                                usages.add(extractedParent);
-                            } else if (OpenapiTypesUtil.isAssignment(extractedParent)) {
-                                final PsiElement assignmentStorage = ((AssignmentExpression) extractedParent).getVariable();
-                                if (assignmentStorage instanceof Variable) {
-                                    final String variableName = ((Variable) assignmentStorage).getName();
-                                    for (final Variable usage : PsiTreeUtil.findChildrenOfType(scopeBody, Variable.class)) {
-                                        if (variableName.equals(usage.getName())) {
-                                            usages.add(usage.getParent());
-                                        }
+                    if (this.canBeBound(this.usages(function))) {
+                        return false;
+                    }
+                }
+                return body != null;
+            }
+
+            private List<PsiElement> usages(@NotNull Function function) {
+                final List<PsiElement> usages = new ArrayList<>();
+                final Function scope          = ExpressionSemanticUtil.getScope(function);
+                if (scope != null) {
+                    final GroupStatement scopeBody = ExpressionSemanticUtil.getGroupStatement(scope);
+                    if (scopeBody != null) {
+                        final PsiElement parent          = function.getParent();
+                        final PsiElement extractedParent = OpenapiTypesUtil.is(parent, PhpElementTypes.CLOSURE) ? parent.getParent() : parent;
+                        if (extractedParent instanceof ParameterList || extractedParent instanceof PhpReturn) {
+                            usages.add(extractedParent);
+                        } else if (OpenapiTypesUtil.isAssignment(extractedParent)) {
+                            final PsiElement assignmentStorage = ((AssignmentExpression) extractedParent).getVariable();
+                            if (assignmentStorage instanceof Variable) {
+                                final String variableName = ((Variable) assignmentStorage).getName();
+                                for (final Variable usage : PsiTreeUtil.findChildrenOfType(scopeBody, Variable.class)) {
+                                    if (variableName.equals(usage.getName())) {
+                                        usages.add(usage.getParent());
                                     }
                                 }
-                            }
-                            if (! usages.isEmpty()) {
-                                for (final PsiElement context : usages) {
-                                    if (context instanceof PhpReturn) {
-                                        return false;
-                                    }
-                                    if (context instanceof ParameterList) {
-                                        final PsiElement bindCandidate = context.getParent();
-                                        if (bindCandidate instanceof MethodReference) {
-                                            final MethodReference reference = (MethodReference) bindCandidate;
-                                            final String methodName         = reference.getName();
-                                            if (methodName != null && methodName.equals("bind")) {
-                                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                                if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure.bind")) {
-                                                    return false;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                usages.clear();
                             }
                         }
                     }
                 }
-                return body != null;
+                return usages;
+            }
+
+            private boolean canBeBound(@NotNull List<PsiElement> usages) {
+                for (final PsiElement context : usages) {
+                    if (context instanceof PhpReturn) {
+                        return true;
+                    }
+                    if (context instanceof ParameterList) {
+                        final PsiElement bindCandidate = context.getParent();
+                        if (bindCandidate instanceof MethodReference) {
+                            final MethodReference reference = (MethodReference) bindCandidate;
+                            final String methodName         = reference.getName();
+                            if (methodName != null && methodName.equals("bind")) {
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure.bind")) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
             }
         };
     }

@@ -20,12 +20,12 @@ class CasesHolder extends ParentClass {
     }
 
     public function returns_closure() {
-        $closure = function() {};
+        $closure = function() { ; };
         return $closure;
     }
 
     public function binds_closure() {
-        $closure = function() {};
+        $closure = function() { ; };
         return Closure::bind($closure, $this);
     }
 }

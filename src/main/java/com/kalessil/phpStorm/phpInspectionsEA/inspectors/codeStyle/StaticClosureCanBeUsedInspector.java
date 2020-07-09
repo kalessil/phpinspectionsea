@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle;
 
-import clojure.lang.Var;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -10,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -88,42 +88,50 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                         }
                     }
                     /* check usages: perhaps bound to closure or returned -> then we can not promote */
-                    final PsiElement parent       = function.getParent();
-                    final List<PsiElement> usages = new ArrayList<>();
-                    if (parent instanceof ParameterList || parent instanceof PhpReturn) {
-                        usages.add(parent);
-                    } else if (OpenapiTypesUtil.isAssignment(parent)) {
-                        final PsiElement assignmentStorage = ((AssignmentExpression) parent).getVariable();
-                        if (assignmentStorage instanceof Variable) {
-                            final String variableName = ((Variable) assignmentStorage).getName();
-                            for (final Variable usage : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
-                                if (variableName.equals(usage.getName())) {
-                                    usages.add(usage.getParent());
-                                }
-                            }
-                        }
-                    }
-                    if (! usages.isEmpty()) {
-                        for (final PsiElement context : usages) {
-                            if (context instanceof PhpReturn) {
-                                return false;
-                            }
-                            if (context instanceof ParameterList) {
-                                final PsiElement bindCandidate = context.getParent();
-                                if (bindCandidate instanceof MethodReference) {
-                                    final MethodReference reference = (MethodReference) bindCandidate;
-                                    final String methodName         = reference.getName();
-                                    if (methodName != null && methodName.equals("bind")) {
-                                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                        if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure::bind")) {
-                                            return false;
+                    final Function scope = ExpressionSemanticUtil.getScope(function);
+                    if (scope != null) {
+                        final GroupStatement scopeBody = ExpressionSemanticUtil.getGroupStatement(scope);
+                        if (scopeBody != null) {
+                            final PsiElement parent          = function.getParent();
+                            final PsiElement extractedParent = OpenapiTypesUtil.is(parent, PhpElementTypes.CLOSURE) ? parent.getParent() : parent;
+                            final List<PsiElement> usages = new ArrayList<>();
+                            if (extractedParent instanceof ParameterList || extractedParent instanceof PhpReturn) {
+                                usages.add(extractedParent);
+                            } else if (OpenapiTypesUtil.isAssignment(extractedParent)) {
+                                final PsiElement assignmentStorage = ((AssignmentExpression) extractedParent).getVariable();
+                                if (assignmentStorage instanceof Variable) {
+                                    final String variableName = ((Variable) assignmentStorage).getName();
+                                    for (final Variable usage : PsiTreeUtil.findChildrenOfType(scopeBody, Variable.class)) {
+                                        if (variableName.equals(usage.getName())) {
+                                            usages.add(usage.getParent());
                                         }
                                     }
                                 }
                             }
+                            if (! usages.isEmpty()) {
+                                for (final PsiElement context : usages) {
+                                    if (context instanceof PhpReturn) {
+                                        return false;
+                                    }
+                                    if (context instanceof ParameterList) {
+                                        final PsiElement bindCandidate = context.getParent();
+                                        if (bindCandidate instanceof MethodReference) {
+                                            final MethodReference reference = (MethodReference) bindCandidate;
+                                            final String methodName         = reference.getName();
+                                            if (methodName != null && methodName.equals("bind")) {
+                                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                                if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure::bind")) {
+                                                    return false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                usages.clear();
+                            }
                         }
-                        usages.clear();
                     }
+
                 }
                 return body != null;
             }

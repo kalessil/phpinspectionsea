@@ -131,7 +131,6 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                             }
                         }
                     }
-
                 }
                 return body != null;
             }

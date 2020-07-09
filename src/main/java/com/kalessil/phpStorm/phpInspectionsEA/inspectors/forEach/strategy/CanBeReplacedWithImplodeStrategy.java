@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -19,36 +18,38 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class CanBeReplacedWithImplodeStrategy {
+final public class CanBeReplacedWithImplodeStrategy extends AbstractStrategy {
     static public boolean apply(@NotNull ForeachStatement foreach, @NotNull PsiElement expression, @NotNull Project project) {
         if (OpenapiTypesUtil.isStatementImpl(expression)) {
             final PsiElement candidate = expression.getFirstChild();
             if (candidate instanceof SelfAssignmentExpression) {
-                final SelfAssignmentExpression assignment = (SelfAssignmentExpression) candidate;
-                if (assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN && assignment.getVariable() instanceof Variable) {
-                    /* concatenated value can be concatenation itself */
-                    PsiElement concatenateValue = assignment.getValue();
-                    if (concatenateValue instanceof BinaryExpression) {
-                        final BinaryExpression binary = (BinaryExpression) concatenateValue;
-                        if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
-                            final PsiElement left = binary.getLeftOperand();
-                            if (left instanceof StringLiteralExpression && ((StringLiteralExpression) left).getFirstPsiChild() == null) {
-                                concatenateValue = binary.getRightOperand();
+                final PsiElement loopSource = foreach.getArray();
+                final PsiElement loopIndex  = foreach.getKey();
+                final PsiElement loopValue  = foreach.getValue();
+                if (loopSource != null && loopValue != null) {
+                    final SelfAssignmentExpression assignment = (SelfAssignmentExpression) candidate;
+                    final PsiElement assignmentStorage        = assignment.getValue();
+                    final PsiElement assignedValue            = assignment.getValue();
+                    if (assignedValue != null && assignmentStorage != null && assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN) {
+                        PsiElement extractedValue = assignedValue;
+                        if (extractedValue instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) extractedValue;
+                            final PsiElement left         = binary.getLeftOperand();
+                            if (binary.getOperationType() == PhpTokenTypes.opCONCAT && left instanceof StringLiteralExpression) {
+                                final boolean hasInjections = ((StringLiteralExpression) left).getFirstPsiChild() != null;
+                                if (! hasInjections) {
+                                    extractedValue = binary.getRightOperand();
+                                }
                             }
                         }
-                    }
-                    /* now match */
-                    final PsiElement loopValue = foreach.getValue();
-                    if (loopValue != null && concatenateValue != null && OpenapiEquivalenceUtil.areEqual(loopValue, concatenateValue)) {
-                        /* skip generators - the loop is performance-optimized */
-                        final PsiElement source = foreach.getArray();
-                        if (source instanceof PhpTypedElement) {
-                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) source, project);
+                        if (extractedValue != null) {
+                            /* false-positive: generators */
+                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) loopSource, project);
                             if (resolved != null && resolved.filterUnknown().getTypes().contains("\\Generator")) {
                                 return false;
                             }
+                            return isArrayValue(extractedValue, loopValue) || (loopIndex != null && isArrayElement(extractedValue, loopSource, loopIndex));
                         }
-                        return true;
                     }
                 }
             }

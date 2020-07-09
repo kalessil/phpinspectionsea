@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.forEach.strategy;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -19,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class CanBeReplacedWithArrayFilterStrategy {
-    static public boolean apply(@NotNull ForeachStatement foreach, @NotNull PsiElement expression, @NotNull Project project) {
+final public class CanBeReplacedWithArrayFilterStrategy extends AbstractStrategy {
+    static public boolean apply(@NotNull ForeachStatement foreach, @NotNull PsiElement expression) {
         if (expression instanceof If && ! ExpressionSemanticUtil.hasAlternativeBranches((If) expression)) {
             final PsiElement loopSource = foreach.getArray();
             final PsiElement loopIndex  = foreach.getKey();
@@ -57,23 +56,6 @@ final public class CanBeReplacedWithArrayFilterStrategy {
             }
         }
         return false;
-    }
-
-    static private boolean isArrayElement(@NotNull PsiElement candidate, @NotNull PsiElement source, @NotNull PsiElement index) {
-        if (candidate instanceof ArrayAccessExpression) {
-            final ArrayAccessExpression access = (ArrayAccessExpression) candidate;
-            final PsiElement base              = access.getValue();
-            final ArrayIndex keyHolder         = access.getIndex();
-            final PsiElement key               = keyHolder == null ? null : keyHolder.getValue();
-            if (base != null && key != null) {
-                return OpenapiEquivalenceUtil.areEqual(base, source) && OpenapiEquivalenceUtil.areEqual(key, index);
-            }
-        }
-        return false;
-    }
-
-    static private boolean isArrayValue(@NotNull PsiElement candidate, @NotNull PsiElement value) {
-        return OpenapiEquivalenceUtil.areEqual(candidate, value);
     }
 
     static private boolean isEmptyCheck(

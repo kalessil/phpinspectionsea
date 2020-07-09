@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * file that was distributed with this source code.
  */
 
-final public class CanBeReplacedWithArrayFlipStrategy {
+final public class CanBeReplacedWithArrayFlipStrategy extends AbstractStrategy {
     static public boolean apply(@NotNull ForeachStatement foreach, @NotNull PsiElement expression, @NotNull Project project) {
         if (OpenapiTypesUtil.isStatementImpl(expression)) {
             final PsiElement candidate = expression.getFirstChild();

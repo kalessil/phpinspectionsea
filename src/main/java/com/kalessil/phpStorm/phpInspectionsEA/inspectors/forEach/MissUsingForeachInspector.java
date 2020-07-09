@@ -79,7 +79,7 @@ public class MissUsingForeachInspector extends PhpInspection {
                                     foreach.getFirstChild(),
                                     MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_column"))
                             );
-                        } else if (CanBeReplacedWithArrayFilterStrategy.apply(foreach, expression, holder.getProject())) {
+                        } else if (CanBeReplacedWithArrayFilterStrategy.apply(foreach, expression)) {
                             holder.registerProblem(
                                     foreach.getFirstChild(),
                                     MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_filter"))

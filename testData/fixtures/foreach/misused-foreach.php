@@ -1,13 +1,13 @@
 <?php
 
-    <warning descr="[EA] Perhaps can be replaced with 'implode(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+    <warning descr="[EA] Perhaps can be replaced with 'implode(...)' call (reduces cognitive load).">foreach</warning> ($array as $value) {
         $accumulator .= $value;
     }
     <warning descr="[EA] Perhaps can be replaced with 'implode(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
         $accumulator .= $array[$index];
     }
 
-    <warning descr="[EA] Perhaps can be replaced with 'implode(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+    <warning descr="[EA] Perhaps can be replaced with 'implode(...)' call (reduces cognitive load).">foreach</warning> ($array as $value) {
         $accumulator .= '...' . $value;
     }
     <warning descr="[EA] Perhaps can be replaced with 'implode(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {

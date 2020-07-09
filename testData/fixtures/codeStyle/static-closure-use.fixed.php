@@ -18,4 +18,14 @@ class CasesHolder extends ParentClass {
             function() { parent::dynamicMethod(); },
         ];
     }
+
+    public function returns_closure() {
+        $closure = function() { ; };
+        return $closure;
+    }
+
+    public function binds_closure() {
+        $closure = function() { ; };
+        return Closure::bind($closure, $this);
+    }
 }

@@ -120,7 +120,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                                             final String methodName         = reference.getName();
                                             if (methodName != null && methodName.equals("bind")) {
                                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                                if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure::bind")) {
+                                                if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure.bind")) {
                                                     return false;
                                                 }
                                             }

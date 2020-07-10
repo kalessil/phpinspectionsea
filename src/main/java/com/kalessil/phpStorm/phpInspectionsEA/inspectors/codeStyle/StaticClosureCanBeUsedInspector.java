@@ -15,10 +15,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -63,6 +60,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                                 new MakeClosureStaticFix()
                         );
                     }
+                    /* learning currently is not feasible: influence of co-dispatched arguments */
                 }
             }
 
@@ -88,7 +86,8 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                         }
                     }
                     /* check usages: perhaps bound to closure or returned -> then we can not promote */
-                    if (this.canBeBound(this.usages(function))) {
+                    /* Closure::bind(, null, ) -> can be static */
+                    if (! this.canBeStatic(this.usages(function))) {
                         return false;
                     }
                 }
@@ -96,51 +95,90 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
             }
 
             private List<PsiElement> usages(@NotNull Function function) {
-                final List<PsiElement> usages = new ArrayList<>();
-                final Function scope          = ExpressionSemanticUtil.getScope(function);
-                if (scope != null) {
-                    final GroupStatement scopeBody = ExpressionSemanticUtil.getGroupStatement(scope);
-                    if (scopeBody != null) {
-                        final PsiElement parent          = function.getParent();
-                        final PsiElement extractedParent = OpenapiTypesUtil.is(parent, PhpElementTypes.CLOSURE) ? parent.getParent() : parent;
-                        if (extractedParent instanceof ParameterList || extractedParent instanceof PhpReturn) {
-                            usages.add(extractedParent);
-                        } else if (OpenapiTypesUtil.isAssignment(extractedParent)) {
-                            final PsiElement assignmentStorage = ((AssignmentExpression) extractedParent).getVariable();
-                            if (assignmentStorage instanceof Variable) {
-                                final String variableName = ((Variable) assignmentStorage).getName();
-                                for (final Variable usage : PsiTreeUtil.findChildrenOfType(scopeBody, Variable.class)) {
-                                    if (variableName.equals(usage.getName())) {
-                                        usages.add(usage.getParent());
+                final List<PsiElement> usages    = new ArrayList<>();
+
+                /* case 1: dispatched directly into a call */
+                final PsiElement parent          = function.getParent();
+                final PsiElement extractedParent = OpenapiTypesUtil.is(parent, PhpElementTypes.CLOSURE) ? parent.getParent() : parent;
+                if (extractedParent instanceof ParameterList) {
+                    usages.add(extractedParent);
+                    return usages;
+                }
+
+                /* case 2: dispatched into a call via variable */
+                if (OpenapiTypesUtil.isAssignment(extractedParent)) {
+                    final PsiElement assignmentStorage = ((AssignmentExpression) extractedParent).getVariable();
+                    if (assignmentStorage instanceof Variable) {
+                        final Function scope           = ExpressionSemanticUtil.getScope(function);
+                        final GroupStatement scopeBody = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
+                        if (scopeBody != null) {
+                            final String variableName = ((Variable) assignmentStorage).getName();
+                            for (final Variable usage : PsiTreeUtil.findChildrenOfType(scopeBody, Variable.class)) {
+                                if (variableName.equals(usage.getName()) && usage != assignmentStorage) {
+                                    final PsiElement usageContext = usage.getParent();
+                                    /* if closure used in other context, side-effects are not predictable */
+                                    if (! (usageContext instanceof ParameterList) && ! (usageContext instanceof MethodReference)) {
+                                        usages.clear();
+                                        return usages;
                                     }
+                                    usages.add(usageContext);
                                 }
                             }
                         }
                     }
                 }
+
+                /* case 3: dispatched into array (factories/callbacks) in non-scoped context */
+                if (OpenapiTypesUtil.is(extractedParent, PhpElementTypes.ARRAY_VALUE)) {
+                    usages.add(extractedParent.getParent());
+                }
+
                 return usages;
             }
 
-            private boolean canBeBound(@NotNull List<PsiElement> usages) {
+            private boolean canBeStatic(@NotNull List<PsiElement> usages) {
                 for (final PsiElement context : usages) {
-                    if (context instanceof PhpReturn) {
-                        return true;
-                    }
                     if (context instanceof ParameterList) {
-                        final PsiElement bindCandidate = context.getParent();
-                        if (bindCandidate instanceof MethodReference) {
-                            final MethodReference reference = (MethodReference) bindCandidate;
+                        final PsiElement referenceCandidate = context.getParent();
+                        if (referenceCandidate instanceof MethodReference) {
+                            /* case: Closure::bind() */
+                            final MethodReference reference = (MethodReference) referenceCandidate;
                             final String methodName         = reference.getName();
                             if (methodName != null && methodName.equals("bind")) {
-                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure.bind")) {
-                                    return true;
+                                final PsiElement[] arguments = reference.getParameters();
+                                if (arguments.length > 1 && PhpLanguageUtil.isNull(arguments[1])) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure.bind")) {
+                                        continue;
+                                    }
                                 }
                             }
+                        } else if (referenceCandidate instanceof FunctionReference) {
+                            /* case: e.g. array_filter($array, $callback) */
+                            final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) referenceCandidate);
+                            if (resolved instanceof Function && ((Function) resolved).getNamespaceName().equals("\\")) {
+                                continue;
+                            }
+                        }
+                    } else if (context instanceof MethodReference) {
+                        /* case: $closure->bindTo() */
+                        final MethodReference reference = (MethodReference) context;
+                        final String methodName         = reference.getName();
+                        if (methodName != null && methodName.equals("bindTo")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length > 0 && PhpLanguageUtil.isNull(arguments[0])) {
+                                continue;
+                            }
+                        }
+                    } else if (context instanceof ArrayHashElement) {
+                        /* case: [ Clazz::class => <callback> ] (factories) */
+                        if (ExpressionSemanticUtil.getScope(context) == null) {
+                            continue;
                         }
                     }
+                    return false;
                 }
-                return false;
+                return true;
             }
         };
     }

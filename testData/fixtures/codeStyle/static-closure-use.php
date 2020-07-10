@@ -10,22 +10,34 @@ class CasesHolder extends ParentClass {
 
     public function method() {
         return [
-            function() { return $this->property; },
-            <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { return null; },
-            static function() { return null; },
+            array_filter([], <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { return null; }),
+            array_filter([], function() { return $this->property; }),
+            array_filter([], static function() { return null; }),
 
-            <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { parent::staticMethod(); },
-            function() { parent::dynamicMethod(); },
+            array_filter([], <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { return parent::staticMethod(); }),
+            array_filter([], function() { return parent::dynamicMethod(); }),
         ];
     }
 
-    public function returns_closure() {
-        $closure = function() { ; };
-        return $closure;
+    public function binds_closure() {
+        $targetClosure = <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { ; };
+        Closure::bind($targetClosure, null);
+        $targetClosure->bindTo(null);
+
+        $skippedClosure = function() { ; };
+        Closure::bind($skippedClosure, $this);
+        $skippedClosure->bindTo($this);
     }
 
-    public function binds_closure() {
-        $closure = function() { ; };
-        return Closure::bind($closure, $this);
+    public function scoped_factories() {
+        return [
+            CasesHolder::class => function() { return null; },
+            CasesHolder::class => static function() { return null; },
+        ];
     }
 }
+
+$unscopedFactories = [
+    CasesHolder::class => <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { return null; },
+    CasesHolder::class => static function() { return null; },
+];

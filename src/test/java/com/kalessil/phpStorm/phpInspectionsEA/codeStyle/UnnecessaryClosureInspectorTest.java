@@ -22,7 +22,7 @@ final public class UnnecessaryClosureInspectorTest extends PhpCodeInsightFixture
         final PhpLanguageLevel level = PhpLanguageLevel.parse("7.4");
         if (level != null && level.getVersionString().equals("7.4")) {
             /* looks like 7.4 feature were introduced in multiple batches */
-            final boolean hasArrowFunctions = Arrays.stream(PhpLanguageFeature.class.getEnumConstants()).anyMatch(f -> f.toString().equals("ARROW_FUNCTION_SYNTAX"));
+            final boolean hasArrowFunctions = Arrays.stream(PhpLanguageFeature.class.getEnumConstants()).anyMatch(f -> f.toString().contains("Arrow function"));
             if (hasArrowFunctions) {
                 PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
                 myFixture.enableInspections(new UnnecessaryClosureInspector());

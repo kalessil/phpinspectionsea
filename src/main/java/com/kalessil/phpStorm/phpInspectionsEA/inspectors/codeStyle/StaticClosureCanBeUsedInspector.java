@@ -65,8 +65,9 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
             }
 
             private boolean canBeStatic(@NotNull Function function) {
-                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
-                if (body != null && ExpressionSemanticUtil.countExpressionsInGroup(body) > 0) {
+                final boolean isArrowFunction = ! OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwFUNCTION);
+                final PsiElement body         = isArrowFunction ? function : ExpressionSemanticUtil.getGroupStatement(function);
+                if (body != null && (isArrowFunction || ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) body) > 0)) {
                     /* check if $this or parent:: being used */
                     for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
                         if (element instanceof Variable) {

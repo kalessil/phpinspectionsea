@@ -40,11 +40,11 @@ public class ComposerPackageAutoloadingIndexer extends FileBasedIndexExtension<S
             final List<String> autoloading = new ArrayList<>();
 
             PsiElement content;
-//            try {
+            try {
                 content = file.getPsiFile().getFirstChild();
-//            } catch (Throwable failure) {
-//                content = null;
-//            }
+            } catch (Throwable failure) {
+                content = null;
+            }
             if (content instanceof JsonObject) {
                 final JsonObject manifest = (JsonObject) content;
 

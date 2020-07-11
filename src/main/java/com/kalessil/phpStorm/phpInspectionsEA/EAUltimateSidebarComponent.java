@@ -78,7 +78,9 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
                     final int basic = 145;
                     try {
                         if (service.isActivatedLicense()) {
-                            message = String.format("Activated (running all features: %s inspections)", total);
+                            message = service.isActiveLicense()
+                                    ? String.format("Active license (running all features: %s inspections)", total)
+                                    : String.format("Expired license (running basic features: %s of %s inspections)", basic, total);
                         } else if (service.isTrialLicense()) {
                             message = service.isActiveTrialLicense()
                                     ? String.format("Active trial (running all features: %s inspections).", total)

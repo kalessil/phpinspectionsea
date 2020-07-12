@@ -3,6 +3,7 @@ Loops:
     'array_chunk()':                              loop + array_slice()
     'in_array()/array_search()':                  loop + comparison + break
 
+- senseless array copy loop (can be replaced with '$copy = $array')
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
 
 - Amount of traits

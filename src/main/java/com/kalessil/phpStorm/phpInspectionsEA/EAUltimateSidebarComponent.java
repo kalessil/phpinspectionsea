@@ -75,7 +75,7 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
                 final LicenseService service = EAUltimateApplicationComponent.getLicenseService();
                 if (service != null && service.shouldCheckPluginLicense()) {
                     final int total = 261;
-                    final int basic = 145;
+                    final int basic = 146;
                     try {
                         if (service.isActivatedLicense()) {
                             message = service.isActiveLicense()

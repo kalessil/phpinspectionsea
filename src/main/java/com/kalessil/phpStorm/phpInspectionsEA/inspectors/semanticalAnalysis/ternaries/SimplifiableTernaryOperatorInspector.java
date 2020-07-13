@@ -53,7 +53,7 @@ public class SimplifiableTernaryOperatorInspector extends PhpInspection {
                     final PsiElement nestedCondition      = nestedTernary.getCondition();
                     final PsiElement nestedPositive       = ExpressionSemanticUtil.getExpressionTroughParenthesis(nestedTernary.getTrueVariant());
                     final PsiElement nestedNegative       = ExpressionSemanticUtil.getExpressionTroughParenthesis(nestedTernary.getFalseVariant());
-                    if (nestedCondition != null && nestedPositive != null && nestedNegative != null) {
+                    if (nestedCondition != null && nestedPositive != null && nestedNegative != null && ! nestedTernary.isShort()) {
                         final boolean isTarget = OpenapiEquivalenceUtil.areEqual(negative, nestedNegative);
                         if (isTarget) {
                             final String newCondition = String.format("(%s && %s)", condition.getText(), nestedCondition.getText());

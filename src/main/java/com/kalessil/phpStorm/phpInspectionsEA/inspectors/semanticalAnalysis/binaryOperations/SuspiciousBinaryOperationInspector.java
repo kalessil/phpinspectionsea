@@ -52,10 +52,11 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 final Collection<BooleanSupplier> callbacks = new ArrayList<>(20);
-                /* pit-falls and all sort of weak-typed language issues*/
+                /* pit-falls and all sorts of weakly typed language issues*/
                 callbacks.add(() -> PossiblyAssignmentStrategy.apply(expression, holder));
                 callbacks.add(() -> PossiblyArrayHashElementDeclarationStrategy.apply(expression, holder));
                 callbacks.add(() -> IdenticalOperandsStrategy.apply(expression, holder));
+                callbacks.add(() -> OperandsWithSameValueStrategy.apply(expression, holder));
                 callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
                 callbacks.add(() -> PossiblyMethodReferenceStrategy.apply(expression, holder));

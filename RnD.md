@@ -1,9 +1,7 @@
 Loops:
-    'array_merge()/array_fill()/array_combine()': loop + pushing to array
-    'array_chunk()':                              loop + array_slice()
-    'in_array()/array_search()':                  loop + comparison + break
+    'array_merge()/array_fill()/array_combine()/array_values()/array_keys()/$copy = $array': loop + pushing to array
+    'array_chunk()':                                                                         loop + array_slice()
 
-- senseless array copy loop (can be replaced with '$copy = $array')
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
 
 - Amount of traits
@@ -13,4 +11,5 @@ Loops:
     - not empty contexts (incl. methods)
     - count/size check (incl. methods)
 - marker traits -> marker interfaces: no methods, checked via class_uses(...)
+- review suspicious binary operation:  strategies && ExpressionSemanticUtil.getExpressionTroughParenthesis
 

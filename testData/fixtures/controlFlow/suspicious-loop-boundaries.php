@@ -1,6 +1,7 @@
 <?php
 
 function cases_holder() {
+    /* cases: generic */
     <error descr="[EA] Conditions and repeated operations are not complimentary, please check what's going on here.">for</error>
         ($i = 0; $i < 5; --$i) {}
     <error descr="[EA] Conditions and repeated operations are not complimentary, please check what's going on here.">for</error>
@@ -13,6 +14,10 @@ function cases_holder() {
         ($i = 0; $i <= count([]); ++$i) {}
     <error descr="[EA] Conditions doesn't seem to be correct, please check what's going on here.">for</error>
         ($i = count([]); $i >= 0; --$i) {}
+
+    /* cases: values discovery */
+    <error descr="[EA] Conditions doesn't seem to be correct, please check what's going on here.">for</error>
+        ($i = 0, $iMax = count([]); $i <= $iMax; ++$i) {}
 
     /* valid cases: going up */
     for ($i = 0; 5 >= $i; ++$i) {}

@@ -99,3 +99,16 @@
     <warning descr="[EA] Perhaps can be replaced with 'array_filter(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
         if ($array[$index] != '') { $storage[$index] = $array[$index]; }
     }
+
+    <warning descr="[EA] Perhaps can be replaced with 'in_array(...)' call (reduces cognitive load).">foreach</warning> ($array as $value) {
+        if ($value == '') { $found = true; break; }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'in_array(...)' call (reduces cognitive load).">foreach</warning> ($array as $value) {
+        if ($value === '') { $found = true; break; }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_search(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if ($value == '') { $position = $index; break; }
+    }
+    <warning descr="[EA] Perhaps can be replaced with 'array_search(...)' call (reduces cognitive load).">foreach</warning> ($array as $index => $value) {
+        if ($value === '') { $position = $index; break; }
+    }

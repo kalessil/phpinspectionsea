@@ -18,6 +18,11 @@
     echo stdClass::$test ?? 'test';
     echo $classname::$test ?? 'test';
 
+    /* pattern: not-empty ? property-reference : alternative */
+    echo $object->property ?? null;
+    echo $array[$index]->property ?? null;
+    echo $object->property->property ?? null;
+
     /* false-positives */
     echo array_key_exists(0, $x) ? $x[0] : 'default';
     echo isset($x[0], $s[1]) ? $x[0] : 'default';

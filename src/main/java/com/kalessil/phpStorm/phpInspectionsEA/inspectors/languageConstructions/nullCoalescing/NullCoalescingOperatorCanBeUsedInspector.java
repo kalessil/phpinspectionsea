@@ -143,10 +143,16 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                 String coalescing = null;
                 if (extracted instanceof PhpIsset) {
                     coalescing = this.generateReplacementForIsset(condition, (PhpIsset) extracted, first, second);
-                } else if (extracted instanceof FunctionReference && second != null) {
-                    coalescing = this.generateReplacementForExists(condition, (FunctionReference) extracted, first, second);
-                } else if (extracted instanceof BinaryExpression && second != null) {
-                    coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, first, second);
+                } else if (extracted instanceof Variable || extracted instanceof ArrayAccessExpression || extracted instanceof FieldReference) {
+                    coalescing = this.generateReplacementForPropertyAccess(condition, extracted, first, second);
+                } else if (extracted instanceof FunctionReference) {
+                    if (second != null) {
+                        coalescing = this.generateReplacementForExists(condition, (FunctionReference) extracted, first, second);
+                    }
+                } else if (extracted instanceof BinaryExpression) {
+                    if (second != null) {
+                        coalescing = this.generateReplacementForIdentity(condition, (BinaryExpression) extracted, first, second);
+                    }
                 }
                 return coalescing;
             }
@@ -236,6 +242,29 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
             }
 
             @Nullable
+            private String generateReplacementForPropertyAccess(
+                    @NotNull PsiElement condition,
+                    @NotNull PsiElement extracted,
+                    @NotNull PsiElement first,
+                    @Nullable PsiElement second
+            ) {
+                final boolean expectsToBeNotEmpty = condition == extracted;
+                final PsiElement candidate        = expectsToBeNotEmpty ? first : second;
+                if (candidate instanceof FieldReference) {
+                    final PsiElement subject = ((FieldReference) candidate).getClassReference();
+                    if (subject != null && OpenapiEquivalenceUtil.areEqual(extracted, subject)) {
+                        final PsiElement alternative = expectsToBeNotEmpty ? second : first;
+                        return String.format(
+                                "%s ?? %s",
+                                String.format(this.wrap(candidate) ? "(%s)" : "%s", candidate.getText()),
+                                String.format(this.wrap(alternative) ? "(%s)" : "%s", alternative == null ? "null" : alternative.getText())
+                        );
+                    }
+                }
+            return null;
+            }
+
+            @Nullable
             private PsiElement getTargetCondition(@NotNull PsiElement condition) {
                 /* un-wrap inverted conditions */
                 if (condition instanceof UnaryExpression) {
@@ -245,7 +274,9 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                     }
                 }
                 /* do check */
-                if (condition instanceof PhpIsset) {
+                if (condition instanceof Variable || condition instanceof ArrayAccessExpression || condition instanceof FieldReference) {
+                    return condition;
+                } if (condition instanceof PhpIsset) {
                     final PhpIsset isset = (PhpIsset) condition;
                     if (isset.getVariables().length == 1) {
                         return condition;

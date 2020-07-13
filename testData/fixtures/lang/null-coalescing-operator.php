@@ -22,6 +22,9 @@
     echo <weak_warning descr="[EA] '$object->property ?? null' can be used instead (reduces cognitive load).">$object ? $object->property : null</weak_warning>;
     echo <weak_warning descr="[EA] '$array[$index]->property ?? null' can be used instead (reduces cognitive load).">$array[$index] ? $array[$index]->property : null</weak_warning>;
     echo <weak_warning descr="[EA] '$object->property->property ?? null' can be used instead (reduces cognitive load).">$object->property ? $object->property->property : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$object->property ?? null' can be used instead (reduces cognitive load).">!empty($object) ? $object->property : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$array[$index]->property ?? null' can be used instead (reduces cognitive load).">!empty($array[$index]) ? $array[$index]->property : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$object->property->property ?? null' can be used instead (reduces cognitive load).">!empty($object->property) ? $object->property->property : null</weak_warning>;
 
     /* false-positives */
     echo array_key_exists(0, $x) ? $x[0] : 'default';

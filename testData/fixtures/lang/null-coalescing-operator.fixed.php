@@ -22,6 +22,9 @@
     echo $object->property ?? null;
     echo $array[$index]->property ?? null;
     echo $object->property->property ?? null;
+    echo $object->property ?? null;
+    echo $array[$index]->property ?? null;
+    echo $object->property->property ?? null;
 
     /* false-positives */
     echo array_key_exists(0, $x) ? $x[0] : 'default';

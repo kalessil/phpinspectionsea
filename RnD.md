@@ -3,6 +3,7 @@ Loops:
     'array_chunk()':                                                                         loop + array_slice()
 
 - jar-binary basic protection
+- NullCoalescingOperatorCanBeUsedInspector -> into extended completely
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
 
 - Amount of traits

@@ -51,6 +51,18 @@ final public class ExpressionSemanticUtil {
     }
 
     @Nullable
+    public static PsiElement getFirstStatement(@NotNull GroupStatement groupStatement) {
+        PsiElement child = groupStatement.getFirstChild();
+        while (child != null) {
+            if (child instanceof PhpPsiElement && !(child instanceof PhpDocComment)) {
+                return child;
+            }
+            child = child.getNextSibling();
+        }
+        return null;
+    }
+
+    @Nullable
     public static PsiElement getLastStatement(@NotNull GroupStatement groupStatement) {
         PsiElement child = groupStatement.getLastChild();
         while (child != null) {

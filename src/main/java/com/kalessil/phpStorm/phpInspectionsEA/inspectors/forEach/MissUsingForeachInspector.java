@@ -84,6 +84,16 @@ public class MissUsingForeachInspector extends PhpInspection {
                                     foreach.getFirstChild(),
                                     MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_filter"))
                             );
+                        } else if (CanBeReplacedWithArraySearchStrategy.apply(foreach, expression, holder.getProject())) {
+                            holder.registerProblem(
+                                    foreach.getFirstChild(),
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "array_search"))
+                            );
+                        } else if (CanBeReplacedWithInArrayStrategy.apply(foreach, expression, holder.getProject())) {
+                            holder.registerProblem(
+                                    foreach.getFirstChild(),
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, "in_array"))
+                            );
                         }
                     }
                 }

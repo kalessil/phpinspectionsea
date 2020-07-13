@@ -32,6 +32,10 @@ final public class OperandsWithSameValueStrategy {
         targetOperations.add(PhpTokenTypes.opIDENTICAL);
         targetOperations.add(PhpTokenTypes.opNOT_EQUAL);
         targetOperations.add(PhpTokenTypes.opNOT_IDENTICAL);
+        targetOperations.add(PhpTokenTypes.opGREATER);
+        targetOperations.add(PhpTokenTypes.opGREATER_OR_EQUAL);
+        targetOperations.add(PhpTokenTypes.opLESS);
+        targetOperations.add(PhpTokenTypes.opLESS_OR_EQUAL);
 
         targetInnerOperations.add(PhpTokenTypes.opPLUS);
         targetInnerOperations.add(PhpTokenTypes.opMINUS);

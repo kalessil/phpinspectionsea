@@ -304,12 +304,12 @@ public class NullCoalescingOperatorCanBeUsedInspector extends PhpInspection {
                 /* do check */
                 if (condition instanceof Variable || condition instanceof ArrayAccessExpression || condition instanceof FieldReference) {
                     return condition;
-                } if (condition instanceof PhpIsset) {
+                } else if (condition instanceof PhpIsset) {
                     final PhpIsset isset = (PhpIsset) condition;
                     if (isset.getVariables().length == 1) {
                         return condition;
                     }
-                }if (condition instanceof PhpEmpty) {
+                } else if (condition instanceof PhpEmpty) {
                     final PhpEmpty empty = (PhpEmpty) condition;
                     if (empty.getVariables().length == 1) {
                         return condition;

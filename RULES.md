@@ -49,6 +49,7 @@ Inspections Lists (Control flow)
 | Control Flow         | ExplodeLimitUsageInspection                     | 'explode(...)' limit can be used                                                  | yes | yes | yes  | no  |
 | Control Flow         | UriPartExtractionInspection                     | URI parts extraction                                                              | n/a | yes | n/a  | no  |
 | Control Flow         | MissUsingForeachInspection                      | Missused foreach constructs                                                       | n/a | yes | n/a  | no  |
+| Control Flow         | SimplifiableTernaryOperatorInspection           | Simplifiable ternary operator                                                     | yes | yes | yes  | no  |
 
 Inspections Lists (PHPUnit)
 ---

@@ -9,7 +9,7 @@ final public class SuspiciousTernaryOperatorInspectorTest extends PhpCodeInsight
     public void testIfFindsAllPatterns() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP700);
         myFixture.enableInspections(new SuspiciousTernaryOperatorInspector());
-        myFixture.configureByFile("testData/fixtures/pitfalls/suspicious-ternary-operator.php");
+        myFixture.configureByFile("testData/fixtures/semanticalAnalysis/ternaries/suspicious-ternary-operator.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

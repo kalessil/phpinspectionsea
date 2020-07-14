@@ -48,22 +48,30 @@ final public class OperandsWithSameValueStrategy {
             final PsiElement left  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getLeftOperand());
             final PsiElement right = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getRightOperand());
             if (left != null && right != null) {
-                final PsiElement innerBinary = left instanceof BinaryExpression ? left : right;
-                final PsiElement innerOther  = left instanceof BinaryExpression ? right : left;
-                if (innerBinary instanceof BinaryExpression && ! (innerOther instanceof BinaryExpression)) {
-                    final BinaryExpression binary = (BinaryExpression) innerBinary;
-                    if (targetInnerOperations.contains(binary.getOperationType())) {
-                        final PsiElement binaryLeft  = binary.getLeftOperand();
-                        final PsiElement binaryRight = binary.getRightOperand();
-                        if (binaryLeft != null && binaryRight != null) {
-                            final boolean isTarget = OpenapiEquivalenceUtil.areEqual(binaryLeft, innerOther) ||
-                                                     OpenapiEquivalenceUtil.areEqual(binaryRight, innerOther);
-                            if (isTarget) {
-                                holder.registerProblem(
-                                        expression,
-                                        MessagesPresentationUtil.prefixWithEa(message)
-                                );
-                                return true;
+                if (OpenapiEquivalenceUtil.areEqual(left, right)) {
+                    holder.registerProblem(
+                            expression,
+                            MessagesPresentationUtil.prefixWithEa(message)
+                    );
+                    return true;
+                } else {
+                    final PsiElement innerBinary = left instanceof BinaryExpression ? left : right;
+                    final PsiElement innerOther  = left instanceof BinaryExpression ? right : left;
+                    if (innerBinary instanceof BinaryExpression && ! (innerOther instanceof BinaryExpression)) {
+                        final BinaryExpression binary = (BinaryExpression) innerBinary;
+                        if (targetInnerOperations.contains(binary.getOperationType())) {
+                            final PsiElement binaryLeft  = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getLeftOperand());
+                            final PsiElement binaryRight = ExpressionSemanticUtil.getExpressionTroughParenthesis(binary.getRightOperand());
+                            if (binaryLeft != null && binaryRight != null) {
+                                final boolean isTarget   = OpenapiEquivalenceUtil.areEqual(binaryLeft, innerOther) ||
+                                                           OpenapiEquivalenceUtil.areEqual(binaryRight, innerOther);
+                                if (isTarget) {
+                                    holder.registerProblem(
+                                            expression,
+                                            MessagesPresentationUtil.prefixWithEa(message)
+                                    );
+                                    return true;
+                                }
                             }
                         }
                     }

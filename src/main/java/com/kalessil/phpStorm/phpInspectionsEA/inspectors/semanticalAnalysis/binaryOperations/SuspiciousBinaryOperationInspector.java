@@ -51,11 +51,10 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
-                final Collection<BooleanSupplier> callbacks = new ArrayList<>(20);
+                final Collection<BooleanSupplier> callbacks = new ArrayList<>(22);
                 /* pit-falls and all sorts of weakly typed language issues*/
                 callbacks.add(() -> PossiblyAssignmentStrategy.apply(expression, holder));
                 callbacks.add(() -> PossiblyArrayHashElementDeclarationStrategy.apply(expression, holder));
-                callbacks.add(() -> IdenticalOperandsStrategy.apply(expression, holder));
                 callbacks.add(() -> OperandsWithSameValueStrategy.apply(expression, holder));
                 callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
@@ -84,12 +83,7 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 }
 
                 /* run through strategies until the first one fired a warning */
-                for (final BooleanSupplier strategy: callbacks) {
-                    if (strategy.getAsBoolean()) {
-                        break;
-                    }
-                }
-
+                callbacks.stream().anyMatch(BooleanSupplier::getAsBoolean);
                 callbacks.clear();
             }
 

@@ -24,8 +24,8 @@ final public class UnclearOperationsPriorityStrategy {
 
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         final IElementType operator = expression.getOperationType();
-        final PsiElement parent     = expression.getParent();
         if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
+            final PsiElement parent = expression.getParent();
             /* binary expressions, already wrapped into parentheses can be skipped */
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
@@ -53,6 +53,7 @@ final public class UnclearOperationsPriorityStrategy {
                 return true;
             }
         } else if (PhpTokenTypes.tsCOMPARE_OPS.contains(operator)) {
+            final PsiElement parent = expression.getParent();
             if (OpenapiTypesUtil.isAssignment(parent) && parent.getParent() instanceof If) {
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
                 final PsiElement assignedValue        = assignment.getValue();
@@ -96,6 +97,7 @@ final public class UnclearOperationsPriorityStrategy {
                 );
                 return true;
             }
+            final PsiElement parent = expression.getParent();
             if (parent instanceof TernaryExpression && ((TernaryExpression) parent).isShort()) {
                 holder.registerProblem(
                         expression,

@@ -13,9 +13,9 @@ trait IOAT_InTrait {
 }
 
 /* a bug: left and right operands are identical */
-$a = <error descr="[EA] Left and right operands are identical.">$x == ($x)</error>;
-$a = <error descr="[EA] Left and right operands are identical.">($x) == $x</error>;
-$a = <error descr="[EA] Left and right operands are identical.">$x == $x</error>;
+$a = <error descr="[EA] Same value used in the operation (the operation is incorrect or can be simplified).">$x == ($x)</error>;
+$a = <error descr="[EA] Same value used in the operation (the operation is incorrect or can be simplified).">($x) == $x</error>;
+$a = <error descr="[EA] Same value used in the operation (the operation is incorrect or can be simplified).">$x == $x</error>;
 
 /* a bug: misplaced operator */
 class MisplacedOperations
@@ -38,15 +38,21 @@ $x = [
 ];
 
 /* operations priority issues */
-if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a = $b !== $c</error>) {}
 if ($a || <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a && $b</error> || $c) {}
+if ($a || ($b && $c)) {}
+if ($a && ($b || $c)) {}
+if ($a || $b || $c) {}
+if ($a && $b && $c) {}
+
+/* operations priority issues */
 if ($a = <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">function1() && $b</error>) {}
 if ($a = <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">function1() && $b = function2()</error>) {}
 if ($a = <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">function1() && $b && $c = function2()</error>) {}
-if ($a || ($b && $c)) {}
-if ($a && ($b || $c)) {}
 $z = $x && $b;
+
+/* operations priority issues */
+if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a = $b !== $c</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a > $b</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a == $b</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a === $b</error>) {}

@@ -38,15 +38,21 @@ $x = [
 ];
 
 /* operations priority issues */
-if ($a = ($b !== $c)) {}
 if ($a || ($b && $c)) {}
 if (($a && $b) || $c) {}
+if ($a || ($b && $c)) {}
+if ($a && ($b || $c)) {}
+if ($a || $b || $c) {}
+if ($a && $b && $c) {}
+
+/* operations priority issues */
 if ($a = (function1() && $b)) {}
 if ($a = (function1() && $b = function2())) {}
 if ($a = (function1() && $b && $c = function2())) {}
-if ($a || ($b && $c)) {}
-if ($a && ($b || $c)) {}
 $z = $x && $b;
+
+/* operations priority issues */
+if ($a = ($b !== $c)) {}
 if ((!$a) > $b) {}
 if ((!$a) == $b) {}
 if ((!$a) === $b) {}

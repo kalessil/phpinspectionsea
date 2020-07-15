@@ -4,10 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.ArrayAccessExpression;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.ConstantReference;
-import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -34,10 +31,12 @@ final public class MistypedLogicalOperatorsStrategy {
             final PsiElement left   = expression.getLeftOperand();
             final PsiElement right  = expression.getRightOperand();
             if (left != null && right != null) {
+                final PsiElement parent       = expression.getParent();
+                final boolean isInTernary     = parent instanceof TernaryExpression && ((TernaryExpression) parent).getCondition() == expression;
                 final boolean hasNumber       = OpenapiTypesUtil.isNumber(right) || OpenapiTypesUtil.isNumber(left);
                 final boolean hasConstants    = (right instanceof ConstantReference || left instanceof ConstantReference);
                 final boolean hasArrayAccess  = (right instanceof ArrayAccessExpression || left instanceof ArrayAccessExpression);
-                final boolean isTargetContext = ! hasNumber && ! hasConstants && ! hasArrayAccess;
+                final boolean isTargetContext = ! hasNumber && ! hasConstants && ! hasArrayAccess && ! isInTernary;
                 if (isTargetContext && (! isIntegerType(left, holder) || ! isIntegerType(right, holder))) {
                     final PsiElement targetExpression = expression.getOperation();
                     if (targetExpression != null) {

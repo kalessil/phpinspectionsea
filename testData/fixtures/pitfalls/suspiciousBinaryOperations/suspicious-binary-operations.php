@@ -27,7 +27,7 @@ class MisplacedOperations
     }
 }
 
-/* a bug: hardcoded booleans */
+/* a bug: hardcoded booleans and null */
 $x = [
     $x && <error descr="[EA] This operand enforces the operation result.">false</error>,
     $x && <error descr="[EA] This operand enforces the operation result.">null</error>,
@@ -37,7 +37,7 @@ $x = [
     $x || <error descr="[EA] This operand enforces the operation result.">true</error>,
 ];
 
-/* operations priority issues */
+/* operations priority issues: mixing || and && */
 if ($a || <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a && $b</error> || $c) {}
 if ($a || ($b && $c)) {}
@@ -45,14 +45,14 @@ if ($a && ($b || $c)) {}
 if ($a || $b || $c) {}
 if ($a && $b && $c) {}
 
-/* operations priority issues */
+/* operations priority issues: assignment */
 if ($a = <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">function1() && $b</error>) {}
 if ($a = <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">function1() && $b = function2()</error>) {}
 if ($a = <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">function1() && $b && $c = function2()</error>) {}
+if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a = $b !== $c</error>) {}
 $z = $x && $b;
 
-/* operations priority issues */
-if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a = $b !== $c</error>) {}
+/* operations priority issues: inversion */
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a > $b</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a == $b</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a === $b</error>) {}
@@ -63,12 +63,40 @@ if ((!$a) === $b) {}
 if (!$a <=> $b) {}
 
 /* operations priority issues: ternaries and null coalescing */
-if ($a ?: $b && $c) {}
-if ($a ?: $b || $c) {}
+if ($a ?: <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}
+if ($a ?: <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b || $c</error>) {}
 if ($a ?? <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}
 if ($a ?? <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b || $c</error>) {}
 if ($x ?: <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$y ?? $z</error>) {}
 if ($x ?? <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$y ?: $z</error>) {}
+
+/* operations priority issues: ternaries and literal opeands */
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a & $b</error> ? 0 : 1;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a | $b</error> ? 0 : 1;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a - $b</error> ? 0 : 1;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a + $b</error> ? 0 : 1;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a / $b</error> ? 0 : 1;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a * $b</error> ? 0 : 1;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a % $b</error> ? 0 : 1;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a ^ $b</error> ? 0 : 1;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a and $b ? 0 : 1</error>;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a or $b ? 0 : 1</error>;
+echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a xor $b ? 0 : 1</error>;
+/* false-positives: condition is specified well */
+echo ($a + $b) ? 0 : 1;
+/* false-positives: conditions intentions are clear */
+echo $a > $b ? 0 : 1;
+echo $a >= $b ? 0 : 1;
+echo $a < $b ? 0 : 1;
+echo $a <= $b ? 0 : 1;
+echo $a && $b ? 0 : 1;
+echo $a || $b ? 0 : 1;
+echo $a == $b ? 0 : 1;
+echo $a != $b ? 0 : 1;
+echo $a === $b ? 0 : 1;
+echo $a !== $b ? 0 : 1;
+echo $a instanceof stdClass ? 0 : 1;
+echo $a <=> $b ? 0 : 1;
 
 /* nullable/falsy values comparison cases */
 $nullable = null;

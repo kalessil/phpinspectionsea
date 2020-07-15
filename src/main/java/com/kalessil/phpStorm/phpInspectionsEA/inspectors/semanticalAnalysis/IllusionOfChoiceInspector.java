@@ -156,8 +156,8 @@ public class IllusionOfChoiceInspector extends PhpInspection {
                             );
                             if (isTarget) {
                                 final IElementType operation = binary.getOperationType();
-                                final boolean isSafe = (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) ||
-                                                       (!PhpLanguageUtil.isFalsyValue(trueVariant) && !PhpLanguageUtil.isFalsyValue(falseVariant));
+                                final boolean isSafe         = (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) ||
+                                                               (! PhpLanguageUtil.isFalsyValue(trueVariant) && ! PhpLanguageUtil.isFalsyValue(falseVariant));
                                 if (isSafe) {
                                     final boolean isInverted    = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
                                     final PsiElement falseValue = isInverted ? trueVariant : falseVariant;
@@ -209,7 +209,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement from = this.from.getElement();
             final PsiElement to   = this.to.getElement();
-            if (from != null && to != null && !project.isDisposed()) {
+            if (from != null && to != null && ! project.isDisposed()) {
                 final PsiElement replacement;
                 if (this.replacement.startsWith("return ")) {
                     replacement = PhpPsiElementFactory

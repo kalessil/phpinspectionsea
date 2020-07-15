@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -9,6 +10,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -22,10 +26,32 @@ import org.jetbrains.annotations.NotNull;
 final public class UnclearOperationsPriorityStrategy {
     private static final String message = "Operations priority might differ from what you expect: please wrap needed with '(...)'.";
 
+    private static final Set<IElementType> ternarySafeOperations = new HashSet<>();
+    static {
+        ternarySafeOperations.add(PhpTokenTypes.opAND);
+        ternarySafeOperations.add(PhpTokenTypes.opOR);
+        ternarySafeOperations.add(PhpTokenTypes.opIDENTICAL);
+        ternarySafeOperations.add(PhpTokenTypes.opNOT_IDENTICAL);
+        ternarySafeOperations.add(PhpTokenTypes.opEQUAL);
+        ternarySafeOperations.add(PhpTokenTypes.opNOT_EQUAL);
+        ternarySafeOperations.add(PhpTokenTypes.opGREATER);
+        ternarySafeOperations.add(PhpTokenTypes.opGREATER_OR_EQUAL);
+        ternarySafeOperations.add(PhpTokenTypes.opLESS);
+        ternarySafeOperations.add(PhpTokenTypes.opLESS_OR_EQUAL);
+        ternarySafeOperations.add(PhpTokenTypes.kwINSTANCEOF);
+        ternarySafeOperations.add(PhpTokenTypes.opSPACESHIP);
+    }
+
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
+        final PsiElement parent = expression.getParent();
+
+        /* badly structured hack: merge into SuspiciousTernaryOperatorInspector patterns */
+        if (parent instanceof TernaryExpression && apply((TernaryExpression) parent, expression, holder)) {
+            return true;
+        }
+
         final IElementType operator = expression.getOperationType();
         if (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) {
-            final PsiElement parent = expression.getParent();
             /* binary expressions, already wrapped into parentheses can be skipped */
             if (parent instanceof BinaryExpression) {
                 final IElementType parentOperator = ((BinaryExpression) parent).getOperationType();
@@ -43,7 +69,7 @@ final public class UnclearOperationsPriorityStrategy {
                 }
             }
             /* assignment dramatically changing precedence */
-            else if (OpenapiTypesUtil.isAssignment(parent) && !OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
+            else if (OpenapiTypesUtil.isAssignment(parent) && ! OpenapiTypesUtil.isStatementImpl(parent.getParent())) {
                 final String replacement = '(' + expression.getText() + ')';
                 holder.registerProblem(
                         expression,
@@ -53,7 +79,6 @@ final public class UnclearOperationsPriorityStrategy {
                 return true;
             }
         } else if (PhpTokenTypes.tsCOMPARE_OPS.contains(operator)) {
-            final PsiElement parent = expression.getParent();
             if (OpenapiTypesUtil.isAssignment(parent) && parent.getParent() instanceof If) {
                 final AssignmentExpression assignment = (AssignmentExpression) parent;
                 final PsiElement assignedValue        = assignment.getValue();
@@ -97,12 +122,48 @@ final public class UnclearOperationsPriorityStrategy {
                 );
                 return true;
             }
-            final PsiElement parent = expression.getParent();
             if (parent instanceof TernaryExpression && ((TernaryExpression) parent).isShort()) {
                 holder.registerProblem(
                         expression,
                         MessagesPresentationUtil.prefixWithEa(message),
                         new WrapItAsItIsFix('(' + expression.getText() + ')')
+                );
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean apply(@NotNull TernaryExpression ternary, @NotNull BinaryExpression condition, @NotNull ProblemsHolder holder) {
+        /* case: binary in alternative short ternary branch */
+        if (ternary.isShort() && ternary.getFalseVariant() == condition) {
+            holder.registerProblem(
+                    condition,
+                    MessagesPresentationUtil.prefixWithEa(message),
+                    new WrapItAsItIsFix(String.format("(%s)", condition.getText()))
+            );
+            return true;
+        }
+
+        /* case: operations which might produce a value as not expected */
+        if (! (ternary.getCondition() instanceof ParenthesizedExpression) && ! ternarySafeOperations.contains(condition.getOperationType())) {
+            holder.registerProblem(
+                    condition,
+                    MessagesPresentationUtil.prefixWithEa(message),
+                    new WrapItAsItIsFix(String.format("(%s)", condition.getText()))
+            );
+            return true;
+        }
+
+        /* case: literal operators priorities issue */
+        final PsiElement parent = ternary.getParent();
+        if (parent instanceof BinaryExpression) {
+            final BinaryExpression candidate = (BinaryExpression) parent;
+            if (candidate.getRightOperand() == ternary && PhpTokenTypes.tsLIT_OPS.contains(candidate.getOperationType())) {
+                holder.registerProblem(
+                        condition,
+                        MessagesPresentationUtil.prefixWithEa(message),
+                        new WrapItAsItIsFix(String.format("(%s)", condition.getText()))
                 );
                 return true;
             }

@@ -30,8 +30,7 @@ import java.util.Set;
  */
 
 public class SuspiciousTernaryOperatorInspector extends PhpInspection {
-    private static final String messagePriorities        = "This may not work as expected (wrap condition into '()' to specify intention).";
-    private static final String messageVariantsIdentical = "True and false variants are identical, most probably this is a bug.";
+    private static final String messagePriorities = "This may not work as expected (wrap condition into '()' to specify intention).";
 
     private static final Set<IElementType> safeOperations = new HashSet<>();
     static {
@@ -70,17 +69,6 @@ public class SuspiciousTernaryOperatorInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 final PsiElement condition    = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
-                final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
-
-                /* Case 1: identical variants */
-                if (trueVariant != null && falseVariant != null && OpenapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
-                    holder.registerProblem(
-                            expression,
-                            MessagesPresentationUtil.prefixWithEa(messageVariantsIdentical),
-                            ProblemHighlightType.GENERIC_ERROR
-                    );
-                }
 
                 /* Case 2: operations which might produce a value as not expected */
                 if (condition instanceof BinaryExpression && !(expression.getCondition() instanceof ParenthesizedExpression)) {

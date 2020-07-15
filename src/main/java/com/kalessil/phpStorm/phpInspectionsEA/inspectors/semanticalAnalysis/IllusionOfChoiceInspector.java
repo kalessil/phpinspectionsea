@@ -21,6 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,9 +37,9 @@ import java.util.stream.Stream;
  */
 
 public class IllusionOfChoiceInspector extends PhpInspection {
-    private static final String messageSameValueConditional = "Same value gets returned by the alternative return. It's possible to simplify the construct.";
-    private static final String messageDegradedConditional  = "Actually the same value gets returned by the alternative return. It's possible to simplify the construct.";
-    private static final String messageDegradedTernary      = "Actually the same value is in the alternative variant. It's possible to simplify the construct.";
+    private static final String messageSameValueConditional     = "Same value gets returned by the alternative return. It's possible to simplify the construct.";
+    private static final String messageDegradedConditional      = "Actually the same value gets returned by the alternative return. It's possible to simplify the construct.";
+    private static final String messageDegradedTernary          = "Actually the same value is in the alternative variant. It's possible to simplify the construct.";
 
     static private final Set<IElementType> targetOperations = new HashSet<>();
     static {
@@ -68,16 +69,13 @@ public class IllusionOfChoiceInspector extends PhpInspection {
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
                 if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                final PsiElement condition = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                if (condition instanceof BinaryExpression) {
-                    final BinaryExpression binary = (BinaryExpression) condition;
-                    if (targetOperations.contains(binary.getOperationType())) {
-                        final PsiElement trueVariant  = expression.getTrueVariant();
-                        final PsiElement falseVariant = expression.getFalseVariant();
-                        if (trueVariant != null && falseVariant != null) {
-                            this.analyze(binary, trueVariant, falseVariant, expression, expression);
-                        }
-                    }
+                final PsiElement condition    = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                final PsiElement trueVariant  = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                if (condition != null && trueVariant != null && falseVariant != null ) {
+                    final boolean withBinary = condition instanceof BinaryExpression &&
+                                               targetOperations.contains(((BinaryExpression) condition).getOperationType());
+                    this.analyze(withBinary ? (BinaryExpression) condition : null, trueVariant, falseVariant, expression, expression);
                 }
             }
 
@@ -124,7 +122,7 @@ public class IllusionOfChoiceInspector extends PhpInspection {
             }
 
             private void analyze(
-                @NotNull BinaryExpression binary,
+                @Nullable BinaryExpression binary,
                 @NotNull PsiElement trueVariant,
                 @NotNull PsiElement falseVariant,
                 @NotNull PsiElement replaceFrom,
@@ -140,29 +138,37 @@ public class IllusionOfChoiceInspector extends PhpInspection {
                                 new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
                         );
                     }
-                    /* ternaries covered by SuspiciousTernaryOperatorInspector in this case */
-                } else {
-                    final PsiElement leftValue  = binary.getLeftOperand();
-                    final PsiElement rightValue = binary.getRightOperand();
-                    if (leftValue != null && rightValue != null) {
-                        final boolean isTarget = Stream.of(leftValue, rightValue).allMatch(v ->
-                                OpenapiEquivalenceUtil.areEqual(v, trueVariant) ||
-                                OpenapiEquivalenceUtil.areEqual(v, falseVariant)
+                    /* case identical positive and negative branches */
+                    if (OpenapiEquivalenceUtil.areEqual(trueVariant, falseVariant)) {
+                        holder.registerProblem(
+                                falseVariant,
+                                MessagesPresentationUtil.prefixWithEa(messageDegradedTernary)
                         );
-                        if (isTarget) {
-                            final IElementType operation = binary.getOperationType();
-                            final boolean isSafe = (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) ||
-                                                   (!PhpLanguageUtil.isFalsyValue(trueVariant) && !PhpLanguageUtil.isFalsyValue(falseVariant));
-                            if (isSafe) {
-                                final boolean isInverted    = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
-                                final PsiElement falseValue = isInverted ? trueVariant : falseVariant;
-                                final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
-                                final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
-                                holder.registerProblem(
-                                        falseValue,
-                                        MessagesPresentationUtil.prefixWithEa(isConditional ? messageDegradedConditional : messageDegradedTernary),
-                                        new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
-                                );
+                    }
+                } else {
+                    if (binary != null) {
+                        final PsiElement leftValue  = binary.getLeftOperand();
+                        final PsiElement rightValue = binary.getRightOperand();
+                        if (leftValue != null && rightValue != null) {
+                            final boolean isTarget = Stream.of(leftValue, rightValue).allMatch(v ->
+                                    OpenapiEquivalenceUtil.areEqual(v, trueVariant) ||
+                                    OpenapiEquivalenceUtil.areEqual(v, falseVariant)
+                            );
+                            if (isTarget) {
+                                final IElementType operation = binary.getOperationType();
+                                final boolean isSafe = (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) ||
+                                                       (!PhpLanguageUtil.isFalsyValue(trueVariant) && !PhpLanguageUtil.isFalsyValue(falseVariant));
+                                if (isSafe) {
+                                    final boolean isInverted    = operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opNOT_EQUAL;
+                                    final PsiElement falseValue = isInverted ? trueVariant : falseVariant;
+                                    final boolean isConditional = falseVariant.getParent() instanceof PhpReturn;
+                                    final String replacement    = String.format(isConditional ? "return %s" : "%s", falseValue.getText());
+                                    holder.registerProblem(
+                                            falseValue,
+                                            MessagesPresentationUtil.prefixWithEa(isConditional ? messageDegradedConditional : messageDegradedTernary),
+                                            new SimplifyFix(holder.getProject(), replaceFrom, replaceTo, replacement)
+                                    );
+                                }
                             }
                         }
                     }

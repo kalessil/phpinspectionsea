@@ -2,7 +2,8 @@
 
 class CasesHolder {
 
-    public function ternaries($x, $y) {
+    public function ternaries($x, $y, $z) {
+        /* pattern: can be simplified to a condition operand */
         $y;
 
         $y;
@@ -14,10 +15,13 @@ class CasesHolder {
         $x;
         0;
         0;
+
+        /* pattern: identical branches */
+        $x ? $y : $y;
 
         /* false-positives */
-        $x === $y ? $x : $x;
-        $x !== $y ? $x : $x;
+        $x === $y ? $x : $z;
+        $x !== $y ? $x : $z;
         $x >= $y ? $x : $y;
         $x ? $x : $y;
     }

@@ -2,6 +2,7 @@ Loops:
     'array_merge()/array_fill()/array_combine()/array_values()/array_keys()/$copy = $array': loop + pushing to array
     'array_chunk()':                                                                         loop + array_slice()
 
+- SuspiciousTernaryOperatorInspector -> SuspiciousTernaryOperatorInspector
 - jar-binary basic protection
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
 

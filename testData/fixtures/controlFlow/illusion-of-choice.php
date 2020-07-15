@@ -2,7 +2,8 @@
 
 class CasesHolder {
 
-    public function ternaries($x, $y) {
+    public function ternaries($x, $y, $z) {
+        /* pattern: can be simplified to a condition operand */
         ($x === $y) ? $x : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
 
         $x === $y ? $x : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
@@ -15,9 +16,12 @@ class CasesHolder {
         $x === 0 ? $x : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">0</warning>;
         $x !== 0 ? <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">0</warning> : $x;
 
+        /* pattern: identical branches */
+        $x ? $y : <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct.">$y</warning>;
+
         /* false-positives */
-        $x === $y ? $x : $x;
-        $x !== $y ? $x : $x;
+        $x === $y ? $x : $z;
+        $x !== $y ? $x : $z;
         $x >= $y ? $x : $y;
         $x ? $x : $y;
     }
@@ -48,13 +52,13 @@ class CasesHolder {
         if ($x === $y) {
             return $x;
         } else {
-            return <warning descr="[EA] Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
+            return <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct."><warning descr="[EA] Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning></warning>;
         }
 
         if ($x === $y) {
             return $x;
         }
-        return <warning descr="[EA] Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning>;
+        return <warning descr="[EA] Actually the same value is in the alternative variant. It's possible to simplify the construct."><warning descr="[EA] Same value gets returned by the alternative return. It's possible to simplify the construct.">$x</warning></warning>;
 
 
         /* false-positives */

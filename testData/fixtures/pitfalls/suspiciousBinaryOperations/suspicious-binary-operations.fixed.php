@@ -65,8 +65,8 @@ if (!$a <=> $b) {}
 /* operations priority issues: ternaries and null coalescing */
 if ($a ?: ($b && $c)) {}
 if ($a ?: ($b || $c)) {}
-if ($a ?? ($b && $c)) {}
-if ($a ?? ($b || $c)) {}
+if ($a ?? $b && $c) {}
+if ($a ?? $b || $c) {}
 if ($x ?: ($y ?? $z)) {}
 if ($x ?? ($y ?: $z)) {}
 

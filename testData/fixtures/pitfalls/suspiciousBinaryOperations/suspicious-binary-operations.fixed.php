@@ -27,7 +27,7 @@ class MisplacedOperations
     }
 }
 
-/* a bug: hardcoded booleans */
+/* a bug: hardcoded booleans and null */
 $x = [
     $x && false,
     $x && null,
@@ -37,7 +37,7 @@ $x = [
     $x || true,
 ];
 
-/* operations priority issues */
+/* operations priority issues: mixing || and && */
 if ($a || ($b && $c)) {}
 if (($a && $b) || $c) {}
 if ($a || ($b && $c)) {}
@@ -45,14 +45,14 @@ if ($a && ($b || $c)) {}
 if ($a || $b || $c) {}
 if ($a && $b && $c) {}
 
-/* operations priority issues */
+/* operations priority issues: assignment */
 if ($a = (function1() && $b)) {}
 if ($a = (function1() && $b = function2())) {}
 if ($a = (function1() && $b && $c = function2())) {}
+if ($a = ($b !== $c)) {}
 $z = $x && $b;
 
-/* operations priority issues */
-if ($a = ($b !== $c)) {}
+/* operations priority issues: inversion */
 if ((!$a) > $b) {}
 if ((!$a) == $b) {}
 if ((!$a) === $b) {}
@@ -63,12 +63,40 @@ if ((!$a) === $b) {}
 if (!$a <=> $b) {}
 
 /* operations priority issues: ternaries and null coalescing */
-if ($a ?: $b && $c) {}
-if ($a ?: $b || $c) {}
-if ($a ?? $b && $c) {}
-if ($a ?? $b || $c) {}
+if ($a ?: ($b && $c)) {}
+if ($a ?: ($b || $c)) {}
+if ($a ?? ($b && $c)) {}
+if ($a ?? ($b || $c)) {}
 if ($x ?: ($y ?? $z)) {}
 if ($x ?? ($y ?: $z)) {}
+
+/* operations priority issues: ternaries and literal opeands */
+echo ($a & $b) ? 0 : 1;
+echo ($a | $b) ? 0 : 1;
+echo ($a - $b) ? 0 : 1;
+echo ($a + $b) ? 0 : 1;
+echo ($a / $b) ? 0 : 1;
+echo ($a * $b) ? 0 : 1;
+echo ($a % $b) ? 0 : 1;
+echo ($a ^ $b) ? 0 : 1;
+echo $a and ($b ? 0 : 1);
+echo $a or ($b ? 0 : 1);
+echo $a xor ($b ? 0 : 1);
+/* false-positives: condition is specified well */
+echo ($a + $b) ? 0 : 1;
+/* false-positives: conditions intentions are clear */
+echo $a > $b ? 0 : 1;
+echo $a >= $b ? 0 : 1;
+echo $a < $b ? 0 : 1;
+echo $a <= $b ? 0 : 1;
+echo $a && $b ? 0 : 1;
+echo $a || $b ? 0 : 1;
+echo $a == $b ? 0 : 1;
+echo $a != $b ? 0 : 1;
+echo $a === $b ? 0 : 1;
+echo $a !== $b ? 0 : 1;
+echo $a instanceof stdClass ? 0 : 1;
+echo $a <=> $b ? 0 : 1;
 
 /* nullable/falsy values comparison cases */
 $nullable = null;

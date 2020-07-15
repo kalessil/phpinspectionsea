@@ -71,17 +71,17 @@ if ($x ?: <error descr="[EA] Operations priority might differ from what you expe
 if ($x ?? <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$y ?: $z</error>) {}
 
 /* operations priority issues: ternaries and literal opeands */
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a & $b</error> ? 0 : 1;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a | $b</error> ? 0 : 1;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a - $b</error> ? 0 : 1;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a + $b</error> ? 0 : 1;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a / $b</error> ? 0 : 1;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a * $b</error> ? 0 : 1;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a % $b</error> ? 0 : 1;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a ^ $b</error> ? 0 : 1;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a and $b ? 0 : 1</error>;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a or $b ? 0 : 1</error>;
-echo <error descr="[EA] This may not work as expected (wrap condition into '()' to specify intention).">$a xor $b ? 0 : 1</error>;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a & $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a | $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a - $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a + $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a / $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a * $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a % $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a ^ $b</error> ? 0 : 1;
+echo $a and <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b ? 0 : 1</error>;
+echo $a or <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b ? 0 : 1</error>;
+echo $a xor <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b ? 0 : 1</error>;
 /* false-positives: condition is specified well */
 echo ($a + $b) ? 0 : 1;
 /* false-positives: conditions intentions are clear */

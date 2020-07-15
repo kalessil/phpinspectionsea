@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.binaryOperations.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -130,6 +129,17 @@ final public class UnclearOperationsPriorityStrategy {
                 );
                 return true;
             }
+        } else if (PhpTokenTypes.tsLIT_OPS.contains(operator)) {
+            /* case: literal and, or, xor operation with ternary at right side */
+            final PsiElement candidate = expression.getRightOperand();
+            if (candidate instanceof TernaryExpression) {
+                holder.registerProblem(
+                        candidate,
+                        MessagesPresentationUtil.prefixWithEa(message),
+                        new WrapItAsItIsFix(String.format("(%s)", candidate.getText()))
+                );
+                return true;
+            }
         }
         return false;
     }
@@ -155,19 +165,6 @@ final public class UnclearOperationsPriorityStrategy {
             return true;
         }
 
-        /* case: literal operators priorities issue */
-        final PsiElement parent = ternary.getParent();
-        if (parent instanceof BinaryExpression) {
-            final BinaryExpression candidate = (BinaryExpression) parent;
-            if (candidate.getRightOperand() == ternary && PhpTokenTypes.tsLIT_OPS.contains(candidate.getOperationType())) {
-                holder.registerProblem(
-                        condition,
-                        MessagesPresentationUtil.prefixWithEa(message),
-                        new WrapItAsItIsFix(String.format("(%s)", condition.getText()))
-                );
-                return true;
-            }
-        }
         return false;
     }
 

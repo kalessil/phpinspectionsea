@@ -26,8 +26,8 @@ import java.util.stream.Stream;
  */
 
 final public class MultipleFalsyValuesCheckStrategy {
-    private static final String messageAlwaysTrue  = "'%s' seems to be always true when reached.";
-    private static final String messageAlwaysFalse = "'%s' seems to be always false when reached.";
+    private static final String messageAlwaysTrue  = "'%s' seems to be always true when reached (?).";
+    private static final String messageAlwaysFalse = "'%s' seems to be always false when reached (?).";
 
     private static boolean apply(
             @NotNull PsiElement target,
@@ -66,7 +66,7 @@ final public class MultipleFalsyValuesCheckStrategy {
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result              = false;
         final IElementType operator = expression.getOperationType();
-        if (operator != null && (operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR)) {
+        if ((operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) && isTargetContext(expression, operator)) {
             /* false-positives: part of another condition */
             final PsiElement parent  = expression.getParent();
             final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
@@ -106,6 +106,15 @@ final public class MultipleFalsyValuesCheckStrategy {
             }
         }
         return result;
+    }
+
+    private static boolean isTargetContext(@NotNull BinaryExpression expression, @NotNull IElementType operator) {
+        final PsiElement parent  = expression.getParent();
+        final PsiElement context = parent instanceof ParenthesizedExpression ? parent.getParent() : parent;
+        if (context instanceof BinaryExpression) {
+            return ((BinaryExpression) context).getOperationType() != operator;
+        }
+        return true;
     }
 
     @NotNull

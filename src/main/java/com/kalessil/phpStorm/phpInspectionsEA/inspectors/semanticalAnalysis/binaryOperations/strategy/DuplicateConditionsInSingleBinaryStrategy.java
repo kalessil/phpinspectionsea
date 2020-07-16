@@ -31,7 +31,7 @@ final public class DuplicateConditionsInSingleBinaryStrategy {
     public static boolean apply(@NotNull BinaryExpression expression, @NotNull ProblemsHolder holder) {
         boolean result              = false;
         final IElementType operator = expression.getOperationType();
-        if ((operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opNOT) && isTargetContext(expression, operator)) {
+        if ((operator == PhpTokenTypes.opAND || operator == PhpTokenTypes.opOR) && isTargetContext(expression, operator)) {
             final List<PsiElement> conditions = conditions(expression, operator);
             if (! conditions.isEmpty()) {
                 final int conditionsCount = conditions.size();
@@ -40,13 +40,13 @@ final public class DuplicateConditionsInSingleBinaryStrategy {
                         final PsiElement outerElement = conditions.get(outerIndex);
                         for (int innerIndex = outerIndex + 1; innerIndex < conditionsCount; ++innerIndex) {
                             final PsiElement innerElement = conditions.get(innerIndex);
-                            final boolean isDuplicate     = OpenapiEquivalenceUtil.areEqual(outerElement, innerElement);
-                            final String messageTemplate  = operator == PhpTokenTypes.opAND ? messageAlwaysTrue : messageAlwaysFalse;
-                            if (result = isDuplicate) {
+                            if (OpenapiEquivalenceUtil.areEqual(outerElement, innerElement)) {
+                                final String messageTemplate = operator == PhpTokenTypes.opAND ? messageAlwaysTrue : messageAlwaysFalse;
                                 holder.registerProblem(
                                         innerElement,
                                         MessagesPresentationUtil.prefixWithEa(String.format(messageTemplate, innerElement.getText()))
                                 );
+                                result = true;
                                 break;
                             }
                         }

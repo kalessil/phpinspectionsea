@@ -55,6 +55,7 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 /* pit-falls and all sorts of weakly typed language issues*/
                 callbacks.add(() -> PossiblyAssignmentStrategy.apply(expression, holder));
                 callbacks.add(() -> PossiblyArrayHashElementDeclarationStrategy.apply(expression, holder));
+                callbacks.add(() -> DuplicateConditionsInSingleBinaryStrategy.apply(expression, holder));
                 callbacks.add(() -> OperandsWithSameValueStrategy.apply(expression, holder));
                 callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));

@@ -81,4 +81,9 @@ final public class SuspiciousBinaryOperationInspectorTest extends PhpCodeInsight
         myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/suspicious-binary-operations.operands-with-same-value.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsDuplicateConditionsInSingleBinaryPatterns() {
+        myFixture.enableInspections(new SuspiciousBinaryOperationInspector());
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousBinaryOperations/suspicious-binary-operations.duplicate-conditions.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

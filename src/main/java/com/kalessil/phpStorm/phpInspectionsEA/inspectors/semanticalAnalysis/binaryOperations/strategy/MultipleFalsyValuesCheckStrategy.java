@@ -26,8 +26,8 @@ import java.util.stream.Stream;
  */
 
 final public class MultipleFalsyValuesCheckStrategy {
-    private static final String messageAlwaysTrue  = "'%s' seems to be always true when reached (?).";
-    private static final String messageAlwaysFalse = "'%s' seems to be always false when reached (?).";
+    private static final String messageAlwaysTrue  = "'%s' seems to be always true when reached.";
+    private static final String messageAlwaysFalse = "'%s' seems to be always false when reached.";
 
     private static boolean apply(
             @NotNull PsiElement target,

@@ -11,7 +11,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.configureByFile("testData/fixtures/ifs/not-optimal-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
-
     public void testBasicPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.SUGGEST_OPTIMIZING_CONDITIONS    = true;
@@ -19,7 +18,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.configureByFile("testData/fixtures/ifs/if-optimal-conditions.php");
         myFixture.testHighlighting(true, false, true);
     }
-
     public void testLiteralOperatorsPatterns() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_LITERAL_OPERATORS         = true;
@@ -27,15 +25,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.configureByFile("testData/fixtures/ifs/if-literal-operators.php");
         myFixture.testHighlighting(true, false, true);
     }
-
-    public void testDuplicateConditions() {
-        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
-        inspector.REPORT_DUPLICATE_CONDITIONS      = true;
-        myFixture.enableInspections(inspector);
-        myFixture.configureByFile("testData/fixtures/ifs/if-duplicate-conditions.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-
     public void testInstanceOfFlaws() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_INSTANCE_OF_FLAWS         = true;
@@ -43,7 +32,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.configureByFile("testData/fixtures/ifs/if-instanceof-flaws.php");
         myFixture.testHighlighting(true, false, true);
     }
-
     public void testInstanceOfFalsePositives() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP540);
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();

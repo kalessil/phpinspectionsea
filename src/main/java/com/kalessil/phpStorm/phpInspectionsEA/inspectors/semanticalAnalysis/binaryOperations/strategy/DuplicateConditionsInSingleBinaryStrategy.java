@@ -5,10 +5,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.ParenthesizedExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.jetbrains.php.lang.psi.elements.UnaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ final public class DuplicateConditionsInSingleBinaryStrategy {
                         final PsiElement outerElement = conditions.get(outerIndex);
                         for (int innerIndex = outerIndex + 1; innerIndex < conditionsCount; ++innerIndex) {
                             final PsiElement innerElement = conditions.get(innerIndex);
-                            if (OpenapiEquivalenceUtil.areEqual(outerElement, innerElement)) {
+                            if (OpenapiEquivalenceUtil.areEqual(outerElement, innerElement) && ! isDirectoryExistenceCheck(innerElement, operator)) {
                                 final String messageTemplate = operator == PhpTokenTypes.opAND ? messageAlwaysTrue : messageAlwaysFalse;
                                 holder.registerProblem(
                                         innerElement,
@@ -56,6 +56,17 @@ final public class DuplicateConditionsInSingleBinaryStrategy {
             }
         }
         return result;
+    }
+
+    private static boolean isDirectoryExistenceCheck(@NotNull PsiElement expression, @NotNull IElementType operator) {
+        PsiElement subject = expression;
+        if (operator == PhpTokenTypes.opAND && subject instanceof UnaryExpression) {
+            final UnaryExpression unary = (UnaryExpression) subject;
+            if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                subject = ExpressionSemanticUtil.getExpressionTroughParenthesis(unary.getValue());
+            }
+        }
+        return OpenapiTypesUtil.isFunctionReference(subject) && "is_dir".equals(((FunctionReference) subject).getName());
     }
 
     private static boolean isTargetContext(@NotNull BinaryExpression expression, @NotNull IElementType operator) {

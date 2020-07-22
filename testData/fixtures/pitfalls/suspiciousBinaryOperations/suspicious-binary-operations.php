@@ -101,10 +101,3 @@ echo $a === $b ? 0 : 1;
 echo $a !== $b ? 0 : 1;
 echo $a instanceof stdClass ? 0 : 1;
 echo $a <=> $b ? 0 : 1;
-
-/* nullable/falsy values comparison cases */
-$nullable = null;
-$falsy    = false;
-if (<error descr="[EA] This might work not as expected (an argument can be null/false), consider using '$nullable >= 5' instead.">!($nullable < 5)</error>) {}
-if (<error descr="[EA] This might work not as expected (an argument can be null/false), consider using '$falsy > 5' instead.">!((($falsy <= 5)))</error>) {}
-

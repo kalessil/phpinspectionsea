@@ -101,10 +101,3 @@ echo $a === $b ? 0 : 1;
 echo $a !== $b ? 0 : 1;
 echo $a instanceof stdClass ? 0 : 1;
 echo $a <=> $b ? 0 : 1;
-
-/* nullable/falsy values comparison cases */
-$nullable = null;
-$falsy    = false;
-if ($nullable >= 5) {}
-if ($falsy > 5) {}
-

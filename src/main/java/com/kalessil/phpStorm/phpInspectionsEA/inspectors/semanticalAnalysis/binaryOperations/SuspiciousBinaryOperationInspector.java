@@ -60,7 +60,6 @@ public class SuspiciousBinaryOperationInspector extends PhpInspection {
                 callbacks.add(() -> InvalidArrayOperationStrategy.apply(expression, holder));
                 callbacks.add(() -> InstanceOfTraitStrategy.apply(expression, holder));
                 callbacks.add(() -> PossiblyMethodReferenceStrategy.apply(expression, holder));
-                callbacks.add(() -> NotOperatorLackingTypeCheckStrategy.apply(expression, holder));
                 callbacks.add(() -> MisplacedOperatorStrategy.apply(expression, holder));
                 callbacks.add(() -> MistypedLogicalOperatorsStrategy.apply(expression, holder));
                 callbacks.add(() -> NullCoalescingOperatorCorrectnessStrategy.apply(expression, holder));

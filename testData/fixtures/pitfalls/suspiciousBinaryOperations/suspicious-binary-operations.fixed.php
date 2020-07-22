@@ -57,10 +57,11 @@ if ((!$a) > $b) {}
 if ((!$a) == $b) {}
 if ((!$a) === $b) {}
 if ((!($a)) > $b) {}
-if ((!$a) > $b) {}
-if ((!$a) == $b) {}
-if ((!$a) === $b) {}
-if (!$a <=> $b) {}
+if (! ($a > $b)) {}
+if ((! $a) > $b) {}
+if ((! $a) == $b) {}
+if ((! $a) === $b) {}
+if (! $a <=> $b) {}
 
 /* operations priority issues: ternaries and null coalescing */
 if ($a ?: ($b && $c)) {}
@@ -70,7 +71,7 @@ if ($a ?? $b || $c) {}
 if ($x ?: ($y ?? $z)) {}
 if ($x ?? ($y ?: $z)) {}
 
-/* operations priority issues: ternaries and literal opeands */
+/* operations priority issues: ternaries and literal operands */
 echo ($a & $b) ? 0 : 1;
 echo ($a | $b) ? 0 : 1;
 echo ($a - $b) ? 0 : 1;
@@ -79,6 +80,9 @@ echo ($a / $b) ? 0 : 1;
 echo ($a * $b) ? 0 : 1;
 echo ($a % $b) ? 0 : 1;
 echo ($a ^ $b) ? 0 : 1;
+echo ($a . $b) ? 0 : 1;
+echo ($a >> $b) ? 0 : 1;
+echo ($a << $b) ? 0 : 1;
 echo $a and ($b ? 0 : 1);
 echo $a or ($b ? 0 : 1);
 echo $a xor ($b ? 0 : 1);

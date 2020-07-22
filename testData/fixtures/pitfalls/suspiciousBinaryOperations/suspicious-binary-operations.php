@@ -57,10 +57,11 @@ if (<error descr="[EA] Operations priority might differ from what you expect: pl
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a == $b</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! $a === $b</error>) {}
 if (<error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">! ($a) > $b</error>) {}
-if ((!$a) > $b) {}
-if ((!$a) == $b) {}
-if ((!$a) === $b) {}
-if (!$a <=> $b) {}
+if (! ($a > $b)) {}
+if ((! $a) > $b) {}
+if ((! $a) == $b) {}
+if ((! $a) === $b) {}
+if (! $a <=> $b) {}
 
 /* operations priority issues: ternaries and null coalescing */
 if ($a ?: <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b && $c</error>) {}
@@ -70,7 +71,7 @@ if ($a ?? <error descr="[EA] Operations priority might differ from what you expe
 if ($x ?: <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$y ?? $z</error>) {}
 if ($x ?? <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$y ?: $z</error>) {}
 
-/* operations priority issues: ternaries and literal opeands */
+/* operations priority issues: ternaries and literal operands */
 echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a & $b</error> ? 0 : 1;
 echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a | $b</error> ? 0 : 1;
 echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a - $b</error> ? 0 : 1;
@@ -79,6 +80,9 @@ echo <error descr="[EA] Operations priority might differ from what you expect: p
 echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a * $b</error> ? 0 : 1;
 echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a % $b</error> ? 0 : 1;
 echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a ^ $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a . $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a >> $b</error> ? 0 : 1;
+echo <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$a << $b</error> ? 0 : 1;
 echo $a and <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b ? 0 : 1</error>;
 echo $a or <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b ? 0 : 1</error>;
 echo $a xor <error descr="[EA] Operations priority might differ from what you expect: please wrap needed with '(...)'.">$b ? 0 : 1</error>;

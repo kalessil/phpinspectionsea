@@ -31,7 +31,7 @@ import java.util.Set;
  */
 
 final public class NotOperatorLackingTypeCheckStrategy {
-    private static final String messagePattern = "This might work not as expected (an argument can be null/false), use '%s' to be sure.";
+    private static final String messagePattern = "This might work not as expected (an argument can be null/false), consider using '%s' instead.";
 
     private static final Map<IElementType, String> mapping = new HashMap<>();
     static {

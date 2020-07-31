@@ -4,13 +4,15 @@ interface CasesHolderParent {}
 
 class CasesHolder implements CasesHolderParent
 {
-    public function first(string $string, stdClass $object, CasesHolderParent $self) {
+    public function first(string $string, callable $callback, stdClass $object, CasesHolderParent $self) {
         return [
             $string instanceof CasesHolderParent,
+            $callback instanceof CasesHolderParent,
             $object instanceof CasesHolderParent,
             $self instanceof CasesHolderParent,
 
             $self instanceof CasesHolder,
+            $callback instanceof \Closure,
         ];
     }
 

@@ -7,7 +7,6 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -45,7 +44,7 @@ final public class InstanceOfCorrectnessStrategy {
                     final int typesCount          = parameterTypes.size();
                     final PhpClass resolvedClass  = (PhpClass) resolved;
                     final String resolvedClassFqn = resolvedClass.getFQN();
-                    if (parameterTypes.contains(resolvedClassFqn) || (parameterTypes.contains(PhpType._CALLABLE) && resolvedClassFqn.equals("\\Closure"))) {
+                    if (parameterTypes.contains(resolvedClassFqn)) {
                         if (typesCount == 1) {
                             holder.registerProblem(
                                     binary,
@@ -78,6 +77,15 @@ final public class InstanceOfCorrectnessStrategy {
                                     );
                                     result = true;
                                 }
+                            }
+                        } else if (typesCount == 3 && parameterTypes.contains(Types.strCallable)) {
+                            final boolean isClosure = resolvedClassFqn.equals("\\Closure");
+                            if (! isClosure) {
+                                holder.registerProblem(
+                                        binary,
+                                        MessagesPresentationUtil.prefixWithEa(messageNotObject)
+                                );
+                                result = true;
                             }
                         }
                     }

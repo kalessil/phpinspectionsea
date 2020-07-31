@@ -400,7 +400,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends PhpInspecti
                                     }
                                 }
                             } else if (operator == PhpTokenTypes.kwINSTANCEOF) {
-                                if (!OpenapiResolveUtil.resolveDeclaredType(parameter).isEmpty()) {
+                                if (! OpenapiResolveUtil.resolveDeclaredType(parameter).isEmpty()) {
                                     InstanceOfCorrectnessStrategy.apply(holder, parameterTypes, binary);
                                 }
                             }

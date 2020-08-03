@@ -33,11 +33,11 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     private static final String message = "Unknown inspection: %s.";
 
     final private static Set<String> inspections = new HashSet<>();
-    private static int minimalLength             = Integer.MAX_VALUE;
     static {
         ApplicationManager.getApplication().invokeLater(() -> {
-            Arrays.stream(LOCAL_INSPECTION.getExtensions()).map(InspectionEP::getShortName).forEach(inspections::add);
-            minimalLength = inspections.stream().mapToInt(String::length).min().orElse(Integer.MAX_VALUE);
+            Arrays.stream(LOCAL_INSPECTION.getExtensions())
+                    .map(InspectionEP::getShortName)
+                    .forEach(inspections::add);
         });
     }
 

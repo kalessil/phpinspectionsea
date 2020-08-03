@@ -45,3 +45,6 @@ $object->method('default', 'whatever', 'undeclared');
 /* false-positives: magic constants as defaults */
 function functionWithMagicDefault($first = __LINE__) {}
 functionWithMagicDefault(__LINE__);
+
+function withDynamicArguments(string $parameter = '...') { return func_get_args(); }
+withDynamicArguments('...');

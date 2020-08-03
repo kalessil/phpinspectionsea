@@ -8,16 +8,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.Function;
-import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.MethodReference;
-import com.jetbrains.php.lang.psi.elements.Parameter;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -90,7 +89,7 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
 
             private void analyze(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && !specialFunctions.contains(functionName)) {
+                if (functionName != null && ! specialFunctions.contains(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0) {
                         PsiElement reportFrom = null;
@@ -110,7 +109,7 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
                                         final PsiElement argument = arguments[index];
                                         final String defaultValue = this.getDefaultValue(function.getFQN(), parameter.getName(), projectIndex, searchScope);
                                         /* false-positives: magic constants, unmatched values */
-                                        if (defaultValue == null || specialConstants.contains(defaultValue) || !defaultValue.equals(argument.getText())) {
+                                        if (defaultValue == null || specialConstants.contains(defaultValue) || ! defaultValue.equals(argument.getText())) {
                                             break;
                                         }
 
@@ -121,7 +120,7 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
                             }
                         }
 
-                        if (reportFrom != null) {
+                        if (reportFrom != null && ! this.isDynamicArgumentsFunctionUsed(reference)) {
                             holder.registerProblem(
                                     holder.getManager().createProblemDescriptor(
                                             reportFrom,
@@ -135,6 +134,24 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
                         }
                     }
                 }
+            }
+
+            private boolean isDynamicArgumentsFunctionUsed(@NotNull FunctionReference reference) {
+                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                if (resolved instanceof Function) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(resolved);
+                    if (body != null) {
+                        for (final FunctionReference call : PsiTreeUtil.findChildrenOfType(body, FunctionReference.class)) {
+                            if (OpenapiTypesUtil.isFunctionReference(call)) {
+                                final String functionName = call.getName();
+                                if (functionName != null && (functionName.equals("func_num_args") || functionName.equals("func_get_args"))) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
             }
 
             @Nullable
@@ -151,7 +168,7 @@ public class ArgumentEqualsDefaultValueInspector extends PhpInspection {
                     final String[] meta = details.get(0).split(";", 3); // the data format "ref:%s;var:%s;def:%s"
                     if (meta.length == 3) {
                         final String[] defaultMeta = meta[2].split(":", 2);
-                        if (defaultMeta.length == 2 && !defaultMeta[1].isEmpty()) {
+                        if (defaultMeta.length == 2 && ! defaultMeta[1].isEmpty()) {
                             result = defaultMeta[1];
                         }
                     }

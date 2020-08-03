@@ -14,6 +14,8 @@ function cases_holder($array) {
     array_map(function (string $value) { return trim($value); }, []);
     /* false-positives: arguments by reference */
     array_walk($array, function(&$value) { $value = trim($value); });
+    /* false-positives: method reference */
+    array_walk($array, function($value) { $value = String::trim($value); });
 
     array_map('strval', []);
     array_map(function ($value) { return (string) trim($value); }, []);

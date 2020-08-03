@@ -87,19 +87,21 @@ public class UnnecessaryClosureInspector extends PhpInspection {
                             if (last != null) {
                                 final PsiElement candidate = isArrowFunction ? last : this.getCandidateFromClassicClosure(last);
                                 if (candidate instanceof FunctionReference) {
-                                    final FunctionReference callback = (FunctionReference) candidate;
-                                    if (this.canInline(callback, closure)) {
-                                        final String replacement = String.format(
-                                                "'%s%s'",
-                                                callback.getImmediateNamespaceName(),
-                                                callback.getName()
-                                        );
-                                        holder.registerProblem(
-                                                expression,
-                                                String.format(MessagesPresentationUtil.prefixWithEa(messageString), replacement),
-                                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                new UseCallbackFix(replacement)
-                                        );
+                                    if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                                        final FunctionReference callback = (FunctionReference) candidate;
+                                        if (this.canInline(callback, closure)) {
+                                            final String replacement = String.format(
+                                                    "'%s%s'",
+                                                    callback.getImmediateNamespaceName(),
+                                                    callback.getName()
+                                            );
+                                            holder.registerProblem(
+                                                    expression,
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messageString), replacement),
+                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                                    new UseCallbackFix(replacement)
+                                            );
+                                        }
                                     }
                                 } else if (candidate instanceof UnaryExpression) {
                                     final UnaryExpression unary = (UnaryExpression) candidate;

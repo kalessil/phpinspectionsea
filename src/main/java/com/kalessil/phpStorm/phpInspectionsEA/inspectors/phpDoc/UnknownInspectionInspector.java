@@ -36,9 +36,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     private static int minimalLength             = Integer.MAX_VALUE;
     static {
         ApplicationManager.getApplication().invokeLater(() -> {
-            /* collect all available inspections names, add some special cases */
             Arrays.stream(LOCAL_INSPECTION.getExtensions()).map(InspectionEP::getShortName).forEach(inspections::add);
-            /* shortest length is a threshold for separating inspections and comments mixed in */
             minimalLength = inspections.stream().mapToInt(String::length).min().orElse(Integer.MAX_VALUE);
         });
     }

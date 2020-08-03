@@ -7,8 +7,8 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ final public class AssertSameStrategy {
                 Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList()).toArray(suggestedArguments);
                 holder.registerProblem(
                         reference,
-                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), suggestedAssertion),
+                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), suggestedAssertion),
                         new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments));
 
                 result = true;

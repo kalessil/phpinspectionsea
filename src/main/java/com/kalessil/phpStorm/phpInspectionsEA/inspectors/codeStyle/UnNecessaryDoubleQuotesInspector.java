@@ -13,7 +13,7 @@ import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -55,7 +55,7 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
                         if (contents.indexOf('\'') == -1 && ! contents.contains("\\")) {
                             holder.registerProblem(
                                     expression,
-                                    ReportingUtil.wrapReportedMessage(message),
+                                    MessagesPresentationUtil.prefixWithEa(message),
                                     new TheLocalFix()
                             );
                         }
@@ -71,13 +71,13 @@ public class UnNecessaryDoubleQuotesInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

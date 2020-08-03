@@ -64,7 +64,7 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
 
                     /* discover and inspect possible values */
                     final Set<PsiElement> values = PossibleValuesDiscoveryUtil.discover(arguments[4]);
-                    if (!values.isEmpty()) {
+                    if (! values.isEmpty()) {
                         /* check all possible values */
                         final List<String> reporting = new ArrayList<>();
                         for (final PsiElement source : values) {
@@ -84,14 +84,13 @@ public class EncryptionInitializationVectorRandomnessInspector extends BasePhpIn
                             final String ivFunction = functionName.startsWith("openssl_") ? "openssl_random_pseudo_bytes" : "mcrypt_create_iv";
                             holder.registerProblem(
                                     arguments[4],
-                                    ReportingUtil.wrapReportedMessage(String.format(messagePattern, ivFunction, String.join(", ", reporting))),
+                                    MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, ivFunction, String.join(", ", reporting))),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                         }
-
                         reporting.clear();
-                        values.clear();
                     }
+                    values.clear();
                 }
             }
 

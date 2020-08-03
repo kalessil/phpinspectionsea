@@ -150,7 +150,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                                 .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
                         holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 fixer
                         );
                     }
@@ -159,19 +159,26 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                 if (1 == typesCount) {
                     final String singleType    = normalizedTypes.iterator().next();
                     final String suggestedType = voidTypes.contains(singleType) ? Types.strVoid : this.compactType(singleType, method);
-                    final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType) || suggestedType.equals("self");
+                    final boolean isLegitBasic = singleType.startsWith("\\") || returnTypes.contains(singleType) || suggestedType.equals("self") || suggestedType.equals("static");
                     final boolean isLegitVoid  = !isLegitBasic && supportNullableTypes && suggestedType.equals(Types.strVoid);
                     if (isLegitBasic || isLegitVoid) {
-                        final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(suggestedType);
-                        final String message      = messagePattern
-                            .replace("%t%", suggestedType)
-                            .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
-                        ;
-                        holder.registerProblem(
-                                target,
-                                ReportingUtil.wrapReportedMessage(message),
-                                fixer
-                        );
+                        /* false-positive: '@return static' which is gets resolved into current class since 2019.2 */
+                        final PhpDocComment docBlock = method.getDocComment();
+                        final PhpDocReturnTag tag    = docBlock == null ? null : docBlock.getReturnTag();
+                        final boolean isStatic       = tag != null && Arrays.stream(tag.getChildren()).map(PsiElement::getText).filter(t -> ! t.isEmpty()).allMatch(t -> t.equals("static"));
+                        final boolean isLegitStatic  = isStatic && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP800);
+                        if (! isStatic || isLegitStatic) {
+                            final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(isLegitStatic ? "static" : suggestedType);
+                            final String message      = messagePattern
+                                .replace("%t%", isLegitStatic ? "static" : suggestedType)
+                                .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
+                            ;
+                            holder.registerProblem(
+                                    target,
+                                    MessagesPresentationUtil.prefixWithEa(message),
+                                    fixer
+                            );
+                        }
                     }
                 }
                 /* case 3: offer using nullable type */
@@ -192,7 +199,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         ;
                         holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 fixer
                         );
                     }
@@ -329,13 +336,13 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         DeclareReturnTypeFix(@NotNull String type) {

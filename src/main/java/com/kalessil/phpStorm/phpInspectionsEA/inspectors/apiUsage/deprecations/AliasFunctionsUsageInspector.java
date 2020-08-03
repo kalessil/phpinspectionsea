@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -108,7 +108,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                             final String original = relevantAliases.get(functionName);
                             holder.registerProblem(
                                     target,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), functionName, original),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), functionName, original),
                                     ProblemHighlightType.LIKE_DEPRECATED,
                                     new TheLocalFix(original)
                             );
@@ -118,7 +118,7 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
                         if (target != null) {
                             holder.registerProblem(
                                     target,
-                                    ReportingUtil.wrapReportedMessage(deprecatedAliases.get(functionName))
+                                    MessagesPresentationUtil.prefixWithEa(deprecatedAliases.get(functionName))
                             );
                         }
                     }
@@ -140,13 +140,13 @@ public class AliasFunctionsUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

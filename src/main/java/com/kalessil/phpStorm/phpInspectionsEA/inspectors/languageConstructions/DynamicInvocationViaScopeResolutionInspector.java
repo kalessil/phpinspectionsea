@@ -67,12 +67,12 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                                             if (currentMethod.isStatic()) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        String.format(ReportingUtil.wrapReportedMessage(patternExpressionUsed), reference.getName())
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(patternExpressionUsed), reference.getName())
                                                 );
                                             } else {
                                                 holder.registerProblem(
                                                         reference,
-                                                        String.format(ReportingUtil.wrapReportedMessage(patternScopeResolutionUsed), methodName),
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(patternScopeResolutionUsed), methodName),
                                                         new TheLocalFix(holder.getProject(), operator, staticCandidate)
                                                 );
                                             }
@@ -84,7 +84,7 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
                                     if (base != null && ! (base instanceof FunctionReference) && ! (staticCandidate instanceof ClassReference)) {
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(ReportingUtil.wrapReportedMessage(patternExpressionUsed), reference.getName()),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(patternExpressionUsed), reference.getName()),
                                                 new TheLocalFix(holder.getProject(), operator, null)
                                         );
                                     }
@@ -114,13 +114,13 @@ public class DynamicInvocationViaScopeResolutionInspector extends BasePhpInspect
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

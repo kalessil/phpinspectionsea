@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.exp
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -35,13 +35,13 @@ final public class GreedyCharactersSetCheckStrategy {
                 if (set.contains("\\w") && set.contains("\\d")) {
                     holder.registerProblem(
                             target,
-                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), set, "\\d", "\\w"),
+                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), set, "\\d", "\\w"),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 } else if (set.contains("\\W") && set.contains("\\D")) {
                     holder.registerProblem(
                             target,
-                            String.format(ReportingUtil.wrapReportedMessage(messagePattern), set, "\\D", "\\W"),
+                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), set, "\\D", "\\W"),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }

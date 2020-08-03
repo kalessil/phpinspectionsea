@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
@@ -31,7 +31,7 @@ public class UselessIgnoreCaseModifierCheckStrategy {
             if (check && !matcher.matcher(pattern.replaceAll("\\\\[\\\\dDwWsS]", "")).matches()) {
                 holder.registerProblem(
                         target,
-                        ReportingUtil.wrapReportedMessage(message),
+                        MessagesPresentationUtil.prefixWithEa(message),
                         ProblemHighlightType.WEAK_WARNING
                 );
             }

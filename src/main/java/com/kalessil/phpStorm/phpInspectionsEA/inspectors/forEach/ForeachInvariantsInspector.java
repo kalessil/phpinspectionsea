@@ -64,7 +64,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                 if (container != null && this.isLimitFor(limit, container)) {
                                         holder.registerProblem(
                                                 expression.getFirstChild(),
-                                                ReportingUtil.wrapReportedMessage(foreachInvariant),
+                                                MessagesPresentationUtil.prefixWithEa(foreachInvariant),
                                                 new UseForeachFix(holder.getProject(), expression, indexVariable, null, container, limit)
                                         );
                                 }
@@ -122,7 +122,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                                 if (!isContainerUsed) {
                                     holder.registerProblem(
                                             parent.getFirstChild(),
-                                            ReportingUtil.wrapReportedMessage(eachFunctionUsed),
+                                            MessagesPresentationUtil.prefixWithEa(eachFunctionUsed),
                                             ProblemHighlightType.GENERIC_ERROR,
                                             fixer
                                     );
@@ -233,13 +233,13 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         UseForeachFix(

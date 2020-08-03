@@ -11,8 +11,8 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -64,11 +64,11 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                         if (resolved instanceof PhpClass) {
                             /* the resolved class will accumulate case issue in its FQN */
                             final List<String> variants = this.getVariants(clazz, (PhpClass) resolved);
-                            if (!variants.isEmpty()) {
+                            if (! variants.isEmpty()) {
                                 if (variants.stream().noneMatch(referencedQn::equals)) {
                                     holder.registerProblem(
                                             reference,
-                                            ReportingUtil.wrapReportedMessage(message)
+                                            MessagesPresentationUtil.prefixWithEa(message)
                                     );
                                 }
                                 variants.clear();
@@ -80,8 +80,9 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
 
             @NotNull
             private List<String> getVariants(@NotNull ClassReference reference, @NotNull PhpClass clazz) {
-                final List<String> result  = new ArrayList<>();
-                final String referenceText = reference.getText();
+                final List<String> result           = new ArrayList<>();
+                final String referenceText          = reference.getText();
+                final String referenceTextLowercase = referenceText.toLowerCase();
                 if (referenceText.startsWith("\\")) {
                     /* FQN specified, resolve as we might have case issues there */
                     final Project project               = holder.getProject();
@@ -104,15 +105,35 @@ public class ClassConstantUsageCorrectnessInspector extends BasePhpInspection {
                     if (referenceText.contains("\\")) {
                         /* RQN specified, check if resolved class in the same NS */
                         final String NsFqn = namespace == null ? null : namespace.getFQN();
-                        if (NsFqn != null && !NsFqn.equals("\\")) {
+                        if (NsFqn != null && ! NsFqn.equals("\\")) {
                             final String classFqnLowercase = classFqn.toLowerCase();
                             if (
                                 classFqnLowercase.startsWith(NsFqn.toLowerCase()) ||
-                                classFqnLowercase.endsWith('\\' + referenceText.toLowerCase())
+                                classFqnLowercase.endsWith('\\' + referenceTextLowercase)
                             ) {
                                 result.add(classFqn.substring(classFqn.length() - referenceText.length()));
                             }
                         }
+                        /* RQN specified, check if resolved class in aliased NS */
+                        final List<PhpUse> uses = new ArrayList<>();
+                        if (namespace != null) {
+                            final GroupStatement body      = namespace.getStatements();
+                            if (body != null) {
+                                Arrays.stream(body.getStatements())
+                                        .filter(statement  -> statement instanceof PhpUseList)
+                                        .forEach(statement -> Collections.addAll(uses, ((PhpUseList) statement).getDeclarations()));
+                            }
+                            for (final PhpUse use : uses) {
+                                final String alias = use.getAliasName();
+                                if (alias != null && referenceTextLowercase.startsWith(alias.toLowerCase())) {
+                                    final PhpReference targetReference = use.getTargetReference();
+                                    if (targetReference != null) {
+                                        result.add(clazz.getFQN().replace(targetReference.getText(), alias).replaceAll("^\\\\", ""));
+                                    }
+                                }
+                            }
+                        }
+                        uses.clear();
                     } else {
                         final List<PhpUse> uses = new ArrayList<>();
                         if (namespace != null) {

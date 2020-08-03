@@ -5,8 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 
 public class MinimalPhpVersionStrategy {
     private static final String strProblemDescription = "%m% is introduced only in version %v%, hence it's unused.";
@@ -16,7 +16,7 @@ public class MinimalPhpVersionStrategy {
         if (nameNode != null && PhpLanguageLevel.get(holder.getProject()).below(neededVersion)) {
             holder.registerProblem(
                     nameNode,
-                    ReportingUtil.wrapReportedMessage(strProblemDescription.replace("%m%", method.getName()).replace("%v%", neededVersion.getVersion())),
+                    MessagesPresentationUtil.prefixWithEa(strProblemDescription.replace("%m%", method.getName()).replace("%v%", neededVersion.getVersion())),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL
             );
         }

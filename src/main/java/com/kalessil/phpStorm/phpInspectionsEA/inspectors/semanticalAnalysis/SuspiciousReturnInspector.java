@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,7 +51,7 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
                     if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class) != null) {
                         holder.registerProblem(
                                 statement,
-                                ReportingUtil.wrapReportedMessage(message)
+                                MessagesPresentationUtil.prefixWithEa(message)
                         );
                     }
                 }

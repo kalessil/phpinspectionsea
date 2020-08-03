@@ -14,7 +14,7 @@ import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.jetbrains.php.lang.psi.elements.PhpUnset;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -71,7 +71,7 @@ public class UselessUnsetInspector extends BasePhpInspection {
                                     final PsiElement target  = (unsetParametersCount == 1 ? expression.getParent() : expression);
                                     holder.registerProblem(
                                             target,
-                                            ReportingUtil.wrapReportedMessage(message),
+                                            MessagesPresentationUtil.prefixWithEa(message),
                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                     );
                                 }

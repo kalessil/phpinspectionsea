@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +64,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                             if (isTarget) {
                                 holder.registerProblem(
                                         expression.getFirstChild(),
-                                        ReportingUtil.wrapReportedMessage(message),
+                                        MessagesPresentationUtil.prefixWithEa(message),
                                         new MergeIntoParentIfFix(holder.getProject(), expression, parentIf)
                                 );
                             }
@@ -74,7 +74,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                         if (isTarget) {
                             holder.registerProblem(
                                     expression.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(message),
+                                    MessagesPresentationUtil.prefixWithEa(message),
                                     new MergeIntoParentElseFix(holder.getProject(), expression, (Else) parentConstruct)
                             );
                         }
@@ -128,13 +128,13 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title + " (else)";
+            return getName() + " (else)";
         }
 
         MergeIntoParentElseFix(@NotNull Project project, @NotNull If target, @NotNull Else parent) {
@@ -167,13 +167,13 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title + " (if)";
+            return getName() + " (if)";
         }
 
         MergeIntoParentIfFix(@NotNull Project project, @NotNull If target, @NotNull If parent) {

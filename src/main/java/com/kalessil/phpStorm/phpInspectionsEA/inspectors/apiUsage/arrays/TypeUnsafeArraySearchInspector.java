@@ -13,9 +13,9 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -106,7 +106,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
                         );
                         holder.registerProblem(
                                 reference,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new MakeSearchTypeSensitiveFix(replacement)
                         );
                     }
@@ -129,7 +129,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         MakeSearchTypeSensitiveFix(@NotNull String expression) {

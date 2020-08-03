@@ -5,7 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,13 +28,13 @@ final public class FunctionCallCheckStrategy {
             if (arguments.length == 1 && functionName.equals("preg_quote")) {
                 holder.registerProblem(
                         reference,
-                        ReportingUtil.wrapReportedMessage(messageQuote)
+                        MessagesPresentationUtil.prefixWithEa(messageQuote)
                 );
             } else if (arguments.length == 2 && functionName.equals("preg_match_all")) {
                 if (ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messageMatch),
+                            MessagesPresentationUtil.prefixWithEa(messageMatch),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }

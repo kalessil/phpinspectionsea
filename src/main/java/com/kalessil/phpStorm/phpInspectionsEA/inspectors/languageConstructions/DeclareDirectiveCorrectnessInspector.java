@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.Declare;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -56,7 +56,7 @@ public class DeclareDirectiveCorrectnessInspector extends BasePhpInspection {
                     if (!directives.contains(directive.trim())) {
                         holder.registerProblem(
                                 declare,
-                                ReportingUtil.wrapReportedMessage(messagePattern.replace("%d%", directive))
+                                MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%d%", directive))
                         );
                     }
                 }

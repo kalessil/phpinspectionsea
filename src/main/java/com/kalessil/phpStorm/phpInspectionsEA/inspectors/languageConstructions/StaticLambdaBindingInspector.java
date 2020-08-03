@@ -15,9 +15,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -63,7 +63,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                                     if (variable.getName().equals("this") && function == ExpressionSemanticUtil.getScope(variable)) {
                                         holder.registerProblem(
                                                 variable,
-                                                ReportingUtil.wrapReportedMessage(messageThis),
+                                                MessagesPresentationUtil.prefixWithEa(messageThis),
                                                 new TurnClosureIntoNonStaticFix(project, function.getFirstChild())
                                         );
                                         return;
@@ -76,7 +76,7 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                                         if (resolved instanceof Method && !((Method) resolved).isStatic()) {
                                             holder.registerProblem(
                                                     reference,
-                                                    ReportingUtil.wrapReportedMessage(messageParent),
+                                                    MessagesPresentationUtil.prefixWithEa(messageParent),
                                                     new TurnClosureIntoNonStaticFix(project, function.getFirstChild())
                                             );
                                             return;
@@ -99,13 +99,13 @@ public class StaticLambdaBindingInspector extends PhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         TurnClosureIntoNonStaticFix(@NotNull Project project, @NotNull PsiElement staticKeyword) {

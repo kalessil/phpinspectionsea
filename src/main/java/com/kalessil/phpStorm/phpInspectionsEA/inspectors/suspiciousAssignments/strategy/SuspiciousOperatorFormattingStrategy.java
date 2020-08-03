@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -51,7 +51,7 @@ final public class SuspiciousOperatorFormattingStrategy {
             if (mapping.containsKey(valueOperation)) {
                 holder.registerProblem(
                         expression,
-                        ReportingUtil.wrapReportedMessage(messagePattern.replace("%o%", mapping.get(valueOperation)))
+                        MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%o%", mapping.get(valueOperation)))
                 );
             }
         }

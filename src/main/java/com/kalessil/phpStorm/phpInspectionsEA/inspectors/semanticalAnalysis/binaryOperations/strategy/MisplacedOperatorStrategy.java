@@ -13,8 +13,8 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +79,7 @@ final public class MisplacedOperatorStrategy {
                                             .replace(expression.getText(), leftOperand.getText());
                                     holder.registerProblem(
                                             operator,
-                                            ReportingUtil.wrapReportedMessage(message),
+                                            MessagesPresentationUtil.prefixWithEa(message),
                                             new MisplacedOperatorFix(holder.getProject(), replacement, call)
                                     );
                                     return true;
@@ -104,13 +104,13 @@ final public class MisplacedOperatorStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         MisplacedOperatorFix(@NotNull Project project, @NotNull String expression, @NotNull PsiElement call) {

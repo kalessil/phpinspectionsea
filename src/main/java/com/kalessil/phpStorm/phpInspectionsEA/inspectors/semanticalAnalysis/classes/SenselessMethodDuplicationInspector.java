@@ -119,13 +119,13 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                     if (method.getAccess().equals(parentMethod.getAccess())) {
                         holder.registerProblem(
                                 methodName,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePatternIdentical), method.getName()),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePatternIdentical), method.getName()),
                                 canFix ? new DropMethodFix() : null
                         );
                     } else {
                         holder.registerProblem(
                                 methodName,
-                                String.format(ReportingUtil.wrapReportedMessage(messagePatternProxy), method.getName()),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePatternProxy), method.getName()),
                                 canFix ? new ProxyCallFix() : null
                         );
                     }
@@ -172,13 +172,13 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

@@ -9,10 +9,10 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,14 +103,14 @@ public class PassingByReferenceCorrectnessInspector extends BasePhpInspection {
                                     if (!this.isByReference(name)) {
                                         holder.registerProblem(
                                                 argument,
-                                                ReportingUtil.wrapReportedMessage(message)
+                                                MessagesPresentationUtil.prefixWithEa(message)
                                         );
                                     }
                                 }
                             } else if (argument instanceof NewExpression) {
                                 holder.registerProblem(
                                         argument,
-                                        ReportingUtil.wrapReportedMessage(message)
+                                        MessagesPresentationUtil.prefixWithEa(message)
                                 );
                             }
                         }

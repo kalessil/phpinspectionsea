@@ -5,6 +5,8 @@ function immediate_overrides()
     /* case 1: possible override, if itself */
     if ($x) { $y1 = ''; }
     <error descr="[EA] $y1 is immediately overridden, perhaps it was intended to use 'else' here.">$y1 = ''</error>;
+    if ($x) { $array['index'] = ''; }
+    <error descr="[EA] $array['index'] is immediately overridden, perhaps it was intended to use 'else' here.">$array['index'] = ''</error>;
 
     /* false-positive: if ends with an exit point */
     if ($x) {
@@ -22,6 +24,11 @@ function immediate_overrides()
     $y4 = '';
     if ($x) { $y4 = ''; }
 
+    /* false-positive: variable container access */
+    if ($x) { $array[] = ''; }
+    $array[] = '';
+    if ($x) { $array[$index] = ''; }
+    $array[$index] = '';
 
     /* case 2: guaranteed override */
     $y5 = '';

@@ -14,7 +14,7 @@ class ImmediateOverridePropsClass {
 
     public function __construct($x) {
         $this->override0 = [];
-        $this->override1 = [] + $this->override1;
+        $this->override1 = array_merge([], $this->override1);
 
         $this->override2 = [];
 

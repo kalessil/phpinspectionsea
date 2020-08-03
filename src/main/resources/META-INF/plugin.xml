@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>4.0.3</version>
+  <version>4.0.5</version>
   <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
   <depends>com.jetbrains.php</depends>
@@ -29,10 +29,6 @@
         shortName="AmbiguousMethodsCallsInArrayMappingInspection" displayName="Non-optimized arrays mapping"
         groupName="Performance"                                   enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.AmbiguousMethodsCallsInArrayMappingInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="CallableInLoopTerminationConditionInspection"  displayName="Callable calls in loops termination condition"
-        groupName="Performance"                                   enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.CallableInLoopTerminationConditionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="SlowArrayOperationsInLoopInspection"           displayName="Slow array function used in loop"
         groupName="Performance"                                   enabledByDefault="true" level="ERROR"
@@ -352,10 +348,6 @@
         groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.dateTime.DateTimeSetTimeUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="SuspiciousTernaryOperatorInspection"           displayName="Suspicious ternary operator"
-        groupName="Probable bugs"                                 enabledByDefault="true" level="ERROR"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.SuspiciousTernaryOperatorInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MissingArrayInitializationInspection"          displayName="Missing array initialization"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.loops.MissingArrayInitializationInspector"/>
@@ -422,10 +414,6 @@
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.CryptographicallySecureAlgorithmsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="NonSecureCryptUsageInspection"                 displayName="Insecure 'crypt(...)' usage (Cryptographically weak algorithms)"
-         groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureCryptUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="HostnameSubstitutionInspection"                displayName="Hostname substitution"
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.HostnameSubstitutionInspector"/>
@@ -436,20 +424,20 @@
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PhpUnitTestsInspection"                        displayName="PhpUnit: bugs and best practices"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        shortName="PhpUnitTestsInspection"                        displayName="PHPUnit: bugs and best practices"
+        groupName="PHPUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="UnnecessaryAssertionInspection"                displayName="PhpUnit: unnecessary assertion"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        shortName="UnnecessaryAssertionInspection"                displayName="PHPUnit: unnecessary assertion"
+        groupName="PHPUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.UnnecessaryAssertionInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="MockingMethodsCorrectnessInspection"           displayName="PhpUnit: methods mocking issues"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WARNING"
+        shortName="MockingMethodsCorrectnessInspection"           displayName="PHPUnit: methods mocking issues"
+        groupName="PHPUnit"                                       enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.MockingMethodsCorrectnessInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="PhpUnitDeprecationsInspection"                 displayName="PhpUnit: API deprecations"
-        groupName="PhpUnit"                                       enabledByDefault="true" level="WEAK WARNING"
+        shortName="PhpUnitDeprecationsInspection"                 displayName="PHPUnit: API deprecations"
+        groupName="PHPUnit"                                       enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitDeprecationsInspector"/>
 
 
@@ -519,7 +507,7 @@
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnNecessaryDoubleQuotesInspection"             displayName="Unnecessary double quotes"
-        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnNecessaryDoubleQuotesInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="MissingOrEmptyGroupStatementInspection"        displayName="Missing or empty conditionals group statement"
@@ -625,7 +613,10 @@
         shortName="ShortEchoTagCanBeUsedInspection"               displayName="Short echo tag can be used"
         groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ShortEchoTagCanBeUsedInspector"/>
-
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
+        groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ElvisOperatorCanBeUsedInspection"              displayName="Elvis operator can be used"
@@ -647,10 +638,6 @@
         shortName="ConstantCanBeUsedInspection"                   displayName="A constant can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.ConstantCanBeUsedInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
-        groupName="Language level migration"                      enabledByDefault="false" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ShortListSyntaxCanBeUsedInspection"            displayName="Short list syntax can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
@@ -711,6 +698,22 @@
         shortName="IsCountableCanBeUsedInspection"                displayName="'is_countable(...)' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsCountableCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StrContainsCanBeUsedInspection"                displayName="'str_contains(...)' can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrContainsCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StrStartsWithCanBeUsedInspection"              displayName="'str_starts_with(...)' can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrStartsWithCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="StrEndsWithCanBeUsedInspection"                displayName="'str_ends_with(...)' can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrEndsWithCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="GetDebugTypeCanBeUsedInspection"               displayName="'get_debug_type(...)' can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.GetDebugTypeCanBeUsedInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

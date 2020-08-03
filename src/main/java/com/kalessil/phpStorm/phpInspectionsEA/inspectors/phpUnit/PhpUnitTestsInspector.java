@@ -22,9 +22,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -45,6 +45,7 @@ import java.util.function.BooleanSupplier;
 
 public class PhpUnitTestsInspector extends BasePhpInspection {
     // Inspection options.
+    public PhpUnitVersion PHP_UNIT_VERSION       = PhpUnitVersion.PHPUNIT80;
     public boolean SUGGEST_TO_USE_ASSERTSAME     = false;
     public boolean SUGGEST_TO_USE_NAMED_DATASETS = false;
     public boolean PROMOTE_PHPUNIT_API           = true;
@@ -66,7 +67,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "PhpUnit: bugs and best practices";
+        return "PHPUnit: bugs and best practices";
     }
 
     @Override
@@ -109,7 +110,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                                 if (!isNamedDataset) {
                                                     holder.registerProblem(
                                                             nameNode,
-                                                            ReportingUtil.wrapReportedMessage(messageNamedProvider)
+                                                            MessagesPresentationUtil.prefixWithEa(messageNamedProvider)
                                                     );
                                                 }
                                             }
@@ -118,14 +119,14 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 } else {
                                     holder.registerProblem(
                                             nameNode,
-                                            ReportingUtil.wrapReportedMessage(messageDataProvider),
+                                            MessagesPresentationUtil.prefixWithEa(messageDataProvider),
                                             ProblemHighlightType.GENERIC_ERROR
                                     );
                                 }
                             } else {
                                 holder.registerProblem(
                                         nameNode,
-                                        ReportingUtil.wrapReportedMessage(messageDataProvider),
+                                        MessagesPresentationUtil.prefixWithEa(messageDataProvider),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }
@@ -144,7 +145,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                         if (docBlock == null || docBlock.getTagElementsByName("@test").length == 0) {
                                             holder.registerProblem(
                                                     nameNode,
-                                                    ReportingUtil.wrapReportedMessage(messageDepends),
+                                                    MessagesPresentationUtil.prefixWithEa(messageDepends),
                                                     ProblemHighlightType.GENERIC_ERROR
                                             );
                                         }
@@ -152,14 +153,14 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 } else {
                                     holder.registerProblem(
                                             nameNode,
-                                            ReportingUtil.wrapReportedMessage(messageDepends),
+                                            MessagesPresentationUtil.prefixWithEa(messageDepends),
                                             ProblemHighlightType.GENERIC_ERROR
                                     );
                                 }
                             } else {
                                 holder.registerProblem(
                                         nameNode,
-                                        ReportingUtil.wrapReportedMessage(messageDepends),
+                                        MessagesPresentationUtil.prefixWithEa(messageDepends),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }
@@ -188,11 +189,11 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                                 }
                             }
 
-                            final boolean callableNeeded = referenceText.contains("::");
+                            final boolean callableNeeded = referenceText.contains("::") && ! referenceText.contains("::<");
                             if ((callableNeeded && !hasCallableReference) || (!callableNeeded && !hasClassReference)) {
                                 holder.registerProblem(
                                         nameNode,
-                                        ReportingUtil.wrapReportedMessage(String.format(messageCovers, referenceText)),
+                                        MessagesPresentationUtil.prefixWithEa(String.format(messageCovers, referenceText)),
                                         ProblemHighlightType.GENERIC_ERROR
                                 );
                             }
@@ -201,7 +202,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         if (isMethodNamedAsTest && this.isAnnotation(tag)) {
                             holder.registerProblem(
                                     tag.getFirstChild(),
-                                    ReportingUtil.wrapReportedMessage(messageTest),
+                                    MessagesPresentationUtil.prefixWithEa(messageTest),
                                     ProblemHighlightType.LIKE_DEPRECATED,
                                     new AmbiguousTestAnnotationLocalFix()
                             );
@@ -231,11 +232,11 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
                         if (PROMOTE_PHPUNIT_API) {
                             callbacks.add(() -> AssertEmptyStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertConstantStrategy.apply(methodName, reference, holder));
-                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertInternalTypeStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION == null ? PhpUnitVersion.PHPUNIT80 : PHP_UNIT_VERSION));
                             callbacks.add(() -> AssertInstanceOfStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertResourceExistsStrategy.apply(methodName, reference, holder));
                             callbacks.add(() -> AssertCountStrategy.apply(methodName, reference, holder));
-                            callbacks.add(() -> AssertContainsStrategy.apply(methodName, reference, holder));
+                            callbacks.add(() -> AssertContainsStrategy.apply(methodName, reference, holder, PHP_UNIT_VERSION == null ? PhpUnitVersion.PHPUNIT80 : PHP_UNIT_VERSION));
                             callbacks.add(() -> AssertRegexStrategy.apply(methodName, reference, holder));
                             /* AssertFileEqualsStrategy and AssertStringEqualsFileStrategy order is important */
                             callbacks.add(() -> AssertFileEqualsStrategy.apply(methodName, reference, holder));
@@ -263,6 +264,7 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
+            component.addDropDown("PHPUnit version", PHP_UNIT_VERSION == null ? PhpUnitVersion.PHPUNIT80 : PHP_UNIT_VERSION, (version) -> PHP_UNIT_VERSION = (PhpUnitVersion) version);
             component.addCheckbox("Promote dedicated asserts", PROMOTE_PHPUNIT_API, (isSelected) -> PROMOTE_PHPUNIT_API = isSelected);
             component.addCheckbox("Promote ->once()", PROMOTE_MOCKING_ONCE, (isSelected) -> PROMOTE_MOCKING_ONCE = isSelected);
             component.addCheckbox("Promote ->willReturn*(...)", PROMOTE_MOCKING_WILL_RETURN, (isSelected) -> PROMOTE_MOCKING_WILL_RETURN = isSelected);
@@ -277,13 +279,13 @@ public class PhpUnitTestsInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

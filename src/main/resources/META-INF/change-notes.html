@@ -1,14 +1,20 @@
 <html>
-New features release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
+Bug-fix release. Supporters via <a href="https://www.patreon.com/kalessil">Patreon</a> are wanted.<br/>
 <br/>
-- Magic methods validity: new patterns<br/>
+- Type inference improvements and PhpStorm 2020.2 compatibility fixes<br/>
+- Forgotten debug statements: new patterns<br/>
+- Slow array function used in loop: new patterns<br/>
+- 'get_debug_type(...)' can be used: implemented<br/>
 - ::class can be used: new patterns<br/>
-- 'is_countable(...)' can be used: implemented<br/>
-- 'is_iterable(...)' can be used: implemented<br/>
 <br/>
-- Class property initialization flaws: resolved a false-positive (typed properties)<br/>
-- Long inheritance chain: new settings<br/>
-- Type casting can be used: new settings<br/>
+- Deprecated constructor style: resolved a false-positive (static methods, thank you @Haehnchen)<br/>
+- JSON encoding API usage: resolved a false-positive (an imposable case)<br/>
+- Non-optimal regular expression: resolved a false-positive (s-modifier)<br/>
+- Proper null-coalescing operator usage: resolved a false-positive (coalesce wrapped into casting)<br/>
+- Suspicious assignments: resolved a false positive (variable array access)<br/>
+- Unknown inspection suppression: resolved false-positives (multiple cases)<br/>
+- 'substr(...)' could be replaced with 'strpos(...)': dropped $string[0] === '?' pattern<br/>
+- ::class constant usage correctness: resolved a false-positive (NS aliases)<br/>
 <br/>
 <hr/>
 </html>

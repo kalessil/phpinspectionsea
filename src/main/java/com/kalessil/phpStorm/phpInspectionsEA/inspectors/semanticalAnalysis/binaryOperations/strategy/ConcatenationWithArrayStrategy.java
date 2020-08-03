@@ -5,8 +5,8 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -29,7 +29,7 @@ final public class ConcatenationWithArrayStrategy {
             if (isTarget) {
                 holder.registerProblem(
                         operation,
-                        ReportingUtil.wrapReportedMessage(message)
+                        MessagesPresentationUtil.prefixWithEa(message)
                 );
                 return true;
             }

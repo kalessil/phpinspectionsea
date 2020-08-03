@@ -47,14 +47,14 @@ Inspections Lists (Control flow)
 | Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | yes |
 | Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | yes |
 
-Inspections Lists (PhpUnit)
+Inspections Lists (PHPUnit)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | --:  | --: |
-| PhpUnit              | PhpUnitTestsInspection                          | PhpUnit: bugs and best practices                    | yes | yes | yes  | n/a |
-| PhpUnit              | UnnecessaryAssertionInspection                  | PhpUnit: unnecessary assertion                      | yes | yes | yes  | n/a |
-| PhpUnit              | MockingMethodsCorrectnessInspection             | PhpUnit: methods mocking issues                     | yes | yes | yes  | n/a |
-| PhpUnit              | PhpUnitDeprecationsInspection                   | PhpUnit: API deprecations                           | n/a | yes | n/a  | n/a |
+| PHPUnit              | PhpUnitTestsInspection                          | PHPUnit: bugs and best practices                    | yes | yes | yes  | n/a |
+| PHPUnit              | UnnecessaryAssertionInspection                  | PHPUnit: unnecessary assertion                      | yes | yes | yes  | n/a |
+| PHPUnit              | MockingMethodsCorrectnessInspection             | PHPUnit: methods mocking issues                     | yes | yes | yes  | n/a |
+| PHPUnit              | PhpUnitDeprecationsInspection                   | PHPUnit: API deprecations                           | n/a | yes | n/a  | n/a |
 
 Inspections Lists (Unused)
 ---
@@ -121,6 +121,7 @@ Inspections Lists (Code style)
 | Code Style           | StaticClosureCanBeUsedInspection                | Static closure can be used                          | yes | yes | yes  | no  |
 | Code Style           | ImplodeArgumentsOrderInspection                 | 'implode(...)' arguments order                      | yes | yes | yes  | no  |
 | Code Style           | ShortEchoTagCanBeUsedInspection                 | Short echo tag can be used                          | yes | yes | yes  | no  |
+| Code Style           | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
 
 Inspections Lists (Language level migration)
 ---
@@ -130,7 +131,6 @@ Inspections Lists (Language level migration)
 | Language level migration | NullCoalescingOperatorCanBeUsedInspection       | Null coalescing operator can be used                | yes | yes | yes  | no  |
 | Language level migration | TypesCastingCanBeUsedInspection                 | Type casting can be used                            | yes | yes | yes  | no  |
 | Language level migration | DirectoryConstantCanBeUsedInspection            | __DIR__ constant can be used                        | yes | yes | yes  | no  |
-| Language level migration | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
 | Language level migration | ShortListSyntaxCanBeUsedInspection              | Short list syntax can be used                       | yes | yes | yes  | no  |
 | Language level migration | DeprecatedConstructorStyleInspection            | Deprecated constructor style                        | yes | yes | yes  | no  |
 | Language level migration | AliasFunctionsUsageInspection                   | Alias functions usage                               | yes | yes | yes  | yes |
@@ -147,6 +147,10 @@ Inspections Lists (Language level migration)
 | Language level migration | UnsupportedEmptyListAssignmentsInspection       | Unsupported empty list assignments                  | n/a | yes | n/a  | no  |
 | Language level migration | IsIterableCanBeUsedInspection                   | 'is_iterable(...)' can be used                      | n/a | yes | n/a  | no  |
 | Language level migration | IsCountableCanBeUsedInspection                  | 'is_countable(...)' can be used                     | n/a | yes | n/a  | no  |
+| Language level migration | StrContainsCanBeUsedInspection                  | 'str_contains(...)' can be used                     | yes | yes | yes  | no  |
+| Language level migration | StrStartsWithCanBeUsedInspection                | 'str_starts_with(...)' can be used                  | yes | yes | yes  | no  |
+| Language level migration | StrEndsWithCanBeUsedInspection                  | 'str_ends_with(...)' can be used                    | yes | yes | yes  | no  |
+| Language level migration | GetDebugTypeCanBeUsedInspection                 | 'get_debug_type(...)' can be used                   | yes | yes | yes  | no  |
 
 Inspections Lists (Architecture)
 ---
@@ -199,7 +203,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | StringsFirstCharactersCompareInspection         | Strings N-character comparison flaws                      | yes | yes | yes  | no  |
 | Probable bugs        | SimpleXmlLoadFileUsageInspection                | 'simplexml_load_file(...)' usage correctness              | yes | yes | yes  | n/a |
 | Probable bugs        | DateTimeSetTimeUsageInspection                  | 'DateTime::setTime(...)' usage correctness                | n/a | yes | n/a  | n/a |
-| Probable bugs        | SuspiciousTernaryOperatorInspection             | Suspicious ternary operator                               | n/a | yes | n/a  | no  |
 | Probable bugs        | MissingArrayInitializationInspection            | Missing array initialization                              | n/a | yes | n/a  | no  |
 | Probable bugs        | DuplicateArrayKeysInspection                    | Duplicate array keys                                      | n/a | yes | n/a  | n/a |
 | Probable bugs        | SuspiciousFunctionCallsInspection               | Suspicious function calls                                 | n/a | yes | n/a  | no  |
@@ -220,7 +223,6 @@ Inspections Lists (Security)
 | Security             | UnserializeExploitsInspection                      | Exploiting unserialize (PHP Object Injection Vulnerability)       | n/a | yes | n/a  | yes |
 | Security             | PotentialMalwareInspection                         | Basic malware patterns                                            | n/a | yes | n/a  | yes |
 | Security             | CryptographicallySecureRandomnessInspection        | Cryptographically secure randomness                               | n/a | yes | n/a  | yes |
-| Security             | NonSecureCryptUsageInspection                      | Insecure 'crypt(...)' usage (Cryptographically weak algorithms)   | n/a | yes | n/a  | n/a |
 | Security             | CryptographicallySecureAlgorithmsInspection        | Cryptographically secure algorithms                               | n/a | yes | n/a  | yes |
 | Security             | HostnameSubstitutionInspection                     | Hostname substitution                                             | n/a | yes | n/a  | n/a |
 | Security             | BacktickOperatorUsageInspection                    | Backtick operator usage                                           | yes | yes | yes  | n/a |
@@ -230,8 +232,7 @@ Inspections Lists (Performance)
 | Group                | Short Name                                      | Full Name                                                                                         | QF  | UTs | QFTs | Doc |
 | :------------------- | :---------------------------------------------- | :------------------------------------------------------------------------------------------------ | --: | --: | ---: | --: |
 | Performance          | AmbiguousMethodsCallsInArrayMappingInspection   | Non-optimized arrays mapping                                                                      | n/a | yes | n/a  | yes |
-| Performance          | CallableInLoopTerminationConditionInspection    | Callable calls in loops termination condition                                                     | n/a | yes | n/a  | no  |
-| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | n/a | yes | n/a  | yes |
+| Performance          | SlowArrayOperationsInLoopInspection             | Slow array function used in loop                                                                  | yes | yes | yes  | yes |
 | Performance          | StrStrUsedAsStrPosInspection                    | 'str(i)str(...)' could be replaced with 'str(i)pos(...)'                                          | yes | yes | yes  | no  |
 | Performance          | AlterInForeachInspection                        | Foreach variables reference usage correctness                                                     | n/a | yes | n/a  | yes |
 | Performance          | ArrayPushMissUseInspection                      | 'array_push(...)' misused                                                                         | yes | yes | yes  | no  |

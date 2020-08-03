@@ -11,9 +11,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -69,7 +69,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                             );
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(messageResultType),
+                                    MessagesPresentationUtil.prefixWithEa(messageResultType),
                                     DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement)
                             );
                         }
@@ -86,7 +86,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                                 );
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageErrorsHandling),
+                                        MessagesPresentationUtil.prefixWithEa(messageErrorsHandling),
                                         new HardenErrorsHandlingFix(replacement)
                                 );
                             }
@@ -115,7 +115,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                                 }
                                 holder.registerProblem(
                                         reference,
-                                        ReportingUtil.wrapReportedMessage(messageErrorsHandling),
+                                        MessagesPresentationUtil.prefixWithEa(messageErrorsHandling),
                                         new HardenErrorsHandlingFix(replacement)
                                 );
                             }
@@ -125,17 +125,22 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
             }
 
             private boolean hasThrowOnErrorFlag(@NotNull PsiElement argument) {
-                boolean hasFlag = false;
+                boolean hasFlag               = false;
                 final Set<PsiElement> options = PossibleValuesDiscoveryUtil.discover(argument);
                 if (options.size() == 1) {
                     final PsiElement option = options.iterator().next();
                     if (OpenapiTypesUtil.isNumber(option)) {
-                        hasFlag = option.getText().equals("4194304"); /* JSON_THROW_ON_ERROR constant */
+                        /* JSON_THROW_ON_ERROR constant value gets resolved */
+                        hasFlag = option.getText().equals("4194304");
+                    } else if (option instanceof ConstantReference) {
+                        /* JSON_THROW_ON_ERROR constant values is not getting resolved (no clue why, but happens) */
+                        hasFlag = "JSON_THROW_ON_ERROR".equals(((ConstantReference) option).getName());
                     } else {
+                        /* a complex case like local variable or implicit flags combination */
                         hasFlag = PsiTreeUtil.findChildrenOfType(option, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
                     }
-                    options.clear();
                 }
+                options.clear();
                 return hasFlag;
             }
         };
@@ -158,7 +163,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         DecodeIntoArrayFix(@NotNull String expression) {
@@ -172,7 +177,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         HardenErrorsHandlingFix(@NotNull String expression) {
@@ -186,7 +191,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         DecodeIntoObjectFix(@NotNull String expression) {

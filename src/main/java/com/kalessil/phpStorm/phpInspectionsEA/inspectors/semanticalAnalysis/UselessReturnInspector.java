@@ -15,8 +15,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -62,14 +62,15 @@ public class UselessReturnInspector extends BasePhpInspection {
                         final Function scope = ExpressionSemanticUtil.getScope(expression);
                         if (scope != null) {
                             final Variable variable = (Variable) assignmentVariable;
-                            final boolean isTarget  = !this.isArgumentReference(variable, scope) &&
-                                                      !this.isBoundReference(variable, scope) &&
-                                                      !this.isStaticVariable(variable, scope);
+                            final boolean isTarget  = ! this.isArgumentReference(variable, scope) &&
+                                                      ! this.isBoundReference(variable, scope) &&
+                                                      ! this.isStaticVariable(variable, scope) &&
+                                                      ! this.isUsedInFinally(variable, scope);
                             if (isTarget) {
                                 final String replacement = String.format("return %s;", assignmentValue.getText());
                                 holder.registerProblem(
                                         expression,
-                                        ReportingUtil.wrapReportedMessage(messageConfusing),
+                                        MessagesPresentationUtil.prefixWithEa(messageConfusing),
                                         new SimplifyFix(replacement)
                                 );
                             }
@@ -98,7 +99,7 @@ public class UselessReturnInspector extends BasePhpInspection {
                     if (returnValue == null) {
                         holder.registerProblem(
                                 lastStatement,
-                                ReportingUtil.wrapReportedMessage(messageSenseless),
+                                MessagesPresentationUtil.prefixWithEa(messageSenseless),
                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
                         );
                     }
@@ -129,6 +130,20 @@ public class UselessReturnInspector extends BasePhpInspection {
                         result                     = OpenapiTypesUtil.is(candidate, PhpTokenTypes.opBIT_AND);
                     }
                     used.clear();
+                }
+                return result;
+            }
+
+            private boolean isUsedInFinally(@NotNull Variable variable, @NotNull Function function) {
+                boolean result     = false;
+                final Try tryScope = PsiTreeUtil.getParentOfType(variable, Try.class, false, Function.class);
+                if (tryScope != null) {
+                    final Finally finallyScope = tryScope.getFinallyBlock();
+                    final GroupStatement body  = finallyScope == null ? null :  ExpressionSemanticUtil.getGroupStatement(finallyScope);
+                    if (body != null) {
+                        final String variableName = variable.getName();
+                        result = PsiTreeUtil.findChildrenOfType(body, Variable.class).stream().anyMatch(v -> variableName.equals(v.getName()));
+                    }
                 }
                 return result;
             }
@@ -166,13 +181,13 @@ public class UselessReturnInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

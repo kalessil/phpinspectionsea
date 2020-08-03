@@ -13,8 +13,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,7 +91,7 @@ public class IsIterableCanBeUsedInspector extends BasePhpInspection {
                                                             final String argument = subject.getText();
                                                             holder.registerProblem(
                                                                     reference,
-                                                                    String.format(ReportingUtil.wrapReportedMessage(message), argument, argument, argument)
+                                                                    String.format(MessagesPresentationUtil.prefixWithEa(message), argument, argument, argument)
                                                             );
                                                             break;
                                                         }

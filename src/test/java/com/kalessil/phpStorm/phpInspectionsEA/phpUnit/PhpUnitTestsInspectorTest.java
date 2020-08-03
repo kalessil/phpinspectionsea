@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.phpUnit;
 
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitTestsInspector;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitVersion;
 
 final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsCoversAnnotationPatterns() {
@@ -99,14 +100,25 @@ final public class PhpUnitTestsInspectorTest extends PhpCodeInsightFixtureTestCa
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/phpUnit/assert-empty.fixed.php");
     }
-    public void testIfFindsAssertInternalTypePatterns() {
-        myFixture.enableInspections(new PhpUnitTestsInspector());
+    public void testIfFindsAssertInternalTypePatternsViaAssertInternalType() {
+        final PhpUnitTestsInspector inspector = new PhpUnitTestsInspector();
+        inspector.PHP_UNIT_VERSION            = PhpUnitVersion.PHPUNIT75;
+        myFixture.enableInspections(inspector);
         myFixture.configureByFile("testData/fixtures/phpUnit/assert-internal-type.php");
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/phpUnit/assert-internal-type.fixed.php");
+    }
+    public void testIfFindsAssertInternalTypePatternsViaSpecializedAsserts() {
+        myFixture.enableInspections(new PhpUnitTestsInspector());
+        myFixture.configureByFile("testData/fixtures/phpUnit/assert-internal-type.after-phpunit-8.php");
+        myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile("testData/fixtures/phpUnit/assert-internal-type.after-phpunit-8.fixed.php");
     }
     public void testIfFindsAssertResourceExistsPatterns() {
         myFixture.enableInspections(new PhpUnitTestsInspector());

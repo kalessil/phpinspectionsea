@@ -56,7 +56,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpBinaryExpression(@NotNull BinaryExpression binary) {
-                if (binary.getOperationType() == PhpTokenTypes.opCOALESCE) {
+                if (binary.getOperationType() == PhpTokenTypes.opCOALESCE && ! this.isPartOfCoalesce(binary) && ! this.isTypeCasted(binary)) {
                     final PsiElement left  = binary.getLeftOperand();
                     final PsiElement right = binary.getRightOperand();
                     if (left != null && right != null) {
@@ -65,7 +65,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                             if (left instanceof FunctionReference) {
                                 holder.registerProblem(
                                         binary,
-                                        String.format(ReportingUtil.wrapReportedMessage(messageSimplify), left.getText()),
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageSimplify), left.getText()),
                                         new UseLeftOperandFix(left.getText())
                                 );
                             }
@@ -82,10 +82,10 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                                         final boolean complimentary = ALLOW_OVERLAPPING_TYPES
                                                 ? rightTypes.stream().anyMatch(leftTypes::contains)
                                                 : rightTypes.containsAll(leftTypes);
-                                        if (!complimentary && !this.areRelated(rightTypes, leftTypes)) {
+                                        if (! complimentary && ! this.areRelated(rightTypes, leftTypes)) {
                                             holder.registerProblem(
                                                     binary,
-                                                    String.format(ReportingUtil.wrapReportedMessage(messageMismatch), leftTypes.toString(), rightTypes.toString())
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messageMismatch), leftTypes.toString(), rightTypes.toString())
                                             );
                                         }
                                         rightTypes.clear();
@@ -96,6 +96,23 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
                         }
                     }
                 }
+            }
+
+            private boolean isTypeCasted(@NotNull BinaryExpression binary) {
+                final PsiElement parent = binary.getParent();
+                if (parent instanceof ParenthesizedExpression) {
+                    final PsiElement grandParent = parent.getParent();
+                    if (grandParent instanceof UnaryExpression) {
+                        final PsiElement operator = ((UnaryExpression) grandParent).getOperation();
+                        return operator != null && PhpTokenTypes.tsCAST_OPS.contains(operator.getNode().getElementType());
+                    }
+                }
+                return false;
+            }
+
+            private boolean isPartOfCoalesce(@NotNull BinaryExpression binary) {
+                final PsiElement parent = binary.getParent();
+                return parent instanceof BinaryExpression && ((BinaryExpression) parent).getOperationType() == PhpTokenTypes.opCOALESCE;
             }
 
             private boolean areRelated(@NotNull Set<String> rightTypes, @NotNull Set<String> leftTypes) {
@@ -152,7 +169,7 @@ public class ProperNullCoalescingOperatorUsageInspector extends BasePhpInspectio
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseLeftOperandFix(@NotNull String expression) {

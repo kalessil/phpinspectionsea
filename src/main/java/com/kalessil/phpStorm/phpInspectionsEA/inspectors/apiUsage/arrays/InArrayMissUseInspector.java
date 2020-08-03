@@ -10,10 +10,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -69,7 +69,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                                     .replace("%k%", arguments[0].getText());
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(String.format(patternKeyExists, replacement)),
+                                    MessagesPresentationUtil.prefixWithEa(String.format(patternKeyExists, replacement)),
                                     new UseArrayKeyExistsFix(replacement)
                             );
                         }
@@ -125,7 +125,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                                                    : String.format("%s %s %s", lastItem.getText(), comparison, arguments[0].getText());
                         holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(String.format(patternComparison, replacement)),
+                                MessagesPresentationUtil.prefixWithEa(String.format(patternComparison, replacement)),
                                 new UseComparisonFix(replacement)
                         );
                     }
@@ -140,7 +140,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseArrayKeyExistsFix(@NotNull String expression) {
@@ -154,7 +154,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseComparisonFix(@NotNull String expression) {

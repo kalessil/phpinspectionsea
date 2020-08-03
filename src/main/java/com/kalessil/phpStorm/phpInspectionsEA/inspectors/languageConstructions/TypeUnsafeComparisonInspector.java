@@ -20,8 +20,8 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.strategy.ClassInStringContextStrategy;
@@ -106,7 +106,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                     if (!literalValue.isEmpty() && !literalValue.matches("^[0-9+-]+$")) {
                         holder.registerProblem(
                                 subject,
-                                String.format(ReportingUtil.wrapReportedMessage(patternCompareStrict), targetOperator),
+                                String.format(MessagesPresentationUtil.prefixWithEa(patternCompareStrict), targetOperator),
                                 new CompareStrictFix(targetOperator)
                         );
                         return;
@@ -119,7 +119,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                     if (!isComparableObject) {
                         holder.registerProblem(
                                 subject,
-                                String.format(ReportingUtil.wrapReportedMessage(patternHarden), targetOperator),
+                                String.format(MessagesPresentationUtil.prefixWithEa(patternHarden), targetOperator),
                                 ProblemHighlightType.WEAK_WARNING
                         );
                     }
@@ -164,13 +164,13 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         CompareStrictFix(@NotNull String operator) {

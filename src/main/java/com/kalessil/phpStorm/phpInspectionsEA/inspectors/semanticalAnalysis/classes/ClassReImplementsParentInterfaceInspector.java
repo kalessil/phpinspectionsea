@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.elements.ImplementsList;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
                                     if (inherited.contains(ownInterface) && processed.add(entry.getKey())) {
                                         holder.registerProblem(
                                                 entry.getKey(),
-                                                String.format(ReportingUtil.wrapReportedMessage(patternIndirectDuplication), ownInterface.getFQN(), parent.getFQN()),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(patternIndirectDuplication), ownInterface.getFQN(), parent.getFQN()),
                                                 new TheLocalFix()
                                         );
                                     }
@@ -95,13 +95,13 @@ public class ClassReImplementsParentInterfaceInspector extends BasePhpInspection
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

@@ -21,6 +21,7 @@ namespace {
                 $one ?? $two,
                 $two ?? $one,
                 $one ?? $three,
+                (string) ($one ?? $three),
 
                 $string ?? null,
             ];

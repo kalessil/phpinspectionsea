@@ -10,9 +10,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,7 +118,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
                     if (countParsedAll != parametersInPattern) {
                         holder.registerProblem(
                                 params[neededPosition],
-                                ReportingUtil.wrapReportedMessage(messagePattern),
+                                MessagesPresentationUtil.prefixWithEa(messagePattern),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                         return;
@@ -168,7 +168,7 @@ public class PrintfScanfArgumentsInspector extends BasePhpInspection {
 
                         holder.registerProblem(
                                 reference,
-                                ReportingUtil.wrapReportedMessage(messageParameters.replace("%c%", String.valueOf(expectedParametersCount))),
+                                MessagesPresentationUtil.prefixWithEa(messageParameters.replace("%c%", String.valueOf(expectedParametersCount))),
                                 ProblemHighlightType.GENERIC_ERROR
                         );
                     }

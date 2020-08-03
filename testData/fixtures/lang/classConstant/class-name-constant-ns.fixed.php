@@ -22,6 +22,7 @@ class Action {
             'Prerequisites',
 
             static::class,
+            parent::class,
 
             stdClassAlias::class,
             stdClassAlias::class,

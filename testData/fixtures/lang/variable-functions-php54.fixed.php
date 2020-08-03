@@ -13,8 +13,8 @@
     forward_static_call($callable, 1, 2, 3);
     forward_static_call($callable, 1, 2, 3);
 
-    Namespace\Clazz::method($a);
-    Namespace\Clazz::method($a);
+    Namespazz\Clazz::method($a);
+    Namespazz\Clazz::method($a);
 
     /* QF correctness cases */
     $callable(...$arguments);

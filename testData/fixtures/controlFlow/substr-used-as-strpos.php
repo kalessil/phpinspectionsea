@@ -16,13 +16,3 @@ function calls_cases_holder() {
     /* false-positives: length is not as expected */
     $x = substr($path, 0, strrpos($path, '...')) == $pathPrefix;
 }
-
-function array_access_cases(string $string, array $array) {
-    $x = <weak_warning descr="[EA] 'strpos($string, '.') === 0' can be used instead (improves maintainability).">$string[0] == '.'</weak_warning>;
-    $x = <weak_warning descr="[EA] 'strpos($string, \".\") === 0' can be used instead (improves maintainability).">$string[0] === "."</weak_warning>;
-
-    $x = $string[0] === '..';
-    $x = $string[1] === '.';
-
-    $x = $array[0] === '.';
-}

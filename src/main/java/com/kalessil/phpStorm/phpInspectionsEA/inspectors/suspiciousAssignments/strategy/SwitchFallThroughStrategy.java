@@ -5,9 +5,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ final public class SwitchFallThroughStrategy {
                                 isOverridden = true;
                                 holder.registerProblem(
                                         variable,
-                                        ReportingUtil.wrapReportedMessage(message)
+                                        MessagesPresentationUtil.prefixWithEa(message)
                                 );
                                 break;
                             }
@@ -89,7 +89,7 @@ final public class SwitchFallThroughStrategy {
                                 isOverridden = true;
                                 holder.registerProblem(
                                         variable,
-                                        ReportingUtil.wrapReportedMessage(message)
+                                        MessagesPresentationUtil.prefixWithEa(message)
                                 );
                                 break;
                             }

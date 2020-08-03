@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
@@ -54,7 +54,7 @@ public class UntrustedInclusionInspector extends BasePhpInspection {
                     if (!path.isEmpty() && !absolutePathPattern.matcher(path).matches()) {
                         holder.registerProblem(
                                 include,
-                                ReportingUtil.wrapReportedMessage(message)
+                                MessagesPresentationUtil.prefixWithEa(message)
                         );
                     }
                 }

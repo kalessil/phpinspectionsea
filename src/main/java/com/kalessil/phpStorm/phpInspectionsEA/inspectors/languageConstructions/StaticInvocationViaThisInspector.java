@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
     // Inspection options.
-    public boolean EXCEPT_PHPUNIT_ASSERTIONS = true;
+    public boolean EXCEPT_PHPUNIT_ASSERTIONS = false;
 
     private static final String messageThisUsed       = "'self::%s(...)' should be used instead.";
     private static final String messageExpressionUsed = "'...::%s(...)' should be used instead.";
@@ -81,7 +81,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                                     if (resolved instanceof Method && ((Method) resolved).isStatic()) {
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(ReportingUtil.wrapReportedMessage(messageExpressionUsed), methodName)
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messageExpressionUsed), methodName)
                                         );
                                     }
                                 }
@@ -122,7 +122,7 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                 }
                 holder.registerProblem(
                         base,
-                        String.format(ReportingUtil.wrapReportedMessage(messageThisUsed), method.getName()),
+                        String.format(MessagesPresentationUtil.prefixWithEa(messageThisUsed), method.getName()),
                         new TheLocalFix(holder.getProject(), base, operator)
                 );
             }
@@ -146,13 +146,13 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

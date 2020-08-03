@@ -11,9 +11,9 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -128,7 +128,7 @@ final public class PlainApiUseCheckStrategy {
                 if (message != null) {
                     holder.registerProblem(
                             getPregMatchContext(reference),
-                            ReportingUtil.wrapReportedMessage(message),
+                            MessagesPresentationUtil.prefixWithEa(message),
                             fixer
                     );
                     return;
@@ -165,7 +165,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%f%", function);
                 holder.registerProblem(
                         reference,
-                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                         new UseTrimFix(replacement)
                 );
                 return;
@@ -182,7 +182,7 @@ final public class PlainApiUseCheckStrategy {
                     .replace("%p%", unescape(patternAdapted));
                 holder.registerProblem(
                         reference,
-                        String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                         new UseExplodeFix(replacement)
                 );
             }
@@ -251,7 +251,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStringReplaceFix(@NotNull String expression) {
@@ -265,7 +265,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStringPositionFix(@NotNull String expression) {
@@ -279,7 +279,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStringComparisonFix(@NotNull String expression) {
@@ -293,7 +293,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseTrimFix(@NotNull String expression) {
@@ -307,7 +307,7 @@ final public class PlainApiUseCheckStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseExplodeFix(@NotNull String expression) {

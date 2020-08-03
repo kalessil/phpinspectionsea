@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -60,13 +60,13 @@ public class DuplicateArrayKeysInspector extends BasePhpInspection {
                                 if (isPairDuplicated) {
                                     holder.registerProblem(
                                             pair,
-                                            ReportingUtil.wrapReportedMessage(messageDuplicatePair),
+                                            MessagesPresentationUtil.prefixWithEa(messageDuplicatePair),
                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                     );
                                 } else {
                                     holder.registerProblem(
                                             key,
-                                            ReportingUtil.wrapReportedMessage(messageDuplicateKey)
+                                            MessagesPresentationUtil.prefixWithEa(messageDuplicateKey)
                                     );
                                 }
                             }

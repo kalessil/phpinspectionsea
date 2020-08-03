@@ -14,8 +14,8 @@ import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -52,7 +52,7 @@ final public class AssertBoolOfComparisonStrategy {
                     final String replacementMethod = "assert" + (isMethodInverting == isOperationInverting ? "" : "Not") + (isTypeStrict ? "Same" : "Equals");
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%m%", replacementMethod)),
+                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%m%", replacementMethod)),
                             new TheLocalFix(holder.getProject(), replacementMethod, left, right)
                     );
 
@@ -83,13 +83,13 @@ final public class AssertBoolOfComparisonStrategy {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title + " (assert same or equal)";
+            return getName() + " (assert same or equal)";
         }
 
         @Override

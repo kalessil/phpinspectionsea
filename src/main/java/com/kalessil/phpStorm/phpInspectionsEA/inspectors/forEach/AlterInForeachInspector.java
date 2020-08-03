@@ -12,9 +12,9 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,7 +111,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                             if (!isRequirementFullFilled) {
                                 holder.registerProblem(
                                         objForeachValue,
-                                        ReportingUtil.wrapReportedMessage(messageMissingUnset)
+                                        MessagesPresentationUtil.prefixWithEa(messageMissingUnset)
                                 );
                             }
                         } else {
@@ -145,7 +145,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                                         ) {
                                             holder.registerProblem(
                                                     unsetExpression,
-                                                    ReportingUtil.wrapReportedMessage(patternAmbiguousUnset.replace("%v%", foreachValueName)),
+                                                    MessagesPresentationUtil.prefixWithEa(patternAmbiguousUnset.replace("%v%", foreachValueName)),
                                                     ProblemHighlightType.WEAK_WARNING
                                             );
                                         }
@@ -207,7 +207,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                             if (!StringUtils.isEmpty(strName)) {
                                 holder.registerProblem(
                                         operand,
-                                        ReportingUtil.wrapReportedMessage(patternSuggestReference.replace("%c%", strName).replace("%v%", strName)),
+                                        MessagesPresentationUtil.prefixWithEa(patternSuggestReference.replace("%c%", strName).replace("%v%", strName)),
                                         ProblemHighlightType.WEAK_WARNING
                                 );
 

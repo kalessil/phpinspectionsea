@@ -17,9 +17,9 @@ import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -61,7 +61,7 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                             /* case: used as (boolean) logical operand */
                             holder.registerProblem(
                                     reference,
-                                    ReportingUtil.wrapReportedMessage(messageUseInArray),
+                                    MessagesPresentationUtil.prefixWithEa(messageUseInArray),
                                     new TheLocalFix()
                             );
                         } else {
@@ -76,13 +76,13 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
                                         if (PhpLanguageUtil.isTrue(secondOperand)) {
                                             holder.registerProblem(
                                                     secondOperand,
-                                                    ReportingUtil.wrapReportedMessage(messageComparingWithTrue),
+                                                    MessagesPresentationUtil.prefixWithEa(messageComparingWithTrue),
                                                     ProblemHighlightType.GENERIC_ERROR
                                             );
                                         } else {
                                             holder.registerProblem(
                                                     binary,
-                                                    ReportingUtil.wrapReportedMessage(messageUseInArray),
+                                                    MessagesPresentationUtil.prefixWithEa(messageUseInArray),
                                                     new TheLocalFix()
                                             );
                                         }
@@ -102,13 +102,13 @@ public class ArraySearchUsedAsInArrayInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

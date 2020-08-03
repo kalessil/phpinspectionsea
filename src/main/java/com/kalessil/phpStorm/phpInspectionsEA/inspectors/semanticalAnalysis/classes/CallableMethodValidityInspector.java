@@ -10,8 +10,8 @@ import com.jetbrains.php.lang.PhpCallbackReferenceBase;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,7 +95,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     if (!method.getAccess().isPublic()) {
                         holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(patternNotPublic.replace("%m%", method.getName()))
+                                MessagesPresentationUtil.prefixWithEa(patternNotPublic.replace("%m%", method.getName()))
                         );
                     }
 
@@ -126,7 +126,7 @@ public class CallableMethodValidityInspector extends BasePhpInspection {
                     if (needStatic) {
                         holder.registerProblem(
                                 target,
-                                ReportingUtil.wrapReportedMessage(patternNotStatic.replace("%m%", method.getName()))
+                                MessagesPresentationUtil.prefixWithEa(patternNotStatic.replace("%m%", method.getName()))
                         );
                     }
                 }

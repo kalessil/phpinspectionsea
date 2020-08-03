@@ -8,10 +8,10 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiElementsUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -116,7 +116,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                             final String constant = functionsToConstantMapping.get(functionName);
                             holder.registerProblem(
                                     reference,
-                                    String.format(ReportingUtil.wrapReportedMessage(useConstantPattern), constant),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(useConstantPattern), constant),
                                     new UseConstantFix(constant)
                             );
                         }
@@ -140,7 +140,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                                             );
                                             holder.registerProblem(
                                                     reference,
-                                                    String.format(ReportingUtil.wrapReportedMessage(usePhpVersionConstantPattern), replacement),
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(usePhpVersionConstantPattern), replacement),
                                                     new UseConstantFix(replacement)
                                             );
                                         }
@@ -190,7 +190,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                                             if (suggest) {
                                                 holder.registerProblem(
                                                         context,
-                                                        ReportingUtil.wrapReportedMessage(useOsFamilyConstantPattern)
+                                                        MessagesPresentationUtil.prefixWithEa(useOsFamilyConstantPattern)
                                                 );
                                             }
                                         }
@@ -210,7 +210,7 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseConstantFix(@NotNull String expression) {

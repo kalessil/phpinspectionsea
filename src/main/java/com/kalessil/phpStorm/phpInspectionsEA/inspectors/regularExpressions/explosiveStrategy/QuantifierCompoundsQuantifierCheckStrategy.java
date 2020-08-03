@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.exp
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -67,7 +67,7 @@ final public class QuantifierCompoundsQuantifierCheckStrategy {
                         if (!candidate.isEmpty() && candidate.matches("^\\\\[dDwWsS][*+]$")) {
                             holder.registerProblem(
                                     target,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), candidate, matcher.group(3)),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), candidate, matcher.group(3)),
                                     ProblemHighlightType.GENERIC_ERROR
                             );
                             break;

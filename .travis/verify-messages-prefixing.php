@@ -1,5 +1,4 @@
 <?php
-// ;
 
     $basePath    = realpath(__DIR__ . '/..');
     $sourcesPath = $basePath . '/src/main/java/com/kalessil/phpStorm/phpInspectionsEA';
@@ -10,7 +9,7 @@
         if ($file->getExtension() === 'java') {
             preg_match_all('/holder\.registerProblem\(([^;]+)\);/im', file_get_contents($file->getPathname()), $messaging);
             foreach ($messaging[1] as $message) {
-                if (strpos($message, 'wrapReportedMessage') === false) {
+                if (strpos($message, 'prefixWithEa') === false) {
                     $missingPrefixes []= $file->getFilename();
                     break;
                 }

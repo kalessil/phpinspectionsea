@@ -4,8 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -26,7 +26,7 @@ final public class MustBePublicStrategy {
             if (nameNode != null) {
                 holder.registerProblem(
                         nameNode,
-                        ReportingUtil.wrapReportedMessage(String.format(messagePattern, method.getName())),
+                        MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, method.getName())),
                         ProblemHighlightType.ERROR
                 );
             }

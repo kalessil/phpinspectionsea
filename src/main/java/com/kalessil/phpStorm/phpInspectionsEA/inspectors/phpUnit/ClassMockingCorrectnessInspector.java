@@ -3,16 +3,18 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
 
     private final static Map<String, String> methods = new HashMap<>();
     static {
-        /* PhpUnit-related */
+        /* PHPUnit-related */
         methods.put("\\PHPUnit_Framework_TestCase.getMockBuilder",            "getMockBuilder");
         methods.put("\\PHPUnit_Framework_TestCase.getMock",                   "getMock");
         methods.put("\\PHPUnit_Framework_TestCase.getMockClass",              "getMockClass");
@@ -74,15 +76,20 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                 if (parent != null && parent.getFQN().equals("\\PhpSpec\\ObjectBehavior")) {
                     for (final Method method : clazz.getOwnMethods()) {
                         for (final Parameter parameter : method.getParameters()) {
-                            final PsiElement typeCandidate = parameter.getFirstPsiChild();
-                            if (typeCandidate instanceof ClassReference) {
-                                final PsiElement resolved = OpenapiResolveUtil.resolveReference((ClassReference) typeCandidate);
-                                if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
-                                    holder.registerProblem(
-                                            typeCandidate,
-                                            ReportingUtil.wrapReportedMessage(messageFinal)
-                                    );
+                            /* Since PS 2020.2 union types are introduced (BC-incompatible PSI-changes). Hence traversing node. */
+                            final Collection<ClassReference> references = PsiTreeUtil.findChildrenOfType(parameter, ClassReference.class);
+                            if (! references.isEmpty()) {
+                                for (final ClassReference reference : references) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof PhpClass && ((PhpClass) resolved).isFinal()) {
+                                        holder.registerProblem(
+                                                reference,
+                                                MessagesPresentationUtil.prefixWithEa(messageFinal)
+                                        );
+                                        break;
+                                    }
                                 }
+                                references.clear();
                             }
                         }
                     }
@@ -102,12 +109,12 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                 if (referencedClass.isTrait()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageTrait)
+                                            MessagesPresentationUtil.prefixWithEa(messageTrait)
                                     );
                                 } else if (referencedClass.isFinal()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
                                     );
                                 }
                             } else if (methodName.equals("getMockBuilder")) {
@@ -121,20 +128,20 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                     if (parentName == null) {
                                         holder.registerProblem(
                                                 arguments[0],
-                                                ReportingUtil.wrapReportedMessage(messageMockAbstract)
+                                                MessagesPresentationUtil.prefixWithEa(messageMockAbstract)
                                         );
                                     }
                                 } else if (referencedClass.isTrait()) {
                                     if (parentName == null) {
                                         holder.registerProblem(
                                                 arguments[0],
-                                                ReportingUtil.wrapReportedMessage(messageMockTrait)
+                                                MessagesPresentationUtil.prefixWithEa(messageMockTrait)
                                         );
                                     }
                                 } else if (referencedClass.isFinal()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
                                     );
                                 }
                                 /* constructor might require arguments */
@@ -145,7 +152,7 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                         if (needsArguments) {
                                             holder.registerProblem(
                                                     arguments[0],
-                                                    ReportingUtil.wrapReportedMessage(messageMockConstructor)
+                                                    MessagesPresentationUtil.prefixWithEa(messageMockConstructor)
                                             );
                                         }
                                     }
@@ -154,21 +161,21 @@ public class ClassMockingCorrectnessInspector extends BasePhpInspection {
                                 if (!referencedClass.isTrait()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageNeedsTrait)
+                                            MessagesPresentationUtil.prefixWithEa(messageNeedsTrait)
                                     );
                                 }
                             } else if (methodName.equals("getMockForAbstractClass")) {
                                 if (!referencedClass.isAbstract()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageNeedsAbstract)
+                                            MessagesPresentationUtil.prefixWithEa(messageNeedsAbstract)
                                     );
                                 }
                             } else {
                                 if (referencedClass.isFinal()) {
                                     holder.registerProblem(
                                             arguments[0],
-                                            ReportingUtil.wrapReportedMessage(messageFinal)
+                                            MessagesPresentationUtil.prefixWithEa(messageFinal)
                                     );
                                 }
                             }

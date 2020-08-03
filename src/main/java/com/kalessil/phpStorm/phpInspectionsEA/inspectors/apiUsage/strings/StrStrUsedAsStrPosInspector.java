@@ -82,7 +82,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                                         );
                                         holder.registerProblem(
                                                 binary,
-                                                String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                                 new UseStrposFix(replacement)
                                         );
                                         return;
@@ -109,7 +109,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
                             );
                            holder.registerProblem(
                                     parent instanceof UnaryExpression ? parent : reference,
-                                    String.format(ReportingUtil.wrapReportedMessage(messagePattern), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
                                     new UseStrposFix(replacement)
                             );
                         }
@@ -125,7 +125,7 @@ public class StrStrUsedAsStrPosInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         UseStrposFix(@NotNull String expression) {

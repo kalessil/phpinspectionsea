@@ -11,8 +11,8 @@ import com.jetbrains.php.lang.psi.elements.ConstantReference;
 import com.jetbrains.php.lang.psi.elements.Field;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -63,7 +63,7 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
                         if (constant.isConstant() && targetClassConstants.contains(constant.getFQN())) {
                             holder.registerProblem(
                                     constantReference,
-                                    ReportingUtil.wrapReportedMessage(messageClassConstant),
+                                    MessagesPresentationUtil.prefixWithEa(messageClassConstant),
                                     new TheLocalFix()
                             );
                         }
@@ -77,7 +77,7 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
                 if (constantName != null && constantName.equals("DATE_ISO8601")) {
                     holder.registerProblem(
                             reference,
-                            ReportingUtil.wrapReportedMessage(messageConstant),
+                            MessagesPresentationUtil.prefixWithEa(messageConstant),
                             new TheLocalFix()
                     );
                 }
@@ -91,13 +91,13 @@ public class DateTimeConstantsUsageInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

@@ -123,7 +123,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                             final String replacement = String.join(" ", fragments);
                             holder.registerProblem(
                                     issetInverted ? issetExpression.getParent() : issetExpression,
-                                    String.format(ReportingUtil.wrapReportedMessage(patternUseNullComparison), replacement),
+                                    String.format(MessagesPresentationUtil.prefixWithEa(patternUseNullComparison), replacement),
                                     ProblemHighlightType.WEAK_WARNING,
                                     new CompareToNullFix(replacement)
                             );
@@ -136,7 +136,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 if (REPORT_CONCATENATION_IN_INDEXES && !isResultStored && this.hasConcatenationAsIndex((ArrayAccessExpression) argument)) {
                     holder.registerProblem(
                             argument,
-                            ReportingUtil.wrapReportedMessage(messageConcatenationInIndex)
+                            MessagesPresentationUtil.prefixWithEa(messageConcatenationInIndex)
                     );
                     return;
                 }
@@ -144,7 +144,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
                 if (SUGGEST_TO_USE_ARRAY_KEY_EXISTS && !isArrayAccess((ArrayAccessExpression) argument)) {
                     holder.registerProblem(
                             argument,
-                            ReportingUtil.wrapReportedMessage(messageUseArrayKeyExists),
+                            MessagesPresentationUtil.prefixWithEa(messageUseArrayKeyExists),
                             ProblemHighlightType.WEAK_WARNING
                     );
                 }
@@ -228,7 +228,7 @@ public class UnSafeIsSetOverArrayInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         CompareToNullFix(@NotNull String expression) {

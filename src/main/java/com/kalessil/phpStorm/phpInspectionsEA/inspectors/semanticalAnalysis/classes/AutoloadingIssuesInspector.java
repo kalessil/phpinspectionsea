@@ -7,8 +7,8 @@ import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class AutoloadingIssuesInspector extends BasePhpInspection {
                             if (classNameNode != null) {
                                 holder.registerProblem(
                                         classNameNode,
-                                        ReportingUtil.wrapReportedMessage(message)
+                                        MessagesPresentationUtil.prefixWithEa(message)
                                 );
                             }
                         }

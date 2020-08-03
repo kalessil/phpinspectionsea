@@ -63,7 +63,7 @@ public class GetClassUsageInspector extends BasePhpInspection {
                                 if ((hasNull || isNullableParameter(arguments[0])) && !isNullabilityChecked(arguments[0])) {
                                     holder.registerProblem(
                                             reference,
-                                            ReportingUtil.wrapReportedMessage(message)
+                                            MessagesPresentationUtil.prefixWithEa(message)
                                     );
                                 }
                             }

@@ -17,9 +17,9 @@ import com.jetbrains.php.lang.psi.elements.Parameter;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.NamedCallableParametersMetaIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -121,7 +121,7 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
                                     holder.getManager().createProblemDescriptor(
                                             reportFrom,
                                             reportTo,
-                                            ReportingUtil.wrapReportedMessage(message),
+                                            MessagesPresentationUtil.prefixWithEa(message),
                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                                             onTheFly,
                                             new TheLocalFix(holder.getProject(), reportFrom, reportTo)
@@ -175,13 +175,13 @@ public class ArgumentEqualsDefaultValueInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

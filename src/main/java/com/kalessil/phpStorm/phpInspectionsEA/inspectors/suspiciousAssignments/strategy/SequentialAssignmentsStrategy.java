@@ -7,9 +7,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +33,7 @@ final public class SequentialAssignmentsStrategy {
         final PsiElement parent    = expression.getParent();
         final PsiElement container = expression.getVariable();
         if (container != null && OpenapiTypesUtil.isStatementImpl(parent)) {
-            final boolean isTargetExpression = !isValidArrayWrite(container) && !isContainerUsed(container, expression);
+            final boolean isTargetExpression = ! isValidArrayWrite(container) && ! isContainerUsed(container, expression);
             if (isTargetExpression) {
                 final PhpPsiElement previous = ((PhpPsiElement) parent).getPrevPsiSibling();
                 if (previous != null) {
@@ -53,18 +53,23 @@ final public class SequentialAssignmentsStrategy {
     static private boolean isValidArrayWrite(@NotNull PsiElement container) {
         boolean result = false;
         while (container instanceof ArrayAccessExpression) {
+            /* array push (container to be skipped) */
             final ArrayAccessExpression expression = (ArrayAccessExpression) container;
             final ArrayIndex index                 = expression.getIndex();
-            if (index != null) {
-                final PsiElement indexValue = index.getValue();
-                if (result = (indexValue == null)) {
+            final PsiElement key                   = ExpressionSemanticUtil.getExpressionTroughParenthesis(index == null ? null : index.getValue());
+            if (result = (key == null)) {
+                break;
+            }
+            /* __LINE__ constant reference (container to be skipped) */
+            if (key instanceof ConstantReference) {
+                final String name = ((ConstantReference) key).getName();
+                if (result = (name != null && name.equals("__LINE__"))) {
                     break;
-                } else if (indexValue instanceof ConstantReference) {
-                    final String name = ((ConstantReference) indexValue).getName();
-                    if (result = (name != null && name.equals("__LINE__"))) {
-                        break;
-                    }
                 }
+            }
+            /* non number and not string (container to be skipped) */
+            if (result = ! (key instanceof StringLiteralExpression) && ! OpenapiTypesUtil.isNumber(key)) {
+                break;
             }
             container = expression.getValue();
         }
@@ -82,11 +87,11 @@ final public class SequentialAssignmentsStrategy {
                 }
             }
             /* check if container expression part are interconnected */
-            if (!result) {
+            if (! result) {
                 final Set<String> variables = new HashSet<>();
                 for (final Variable variable : PsiTreeUtil.findChildrenOfType(container, Variable.class)) {
                     final String variableName = variable.getName();
-                    if (!variableName.equals("this") && !variables.add(variableName)) {
+                    if (! variableName.equals("this") && ! variables.add(variableName)) {
                         result = true;
                         break;
                     }
@@ -110,7 +115,7 @@ final public class SequentialAssignmentsStrategy {
                     lastStatement instanceof PhpReturn   || lastStatement instanceof PhpThrow ||
                     lastStatement instanceof PhpContinue || lastStatement instanceof PhpBreak ||
                     lastStatement.getFirstChild() instanceof PhpExit;
-            if (!isReturnPoint) {
+            if (! isReturnPoint) {
                 PhpPsiElement found = null;
                 /* identify conditional assignment */
                 for (final PsiElement bodyStatement : body.getChildren()) {
@@ -130,10 +135,10 @@ final public class SequentialAssignmentsStrategy {
                     final boolean isUsed               = consumerCandidate != null &&
                             PsiTreeUtil.findChildrenOfType(consumerCandidate, container.getClass()).stream()
                                     .anyMatch(candidate -> OpenapiEquivalenceUtil.areEqual(candidate, container));
-                    if (!isUsed) {
+                    if (! isUsed) {
                         holder.registerProblem(
                                 container.getParent(),
-                                String.format(ReportingUtil.wrapReportedMessage(patternConditional), container.getText())
+                                String.format(MessagesPresentationUtil.prefixWithEa(patternConditional), container.getText())
                         );
                     }
                 }
@@ -170,7 +175,7 @@ final public class SequentialAssignmentsStrategy {
 
             holder.registerProblem(
                     container,
-                    String.format(ReportingUtil.wrapReportedMessage(patternGeneral), container.getText())
+                    String.format(MessagesPresentationUtil.prefixWithEa(patternGeneral), container.getText())
             );
         }
     }

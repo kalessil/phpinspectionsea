@@ -52,7 +52,8 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpForeach(@NotNull ForeachStatement loop) {
-                if (this.isNotLooping(loop)) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade && this.isNotLooping(loop)) {
                     /* false-positive: return first element from generator, iterable and co */
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                     final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
@@ -70,37 +71,40 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
 
                     holder.registerProblem(
                             loop.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
 
             @Override
             public void visitPhpFor(@NotNull For loop) {
-                if (this.isNotLooping(loop)) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade && this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
 
             @Override
             public void visitPhpWhile(@NotNull While loop) {
-                if (this.isNotLooping(loop)) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade && this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }
 
             @Override
             public void visitPhpDoWhile(@NotNull DoWhile loop) {
-                if (this.isNotLooping(loop)) {
+                final boolean isBlade = holder.getFile().getName().endsWith(".blade.php");
+                if (! isBlade && this.isNotLooping(loop)) {
                     holder.registerProblem(
                             loop.getFirstChild(),
-                            ReportingUtil.wrapReportedMessage(message)
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }

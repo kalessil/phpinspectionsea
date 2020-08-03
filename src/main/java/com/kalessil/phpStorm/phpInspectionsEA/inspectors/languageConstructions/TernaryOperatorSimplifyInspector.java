@@ -11,8 +11,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixe
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,7 +75,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
                                     if (replacement != null) {
                                         holder.registerProblem(
                                                 expression,
-                                                ReportingUtil.wrapReportedMessage(String.format(messagePattern, replacement)),
+                                                MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, replacement)),
                                                 new SimplifyFix(replacement)
                                         );
                                     }
@@ -128,7 +128,7 @@ public class TernaryOperatorSimplifyInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         SimplifyFix(@NotNull String expression) {

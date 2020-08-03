@@ -19,9 +19,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +49,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
 
     private static final String messagePattern   = "Perhaps this can be replaced with %c%::class.";
     private static final String messageUseStatic = "'static::class' can be used instead.";
+    private static final String messageUseParent = "'parent::class' can be used instead.";
 
     final static private Pattern classNameRegex;
     static {
@@ -81,14 +82,25 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
                     final String functionName = reference.getName();
-                    if (functionName != null && functionName.equals("get_called_class")) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 0) {
-                            holder.registerProblem(
-                                    reference,
-                                    ReportingUtil.wrapReportedMessage(messageUseStatic),
-                                    new UseStaticFix()
-                            );
+                    if (functionName != null) {
+                        if (functionName.equals("get_called_class")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 0) {
+                                holder.registerProblem(
+                                        reference,
+                                        MessagesPresentationUtil.prefixWithEa(messageUseStatic),
+                                        new UseStaticClassConstantFix()
+                                );
+                            }
+                        } else if (functionName.equals("get_parent_class")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP550)) {
+                                holder.registerProblem(
+                                        reference,
+                                        MessagesPresentationUtil.prefixWithEa(messageUseParent),
+                                        new UseParentClassConstantFix()
+                                );
+                            }
                         }
                     }
                 }
@@ -119,7 +131,7 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                         return;
                     }
                 }
-                if (parent instanceof SelfAssignmentExpression) {
+                if (parent instanceof SelfAssignmentExpression || this.isClassAlias(expression)) {
                     return;
                 }
 
@@ -156,13 +168,13 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                                     normalizedContents = expression.getContents().replaceAll("\\\\\\\\", "\\\\").replaceAll("^\\\\", "");
                                     holder.registerProblem(
                                             parent,
-                                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", normalizedContents)),
+                                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%c%", normalizedContents)),
                                             new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
                                     );
                                 } else {
                                     holder.registerProblem(
                                             expression,
-                                            ReportingUtil.wrapReportedMessage(messagePattern.replace("%c%", normalizedContents)),
+                                            MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%c%", normalizedContents)),
                                             new TheLocalFix(normalizedContents, IMPORT_CLASSES_ON_QF, USE_RELATIVE_QF)
                                     );
                                 }
@@ -185,20 +197,51 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
                 }
                 return content;
             }
+
+            private boolean isClassAlias(@NotNull StringLiteralExpression literal) {
+                boolean result          = false;
+                final PsiElement parent = literal.getParent();
+                if (parent instanceof ParameterList) {
+                    final PsiElement grandParent = parent.getParent();
+                    if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
+                        final FunctionReference reference = (FunctionReference) grandParent;
+                        final String functionName         = reference.getName();
+                        if (functionName != null && functionName.equals("class_alias")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            result = arguments.length == 2 && arguments[1] == literal;
+                        }
+                    }
+                }
+                return result;
+            }
         };
     }
 
-    private static final class UseStaticFix extends UseSuggestedReplacementFixer {
+    private static final class UseStaticClassConstantFix extends UseSuggestedReplacementFixer {
         private static final String title = "Use static::class instead";
 
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
-        UseStaticFix() {
+        UseStaticClassConstantFix() {
             super("static::class");
+        }
+    }
+
+    private static final class UseParentClassConstantFix extends UseSuggestedReplacementFixer {
+        private static final String title = "Use parent::class instead";
+
+        @NotNull
+        @Override
+        public String getName() {
+            return MessagesPresentationUtil.prefixWithEa(title);
+        }
+
+        UseParentClassConstantFix() {
+            super("parent::class");
         }
     }
 
@@ -212,13 +255,13 @@ public class ClassConstantCanBeUsedInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         TheLocalFix(@NotNull String fqn, boolean importClasses, boolean useRelativeQN) {

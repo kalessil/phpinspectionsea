@@ -56,7 +56,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "PhpUnit: unnecessary assertion";
+        return "PHPUnit: unnecessary assertion";
     }
 
     @Override
@@ -84,7 +84,7 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                         if (innerMethodName != null && innerMethodName.equals("any")) {
                             holder.registerProblem(
                                     innerReference,
-                                    ReportingUtil.wrapReportedMessage(messageExpectsAny),
+                                    MessagesPresentationUtil.prefixWithEa(messageExpectsAny),
                                     new RemoveExpectsAssertionFixer(holder.getProject(), reference, reference.getFirstChild())
                             );
                         }
@@ -128,12 +128,12 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
                                             if (expected == null) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageReturnType)
+                                                        MessagesPresentationUtil.prefixWithEa(messageReturnType)
                                                 );
                                             } else if (resolved.getTypes().stream().anyMatch(t -> Types.getType(t).equals(expected))) {
                                                 holder.registerProblem(
                                                         reference,
-                                                        ReportingUtil.wrapReportedMessage(messageReturnType)
+                                                        MessagesPresentationUtil.prefixWithEa(messageReturnType)
                                                 );
                                             }
 
@@ -157,13 +157,13 @@ public class UnnecessaryAssertionInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         RemoveExpectsAssertionFixer(@NotNull Project project, @NotNull PsiElement assertion, @NotNull PsiElement base) {

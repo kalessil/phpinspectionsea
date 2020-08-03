@@ -12,8 +12,8 @@ import com.jetbrains.php.lang.psi.elements.ControlStatement;
 import com.jetbrains.php.lang.psi.elements.Include;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ReportingUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -51,7 +51,7 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
                     if (include.getArgument() != null && include.getFirstChild().getText().endsWith("_once")) {
                         holder.registerProblem(
                                 include,
-                                ReportingUtil.wrapReportedMessage(message),
+                                MessagesPresentationUtil.prefixWithEa(message),
                                 new TheLocalFix()
                         );
                     }
@@ -66,13 +66,13 @@ public class UsingInclusionOnceReturnValueInspector extends BasePhpInspection {
         @NotNull
         @Override
         public String getName() {
-            return title;
+            return MessagesPresentationUtil.prefixWithEa(title);
         }
 
         @NotNull
         @Override
         public String getFamilyName() {
-            return title;
+            return getName();
         }
 
         @Override

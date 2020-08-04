@@ -27,45 +27,68 @@ final public class MustReturnSpecifiedTypeStrategy {
     private static final String messagePattern = "%s must return %s (resolved: '%s').";
 
     static public void apply(@NotNull PhpType allowedTypes, @NotNull Method method, @NotNull ProblemsHolder holder) {
-        final Collection<PhpReturn> returns = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
-        if (returns.isEmpty()) {
-            final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
-            if (nameNode != null) {
-                final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
-                holder.registerProblem(
+        final PsiElement returnType = OpenapiElementsUtil.getReturnType(method);
+        if (returnType != null) {
+            /* case: return type has ben specified */
+            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) returnType, holder.getProject());
+            if (resolved != null) {
+                final PhpType normalizedType = new PhpType();
+                resolved.filterUnknown().getTypes().forEach(t -> normalizedType.add(Types.getType(t)));
+                if (! normalizedType.isEmpty() && ! PhpType.isSubType(normalizedType, allowedTypes)) {
+                    final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                    if (nameNode != null) {
+                        final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
+                        holder.registerProblem(
+                            nameNode,
+                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), normalizedType.toString()),
+                            ProblemHighlightType.ERROR
+                        );
+                    }
+                }
+            }
+        } else {
+            final Collection<PhpReturn> returns = PsiTreeUtil.findChildrenOfType(method, PhpReturn.class);
+            if (returns.isEmpty()) {
+                /* case: the method doesn't return anything */
+                final PsiElement nameNode = NamedElementUtil.getNameIdentifier(method);
+                if (nameNode != null) {
+                    final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
+                    holder.registerProblem(
                         nameNode,
                         String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), ""),
                         ProblemHighlightType.ERROR
-                );
-            }
-        } else {
-            final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
-            final Project project       = holder.getProject();
-            for (final PhpReturn expression : returns) {
-                PhpType normalizedType       = new PhpType();
-                final PsiElement returnValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(expression));
-                if (returnValue instanceof PhpTypedElement) {
-                    /* previously we had an issue with https://youtrack.jetbrains.com/issue/WI-31249 here */
-                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) returnValue, project);
-                    if (resolved != null) {
-                        resolved.filterUnknown().getTypes().forEach(t -> normalizedType.add(Types.getType(t)));
-                        /* case: resolve has failed or resolved types are compatible */
-                        if (normalizedType.isEmpty() || PhpType.isSubType(normalizedType, allowedTypes)) {
-                            continue;
-                        }
-                        /* case: closure or anonymous class */
-                        else if (method != ExpressionSemanticUtil.getScope(expression)) {
-                            continue;
+                    );
+                }
+            } else {
+                /* case: method returns non-compatible type */
+                final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
+                final Project project       = holder.getProject();
+                for (final PhpReturn expression : returns) {
+                    final PhpType normalizedType = new PhpType();
+                    final PsiElement returnValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(expression));
+                    if (returnValue instanceof PhpTypedElement) {
+                        /* previously we had an issue with https://youtrack.jetbrains.com/issue/WI-31249 here */
+                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) returnValue, project);
+                        if (resolved != null) {
+                            resolved.filterUnknown().getTypes().forEach(t -> normalizedType.add(Types.getType(t)));
+                            /* case: resolve has failed or resolved types are compatible */
+                            if (normalizedType.isEmpty() || PhpType.isSubType(normalizedType, allowedTypes)) {
+                                continue;
+                            }
+                            /* case: closure or anonymous class */
+                            else if (method != ExpressionSemanticUtil.getScope(expression)) {
+                                continue;
+                            }
                         }
                     }
-                }
-                holder.registerProblem(
+                    holder.registerProblem(
                         expression,
                         String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), normalizedType.toString()),
                         ProblemHighlightType.ERROR
-                );
+                    );
+                }
+                returns.clear();
             }
-            returns.clear();
         }
     }
 }

@@ -18,7 +18,7 @@ class ClassToStringNotPublic {
     }
 }
 
-class ClassToStringReturnTypes {
+class ClassToStringReturnedTypes {
     private $property;
 
     public function __toString() {
@@ -27,5 +27,11 @@ class ClassToStringReturnTypes {
             return $this->property;
         }
         <error descr="[EA] __toString must return string (resolved: 'array').">return [];</error>
+    }
+}
+
+class ClassToStringImplicitReturnTypes {
+    public function <error descr="[EA] __toString must return string (resolved: 'array').">__toString</error>(): array {
+        return [];
     }
 }

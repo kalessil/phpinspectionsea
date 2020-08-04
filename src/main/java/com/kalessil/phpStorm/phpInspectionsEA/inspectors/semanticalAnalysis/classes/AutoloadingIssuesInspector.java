@@ -95,9 +95,9 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                                         .map(location -> location + fileLocationRelative.replaceFirst(location, ""))
                                         .collect(Collectors.toList());
                                 if (! possibleFileLocations.isEmpty()) {
-                                    final boolean truncatePrefix     = classFqn.startsWith('\\' + mappingFragments[0]);
-                                    final String truncatedClassFqn   = truncatePrefix ? classFqn.substring(mappingFragments[0].length() + 1) : classFqn;
-                                    final String fileLocationFromFqn = truncatedClassFqn.replaceAll("\\\\", "/") + ".php";
+                                    final boolean normalize          = classFqn.startsWith('\\' + mappingFragments[0]);
+                                    final String normalizedClassFqn  = normalize ? classFqn.substring(mappingFragments[0].length() + 1) : classFqn;
+                                    final String fileLocationFromFqn = normalizedClassFqn.replaceAll("\\\\", "/") + ".php";
                                     final boolean isTarget           = possibleFileLocations.stream().noneMatch(location -> location.endsWith('/' + fileLocationFromFqn));
                                     if (isTarget) {
                                         final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);

@@ -65,7 +65,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(file, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 final String fileName = file.getName();
-                if (fileName.endsWith(".php") && !ignoredFiles.contains(fileName)) {
+                if (fileName.endsWith(".php") && ! ignoredFiles.contains(fileName)) {
                     final PhpClass clazz = this.getClass(file);
                     if (clazz != null) {
                         final Matcher matcher = laravelMigration.matcher(fileName);
@@ -84,7 +84,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                 final String manifest = this.getComposerManifestPath(file, holder.getProject());
                 if (manifest != null) {
                     final List<String> mapping = this.getAutoloadingLocations(manifest, holder.getProject());
-                    if (!mapping.isEmpty()) {
+                    if (! mapping.isEmpty()) {
                         final String classFqn             = clazz.getFQN();
                         final String fileLocationRelative = file.getVirtualFile().getCanonicalPath().replace(manifest.replace("composer.json", ""), "");
                         for (final String mappingEntry : mapping) {
@@ -94,8 +94,10 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                                         .map(location -> StringUtil.trimTrailing(StringUtil.trimLeading(location, '/'), '/') + '/')
                                         .map(location -> location + fileLocationRelative.replaceFirst(location, ""))
                                         .collect(Collectors.toList());
-                                if (!possibleFileLocations.isEmpty()) {
-                                    final String fileLocationFromFqn = classFqn.replace('\\' + mappingFragments[0], "").replaceAll("\\\\", "/") + ".php";
+                                if (! possibleFileLocations.isEmpty()) {
+                                    final boolean truncatePrefix     = classFqn.startsWith('\\' + mappingFragments[0]);
+                                    final String truncatedClassFqn   = truncatePrefix ? classFqn.substring(mappingFragments[0].length() + 1) : classFqn;
+                                    final String fileLocationFromFqn = truncatedClassFqn.replaceAll("\\\\", "/") + ".php";
                                     final boolean isTarget           = possibleFileLocations.stream().noneMatch(location -> location.endsWith('/' + fileLocationFromFqn));
                                     if (isTarget) {
                                         final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
@@ -117,7 +119,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
 
             private void checkFileNamePsrCompliant(@NotNull PhpClass clazz, @NotNull String extractedClassName, @NotNull String fileName) {
                 final String expectedClassName = fileName.substring(0, fileName.indexOf('.'));
-                if (!expectedClassName.equals(extractedClassName) && !expectedClassName.equals(clazz.getName())) {
+                if (! expectedClassName.equals(extractedClassName) && ! expectedClassName.equals(clazz.getName())) {
                     final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                     if (classNameNode != null) {
                         holder.registerProblem(
@@ -130,7 +132,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
 
             private void checkLaravelMigration(@NotNull PhpClass clazz, @NotNull String classNamingInput) {
                 final String expectedClassName = StringUtil.capitalizeWords(classNamingInput.replaceAll("_", " "), true).replaceAll(" ", "");
-                if (!expectedClassName.equals(clazz.getName())) {
+                if (! expectedClassName.equals(clazz.getName())) {
                     final PsiElement classNameNode = NamedElementUtil.getNameIdentifier(clazz);
                     if (classNameNode != null) {
                         holder.registerProblem(

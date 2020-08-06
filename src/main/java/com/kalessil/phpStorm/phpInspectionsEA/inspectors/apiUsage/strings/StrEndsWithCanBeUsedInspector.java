@@ -52,31 +52,65 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName != null && (functionName.equals("substr") || functionName.equals("mb_substr"))) {
-                    final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_ends_with", holder.getProject());
-                    if (isAvailable) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length == 2) {
-                            final PsiElement context = reference.getParent();
-                            if (context instanceof BinaryExpression) {
-                                final BinaryExpression binary = (BinaryExpression) context;
-                                final IElementType operation  = binary.getOperationType();
-                                if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
-                                    final PsiElement limitArgument = this.extractLimitArgument(arguments[1]);
-                                    final PsiElement second        = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                                    if (second != null && limitArgument != null && OpenapiEquivalenceUtil.areEqual(second, limitArgument)) {
-                                        final String replacement = String.format(
-                                                "%s%sstr_ends_with(%s, %s)",
-                                                operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
-                                                reference.getImmediateNamespaceName(),
-                                                arguments[0].getText(),
-                                                second.getText()
-                                        );
-                                        holder.registerProblem(
-                                                binary,
-                                                String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
-                                                new UseStrEndsWithFix(replacement)
-                                        );
+                if (functionName != null) {
+                    if (functionName.equals("substr") || functionName.equals("mb_substr")) {
+                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_ends_with", holder.getProject());
+                        if (isAvailable) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 2) {
+                                final PsiElement context = reference.getParent();
+                                if (context instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) context;
+                                    final IElementType operation  = binary.getOperationType();
+                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
+                                        final PsiElement lengthArgument = this.extractLengthArgument(arguments[1]);
+                                        final PsiElement second         = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                        if (second != null && lengthArgument != null && OpenapiEquivalenceUtil.areEqual(second, lengthArgument)) {
+                                            final String replacement = String.format(
+                                                    "%s%sstr_ends_with(%s, %s)",
+                                                    operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                                    reference.getImmediateNamespaceName(),
+                                                    arguments[0].getText(),
+                                                    second.getText()
+                                            );
+                                            holder.registerProblem(
+                                                    binary,
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                                    new UseStrEndsWithFix(replacement)
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if (functionName.equals("strpos") || functionName.equals("mb_strpos")) {
+                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_ends_with", holder.getProject());
+                        if (isAvailable) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 3) {
+                                final PsiElement context = reference.getParent();
+                                if (context instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) context;
+                                    final IElementType operation  = binary.getOperationType();
+                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
+                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                        if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("-1")) {
+                                            final PsiElement lengthArgument = this.extractLengthArgument(arguments[2]);
+                                            if (lengthArgument != null && OpenapiEquivalenceUtil.areEqual(lengthArgument, arguments[1])) {
+                                                final String replacement = String.format(
+                                                        "%s%sstr_ends_with(%s, %s)",
+                                                        operation == PhpTokenTypes.opIDENTICAL ? "! " : "",
+                                                        reference.getImmediateNamespaceName(),
+                                                        arguments[0].getText(),
+                                                        arguments[1].getText()
+                                                );
+                                                holder.registerProblem(
+                                                        binary,
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                                        new UseStrEndsWithFix(replacement)
+                                                );
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -86,7 +120,7 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
             }
 
             @Nullable
-            private PsiElement extractLimitArgument(@Nullable PsiElement expression) {
+            private PsiElement extractLengthArgument(@Nullable PsiElement expression) {
                 if (expression instanceof UnaryExpression) {
                     final UnaryExpression unary = (UnaryExpression) expression;
                     if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opMINUS)) {

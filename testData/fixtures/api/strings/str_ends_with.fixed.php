@@ -3,7 +3,9 @@
 return [
     str_ends_with('haystack', 'needle'),
     str_ends_with('haystack', 'needle'),
+    str_ends_with('haystack', 'needle'),
 
+    !str_ends_with('haystack', 'needle'),
     !str_ends_with('haystack', 'needle'),
     !str_ends_with('haystack', 'needle'),
 

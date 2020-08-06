@@ -66,16 +66,16 @@ final public class PlainApiUseCheckStrategy {
     ) {
         final PsiElement[] params = reference.getParameters();
         final int parametersCount = params.length;
-        if (parametersCount >= 2 && !StringUtils.isEmpty(pattern)) {
+        if (parametersCount >= 2 && ! StringUtils.isEmpty(pattern)) {
             final String patternAdapted = pattern
                     .replace("a-zA-Z",    "A-Za-z")
                     .replace("0-9A-Za-z", "A-Za-z0-9");
 
             final Matcher regexMatcher = regexTextSearch.matcher(patternAdapted);
             if (regexMatcher.find()) {
-                final boolean ignoreCase = !StringUtils.isEmpty(modifiers) && modifiers.indexOf('i') != -1;
-                final boolean startWith  = !StringUtils.isEmpty(regexMatcher.group(1));
-                final boolean endsWith   = !StringUtils.isEmpty(regexMatcher.group(3));
+                final boolean ignoreCase = ! StringUtils.isEmpty(modifiers) && modifiers.indexOf('i') != -1;
+                final boolean startWith  = ! StringUtils.isEmpty(regexMatcher.group(1));
+                final boolean endsWith   = ! StringUtils.isEmpty(regexMatcher.group(3));
 
                 /* analyse if pattern is the one strategy targeting */
                 String message      = null;
@@ -84,16 +84,18 @@ final public class PlainApiUseCheckStrategy {
                 if (parametersCount == 2 && functionName.equals("preg_match")) {
                     final boolean isInverted = isPregMatchInverted(reference);
 
-                    if (startWith && endsWith && !ignoreCase) {
-                        final String replacement = String.format(
-                                "\"%s\" %s %s",
-                                unescape(regexMatcher.group(2)),
-                                isInverted ? "!==" : "===",
-                                params[1].getText()
-                        );
-                        message = String.format(messagePattern, replacement);
-                        fixer   = new UseStringComparisonFix(replacement);
-                    } else if (startWith && !endsWith) {
+                    if (startWith && endsWith) {
+                        if (! ignoreCase) {
+                            final String replacement = String.format(
+                                    "\"%s\" %s %s",
+                                    unescape(regexMatcher.group(2)),
+                                    isInverted ? "!==" : "===",
+                                    params[1].getText()
+                            );
+                            message = String.format(messagePattern, replacement);
+                            fixer   = new UseStringComparisonFix(replacement);
+                        }
+                    } else if (startWith && ! endsWith) {
                         final String replacement = String.format(
                                 "0 %s %s(%s, \"%s\")",
                                 isInverted ? "!==" : "===",
@@ -102,8 +104,20 @@ final public class PlainApiUseCheckStrategy {
                                 unescape(regexMatcher.group(2))
                         );
                         message = String.format(messagePattern, replacement);
-                        fixer   = new UseStringPositionFix(replacement);
-                    } else if (!startWith && !endsWith) {
+                        fixer = new UseStringPositionFix(replacement);
+                    } else if (! startWith && endsWith) {
+                        final String replacement = String.format(
+                                "-1 %s %s(%s, \"%s\", -strlen(\"%s\"))",
+                                isInverted ? "===" : "!==",
+                                ignoreCase ? "stripos" : "strpos",
+                                params[1].getText(),
+                                unescape(regexMatcher.group(2)),
+                                unescape(regexMatcher.group(2))
+                        );
+                        message = String.format(messagePattern, replacement);
+                        fixer = new UseStringPositionFix(replacement);
+
+                    } else if (! startWith && ! endsWith) {
                         final String replacement = String.format(
                                 "false %s %s(%s, \"%s\")",
                                 isInverted ? "===" : "!==",
@@ -114,7 +128,7 @@ final public class PlainApiUseCheckStrategy {
                         message = String.format(messagePattern, replacement);
                         fixer   = new UseStringPositionFix(replacement);
                     }
-                } else if (parametersCount == 3 && functionName.equals("preg_replace") && !startWith && !endsWith) {
+                } else if (parametersCount == 3 && functionName.equals("preg_replace") && ! startWith && ! endsWith) {
                     // mixed str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] )
                     final String replacement = "%f%(\"%p%\", %r%, %s%)"
                         .replace("%s%", params[2].getText())
@@ -149,9 +163,9 @@ final public class PlainApiUseCheckStrategy {
 
                 // mixed preg_replace ( mixed $pattern , mixed $replacement , mixed $subject [, int $limit = -1 [, int &$count ]] )
                 String function = "trim";
-                if (!pattern.startsWith("^")) {
+                if (! pattern.startsWith("^")) {
                     function = "rtrim";
-                } else if (!pattern.endsWith("$")) {
+                } else if (! pattern.endsWith("$")) {
                     function = "ltrim";
                 }
 
@@ -174,7 +188,7 @@ final public class PlainApiUseCheckStrategy {
             /* investigate using explode(...) instead */
             if (
                 (parametersCount == 2 || parametersCount == 3) && functionName.equals("preg_split") && StringUtils.isEmpty(modifiers) &&
-                (regexSingleCharSet.matcher(patternAdapted).find() || !regexHasRegexAttributes.matcher(patternAdapted).find())
+                (regexSingleCharSet.matcher(patternAdapted).find() || ! regexHasRegexAttributes.matcher(patternAdapted).find())
             ) {
                 final String replacement = "explode(\"%p%\", %s%%l%)"
                     .replace("%l%", parametersCount > 2 ? ", " + params[2].getText() : "")

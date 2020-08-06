@@ -17,6 +17,10 @@
     0 === strpos($string, "+");
     0 === strpos($string, "whatever");
     0 === stripos($string, "whatever");
+    -1 !== strpos($string, "+", -strlen("+"));
+    -1 !== strpos($string, "whatever", -strlen("whatever"));
+    -1 !== stripos($string, "whatever", -strlen("whatever"));
+
     /* false-positives */
     preg_match('/whatever.+/',  $string);
     preg_match('/whatever/',    $string, $matches);

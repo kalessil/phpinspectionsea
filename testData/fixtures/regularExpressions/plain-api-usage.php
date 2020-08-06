@@ -17,6 +17,10 @@
     <warning descr="[EA] '0 === strpos($string, \"+\")' can be used instead.">preg_match('/^\+/', $string)</warning>;
     <warning descr="[EA] '0 === strpos($string, \"whatever\")' can be used instead.">preg_match('/^whatever/', $string)</warning>;
     <warning descr="[EA] '0 === stripos($string, \"whatever\")' can be used instead.">preg_match('/^whatever/i', $string)</warning>;
+    <warning descr="[EA] '-1 !== strpos($string, \"+\", -strlen(\"+\"))' can be used instead.">preg_match('/\+$/', $string)</warning>;
+    <warning descr="[EA] '-1 !== strpos($string, \"whatever\", -strlen(\"whatever\"))' can be used instead.">preg_match('/whatever$/', $string)</warning>;
+    <warning descr="[EA] '-1 !== stripos($string, \"whatever\", -strlen(\"whatever\"))' can be used instead.">preg_match('/whatever$/i', $string)</warning>;
+
     /* false-positives */
     preg_match('/whatever.+/',  $string);
     preg_match('/whatever/',    $string, $matches);

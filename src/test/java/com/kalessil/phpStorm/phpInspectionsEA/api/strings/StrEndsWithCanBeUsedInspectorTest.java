@@ -4,7 +4,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrEndsWithCanBeUsedInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 
-public class StrEndsWithCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase
+final public class StrEndsWithCanBeUsedInspectorTest extends PhpCodeInsightFixtureTestCase
 {
     public void testIfFindsAllPatterns() {
         PhpLanguageLevel.set(PhpLanguageLevel.PHP800);

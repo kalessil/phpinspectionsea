@@ -156,7 +156,7 @@ final public class UnclearOperationsPriorityStrategy {
         }
 
         /* case: operations which might produce a value as not expected */
-        if (! (ternary.getCondition() instanceof ParenthesizedExpression) && ! ternarySafeOperations.contains(condition.getOperationType())) {
+        if (ternary.getCondition() == condition && ! ternarySafeOperations.contains(condition.getOperationType())) {
             holder.registerProblem(
                     condition,
                     MessagesPresentationUtil.prefixWithEa(message),

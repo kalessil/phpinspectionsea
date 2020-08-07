@@ -67,6 +67,13 @@ final public class SequentialAssignmentsStrategy {
                     break;
                 }
             }
+            /* inlined ++ and -- operations */
+            if (key instanceof UnaryExpression) {
+                final PsiElement operator = ((UnaryExpression) key).getOperation();
+                if (result = (! OpenapiTypesUtil.is(operator, PhpTokenTypes.opINCREMENT) && ! OpenapiTypesUtil.is(operator, PhpTokenTypes.opDECREMENT))) {
+                    break;
+                }
+            }
             /* non number and not string (container to be skipped) */
             if (result = ! (key instanceof StringLiteralExpression) && ! OpenapiTypesUtil.isNumber(key)) {
                 break;

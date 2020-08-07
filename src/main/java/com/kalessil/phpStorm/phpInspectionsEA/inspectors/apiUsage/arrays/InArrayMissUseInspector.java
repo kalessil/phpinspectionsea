@@ -50,7 +50,7 @@ public class InArrayMissUseInspector extends PhpInspection {
                 if (this.shouldSkipAnalysis(reference, StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE)) { return; }
 
                 final String functionName = reference.getName();
-                if (functionName == null || !functionName.equals("in_array")) {
+                if (functionName == null || ! functionName.equals("in_array")) {
                     return;
                 }
                 final PsiElement[] arguments = reference.getParameters();
@@ -83,7 +83,7 @@ public class InArrayMissUseInspector extends PhpInspection {
                     }
                 }
                 /* pattern: comparison equivalence */
-                else if (discoveredValue instanceof ArrayCreationExpression) {
+                else if (discoveredValue instanceof ArrayCreationExpression && ! (arguments[1] instanceof FieldReference)) {
                     int itemsCount      = 0;
                     PsiElement lastItem = null;
                     for (final PsiElement oneItem : discoveredValue.getChildren()) {
@@ -118,7 +118,7 @@ public class InArrayMissUseInspector extends PhpInspection {
                                     checkExists = PhpLanguageUtil.isTrue(secondOperand);
                                 } else if (PhpTokenTypes.opNOT_EQUAL == operation || PhpTokenTypes.opNOT_IDENTICAL == operation) {
                                     target      = parent;
-                                    checkExists = !PhpLanguageUtil.isTrue(secondOperand);
+                                    checkExists = ! PhpLanguageUtil.isTrue(secondOperand);
                                 } else {
                                     target = reference;
                                 }

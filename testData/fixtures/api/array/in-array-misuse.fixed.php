@@ -50,3 +50,12 @@ function cases_holder() {
     $x = in_array('1', array(), true);
     $x = in_array('1', array());
 }
+
+class Clazz {
+    private $property = [ '...' ];
+    public function method() {
+        return [
+            in_array('...', $this->property),
+        ];
+    }
+}

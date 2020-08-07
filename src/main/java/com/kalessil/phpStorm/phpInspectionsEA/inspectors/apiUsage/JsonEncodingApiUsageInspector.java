@@ -17,6 +17,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /*
@@ -126,7 +128,9 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
 
             private boolean hasThrowOnErrorFlag(@NotNull PsiElement argument) {
                 boolean hasFlag               = false;
-                final Set<PsiElement> options = PossibleValuesDiscoveryUtil.discover(argument);
+                final Set<PsiElement> options = argument instanceof ConstantReference
+                                                    ? new HashSet<>(Collections.singletonList(argument))
+                                                    : PossibleValuesDiscoveryUtil.discover(argument);
                 if (options.size() == 1) {
                     final PsiElement option = options.iterator().next();
                     if (OpenapiTypesUtil.isNumber(option)) {

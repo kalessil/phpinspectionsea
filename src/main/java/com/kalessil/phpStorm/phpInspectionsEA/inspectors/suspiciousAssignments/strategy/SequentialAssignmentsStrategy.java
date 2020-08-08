@@ -53,21 +53,18 @@ final public class SequentialAssignmentsStrategy {
     static private boolean isValidArrayWrite(@NotNull PsiElement container) {
         boolean result = false;
         while (container instanceof ArrayAccessExpression) {
-            /* array push (container to be skipped) */
             final ArrayAccessExpression expression = (ArrayAccessExpression) container;
             final ArrayIndex index                 = expression.getIndex();
             final PsiElement key                   = ExpressionSemanticUtil.getExpressionTroughParenthesis(index == null ? null : index.getValue());
+            /* array push */
             if (result = (key == null)) {
                 break;
             }
-            /* __LINE__ constant reference (container to be skipped) */
-            if (key instanceof ConstantReference) {
-                final String name = ((ConstantReference) key).getName();
-                if (result = (name != null && name.equals("__LINE__"))) {
-                    break;
-                }
+            /* __LINE__ constant reference */
+            if (result = (key instanceof ConstantReference && "__LINE__".equals(((ConstantReference) key).getName()))) {
+                break;
             }
-            /* non number and not string (container to be skipped) */
+            /* not a regular array keys */
             if (result = (! (key instanceof StringLiteralExpression) && ! OpenapiTypesUtil.isNumber(key))) {
                 break;
             }

@@ -82,6 +82,12 @@ function immediate_overrides()
         $y14 = (string)$y14;
     }
     $y14 = null;
+
+    /* false-positive: increment/decrement */
+    if ($x) {
+        $y15[$index++] = '';
+    }
+    $y15[$index++] = '';
 }
 
 function increments_decrements_cases_holder ()

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
-    private static final String message = "' ... ?: ...' construction should be used instead.";
+    private static final String message = "'... ?: ...' should be used instead.";
 
     @NotNull
     @Override
@@ -45,19 +45,17 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                if (!expression.isShort()) {
-                    final PsiElement trueRaw       = expression.getTrueVariant();
-                    final PsiElement trueExtracted = ExpressionSemanticUtil.getExpressionTroughParenthesis(trueRaw);
-                    if (trueRaw != null && trueExtracted != null) {
-                        final PsiElement conditionExtracted = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                        if (conditionExtracted != null) {
-                            if (conditionExtracted != trueExtracted && OpenapiEquivalenceUtil.areEqual(conditionExtracted, trueExtracted)) {
-                                holder.registerProblem(
-                                        trueRaw,
-                                        MessagesPresentationUtil.prefixWithEa(message),
-                                        new TheLocalFix()
-                                );
-                            }
+                if (! expression.isShort()) {
+                    final PsiElement condition   = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
+                    final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+                    if (condition != null && trueVariant != null) {
+                        final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                        if (falseVariant != null && OpenapiEquivalenceUtil.areEqual(condition, trueVariant)) {
+                            holder.registerProblem(
+                                    expression.getTrueVariant(),
+                                    MessagesPresentationUtil.prefixWithEa(message),
+                                    new UseElvisOperatorFix()
+                            );
                         }
                     }
                 }
@@ -65,7 +63,7 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
         };
     }
 
-    private static final class TheLocalFix implements LocalQuickFix {
+    private static final class UseElvisOperatorFix implements LocalQuickFix {
         private static final String title = "Use ?: instead";
 
         @NotNull

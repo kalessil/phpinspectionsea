@@ -19,7 +19,7 @@ The aim is to improve code usability by moving default logic into the body.
     }
     
     /* code refactoring step 2 (further hardening, perhaps the plugin will assist here in the future) */
-    function calculateRadial(float $radius, ?float $pi, ?float $multiplier): float {
+    function calculateRadial(float $radius, float $pi = null, float $multiplier = null): float {
         return $radius * ($pi ?? M_PI) * ($multiplier ?? 1);
     }
 ```

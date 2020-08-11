@@ -1,9 +1,9 @@
 <?php
 
-    $x = $y ? <weak_warning descr="[EA] ' ... ?: ...' construction should be used instead.">$y</weak_warning> : 0;
-    $x = $y ? <weak_warning descr="[EA] ' ... ?: ...' construction should be used instead.">(($y))</weak_warning> : 0;
-    $x = ($y) ? <weak_warning descr="[EA] ' ... ?: ...' construction should be used instead.">$y</weak_warning> : 0;
-    $x = ((($y))) ? <weak_warning descr="[EA] ' ... ?: ...' construction should be used instead.">($y)</weak_warning> : 0;
+    $x = <weak_warning descr="[EA] It's possible to use '$y ?: 0' here (shorter notation).">$y ? $y : 0</weak_warning>;
+    $x = <weak_warning descr="[EA] It's possible to use '$y ?: 0' here (shorter notation).">$y ? (($y)) : 0</weak_warning>;
+    $x = <weak_warning descr="[EA] It's possible to use '($y) ?: 0' here (shorter notation).">($y) ? $y : 0</weak_warning>;
+    $x = <weak_warning descr="[EA] It's possible to use '((($y))) ?: 0' here (shorter notation).">((($y))) ? ($y) : 0</weak_warning>;
 
     /* false-positives */
     $x = $y ? 0 : $y;

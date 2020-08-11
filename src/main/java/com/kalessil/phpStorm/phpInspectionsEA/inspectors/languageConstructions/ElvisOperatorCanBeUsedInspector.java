@@ -41,20 +41,20 @@ public class ElvisOperatorCanBeUsedInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpTernaryExpression(@NotNull TernaryExpression expression) {
-                if (! expression.isShort()) {
-                    final PsiElement condition   = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getCondition());
-                    final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getTrueVariant());
+            public void visitPhpTernaryExpression(@NotNull TernaryExpression ternary) {
+                if (! ternary.isShort()) {
+                    final PsiElement condition   = ExpressionSemanticUtil.getExpressionTroughParenthesis(ternary.getCondition());
+                    final PsiElement trueVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(ternary.getTrueVariant());
                     if (condition != null && trueVariant != null) {
-                        final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFalseVariant());
+                        final PsiElement falseVariant = ExpressionSemanticUtil.getExpressionTroughParenthesis(ternary.getFalseVariant());
                         if (falseVariant != null && OpenapiEquivalenceUtil.areEqual(condition, trueVariant)) {
                             final String replacement = String.format(
                                     "%s ?: %s",
-                                    trueVariant.getText(),
-                                    falseVariant.getText()
+                                    ternary.getCondition().getText(),
+                                    ternary.getFalseVariant().getText()
                             );
                             holder.registerProblem(
-                                    expression,
+                                    ternary,
                                     MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, replacement)),
                                     new UseElvisOperatorFix(replacement)
                             );

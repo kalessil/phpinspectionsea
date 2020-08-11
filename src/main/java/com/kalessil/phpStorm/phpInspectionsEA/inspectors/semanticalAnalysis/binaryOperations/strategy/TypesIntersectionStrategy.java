@@ -31,24 +31,27 @@ final public class TypesIntersectionStrategy {
         boolean result               = false;
         final IElementType operation = expression.getOperationType();
         if (operation == PhpTokenTypes.opIDENTICAL || operation == PhpTokenTypes.opNOT_IDENTICAL) {
-            final PhpType left = extract(expression.getLeftOperand(), holder).filterMixed();
+            final PhpType left = extract(expression.getLeftOperand(), holder);
             if (! left.isEmpty() && ! left.hasUnknown()) {
-                final PhpType right = extract(expression.getRightOperand(), holder).filterMixed();
+                final PhpType right = extract(expression.getRightOperand(), holder);
                 if (! right.isEmpty() && ! right.hasUnknown()) {
                     final Set<String> leftTypes  = left.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
                     final Set<String> rightTypes = right.getTypes().stream().map(Types::getType).collect(Collectors.toSet());
-                    final boolean isIntersecting = rightTypes.stream().anyMatch(leftTypes::contains);
-                    if (result = ! isIntersecting) {
-                        if (operation == PhpTokenTypes.opIDENTICAL) {
-                            holder.registerProblem(
-                                    expression,
-                                    String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), expression.getText())
-                            );
-                        } else {
-                            holder.registerProblem(
-                                    expression,
-                                    String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), expression.getText())
-                            );
+                    final boolean hasMixed       = leftTypes.contains(Types.strMixed) || rightTypes.contains(Types.strMixed);
+                    if (! hasMixed) {
+                        final boolean isIntersecting = rightTypes.stream().anyMatch(leftTypes::contains);
+                        if (result = ! isIntersecting) {
+                            if (operation == PhpTokenTypes.opIDENTICAL) {
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysFalse), expression.getText())
+                                );
+                            } else {
+                                holder.registerProblem(
+                                        expression,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messageAlwaysTrue), expression.getText())
+                                );
+                            }
                         }
                     }
                     leftTypes.clear();

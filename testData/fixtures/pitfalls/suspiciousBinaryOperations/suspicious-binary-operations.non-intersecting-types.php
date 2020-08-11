@@ -3,6 +3,8 @@
 abstract class TestCase {
     /** @return int */
     abstract function annotatedReturnsInteger();
+    /** @return mixed */
+    abstract function annotatedReturnsMixed();
 
     abstract function subject(): float;
     abstract function returnsFloat(): float;
@@ -18,6 +20,7 @@ abstract class TestCase {
             <error descr="[EA] '$this->subject() === null' seems to be always false.">$this->subject() === null</error>,
             $this->subject() == $this->returnsInteger(),
             <error descr="[EA] '$this->subject() === $this->annotatedReturnsInteger()' seems to be always false.">$this->subject() === $this->annotatedReturnsInteger()</error>,
+            $this->subject() === $this->annotatedReturnsMixed(),
 
             $this->subject() !== $this->returnsFloat(),
             $this->subject() !== 0.0,
@@ -27,6 +30,7 @@ abstract class TestCase {
             <error descr="[EA] '$this->subject() !== null' seems to be always true.">$this->subject() !== null</error>,
             $this->subject() != $this->returnsInteger(),
             <error descr="[EA] '$this->subject() !== $this->annotatedReturnsInteger()' seems to be always true.">$this->subject() !== $this->annotatedReturnsInteger()</error>,
+            $this->subject() !== $this->annotatedReturnsMixed(),
         ];
     }
 }

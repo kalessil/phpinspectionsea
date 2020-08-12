@@ -58,7 +58,7 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                         if (isAvailable) {
                             final PsiElement[] arguments = reference.getParameters();
                             if (arguments.length == 2) {
-                                /* case: substr('haystack', -...) === 'needle */
+                                /* case: substr($haystack, -...) === $needle */
                                 final PsiElement context = reference.getParent();
                                 if (context instanceof BinaryExpression) {
                                     final BinaryExpression binary = (BinaryExpression) context;
@@ -94,7 +94,7 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                         if (isAvailable) {
                             final PsiElement[] arguments = reference.getParameters();
                             if (arguments.length == 3) {
-                                /* case: strpos('haystack', 'needle', -strlen('needle')) !== -1 */
+                                /* case: strpos($haystack, $needle, -strlen($needle)) !== -1 */
                                 final PsiElement context = reference.getParent();
                                 if (context instanceof BinaryExpression) {
                                     final BinaryExpression binary = (BinaryExpression) context;
@@ -121,7 +121,7 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                                     }
                                 }
                             } else if (arguments.length == 2) {
-                                /* case: strpos(strrev('haystack'), strrev('needle')) === 0 */
+                                /* case: strpos(strrev($haystack), strrev($needle)) === 0 */
                                 final PsiElement context = reference.getParent();
                                 if (context instanceof BinaryExpression) {
                                     final BinaryExpression binary = (BinaryExpression) context;
@@ -138,6 +138,39 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                                                         reference.getImmediateNamespaceName(),
                                                         haystack.getText(),
                                                         needle.getText()
+                                                );
+                                                holder.registerProblem(
+                                                        binary,
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                                        new UseStrEndsWithFix(replacement)
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if (functionName.equals("substr_compare")) {
+                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_ends_with", holder.getProject());
+                        if (isAvailable) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 3) {
+                                /* case: substr_compare($haystack, $needle, -strlen($needle)) === 0 */
+                                final PsiElement context = reference.getParent();
+                                if (context instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) context;
+                                    final IElementType operation  = binary.getOperationType();
+                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
+                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                        if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
+                                            final PsiElement lengthArgument = this.extractLengthArgument(arguments[2]);
+                                            if (lengthArgument != null && OpenapiEquivalenceUtil.areEqual(lengthArgument, arguments[1])) {
+                                                final String replacement = String.format(
+                                                        "%s%sstr_ends_with(%s, %s)",
+                                                        operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                                        reference.getImmediateNamespaceName(),
+                                                        arguments[0].getText(),
+                                                        arguments[1].getText()
                                                 );
                                                 holder.registerProblem(
                                                         binary,

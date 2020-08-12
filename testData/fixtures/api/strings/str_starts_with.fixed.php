@@ -5,7 +5,9 @@ function cases_holder() {
         str_starts_with('haystack', 'needle'),
         str_starts_with('haystack', 'needle'),
         str_starts_with('haystack', 'needle'),
+        str_starts_with('haystack', 'needle'),
 
+        !str_starts_with('haystack', 'needle'),
         !str_starts_with('haystack', 'needle'),
         !str_starts_with('haystack', 'needle'),
         !str_starts_with('haystack', 'needle'),

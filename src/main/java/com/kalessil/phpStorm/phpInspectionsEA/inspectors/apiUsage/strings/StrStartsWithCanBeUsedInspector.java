@@ -8,7 +8,6 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.BinaryExpression;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
-import com.jetbrains.php.lang.psi.elements.UnaryExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.indexers.FunctionsPolyfillsIndexer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
@@ -53,6 +52,8 @@ public class StrStartsWithCanBeUsedInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null) {
+                    /* TODO: substr('haystack', 0, strlen('needle')) === 'needle' */
+
                     if (functionName.equals("strpos") || functionName.equals("mb_strpos")) {
                         final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
                         if (isAvailable) {
@@ -122,8 +123,33 @@ public class StrStartsWithCanBeUsedInspector extends PhpInspection {
                         final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_ends_with", holder.getProject());
                         if (isAvailable) {
                             final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length == 4) {
+                            if (arguments.length == 3) {
                                 /* case: strncmp($haystack, $needle, strlen($needle)) === 0 */
+                                final PsiElement context = reference.getParent();
+                                if (context instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) context;
+                                    final IElementType operation  = binary.getOperationType();
+                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
+                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                        if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
+                                            final PsiElement lengthArgument = this.extractLengthArgument(arguments[2]);
+                                            if (lengthArgument != null && OpenapiEquivalenceUtil.areEqual(lengthArgument, arguments[1])) {
+                                                final String replacement = String.format(
+                                                        "%s%sstr_starts_with(%s, %s)",
+                                                        operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                                        reference.getImmediateNamespaceName(),
+                                                        arguments[0].getText(),
+                                                        arguments[1].getText()
+                                                );
+                                                holder.registerProblem(
+                                                        binary,
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                                        new UseStrStartsWithFix(replacement)
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

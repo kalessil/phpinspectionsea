@@ -53,140 +53,122 @@ public class StrStartsWithCanBeUsedInspector extends PhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null) {
                     if (functionName.equals("substr") || functionName.equals("mb_substr")) {
-                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
-                        if (isAvailable) {
-                            final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length == 3) {
-                                /* case: substr($haystack, 0, strlen($needle)) === $needle */
-                                final PsiElement context = reference.getParent();
-                                if (context instanceof BinaryExpression) {
-                                    final BinaryExpression binary = (BinaryExpression) context;
-                                    final IElementType operation  = binary.getOperationType();
-                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
-                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                                        if (second != null) {
-                                            final PsiElement lengthArgument = this.extractLengthArgument(arguments[2]);
-                                            final boolean isTargetLength    = lengthArgument != null && OpenapiEquivalenceUtil.areEqual(lengthArgument, second);
-                                            final boolean isTargetOffset    = OpenapiTypesUtil.isNumber(arguments[1]) && arguments[1].getText().equals("0");
-                                            if (isTargetOffset && isTargetLength) {
-                                                final String replacement = String.format(
-                                                        "%s%sstr_starts_with(%s, %s)",
-                                                        operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
-                                                        reference.getImmediateNamespaceName(),
-                                                        arguments[0].getText(),
-                                                        second.getText()
-                                                );
-                                                holder.registerProblem(
-                                                        binary,
-                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
-                                                        new UseStrStartsWithFix(replacement)
-                                                );
-                                            }
-                                        }
-                                    }
+                        /* case: substr($haystack, 0, strlen($needle)) === $needle */
+                        final BinaryExpression context = this.extractTargetContext(reference, 3);
+                        if (context != null) {
+                            final PsiElement second = OpenapiElementsUtil.getSecondOperand(context, reference);
+                            if (second != null) {
+                                final PsiElement[] arguments = reference.getParameters();
+                                final PsiElement needle      = this.extractLengthArgument(arguments[2]);
+                                final boolean isTargetLength = needle != null && OpenapiEquivalenceUtil.areEqual(needle, second);
+                                final boolean isTargetOffset = OpenapiTypesUtil.isNumber(arguments[1]) && arguments[1].getText().equals("0");
+                                if (isTargetOffset && isTargetLength) {
+                                    final String replacement = String.format(
+                                            "%s%sstr_starts_with(%s, %s)",
+                                            context.getOperationType() == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                            reference.getImmediateNamespaceName(),
+                                            arguments[0].getText(),
+                                            needle.getText()
+                                    );
+                                    holder.registerProblem(
+                                            context,
+                                            String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                            new UseStrStartsWithFix(replacement)
+                                    );
                                 }
                             }
                         }
                     } else if (functionName.equals("strpos") || functionName.equals("mb_strpos")) {
-                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
-                        if (isAvailable) {
-                            final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length == 2) {
-                                /* case: strpos($haystack, $needle) === 0 */
-                                final PsiElement context = reference.getParent();
-                                if (context instanceof BinaryExpression) {
-                                    final BinaryExpression binary = (BinaryExpression) context;
-                                    final IElementType operation  = binary.getOperationType();
-                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
-                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                                        if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
-                                            final String replacement = String.format(
-                                                    "%s%sstr_starts_with(%s, %s)",
-                                                    operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
-                                                    reference.getImmediateNamespaceName(),
-                                                    arguments[0].getText(),
-                                                    arguments[1].getText()
-                                            );
-                                            holder.registerProblem(
-                                                    binary,
-                                                    String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
-                                                    new UseStrStartsWithFix(replacement)
-                                            );
-                                        }
-                                    }
-                                }
+                        /* case: strpos($haystack, $needle) === 0 */
+                        final BinaryExpression context = this.extractTargetContext(reference, 2);
+                        if (context != null) {
+                            final PsiElement second = OpenapiElementsUtil.getSecondOperand(context, reference);
+                            if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
+                                final PsiElement[] arguments = reference.getParameters();
+                                final String replacement     = String.format(
+                                        "%s%sstr_starts_with(%s, %s)",
+                                        context.getOperationType() == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                        reference.getImmediateNamespaceName(),
+                                        arguments[0].getText(),
+                                        arguments[1].getText()
+                                );
+                                holder.registerProblem(
+                                        context,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                        new UseStrStartsWithFix(replacement)
+                                );
                             }
                         }
                     }  else if (functionName.equals("substr_compare")) {
-                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
-                        if (isAvailable) {
-                            final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length == 4) {
-                                /* case: substr_compare($haystack, $needle, 0, strlen($needle)) === 0 */
-                                final PsiElement context = reference.getParent();
-                                if (context instanceof BinaryExpression) {
-                                    final BinaryExpression binary = (BinaryExpression) context;
-                                    final IElementType operation  = binary.getOperationType();
-                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
-                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                                        if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
-                                            final PsiElement lengthArgument = this.extractLengthArgument(arguments[3]);
-                                            final boolean isTargetLength    = lengthArgument != null && OpenapiEquivalenceUtil.areEqual(lengthArgument, arguments[1]);
-                                            final boolean isTargetOffset    = OpenapiTypesUtil.isNumber(arguments[2]) && arguments[2].getText().equals("0");
-                                            if (isTargetOffset && isTargetLength) {
-                                                final String replacement = String.format(
-                                                        "%s%sstr_starts_with(%s, %s)",
-                                                        operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
-                                                        reference.getImmediateNamespaceName(),
-                                                        arguments[0].getText(),
-                                                        arguments[1].getText()
-                                                );
-                                                holder.registerProblem(
-                                                        binary,
-                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
-                                                        new UseStrStartsWithFix(replacement)
-                                                );
-                                            }
-                                        }
-                                    }
+                        /* case: substr_compare($haystack, $needle, 0, strlen($needle)) === 0 */
+                        final BinaryExpression context = this.extractTargetContext(reference, 4);
+                        if (context != null) {
+                            final PsiElement second = OpenapiElementsUtil.getSecondOperand(context, reference);
+                            if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
+                                final PsiElement[] arguments = reference.getParameters();
+                                final PsiElement needle      = this.extractLengthArgument(arguments[3]);
+                                final boolean isTargetLength = needle != null && OpenapiEquivalenceUtil.areEqual(needle, arguments[1]);
+                                final boolean isTargetOffset = OpenapiTypesUtil.isNumber(arguments[2]) && arguments[2].getText().equals("0");
+                                if (isTargetOffset && isTargetLength) {
+                                    final String replacement = String.format(
+                                            "%s%sstr_starts_with(%s, %s)",
+                                            context.getOperationType() == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                            reference.getImmediateNamespaceName(),
+                                            arguments[0].getText(),
+                                            needle.getText()
+                                    );
+                                    holder.registerProblem(
+                                            context,
+                                            String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                            new UseStrStartsWithFix(replacement)
+                                    );
                                 }
                             }
                         }
                     } else if (functionName.equals("strncmp")) {
-                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
-                        if (isAvailable) {
-                            final PsiElement[] arguments = reference.getParameters();
-                            if (arguments.length == 3) {
-                                /* case: strncmp($haystack, $needle, strlen($needle)) === 0 */
-                                final PsiElement context = reference.getParent();
-                                if (context instanceof BinaryExpression) {
-                                    final BinaryExpression binary = (BinaryExpression) context;
-                                    final IElementType operation  = binary.getOperationType();
-                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
-                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                                        if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
-                                            final PsiElement lengthArgument = this.extractLengthArgument(arguments[2]);
-                                            if (lengthArgument != null && OpenapiEquivalenceUtil.areEqual(lengthArgument, arguments[1])) {
-                                                final String replacement = String.format(
-                                                        "%s%sstr_starts_with(%s, %s)",
-                                                        operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
-                                                        reference.getImmediateNamespaceName(),
-                                                        arguments[0].getText(),
-                                                        arguments[1].getText()
-                                                );
-                                                holder.registerProblem(
-                                                        binary,
-                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
-                                                        new UseStrStartsWithFix(replacement)
-                                                );
-                                            }
-                                        }
-                                    }
+                        /* case: strncmp($haystack, $needle, strlen($needle)) === 0 */
+                        final BinaryExpression context = this.extractTargetContext(reference, 3);
+                        if (context != null) {
+                            final PsiElement second = OpenapiElementsUtil.getSecondOperand(context, reference);
+                            if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
+                                final PsiElement[] arguments = reference.getParameters();
+                                final PsiElement needle      = this.extractLengthArgument(arguments[2]);
+                                if (needle != null && OpenapiEquivalenceUtil.areEqual(needle, arguments[1])) {
+                                    final String replacement = String.format(
+                                            "%s%sstr_starts_with(%s, %s)",
+                                            context.getOperationType() == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                            reference.getImmediateNamespaceName(),
+                                            arguments[0].getText(),
+                                            arguments[1].getText()
+                                    );
+                                    holder.registerProblem(
+                                            context,
+                                            String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                            new UseStrStartsWithFix(replacement)
+                                    );
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            @Nullable
+            private BinaryExpression extractTargetContext(@NotNull FunctionReference reference, int argumentsCount) {
+                if (reference.getParameters().length == argumentsCount) {
+                    final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
+                    if (isAvailable) {
+                        final PsiElement context = reference.getParent();
+                        if (context instanceof BinaryExpression) {
+                            final BinaryExpression binary = (BinaryExpression) context;
+                            final IElementType operation  = binary.getOperationType();
+                            if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
+                                return binary;
+                            }
+                        }
+                    }
+                }
+                return null;
             }
 
             @Nullable

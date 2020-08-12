@@ -3,8 +3,12 @@
 function cases_holder() {
     return [
         str_contains('haystack', 'needle'),
+        str_contains('haystack', 'needle') || false,
+        str_contains('haystack', 'needle'),
         str_contains('haystack', 'needle'),
 
+        !str_contains('haystack', 'needle'),
+        !str_contains('haystack', 'needle'),
         !str_contains('haystack', 'needle'),
         !str_contains('haystack', 'needle'),
 

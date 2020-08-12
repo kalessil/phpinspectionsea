@@ -78,7 +78,7 @@
         $six = str_ireplace('...', '...', '');
         $six = str_replace('...', '...', $six);
     }
-        
+
     function preg_ireplace_cases() {
         $one = preg_replace('/regex/', '...', <warning descr="[EA] This call can be merged with its parent.">preg_replace('/regex/', '...', '')</warning>);
 

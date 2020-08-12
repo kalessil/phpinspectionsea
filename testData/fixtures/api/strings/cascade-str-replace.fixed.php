@@ -68,3 +68,19 @@
         $six = str_ireplace('...', '...', '');
         $six = str_replace('...', '...', $six);
     }
+
+    function preg_ireplace_cases() {
+        $one = preg_replace(['/regex/', '/regex/'], '...', '');
+
+        $two = preg_replace(['/regex/', '/regex/'], '...', '');
+
+        /* false-positives: mixed calls */
+        $three = preg_replace('/regex/', '...', str_replace('/regex/', '...', ''));
+        $four = str_replace('/regex/', '...', preg_replace('/regex/', '...', ''));
+
+        $five = preg_replace('/regex/', '...', '');
+        $five = str_replace('/regex/', '...', $five);
+
+        $six = preg_replace('/regex/', '...', '');
+        $six = str_replace('/regex/', '...', $six);
+    }

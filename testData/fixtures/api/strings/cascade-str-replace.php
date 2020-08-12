@@ -78,3 +78,20 @@
         $six = str_ireplace('...', '...', '');
         $six = str_replace('...', '...', $six);
     }
+        
+    function preg_ireplace_cases() {
+        $one = preg_replace('/regex/', '...', <warning descr="[EA] This call can be merged with its parent.">preg_replace('/regex/', '...', '')</warning>);
+
+        $two = preg_replace('/regex/', '...', '');
+        $two = <warning descr="[EA] This call can be merged with the previous.">preg_replace('/regex/', '...', $two)</warning>;
+
+        /* false-positives: mixed calls */
+        $three = preg_replace('/regex/', '...', str_replace('/regex/', '...', ''));
+        $four = str_replace('/regex/', '...', preg_replace('/regex/', '...', ''));
+
+        $five = preg_replace('/regex/', '...', '');
+        $five = str_replace('/regex/', '...', $five);
+
+        $six = preg_replace('/regex/', '...', '');
+        $six = str_replace('/regex/', '...', $six);
+    }

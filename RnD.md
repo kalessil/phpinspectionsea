@@ -4,7 +4,6 @@ Loops:
 
 - jar-binary basic protection
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
-- CascadeStringReplacementInspector: add preg_replace support
 
 - Amount of traits
 - Unused function result, but for generators

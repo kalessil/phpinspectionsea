@@ -47,6 +47,7 @@ public class CascadeStringReplacementInspector extends PhpInspection {
 
     private static final Set<String> functions = new HashSet<>();
     static {
+        functions.add("preg_replace");
         functions.add("str_replace");
         functions.add("str_ireplace");
     }

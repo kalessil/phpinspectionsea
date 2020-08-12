@@ -58,26 +58,32 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                         if (isAvailable) {
                             final PsiElement[] arguments = reference.getParameters();
                             if (arguments.length == 2) {
+                                /* case: substr('haystack', -...) === 'needle */
                                 final PsiElement context = reference.getParent();
                                 if (context instanceof BinaryExpression) {
                                     final BinaryExpression binary = (BinaryExpression) context;
                                     final IElementType operation  = binary.getOperationType();
                                     if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
-                                        final PsiElement lengthArgument = this.extractLengthArgument(arguments[1]);
-                                        final PsiElement second         = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                                        if (second != null && lengthArgument != null && OpenapiEquivalenceUtil.areEqual(second, lengthArgument)) {
-                                            final String replacement = String.format(
-                                                    "%s%sstr_ends_with(%s, %s)",
-                                                    operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
-                                                    reference.getImmediateNamespaceName(),
-                                                    arguments[0].getText(),
-                                                    second.getText()
-                                            );
-                                            holder.registerProblem(
-                                                    binary,
-                                                    String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
-                                                    new UseStrEndsWithFix(replacement)
-                                            );
+                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                        if (second != null) {
+                                            final PsiElement lengthArgument = this.extractLengthArgument(arguments[1]);
+                                            final boolean isTarget          = lengthArgument == null
+                                                    ? OpenapiTypesUtil.isNumber(arguments[1]) && arguments[1].getText().startsWith("-")
+                                                    : OpenapiEquivalenceUtil.areEqual(second, lengthArgument);
+                                            if (isTarget) {
+                                                final String replacement = String.format(
+                                                        "%s%sstr_ends_with(%s, %s)",
+                                                        operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                                        reference.getImmediateNamespaceName(),
+                                                        arguments[0].getText(),
+                                                        second.getText()
+                                                );
+                                                holder.registerProblem(
+                                                        binary,
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                                        new UseStrEndsWithFix(replacement)
+                                                );
+                                            }
                                         }
                                     }
                                 }
@@ -88,6 +94,7 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                         if (isAvailable) {
                             final PsiElement[] arguments = reference.getParameters();
                             if (arguments.length == 3) {
+                                /* case: strpos('haystack', 'needle', -strlen('needle')) !== -1 */
                                 final PsiElement context = reference.getParent();
                                 if (context instanceof BinaryExpression) {
                                     final BinaryExpression binary = (BinaryExpression) context;
@@ -103,6 +110,34 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                                                         reference.getImmediateNamespaceName(),
                                                         arguments[0].getText(),
                                                         arguments[1].getText()
+                                                );
+                                                holder.registerProblem(
+                                                        binary,
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                                        new UseStrEndsWithFix(replacement)
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if (arguments.length == 2) {
+                                /* case: strpos(strrev('haystack'), strrev('needle')) === 0 */
+                                final PsiElement context = reference.getParent();
+                                if (context instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) context;
+                                    final IElementType operation  = binary.getOperationType();
+                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
+                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                        if (second != null && OpenapiTypesUtil.isNumber(second) && second.getText().equals("0")) {
+                                            final PsiElement haystack = this.extractReverseArgument(arguments[0]);
+                                            final PsiElement needle   = this.extractReverseArgument(arguments[1]);
+                                            if (haystack != null && needle != null) {
+                                                final String replacement = String.format(
+                                                        "%s%sstr_ends_with(%s, %s)",
+                                                        operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                                        reference.getImmediateNamespaceName(),
+                                                        haystack.getText(),
+                                                        needle.getText()
                                                 );
                                                 holder.registerProblem(
                                                         binary,
@@ -143,6 +178,28 @@ public class StrEndsWithCanBeUsedInspector extends PhpInspection {
                             possibleValues.clear();
                         }
                     }
+                }
+                return null;
+            }
+
+            @Nullable
+            private PsiElement extractReverseArgument(@Nullable PsiElement expression) {
+                if (expression != null) {
+                    final Set<PsiElement> possibleValues = PossibleValuesDiscoveryUtil.discover(expression);
+                    if (possibleValues.size() == 1) {
+                        final PsiElement candidate = possibleValues.iterator().next();
+                        if (OpenapiTypesUtil.isFunctionReference(candidate)) {
+                            final FunctionReference reference = (FunctionReference) candidate;
+                            final String functionName         = reference.getName();
+                            if (functionName != null && functionName.equals("strrev")) {
+                                final PsiElement[] arguments = reference.getParameters();
+                                if (arguments.length == 1) {
+                                    return arguments[0];
+                                }
+                            }
+                        }
+                    }
+                    possibleValues.clear();
                 }
                 return null;
             }

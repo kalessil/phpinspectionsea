@@ -4,8 +4,6 @@ Loops:
 
 - jar-binary basic protection
 - (performance) foreach (file('...') as ...) -> foreach (new SplFileObject('...') as $line)
-- str_starts_with: substr_compare($haystack, $needle, 0, strlen($needle)) === 0
-- str_starts_with: strncmp($haystack, $needle, strlen($needle)) === 0
 
 - Amount of traits
 - Unused function result, but for generators

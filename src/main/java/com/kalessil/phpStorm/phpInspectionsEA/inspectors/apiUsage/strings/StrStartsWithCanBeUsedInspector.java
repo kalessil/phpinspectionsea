@@ -52,9 +52,42 @@ public class StrStartsWithCanBeUsedInspector extends PhpInspection {
 
                 final String functionName = reference.getName();
                 if (functionName != null) {
-                    /* TODO: substr('haystack', 0, strlen('needle')) === 'needle' */
-
-                    if (functionName.equals("strpos") || functionName.equals("mb_strpos")) {
+                    if (functionName.equals("substr") || functionName.equals("mb_substr")) {
+                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
+                        if (isAvailable) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 3) {
+                                /* case: substr($haystack, 0, strlen($needle)) === $needle */
+                                final PsiElement context = reference.getParent();
+                                if (context instanceof BinaryExpression) {
+                                    final BinaryExpression binary = (BinaryExpression) context;
+                                    final IElementType operation  = binary.getOperationType();
+                                    if (operation == PhpTokenTypes.opNOT_IDENTICAL || operation == PhpTokenTypes.opIDENTICAL) {
+                                        final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
+                                        if (second != null) {
+                                            final PsiElement lengthArgument = this.extractLengthArgument(arguments[2]);
+                                            final boolean isTargetLength    = lengthArgument != null && OpenapiEquivalenceUtil.areEqual(lengthArgument, second);
+                                            final boolean isTargetOffset    = OpenapiTypesUtil.isNumber(arguments[1]) && arguments[1].getText().equals("0");
+                                            if (isTargetOffset && isTargetLength) {
+                                                final String replacement = String.format(
+                                                        "%s%sstr_starts_with(%s, %s)",
+                                                        operation == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
+                                                        reference.getImmediateNamespaceName(),
+                                                        arguments[0].getText(),
+                                                        second.getText()
+                                                );
+                                                holder.registerProblem(
+                                                        binary,
+                                                        String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
+                                                        new UseStrStartsWithFix(replacement)
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if (functionName.equals("strpos") || functionName.equals("mb_strpos")) {
                         final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
                         if (isAvailable) {
                             final PsiElement[] arguments = reference.getParameters();
@@ -85,7 +118,7 @@ public class StrStartsWithCanBeUsedInspector extends PhpInspection {
                             }
                         }
                     }  else if (functionName.equals("substr_compare")) {
-                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_ends_with", holder.getProject());
+                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
                         if (isAvailable) {
                             final PsiElement[] arguments = reference.getParameters();
                             if (arguments.length == 4) {
@@ -120,7 +153,7 @@ public class StrStartsWithCanBeUsedInspector extends PhpInspection {
                             }
                         }
                     } else if (functionName.equals("strncmp")) {
-                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_ends_with", holder.getProject());
+                        final boolean isAvailable = FunctionsPolyfillsIndexer.isFunctionAvailable("\\str_starts_with", holder.getProject());
                         if (isAvailable) {
                             final PsiElement[] arguments = reference.getParameters();
                             if (arguments.length == 3) {

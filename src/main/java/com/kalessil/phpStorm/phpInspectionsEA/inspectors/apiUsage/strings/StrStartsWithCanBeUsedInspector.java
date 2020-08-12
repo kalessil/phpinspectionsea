@@ -139,7 +139,7 @@ public class StrStartsWithCanBeUsedInspector extends PhpInspection {
                                             context.getOperationType() == PhpTokenTypes.opNOT_IDENTICAL ? "! " : "",
                                             reference.getImmediateNamespaceName(),
                                             arguments[0].getText(),
-                                            arguments[1].getText()
+                                            needle.getText()
                                     );
                                     holder.registerProblem(
                                             context,

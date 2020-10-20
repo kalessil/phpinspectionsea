@@ -2,8 +2,8 @@
   "name":        "kalessil/whatever",
   "description": "",
   "license":     "",
-  <warning descr="[EA] Please add roave/security-advisories:dev-master into require-dev as a firewall for vulnerable components.">"require"</warning>: {
+  <warning descr="[EA] Please add roave/security-advisories:dev-latest into require-dev as a firewall for vulnerable components.">"require"</warning>: {
     <warning descr="[EA] Dev-packages have no security guaranties, invoke the package via require-dev instead.">"phpunit/PHPUnit"</warning>: "*",
-    <warning descr="[EA] Dev-packages have no security guaranties, invoke the package via require-dev instead.">"roave/security-advisories"</warning>: "dev-master"
+    <warning descr="[EA] Dev-packages have no security guaranties, invoke the package via require-dev instead.">"roave/security-advisories"</warning>: "dev-latest"
   }
 }

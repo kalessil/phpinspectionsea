@@ -262,7 +262,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                             final String packageVersion = pair.getValue().getValue().toLowerCase();
                             if (!packageName.isEmpty() && !packageVersion.isEmpty()) {
                                 if (packageName.equals("roave/security-advisories")) {
-                                    if (!packageVersion.equals("dev-master")) {
+                                    if (!packageVersion.equals("dev-master") && !packageVersion.equals("dev-latest")) {
                                         holder.registerProblem(
                                                 pair.getValue(),
                                                 MessagesPresentationUtil.prefixWithEa(useMaster)

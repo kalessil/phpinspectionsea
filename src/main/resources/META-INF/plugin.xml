@@ -2,7 +2,7 @@
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
   <version>4.0.6</version>
-  <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
+  <vendor email="ea.inspections.team@gmail.com">EA Inspections Team</vendor>
 
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>

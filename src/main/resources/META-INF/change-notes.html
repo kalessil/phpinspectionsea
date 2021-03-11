@@ -1,18 +1,19 @@
 <html>
 Bug-fix and new features release.<br/>
 <br/>
-- Added 'Release the Key (force)' menu entry under 'Help -> Php Inspections (EA Ultimate) -> ...'<br/>
+- Changes from Php Inspections (EA Extended) <a href="https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-/versions/stable/96482">v4.0.6</a><br/>
+- Cascading 'str_replace(...)' calls: new patterns<br/>
+- Null coalescing operator can be used: new patterns<br/>
+- Simplifiable ternary operator: implemented<br/>
+- 'file_get_contents(...)' misused: new patterns<br/>
+- 'str_contains(...)' can be used: new patterns<br/>
+- 'str_ends_with(...)' can be used: new patterns<br/>
+- 'str_starts_with(...)' can be used: new patterns<br/>
 <br/>
-- Proper null-coalescing operator usage: resolved a false-positive (coalesce wrapped into casting)<br/>
-- Suspicious binary operations: resolved false-positives (multiple cases)<br/>
-
-13.07.2020 17:38:
-- NullCoalescingOperatorCanBeUsedInspector: new patterns
-- SuspiciousBinaryOperationInspector: new patterns
-- MissUsingForeachInspector: new patterns
-- SlowArrayOperationsInLoopInspector: new patterns ?
-- FileGetContentsMissUseInspector: new patterns
-
+- Added 'Release the Key (force)' menu entry under 'Help -> Php Inspections (EA Ultimate) -> ...'<br/>
+- Added 'Resources' section under 'PHP Inspections' sidebar<br/>
+- Class autoloading correctness: resolved a false-positive (incorrect path guessing)<br/>
+- 'in_array(...)' misused: resolved a false-positive (in_array on a field reference)<br/>
 <br/>
 <hr/>
 </html>

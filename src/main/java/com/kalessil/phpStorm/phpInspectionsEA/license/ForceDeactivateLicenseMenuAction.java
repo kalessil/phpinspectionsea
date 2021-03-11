@@ -8,12 +8,16 @@ import com.intellij.openapi.project.DumbAware;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.wyday.turboactivate.TurboActivateException;
 
-final public class ActivateLicenseMenuAction extends AnAction implements DumbAware {
-    public ActivateLicenseMenuAction() {
+/**
+ * The action is intended to force license deactivation, in order to troubleshoot license state issues.
+ */
+final public class ForceDeactivateLicenseMenuAction extends AnAction implements DumbAware {
+    public ForceDeactivateLicenseMenuAction() {
     }
 
     @Override
     public void update(final AnActionEvent event) {
+        /* Same as ActivateLicenseMenuAction::update */
         final Presentation presentation = event.getPresentation();
         presentation.setVisible(true);
         presentation.setEnabled(true);
@@ -30,10 +34,11 @@ final public class ActivateLicenseMenuAction extends AnAction implements DumbAwa
 
     @Override
     public void actionPerformed(final AnActionEvent event) {
+        /* Same as DeactivateLicenseMenuAction::actionPerformed */
         final LicenseService service      = EAUltimateApplicationComponent.getLicenseService();
         final IdeaPluginDescriptor plugin = EAUltimateApplicationComponent.getPluginDescriptor();
         if (service != null && plugin != null && service.isClientInitialized()) {
-            (new ActivateLicenseAction()).perform(service, plugin);
+            (new DeactivateLicenseAction()).perform(service, plugin);
             this.update(event);
         }
     }

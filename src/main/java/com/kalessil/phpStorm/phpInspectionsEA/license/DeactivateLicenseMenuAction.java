@@ -12,7 +12,7 @@ final public class DeactivateLicenseMenuAction extends AnAction implements DumbA
     public DeactivateLicenseMenuAction() {
     }
 
-    public void update(AnActionEvent event) {
+    public void update(final AnActionEvent event) {
         final Presentation presentation = event.getPresentation();
         presentation.setVisible(true);
         presentation.setEnabled(true);
@@ -28,7 +28,7 @@ final public class DeactivateLicenseMenuAction extends AnAction implements DumbA
     }
 
     @Override
-    public void actionPerformed(AnActionEvent event) {
+    public void actionPerformed(final AnActionEvent event) {
         final LicenseService service      = EAUltimateApplicationComponent.getLicenseService();
         final IdeaPluginDescriptor plugin = EAUltimateApplicationComponent.getPluginDescriptor();
         if (service != null && plugin != null && service.isClientInitialized()) {

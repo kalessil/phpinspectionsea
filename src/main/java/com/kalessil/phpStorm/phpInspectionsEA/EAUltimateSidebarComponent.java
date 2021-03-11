@@ -1,5 +1,6 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Document;
@@ -48,7 +49,7 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
         }
     }
 
-    private void refresh() {
+    private void rerunInspections() {
         ApplicationManager.getApplication().runWriteAction(() -> {
             final PsiDocumentManager documents = PsiDocumentManager.getInstance(myProject);
             final PsiManager files             = PsiManager.getInstance(myProject);
@@ -79,42 +80,48 @@ public class EAUltimateSidebarComponent extends AbstractProjectComponent {
                     try {
                         if (service.isActivatedLicense()) {
                             message = service.isActiveLicense()
-                                    ? String.format("Active license (running all features: %s inspections)", total)
-                                    : String.format("Expired license (running basic features: %s of %s inspections)", basic, total);
+                                    ? String.format("Active license (running all features: %s inspections).", total)
+                                    : String.format("Expired license (running basic features: %s of %s inspections).", basic, total);
                         } else if (service.isTrialLicense()) {
                             message = service.isActiveTrialLicense()
                                     ? String.format("Active trial (running all features: %s inspections).", total)
-                                    : String.format("Expired trial (running basic features: %s of %s inspections)", basic, total);
+                                    : String.format("Expired trial (running basic features: %s of %s inspections).", basic, total);
                         } else {
-                            message = String.format("Not activated (running basic features: %s of %s inspections)", basic, total);
+                            message = String.format("Not activated (running basic features: %s of %s inspections).", basic, total);
                         }
                     } catch (final Exception failure) {
-                        message = String.format("Licensing information is not available (error: %s)", failure.getMessage());
+                        message = String.format("Licensing information is not available (error: %s).", failure.getMessage());
                     }
                 }
                 panel.addText("", 12);
                 panel.addText(message);
             });
+            component.addPanel("Resources", panel -> {
+                panel.addHyperlink("Documentation",       (event) -> { BrowserUtil.browse("https://github.com/kalessil/phpinspectionsea/tree/master/docs"); });
+                panel.addHyperlink("Bugtracker",          (event) -> { BrowserUtil.browse("https://github.com/kalessil/phpinspectionsea/issues"); });
+                panel.addHyperlink("Contact information", (event) -> { BrowserUtil.browse("https://plugins.jetbrains.com/author/3a97e348-a73f-46ba-b5a6-67e9fdcecf1b"); });
+                panel.addText("License management: Help -> Php Inspections (EA Ultimate) -> ...");
+            });
             component.addPanel("Settings management",                            panel -> {
                 panel.addText("", 12);
                 panel.addHyperlink("File / Settings / Editor / Inspections", (event) -> ShowSettingsUtil.getInstance().showSettingsDialog(myProject, "Inspections"));
-                panel.addCheckbox("Prefer Yoda comparison style",            s.isPreferringYodaComparisonStyle(), (is) -> { s.setPreferringYodaComparisonStyle(is); this.refresh(); });
-                panel.addCheckbox("Analyze only modified files",             s.isAnalyzingOnlyModifiedFiles(),    (is) -> { s.setAnalyzingOnlyModifiedFiles(is);    this.refresh(); });
+                panel.addCheckbox("Prefer Yoda comparison style",            s.isPreferringYodaComparisonStyle(), (is) -> { s.setPreferringYodaComparisonStyle(is); this.rerunInspections(); });
+                panel.addCheckbox("Analyze only modified files",             s.isAnalyzingOnlyModifiedFiles(),    (is) -> { s.setAnalyzingOnlyModifiedFiles(is);    this.rerunInspections(); });
             });
             component.addPanel("Strictness categories * (loosest to strictest)", panel -> {
                 panel.addText("", 12);
-                panel.addCheckbox("Prio 1: Security",                 s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_SECURITY),                 (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_SECURITY, is);                 this.refresh(); });
-                panel.addCheckbox("Prio 2: Probable bugs",            s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS),            (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS, is);            this.refresh(); });
-                panel.addCheckbox("Prio 3: Performance",              s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE),              (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE, is);              this.refresh(); });
+                panel.addCheckbox("Prio 1: Security",                 s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_SECURITY),                 (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_SECURITY, is);                 this.rerunInspections(); });
+                panel.addCheckbox("Prio 2: Probable bugs",            s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS),            (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS, is);            this.rerunInspections(); });
+                panel.addCheckbox("Prio 3: Performance",              s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE),              (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_PERFORMANCE, is);              this.rerunInspections(); });
                 panel.addCheckbox("Prio 4: Architecture, PHPUnit",    s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE),             (is) -> {
                                                                                                                                                                 s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_ARCHITECTURE, is);
                                                                                                                                                                 s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_PHPUNIT, is);
-                                                                                                                                                                this.refresh();
+                                                                                                                                                                this.rerunInspections();
                                                                                                                                                             });
-                panel.addCheckbox("Prio 5: Control flow",             s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW),             (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW, is);             this.refresh(); });
-                panel.addCheckbox("Prio 6: Language level migration", s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION), (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION, is); this.refresh(); });
-                panel.addCheckbox("Prio 7: Code style",               s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE),               (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE, is);               this.refresh(); });
-                panel.addCheckbox("Prio 8: Unused",                   s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_UNUSED),                   (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_UNUSED, is);                   this.refresh(); });
+                panel.addCheckbox("Prio 5: Control flow",             s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW),             (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW, is);             this.rerunInspections(); });
+                panel.addCheckbox("Prio 6: Language level migration", s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION), (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_LANGUAGE_LEVEL_MIGRATION, is); this.rerunInspections(); });
+                panel.addCheckbox("Prio 7: Code style",               s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE),               (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_CODE_STYLE, is);               this.rerunInspections(); });
+                panel.addCheckbox("Prio 8: Unused",                   s.isCategoryActive(StrictnessCategory.STRICTNESS_CATEGORY_UNUSED),                   (is) -> { s.setCategoryActiveFlag(StrictnessCategory.STRICTNESS_CATEGORY_UNUSED, is);                   this.rerunInspections(); });
                 panel.addText("", 12);
                 panel.addText("* inspections from the unchecked groups are skipped", 12);
             });

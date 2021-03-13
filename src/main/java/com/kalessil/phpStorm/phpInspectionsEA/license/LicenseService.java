@@ -42,13 +42,13 @@ final public class LicenseService {
     private String getProxy() {
         final HttpConfigurable proxySettings = HttpConfigurable.getInstance();
         final String host                    = proxySettings.PROXY_HOST;
-        if (!proxySettings.USE_HTTP_PROXY || host == null || host.isEmpty()) {
+        if (! proxySettings.USE_HTTP_PROXY || host == null || host.isEmpty()) {
             return null;
         }
 
         String credentials = "";
         final String login = proxySettings.getProxyLogin();
-        if (login != null && !login.isEmpty()) {
+        if (login != null && ! login.isEmpty()) {
             final String password = proxySettings.getPlainProxyPassword();
             credentials = login + (password == null ? "" : (':' + password)) + '@';
         }
@@ -77,20 +77,22 @@ final public class LicenseService {
     }
 
     public void initializeClient() throws IOException, URISyntaxException, TurboActivateException {
-        final URL binaries = EAUltimateApplicationComponent.class.getResource("/TurboActivate/");
+        final URL binaries = EAUltimateApplicationComponent.class.getClassLoader().getResource("TurboActivate/TurboActivate.dat");
         if (binaries == null) {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final String latest = "php-inspections-ea-ultimate-20200703-1828";
+        final String latest = "php-inspections-ea-ultimate-20210313-1806";
         final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath().toAbsolutePath();
         final String path   = location.toString();
-        if (!Files.exists(location)) {
+        if (! Files.exists(location)) {
             /* create location, copy TA resources */
             Files.createDirectory(location);
-            final String[] sourceDetails = binaries.toURI().toString().split("!");
-            final FileSystem pluginJarFs = FileSystems.newFileSystem(URI.create(sourceDetails[0]), new HashMap<>());
-            Files.walk(pluginJarFs.getPath(sourceDetails[1])).forEach(sourceFile -> {
+            final String[] sourceDetails        = binaries.toURI().toString().split("!");
+            final String pluginJarPath          = sourceDetails[0];
+            final String licensingResourcesPath = sourceDetails[1].replace("/TurboActivate.dat", "/");
+            final FileSystem pluginJarFs        = FileSystems.newFileSystem(URI.create(pluginJarPath), new HashMap<>());
+            Files.walk(pluginJarFs.getPath(licensingResourcesPath)).forEach(sourceFile -> {
                 try {
                     Files.copy(
                             sourceFile,
@@ -109,7 +111,7 @@ final public class LicenseService {
             if (directories != null) {
                 final String cleanupPath = cleanupDirectory.toString();
                 Arrays.stream(directories)
-                        .filter(name  -> !name.equals(latest) && name.startsWith("php-inspections-ea-ultimate-"))
+                        .filter(name  -> ! name.equals(latest) && name.startsWith("php-inspections-ea-ultimate-"))
                         .forEach(name -> {
                             try {
                                 Files.walk(Paths.get(cleanupPath + File.separator + name))

@@ -70,7 +70,7 @@ final public class LicenseService {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final String latest = "php-inspections-ea-ultimate-20210314-1130";
+        final String latest = "php-inspections-ea-ultimate-20210314-1305";
         final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath().toAbsolutePath();
         final String path   = location.toString();
         if (! Files.exists(location)) {

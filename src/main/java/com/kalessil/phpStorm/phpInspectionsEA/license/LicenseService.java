@@ -74,7 +74,7 @@ final public class LicenseService {
         final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath().toAbsolutePath();
         final String path   = location.toString();
         if (! Files.exists(location)) {
-            /* create location, copy TA resources */
+            /* create location, extract TurboActivate resources */
             Files.createDirectory(location);
             final String[] sourceDetails        = binaries.toURI().toString().split("!");
             final String pluginJarPath          = sourceDetails[0];

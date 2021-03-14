@@ -58,8 +58,7 @@ final public class LicenseService {
 
     public boolean shouldCheckPluginLicense() {
         if (this.shouldCheckLicense == null) {
-            /* allow usage in headless mode; TODO: testing mode only, not headless */
-            this.shouldCheckLicense = ! ApplicationManager.getApplication().isHeadlessEnvironment();
+            this.shouldCheckLicense = ! ApplicationManager.getApplication().isUnitTestMode();
             this.shouldAllowUsage   = ! this.shouldCheckLicense;
         }
         return this.shouldCheckLicense;
@@ -71,7 +70,7 @@ final public class LicenseService {
             throw new RuntimeException("Licensing related resources are missing.");
         }
 
-        final String latest = "php-inspections-ea-ultimate-20210314-0927";
+        final String latest = "php-inspections-ea-ultimate-20210314-1130";
         final Path location = (new File(Paths.get(PathManager.getTempPath()).toFile(), latest)).toPath().toAbsolutePath();
         final String path   = location.toString();
         if (! Files.exists(location)) {

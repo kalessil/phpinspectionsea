@@ -30,3 +30,9 @@
         /* assign into local variable or use $value further */
         break;
     }
+
+    /* @var iterable $iterable */
+    foreach ($iterable as $value) {
+        /* assign into local variable or use $value further */
+        break;
+    }

@@ -30,7 +30,7 @@ import java.util.*;
 
 public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     private static final String message       = "Please add roave/security-advisories:dev-latest into require-dev as a firewall for vulnerable components.";
-    private static final String useMaster     = "Please use dev-latest instead.";
+    private static final String useLatest     = "Please use dev-latest instead.";
     private static final String useRequireDev = "Dev-packages have no security guaranties, invoke the package via require-dev instead.";
 
     // Inspection options.
@@ -265,7 +265,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
                                     if (!packageVersion.equals("dev-latest")) {
                                         holder.registerProblem(
                                                 pair.getValue(),
-                                                MessagesPresentationUtil.prefixWithEa(useMaster)
+                                                MessagesPresentationUtil.prefixWithEa(useLatest)
                                         );
                                     }
                                     isSecured = true;

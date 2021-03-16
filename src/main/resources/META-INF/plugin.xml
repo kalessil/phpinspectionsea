@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin require-restart="true">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
   <version>4.0.6.1</version>

@@ -50,8 +50,8 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new BasePhpElementVisitor() {
             @Override
-            public void visitPhpThrow(@NotNull PhpThrow throwStatement) {
-                final PsiElement argument = throwStatement.getArgument();
+            public void visitPhpThrow(@NotNull PhpPsiElement expression) {
+                final PsiElement argument = expression.getFirstPsiChild();
                 if (argument instanceof NewExpression) {
                     final NewExpression newExpression   = (NewExpression) argument;
                     final ClassReference classReference = newExpression.getClassReference();

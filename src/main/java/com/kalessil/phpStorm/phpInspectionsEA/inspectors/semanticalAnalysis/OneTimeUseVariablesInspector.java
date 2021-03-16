@@ -199,13 +199,13 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             /* TODO: once got bored, add foreach source pattern here =) I'm naive but nevertheless ^_^ */
 
             @Override
-            public void visitPhpThrow(@NotNull PhpThrow throwStatement) {
+            public void visitPhpThrow(@NotNull PhpPsiElement expression) {
                 if (ANALYZE_THROW_STATEMENTS) {
-                    final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(throwStatement.getArgument());
+                    final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFirstPsiChild());
                     if (argument instanceof PhpPsiElement) {
                         final Variable variable = this.getVariable((PhpPsiElement) argument);
                         if (null != variable) {
-                            checkOneTimeUse(throwStatement, variable);
+                            checkOneTimeUse(expression, variable);
                         }
                     }
                 }

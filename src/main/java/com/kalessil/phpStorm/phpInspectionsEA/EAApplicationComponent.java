@@ -12,6 +12,8 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 public class EAApplicationComponent implements ApplicationComponent {
     private boolean updated;
     private boolean updateNotificationShown;
@@ -23,7 +25,11 @@ public class EAApplicationComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
+        final PluginId pluginId           = PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA");
+        final IdeaPluginDescriptor plugin = Arrays.stream(PluginManagerCore.getPlugins())
+                .filter(descriptor -> pluginId.equals(descriptor.getPluginId()))
+                .findFirst( )
+                .orElse(null);
         if (null == plugin) {
             return;
         }

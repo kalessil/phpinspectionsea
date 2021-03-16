@@ -9,6 +9,8 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.extensions.PluginId;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 public class EAUpdateComponent implements ProjectComponent {
     private EAApplicationComponent applicationComponent;
 
@@ -29,7 +31,11 @@ public class EAUpdateComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         if (applicationComponent.isUpdated() && !applicationComponent.isUpdateNotificationShown()) {
-            IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
+            final PluginId pluginId           = PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA");
+            final IdeaPluginDescriptor plugin = Arrays.stream(PluginManagerCore.getPlugins())
+                    .filter(descriptor -> pluginId.equals(descriptor.getPluginId()))
+                    .findFirst( )
+                    .orElse(null);
             if (null == plugin) {
                 return;
             }

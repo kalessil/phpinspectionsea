@@ -20,6 +20,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
@@ -199,13 +200,13 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
             /* TODO: once got bored, add foreach source pattern here =) I'm naive but nevertheless ^_^ */
 
             @Override
-            public void visitPhpThrow(@NotNull PhpPsiElement expression) {
+            public void visitPhpThrowExpression(@NotNull PhpThrowExpression expression) {
                 if (ANALYZE_THROW_STATEMENTS) {
-                    final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getFirstPsiChild());
+                    final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                     if (argument instanceof PhpPsiElement) {
                         final Variable variable = this.getVariable((PhpPsiElement) argument);
                         if (null != variable) {
-                            checkOneTimeUse(expression, variable);
+                            checkOneTimeUse(expression.getExpression(), variable);
                         }
                     }
                 }

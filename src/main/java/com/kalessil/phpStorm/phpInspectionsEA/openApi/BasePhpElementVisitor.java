@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         } else {
             if (OpenapiTypesUtil.is(element.getFirstChild(), PhpTokenTypes.kwTHROW)) {
                 // PS 2020.3, 2021.1 has changed the throw structure, hence we have to rely on low-level structures.
-                this.visitPhpThrow(element);
+                this.visitPhpThrowExpression(new PhpThrowExpression(element));
             } else {
                 this.visitElement(element);
             }
@@ -47,7 +48,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     public void visitPhpEval(@NotNull PhpEval eval)                                 {}
     public void visitPhpDocTag(@NotNull PhpDocTag tag)                              {}
     public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
-    public void visitPhpThrow(@NotNull PhpPsiElement expression)                    {}
+    public void visitPhpThrowExpression(@NotNull PhpThrowExpression expression)     {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
     @Override public void visitPhpFile(PhpFile PhpFile)        {}

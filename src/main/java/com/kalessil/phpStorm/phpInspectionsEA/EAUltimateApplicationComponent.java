@@ -1,15 +1,14 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.extensions.PluginId;
 import com.kalessil.phpStorm.phpInspectionsEA.license.*;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPlatformUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
@@ -104,7 +103,7 @@ public class EAUltimateApplicationComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        plugin = plugin == null ? PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsUltimate")) : plugin;
+        plugin = plugin == null ? OpenapiPlatformUtil.getPluginById("com.kalessil.phpStorm.phpInspectionsUltimate") : plugin;
         if (plugin == null) {
             return;
         }

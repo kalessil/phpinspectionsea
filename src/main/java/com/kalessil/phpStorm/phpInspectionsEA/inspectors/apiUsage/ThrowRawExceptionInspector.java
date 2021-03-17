@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.GenericPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
@@ -51,10 +52,10 @@ public class ThrowRawExceptionInspector extends PhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new GenericPhpElementVisitor() {
             @Override
-            public void visitPhpThrow(@NotNull PhpThrow throwStatement) {
-                if (this.shouldSkipAnalysis(throwStatement, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
+            public void visitPhpThrowExpression(@NotNull PhpThrowExpression expression) {
+                if (this.shouldSkipAnalysis(expression.getExpression(), StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
-                final PsiElement argument = throwStatement.getArgument();
+                final PsiElement argument = expression.getArgument();
                 if (argument instanceof NewExpression) {
                     final NewExpression newExpression   = (NewExpression) argument;
                     final ClassReference classReference = newExpression.getClassReference();

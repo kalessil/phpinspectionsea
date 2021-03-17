@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
@@ -51,8 +52,8 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
         return new FeaturedPhpElementVisitor() {
             @Override
-            public void visitPhpThrow(@NotNull PhpThrow expression) {
-                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
+            public void visitPhpThrowExpression(@NotNull PhpThrowExpression expression) {
+                if (this.shouldSkipAnalysis(expression.getExpression(), StrictnessCategory.STRICTNESS_CATEGORY_PROBABLE_BUGS)) { return; }
 
                 final PsiElement argument = expression.getArgument();
                 if (!(argument instanceof NewExpression) && OpenapiTypesUtil.isFunctionReference(argument)) {

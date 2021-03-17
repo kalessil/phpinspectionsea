@@ -6,13 +6,16 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateChangesTrackerComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateProjectSettings;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -36,7 +39,13 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
         } else if (element instanceof PhpShellCommandExpression) {
             this.visitPhpShellCommand((PhpShellCommandExpression) element);
         } else {
-            this.visitElement(element);
+            final boolean possiblyThrow = element instanceof StatementWithArgument || element instanceof PhpExpression;
+            if (possiblyThrow && OpenapiTypesUtil.is(element.getFirstChild(), PhpTokenTypes.kwTHROW)) {
+                // PS 2020.3, 2021.1 has changed the throw structure, hence we have to rely on low-level structures.
+                this.visitPhpThrowExpression(new PhpThrowExpression(element));
+            } else {
+                this.visitElement(element);
+            }
         }
     }
 
@@ -44,6 +53,7 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
     public void visitPhpEval(@NotNull PhpEval eval)                                 {}
     public void visitPhpDocTag(@NotNull PhpDocTag tag)                              {}
     public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
+    public void visitPhpThrowExpression(@NotNull PhpThrowExpression expression)     {}
 
     /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
     @Override public void visitPhpFile(PhpFile PhpFile)        {}
@@ -99,7 +109,6 @@ public abstract class GenericPhpElementVisitor extends PhpElementVisitor {
     @Override public void visitPhpTry(Try tryStatement)      {}
     @Override public void visitPhpCatch(Catch phpCatch)      {}
     @Override public void visitPhpFinally(Finally element)   {}
-    @Override public void visitPhpThrow(PhpThrow expression) {}
 
     @Override public void visitPhpSwitch(PhpSwitch switchStatement) {}
     @Override public void visitPhpReturn(PhpReturn returnStatement) {}

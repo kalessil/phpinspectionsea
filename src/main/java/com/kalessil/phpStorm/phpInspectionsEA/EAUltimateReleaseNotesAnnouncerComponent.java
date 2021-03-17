@@ -1,14 +1,13 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.extensions.PluginId;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPlatformUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -40,7 +39,7 @@ public class EAUltimateReleaseNotesAnnouncerComponent implements ProjectComponen
     @Override
     public void projectOpened() {
         if (applicationComponent.isUpdated() && !applicationComponent.isUpdateNotificationShown()) {
-            final IdeaPluginDescriptor ultimatePlugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsUltimate"));
+            final IdeaPluginDescriptor ultimatePlugin = OpenapiPlatformUtil.getPluginById("com.kalessil.phpStorm.phpInspectionsUltimate");
             if (ultimatePlugin == null) {
                 return;
             }
@@ -57,7 +56,7 @@ public class EAUltimateReleaseNotesAnnouncerComponent implements ProjectComponen
                 ));
             });
 
-            final IdeaPluginDescriptor extendedPlugin = PluginManager.getPlugin(PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA"));
+            final IdeaPluginDescriptor extendedPlugin = OpenapiPlatformUtil.getPluginById("com.kalessil.phpStorm.phpInspectionsEA");
             if (extendedPlugin != null) {
                 ApplicationManager.getApplication().executeOnPooledThread(() ->
                     Notifications.Bus.notify(group.createNotification(

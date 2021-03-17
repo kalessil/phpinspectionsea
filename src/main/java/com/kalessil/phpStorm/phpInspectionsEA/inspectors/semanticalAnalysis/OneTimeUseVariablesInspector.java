@@ -17,6 +17,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
@@ -284,15 +285,15 @@ public class OneTimeUseVariablesInspector extends PhpInspection {
             }
 
             @Override
-            public void visitPhpThrow(@NotNull PhpThrow expression) {
-                if (this.shouldSkipAnalysis(expression, StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
+            public void visitPhpThrowExpression(@NotNull PhpThrowExpression expression) {
+                if (this.shouldSkipAnalysis(expression.getExpression(), StrictnessCategory.STRICTNESS_CATEGORY_CONTROL_FLOW)) { return; }
 
                 if (ANALYZE_THROW_STATEMENTS) {
                     final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(expression.getArgument());
                     if (argument instanceof PhpPsiElement) {
                         final Variable variable = this.getVariable(argument);
                         if (variable != null) {
-                            this.checkOneTimeUse(expression, variable, ExpressionSemanticUtil.getScope(expression));
+                            this.checkOneTimeUse(expression.getExpression(), variable, ExpressionSemanticUtil.getScope(expression.getExpression()));
                         }
                     }
                 }

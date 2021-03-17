@@ -1,18 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.extensions.PluginId;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPlatformUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.analytics.AnalyticsUtil;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 public class EAApplicationComponent implements ApplicationComponent {
     private boolean updated;
@@ -25,11 +22,7 @@ public class EAApplicationComponent implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        final PluginId pluginId           = PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA");
-        final IdeaPluginDescriptor plugin = Arrays.stream(PluginManagerCore.getPlugins())
-                .filter(descriptor -> pluginId.equals(descriptor.getPluginId()))
-                .findFirst( )
-                .orElse(null);
+        final IdeaPluginDescriptor plugin = OpenapiPlatformUtil.getPluginById("com.kalessil.phpStorm.phpInspectionsEA");
         if (null == plugin) {
             return;
         }

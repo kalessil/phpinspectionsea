@@ -1,15 +1,12 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.extensions.PluginId;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPlatformUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 public class EAUpdateComponent implements ProjectComponent {
     private EAApplicationComponent applicationComponent;
@@ -31,11 +28,7 @@ public class EAUpdateComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         if (applicationComponent.isUpdated() && !applicationComponent.isUpdateNotificationShown()) {
-            final PluginId pluginId           = PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA");
-            final IdeaPluginDescriptor plugin = Arrays.stream(PluginManagerCore.getPlugins())
-                    .filter(descriptor -> pluginId.equals(descriptor.getPluginId()))
-                    .findFirst( )
-                    .orElse(null);
+            final IdeaPluginDescriptor plugin = OpenapiPlatformUtil.getPluginById("com.kalessil.phpStorm.phpInspectionsEA");
             if (null == plugin) {
                 return;
             }

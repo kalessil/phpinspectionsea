@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -18,8 +17,7 @@ public class CanNotTakeArgumentsByReferenceStrategy {
                 if (nameNode != null) {
                     holder.registerProblem(
                             nameNode,
-                            MessagesPresentationUtil.prefixWithEa(strProblemDescription.replace("%m%", method.getName())),
-                            ProblemHighlightType.ERROR
+                            MessagesPresentationUtil.prefixWithEa(strProblemDescription.replace("%m%", method.getName()))
                     );
                     return;
                 }

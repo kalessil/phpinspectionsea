@@ -9,6 +9,6 @@
     "vendor/four":  "*"
   },
   "require-dev": {
-     "roave/security-advisories": "dev-master"
+     "roave/security-advisories": "dev-latest"
   }
 }

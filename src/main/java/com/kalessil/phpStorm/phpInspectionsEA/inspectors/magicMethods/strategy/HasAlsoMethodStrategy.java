@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -29,8 +28,7 @@ final public class HasAlsoMethodStrategy {
             if (nameNode != null) {
                 holder.registerProblem(
                         nameNode,
-                        MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, method.getName(), companion)),
-                        ProblemHighlightType.GENERIC_ERROR
+                        MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, method.getName(), companion))
                 );
             }
         }

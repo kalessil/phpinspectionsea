@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -40,8 +39,7 @@ final public class MustReturnSpecifiedTypeStrategy {
                         final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
                         holder.registerProblem(
                             nameNode,
-                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), normalizedType.toString()),
-                            ProblemHighlightType.ERROR
+                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), normalizedType.toString())
                         );
                     }
                 }
@@ -55,8 +53,7 @@ final public class MustReturnSpecifiedTypeStrategy {
                     final PhpType withoutStatic = allowedTypes.filter((new PhpType()).add(Types.strStatic));
                     holder.registerProblem(
                         nameNode,
-                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), ""),
-                        ProblemHighlightType.ERROR
+                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), "")
                     );
                 }
             } else {
@@ -83,8 +80,7 @@ final public class MustReturnSpecifiedTypeStrategy {
                     }
                     holder.registerProblem(
                         expression,
-                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), normalizedType.toString()),
-                        ProblemHighlightType.ERROR
+                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), withoutStatic.toString(), normalizedType.toString())
                     );
                 }
                 returns.clear();

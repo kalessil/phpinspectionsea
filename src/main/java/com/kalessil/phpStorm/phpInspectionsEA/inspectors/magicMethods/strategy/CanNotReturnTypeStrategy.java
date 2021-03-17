@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -25,8 +24,7 @@ public class CanNotReturnTypeStrategy {
                 if (null != returnValue && method == ExpressionSemanticUtil.getScope(returnExpression)) {
                     holder.registerProblem(
                             returnExpression,
-                            MessagesPresentationUtil.prefixWithEa(message),
-                            ProblemHighlightType.ERROR
+                            MessagesPresentationUtil.prefixWithEa(message)
                     );
                 }
             }

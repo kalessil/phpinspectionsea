@@ -6,7 +6,7 @@
     "kalessil-team/something-else": "*"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-master"
+    "roave/security-advisories": "dev-latest"
     ,
     "kalessil-team/something-else": "*"
   }

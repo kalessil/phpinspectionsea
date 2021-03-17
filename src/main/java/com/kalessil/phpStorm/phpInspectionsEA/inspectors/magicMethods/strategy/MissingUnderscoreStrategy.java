@@ -2,7 +2,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -54,7 +53,6 @@ final public class MissingUnderscoreStrategy {
                 holder.registerProblem(
                         target,
                         MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, methodName, methodName)),
-                        ProblemHighlightType.WEAK_WARNING,
                         new NameFix()
                 );
             }

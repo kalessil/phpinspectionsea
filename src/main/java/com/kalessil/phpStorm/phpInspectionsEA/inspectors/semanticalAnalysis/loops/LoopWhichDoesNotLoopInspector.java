@@ -33,6 +33,7 @@ public class LoopWhichDoesNotLoopInspector extends PhpInspection {
         foreachExceptions.add("\\Generator");
         foreachExceptions.add("\\Traversable");
         foreachExceptions.add("\\Iterator");
+        foreachExceptions.add("iterable");
     }
 
     @NotNull

@@ -41,6 +41,7 @@ public class IssetArgumentExistenceInspector extends PhpInspection {
     static {
         specialVariables.add("this");
         specialVariables.add("php_errormsg");
+        specialVariables.add("http_response_header");
     }
 
     @NotNull

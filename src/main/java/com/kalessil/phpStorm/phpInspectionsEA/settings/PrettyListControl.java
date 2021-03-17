@@ -90,13 +90,13 @@ public class PrettyListControl {
 
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     model.clear();
-                    model.addAll(defaultItems.get());
+                    defaultItems.get().forEach(model::addElement);
                 }
             });
             popupMenu.add(resetOption);
 
             final JMenuItem mergeOption = new JMenuItem("Merge with default");
-            mergeOption.addActionListener(e -> model.addAll(defaultItems.get()));
+            mergeOption.addActionListener(e -> defaultItems.get().forEach(model::addElement));
             popupMenu.add(mergeOption);
 
             list.addMouseListener(new MouseAdapter() {

@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.magicMethods.strategy;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -26,8 +25,7 @@ final public class TakesExactAmountOfArgumentsStrategy {
             if (nameNode != null) {
                 holder.registerProblem(
                         nameNode,
-                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), argumentsCount),
-                        ProblemHighlightType.ERROR
+                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), method.getName(), argumentsCount)
                 );
             }
         }

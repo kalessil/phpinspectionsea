@@ -35,7 +35,8 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
         } else if (element instanceof PhpShellCommandExpression) {
             this.visitPhpShellCommand((PhpShellCommandExpression) element);
         } else {
-            if (OpenapiTypesUtil.is(element.getFirstChild(), PhpTokenTypes.kwTHROW)) {
+            final boolean possiblyThrow = element instanceof StatementWithArgument || element instanceof PhpExpression;
+            if (possiblyThrow && OpenapiTypesUtil.is(element.getFirstChild(), PhpTokenTypes.kwTHROW)) {
                 // PS 2020.3, 2021.1 has changed the throw structure, hence we have to rely on low-level structures.
                 this.visitPhpThrowExpression(new PhpThrowExpression(element));
             } else {

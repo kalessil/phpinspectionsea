@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -21,7 +20,7 @@ import java.util.Arrays;
 final public class OpenapiPlatformUtil {
     @Nullable
     public static IdeaPluginDescriptor getPluginById(@NotNull String id) {
-        final PluginId pluginId = PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA");
+        final PluginId pluginId = PluginId.getId(id);
         return Arrays.stream(PluginManagerCore.getPlugins())
                 .filter(descriptor -> pluginId.equals(descriptor.getPluginId()))
                 .findFirst()

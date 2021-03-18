@@ -58,7 +58,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                     /* false-positive: return first element from generator, iterable and co */
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(loop);
                     final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
-                    if (last != null && !(last instanceof PhpThrow)) {
+                    if (last != null && ! OpenapiTypesUtil.isThrowExpression(last)) {
                         final PsiElement source = loop.getArray();
                         if (source instanceof PhpTypedElement) {
                             final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) source, holder.getProject());
@@ -117,9 +117,9 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                 }
 
                 final PsiElement lastExpression                  = ExpressionSemanticUtil.getLastStatement(body);
-                final boolean isLoopTerminatedWithLastExpression = lastExpression instanceof PhpBreak ||
+                final boolean isLoopTerminatedWithLastExpression = lastExpression instanceof PhpBreak  ||
                                                                    lastExpression instanceof PhpReturn ||
-                                                                   lastExpression instanceof PhpThrow;
+                                                                   OpenapiTypesUtil.isThrowExpression(lastExpression);
                 /* loop is empty or terminates on first iteration */
                 if (null != lastExpression && !isLoopTerminatedWithLastExpression) {
                     return false;

@@ -86,8 +86,10 @@ public class RedundantElseClauseInspector extends BasePhpInspection {
                 if (lastStatement != null) {
                     final boolean isExitStatement = lastStatement.getFirstChild() instanceof PhpExit;
                     final boolean isReturnPoint   = isExitStatement ||
-                               lastStatement instanceof PhpReturn   || lastStatement instanceof PhpThrow ||
-                               lastStatement instanceof PhpContinue || lastStatement instanceof PhpBreak;
+                               lastStatement instanceof PhpReturn   ||
+                               lastStatement instanceof PhpContinue ||
+                               lastStatement instanceof PhpBreak    ||
+                               OpenapiTypesUtil.isThrowExpression(lastStatement);
 
                     if (isReturnPoint) {
                         holder.registerProblem(

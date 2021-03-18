@@ -86,7 +86,7 @@ public class AlterInForeachInspector extends BasePhpInspection {
                             while (nextExpression instanceof PhpDocComment) {
                                 nextExpression = nextExpression.getNextPsiSibling();
                             }
-                            if (null == nextExpression || nextExpression instanceof PhpReturn || nextExpression instanceof PhpThrow) {
+                            if (nextExpression == null || nextExpression instanceof PhpReturn || OpenapiTypesUtil.isThrowExpression(nextExpression)) {
                                 isRequirementFullFilled = true;
                             }
                             /* check unset is applied to value-variable */

@@ -15,6 +15,8 @@ function cases_holder($x) {
         $x = [],
         $x = ['...', '...' => '...'],
         $x = ['...' => '...', '...'],
+        $x = array_merge( ... []),
+        $x = array_merge( [], ... []),
 
         array_unshift($x, 0),
         array_unshift($x, 0, 1, 2),

@@ -15,6 +15,8 @@ function cases_holder($x) {
         $x = <warning descr="[EA] '[...]' would fit more here (it also much faster).">array_merge([], [])</warning>,
         $x = <warning descr="[EA] '[...]' would fit more here (it also much faster).">array_merge(['...'], ['...' => '...'])</warning>,
         $x = <warning descr="[EA] '[...]' would fit more here (it also much faster).">array_merge(['...' => '...'], ['...'])</warning>,
+        $x = array_merge( ... []),
+        $x = array_merge( [], ... []),
 
         <warning descr="[EA] 'array_unshift($x, ...)' would fit more here (it also faster).">$x = array_merge([0], $x)</warning>,
         <warning descr="[EA] 'array_unshift($x, ...)' would fit more here (it also faster).">$x = array_merge([0, 1, 2], $x)</warning>,

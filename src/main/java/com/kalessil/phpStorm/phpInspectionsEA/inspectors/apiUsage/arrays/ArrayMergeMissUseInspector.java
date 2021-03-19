@@ -3,7 +3,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
@@ -59,16 +61,26 @@ public class ArrayMergeMissUseInspector extends PhpInspection {
                 if (functionName != null && functionName.equals("array_merge")) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0) {
-                        /* case 1: `array_merge([], ...)` - all arguments are arrays  */
+                        /* case 1: `array_merge([], )` - all arguments are arrays  */
                         if (Arrays.stream(arguments).allMatch(a -> a instanceof ArrayCreationExpression)) {
-                            final List<String> fragments = new ArrayList<>();
-                            Arrays.stream(arguments).forEach(a -> Stream.of(a.getChildren()).forEach(c -> fragments.add(c.getText())));
-                            holder.registerProblem(
-                                    reference,
-                                    MessagesPresentationUtil.prefixWithEa(messageUseArray),
-                                    new UseArrayFixer(String.format("[%s]", String.join(", ", fragments)))
-                            );
-                            fragments.clear();
+                            /* false-positive: an array unpacking among arguments */
+                            final boolean hasArrayUnpacking = Arrays.stream(arguments).anyMatch(a -> {
+                                PsiElement previous = a.getPrevSibling();
+                                if (previous instanceof PsiWhiteSpace) {
+                                    previous = previous.getPrevSibling();
+                                }
+                                return OpenapiTypesUtil.is(previous, PhpTokenTypes.opVARIADIC);
+                            });
+                            if (! hasArrayUnpacking) {
+                                final List<String> fragments = new ArrayList<>();
+                                Arrays.stream(arguments).forEach(a -> Stream.of(a.getChildren()).forEach(c -> fragments.add(c.getText())));
+                                holder.registerProblem(
+                                        reference,
+                                        MessagesPresentationUtil.prefixWithEa(messageUseArray),
+                                        new UseArrayFixer(String.format("[%s]", String.join(", ", fragments)))
+                                );
+                                fragments.clear();
+                            }
                         }
 
                         /* case 2: `... = array_merge(..., [])`, `... = array_merge([], ...)` - pushing items into array */

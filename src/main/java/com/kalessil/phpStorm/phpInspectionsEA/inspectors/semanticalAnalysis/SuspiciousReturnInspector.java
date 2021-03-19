@@ -5,11 +5,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.Finally;
+import com.jetbrains.php.lang.psi.elements.Function;
+import com.jetbrains.php.lang.psi.elements.GroupStatement;
+import com.jetbrains.php.lang.psi.elements.PhpReturn;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPlatformUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -48,7 +52,7 @@ public class SuspiciousReturnInspector extends BasePhpInspection {
                 }
                 if (context instanceof Finally) {
                     final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(context.getParent());
-                    if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, PhpThrow.class) != null) {
+                    if (body != null && PsiTreeUtil.findChildOfAnyType(body, PhpReturn.class, OpenapiPlatformUtil.classes.get("PhpThrow")) != null) {
                         holder.registerProblem(
                                 statement,
                                 MessagesPresentationUtil.prefixWithEa(message)

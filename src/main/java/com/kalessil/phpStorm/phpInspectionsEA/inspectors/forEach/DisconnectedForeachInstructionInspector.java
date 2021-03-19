@@ -123,7 +123,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                     if (!OpenapiTypesUtil.isPhpExpressionImpl(oneInstruction) && oneInstruction.getTextLength() > 0) {
                                         /* inner looping termination/continuation should be taken into account */
                                         final PsiElement loopInterrupter
-                                            = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, PhpBreak.class, PhpContinue.class, PhpThrow.class, PhpReturn.class);
+                                            = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, PhpBreak.class, PhpContinue.class, PhpReturn.class, OpenapiPlatformUtil.classes.get("PhpThrow"));
                                         /* operating with variables should be taken into account */
                                         final boolean isVariablesUsed = PsiTreeUtil.findChildOfAnyType(oneInstruction, true, (Class) Variable.class) != null;
                                         if (null == loopInterrupter && isVariablesUsed) {

@@ -105,6 +105,17 @@ final public class OpenapiTypesUtil {
         return result;
     }
 
+    static public boolean isThrowExpression(@Nullable PsiElement expression) {
+        if (expression != null) {
+            // PS 2020.3, 2021.1 has changed the throw structure, hence we have to rely on low-level structures.
+            final boolean possiblyThrow = expression instanceof StatementWithArgument;
+            if (possiblyThrow && OpenapiTypesUtil.is(expression.getFirstChild(), PhpTokenTypes.kwTHROW)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static public boolean is(@Nullable PsiElement expression, @NotNull IElementType type) {
         return expression != null && expression.getNode().getElementType() == type;
     }

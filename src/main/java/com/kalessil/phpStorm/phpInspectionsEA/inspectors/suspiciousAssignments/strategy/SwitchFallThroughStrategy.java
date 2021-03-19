@@ -122,12 +122,12 @@ final public class SwitchFallThroughStrategy {
             /* once break/return met, clean the written expressions out */
             final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
             if (
-                last instanceof PhpBreak ||
-                last instanceof PhpReturn ||
+                last instanceof PhpBreak    ||
+                last instanceof PhpReturn   ||
                 last instanceof PhpContinue ||
-                last instanceof PhpThrow ||
+                last instanceof PhpGoto     ||
                 (last instanceof Statement && last.getFirstChild() instanceof PhpExit) ||
-                last instanceof PhpGoto
+                OpenapiTypesUtil.isThrowExpression(last)
             ) {
                 written.clear();
                 // continue;

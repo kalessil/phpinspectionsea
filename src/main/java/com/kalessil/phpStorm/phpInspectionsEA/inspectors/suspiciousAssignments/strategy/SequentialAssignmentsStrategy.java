@@ -110,8 +110,10 @@ final public class SequentialAssignmentsStrategy {
         final PsiElement lastStatement = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
         if (lastStatement != null) {
             final boolean isReturnPoint =
-                    lastStatement instanceof PhpReturn   || lastStatement instanceof PhpThrow ||
-                    lastStatement instanceof PhpContinue || lastStatement instanceof PhpBreak ||
+                    lastStatement instanceof PhpReturn   ||
+                    lastStatement instanceof PhpContinue ||
+                    lastStatement instanceof PhpBreak    ||
+                    OpenapiTypesUtil.isThrowExpression(lastStatement) ||
                     lastStatement.getFirstChild() instanceof PhpExit;
             if (! isReturnPoint) {
                 PhpPsiElement found = null;

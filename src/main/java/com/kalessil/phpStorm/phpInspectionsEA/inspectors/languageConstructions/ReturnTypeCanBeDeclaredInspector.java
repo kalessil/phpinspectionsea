@@ -304,7 +304,7 @@ public class ReturnTypeCanBeDeclaredInspector extends PhpInspection {
                     if (!types.contains(Types.strNull) && !types.contains(Types.strVoid)) {
                         final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(method);
                         final PsiElement last     = body == null ? null : ExpressionSemanticUtil.getLastStatement(body);
-                        if (!(last instanceof PhpReturn) && !(last instanceof PhpThrow)) {
+                        if (! (last instanceof PhpReturn) && ! OpenapiTypesUtil.isThrowExpression(last)) {
                             types.add(Types.strNull);
                         }
                     }

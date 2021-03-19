@@ -14,6 +14,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPlatformUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
@@ -153,9 +154,9 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression != null && !project.isDisposed()) {
-                final PhpThrow implant = PhpPsiElementFactory.createFromText(project, PhpThrow.class, "throw $x;");
+                final PsiElement implant = PhpPsiElementFactory.createFromText(project, OpenapiPlatformUtil.classes.get("PhpThrow"), "throw $x;");
                 if (implant != null) {
-                    final PsiElement socket = implant.getArgument();
+                    final PsiElement socket = (new PhpThrowExpression((PhpPsiElement) implant)).getArgument();
                     if (socket != null) {
                         socket.replace(expression.copy());
                         expression.getParent().replace(implant);
@@ -185,7 +186,7 @@ public class IncompleteThrowStatementsInspector extends PhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression != null && !project.isDisposed()) {
                 final String replacement = String.format("throw new %s;", expression.getText());
-                final PhpThrow implant   = PhpPsiElementFactory.createFromText(project, PhpThrow.class, replacement);
+                final PsiElement implant = PhpPsiElementFactory.createFromText(project, OpenapiPlatformUtil.classes.get("PhpThrow"), replacement);
                 if (implant != null) {
                     expression.getParent().replace(implant);
                 }

@@ -1,10 +1,8 @@
 package com.kalessil.phpStorm.phpInspectionsEA.license;
 
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.ui.LicensingFacade;
 import com.intellij.util.net.HttpConfigurable;
 import com.kalessil.phpStorm.phpInspectionsEA.EAUltimateApplicationComponent;
 import com.wyday.turboactivate.BoolRef;

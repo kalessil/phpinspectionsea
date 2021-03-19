@@ -7,10 +7,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.FeaturedPhpElementVisitor;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.StrictnessCategory;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -89,9 +91,9 @@ public class BadExceptionsProcessingInspector extends PhpInspection {
                                 /* the catch should be the last and only re-throw */
                                 if (catchStatement.getNextPsiSibling() == null) {
                                     final PsiElement last = ExpressionSemanticUtil.getLastStatement(body);
-                                    if (last instanceof PhpThrow) {
-                                        final PhpThrow lastThrow  = (PhpThrow) last;
-                                        final PsiElement argument = lastThrow.getArgument();
+                                    if (OpenapiTypesUtil.isThrowExpression(last)) {
+                                        final PhpThrowExpression lastThrow = new PhpThrowExpression((PhpPsiElement) last);
+                                        final PsiElement argument          = lastThrow.getArgument();
                                         if (argument != null && OpenapiEquivalenceUtil.areEqual(argument, variable)) {
                                             holder.registerProblem(
                                                     variable,

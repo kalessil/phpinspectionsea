@@ -91,7 +91,7 @@ public class AutoloadingIssuesInspector extends PhpInspection {
                             final String[] mappingFragments = mappingEntry.split(":", 2);
                             if (mappingFragments.length == 2 && classFqn.startsWith('\\' + mappingFragments[0])) {
                                 final List<String> possibleFileLocations = Arrays.stream(mappingFragments[1].split(","))
-                                        .map(location -> StringUtil.trimTrailing(StringUtil.trimLeading(location, '/'), '/') + '/')
+                                        .map(location -> StringUtil.trimTrailing(StringUtil.trimLeading(location, '/'), '/').replace("\\", "/") + '/')
                                         .map(location -> location + fileLocationRelative.replaceFirst(location, ""))
                                         .collect(Collectors.toList());
                                 if (! possibleFileLocations.isEmpty()) {

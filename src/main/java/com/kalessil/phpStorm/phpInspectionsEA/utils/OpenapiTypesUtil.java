@@ -57,6 +57,14 @@ final public class OpenapiTypesUtil {
         return expression != null && expression.getNode().getElementType() == PhpElementTypes.FUNCTION_CALL;
     }
 
+    static public boolean isNullSafeMemberReferenceOperator(@Nullable PsiElement operator) {
+        if (operator != null) {
+            final PsiElement previous = operator.getPrevSibling();
+            return previous != null && previous.getNode().getElementType() == PhpTokenTypes.opQUEST;
+        }
+        return false;
+    }
+
     static public boolean isLoop(@Nullable PsiElement expression) {
         return expression instanceof ForeachStatement ||
                expression instanceof For   ||

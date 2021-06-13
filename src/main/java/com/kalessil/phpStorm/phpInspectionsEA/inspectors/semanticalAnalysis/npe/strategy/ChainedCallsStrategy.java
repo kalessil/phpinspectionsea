@@ -41,7 +41,7 @@ final public class ChainedCallsStrategy {
         @NotNull ProblemsHolder holder
     ) {
         final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-        if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
+        if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW) && ! OpenapiTypesUtil.isNullSafeMemberReferenceOperator(operator)) {
             final PsiElement base = reference.getFirstPsiChild();
             if (base instanceof FunctionReference) {
                 final FunctionReference baseCall = (FunctionReference) base;

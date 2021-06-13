@@ -3,10 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
-import com.jetbrains.php.lang.psi.elements.ClassReference;
-import com.jetbrains.php.lang.psi.elements.MemberReference;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -27,18 +24,20 @@ final public class OpenapiPsiSearchUtil {
     public static PsiElement findResolutionOperator(@Nullable MemberReference reference) {
         if (reference != null) {
             final PhpPsiElement start = reference.getFirstPsiChild();
-            final PsiElement end
-                = start == null ? null : (start instanceof ClassReference ? reference.getLastChild() : start.getNextPsiSibling());
-            if (start != null && end != null) {
-                PsiElement current = start.getNextSibling();
-                while (current != null && current != end) {
-                    final IElementType nodeType = current.getNode().getElementType();
-                    if (nodeType == PhpTokenTypes.ARROW || nodeType == PhpTokenTypes.SCOPE_RESOLUTION) {
-                        return current;
+            if (start != null) {
+                final PsiElement end = reference instanceof FieldReference ? reference.getLastChild() : start.getNextPsiSibling();
+                if (end != null) {
+                    PsiElement current = start.getNextSibling();
+                    while (current != null && current != end) {
+                        final IElementType nodeType = current.getNode().getElementType();
+                        if (nodeType == PhpTokenTypes.ARROW || nodeType == PhpTokenTypes.SCOPE_RESOLUTION) {
+                            return current;
+                        }
+                        current = current.getNextSibling();
                     }
-                    current = current.getNextSibling();
                 }
             }
+
         }
         return null;
     }

@@ -86,7 +86,7 @@ final public class NullableVariablesStrategy {
         }
     }
 
-    static private boolean isNullableResult(@NotNull AssignmentExpression assignment, @NotNull Project project) {
+    private static boolean isNullableResult(@NotNull AssignmentExpression assignment, @NotNull Project project) {
         boolean result                   = false;
         final PsiElement assignmentValue = assignment.getValue();
         /* primary strategy: resolve types and check nullability */
@@ -258,37 +258,39 @@ final public class NullableVariablesStrategy {
             /* cases when NPE can be introduced: member reference */
             else if (parent instanceof MemberReference) {
                 final MemberReference reference = (MemberReference) parent;
-                final PsiElement subject        = reference.getClassReference();
-                if (subject instanceof Variable && ((Variable) subject).getName().equals(variableName)) {
-
-                    /* false-positives: `$variable->property ?? ...`, isset($variable->property), isset($variable->property[...]) */
-                    if (reference instanceof FieldReference) {
-                        PsiElement lastReference    = reference;
-                        PsiElement referenceContext = reference;
-                        while (referenceContext instanceof FieldReference || referenceContext instanceof ArrayAccessExpression) {
-                            lastReference    = referenceContext;
-                            referenceContext = referenceContext.getParent();
-                        }
-                        if (referenceContext instanceof BinaryExpression) {
-                            final BinaryExpression binary = (BinaryExpression) referenceContext;
-                            final boolean isCoalescing    = binary.getOperationType() == PhpTokenTypes.opCOALESCE;
-                            if (isCoalescing && lastReference == binary.getLeftOperand()) {
+                final PsiElement operator       = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW) && ! OpenapiTypesUtil.isNullSafeMemberReferenceOperator(operator)) {
+                    final PsiElement subject        = reference.getClassReference();
+                    if (subject instanceof Variable && ((Variable) subject).getName().equals(variableName)) {
+                        /* false-positives: `$variable->property ?? ...`, isset($variable->property), isset($variable->property[...]) */
+                        if (reference instanceof FieldReference) {
+                            PsiElement lastReference    = reference;
+                            PsiElement referenceContext = reference;
+                            while (referenceContext instanceof FieldReference || referenceContext instanceof ArrayAccessExpression) {
+                                lastReference    = referenceContext;
+                                referenceContext = referenceContext.getParent();
+                            }
+                            if (referenceContext instanceof BinaryExpression) {
+                                final BinaryExpression binary = (BinaryExpression) referenceContext;
+                                final boolean isCoalescing    = binary.getOperationType() == PhpTokenTypes.opCOALESCE;
+                                if (isCoalescing && lastReference == binary.getLeftOperand()) {
+                                    continue;
+                                }
+                            } else if (referenceContext instanceof PhpIsset) {
                                 continue;
                             }
-                        } else if (referenceContext instanceof PhpIsset) {
+                        }
+                        /* false-positive: `$variable = $variable->method(...)` */
+                        else if (reference instanceof MethodReference && grandParent == variableDeclaration) {
                             continue;
                         }
-                    }
-                    /* false-positive: `$variable = $variable->method(...)` */
-                    else if (reference instanceof MethodReference && grandParent == variableDeclaration) {
-                        continue;
-                    }
 
-                    if (processed.add(subject)) {
-                        holder.registerProblem(
-                                subject,
-                                MessagesPresentationUtil.prefixWithEa(message)
-                        );
+                        if (processed.add(subject)) {
+                            holder.registerProblem(
+                                    subject,
+                                    MessagesPresentationUtil.prefixWithEa(message)
+                            );
+                        }
                     }
                 }
             }

@@ -37,7 +37,6 @@ final public class OpenapiPsiSearchUtil {
                     }
                 }
             }
-
         }
         return null;
     }

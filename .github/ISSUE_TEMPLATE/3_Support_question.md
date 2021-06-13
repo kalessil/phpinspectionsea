@@ -10,7 +10,3 @@ about: Questions about using this plugin
 
 Question
 --
-
-<!--
-- The project support is powered by community funding via [Patreon](https://www.patreon.com/kalessil)
--->

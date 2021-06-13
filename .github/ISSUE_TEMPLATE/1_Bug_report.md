@@ -2,8 +2,8 @@
 name: Bug Report
 about: Report errors and problems
 ---
-<!-- First, thank you for reporting a bug. That takes time and we appreciate that! -->
-<!-- Let's start with common details: -->
+
+<!-- Thank you for reporting a bug. That takes time and we appreciate that! -->
 
 | Subject        | Details                                                                       |
 | :------------- | :---------------------------------------------------------------------------- |
@@ -19,7 +19,5 @@ Expected behaviour
 
 Environment details
 ---
-<!--- 
-Information from Help - About dialog (contains IDE and it's version details).
-- The project support is powered by community funding via [Patreon](https://www.patreon.com/kalessil)
--->
+
+Information from Help - About dialog

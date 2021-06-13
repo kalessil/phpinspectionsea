@@ -5,10 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.BinaryExpression;
-import com.jetbrains.php.lang.psi.elements.PhpTypedElement;
-import com.jetbrains.php.lang.psi.elements.SelfAssignmentExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -50,8 +47,10 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
             public void visitPhpBinaryExpression(@NotNull BinaryExpression expression) {
                 final PsiElement operation = expression.getOperation();
                 if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opPLUS)) {
-                    final boolean isNestedBinary = expression.getParent() instanceof BinaryExpression;
-                    if (!isNestedBinary) {
+                    final PsiElement parent                  = expression.getParent();
+                    final boolean isNestedBinary             = parent instanceof BinaryExpression;
+                    final boolean isClassConstantDeclaration = parent instanceof Field;
+                    if (! isNestedBinary && ! isClassConstantDeclaration) {
                         /* do not report ' ... + []' and '[] + ...' */
                         final PsiElement right = expression.getRightOperand();
                         PsiElement left        = expression.getLeftOperand();
@@ -61,7 +60,7 @@ public class AdditionOperationOnArraysInspection extends BasePhpInspection {
                         if (left instanceof PhpTypedElement && right instanceof PhpTypedElement) {
                             final boolean addsImplicitArray = left instanceof ArrayCreationExpression ||
                                                               right instanceof ArrayCreationExpression;
-                            if (!addsImplicitArray) {
+                            if (! addsImplicitArray) {
                                 this.inspectExpression(operation, (PhpTypedElement) left, (PhpTypedElement) right);
                             }
                         }

@@ -1,18 +1,7 @@
 <?php
 
-    $x = [];
-    $y = [];
-
-    $z = $x <warning descr="[EA] Perhaps array_merge/array_replace can be used instead. Feel free to disable the inspection if '+' is intended.">+</warning> $y;
-    $z <warning descr="[EA] Perhaps array_merge/array_replace can be used instead. Feel free to disable the inspection if '+' is intended.">+=</warning> $y;
-
-    /* false-positives: implicit arrays, obvious types and behaviour */
-    $a = [] + $z;
-    $b = [] + $x + $y;
-    $c = $y + $x + [];
-    $d = $z + [];
-    $z += [];
-
-    /* false-positives: summing up with non-array types */
-    $e = $x + '...';
-    $x += '...';
+    /* false-positives: a constant initialization */
+    class Clazz {
+        const SINGLE_ARRAY_CONSTANT = [];
+        const ADDED_ARRAY_CONSTANT  = self::SINGLE_ARRAY_CONSTANT + self::SINGLE_ARRAY_CONSTANT;
+    }

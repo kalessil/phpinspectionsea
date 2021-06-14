@@ -44,7 +44,6 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
         functionsToConstantMapping.put("php_sapi_name", "PHP_SAPI");
         functionsToConstantMapping.put("get_class",     "__CLASS__");
         functionsToConstantMapping.put("pi",            "M_PI");
-        functionsToConstantMapping.put("php_uname",     "PHP_OS");
 
         functionsForOsFamily.add("strpos");
         functionsForOsFamily.add("stripos");
@@ -104,15 +103,8 @@ public class ConstantCanBeUsedInspector extends BasePhpInspection {
                 if (functionName != null && !(reference.getParent() instanceof PhpUse)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (functionsToConstantMapping.containsKey(functionName)) {
-                        boolean canUseConstant = arguments.length == 0;
-                        /* special handling for "php_uname" */
-                        if (functionName.equals("php_uname")) {
-                            canUseConstant = false;
-                            if (arguments.length == 1 && arguments[0] instanceof StringLiteralExpression) {
-                                canUseConstant = ((StringLiteralExpression) arguments[0]).getContents().equals("s");
-                            }
-                        }
-                        if (canUseConstant) {
+                        boolean constantApplicable = arguments.length == 0;
+                        if (constantApplicable) {
                             final String constant = functionsToConstantMapping.get(functionName);
                             holder.registerProblem(
                                     reference,

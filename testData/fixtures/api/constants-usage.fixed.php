@@ -6,10 +6,11 @@
     echo PHP_VERSION;
     echo __CLASS__;
     echo M_PI;
-    echo PHP_OS;
 
     echo phpversion('extension-name');
     echo phpversion($object);
+
+    echo php_uname('s');
     echo php_uname('...');
     echo php_uname();
 

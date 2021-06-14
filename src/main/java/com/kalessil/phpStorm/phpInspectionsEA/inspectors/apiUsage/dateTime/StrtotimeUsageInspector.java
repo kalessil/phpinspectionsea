@@ -69,8 +69,9 @@ public class StrtotimeUsageInspector extends BasePhpInspection {
                 /* handle case: strtotime(..., time()) -> date(...) */
                 else if (arguments.length == 2) {
                     if (OpenapiTypesUtil.isFunctionReference(arguments[1])) {
-                        final String callName = ((FunctionReference) arguments[1]).getName();
-                        if (callName != null && callName.equals("time")) {
+                        final FunctionReference candidate = (FunctionReference) arguments[1];
+                        final String candidateName        = candidate.getName();
+                        if (candidateName != null && candidateName.equals("time") && this.isFromRootNamespace(candidate)) {
                             final String replacement = "strtotime(%a%)".replace("%a%", arguments[0].getText());
                             holder.registerProblem(
                                     reference,

@@ -40,7 +40,7 @@ Supporting the project
 ---
 
 It is possible to support the project by buying a [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-) license.
-The funding used for maintaining analyzer and introducing new features.
+The raised funding used for maintaining analyzer and introducing new features.
 
 Acknowledgments
 ---

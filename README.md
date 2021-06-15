@@ -36,16 +36,13 @@ Please follow this [documentation link](docs/getting-started.md).
 
 Enhancing the experience
 ---
-Once you have accommodated with the analyzer and want move to further, check [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-) out.
+Once you have accommodated with the analyzer and want move to further, check [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-) out.
 
-Crowdfunding
+Supporting the project
 ---
 
-It's also possible to support the project on [Patreon](https://www.patreon.com/kalessil) or by buying a 
-[Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-) license.
-
-This funding is used for maintaining the project and adding new features into Code Style, PHPUnit and similar inspections 
-groups of Php Inspections (EA Extended).
+It is possible to support the project by buying a [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-) license.
+The funding used for maintaining analyzer and introducing new features.
 
 Acknowledgments
 ---

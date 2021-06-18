@@ -24,5 +24,7 @@ final public class AutoloadingIssuesInspectorTest extends PhpCodeInsightFixtureT
         myFixture.testHighlighting(true, false, true);
         myFixture.configureByFile("testData/fixtures/classes/brokenAutoloading/0000_00_00_000000_Version000000_.php");
         myFixture.testHighlighting(true, false, true);
+        myFixture.configureByFile("testData/fixtures/classes/brokenAutoloading/class-wordpress-valid-case.php");
+        myFixture.testHighlighting(true, false, true);
     }
 }

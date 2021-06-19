@@ -66,7 +66,9 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                 if (tag.getName().equals("@noinspection")) {
                     final String[] candidates = tag.getTagValue().replaceAll("[^\\p{L}\\p{Nd}]+", " ").trim().split("\\s+");
                     if (candidates.length > 0) {
-                        final List<String> unknown = Stream.of(candidates[0]).filter(c -> ! inspections.contains(c)).collect(Collectors.toList());
+                        final List<String> unknown = Stream.of(candidates[0])
+                                .filter(c -> ! inspections.contains(c) && ! inspections.contains(c + "Inspection"))
+                                .collect(Collectors.toList());
                         if (! unknown.isEmpty()) {
                             final PsiElement target = tag.getFirstChild();
                             if (target != null) {

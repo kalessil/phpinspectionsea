@@ -11,3 +11,5 @@
     /** @noinspection PhpMissingParentCallCommonInspection */
     /** @noinspection PhpUnused */
     /** @noinspection SqlResolve */
+    /** @noinspection SqlAggregates */
+    /** @noinspection SqlRedundantOrderingDirection */

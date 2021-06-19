@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.intellij.codeInspection.LocalInspectionEP.LOCAL_INSPECTION;
+import static com.intellij.codeInspection.InspectionEP.GLOBAL_INSPECTION;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -35,6 +36,9 @@ public class UnknownInspectionInspector extends BasePhpInspection {
     final private static Set<String> inspections = new HashSet<>();
     static {
         ApplicationManager.getApplication().invokeLater(() -> {
+            Arrays.stream(GLOBAL_INSPECTION.getExtensions())
+                    .map(InspectionEP::getShortName)
+                    .forEach(inspections::add);
             Arrays.stream(LOCAL_INSPECTION.getExtensions())
                     .map(InspectionEP::getShortName)
                     .forEach(inspections::add);

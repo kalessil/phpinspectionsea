@@ -32,9 +32,12 @@ class aClass {
         echo sprintf($pattern4, $arg, $arg);
         echo sprintf($pattern4, $arg, $arg);
         echo sprintf('%d', $arg);
+        echo sprintf('%04.d', $arg);
         echo sprintf('%1$d %1$d', $arg);
         echo sprintf("%% %1$'.-9d %1$'.-9d %s", $arg);
         echo sprintf('%% %1$\'.-9d %1$\'.-9d %s', $arg);
+        echo sprintf('%f', $arg);
+        echo sprintf('%0.2f', $arg);
 
         /* false-positive: sscanf returning array */
         list($first, $second) = sscanf($arg, $pattern4);

@@ -17,9 +17,11 @@ final public class UnnecessaryCastingInspectorTest extends PhpCodeInsightFixture
 
     public void testIfFindsAllPatternsPhp8() {
         PhpLanguageLevel.set(PhpLanguageLevel.PHP800);
-        myFixture.enableInspections(new UnnecessaryCastingInspector());
-        myFixture.configureByFile("testData/fixtures/types/unnecessary-casting.php8.php");
-        myFixture.testHighlighting(true, false, true);
+        if (PhpLanguageLevel.get(myFixture.getProject()) == PhpLanguageLevel.PHP800) {
+            myFixture.enableInspections(new UnnecessaryCastingInspector());
+            myFixture.configureByFile("testData/fixtures/types/unnecessary-casting.php8.php");
+            myFixture.testHighlighting(true, false, true);
+        }
         PhpLanguageLevel.set(null);
     }
 }

@@ -26,7 +26,7 @@ It covers:
 Some of inspections are expecting conditional statements (e.g. "if") to use group statement for wrapping body 
 expressions. If this requirement is met then additional inspections are applied to the source code.
 
-On some projects CPU and therefore battery usage could be intensive, so it should be taken into account when traveling
+On some projects CPU and therefore battery usage could be intensive, so it should be taken into account when traveling.
 
 Installation and getting started
 ---

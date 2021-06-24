@@ -150,7 +150,22 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                 } else {
                     result = OpenapiResolveUtil.resolveType(expression, project);
                 }
-                return result == null ? PhpType.EMPTY : result.filterUnknown();
+
+                /* Normalize the resolved types */
+                if (result != null && ! result.isEmpty()) {
+                    result = result.filterUnknown();
+                    /* When `?->` operator is used, add null */
+                    if (expression instanceof MemberReference) {
+                        final MemberReference reference = (MemberReference) expression;
+                        final PsiElement operator       = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                        if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW) && ! OpenapiTypesUtil.isNullSafeMemberReferenceOperator(operator)) {
+                            result = new PhpType().add(result.filterNull()).add(PhpType.NULL);
+                        }
+                    }
+                    return result;
+                }
+
+                return PhpType.EMPTY;
             }
 
             private boolean isWeakTypedParameter(@NotNull Variable variable) {

@@ -1,6 +1,6 @@
 dist:     trusty
 language: java
-jdk:      oraclejdk11
+jdk:      oraclejdk8
 
 addons:
   apt_packages:

@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.types;
 
 import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.UnnecessaryCastingInspector;
 
@@ -18,6 +19,7 @@ final public class UnnecessaryCastingInspectorTest extends PhpCodeInsightFixture
     public void testIfFindsAllPatternsPhp8() {
         final PhpLanguageLevel level = PhpLanguageLevel.parse("8.0");
         if (level != null && level.getVersionString().equals("8.0")) {
+            PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
             myFixture.enableInspections(new UnnecessaryCastingInspector());
             myFixture.configureByFile("testData/fixtures/types/unnecessary-casting.php8.php");
             myFixture.testHighlighting(true, false, true);

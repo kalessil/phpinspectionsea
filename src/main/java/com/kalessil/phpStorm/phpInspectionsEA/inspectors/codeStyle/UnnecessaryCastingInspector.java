@@ -158,7 +158,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     if (expression instanceof MemberReference) {
                         final MemberReference reference = (MemberReference) expression;
                         final PsiElement operator       = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                        if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW) && ! OpenapiTypesUtil.isNullSafeMemberReferenceOperator(operator)) {
+                        if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW) && OpenapiTypesUtil.isNullSafeMemberReferenceOperator(operator)) {
                             result = new PhpType().add(result.filterNull()).add(PhpType.NULL);
                         }
                     }

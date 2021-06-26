@@ -23,7 +23,7 @@ final public class UnnecessaryCastingInspectorTest extends PhpCodeInsightFixture
         final PhpLanguageLevel level = PhpLanguageLevel.parse("8.0");
         if (level != null && level.getVersionString().equals("8.0"))  {
             // PS 2020.2 introduced very limited PHP 8 support, hence we are checking the feature availability as well
-            final boolean run = Arrays.stream(PhpLanguageFeature.class.getEnumConstants()).anyMatch(v -> v.name().equals("NULLSAFE_DEREFERENCING"));
+            final boolean run = Arrays.stream(PhpLanguageFeature.class.getEnumConstants()).anyMatch(v -> v.toString().equals("NULLSAFE_DEREFERENCING"));
             if (run) {
                 PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
                 myFixture.enableInspections(new UnnecessaryCastingInspector());

@@ -8,14 +8,22 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.tree.IElementType;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -28,6 +36,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
     private static final String messagePattern = "The construct can be replaced with '%s'.";
+
+    private static final Map<IElementType, String> inversionMapping = new HashMap<>(8);
+    static {
+        inversionMapping.put(PhpTokenTypes.opIDENTICAL, "!==");
+        inversionMapping.put(PhpTokenTypes.opNOT_IDENTICAL, "===");
+        inversionMapping.put(PhpTokenTypes.opEQUAL, "!=");
+        inversionMapping.put(PhpTokenTypes.opNOT_EQUAL, "==");
+        inversionMapping.put(PhpTokenTypes.opGREATER, "<=");
+        inversionMapping.put(PhpTokenTypes.opGREATER_OR_EQUAL, "<");
+        inversionMapping.put(PhpTokenTypes.opLESS, ">=");
+        inversionMapping.put(PhpTokenTypes.opLESS_OR_EQUAL, ">");
+    }
 
     @NotNull
     @Override
@@ -136,13 +156,38 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement from = this.from.getElement();
             final PsiElement to   = this.to.getElement();
-            if (from != null && to != null && !project.isDisposed()) {
-                final String code = this.replacement + ';';
+            if (from != null && to != null && ! project.isDisposed()) {
+                PhpReturn replacement = PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, this.replacement + ';');
+                /* Do simplifications if possible */
+                final PsiElement returnArgument = replacement.getArgument();
+                if (returnArgument instanceof UnaryExpression) {
+                    final UnaryExpression unary = (UnaryExpression) returnArgument;
+                    if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
+                        final PsiElement unaryArgument = unary.getOperation();
+                        if (unaryArgument instanceof ParenthesizedExpression) {
+                            final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(unaryArgument);
+                            if (argument instanceof BinaryExpression) {
+                                final BinaryExpression binary = (BinaryExpression) argument;
+                                final PsiElement left         = binary.getLeftOperand();
+                                final PsiElement right        = binary.getRightOperand();
+                                final IElementType operator   = binary.getOperationType();
+                                if (left != null && right != null && inversionMapping.containsKey(operator)) {
+                                    replacement = PhpPsiElementFactory.createPhpPsiFromText(
+                                            project,
+                                            PhpReturn.class,
+                                            String.format("return %s %s %s;", left.getText(), inversionMapping.get(operator), right.getText())
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+                /* Do the replacement */
                 if (from == to) {
-                    from.replace(PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, code));
+                    from.replace(replacement);
                 } else {
                     final PsiElement parent = from.getParent();
-                    parent.addBefore(PhpPsiElementFactory.createPhpPsiFromText(project, PhpReturn.class, code), from);
+                    parent.addBefore(replacement, from);
                     parent.deleteChildRange(from, to);
                 }
             }

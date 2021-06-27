@@ -37,4 +37,22 @@ class CasesHolder {
         /* a comment here */
         return !($x > 0);
     }
+
+    public function ifReturnReturnResultSimplification($x) {
+        return $x !== 0;
+
+        return $x === 0;
+
+        return $x != 0;
+
+        return $x == 0;
+
+        return $x <= 0;
+
+        return $x < 0;
+
+        return $x >= 0;
+
+        return $x > 0;
+    }
 }

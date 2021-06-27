@@ -43,4 +43,30 @@ class CasesHolder {
         <warning descr="[EA] The construct can be replaced with 'return !($x > 0)'.">if</warning> ($x > 0) { return false; }
         else { return true; }
     }
+
+    public function ifReturnReturnResultSimplification($x) {
+        <warning descr="[EA] The construct can be replaced with 'return !($x === 0)'.">if</warning> ($x === 0) { return false; }
+        return true;
+
+        <warning descr="[EA] The construct can be replaced with 'return !($x !== 0)'.">if</warning> ($x !== 0) { return false; }
+        return true;
+
+        <warning descr="[EA] The construct can be replaced with 'return !($x == 0)'.">if</warning> ($x == 0) { return false; }
+        return true;
+
+        <warning descr="[EA] The construct can be replaced with 'return !($x != 0)'.">if</warning> ($x != 0) { return false; }
+        return true;
+
+        <warning descr="[EA] The construct can be replaced with 'return !($x > 0)'.">if</warning> ($x > 0) { return false; }
+        return true;
+
+        <warning descr="[EA] The construct can be replaced with 'return !($x >= 0)'.">if</warning> ($x >= 0) { return false; }
+        return true;
+
+        <warning descr="[EA] The construct can be replaced with 'return !($x < 0)'.">if</warning> ($x < 0) { return false; }
+        return true;
+
+        <warning descr="[EA] The construct can be replaced with 'return !($x <= 0)'.">if</warning> ($x <= 0) { return false; }
+        return true;
+    }
 }

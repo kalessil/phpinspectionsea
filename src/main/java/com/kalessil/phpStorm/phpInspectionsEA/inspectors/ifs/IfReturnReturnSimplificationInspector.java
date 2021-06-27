@@ -20,9 +20,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /*
@@ -163,7 +161,7 @@ public class IfReturnReturnSimplificationInspector extends BasePhpInspection {
                 if (returnArgument instanceof UnaryExpression) {
                     final UnaryExpression unary = (UnaryExpression) returnArgument;
                     if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.opNOT)) {
-                        final PsiElement unaryArgument = unary.getOperation();
+                        final PsiElement unaryArgument = unary.getValue();
                         if (unaryArgument instanceof ParenthesizedExpression) {
                             final PsiElement argument = ExpressionSemanticUtil.getExpressionTroughParenthesis(unaryArgument);
                             if (argument instanceof BinaryExpression) {

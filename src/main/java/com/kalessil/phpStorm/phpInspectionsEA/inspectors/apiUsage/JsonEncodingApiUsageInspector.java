@@ -33,8 +33,8 @@ import java.util.Set;
 public class JsonEncodingApiUsageInspector extends BasePhpInspection {
     // Inspection options.
     public boolean HARDEN_DECODING_RESULT_TYPE = true;
-    public boolean DECODE_AS_ARRAY             = true;
-    public boolean DECODE_AS_OBJECT            = false;
+    public boolean DECODE_AS_ARRAY             = false;
+    public boolean DECODE_AS_OBJECT            = true;
     public boolean HARDEN_ERRORS_HANDLING      = true;
 
     private static final String messageResultType     = "Please specify the second argument (clarifies decoding into array or object).";

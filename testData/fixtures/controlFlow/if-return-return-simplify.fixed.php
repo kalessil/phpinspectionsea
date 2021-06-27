@@ -2,7 +2,7 @@
 
 class CasesHolder {
     public function ifReturnReturnOne($x) {
-        return !($x > 0);
+        return $x <= 0;
     }
     public function ifReturnReturnTwo($x) {
         return $x > 0;
@@ -26,7 +26,7 @@ class CasesHolder {
         return $x > 0;
     }
     public function ifReturnElseReturnTwo($x) {
-        return !($x > 0);
+        return $x <= 0;
     }
     public function ifReturnElseReturnThree($x) {
         if ($x > 0) { return true; }
@@ -35,7 +35,7 @@ class CasesHolder {
     public function ifReturnElseReturnFour($x) {
         if ($x === 0) { return true; }
         /* a comment here */
-        return !($x > 0);
+        return $x <= 0;
     }
 
     public function ifReturnReturnResultSimplification($x) {

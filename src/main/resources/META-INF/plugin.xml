@@ -166,10 +166,6 @@
          groupName="Control Flow"                                  enabledByDefault="true" level="WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArraySearchUsedAsInArrayInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="UnsetConstructsCanBeMergedInspection"          displayName="'unset(...)' constructs can be merged"
-         groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnsetConstructsCanBeMergedInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="StrTrUsageAsStrReplaceInspection"              displayName="'strtr(...)' could be replaced with 'str_replace(...)'"
          groupName="Control Flow"                                  enabledByDefault="true" level="WEAK WARNING"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings.StrTrUsageAsStrReplaceInspector"/>
@@ -613,6 +609,11 @@
         shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
         groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="UnsetConstructsCanBeMergedInspection"          displayName="'unset(...)' constructs can be merged"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnsetConstructsCanBeMergedInspector"/>
+
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="ElvisOperatorCanBeUsedInspection"              displayName="Elvis operator can be used"

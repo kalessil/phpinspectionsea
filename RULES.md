@@ -121,8 +121,7 @@ Inspections Lists (Code style)
 | Code Style           | ImplodeArgumentsOrderInspection                 | 'implode(...)' arguments order                      | yes | yes | yes  | no  |
 | Code Style           | ShortEchoTagCanBeUsedInspection                 | Short echo tag can be used                          | yes | yes | yes  | no  |
 | Code Style           | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
-| Control Flow         | UnsetConstructsCanBeMergedInspection            | 'unset(...)' constructs can be merged               | yes | yes | yes  | yes |
-
+| Code Style           | UnsetConstructsCanBeMergedInspection            | 'unset(...)' constructs can be merged               | yes | yes | yes  | yes |
 
 Inspections Lists (Language level migration)
 ---

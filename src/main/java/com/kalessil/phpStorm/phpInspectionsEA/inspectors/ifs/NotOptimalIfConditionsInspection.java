@@ -9,6 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.PhpExpressionImpl;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionsCouplingCheckUtil;
@@ -20,6 +21,8 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.hierarhy.InterfacesExtractUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
+import com.jetbrains.php.lang.psi.resolve.types.PhpTypeInfo;
 
 import javax.swing.*;
 import java.util.*;
@@ -40,12 +43,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     public boolean REPORT_DUPLICATE_CONDITIONS   = true;
     public boolean REPORT_INSTANCE_OF_FLAWS      = true;
     public boolean SUGGEST_OPTIMIZING_CONDITIONS = true;
+    public boolean REPORT_NON_BOOL_CONDITIONS    = true;
 
     private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
     private static final String messageInstanceOfAmbiguous       = "This condition is ambiguous and can be safely removed.";
     private static final String messageOrdering                  = "This condition execution costs less than the previous one.";
     private static final String messageDuplicateConditions       = "This condition is duplicated in another if/elseif branch.";
     private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
+    private static final String messageNonBoolCondition          = "Non-boolean if expression.";
 
     @NotNull
     @Override
@@ -86,7 +91,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             @Override
             public void visitPhpIf(@NotNull If ifStatement) {
                 final List<PsiElement> objAllConditions = new ArrayList<>();
-                final IElementType[] arrOperationHolder = { null };
+                final IElementType[] arrOperationHolder = {null};
 
                 List<PsiElement> objConditionsFromStatement = this.inspectExpressionsOrder(ifStatement.getCondition(), arrOperationHolder);
                 if (null != objConditionsFromStatement) {
@@ -98,6 +103,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     if (REPORT_INSTANCE_OF_FLAWS) {
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
                         this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
+                    }
+                    if (REPORT_NON_BOOL_CONDITIONS) {
+                        this.inspectConditionsForNonBooleanTypes(objConditionsFromStatement);
                     }
 
                     objConditionsFromStatement.clear();
@@ -172,7 +180,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                     // ensure resolvable
                     final ClassReference reference = (ClassReference) instanceOfExpression.getRightOperand();
-                    final PsiElement resolved      = OpenapiResolveUtil.resolveReference(reference);
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                     if (!(resolved instanceof PhpClass)) {
                         continue;
                     }
@@ -206,14 +214,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     // investigate one subject when it has multiple instanceof-expressions
                     if (subjectContainer.size() > 1) {
                         // walk through conditions
-                        for (Map.Entry<PsiElement, PhpClass> instanceOf2class: subjectContainer.entrySet()) {
+                        for (Map.Entry<PsiElement, PhpClass> instanceOf2class : subjectContainer.entrySet()) {
                             /* unpack the pair */
-                            final PhpClass clazz                  = instanceOf2class.getValue();
+                            final PhpClass clazz = instanceOf2class.getValue();
                             final PsiElement instanceOfExpression = instanceOf2class.getKey();
 
                             // extract current condition details
                             final Set<PhpClass> clazzParents = resolvedInheritanceChains
-                                .computeIfAbsent(clazz, c -> InterfacesExtractUtil.getCrawlInheritanceTree(c, true));
+                                    .computeIfAbsent(clazz, c -> InterfacesExtractUtil.getCrawlInheritanceTree(c, true));
 
                             // inner loop for verification
                             for (Map.Entry<PsiElement, PhpClass> instanceOf2classInner : subjectContainer.entrySet()) {
@@ -268,15 +276,15 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     for (final PsiElement expression : conditions) {
                         if (expression instanceof BinaryExpression) {
                             final BinaryExpression binaryExpression = (BinaryExpression) expression;
-                            final PsiElement left                   = binaryExpression.getLeftOperand();
-                            final PsiElement right                  = binaryExpression.getRightOperand();
+                            final PsiElement left = binaryExpression.getLeftOperand();
+                            final PsiElement right = binaryExpression.getRightOperand();
                             if (
-                                left != null && right != null &&
-                                OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
+                                    left != null && right != null &&
+                                            OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(binaryExpression.getOperationType())
                             ) {
                                 if (
-                                    OpenapiEquivalenceUtil.areEqual(testSubject, left) ||
-                                    OpenapiEquivalenceUtil.areEqual(testSubject, right)
+                                        OpenapiEquivalenceUtil.areEqual(testSubject, left) ||
+                                                OpenapiEquivalenceUtil.areEqual(testSubject, right)
                                 ) {
                                     holder.registerProblem(
                                             expression,
@@ -353,7 +361,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 /* pickup only expressions not depending on previously modified variables */
                 final List<String> modifiedVariables = this.getPreviouslyModifiedVariables(ifStatement);
-                final List<PsiElement> conditions    = objAllConditions.stream()
+                final List<PsiElement> conditions = objAllConditions.stream()
                         .filter(expression -> {
                             boolean result = true;
                             if (!modifiedVariables.isEmpty()) {
@@ -417,7 +425,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                     /* ignore variables (even if compared with booleans) */
                     if (variableCandidate instanceof BinaryExpression) {
-                        final PsiElement left  = ((BinaryExpression) variableCandidate).getLeftOperand();
+                        final PsiElement left = ((BinaryExpression) variableCandidate).getLeftOperand();
                         final PsiElement right = ((BinaryExpression) variableCandidate).getRightOperand();
                         if (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right)) {
                             variableCandidate = left;
@@ -426,9 +434,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                         }
                     }
                     if (
-                        variableCandidate instanceof Variable ||
-                        variableCandidate instanceof ConstantReference ||
-                        variableCandidate instanceof FieldReference
+                            variableCandidate instanceof Variable ||
+                                    variableCandidate instanceof ConstantReference ||
+                                    variableCandidate instanceof FieldReference
                     ) {
                         continue;
                     }
@@ -488,14 +496,14 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 }
 
                 /* verify if costs estimated are optimal */
-                int intPreviousCost     = 0;
+                int intPreviousCost = 0;
                 PsiElement previousCond = null;
                 for (final PsiElement condition : conditions) {
                     int intLoopCurrentCost = ExpressionCostEstimateUtil.getExpressionCost(condition, functionsSet);
 
                     if (
-                        null != previousCond && intLoopCurrentCost < intPreviousCost &&
-                        !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(previousCond, condition)
+                            null != previousCond && intLoopCurrentCost < intPreviousCost &&
+                                    !ExpressionsCouplingCheckUtil.isSecondCoupledWithFirst(previousCond, condition)
                     ) {
                         holder.registerProblem(
                                 condition,
@@ -510,6 +518,30 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
                 return conditions;
             }
+
+            private void inspectConditionsForNonBooleanTypes(@NotNull List<PsiElement> conditions) {
+                for (final PsiElement expression : conditions) {
+                    PhpType type;
+                    if (expression.toString().equals(PhpExpressionImpl.CONSTANT_REF.toString())) {
+                        PhpReference reference = (PhpReference) expression;
+                        type = PhpTypeInfo.getType(reference.resolve(), 2);
+                    } else if (expression.toString().equals(PhpExpressionImpl.VARIABLE.toString())) {
+                        type = PhpTypeInfo.getType(expression, 2);
+                    } else {
+                        holder.registerProblem(
+                                expression,
+                                MessagesPresentationUtil.prefixWithEa(messageNonBoolCondition + " (got " + expression + ")")
+                        );
+                        continue;
+                    }
+                    if (type != null && !type.isEmpty() && type.isComplete() && !type.toString().equals("bool")) {
+                        holder.registerProblem(
+                                expression,
+                                MessagesPresentationUtil.prefixWithEa(messageNonBoolCondition + " (got " + type.toString() + ")")
+                        );
+                    }
+                }
+            }
         };
     }
 
@@ -519,6 +551,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
             component.addCheckbox("Report instanceof usage flaws", REPORT_INSTANCE_OF_FLAWS, (isSelected) -> REPORT_INSTANCE_OF_FLAWS = isSelected);
             component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
             component.addCheckbox("Suggest optimizing conditions", SUGGEST_OPTIMIZING_CONDITIONS, (isSelected) -> SUGGEST_OPTIMIZING_CONDITIONS = isSelected);
+            component.addCheckbox("Report non-boolean conditions", REPORT_NON_BOOL_CONDITIONS, (isSelected) -> REPORT_NON_BOOL_CONDITIONS = isSelected);
         });
     }
 }

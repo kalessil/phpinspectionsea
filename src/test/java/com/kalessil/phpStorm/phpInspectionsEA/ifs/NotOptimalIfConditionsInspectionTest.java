@@ -52,4 +52,13 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.configureByFile("testData/fixtures/ifs/if-instanceof-flaws-false-positives.php");
         myFixture.testHighlighting(true, false, true);
     }
+
+    public void testNonBooleanConditions() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP540);
+        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
+        inspector.REPORT_NON_BOOL_CONDITIONS         = true;
+        myFixture.enableInspections(inspector);
+        myFixture.configureByFile("testData/fixtures/ifs/if-non-bool-conditions.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

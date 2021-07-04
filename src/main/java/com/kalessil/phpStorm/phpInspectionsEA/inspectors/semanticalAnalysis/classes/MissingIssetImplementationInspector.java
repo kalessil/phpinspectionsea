@@ -2,7 +2,9 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.cla
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -13,6 +15,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
+import org.mozilla.javascript.ast.AstNode;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -70,10 +73,12 @@ public class MissingIssetImplementationInspector extends BasePhpInspection {
                 for (final PhpExpression parameter : parameters) {
                     if (parameter instanceof FieldReference) {
                         final FieldReference reference = (FieldReference) parameter;
+                        final ASTNode nameNode         = reference.getNameNode();
                         final String parameterName     = parameter.getName();
                         /* if the field name is not implicit or the field resolved, continue */
                         if (
-                            reference.getNameNode() == null || parameterName == null ||
+                            (nameNode == null || nameNode instanceof Variable) ||
+                            (parameterName == null || parameterName.isEmpty()) ||
                             OpenapiResolveUtil.resolveReference(reference) != null
                         ) {
                             continue;

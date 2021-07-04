@@ -7,7 +7,8 @@ function cases_holder(\PDO $x)
     /* comment should not break inspection */
     /** multiple DocBlocks should not break inspection */
 
-    $x->exec('...');
+    // Should not be reported, see https://github.com/doctrine/dbal/pull/3200#discussion_r663412391
+    $x->query('...');
 
     /* false-positives: parameters */
     $z = $x->prepare('');

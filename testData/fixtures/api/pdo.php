@@ -8,7 +8,8 @@ function cases_holder(\PDO $x)
     /** multiple DocBlocks should not break inspection */
     <weak_warning descr="[EA] 'PDO::query(...)' should be used instead of 'prepare-execute' calls chain.">$y->execute()</weak_warning>;
 
-    <weak_warning descr="[EA] 'PDO::exec(...)' should be used instead (consumes less resources).">$x->query('...')</weak_warning>;
+    // Should not be reported, see https://github.com/doctrine/dbal/pull/3200#discussion_r663412391
+    $x->query('...');
 
     /* false-positives: parameters */
     $z = $x->prepare('');

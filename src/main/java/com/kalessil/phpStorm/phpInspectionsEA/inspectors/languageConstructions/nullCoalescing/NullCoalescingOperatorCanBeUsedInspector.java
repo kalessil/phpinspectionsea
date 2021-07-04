@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -248,14 +249,23 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                 final boolean expectsToBeNotEmpty = condition == extracted;
                 final PsiElement candidate        = expectsToBeNotEmpty ? first : second;
                 if (candidate instanceof FieldReference) {
-                    final PsiElement reference = ((FieldReference) candidate).getClassReference();
-                    if (reference != null && OpenapiEquivalenceUtil.areEqual(extracted, reference)) {
-                        final PsiElement alternative = expectsToBeNotEmpty ? second : first;
-                        return String.format(
-                                "%s ?? %s",
-                                String.format(this.wrap(candidate) ? "(%s)" : "%s", candidate.getText()),
-                                String.format(this.wrap(alternative) ? "(%s)" : "%s", alternative == null ? "null" : alternative.getText())
-                        );
+                    final FieldReference fieldReference = (FieldReference) candidate;
+                    final PsiElement base               = fieldReference.getClassReference();
+                    if (base != null && OpenapiEquivalenceUtil.areEqual(extracted, base)) {
+                        final PhpType resolved = OpenapiResolveUtil.resolveType(fieldReference, fieldReference.getProject());
+                        if (resolved != null && ! resolved.filterUnknown().isEmpty()) {
+                            final PsiElement alternative = expectsToBeNotEmpty ? second : first;
+                            final boolean isNullable     = resolved.filterUnknown().getTypes().stream()
+                                    .map(Types::getType)
+                                    .anyMatch(t -> t.equals(Types.strNull));
+                            if (! isNullable || (alternative == null || PhpLanguageUtil.isNull(alternative))) {
+                                return String.format(
+                                        "%s ?? %s",
+                                        String.format(this.wrap(fieldReference) ? "(%s)" : "%s", fieldReference.getText()),
+                                        String.format(this.wrap(alternative) ? "(%s)" : "%s", alternative == null ? "null" : alternative.getText())
+                                );
+                            }
+                        }
                     }
                 }
                 return null;

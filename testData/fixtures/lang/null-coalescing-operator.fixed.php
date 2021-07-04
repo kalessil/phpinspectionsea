@@ -1,4 +1,13 @@
 <?php
+    class Clazz {
+        /** @var string */
+        public $string;
+
+        /** @var null|Clazz */
+        public $nullable;
+    }
+    /** @var Clazz $object */
+    /** @var Clazz[] $array */
 
     /* pattern: isset */
     echo $x[0] ?? null;
@@ -19,12 +28,15 @@
     echo $classname::$test ?? 'test';
 
     /* pattern: not-empty ? property-reference : alternative */
-    echo $object->property ?? null;
+    echo $object->nullable ?? null;
+    echo $object->string ?? null;
+    echo $array[$index]->string ?? null;
+    echo $object->nullable->string ?? null;
+    echo $object->string ?? null;
     echo $array[$index]->property ?? null;
-    echo $object->property->property ?? null;
-    echo $object->property ?? null;
-    echo $array[$index]->property ?? null;
-    echo $object->property->property ?? null;
+    echo $object->string->property ?? null;
+    echo $object ? $object->nullable : '...';
+    echo $unknown ? $unknown->nullable : '...';
 
     /* false-positives */
     echo array_key_exists(0, $x) ? $x[0] : 'default';

@@ -1,4 +1,13 @@
 <?php
+    class Clazz {
+        /** @var string */
+        public $string;
+
+        /** @var null|Clazz */
+        public $nullable;
+    }
+    /** @var Clazz $object */
+    /** @var Clazz[] $array */
 
     /* pattern: isset */
     echo <weak_warning descr="[EA] '$x[0] ?? null' can be used instead (reduces cognitive load).">isset($x[0]) ? $x[0] : null</weak_warning>;
@@ -19,12 +28,15 @@
     echo <weak_warning descr="[EA] '$classname::$test ?? 'test'' can be used instead (reduces cognitive load).">isset($classname::$test) ? $classname::$test : 'test'</weak_warning>;
 
     /* pattern: not-empty ? property-reference : alternative */
-    echo <weak_warning descr="[EA] '$object->property ?? null' can be used instead (reduces cognitive load).">$object ? $object->property : null</weak_warning>;
-    echo <weak_warning descr="[EA] '$array[$index]->property ?? null' can be used instead (reduces cognitive load).">$array[$index] ? $array[$index]->property : null</weak_warning>;
-    echo <weak_warning descr="[EA] '$object->property->property ?? null' can be used instead (reduces cognitive load).">$object->property ? $object->property->property : null</weak_warning>;
-    echo <weak_warning descr="[EA] '$object->property ?? null' can be used instead (reduces cognitive load).">!empty($object) ? $object->property : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$object->nullable ?? null' can be used instead (reduces cognitive load).">$object ? $object->nullable : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$object->string ?? null' can be used instead (reduces cognitive load).">$object ? $object->string : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$array[$index]->string ?? null' can be used instead (reduces cognitive load).">$array[$index] ? $array[$index]->string : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$object->nullable->string ?? null' can be used instead (reduces cognitive load).">$object->nullable ? $object->nullable->string : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$object->string ?? null' can be used instead (reduces cognitive load).">!empty($object) ? $object->string : null</weak_warning>;
     echo <weak_warning descr="[EA] '$array[$index]->property ?? null' can be used instead (reduces cognitive load).">!empty($array[$index]) ? $array[$index]->property : null</weak_warning>;
-    echo <weak_warning descr="[EA] '$object->property->property ?? null' can be used instead (reduces cognitive load).">!empty($object->property) ? $object->property->property : null</weak_warning>;
+    echo <weak_warning descr="[EA] '$object->string->property ?? null' can be used instead (reduces cognitive load).">!empty($object->string) ? $object->string->property : null</weak_warning>;
+    echo $object ? $object->nullable : '...';
+    echo $unknown ? $unknown->nullable : '...';
 
     /* false-positives */
     echo array_key_exists(0, $x) ? $x[0] : 'default';

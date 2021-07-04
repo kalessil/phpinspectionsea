@@ -22,4 +22,11 @@ final public class StaticInvocationViaThisInspectorTest extends PhpCodeInsightFi
         myFixture.configureByFile("testData/fixtures/classes/static-method-invocation-via-this-phpunit.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfRespectsEloquentModels() {
+        final StaticInvocationViaThisInspector inspector = new StaticInvocationViaThisInspector();
+        inspector.EXCEPT_PHPUNIT_ASSERTIONS              = true;
+        myFixture.enableInspections(inspector);
+        myFixture.configureByFile("testData/fixtures/classes/static-method-invocation-via-this-eloquent.php");
+        myFixture.testHighlighting(true, false, true);
+    }
 }

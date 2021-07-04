@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 public class StaticInvocationViaThisInspector extends BasePhpInspection {
     // Inspection options.
     public boolean EXCEPT_PHPUNIT_ASSERTIONS = true;
+    public boolean EXCEPT_ELOQUENT_MODELS    = true;
 
     private static final String messageThisUsed       = "'self::%s(...)' should be used instead.";
     private static final String messageExpressionUsed = "'...::%s(...)' should be used instead.";
@@ -69,8 +70,12 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                                     if (resolved instanceof Method) {
                                         final Method method = (Method) resolved;
-                                        if (method.isStatic()) {
-                                            this.handleLateStaticBinding(base, operator, method);
+                                        if (method.isStatic() && ! this.shouldSkip(method)) {
+                                            holder.registerProblem(
+                                                    base,
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messageThisUsed), method.getName()),
+                                                    new TheLocalFix(holder.getProject(), base, operator)
+                                            );
                                         }
                                     }
                                 }
@@ -78,17 +83,32 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                                 /* <expression>->static() */
                                 if (! (base instanceof Variable) || ! this.isParameterOrUseVariable((Variable) base)) {
                                     final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                    if (resolved instanceof Method && ((Method) resolved).isStatic()) {
-                                        holder.registerProblem(
-                                                reference,
-                                                String.format(MessagesPresentationUtil.prefixWithEa(messageExpressionUsed), methodName)
-                                        );
+                                    if (resolved instanceof Method) {
+                                        final Method method = (Method) resolved;
+                                        if (method.isStatic() && ! this.shouldSkip(method)) {
+                                            holder.registerProblem(
+                                                    reference,
+                                                    String.format(MessagesPresentationUtil.prefixWithEa(messageExpressionUsed), methodName)
+                                            );
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            private boolean shouldSkip(@NotNull Method method) {
+                final String fqn = method.getFQN();
+                if (EXCEPT_PHPUNIT_ASSERTIONS && fqn.startsWith("\\PHPUnit")) {
+                    final String normalized = fqn.indexOf('_') == -1 ? fqn : fqn.replaceAll("_", "\\\\");
+                    return normalized.startsWith("\\PHPUnit\\Framework\\");
+                }
+                if (EXCEPT_ELOQUENT_MODELS && fqn.startsWith("\\Illuminate\\Database\\Eloquent\\Model.")) {
+                    return true;
+                }
+                return false;
             }
 
             private boolean isParameterOrUseVariable(@NotNull Variable variable) {
@@ -108,23 +128,6 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
                     }
                 }
                 return result;
-            }
-
-            private void handleLateStaticBinding(@NotNull PsiElement base, @NotNull PsiElement operator, @NotNull Method method) {
-                if (EXCEPT_PHPUNIT_ASSERTIONS) {
-                    final String fqn = method.getFQN();
-                    if (fqn.startsWith("\\PHPUnit")) {
-                        final String normalized = fqn.indexOf('_') == -1 ? fqn : fqn.replaceAll("_", "\\\\");
-                        if (normalized.startsWith("\\PHPUnit\\Framework\\")) {
-                            return;
-                        }
-                    }
-                }
-                holder.registerProblem(
-                        base,
-                        String.format(MessagesPresentationUtil.prefixWithEa(messageThisUsed), method.getName()),
-                        new TheLocalFix(holder.getProject(), base, operator)
-                );
             }
         };
     }
@@ -170,8 +173,9 @@ public class StaticInvocationViaThisInspector extends BasePhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return OptionsComponent.create((component) ->
-            component.addCheckbox("Except PHPUnit assertions", EXCEPT_PHPUNIT_ASSERTIONS, (isSelected) -> EXCEPT_PHPUNIT_ASSERTIONS = isSelected)
-        );
+        return OptionsComponent.create((component) -> {
+            component.addCheckbox("Except PHPUnit assertions", EXCEPT_PHPUNIT_ASSERTIONS, (isSelected) -> EXCEPT_PHPUNIT_ASSERTIONS = isSelected);
+            component.addCheckbox("Except Eloquent models", EXCEPT_ELOQUENT_MODELS, (isSelected) -> EXCEPT_ELOQUENT_MODELS = isSelected);
+        });
     }
 }

@@ -120,16 +120,30 @@ public class UselessReturnInspector extends BasePhpInspection {
 
             private boolean isBoundReference(@NotNull Variable variable, @NotNull Function function) {
                 boolean result            = false;
-                final List<Variable> used = ExpressionSemanticUtil.getUseListVariables(function);
-                if (used != null) {
-                    final String variableName      = variable.getName();
-                    final Optional<Variable> match = used.stream().filter(v -> v.getName().equals(variableName)).findFirst();
-                    if (match.isPresent()) {
-                        final PsiElement previous  = match.get().getPrevSibling();
-                        final PsiElement candidate = previous instanceof PsiWhiteSpace ? previous.getPrevSibling() : previous;
-                        result                     = OpenapiTypesUtil.is(candidate, PhpTokenTypes.opBIT_AND);
+                final String variableName = variable.getName();
+                if (! variableName.isEmpty() && ! (result = this.isReferenceBoundTo(variableName, function))) {
+                    final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                    if (body != null) {
+                        result = PsiTreeUtil.findChildrenOfType(body, Function.class).stream()
+                                .anyMatch(l -> this.isReferenceBoundTo(variableName, l));
                     }
-                    used.clear();
+                }
+                return result;
+            }
+
+            private boolean isReferenceBoundTo(@NotNull String variableName, @NotNull Function function) {
+                boolean result = false;
+                if (OpenapiTypesUtil.isLambda(function)) {
+                    final List<Variable> used = ExpressionSemanticUtil.getUseListVariables(function);
+                    if (used != null) {
+                        final Optional<Variable> match = used.stream().filter(v -> v.getName().equals(variableName)).findFirst();
+                        if (match.isPresent()) {
+                            final PsiElement previous  = match.get().getPrevSibling();
+                            final PsiElement candidate = previous instanceof PsiWhiteSpace ? previous.getPrevSibling() : previous;
+                            result                     = OpenapiTypesUtil.is(candidate, PhpTokenTypes.opBIT_AND);
+                        }
+                        used.clear();
+                    }
                 }
                 return result;
             }

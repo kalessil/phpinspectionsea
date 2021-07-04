@@ -1,19 +1,22 @@
 <?php
 
-function cases_holder($parameter) {
-    $lambda = function ($regular, & $reference) use (& $parameter) {
-        if ($parameter === null) {
-            return $parameter = '...';
+function cases_holder($boundParameter, $unboundParameter) {
+    $boundLocal = null;
+    $lambda = function ($regular, & $reference) use (& $boundParameter, & $boundLocal) {
+        if ($boundParameter === null) {
+            return $boundParameter = '...';
         }
-        if ($parameter === null) {
+        if ($boundLocal === null) {
+            return $boundLocal = '...';
+        }
+        if ($reference === null) {
             return $reference = '...';
         }
-        if ($parameter === null) {
+        if ($regular === null) {
             <weak_warning descr="[EA] Assignment here is not making much sense.">return $regular = '...';</weak_warning>
         }
     };
-
-    <weak_warning descr="[EA] Assignment here is not making much sense.">return $parameter = $lambda;</weak_warning>
+    <weak_warning descr="[EA] Assignment here is not making much sense.">return $unboundParameter = $lambda;</weak_warning>
 }
 
 function multiple_return_statements($parameter) {

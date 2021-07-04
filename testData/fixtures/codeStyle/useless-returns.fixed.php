@@ -1,18 +1,21 @@
 <?php
 
-function cases_holder($parameter) {
-    $lambda = function ($regular, & $reference) use (& $parameter) {
-        if ($parameter === null) {
-            return $parameter = '...';
+function cases_holder($boundParameter, $unboundParameter) {
+    $boundLocal = null;
+    $lambda = function ($regular, & $reference) use (& $boundParameter, & $boundLocal) {
+        if ($boundParameter === null) {
+            return $boundParameter = '...';
         }
-        if ($parameter === null) {
+        if ($boundLocal === null) {
+            return $boundLocal = '...';
+        }
+        if ($reference === null) {
             return $reference = '...';
         }
-        if ($parameter === null) {
+        if ($regular === null) {
             return '...';
         }
     };
-
     return $lambda;
 }
 

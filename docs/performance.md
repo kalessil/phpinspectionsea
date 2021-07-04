@@ -108,7 +108,7 @@ methods calls, which can be reduced by introducing a local variable.
 
 ## Non-optimal regular expression
 
-> Note: the inspection is further developed in [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-)
+> Note: the inspection is further developed in [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-)
 
 The inspection applies multiple checks to regular expressions in preg_* functions:
 

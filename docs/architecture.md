@@ -99,18 +99,31 @@ From this angle the inspection can spot existing architecture issues and alert w
 
 ## Transitive dependencies usage
 
-> Note: this inspection is part of [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-).
+> Note: this inspection is part of [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-).
 
 > Note: it also worth checking [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker) for CI purposes
 
-The inspection reports transitive dependencies usages when composer is being used as the package manager.
+The inspection reports transitive dependencies usages in codebase when Composer is being used as the package manager.
 
 Transitive dependencies (classes from packages which are not required in application manifest) are managed by implicitly 
 declared dependencies and might be dropped or updated to incompatible/compromised version at any time when application 
 dependencies being updated.
 
-The issue can be resolved by adding the transitive dependency into require/require-dev section of applications' 
-composer.json file.  
+The issue can be resolved by adding the transitive dependency into require/require-dev section of the applications' 
+composer.json file.
+
+## Development dependencies usage
+
+> Note: this inspection is part of [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-).
+
+The inspection reports development dependencies usages in codebase when Composer is being used as the package manager.
+
+Development dependencies are the dependencies declared in require-dev section of composer.json (and their transitive dependencies).
+When a codebase uses components from development dependencies, it might fail in production, where applications typically
+deployed without development dependencies.
+
+The issue can be resolved by adding the development dependency into require section of the applications' composer.json file
+or using a component from production packages.
 
 ## Badly organized exception handling
 

@@ -79,7 +79,7 @@ class names are expanded even if the class does not exist. No error is issued in
 
 ## Null pointer exceptions prevention
 
-> Note: the inspection is further developed in [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-)
+> Note: the inspection is further developed in [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-)
 > where it covers more cases that described here.
 
 This inspection name is clearly taken from Java. We're also actively enhancing this inspection towards similar checks in Java.
@@ -115,7 +115,7 @@ another process has already managed to create the directory.
 
 ## 'file_put_contents(...)' race condition
 
-> Note: this inspection is part of [Php Inspections (EA Ultimate)](http://plugins.jetbrains.com/plugin/10215-php-inspections-ea-ultimate-).
+> Note: this inspection is part of [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-).
 
 > Note: in order to report all cases, please check the inspection settings.
 

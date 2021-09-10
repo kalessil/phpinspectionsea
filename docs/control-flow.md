@@ -34,7 +34,7 @@ The inspection reports following cases:
 ```
 
 The case doesn't have any parameters binding and the prepared statement is not really make any sense. 
-Also the result of the query execution is not even checked. Following changes can be applied to fix the case:
+Also, the result of the query execution is not even checked. Following changes can be applied to fix the case:
 
 - Apply a Quick-Fix to use PDO:query() instead
 - Bind arguments while executing the statement
@@ -185,7 +185,7 @@ In some cases variables are used as temporary value containers and it's possible
 ## 'list(...) = ' usage possible
 
 Since PHP 5.5 it's possible to use mass-assignments from array with 'list($variable, ...) = $array'. 
-Additionally to code compactness and performance, you'll notice if data array contains any un-used entries.
+Additionally, to code compactness and performance, you'll notice if data array contains any un-used entries.
 
 ```php
     /* before */

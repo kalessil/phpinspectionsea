@@ -17,18 +17,18 @@ After installation IDE will suggest restarting, do so to get plugin loaded.
 
 ## Initial configuration
 
-If you just started using the analyzer, it worth following those steps:
+If you just started using the analyzer, it is worth following those steps:
 * Right click on root folder, click "Inspect code" or "Analyze"->"Inspect code";
 * Exclude all third-party components (e.g. vendor folder);
 * Click "Ok" and wait for analysis completion;
 * Review reported issues and decide if you want to deactivate some of them;
-* It also worth reviewing entries reported in the "Probable Bugs" group at first place;
+* It is also worth reviewing entries reported in the "Probable Bugs" group at first place;
 
-You can activate disabled inspections later in IDE settings. Also some inspections have own settings 
+You can activate disabled inspections later in IDE settings. Also some inspections have own settings,
 and perhaps you would want to review them before deactivating anything.
 
 ## Automatic fixes for found issues
 
-Most of inspections has so called Quick-Fixes fixing the reported issues. They are applicable in 2 ways:
+Most of the inspections has so called Quick-Fixes fixing the reported issues. They are applicable in 2 ways:
 * from inspection results (button with action title)
 * from a bulb appearing when you placing the cursor on a reported code fragment (code is grayed out, colored and etc.);

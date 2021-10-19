@@ -30,8 +30,8 @@ final public class AssertResourceExistsStrategy {
 
         targetMapping.put("assertTrue",     "assert%sExists");
         targetMapping.put("assertNotFalse", "assert%sExists");
-        targetMapping.put("assertFalse",    "assert%sNotExists");
-        targetMapping.put("assertNotTrue",  "assert%sNotExists");
+        targetMapping.put("assertFalse",    "assert%sDoesNotExist");
+        targetMapping.put("assertNotTrue",  "assert%sDoesNotExist");
     }
 
     private final static String messagePattern = "'%s(...)' would fit more here.";

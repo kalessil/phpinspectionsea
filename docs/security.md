@@ -25,7 +25,7 @@ implicitly specifying which classes can be unserialized.
     /* graceful approach which supports older versions of PHP */ 
     if (PHP_VERSION_ID >= 70000) {
         /* to forbid classes unserializing at all use this: array('allowed_classes' => false) */
-        $unserializedData = unserialize($serializedData, array('allowed_classes' => ['Class1', 'Class2']));
+        $unserializedData = unserialize($serializedData, ['allowed_classes' => ['Class1', 'Class2']]);
     } else {
         $unserializedData = unserialize($serializedData);
     }

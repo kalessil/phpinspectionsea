@@ -349,9 +349,7 @@ public class ForeachInvariantsInspector extends BasePhpInspection {
                         final PsiElement grandParent = parent.getParent();
                         if (grandParent instanceof FunctionReference) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) grandParent);
-                            if (resolved instanceof Function) {
-                                return Arrays.stream(((Function) resolved).getParameters()).noneMatch(Parameter::isPassByRef);
-                            }
+                            return resolved instanceof Function && Arrays.stream(((Function) resolved).getParameters()).noneMatch(Parameter::isPassByRef);
                         }
                     } else if (parent instanceof AssignmentExpression) {
                         /* assignments, but not by reference */

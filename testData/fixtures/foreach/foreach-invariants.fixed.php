@@ -106,4 +106,12 @@ namespace {
             echo $string[$i];
         }
     }
+
+    function method_with_reference(& $array) {}
+    function quick_fix_correctness() {
+        foreach ($arr as $i => $iValue) {
+            array_push($arr[$i], '...');
+            $this->method_with_reference($arr[$i]);
+        }
+    }
 }

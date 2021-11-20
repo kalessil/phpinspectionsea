@@ -109,4 +109,12 @@ namespace {
             echo $string[$i];
         }
     }
+
+    function method_with_reference(& $array) {}
+    function quick_fix_correctness() {
+        <warning descr="[EA] Foreach can probably be used instead (easier to read and support).">for</warning> ($i = 0, $max1 = count($arr); $i < $max1; ++$i) {
+            array_push($arr[$i], '...');
+            $this->method_with_reference($arr[$i]);
+        }
+    }
 }

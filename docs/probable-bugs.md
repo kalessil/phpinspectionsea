@@ -152,10 +152,10 @@ This is PHP-specific and mentioned in the [documentation](https://secure.php.net
 The inspection is targeting isset(...) and empty(...) constructs applied to class property references. If the property 
 could not be resolved, the `__isset` method existence is verified and reported if missing.
 
-The main assumption made here is that codebase is not relying to dynamic properties, but on DTOs (Data Transfer Objects).
-With this assumption magic methods `__isset` (we check only this one), `__get`, `__set` are needed.
+The main assumption made here is that the codebase is not relying on dynamic properties, but on DTOs (Data Transfer Objects).
+With this assumption the magic methods `__isset` (we check only this one), `__get`, `__set` are needed.
 
-If the `__isset` method is not implemented, the both target constructs will constantly return `false`.
+If the `__isset` method is not implemented, then both target constructs will constantly return `false`.
 
 ## Incorrect random generation range
 

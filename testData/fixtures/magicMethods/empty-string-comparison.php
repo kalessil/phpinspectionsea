@@ -1,14 +1,11 @@
 <?php
 
-function checkUseCases(string $string, float $float, int $int)
+function cases_holder(string $string, float $float, int $int)
 {
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">mb_strlen($string)</weak_warning>)  {}
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">!mb_strlen($string)</weak_warning>) {}
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>)     {}
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">!strlen($string)</weak_warning>)    {}
-
-    if ($string === null || <weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>) {}
-    if ($string !== null && <weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>) {}
 
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">strlen($string) == 0</weak_warning>)  {}
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string) != 0</weak_warning>)  {}
@@ -30,4 +27,12 @@ function checkUseCases(string $string, float $float, int $int)
     /* not yet supported */
     if (1 >  strlen($string)) {}
     if (1 <= strlen($string)) {}
+}
+
+function isolated_cases_holder()
+{
+    $string = '';
+
+    if (false || <weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>) {}
+    if (true && <weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>) {}
 }

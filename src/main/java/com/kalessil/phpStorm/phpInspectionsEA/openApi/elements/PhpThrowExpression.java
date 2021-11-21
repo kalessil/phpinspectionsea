@@ -1,9 +1,15 @@
 package com.kalessil.phpStorm.phpInspectionsEA.openApi.elements;
 
+import com.intellij.psi.PsiElement;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StatementWithArgument;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -24,7 +30,17 @@ final public class PhpThrowExpression {
 
     @Nullable
     public PhpPsiElement getArgument() {
-        return expression.getFirstPsiChild();
+        // PS 2020.3, 2021.1 has changed the throw structure, hence we have to rely on low-level structures.
+        final Optional<PsiElement> argument = Stream.of(expression, expression.getFirstChild())
+                .filter(e -> OpenapiTypesUtil.is(e.getFirstChild(), PhpTokenTypes.kwTHROW))
+                .findFirst();
+        if (argument.isPresent()) {
+            final PsiElement expression = argument.get();
+            if (expression instanceof PhpPsiElement) {
+                return ((PhpPsiElement) expression).getFirstPsiChild();
+            }
+        }
+        return null;
     }
 
     @NotNull

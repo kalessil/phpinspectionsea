@@ -52,7 +52,7 @@ file. This breaks class autoloading. The inspection will spot class and file nam
 PHP´s magic [`::class`-constant](http://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class) will not 
 canonical the casing of your imports.
 
-This can lead to hard to debug errors when you a using a case sensitive `PSR-11`-locator service like `Zend\ServiceManager`.
+This can lead to hard to debug errors when you are using a case-sensitive `PSR-11`-locator service like `Zend\ServiceManager`.
 
 ```php
 namespace FirstNamespace;
@@ -65,7 +65,7 @@ namespace YetAnotherNamespace;
 
 use FirstNamespace\Testclass; // wrong case in last segment
 
-$instance = new TestClass(); // perfectly valid since php itself is not case sensitive for classnames
+$instance = new TestClass(); // perfectly valid since php itself is not case-sensitive for classnames
 
 $container->get(TestClass::class); 
 // TestClass::class expands to FirstNamespace\Testclass which is not registered in the $container

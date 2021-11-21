@@ -9,7 +9,7 @@ This document covers changes to your code to improve php performance.
 
 PHP7 introduced significant improvements in performance and memory usage. One of improvements was an optimization of
 internals for associative arrays. To be more specific if an array has only integer keys organized in natural
-ascending order, then it will consume less memory and work a little bit faster with core array functions.
+ascending order, then it will consume less memory and work a little faster with core array functions.
 
 Php Inspections (EA Extended) checks array creation constructs and gives hints if found ways for enabling the
 optimizations.

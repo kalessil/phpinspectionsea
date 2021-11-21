@@ -4,7 +4,7 @@ This document covers various architectural changes that you might want to apply 
 
 ## Class overrides a field of a parent class
 
-In general the issue is due to name collision. Nevertheless in the context of inheritance, it is better to verify the reported cases.
+In general the issue is due to name collision. Nevertheless, in the context of inheritance, it is better to verify the reported cases.
 
 Reported cases and possible alternatives:
 
@@ -101,7 +101,7 @@ From this angle the inspection can spot existing architecture issues and alert w
 
 > Note: this inspection is part of [Php Inspections (EA Ultimate)](https://plugins.jetbrains.com/plugin/16935-php-inspections-ea-ultimate-).
 
-> Note: it also worth checking [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker) for CI purposes
+> Note: it is also worth checking [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker) for CI purposes
 
 The inspection reports transitive dependencies usages in codebase when Composer is being used as the package manager.
 
@@ -160,23 +160,23 @@ Analyzes functions and methods parameters usage, verifying multiple cases:
 - 'is_*(...)' calls against parameter type
 - assigning new values to parameter against parameter type
 
-> Note: when parameter is annotated as 'mixed', consider revising it to set specific type (the inspection skips analysis if finds 'mixed').
+> Note: when parameter is annotated as 'mixed', consider revising it to set specific type (the inspection skips analysis if it finds 'mixed').
 
 > Note: this inspection is disabled by default.
 
 ```php
     function name (string $string, array $array) {
-        /* gets reported, as we assigning string into originally array variable */
+        /* gets reported, as we're assigning string into originally array variable */
         $array = '...'; 
         
         /* gets reported, making no sense (always false in fact) */
         if (is_array($string)) {
-            /* something happends here */
+            /* something happens here */
         }
 
         /* gets reported, making no sense (always true in fact) */
         if (is_string($string)) {
-            /* something happends here */
+            /* something happens here */
         }
     }
 ```

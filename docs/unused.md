@@ -117,7 +117,7 @@ Reports if a method only content is a parent method call.
 
 ## Child method is exactly the same
 
-Reports methods identical to parent's one (code duplication). In order to not slow dow IDE only methods with length of 20 expressions or less being analyzed.
+Reports methods identical to parent's one (code duplication). In order to not slow dow IDE only methods with length of 20 expressions or fewer being analyzed.
 
 ```php
     /* before */

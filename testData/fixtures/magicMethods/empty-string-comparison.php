@@ -7,8 +7,8 @@ function checkUseCases(string $string, float $float, int $int)
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>)     {}
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">!strlen($string)</weak_warning>)    {}
 
-    if ($string || <weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>) {}
-    if ($string && <weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>) {}
+    if ($string === null || <weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>) {}
+    if ($string !== null && <weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>) {}
 
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">strlen($string) == 0</weak_warning>)  {}
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string) != 0</weak_warning>)  {}

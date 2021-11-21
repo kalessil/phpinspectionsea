@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  */
 
 public class ShortEchoTagCanBeUsedInspector extends BasePhpInspection {
-    private static final String message = "'<?= ... ?>' could be used instead (but ensure that short_open_tag is enabled).";
+    private static final String message = "'<?= ... ?>' could be used instead.";
 
     @NotNull
     @Override

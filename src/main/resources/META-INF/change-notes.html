@@ -1,13 +1,27 @@
 <html>
-Hot-fix release:<br/>
+Hot-fix release (incl. IDE compatibility fixes):<br/>
 <br/>
-- Addition operator used on arrays: resolved a false-positive (class constant initialization)<br/>
-- Updated vendor information<br/>
+- Vendor information update, IDE compatibility fixes<br/>
+- Addition operator used on arrays: dropped (unstable and low value)<br/>
+- Class autoloading correctness: resolved a false-positive (WordPress coding standards)<br/>
+- Declare directive correctness: dropped (a native inspection available)<br/>
+- Empty/isset results correctness: resolved a false-positive (multiple cases)<br/>
+- JSON encoding API usage: fix default settings (was not matching default behaviour)<br/>
+- If-return-return could be simplified: enhanced QF<br/>
 - Newer IDE versions compatibility fixes (deprecated APIs)<br/>
 - Magic methods validity: respect severity settings<br/>
 - Non-optimal regular expression: messages wording fixes<br/>
+- Null coalescing operator can be used: resolved false-positives (multiple cases)<br/>
 - Null reference: resolved false-positives ('?->' operator)<br/>
-- Static methods invocation via '->': enable 'Except PHPUnit assertions' by default<br/>
+- PDO API usage: drop query to exec pattern (not working the same over different drivers)<br/>
+- Static methods invocation via '->': enable 'Except PHPUnit assertions' by default, skip Eloquent models by default<br/>
+- Unknown inspection suppression: resolved false-positives (SQL and global inspections)<br/>
+- Unnecessary call arguments specification: dropped (a native inspection available)<br/>
+- Unnecessary type casting: resolved a false-positive (null-safe operator)<br/>
+- Useless return: resolved a false-positive (bound references)<br/>
+- __DIR__ constant can be used: resolved a false-positive (PHP_OS)<br/>
+- 'strtotime(...)' misused: resolved a false-positive (custom time-function)<br/>
+- *printf/*scanf arguments count mismatches: resolved a false-positive (valid decimal formatters)<br/>
 <br/>
 <hr/>
 </html>

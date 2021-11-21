@@ -9,6 +9,8 @@ import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.stream.Stream;
+
 final public class OpenapiTypesUtil {
     final public static TokenSet tsCOMPARE_EQUALITY_OPS = TokenSet.create(
             PhpTokenTypes.opEQUAL,
@@ -98,8 +100,9 @@ final public class OpenapiTypesUtil {
         if (expression != null) {
             // PS 2020.3, 2021.1 has changed the throw structure, hence we have to rely on low-level structures.
             final boolean possiblyThrow = expression instanceof StatementWithArgument;
-            if (possiblyThrow && OpenapiTypesUtil.is(expression.getFirstChild(), PhpTokenTypes.kwTHROW)) {
-                return true;
+            if (possiblyThrow) {
+                return Stream.of(expression, expression.getFirstChild())
+                             .anyMatch(e -> OpenapiTypesUtil.is(e.getFirstChild(), PhpTokenTypes.kwTHROW));
             }
         }
         return false;

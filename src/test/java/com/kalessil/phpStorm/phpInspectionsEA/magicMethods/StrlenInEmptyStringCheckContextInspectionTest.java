@@ -15,7 +15,5 @@ final public class StrlenInEmptyStringCheckContextInspectionTest extends PhpCode
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/magicMethods/empty-string-comparison.fixed.php");
-
-        ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
 }

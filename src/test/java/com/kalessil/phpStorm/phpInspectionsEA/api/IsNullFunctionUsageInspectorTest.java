@@ -15,8 +15,6 @@ final public class IsNullFunctionUsageInspectorTest extends PhpCodeInsightFixtur
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/api/is-null-function.yoda.fixed.php");
-
-        ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
     public void testIfFindsAllPatternsAndWithInRegularStyle() {
         myFixture.enableInspections(new IsNullFunctionUsageInspector());

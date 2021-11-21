@@ -15,8 +15,6 @@ final public class ComparisonOperandsOrderInspectorTest extends PhpCodeInsightFi
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/codeStyle/comparison-order-yoda.fixed.php");
-
-        ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
     public void testIfFindsRegularPatterns() {
         myFixture.enableInspections(new ComparisonOperandsOrderInspector());

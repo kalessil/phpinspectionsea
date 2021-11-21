@@ -6,6 +6,7 @@ import com.intellij.testFramework.builders.ModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import com.intellij.testFramework.fixtures.impl.ModuleFixtureBuilderImpl;
 import com.intellij.testFramework.fixtures.impl.ModuleFixtureImpl;
+import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
 
 import java.io.File;
 import java.util.Objects;
@@ -18,6 +19,9 @@ public abstract class PhpCodeInsightFixtureTestCase extends CodeInsightFixtureTe
 
         /* platform backward-compatibility */
         myFixture.setTestDataPath((new File("testData/..")).getAbsolutePath());
+
+        /* prevent failing tests to cause false-alarms where the setting suppose to be reset */
+        ComparisonStyle.force(ComparisonStyle.REGULAR);
     }
 
     @Override

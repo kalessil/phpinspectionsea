@@ -73,26 +73,6 @@ public class UnsupportedEmptyListAssignmentsInspector extends BasePhpInspection 
                     }
                 }
             }
-
-            @Override
-            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression expression) {
-                if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700) && expression.getVariables().isEmpty()) {
-                    final PsiElement first = expression.getFirstChild();
-                    if (first != null) {
-                        final boolean isTarget =
-                                first instanceof ArrayCreationExpression ||
-                                OpenapiTypesUtil.is(first, PhpTokenTypes.kwLIST) ||
-                                OpenapiTypesUtil.is(first, PhpTokenTypes.chLBRACKET);
-                        if (isTarget) {
-                            holder.registerProblem(
-                                    first,
-                                    MessagesPresentationUtil.prefixWithEa(message),
-                                    ProblemHighlightType.GENERIC_ERROR
-                            );
-                        }
-                    }
-                }
-            }
         };
     }
 }

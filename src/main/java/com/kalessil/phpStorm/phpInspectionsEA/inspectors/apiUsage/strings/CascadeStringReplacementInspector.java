@@ -10,14 +10,13 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiEquivalenceUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +91,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                                                                     : callSubject;
                             if (
                                 callResultStorage != null && callSubject.getName().equals(previousVariable.getName()) &&
-                                OpenapiEquivalenceUtil.areEqual(transitionVariable, callResultStorage)
+                                OpenapiEquivalenceUtil.areEqual(transitionVariable, callResultStorage) &&
+                                this.canMergeArguments(functionCall, previousCall)
                             ) {
                                 holder.registerProblem(
                                         functionCall,
@@ -141,16 +141,38 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
             private void checkNestedCalls(@NotNull Project project, @NotNull PsiElement callCandidate, @NotNull FunctionReference parentCall) {
                 if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
-                    final FunctionReference call = (FunctionReference) callCandidate;
-                    final String functionName    = call.getName();
-                    if (functionName != null && functionName.equals("str_replace")) {
+                    final FunctionReference functionCall = (FunctionReference) callCandidate;
+                    final String functionName            = functionCall.getName();
+                    if (functionName != null && functionName.equals("str_replace") && this.canMergeArguments(functionCall, parentCall)) {
                         holder.registerProblem(
                                 callCandidate,
                                 MessagesPresentationUtil.prefixWithEa(messageNesting),
-                                new MergeStringReplaceCallsFix(project, parentCall, call, USE_SHORT_ARRAYS_SYNTAX)
+                                new MergeStringReplaceCallsFix(project, parentCall, functionCall, USE_SHORT_ARRAYS_SYNTAX)
                         );
                     }
                 }
+            }
+
+            private boolean canMergeArguments(@NotNull FunctionReference call, @NotNull FunctionReference previousCall) {
+                final PsiElement[] arguments         = call.getParameters();
+                final PsiElement[] previousArguments = previousCall.getParameters();
+
+                // If an argument is array (non-implicit), we need PHP 7.4+ for QF
+                final boolean haveArrayType = Stream.of(arguments[0], arguments[1], previousArguments[0], previousArguments[1])
+                      .filter(a   -> a instanceof PhpTypedElement && ! (a instanceof ArrayCreationExpression))
+                      .anyMatch(a -> {
+                          final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) a, call.getProject());
+                          if (resolved != null) {
+                              final Set<String> types = resolved.filterUnknown().getTypes().stream().map(Types::getType).collect(Collectors.toSet());
+                              return types.contains(Types.strArray) && ! types.contains(Types.strString);
+                          }
+                          return false;
+                      });
+                if (haveArrayType) {
+                    return ! PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740);
+                }
+
+                return true;
             }
 
             @Nullable
@@ -264,6 +286,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     this.mergeArguments(project, patch.getParameters()[0], eliminate.getParameters()[0]);
                     this.mergeSources(patch, eliminate);
                     this.applyArraySyntax(project, patch, this.useShortSyntax);
+                    // TODO: if 7.4+, search/replace array elements, which are arrays should be prefixed with '...'
                 }
             }
         }

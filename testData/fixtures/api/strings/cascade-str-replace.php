@@ -38,8 +38,7 @@
     $a = str_replace('', '', '');
     $b = str_replace('', '', $a);
 
-    /* QF correctness cases */
-    function fix_correctness($x, $y, $z, $t)
+    function fix_correctness_generic($x, $y, $z, $t)
     {
         $one = str_replace('1', '.', '...');
         $one = <warning descr="[EA] This str_replace(...) call can be merged with the previous.">str_replace('2', '.', $one)</warning>;
@@ -60,4 +59,14 @@
 
         $thirteen = str_replace([$one, $two], [$one, $two], '___');
         $thirteen = <warning descr="[EA] This str_replace(...) call can be merged with the previous.">str_replace($three, $three, $thirteen)</warning>;
+    }
+
+    function fix_correctness_arrays() {
+        $array = [];
+
+        $x = str_replace([$one, $two], [$one, $two], '___');
+        $x = <warning descr="[EA] This str_replace(...) call can be merged with the previous.">str_replace($array, $array, $x)</warning>;
+
+        $y = str_replace($array, $array, '___');
+        $y = <warning descr="[EA] This str_replace(...) call can be merged with the previous.">str_replace([$one, $two], [$one, $two], $y)</warning>;
     }

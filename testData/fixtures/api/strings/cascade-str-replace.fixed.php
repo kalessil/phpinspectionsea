@@ -32,8 +32,7 @@
     $a = str_replace('', '', '');
     $b = str_replace('', '', $a);
 
-    /* QF correctness cases */
-    function fix_correctness($x, $y, $z, $t)
+    function fix_correctness_generic($x, $y, $z, $t)
     {
         $one = str_replace(['1', '2', '3'], ['.', '.', '_'], '...');
 
@@ -51,4 +50,12 @@
         $eleven = str_replace([$z, 'x'], [$t, 'y'], '...');
 
         $thirteen = str_replace([$one, $two, $three], [$one, $two, $three], '___');
+    }
+
+    function fix_correctness_arrays() {
+        $array = [];
+
+        $x = str_replace([$one, $two, ...$array], [$one, $two, ...$array], '___');
+
+        $y = str_replace([...$array, $one, $two], [...$array, $one, $two], '___');
     }

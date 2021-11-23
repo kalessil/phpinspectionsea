@@ -291,8 +291,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         }
 
         private void mergeArguments(@NotNull Project project, @NotNull PsiElement to, @NotNull PsiElement from) {
+            final PsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
             if (to instanceof ArrayCreationExpression) {
-                final PsiElement comma      = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
                 final PsiElement firstValue = ((ArrayCreationExpression) to).getFirstPsiChild();
                 final PsiElement marker     = firstValue == null ? null : firstValue.getPrevSibling();
                 if (comma != null && marker != null) {
@@ -304,14 +304,14 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                             to.addAfter(value.copy(), marker);
                         });
                     } else {
-                        // TODO: destructuring for from
+                        final String pattern                  = String.format("array(%s%s)", this.needsDestructuring(project, from) ? "..." : "", from.getText());
+                        final ArrayCreationExpression element = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
                         to.addAfter(comma, marker);
-                        to.addAfter(from.copy(), marker);
+                        to.addAfter(element.getFirstPsiChild(), marker);
                     }
                 }
             } else {
                 if (from instanceof ArrayCreationExpression) {
-                    final PsiElement comma                    = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
                     final String pattern                      = String.format("array(%s%s)", this.needsDestructuring(project, to) ? "..." : "", to.getText());
                     final ArrayCreationExpression replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
                     final PsiElement firstValue               = replacement.getFirstPsiChild();

@@ -169,7 +169,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                           return false;
                       });
                 if (haveArrayType) {
-                    return ! PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740);
+                    return PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740);
                 }
 
                 return true;

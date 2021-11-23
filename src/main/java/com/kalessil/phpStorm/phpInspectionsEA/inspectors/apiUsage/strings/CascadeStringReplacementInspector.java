@@ -121,7 +121,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 for (final PsiElement oneReplacement : candidate.getChildren()) {
                     if (oneReplacement instanceof PhpPsiElement) {
                         final PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
-                        if (!(item instanceof StringLiteralExpression)) {
+                        if (! (item instanceof StringLiteralExpression)) {
                             replacements.clear();
                             return;
                         }
@@ -210,7 +210,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 } else if (returnOrAssignment instanceof AssignmentExpression) {
                     previous = returnOrAssignment.getParent().getPrevSibling();
                 }
-                while (previous != null && !(previous instanceof PhpPsiElement)) {
+                while (previous != null && ! (previous instanceof PhpPsiElement)) {
                     previous = previous.getPrevSibling();
                 }
                 while (previous instanceof PhpDocComment) {
@@ -286,7 +286,6 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     this.mergeArguments(project, patch.getParameters()[0], eliminate.getParameters()[0]);
                     this.mergeSources(patch, eliminate);
                     this.applyArraySyntax(project, patch, this.useShortSyntax);
-                    // TODO: if 7.4+, search/replace array elements, which are arrays should be prefixed with '...'
                 }
             }
         }
@@ -305,6 +304,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                             to.addAfter(value.copy(), marker);
                         });
                     } else {
+                        // TODO: destructuring for from
                         to.addAfter(comma, marker);
                         to.addAfter(from.copy(), marker);
                     }
@@ -312,7 +312,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             } else {
                 if (from instanceof ArrayCreationExpression) {
                     final PsiElement comma                    = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-                    final String pattern                      = String.format("array(%s)", to.getText());
+                    final String pattern                      = String.format("array(%s%s)", this.needsDestructuring(project, to) ? "..." : "", to.getText());
                     final ArrayCreationExpression replacement = PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern);
                     final PsiElement firstValue               = replacement.getFirstPsiChild();
                     final PsiElement marker                   = firstValue == null ? null : firstValue.getPrevSibling();
@@ -326,17 +326,33 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                         to.replace(replacement);
                     }
                 } else {
-                    final String pattern = String.format("array(%s, %s)", from.getText(), to.getText());
+                    final String pattern = String.format(
+                            "array(%s%s, %s%s)",
+                            this.needsDestructuring(project, from) ? "..." : "", from.getText(),
+                            this.needsDestructuring(project, to) ? "..." : "", to.getText()
+                    );
                     to.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ArrayCreationExpression.class, pattern));
                 }
             }
+        }
+
+        private boolean needsDestructuring(@NotNull Project project, @NotNull PsiElement argument) {
+            // Based on analysis pre-requisites we consider the destructuring available
+            if (argument instanceof PhpTypedElement && ! (argument instanceof ArrayCreationExpression)) {
+                final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) argument, project);
+                if (resolved != null) {
+                    final Set<String> types = resolved.filterUnknown().getTypes().stream().map(Types::getType).collect(Collectors.toSet());
+                    return types.contains(Types.strArray) && ! types.contains(Types.strString);
+                }
+            }
+            return false;
         }
 
         @NotNull
         private PsiElement unbox(@NotNull PsiElement what) {
             if (what instanceof ArrayCreationExpression) {
                 final PsiElement[] elements = what.getChildren();
-                if (elements.length == 1 && !(elements[0] instanceof ArrayHashElement)) {
+                if (elements.length == 1 && ! (elements[0] instanceof ArrayHashElement)) {
                     final PsiElement value = elements[0].getFirstChild();
                     if (value instanceof StringLiteralExpression) {
                         what = value;

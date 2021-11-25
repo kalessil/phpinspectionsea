@@ -326,7 +326,7 @@ final public class OpenapiResolveUtil {
                     final PhpType resolved = parameter.getDeclaredType();
                     if (resolved.isEmpty()) {
                         result = new PhpType().add(PhpType.ARRAY);
-                    } else if (resolved.size() == 1 && ! resolved.equals(PhpType.ARRAY)) {
+                    } else if (resolved.size() == 1 && ! Types.getType(resolved.getTypes().iterator().next()).equals(Types.strArray)) {
                         result = new PhpType().add(String.format("%s[]", resolved.getTypes().iterator().next()));
                     }
                 }
@@ -445,7 +445,17 @@ final public class OpenapiResolveUtil {
     @NotNull
     static public PhpType resolveDeclaredType(@NotNull Parameter parameter) {
         try {
-            return parameter.getDeclaredType();
+            final PhpType resolved = parameter.getDeclaredType();
+            /* Incorrect type inference for variadic parameters */
+            if (parameter.isVariadic()) {
+                if (resolved.isEmpty()) {
+                    return new PhpType().add(PhpType.ARRAY);
+                }
+                if (resolved.size() == 1 && ! Types.getType(resolved.getTypes().iterator().next()).equals(Types.strArray)) {
+                    return new PhpType().add(String.format("%s[]", resolved.getTypes().iterator().next()));
+                }
+            }
+            return resolved;
         } catch (final Throwable error) {
             if (error instanceof ProcessCanceledException) {
                 throw error;

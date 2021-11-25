@@ -37,4 +37,5 @@ if (isset($array[0]) || array_key_exists(0, $array)) {}
 
 /* variable property/variable names */
 if ($object->getString() && $object->{$object->getString()}) {}
+if ($object->getString() && "{$object->getString()}") {}
 if ($object->getString() && ${$object->getString()}) {}

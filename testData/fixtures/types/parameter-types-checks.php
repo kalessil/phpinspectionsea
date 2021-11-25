@@ -17,6 +17,13 @@
         ;
     };
 
+    function variadicTypesOne (string ...$stringVariadicArray) {
+        return is_array($stringVariadicArray);
+    }
+    function variadicTypesTwo (...$genericVariadicArray) {
+        return is_array($genericVariadicArray);
+    }
+
     function callableTypes (callable $callable) {
         return [
             is_object($callable),

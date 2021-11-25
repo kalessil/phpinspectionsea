@@ -319,7 +319,19 @@ final public class OpenapiResolveUtil {
                 if (value instanceof PhpTypedElement) {
                     result = resolveType((PhpTypedElement) value, project);
                 }
+            } else if (expression instanceof Parameter) {
+                /* Incorrect type inference for variadic parameters */
+                final Parameter parameter = (Parameter) expression;
+                if (parameter.isVariadic()) {
+                    final PhpType resolved = parameter.getDeclaredType();
+                    if (resolved.isEmpty()) {
+                        result = new PhpType().add(PhpType.ARRAY);
+                    } else if (resolved.size() == 1 && ! resolved.equals(PhpType.ARRAY)) {
+                        result = new PhpType().add(String.format("%s[]", resolved.getTypes().iterator().next()));
+                    }
+                }
             }
+
             /* default behaviour */
             result = result == null
                     ? expression.getType().global(project)

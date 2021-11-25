@@ -59,4 +59,7 @@
 
         $thirteen = str_replace([$one, $two], [$one, $two], '___');
         $thirteen = <warning descr="[EA] This str_replace(...) call can be merged with the previous.">str_replace($three, $three, $thirteen)</warning>;
+
+        $fourteen = str_replace('prefix', '', '...');
+        $fourteen = <warning descr="[EA] This str_replace(...) call can be merged with the previous.">str_replace(['fragment-1', 'fragment-2'], DIRECTORY_SEPARATOR, $fourteen)</warning>;
     }

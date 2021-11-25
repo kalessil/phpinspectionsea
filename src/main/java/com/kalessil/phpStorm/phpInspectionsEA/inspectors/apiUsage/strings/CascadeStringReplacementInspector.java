@@ -349,7 +349,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         }
 
         @NotNull
-        private PsiElement unbox(@NotNull PsiElement what) {
+        private PsiElement unboxIfOneElementArray(@NotNull PsiElement what) {
             if (what instanceof ArrayCreationExpression) {
                 final PsiElement[] elements = what.getChildren();
                 if (elements.length == 1 && ! (elements[0] instanceof ArrayHashElement)) {
@@ -362,22 +362,34 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             return what;
         }
 
+        @NotNull
+        private PsiElement unboxIfConstant(@NotNull PsiElement what) {
+            PsiElement result = what;
+            if (what instanceof ConstantReference) {
+                final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(what);
+                if (variants.size() == 1) {
+                    result = variants.iterator().next();
+                }
+                variants.clear();
+            }
+            return result;
+        }
+
         private void mergeReplaces(@NotNull Project project, @NotNull FunctionReference to, @NotNull FunctionReference from) {
             /* normalization here */
-            final PsiElement fromNormalized = this.unbox(from.getParameters()[1]);
+            final PsiElement fromNormalized = this.unboxIfOneElementArray(from.getParameters()[1]);
             final PsiElement toRaw          = to.getParameters()[1];
-            final PsiElement toNormalized   = this.unbox(toRaw);
+            final PsiElement toNormalized   = this.unboxIfOneElementArray(toRaw);
 
             /* a little bit of intelligence */
             boolean needsFurtherFixing = true;
-            if (toNormalized instanceof StringLiteralExpression) {
-                if (
-                    fromNormalized instanceof StringLiteralExpression &&
-                    fromNormalized.getText().equals(toNormalized.getText())
-                ) {
-                    toRaw.replace(toNormalized);
-                    needsFurtherFixing = false;
-                }
+            if (
+                this.unboxIfConstant(toNormalized) instanceof StringLiteralExpression &&
+                this.unboxIfConstant(fromNormalized) instanceof StringLiteralExpression &&
+                OpenapiEquivalenceUtil.areEqual(fromNormalized, toNormalized)
+            ) {
+                toRaw.replace(toNormalized);
+                needsFurtherFixing = false;
             }
 
             if (needsFurtherFixing) {
@@ -392,7 +404,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             final PsiElement[] arguments = call.getParameters();
             final PsiElement search      = arguments[0];
             final PsiElement replace     = arguments[1];
-            if (replace instanceof StringLiteralExpression && search instanceof ArrayCreationExpression) {
+            if (this.unboxIfConstant(replace) instanceof StringLiteralExpression && search instanceof ArrayCreationExpression) {
                 final int searchesCount = search.getChildren().length;
                 if (searchesCount > 1) {
                     final List<String> replaces = Collections.nCopies(searchesCount, replace.getText());

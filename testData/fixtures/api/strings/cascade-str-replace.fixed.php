@@ -50,4 +50,6 @@
         $eleven = str_replace([$z, 'x'], [$t, 'y'], '...');
 
         $thirteen = str_replace([$one, $two, $three], [$one, $two, $three], '___');
+
+        $fourteen = str_replace(['prefix', 'fragment-1', 'fragment-2'], ['', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR], '...');
     }

@@ -1,8 +1,15 @@
 <?php
 
-    /* pattern: count can be used */
-    echo count([]) === 0;
-    echo count([]) !== 0;
+    function empty_with_array(array $array) {
+        /* pattern: count can be used */
+        echo count($array) === 0;
+        echo count($array) !== 0;
+    }
+
+    function empty_with_countable(\ArrayIterator $iterator) {
+        echo count($iterator) === 0;
+        echo count($iterator) !== 0;
+    }
 
     /**
      * @param int|null $int

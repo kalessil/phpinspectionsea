@@ -9,6 +9,7 @@ final public class IsEmptyFunctionUsageInspectorTest extends PhpCodeInsightFixtu
         inspector.SUGGEST_TO_USE_COUNT_CHECK          = true;
         inspector.REPORT_EMPTY_USAGE                  = true;
         inspector.SUGGEST_TO_USE_NULL_COMPARISON      = true;
+        inspector.SUGGEST_NULL_COMPARISON_FOR_SCALARS = true;
         myFixture.configureByFile("testData/fixtures/api/empty-function.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);

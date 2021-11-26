@@ -30,9 +30,10 @@ import java.util.Set;
 
 public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
     // Inspections options.
-    public boolean REPORT_EMPTY_USAGE             = false;
-    public boolean SUGGEST_TO_USE_COUNT_CHECK     = false;
-    public boolean SUGGEST_TO_USE_NULL_COMPARISON = true;
+    public boolean REPORT_EMPTY_USAGE                  = false;
+    public boolean SUGGEST_TO_USE_COUNT_CHECK          = false;
+    public boolean SUGGEST_TO_USE_NULL_COMPARISON      = true;
+    public boolean SUGGEST_NULL_COMPARISON_FOR_SCALARS = true;
 
     private static final String messageDoNotUse    = "'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.";
     private static final String patternAlternative = "You should probably use '%s' instead.";
@@ -59,7 +60,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 if (values.length == 1) {
                     final PsiElement subject = ExpressionSemanticUtil.getExpressionTroughParenthesis(values[0]);
                     if (subject == null || subject instanceof ArrayAccessExpression) {
-                        /* currently php docs lacks of array structure notations, skip it */
+                        /* currently, php docs lacks of array structure notations, skip it */
                         return;
                     }
 
@@ -77,52 +78,48 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                     }
 
                     /* Case 1: empty(array) - hidden logic - empty array */
-                    if (this.isArrayType(resolvedTypes)) {
-                        if (SUGGEST_TO_USE_COUNT_CHECK) {
-                            final String comparision = isInverted ? "!==" : "===";
-                            final String replacement = ComparisonStyle.isRegular()
-                                                       ? String.format("count(%s) %s 0", subject.getText(), comparision)
-                                                       : String.format("0 %s count(%s)", comparision, subject.getText());
-                            final PsiElement target  = isInverted ? parent : emptyExpression;
-                            holder.registerProblem(
-                                    target,
-                                    String.format(MessagesPresentationUtil.prefixWithEa(patternAlternative), replacement),
-                                    new UseCountFix(replacement)
-                            );
-                        }
+                    if (SUGGEST_TO_USE_COUNT_CHECK && this.isArrayType(resolvedTypes)) {
+                        final String comparison  = isInverted ? "!==" : "===";
+                        final String replacement = ComparisonStyle.isRegular()
+                                                   ? String.format("count(%s) %s 0", subject.getText(), comparison)
+                                                   : String.format("0 %s count(%s)", comparison, subject.getText());
+                        final PsiElement target  = isInverted ? parent : emptyExpression;
+                        holder.registerProblem(
+                                target,
+                                String.format(MessagesPresentationUtil.prefixWithEa(patternAlternative), replacement),
+                                new UseCountFix(replacement)
+                        );
                         resolvedTypes.clear();
-
                         return;
                     }
 
                     /* case 2: nullable classes, nullable target core types */
-                    if (this.isNullableCoreType(resolvedTypes) || TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes)) {
-                        if (SUGGEST_TO_USE_NULL_COMPARISON) {
-                            /* false-positive: a field reference used in the subject expression */
-                            PsiElement base = subject;
-                            while (base instanceof PhpPsiElement) {
-                                if (base instanceof FieldReference) {
-                                    break;
-                                }
-                                base = ((PhpPsiElement) base).getFirstPsiChild();
+                    if (
+                        SUGGEST_TO_USE_NULL_COMPARISON &&
+                        ((SUGGEST_NULL_COMPARISON_FOR_SCALARS && this.isNullableCoreType(resolvedTypes)) || TypesSemanticsUtil.isNullableObjectInterface(resolvedTypes))
+                    ) {
+                        /* false-positive: a field reference used in the subject expression */
+                        PsiElement base = subject;
+                        while (base instanceof PhpPsiElement) {
+                            if (base instanceof FieldReference) {
+                                break;
                             }
-                            if (!(base instanceof FieldReference)) {
-                                final String comparision = isInverted ? "!==" : "===";
-                                final String replacement = ComparisonStyle.isRegular()
-                                                           ? String.format("%s %s null", subject.getText(), comparision)
-                                                           : String.format("null %s %s", comparision, subject.getText());
-                                holder.registerProblem(
-                                        isInverted ? parent : emptyExpression,
-                                        String.format(MessagesPresentationUtil.prefixWithEa(patternAlternative), replacement),
-                                        new CompareToNullFix(replacement)
-                                );
-                            }
+                            base = ((PhpPsiElement) base).getFirstPsiChild();
+                        }
+                        if (! (base instanceof FieldReference)) {
+                            final String comparison  = isInverted ? "!==" : "===";
+                            final String replacement = ComparisonStyle.isRegular()
+                                                       ? String.format("%s %s null", subject.getText(), comparison)
+                                                       : String.format("null %s %s", comparison, subject.getText());
+                            holder.registerProblem(
+                                    isInverted ? parent : emptyExpression,
+                                    String.format(MessagesPresentationUtil.prefixWithEa(patternAlternative), replacement),
+                                    new CompareToNullFix(replacement)
+                            );
                         }
                         resolvedTypes.clear();
-
                         return;
                     }
-
                     resolvedTypes.clear();
                 }
 
@@ -159,6 +156,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
             component.addCheckbox("Report empty() usage", REPORT_EMPTY_USAGE, (isSelected) -> REPORT_EMPTY_USAGE = isSelected);
             component.addCheckbox("Suggest to use count()-comparison", SUGGEST_TO_USE_COUNT_CHECK, (isSelected) -> SUGGEST_TO_USE_COUNT_CHECK = isSelected);
             component.addCheckbox("Suggest to use null-comparison", SUGGEST_TO_USE_NULL_COMPARISON, (isSelected) -> SUGGEST_TO_USE_NULL_COMPARISON = isSelected);
+            component.addCheckbox("Suggest null-comparison for scalars", SUGGEST_NULL_COMPARISON_FOR_SCALARS, (isSelected) -> SUGGEST_NULL_COMPARISON_FOR_SCALARS = isSelected);
         });
     }
 

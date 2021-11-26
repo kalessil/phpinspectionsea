@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 final public class ExpressionCostEstimateUtil {
     public final static Set<String> predefinedVars = new HashSet<>();
@@ -38,18 +39,22 @@ final public class ExpressionCostEstimateUtil {
         if (
             objExpression == null ||
             objExpression instanceof ConstantReference ||
-            objExpression instanceof StringLiteralExpression ||
             objExpression instanceof ClassReference ||
-            objExpression instanceof Variable ||
             objExpression instanceof ClassConstantReference ||
             OpenapiTypesUtil.isNumber(objExpression)
         ) {
             return 0;
         }
 
-        if (objExpression instanceof FieldReference) {
-            /* $x->y and $x->y->z to have the same cost. Because of magic methods, which are slower. */
-            return getExpressionCost(((FieldReference) objExpression).getFirstPsiChild(), functionsSetToAllow);
+        if (
+            objExpression instanceof Variable ||
+            objExpression instanceof StringLiteralExpression ||
+            objExpression instanceof FieldReference
+        ) {
+            /* It can be nested expression in there, incl. injections and etc */
+            return Stream.of(objExpression.getChildren())
+                    .mapToInt(c -> getExpressionCost(c, functionsSetToAllow))
+                    .sum();
         }
 
         /* hash-maps is well optimized, hence no additional costs */

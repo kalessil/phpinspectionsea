@@ -78,7 +78,14 @@ public class ArrayIsListCanBeUsedInspector extends BasePhpInspection {
                                                         final PsiElement right = rangeToBinary.getRightOperand();
                                                         final PsiElement left  = rangeToBinary.getLeftOperand();
                                                         if (OpenapiTypesUtil.isNumber(right) && right.getText().equals("1") && OpenapiTypesUtil.isFunctionReference(left)) {
-                                                            // TODO: count
+                                                            final FunctionReference leftReference = (FunctionReference) left;
+                                                            final String leftName                 = leftReference.getName();
+                                                            final PsiElement[] leftArguments      = leftReference.getParameters();
+                                                            if (leftName != null && leftName.equals("count") && leftArguments.length == 1) {
+                                                                if (OpenapiEquivalenceUtil.areEqual(arguments[0], leftArguments[0])) {
+                                                                    // TODO: warning
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }

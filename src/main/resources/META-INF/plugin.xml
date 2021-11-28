@@ -701,6 +701,10 @@
         shortName="GetDebugTypeCanBeUsedInspection"               displayName="'get_debug_type(...)' can be used"
         groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.debug.GetDebugTypeCanBeUsedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="ArrayIsListCanBeUsedInspection"                displayName="'array_is_list(...)' can be used"
+        groupName="Language level migration"                      enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.arrays.ArrayIsListCanBeUsedInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

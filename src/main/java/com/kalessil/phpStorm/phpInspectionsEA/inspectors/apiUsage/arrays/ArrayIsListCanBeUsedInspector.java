@@ -59,32 +59,28 @@ public class ArrayIsListCanBeUsedInspector extends BasePhpInspection {
                                 final IElementType operator   = binary.getOperationType();
                                 if (OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                                     final PsiElement second = OpenapiElementsUtil.getSecondOperand(binary, reference);
-                                    if (functionName.equals("array_values")) {
-                                        if (second != null && OpenapiEquivalenceUtil.areEqual(arguments[0], second)) {
-                                            // TODO: warning
-                                            return;
-                                        }
+                                    if (functionName.equals("array_values") && second != null && OpenapiEquivalenceUtil.areEqual(arguments[0], second)) {
+                                        // TODO: warning and replacement generation
+                                        return;
                                     }
-                                    if (functionName.equals("array_keys")) {
-                                        if (OpenapiTypesUtil.isFunctionReference(second)) {
-                                            final FunctionReference rightReference = (FunctionReference) second;
-                                            final String rightFunctionName         = rightReference.getName();
-                                            final PsiElement[] rightArguments      = rightReference.getParameters();
-                                            if ((rightFunctionName != null && rightFunctionName.equals("range")) && rightArguments.length == 2) {
-                                                final boolean rangeFromZero = OpenapiTypesUtil.isNumber(rightArguments[0]) && rightArguments[0].getText().equals("0");
-                                                if (rangeFromZero && rightArguments[1] instanceof BinaryExpression) {
-                                                    final BinaryExpression rangeToBinary = (BinaryExpression) rightArguments[1];
-                                                    if (rangeToBinary.getOperationType() == PhpTokenTypes.opMINUS) {
-                                                        final PsiElement right = rangeToBinary.getRightOperand();
-                                                        final PsiElement left  = rangeToBinary.getLeftOperand();
-                                                        if (OpenapiTypesUtil.isNumber(right) && right.getText().equals("1") && OpenapiTypesUtil.isFunctionReference(left)) {
-                                                            final FunctionReference leftReference = (FunctionReference) left;
-                                                            final String leftName                 = leftReference.getName();
-                                                            final PsiElement[] leftArguments      = leftReference.getParameters();
-                                                            if (leftName != null && leftName.equals("count") && leftArguments.length == 1) {
-                                                                if (OpenapiEquivalenceUtil.areEqual(arguments[0], leftArguments[0])) {
-                                                                    // TODO: warning
-                                                                }
+                                    if (functionName.equals("array_keys") && OpenapiTypesUtil.isFunctionReference(second)) {
+                                        final FunctionReference rightReference = (FunctionReference) second;
+                                        final String rightFunctionName         = rightReference.getName();
+                                        final PsiElement[] rightArguments      = rightReference.getParameters();
+                                        if ((rightFunctionName != null && rightFunctionName.equals("range")) && rightArguments.length == 2) {
+                                            final boolean rangeFromZero = OpenapiTypesUtil.isNumber(rightArguments[0]) && rightArguments[0].getText().equals("0");
+                                            if (rangeFromZero && rightArguments[1] instanceof BinaryExpression) {
+                                                final BinaryExpression rangeToBinary = (BinaryExpression) rightArguments[1];
+                                                if (rangeToBinary.getOperationType() == PhpTokenTypes.opMINUS) {
+                                                    final PsiElement right = rangeToBinary.getRightOperand();
+                                                    final PsiElement left  = rangeToBinary.getLeftOperand();
+                                                    if (OpenapiTypesUtil.isNumber(right) && right.getText().equals("1") && OpenapiTypesUtil.isFunctionReference(left)) {
+                                                        final FunctionReference leftReference = (FunctionReference) left;
+                                                        final String leftName                 = leftReference.getName();
+                                                        final PsiElement[] leftArguments      = leftReference.getParameters();
+                                                        if (leftName != null && leftName.equals("count") && leftArguments.length == 1) {
+                                                            if (OpenapiEquivalenceUtil.areEqual(arguments[0], leftArguments[0])) {
+                                                                // TODO: warning and replacement generation
                                                             }
                                                         }
                                                     }

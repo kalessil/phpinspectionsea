@@ -26,6 +26,7 @@
     /* false-positives: scalar types */
     function type_declaration_cases_holder(string & $param1, \string & $param2) {}
     function nullable_type_declaration_cases_holder(?string & $param1, ?\string & $param2) {}
+    function mixed_type_declaration_cases_holder(mixed & $param1) {}
 
     /* false-positives: writing into */
     function value_has_been_written_cases_holder(stdClass &$param) {

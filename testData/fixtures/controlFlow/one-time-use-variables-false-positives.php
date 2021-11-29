@@ -25,6 +25,16 @@ function self_assignment ($x, $y) {
     return $x;
 }
 
+function static_property_reference () {
+    $x = provide_me_class_name();
+    return $x::$property;
+}
+
+function static_method_reference () {
+    $x = provide_me_class_name();
+    return $x::method();
+}
+
 function false_positive_from_symfony_profiler() {
     $values = [];
     list($one,) = $values;

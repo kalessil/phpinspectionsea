@@ -39,6 +39,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
         supportedScalarTypes.add(PhpType.BOOLEAN);
         supportedScalarTypes.add(PhpType.ARRAY);
         supportedScalarTypes.add(PhpType.MIXED);
+        supportedScalarTypes.add(new PhpType().add("\\iterable"));
         /* nullability support */
         supportedScalarTypes.add(PhpType.NULL);
     }

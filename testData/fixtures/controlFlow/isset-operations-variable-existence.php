@@ -36,15 +36,31 @@ class CasesHolder
         echo $x ?? '';
     }
 
-    public function loops() {
-        while (true) {
-            $something = isset($variableInWhile) ? $variableInWhile : '...';
-            $variableInWhile = '...';
-        }
+    public function loopsFor() {
+         for ( ; ; ) {
+             $something = isset($variable) ? $variable : '...';
+         }
+     }
 
+    public function loopsWhile() {
+         while (true) {
+            $something = isset($variable) ? $variable : '...';
+            $variable = '...';
+        }
+    }
+
+    public function loopsDoWhile() {
         do {
-            $something = isset($variableInDo) ? $variableInDo : '...';
-        } while ($variableInDo = '...');
+            $something = isset($variable) ? $variable : '...';
+            $variable = '...';
+        } while (true);
+    }
+
+    public function withGoto() {
+        entry:
+        $something = isset($variable) ? $variable : '...';
+        $variable = '...';
+        goto entry;
     }
 
     public function withInclude() {

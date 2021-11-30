@@ -39,27 +39,28 @@ class CasesHolder
     public function loopsFor() {
          for ( ; ; ) {
              $something = isset($variable) ? $variable : '...';
+             $variable  = '...';
          }
      }
 
     public function loopsWhile() {
          while (true) {
             $something = isset($variable) ? $variable : '...';
-            $variable = '...';
+            $variable  = '...';
         }
     }
 
     public function loopsDoWhile() {
         do {
             $something = isset($variable) ? $variable : '...';
-            $variable = '...';
+            $variable  = '...';
         } while (true);
     }
 
     public function withGoto() {
         entry:
         $something = isset($variable) ? $variable : '...';
-        $variable = '...';
+        $variable  = '...';
         goto entry;
     }
 

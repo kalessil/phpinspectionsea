@@ -3,7 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit;
 import org.jetbrains.annotations.NotNull;
 
 public enum PhpUnitVersion {
-    /* Note from March 2020: versions according current PHPUnit documentation versiosn */
+    /* Note from March 2020: versions according current PHPUnit documentation versions */
     PHPUNIT70("7.0"),
     PHPUNIT71("7.1"),
     PHPUNIT72("7.2"),
@@ -17,7 +17,11 @@ public enum PhpUnitVersion {
     PHPUNIT84("8.4"),
     PHPUNIT85("8.5"),
     PHPUNIT90("9.0"),
-    PHPUNIT91("9.1");
+    PHPUNIT91("9.1"),
+    PHPUNIT92("9.2"),
+    PHPUNIT93("9.3"),
+    PHPUNIT94("9.4"),
+    PHPUNIT95("9.5");
 
     @NotNull
     private final String version;

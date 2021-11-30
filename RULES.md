@@ -66,7 +66,6 @@ Inspections Lists (Unused)
 | Unused               | SenselessProxyMethodInspection                  | Senseless proxy function                            | yes | yes | yes  | yes |
 | Unused               | SenselessMethodDuplicationInspection            | Child method is exactly the same                    | yes | yes | yes  | yes |
 | Unused               | UnusedGotoLabelInspection                       | Unused goto labels                                  | yes | yes | yes  | n/a |
-| Unused               | ArgumentEqualsDefaultValueInspection            | Unnecessary call arguments specification            | yes | yes | yes  | yes |
 | Unused               | UnnecessaryIssetArgumentsInspection             | Unnecessary isset arguments specification           | yes | yes | yes  | yes |
 | Unused               | DateUsageInspection                             | Unnecessary 'date(...)' arguments specification     | yes | yes | yes  | yes |
 
@@ -151,6 +150,7 @@ Inspections Lists (Language level migration)
 | Language level migration | StrStartsWithCanBeUsedInspection                | 'str_starts_with(...)' can be used                  | yes | yes | yes  | no  |
 | Language level migration | StrEndsWithCanBeUsedInspection                  | 'str_ends_with(...)' can be used                    | yes | yes | yes  | no  |
 | Language level migration | GetDebugTypeCanBeUsedInspection                 | 'get_debug_type(...)' can be used                   | yes | yes | yes  | no  |
+| Language level migration | ArrayIsListCanBeUsedInspection                  | 'array_is_list(...)' can be used                    | yes | yes | yes  | no  |
 
 Inspections Lists (Architecture)
 ---
@@ -197,7 +197,6 @@ Inspections Lists (Probable bugs)
 | Probable bugs        | PassingByReferenceCorrectnessInspection         | Passing arguments by reference correctness                | n/a | yes | n/a  | n/a |
 | Probable bugs        | ClassMockingCorrectnessInspection               | Class mocking correctness                                 | n/a | yes | n/a  | no  |
 | Probable bugs        | ClassConstantUsageCorrectnessInspection         | ::class constant usage correctness                        | n/a | yes | n/a  | yes |
-| Probable bugs        | DeclareDirectiveCorrectnessInspection           | Declare directive correctness                             | n/a | yes | n/a  | n/a |
 | Probable bugs        | InfinityLoopInspection                          | Infinity loop detection                                   | n/a | yes | n/a  | no  |
 | Probable bugs        | StringsFirstCharactersCompareInspection         | Strings N-character comparison flaws                      | yes | yes | yes  | no  |
 | Probable bugs        | SimpleXmlLoadFileUsageInspection                | 'simplexml_load_file(...)' usage correctness              | yes | yes | yes  | n/a |

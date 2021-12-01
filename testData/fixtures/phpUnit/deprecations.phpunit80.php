@@ -16,5 +16,9 @@ class Clazz {
             <weak_warning descr="[EA] $canonicalize is deprecated in favor of assertNotEqualsCanonicalizing() since PHPUnit 8.0.">$canonicalize = false</weak_warning>,
             <weak_warning descr="[EA] $ignoreCase is deprecated in favor of assertNotEqualsIgnoringCase() since PHPUnit 8.0.">$ignoreCase = false</weak_warning>
         );
+
+        /* false-positives: deprecations in PHPUnit 9.1 */
+        $this->assertFileNotExists('');
+        $this->assertDirectoryNotExists('');
     }
 }

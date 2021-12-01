@@ -33,9 +33,14 @@ public class AssertContainsStrategy {
 
     private final static String messagePattern = "'%s(...)' would fit more here.";
 
-    static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder, @NotNull PhpUnitVersion level) {
+    static public boolean apply(
+            @NotNull String methodName,
+            @NotNull MethodReference reference,
+            @NotNull ProblemsHolder holder,
+            @NotNull PhpUnitVersion version
+    ) {
         boolean result = false;
-        if (level.below(PhpUnitVersion.PHPUNIT90) && targetMapping.containsKey(methodName)) {
+        if (version.below(PhpUnitVersion.PHPUNIT90) && targetMapping.containsKey(methodName)) {
             final PsiElement[] assertionArguments = reference.getParameters();
             if (assertionArguments.length > 0 && OpenapiTypesUtil.isFunctionReference(assertionArguments[0])) {
                 final FunctionReference candidate = (FunctionReference) assertionArguments[0];

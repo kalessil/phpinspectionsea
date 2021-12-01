@@ -72,12 +72,14 @@
     }
 
     function false_positives_holder() {
-        foreach ([] as $key => $value) {} /* -> string|integer */
-        $string = substr('', -1);         /* -> string|false   */
+        foreach ([] as $key => $value) {}  /* -> string|integer */
+        $string = substr('', -1);          /* -> string|false   */
+        $parts  = explode('-', $string); /* -> string[]|false   */
 
         return [
             $key[0],
             $string[0],
+            $parts[0],
         ];
     }
 

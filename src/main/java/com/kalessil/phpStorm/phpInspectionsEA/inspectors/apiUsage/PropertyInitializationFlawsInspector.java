@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
@@ -106,8 +107,9 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
             private boolean isTypedProperty(@Nullable Field field) {
                 if (field != null && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740)) {
-                    /* in 2019.1 environment this is not working properly, IDE returns nonsense */
-                    return OpenapiResolveUtil.resolveDeclaredType(field).size() == 2;
+                    /* Note: in 2019.1 environment this is not working properly, IDE returns nonsense */
+                    final PhpType resolved = OpenapiResolveUtil.resolveDeclaredType(field);
+                    return resolved.size() == 2 || resolved.equals(PhpType.MIXED);
                 }
                 return false;
             }

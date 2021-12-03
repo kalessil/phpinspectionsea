@@ -1,8 +1,15 @@
 <?php
 
-    /* pattern: count can be used */
-    echo <warning descr="[EA] You should probably use 'count([]) === 0' instead.">empty([])</warning>;
-    echo <warning descr="[EA] You should probably use 'count([]) !== 0' instead.">!empty([])</warning>;
+    function empty_with_array(array $array) {
+        /* pattern: count can be used */
+        echo <warning descr="[EA] You should probably use 'count($array) === 0' instead.">empty($array)</warning>;
+        echo <warning descr="[EA] You should probably use 'count($array) !== 0' instead.">!empty($array)</warning>;
+    }
+
+    function empty_with_countable(\ArrayIterator $iterator) {
+        echo <warning descr="[EA] You should probably use 'count($iterator) === 0' instead.">empty($iterator)</warning>;
+        echo <warning descr="[EA] You should probably use 'count($iterator) !== 0' instead.">!empty($iterator)</warning>;
+    }
 
     /**
      * @param int|null $int

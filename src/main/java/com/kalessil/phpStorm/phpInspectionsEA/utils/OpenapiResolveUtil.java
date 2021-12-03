@@ -222,7 +222,10 @@ final public class OpenapiResolveUtil {
                         if (leftType != null) {
                             final Set<String> leftTypes = new HashSet<>();
                             leftType.filterUnknown().getTypes().forEach(type -> leftTypes.add(Types.getType(type)));
-                            hasFloat = leftTypes.isEmpty() || leftTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                            hasFloat = leftTypes.isEmpty() ||
+                                       leftTypes.contains(Types.strFloat) ||
+                                       leftTypes.contains(Types.strNumber) ||
+                                       (leftTypes.contains(Types.strString) && ! leftTypes.contains(Types.strInteger));
                             hasArray = leftTypes.contains(Types.strArray);
                             leftTypes.clear();
                             if (!hasFloat || (!hasArray && operator == PhpTokenTypes.opPLUS)) {
@@ -232,8 +235,10 @@ final public class OpenapiResolveUtil {
                                     if (rightType != null) {
                                         final Set<String> rightTypes = new HashSet<>();
                                         rightType.filterUnknown().getTypes().forEach(type -> rightTypes.add(Types.getType(type)));
-                                        hasFloat = hasFloat ||
-                                                   rightTypes.isEmpty() || rightTypes.contains(Types.strFloat) || leftTypes.contains(Types.strNumber);
+                                        hasFloat = hasFloat || rightTypes.isEmpty() ||
+                                                   rightTypes.contains(Types.strFloat) ||
+                                                   rightTypes.contains(Types.strNumber) ||
+                                                   (rightTypes.contains(Types.strString) && ! rightTypes.contains(Types.strInteger));
                                         hasArray = (hasArray && !OpenapiTypesUtil.isNumber(right)) ||
                                                    rightTypes.contains(Types.strArray);
                                         rightTypes.clear();

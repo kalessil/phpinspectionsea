@@ -252,7 +252,7 @@ public class NullCoalescingOperatorCanBeUsedInspector extends BasePhpInspection 
                     final FieldReference fieldReference = (FieldReference) candidate;
                     final PsiElement base               = fieldReference.getClassReference();
                     if (base != null && OpenapiEquivalenceUtil.areEqual(extracted, base)) {
-                        final PhpType resolved = OpenapiResolveUtil.resolveType(fieldReference, fieldReference.getProject());
+                        final PhpType resolved = OpenapiResolveUtil.resolveType(fieldReference, holder.getProject());
                         if (resolved != null && ! resolved.filterUnknown().isEmpty()) {
                             final PsiElement alternative = expectsToBeNotEmpty ? second : first;
                             final boolean isNullable     = resolved.filterUnknown().getTypes().stream()

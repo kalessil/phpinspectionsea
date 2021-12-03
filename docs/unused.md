@@ -142,22 +142,6 @@ Reports methods identical to parent's one (code duplication). In order to not sl
     }
 ```
 
-## Unnecessary call arguments specification
-
-Reports arguments which can be safely dropped, as they are identical to the default value.
-
-> Note: this inspection is disabled by default
-
-```php
-    function name (string $string = 'default') {}
-
-    /* before */
-    name('default');
-
-    /* after */
-    name();
-```
-
 ## Unnecessary isset arguments specification
 
 Suggests possible isset arguments simplifications.

@@ -49,7 +49,12 @@ final public class AssertInternalTypeStrategy {
     private final static String messagePatternInternalType = "'%s('%s', ...)' would fit more here.";
     private final static String messagePattern             = "'%s(...)' would fit more here.";
 
-    static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder, @NotNull PhpUnitVersion level) {
+    static public boolean apply(
+            @NotNull String methodName,
+            @NotNull MethodReference reference,
+            @NotNull ProblemsHolder holder,
+            @NotNull PhpUnitVersion version
+    ) {
         boolean result = false;
         if (targetMapping.containsKey(methodName)) {
             final PsiElement[] assertionArguments = reference.getParameters();
@@ -64,7 +69,7 @@ final public class AssertInternalTypeStrategy {
                         final String suggestedType;
                         final String[] suggestedArguments;
                         final String message;
-                        if (level.below(PhpUnitVersion.PHPUNIT80)) {
+                        if (version.below(PhpUnitVersion.PHPUNIT80)) {
                             suggestedAssertion    = targetMapping.get(methodName);
                             suggestedType         = targetFunctionMapping.get(functionName);
                             suggestedArguments    = new String[assertionArguments.length + 1];

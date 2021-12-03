@@ -84,7 +84,7 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                 if (arguments.length > 0) {
                     final Set<String> parameters = this.getSuppliedVariables(arguments[0]);
                     for (final PhpExpression argument : arguments) {
-                        if (argument instanceof Variable && !parameters.contains(argument.getName())) {
+                        if (argument instanceof Variable && ! parameters.contains(argument.getName())) {
                             this.analyzeExistence((Variable) argument);
                         }
                     }
@@ -94,14 +94,14 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
 
             private void analyzeExistence (@NotNull Variable variable) {
                 final String variableName = variable.getName();
-                if (!variableName.isEmpty() && !specialVariables.contains(variableName)) {
+                if (! variableName.isEmpty() && ! specialVariables.contains(variableName)) {
                     final Function scope      = ExpressionSemanticUtil.getScope(variable);
                     final GroupStatement body = scope == null ? null : ExpressionSemanticUtil.getGroupStatement(scope);
                     if (body != null) {
                         for (final Variable reference : PsiTreeUtil.findChildrenOfType(body, Variable.class)) {
                             if (reference.getName().equals(variableName)) {
                                 boolean report = reference == variable;
-                                if (!report) {
+                                if (! report) {
                                     final PsiElement parent = reference.getParent();
                                     if (parent instanceof AssignmentExpression) {
                                         report = PsiTreeUtil.findCommonParent(reference, variable) == parent;
@@ -123,7 +123,7 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                                         }
                                         loopCandidate = loopCandidate.getParent();
                                     }
-                                    if (report && (IGNORE_INCLUDES || !this.hasIncludes(scope))) {
+                                    if (report && (IGNORE_INCLUDES || ! this.hasIncludes(scope)) && ! this.hasGotos(scope)) {
                                         holder.registerProblem(
                                                 variable,
                                                 String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), variableName),
@@ -147,7 +147,7 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                         result.add(parameter.getName());
                     }
                     final List<Variable> used = ExpressionSemanticUtil.getUseListVariables(scope);
-                    if (used != null && !used.isEmpty()) {
+                    if (used != null && ! used.isEmpty()) {
                         used.forEach(v -> result.add(v.getName()));
                         used.clear();
                     }
@@ -159,6 +159,14 @@ public class IssetArgumentExistenceInspector extends BasePhpInspection {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
                 if (body != null) {
                     return PsiTreeUtil.findChildOfType(body, Include.class) != null;
+                }
+                return false;
+            }
+
+            private boolean hasGotos(@NotNull Function function) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                if (body != null) {
+                    return PsiTreeUtil.findChildOfType(body, PhpGoto.class) != null;
                 }
                 return false;
             }

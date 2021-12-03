@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
@@ -69,7 +70,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
 
                     if (PhpLanguageUtil.isNull(fieldDefault)) {
                         /* false-positives: typed properties PS will take care of them */
-                        if (! this.isTypedProperty(field)) {
+                        if (! this.isNullableTypedProperty(field)) {
                             holder.registerProblem(
                                     fieldDefault,
                                     MessagesPresentationUtil.prefixWithEa(messageDefaultNull),
@@ -104,10 +105,11 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean isTypedProperty(@Nullable Field field) {
+            private boolean isNullableTypedProperty(@Nullable Field field) {
                 if (field != null && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP740)) {
-                    /* in 2019.1 environment this is not working properly, IDE returns nonsense */
-                    return OpenapiResolveUtil.resolveDeclaredType(field).size() == 2;
+                    final PhpType resolved = OpenapiResolveUtil.resolveDeclaredType(field);
+                    return ! resolved.isEmpty() &&
+                           resolved.getTypes().stream().map(Types::getType).anyMatch(t -> t.equals(Types.strNull) || t.equals(Types.strMixed));
                 }
                 return false;
             }
@@ -182,7 +184,7 @@ public class PropertyInitializationFlawsInspector extends BasePhpInspection {
                             (null != fieldDefault && OpenapiEquivalenceUtil.areEqual(value, fieldDefault))
                         ) {
                             /* false-positives: typed properties */
-                            if (! this.isTypedProperty(OpenapiResolveUtil.resolveField(clazz, overriddenProperty))) {
+                            if (! this.isNullableTypedProperty(OpenapiResolveUtil.resolveField(clazz, overriddenProperty))) {
                                 holder.registerProblem(
                                         expression,
                                         MessagesPresentationUtil.prefixWithEa(messageSenselessWrite),

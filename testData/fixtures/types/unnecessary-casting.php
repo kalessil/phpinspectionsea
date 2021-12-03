@@ -107,3 +107,11 @@
     class UntypedPropertyHolder {
         protected $property = [];
     }
+
+    /* false-positives: operations with strings */
+    function cases_holder_string_as_operation_argument(string $string) {
+        return [
+            (int) ($string * 100),
+            (int) ($string / 100),
+        ];
+    }

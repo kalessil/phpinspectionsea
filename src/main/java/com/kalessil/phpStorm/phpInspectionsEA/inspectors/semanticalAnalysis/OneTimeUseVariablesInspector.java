@@ -22,10 +22,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.elements.PhpThrowExpression;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.NamedElementUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -217,10 +214,14 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                 if (expression != null) {
                     if (expression instanceof Variable) {
                         return (Variable) expression;
-                    } else if (expression instanceof FieldReference) {
-                        final FieldReference propertyAccess = (FieldReference) expression;
-                        if (propertyAccess.getFirstChild() instanceof Variable) {
-                            return (Variable) propertyAccess.getFirstChild();
+                    } else if (expression instanceof MemberReference) {
+                        final MemberReference reference = (MemberReference) expression;
+                        final PsiElement candidate      = reference.getFirstChild();
+                        if (candidate instanceof Variable) {
+                            final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                            if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW)) {
+                                return (Variable) candidate;
+                            }
                         }
                     } else if (OpenapiTypesUtil.isPhpExpressionImpl(expression)) {
                         /* instanceof passes child classes as well, what isn't correct */

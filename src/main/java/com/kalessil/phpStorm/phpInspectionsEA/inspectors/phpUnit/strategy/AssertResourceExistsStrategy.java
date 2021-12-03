@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.PhpUnitAssertFixer;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.phpUnit.PhpUnitVersion;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,12 @@ final public class AssertResourceExistsStrategy {
 
     private final static String messagePattern = "'%s(...)' would fit more here.";
 
-    static public boolean apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {
+    static public boolean apply(
+            @NotNull String methodName,
+            @NotNull MethodReference reference,
+            @NotNull ProblemsHolder holder,
+            @NotNull PhpUnitVersion version
+        ) {
         boolean result = false;
         if (targetMapping.containsKey(methodName)) {
             final PsiElement[] assertionArguments = reference.getParameters();
@@ -57,7 +63,10 @@ final public class AssertResourceExistsStrategy {
                         }
                         holder.registerProblem(
                                 reference,
-                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), suggestedAssertion),
+                                String.format(
+                                        MessagesPresentationUtil.prefixWithEa(messagePattern),
+                                        suggestNotDeprecated(suggestedAssertion, version)
+                                ),
                                 new PhpUnitAssertFixer(suggestedAssertion, suggestedArguments)
                         );
 
@@ -67,5 +76,12 @@ final public class AssertResourceExistsStrategy {
             }
         }
         return result;
+    }
+
+    static private String suggestNotDeprecated(@NotNull String assertion, @NotNull PhpUnitVersion version) {
+        if (version.atLeast(PhpUnitVersion.PHPUNIT91)) {
+            return assertion.replace("NotExist", "DoesNotExist");
+        }
+        return assertion;
     }
 }

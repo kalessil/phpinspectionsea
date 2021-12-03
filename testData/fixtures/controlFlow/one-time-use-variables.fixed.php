@@ -6,6 +6,8 @@ return returnByReference()->x;
 
 return (new \stdClass())->x;
 
+return (new \stdClass())->method();
+
 return (clone $x)->x;
 
 throw new Exception();

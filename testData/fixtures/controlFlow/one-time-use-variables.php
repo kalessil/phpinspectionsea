@@ -9,6 +9,9 @@ return $x->x;
 <warning descr="[EA] Variable $x is redundant.">$x</warning> = new \stdClass();
 return $x->x;
 
+<warning descr="[EA] Variable $x is redundant.">$x</warning> = new \stdClass();
+return $x->method();
+
 <warning descr="[EA] Variable $x is redundant.">$x</warning> = clone $x;
 return $x->x;
 

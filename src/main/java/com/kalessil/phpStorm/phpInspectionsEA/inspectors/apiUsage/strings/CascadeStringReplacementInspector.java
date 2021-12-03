@@ -161,7 +161,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 final boolean haveArrayType = Stream.of(arguments[0], arguments[1], previousArguments[0], previousArguments[1])
                       .filter(a   -> a instanceof PhpTypedElement && ! (a instanceof ArrayCreationExpression))
                       .anyMatch(a -> {
-                          final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) a, call.getProject());
+                          final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) a, holder.getProject());
                           if (resolved != null) {
                               final Set<String> types = resolved.filterUnknown().getTypes().stream().map(Types::getType).collect(Collectors.toSet());
                               return types.contains(Types.strArray) && ! types.contains(Types.strString);

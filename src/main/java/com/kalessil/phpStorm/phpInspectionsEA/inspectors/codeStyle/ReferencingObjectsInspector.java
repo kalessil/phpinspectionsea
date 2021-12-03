@@ -30,16 +30,18 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
     private static final String messageParameter  = "Objects are always passed by reference; please correct '& $%s'.";
     private static final String messageAssignment = "Objects are always passed by reference; please correct '= & new '.";
 
-    private static final PhpType php7Types = new PhpType();
+    private static final PhpType supportedScalarTypes = new PhpType();
     static {
         /* implicit scalar types */
-        php7Types.add(PhpType.STRING);
-        php7Types.add(PhpType.INT);
-        php7Types.add(PhpType.FLOAT);
-        php7Types.add(PhpType.BOOLEAN);
-        php7Types.add(PhpType.ARRAY);
+        supportedScalarTypes.add(PhpType.STRING);
+        supportedScalarTypes.add(PhpType.INT);
+        supportedScalarTypes.add(PhpType.FLOAT);
+        supportedScalarTypes.add(PhpType.BOOLEAN);
+        supportedScalarTypes.add(PhpType.ARRAY);
+        supportedScalarTypes.add(PhpType.MIXED);
+        supportedScalarTypes.add(new PhpType().add("\\iterable"));
         /* nullability support */
-        php7Types.add(PhpType.NULL);
+        supportedScalarTypes.add(PhpType.NULL);
     }
 
     @NotNull
@@ -74,7 +76,7 @@ public class ReferencingObjectsInspector extends BasePhpInspection {
                         .filter(parameter -> {
                             if (parameter.isPassByRef() && parameter.getDefaultValue() == null) {
                                 final PhpType declared = OpenapiResolveUtil.resolveDeclaredType(parameter);
-                                return !declared.isEmpty() && !PhpType.isSubType(declared, php7Types);
+                                return !declared.isEmpty() && !PhpType.isSubType(declared, supportedScalarTypes);
                             }
                             return false;
                         })

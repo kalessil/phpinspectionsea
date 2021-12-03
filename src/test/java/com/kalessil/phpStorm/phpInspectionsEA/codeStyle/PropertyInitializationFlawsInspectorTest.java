@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.codeStyle;
 
-import com.intellij.openapi.application.ApplicationInfo;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
@@ -34,15 +33,10 @@ final public class PropertyInitializationFlawsInspectorTest extends PhpCodeInsig
     public void testTypedPropertiesPatterns() {
         final PhpLanguageLevel level = PhpLanguageLevel.parse("7.4");
         if (level != null && level.getVersionString().equals("7.4")) {
-            /* In 2019.1 environment, typed properties are not identifying properly */
-            final ApplicationInfo about = ApplicationInfo.getInstance();
-            final boolean executeTest   = ! (about.getMajorVersion().equals("2019") && about.getMinorVersion().startsWith("1"));
-            if (executeTest) {
-                PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
-                myFixture.enableInspections(new PropertyInitializationFlawsInspector());
-                myFixture.configureByFile("testData/fixtures/codeStyle/property-initialization-typed-properties.php");
-                myFixture.testHighlighting(true, false, true);
-            }
+            PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
+            myFixture.enableInspections(new PropertyInitializationFlawsInspector());
+            myFixture.configureByFile("testData/fixtures/codeStyle/property-initialization-typed-properties.php");
+            myFixture.testHighlighting(true, false, true);
         }
     }
 }

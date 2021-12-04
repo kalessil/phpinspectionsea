@@ -593,7 +593,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.ShortEchoTagCanBeUsedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsNullFunctionUsageInspection"                 displayName="'null === ...' can be used"
-        groupName="Code Style"                                    enabledByDefault="false" level="WARNING"
+        groupName="Code Style"                                    enabledByDefault="false" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsNullFunctionUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="UnsetConstructsCanBeMergedInspection"          displayName="'unset(...)' constructs can be merged"

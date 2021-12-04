@@ -105,13 +105,18 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                 }
 
 
-                /* methods seems to be identical: resolve used classes to avoid ns/imports magic */
-                final Collection<String> collection = this.getUsedReferences(body);
-                if (!collection.isEmpty() && !collection.containsAll(this.getUsedReferences(parentBody))) {
-                    collection.clear();
+                /* methods seem to be identical: resolve used classes to avoid ns/imports magic */
+                boolean areReferencesMatching          = true;
+                final Collection<String> ownReferences = this.getUsedReferences(body);
+                if (! ownReferences.isEmpty()) {
+                    final Collection<String> parentReferences = this.getUsedReferences(parentBody);
+                    areReferencesMatching                     = ! ownReferences.contains(null) && ownReferences.equals(parentReferences);
+                    parentReferences.clear();
+                }
+                ownReferences.clear();
+                if (! areReferencesMatching) {
                     return;
                 }
-                collection.clear();
 
                 final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
                 if (methodName != null && !this.isOperatingOnPrivateMembers(parentMethod)) {
@@ -139,6 +144,8 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
                         final PsiElement entry = OpenapiResolveUtil.resolveReference(reference);
                         if (entry instanceof PhpNamedElement) {
                             fqns.add(((PhpNamedElement) entry).getFQN());
+                        } else {
+                            fqns.add(null);
                         }
                     }
                 }

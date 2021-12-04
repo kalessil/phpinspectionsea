@@ -60,3 +60,10 @@
             empty($subject->get()->field),
         ];
     }
+
+    /** @param bool|null|stdClass $object */
+    function empty_with_multiple_falsy_types($object) {
+        return [
+            <weak_warning descr="[EA] 'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty($object)</weak_warning>,
+        ];
+    }

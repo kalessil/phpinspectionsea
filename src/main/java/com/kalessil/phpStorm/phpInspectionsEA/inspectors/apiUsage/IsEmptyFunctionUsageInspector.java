@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -129,8 +128,7 @@ public class IsEmptyFunctionUsageInspector extends BasePhpInspection {
                 if (REPORT_EMPTY_USAGE) {
                     holder.registerProblem(
                             emptyExpression,
-                            MessagesPresentationUtil.prefixWithEa(messageDoNotUse),
-                            ProblemHighlightType.WEAK_WARNING
+                            MessagesPresentationUtil.prefixWithEa(messageDoNotUse)
                     );
                 }
             }

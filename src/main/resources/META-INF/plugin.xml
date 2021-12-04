@@ -90,10 +90,6 @@
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-        shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"
-        groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
-        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="TypeUnsafeComparisonInspection"                displayName="Type unsafe comparison"
         groupName="Type compatibility"                            enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.TypeUnsafeComparisonInspector"/>
@@ -603,6 +599,10 @@
         shortName="UnsetConstructsCanBeMergedInspection"          displayName="'unset(...)' constructs can be merged"
         groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnsetConstructsCanBeMergedInspector"/>
+    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
+        shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"
+        groupName="Code Style"                                     enabledByDefault="true" level="WEAK WARNING"
+        implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector"/>
 
 
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"

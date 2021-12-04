@@ -2,13 +2,13 @@
 
     function empty_with_array(array $array) {
         /* pattern: count can be used */
-        echo <warning descr="[EA] You should probably use 'count($array) === 0' instead.">empty($array)</warning>;
-        echo <warning descr="[EA] You should probably use 'count($array) !== 0' instead.">!empty($array)</warning>;
+        echo <weak_warning descr="[EA] You should probably use 'count($array) === 0' instead.">empty($array)</weak_warning>;
+        echo <weak_warning descr="[EA] You should probably use 'count($array) !== 0' instead.">!empty($array)</weak_warning>;
     }
 
     function empty_with_countable(\ArrayIterator $iterator) {
-        echo <warning descr="[EA] You should probably use 'count($iterator) === 0' instead.">empty($iterator)</warning>;
-        echo <warning descr="[EA] You should probably use 'count($iterator) !== 0' instead.">!empty($iterator)</warning>;
+        echo <weak_warning descr="[EA] You should probably use 'count($iterator) === 0' instead.">empty($iterator)</weak_warning>;
+        echo <weak_warning descr="[EA] You should probably use 'count($iterator) !== 0' instead.">!empty($iterator)</weak_warning>;
     }
 
     /**
@@ -21,17 +21,17 @@
     function empty_with_typed_params($int, $float, $boolean, $resource, $string) {
         return [
             /* pattern: can be compared to null */
-            <warning descr="[EA] You should probably use '$int === null' instead.">empty($int)</warning>,
-            <warning descr="[EA] You should probably use '$float === null' instead.">empty($float)</warning>,
-            <warning descr="[EA] You should probably use '$boolean === null' instead.">empty($boolean)</warning>,
-            <warning descr="[EA] You should probably use '$resource === null' instead.">empty($resource)</warning>,
+            <weak_warning descr="[EA] You should probably use '$int === null' instead.">empty($int)</weak_warning>,
+            <weak_warning descr="[EA] You should probably use '$float === null' instead.">empty($float)</weak_warning>,
+            <weak_warning descr="[EA] You should probably use '$boolean === null' instead.">empty($boolean)</weak_warning>,
+            <weak_warning descr="[EA] You should probably use '$resource === null' instead.">empty($resource)</weak_warning>,
             <weak_warning descr="[EA] 'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty($string)</weak_warning>,
         ];
     }
 
     function nullable_int(?int $int) { return $int; }
-    echo <warning descr="[EA] You should probably use 'nullable_int() === null' instead.">empty(nullable_int())</warning>;
-    echo <warning descr="[EA] You should probably use 'nullable_int() !== null' instead.">!empty(nullable_int())</warning>;
+    echo <weak_warning descr="[EA] You should probably use 'nullable_int() === null' instead.">empty(nullable_int())</weak_warning>;
+    echo <weak_warning descr="[EA] You should probably use 'nullable_int() !== null' instead.">!empty(nullable_int())</weak_warning>;
 
     function nullable_string(?string $string) { return $string; }
     echo <weak_warning descr="[EA] 'empty(...)' counts too many values as empty, consider refactoring with type sensitive checks.">empty(nullable_string())</weak_warning>;

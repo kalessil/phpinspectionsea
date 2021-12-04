@@ -11,7 +11,6 @@ Inspections Lists (Type compatibility)
 ---
 | Group                | Short Name                                      | Full Name                                              | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :----------------------------------------------------- | --: | --: | ---: | --: |
-| Type compatibility   | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                     | yes | yes | yes  | yes |
 | Type compatibility   | TypeUnsafeComparisonInspection                  | Type unsafe comparison                                 | yes | yes | yes  | yes |
 | Type compatibility   | TypeUnsafeArraySearchInspection                 | 'in_array(...)', 'array_search(...)' type unsafe usage | yes | yes | yes  | yes |
 | Type compatibility   | JsonEncodingApiUsageInspection                  | JSON encoding API usage                                | yes | yes | yes  | yes |
@@ -121,6 +120,7 @@ Inspections Lists (Code style)
 | Code Style           | ShortEchoTagCanBeUsedInspection                 | Short echo tag can be used                          | yes | yes | yes  | no  |
 | Code Style           | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
 | Code Style           | UnsetConstructsCanBeMergedInspection            | 'unset(...)' constructs can be merged               | yes | yes | yes  | yes |
+| Code Style           | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | yes | yes | yes  | yes |
 
 Inspections Lists (Language level migration)
 ---

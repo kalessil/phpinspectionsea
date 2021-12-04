@@ -601,7 +601,7 @@
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.UnsetConstructsCanBeMergedInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IsEmptyFunctionUsageInspection"                displayName="'empty(...)' usage"
-        groupName="Code Style"                                     enabledByDefault="true" level="WEAK WARNING"
+        groupName="Code Style"                                    enabledByDefault="true" level="WEAK WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.IsEmptyFunctionUsageInspector"/>
 
 

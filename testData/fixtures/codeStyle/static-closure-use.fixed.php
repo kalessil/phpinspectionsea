@@ -29,6 +29,14 @@ class CasesHolder extends ParentClass {
         $skippedClosure->bindTo($this);
     }
 
+    public function dispatched_into_static_methods() {
+        $targetClosure = static function() { ; };
+    	Clazz::method( $targetClosure );
+
+    	$skippedClosure = function() { ; };
+    	$object->method( $skippedClosure );
+    }
+
     public function scoped_factories() {
         return [
             CasesHolder::class => function() { return null; },

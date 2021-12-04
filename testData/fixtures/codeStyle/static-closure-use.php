@@ -29,6 +29,14 @@ class CasesHolder extends ParentClass {
         $skippedClosure->bindTo($this);
     }
 
+    public function dispatched_into_static_methods() {
+        $targetClosure = <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { ; };
+    	Clazz::method( $targetClosure );
+
+    	$skippedClosure = function() { ; };
+    	$object->method( $skippedClosure );
+    }
+
     public function scoped_factories() {
         return [
             CasesHolder::class => function() { return null; },

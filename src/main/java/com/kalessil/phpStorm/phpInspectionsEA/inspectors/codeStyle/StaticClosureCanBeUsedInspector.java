@@ -153,6 +153,11 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                                         continue;
                                     }
                                 }
+                            } else {
+                                final PsiElement operator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
+                                if (OpenapiTypesUtil.is(operator, PhpTokenTypes.SCOPE_RESOLUTION)) {
+                                    continue;
+                                }
                             }
                         } else if (referenceCandidate instanceof FunctionReference) {
                             /* case: e.g. array_filter($array, $callback) */
@@ -168,7 +173,10 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                         if (methodName != null && methodName.equals("bindTo")) {
                             final PsiElement[] arguments = reference.getParameters();
                             if (arguments.length > 0 && PhpLanguageUtil.isNull(arguments[0])) {
-                                continue;
+                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                if (resolved instanceof Method && ((Method) resolved).getFQN().equals("\\Closure.bindTo")) {
+                                    continue;
+                                }
                             }
                         }
                     } else if (context instanceof ArrayHashElement) {

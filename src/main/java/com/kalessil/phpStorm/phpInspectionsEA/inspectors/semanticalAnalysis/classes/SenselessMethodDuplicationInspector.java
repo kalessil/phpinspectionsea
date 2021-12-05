@@ -140,10 +140,11 @@ public class SenselessMethodDuplicationInspector extends BasePhpInspection {
             private Collection<String> getUsedReferences(@NotNull GroupStatement body) {
                 final Set<String> fqns = new HashSet<>();
                 for (final PhpReference reference : PsiTreeUtil.findChildrenOfAnyType(body, ClassReference.class, ConstantReference.class, FunctionReference.class)) {
-                    if (!(reference instanceof MethodReference)) {
+                    if (! (reference instanceof MethodReference)) {
                         final PsiElement entry = OpenapiResolveUtil.resolveReference(reference);
                         if (entry instanceof PhpNamedElement) {
-                            fqns.add(((PhpNamedElement) entry).getFQN());
+                            // We have to use this over resolved entry FQN as some of PhpStorm versions might not resolve the proper symbol
+                            fqns.add(reference.getFQN());
                         } else {
                             fqns.add(null);
                         }

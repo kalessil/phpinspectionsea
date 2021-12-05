@@ -28,14 +28,6 @@ final public class NotOptimalIfConditionsInspectionTest extends PhpCodeInsightFi
         myFixture.testHighlighting(true, false, true);
     }
 
-    public void testDuplicateConditions() {
-        NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
-        inspector.REPORT_DUPLICATE_CONDITIONS      = true;
-        myFixture.enableInspections(inspector);
-        myFixture.configureByFile("testData/fixtures/ifs/if-duplicate-conditions.php");
-        myFixture.testHighlighting(true, false, true);
-    }
-
     public void testInstanceOfFlaws() {
         NotOptimalIfConditionsInspection inspector = new NotOptimalIfConditionsInspection();
         inspector.REPORT_INSTANCE_OF_FLAWS         = true;

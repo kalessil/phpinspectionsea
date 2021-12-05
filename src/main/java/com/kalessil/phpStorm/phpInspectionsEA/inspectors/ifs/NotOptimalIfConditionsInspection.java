@@ -5,9 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.strategy.AndOrWordsUsageStrategy;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
@@ -23,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -37,14 +34,12 @@ import java.util.stream.Collectors;
 public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     // Inspection options.
     public boolean REPORT_LITERAL_OPERATORS      = true;
-    public boolean REPORT_DUPLICATE_CONDITIONS   = true;
     public boolean REPORT_INSTANCE_OF_FLAWS      = true;
     public boolean SUGGEST_OPTIMIZING_CONDITIONS = true;
 
     private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
     private static final String messageInstanceOfAmbiguous       = "This condition is ambiguous and can be safely removed.";
     private static final String messageOrdering                  = "This condition execution costs less than the previous one.";
-    private static final String messageDuplicateConditions       = "This condition is duplicated in another if/elseif branch (replacing duplicates with a local variable would make sense).";
     private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
 
     @NotNull
@@ -61,22 +56,24 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
     final private static Set<String> functionsSet = new HashSet<>();
     static {
-            functionsSet.add("array_key_exists");
-            functionsSet.add("defined");
-            functionsSet.add("is_array");
-            functionsSet.add("is_string");
-            functionsSet.add("is_bool");
-            functionsSet.add("is_int");
-            functionsSet.add("is_float");
-            functionsSet.add("is_resource");
-            functionsSet.add("is_numeric");
-            functionsSet.add("is_scalar");
-            functionsSet.add("is_object");
-            functionsSet.add("is_callable");
-            functionsSet.add("is_countable");
-            functionsSet.add("is_iterable");
-            functionsSet.add("function_exists");
-            functionsSet.add("property_exists");
+        functionsSet.add("array_key_exists");
+        functionsSet.add("function_exists");
+        functionsSet.add("property_exists");
+
+        functionsSet.add("defined");
+        functionsSet.add("is_array");
+        functionsSet.add("is_bool");
+        functionsSet.add("is_callable");
+        functionsSet.add("is_countable");
+        functionsSet.add("is_float");
+        functionsSet.add("is_int");
+        functionsSet.add("is_iterable");
+        functionsSet.add("is_null");
+        functionsSet.add("is_numeric");
+        functionsSet.add("is_object");
+        functionsSet.add("is_resource");
+        functionsSet.add("is_scalar");
+        functionsSet.add("is_string");
     }
 
     @Override
@@ -92,9 +89,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 if (null != objConditionsFromStatement) {
                     objAllConditions.addAll(objConditionsFromStatement);
 
-                    if (REPORT_DUPLICATE_CONDITIONS) {
-                        this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
-                    }
                     if (REPORT_INSTANCE_OF_FLAWS) {
                         this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
                         this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
@@ -112,9 +106,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     if (objConditionsFromStatement != null) {
                         objAllConditions.addAll(objConditionsFromStatement);
 
-                        if (REPORT_DUPLICATE_CONDITIONS) {
-                            this.inspectConditionsForDuplicatedCalls(objConditionsFromStatement);
-                        }
                         if (REPORT_INSTANCE_OF_FLAWS) {
                             this.inspectConditionsForInstanceOfAndIdentityOperations(objConditionsFromStatement, arrOperationHolder[0]);
                             this.inspectConditionsForAmbiguousInstanceOf(objConditionsFromStatement);
@@ -128,9 +119,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                     }
                 }
 
-                if (REPORT_DUPLICATE_CONDITIONS) {
-                    this.inspectDuplicatedConditions(objAllConditions, ifStatement);
-                }
                 /* TODO: If not binary/ternary/assignment/array access expression,  */
                 /* TODO: perform types lookup - nullable core types/classes should be compared with null.  */
                 /* TODO: Inversion should be un-boxed to get expression. */
@@ -347,131 +335,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
                 return result;
             }
 
-            /* Checks if duplicates are introduced, conditions collection will be modified so it's empty in the end */
-            private void inspectDuplicatedConditions(@NotNull List<PsiElement> objAllConditions, @NotNull If ifStatement) {
-                final List<PsiElement> objParentConditions = new ArrayList<>();
-
-                /* pickup only expressions not depending on previously modified variables */
-                final List<String> modifiedVariables = this.getPreviouslyModifiedVariables(ifStatement);
-                final List<PsiElement> conditions    = objAllConditions.stream()
-                        .filter(expression -> {
-                            boolean result = true;
-                            if (!modifiedVariables.isEmpty()) {
-                                for (final Variable variable : PsiTreeUtil.findChildrenOfType(expression, Variable.class)) {
-                                    if (modifiedVariables.contains(variable.getName())) {
-                                        result = false;
-                                        break;
-                                    }
-                                }
-                            }
-                            return result;
-                        })
-                        .collect(Collectors.toList());
-
-                /* collect parent scopes conditions */
-                PsiElement parent = ifStatement.getParent();
-                while (parent != null && !(parent instanceof PhpFile) && !(parent instanceof Function)) {
-                    if (parent instanceof If) {
-                        List<PsiElement> tempList = ExpressionSemanticUtil.getConditions(((If) parent).getCondition(), null);
-                        if (tempList != null) {
-                            objParentConditions.addAll(tempList);
-                            tempList.clear();
-                        }
-
-                        for (final ElseIf objParentElseIf : ((If) parent).getElseIfBranches()) {
-                            tempList = ExpressionSemanticUtil.getConditions(objParentElseIf.getCondition(), null);
-                            if (tempList != null) {
-                                objParentConditions.addAll(tempList);
-                                tempList.clear();
-                            }
-                        }
-                    }
-                    parent = parent.getParent();
-                }
-
-
-                /* scan for duplicates */
-                for (PsiElement objExpression : conditions) {
-                    if (null == objExpression) {
-                        continue;
-                    }
-
-                    /* put a stub */
-                    int intOuterIndex = conditions.indexOf(objExpression);
-                    conditions.set(intOuterIndex, null);
-
-
-                    /* ignore variables (even if inverted) */
-                    PsiElement variableCandidate = objExpression;
-                    if (variableCandidate instanceof UnaryExpression) {
-                        final PsiElement notOperatorCandidate = ((UnaryExpression) variableCandidate).getOperation();
-                        if (null != notOperatorCandidate && notOperatorCandidate.getNode().getElementType() == PhpTokenTypes.opNOT) {
-                            PsiElement invertedValue = ((UnaryExpression) variableCandidate).getValue();
-                            invertedValue = ExpressionSemanticUtil.getExpressionTroughParenthesis(invertedValue);
-                            if (null == invertedValue) {
-                                continue;
-                            }
-
-                            variableCandidate = invertedValue;
-                        }
-                    }
-                    /* ignore variables (even if compared with booleans) */
-                    if (variableCandidate instanceof BinaryExpression) {
-                        final PsiElement left  = ((BinaryExpression) variableCandidate).getLeftOperand();
-                        final PsiElement right = ((BinaryExpression) variableCandidate).getRightOperand();
-                        if (PhpLanguageUtil.isBoolean(right) || PhpLanguageUtil.isNull(right)) {
-                            variableCandidate = left;
-                        } else if (PhpLanguageUtil.isBoolean(left) || PhpLanguageUtil.isNull(left)) {
-                            variableCandidate = right;
-                        }
-                    }
-                    if (
-                        variableCandidate instanceof Variable ||
-                        variableCandidate instanceof ConstantReference ||
-                        variableCandidate instanceof FieldReference
-                    ) {
-                        continue;
-                    }
-                    /* continue with sensible expressions analysis */
-
-
-                    /* search duplicates in current scope */
-                    for (final PsiElement innerLoopExpression : conditions) {
-                        if (innerLoopExpression != null && OpenapiEquivalenceUtil.areEqual(innerLoopExpression, objExpression)) {
-                            /* false-positives: mkdir race conditions */
-                            final PsiElement extracted = objExpression instanceof UnaryExpression
-                                    ? ((UnaryExpression) objExpression).getValue()
-                                    : objExpression;
-                            if (OpenapiTypesUtil.isFunctionReference(extracted)) {
-                                final String functionName = ((FunctionReference) extracted).getName();
-                                if (functionName != null && functionName.equals("is_dir")) {
-                                    continue;
-                                }
-                            }
-
-                            holder.registerProblem(
-                                    innerLoopExpression,
-                                    MessagesPresentationUtil.prefixWithEa(messageDuplicateConditions)
-                            );
-                            conditions.set(conditions.indexOf(innerLoopExpression), null);
-                        }
-                    }
-
-                    /* search duplicates in outer scopes */
-                    for (final PsiElement objOuterScopeExpression : objParentConditions) {
-                        if (objOuterScopeExpression != null && OpenapiEquivalenceUtil.areEqual(objOuterScopeExpression, objExpression)) {
-                            holder.registerProblem(
-                                    objExpression,
-                                    MessagesPresentationUtil.prefixWithEa(messageDuplicateConditions)
-                            );
-                            objParentConditions.set(objParentConditions.indexOf(objOuterScopeExpression), null);
-                        }
-                    }
-                }
-
-                objParentConditions.clear();
-            }
-
             /**
              * @param objCondition to inspect
              */
@@ -515,7 +378,6 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) -> {
-            component.addCheckbox("Report duplicate conditions", REPORT_DUPLICATE_CONDITIONS, (isSelected) -> REPORT_DUPLICATE_CONDITIONS = isSelected);
             component.addCheckbox("Report instanceof usage flaws", REPORT_INSTANCE_OF_FLAWS, (isSelected) -> REPORT_INSTANCE_OF_FLAWS = isSelected);
             component.addCheckbox("Report literal and/or operators", REPORT_LITERAL_OPERATORS, (isSelected) -> REPORT_LITERAL_OPERATORS = isSelected);
             component.addCheckbox("Suggest optimizing conditions", SUGGEST_OPTIMIZING_CONDITIONS, (isSelected) -> SUGGEST_OPTIMIZING_CONDITIONS = isSelected);

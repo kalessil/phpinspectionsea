@@ -44,7 +44,7 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
     private static final String messageInstanceOfComplementarity = "Probable bug: ensure this behaves properly with 'instanceof(...)' in this scenario.";
     private static final String messageInstanceOfAmbiguous       = "This condition is ambiguous and can be safely removed.";
     private static final String messageOrdering                  = "This condition execution costs less than the previous one.";
-    private static final String messageDuplicateConditions       = "This condition is duplicated in another if/elseif branch.";
+    private static final String messageDuplicateConditions       = "This condition is duplicated in another if/elseif branch (replacing duplicates with a local variable would make sense).";
     private static final String messageDuplicateConditionPart    = "This call is duplicated in conditions set.";
 
     @NotNull

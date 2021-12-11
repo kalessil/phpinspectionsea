@@ -21,7 +21,7 @@ public enum PhpLanguageLevel {
     PHP540("5.4.0"),
     PHP550("5.5.0"),
     PHP560("5.6.0"),
-    PHP700("7"),
+    PHP700("7.0"),
     PHP710("7.1"),
     PHP720("7.2"),
     PHP730("7.3"),
@@ -60,7 +60,7 @@ public enum PhpLanguageLevel {
         if (current == null) {
             final String version = PhpProjectConfigurationFacade.getInstance(project).getLanguageLevel().getVersionString();
             return Arrays.stream(values())
-                    .filter(level -> level.getVersion().equals(version))
+                    .filter(level -> level.getVersion().equals(version.equals("7") ? "7.0" : version))
                     .findFirst()
                     .orElse(PHP740);
         }

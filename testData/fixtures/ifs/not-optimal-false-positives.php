@@ -20,9 +20,17 @@ if (!isset($array[$index]) && !array_key_exists($index, $array)) {}
 if (!isset($array[trim($index)]) && !array_key_exists($index, $array)) {}
 
 /* older code samples: weights estimation */
-if (isset($x) && $y)                     {}
-if (empty($x) && $y)                     {}
-if (isset($x[uniqid()]) && $y[uniqid()]) {}
+if (isset($x) && $y)                         {}
+if (!isset($x) && $y)                        {}
+if (isset($x[uniqid()]) && $y[uniqid()])     {}
+if (isset($x[$key]) && $y[$key])             {}
+if (empty($x) && $y)                         {}
+if (!empty($x) && $y)                        {}
+if (empty($x[$key]) && $y[$key])             {}
+if (is_null($x) && $y)                       {}
+if (!is_null($x) && $y)                      {}
+if (array_key_exists($key, $y) && $y[$key])  {}
+if (!array_key_exists($key, $y) && $y[$key]) {}
 
 /* duplicate calls: variable gets overridden */
 if (!call($mixed)) {
@@ -39,3 +47,6 @@ if (isset($array[0]) || array_key_exists(0, $array)) {}
 if ($object->getString() && $object->{$object->getString()}) {}
 if ($object->getString() && "{$object->getString()}") {}
 if ($object->getString() && ${$object->getString()}) {}
+
+/*  */
+if () {}

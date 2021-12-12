@@ -24,10 +24,11 @@ import java.util.Map;
 final public class OpenapiControlFlowUtil {
     @NotNull
     public static List<PhpAccessVariableInstruction> getFollowingVariableAccessInstructions(@NotNull PhpInstruction point, @NotNull final CharSequence variableName) {
+        /* PhpStorm 2021 supplies duplicate values for some reason, breaking existing inspections */
         final List<PhpAccessVariableInstruction> instructions               = new ArrayList<>();
         final Map<PsiElement, PhpAccessInstruction.Access> processedAnchors = new HashMap<>();
         for (final PhpAccessVariableInstruction entry: PhpControlFlowUtil.getFollowingVariableAccessInstructions(point, variableName, false)) {
-            final PsiElement anchor                  = entry.getAnchor().getParent();
+            final PsiElement anchor                  = entry.getAnchor();
             final PhpAccessInstruction.Access access = entry.getAccess();
             if (! processedAnchors.containsKey(anchor) || ! processedAnchors.get(anchor).equals(access)) {
                 processedAnchors.put(anchor, access);

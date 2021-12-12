@@ -59,6 +59,9 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         functionsSet.add("array_key_exists");
         functionsSet.add("function_exists");
         functionsSet.add("property_exists");
+        functionsSet.add("class_exists");
+        functionsSet.add("interface_exists");
+        functionsSet.add("trait_exists");
 
         functionsSet.add("defined");
         functionsSet.add("is_array");

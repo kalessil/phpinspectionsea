@@ -169,8 +169,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 @NotNull Set<String> individualDependencies,
                 @NotNull Set<String> allModifiedVariables
             ) {
-                for (final PsiElement variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
-                    final String variableName = ((Variable) variable).getName();
+                for (final Variable variable : PsiTreeUtil.findChildrenOfType(oneInstruction, Variable.class)) {
+                    final String variableName = variable.getName();
                     PsiElement valueContainer = variable;
                     PsiElement parent         = variable.getParent();
                     while (parent instanceof FieldReference) {
@@ -179,7 +179,10 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     }
                     /* a special case: `[] = ` and `array() = ` unboxing */
                     if (OpenapiTypesUtil.is(parent, PhpElementTypes.ARRAY_VALUE)) {
-                        parent = parent.getParent().getParent();
+                        parent = parent.getParent();
+                        if (parent instanceof ArrayCreationExpression) {
+                            parent = parent.getParent();
+                        }
                     }
                     final PsiElement grandParent = parent.getParent();
 

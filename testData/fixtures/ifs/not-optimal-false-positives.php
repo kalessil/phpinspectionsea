@@ -31,6 +31,12 @@ if (is_null($x) && $y)                       {}
 if (!is_null($x) && $y)                      {}
 if (array_key_exists($key, $y) && $y[$key])  {}
 if (!array_key_exists($key, $y) && $y[$key]) {}
+if (function_exists('f') && f(abs($y)))                  {}
+if (method_exists($y, 'm') && f(abs($y->m())))           {}
+if (property_exists($y, 'p') && f(abs($y->p)))           {}
+if (class_exists('Clazz') && f(abs(new Clazz())))        {}
+if (interface_exists('Contract') && f(abs(new Clazz()))) {}
+if (trait_exists('CopyPaste') && f(abs(new Clazz())) )   {}
 
 /* duplicate calls: variable gets overridden */
 if (!call($mixed)) {
@@ -47,6 +53,3 @@ if (isset($array[0]) || array_key_exists(0, $array)) {}
 if ($object->getString() && $object->{$object->getString()}) {}
 if ($object->getString() && "{$object->getString()}") {}
 if ($object->getString() && ${$object->getString()}) {}
-
-/*  */
-if () {}

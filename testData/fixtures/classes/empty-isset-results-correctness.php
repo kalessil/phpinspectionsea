@@ -22,8 +22,10 @@ class ClassWithoutIsset
         $validObject   = new ClassWithIsset();
         $invalidObject = new ClassWithoutIsset();
         return [
-            isset($regularObject-><error descr="Member has private access">privateProperty</error>),
-            isset($regularObject-><error descr="Member has protected access">protectedProperty</error>),
+            // covered by IDE itself: Member has private/protected access
+            // isset($regularObject->privateProperty),
+            // isset($regularObject->protectedProperty),
+
             isset($regularObject->publicProperty),
             isset($regularObject->{$magic}),
             isset(ClassWithProperty::${$magic}),
@@ -35,8 +37,10 @@ class ClassWithoutIsset
             isset($invalidObject->{$magic}),
             isset(ClassWithoutIsset::${$magic}),
 
-            empty($regularObject-><error descr="Member has private access">privateProperty</error>),
-            empty($regularObject-><error descr="Member has protected access">protectedProperty</error>),
+            // covered by IDE itself: Member has private/protected access
+            // empty($regularObject->privateProperty),
+            // empty($regularObject->protectedProperty),
+
             empty($regularObject->publicProperty),
             empty($regularObject->{$magic}),
             empty(ClassWithProperty::${$magic}),

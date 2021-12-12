@@ -32,7 +32,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
         foreachExceptions.add("\\Generator");
         foreachExceptions.add("\\Traversable");
         foreachExceptions.add("\\Iterator");
-        foreachExceptions.add("iterable");
+        foreachExceptions.add(Types.strIterable);
     }
 
     @NotNull
@@ -121,7 +121,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                                                                    lastExpression instanceof PhpReturn ||
                                                                    OpenapiTypesUtil.isThrowExpression(lastExpression);
                 /* loop is empty or terminates on first iteration */
-                if (null != lastExpression && !isLoopTerminatedWithLastExpression) {
+                if (null != lastExpression && ! isLoopTerminatedWithLastExpression) {
                     return false;
                 }
 
@@ -129,7 +129,7 @@ public class LoopWhichDoesNotLoopInspector extends BasePhpInspection {
                 for (final PhpContinue expression : PsiTreeUtil.findChildrenOfType(body, PhpContinue.class)) {
                     int nestingLevel  = 0;
                     PsiElement parent = expression.getParent();
-                    while (null != parent && !(parent instanceof Function) && !(parent instanceof PsiFile)) {
+                    while (null != parent && ! (parent instanceof Function) && ! (parent instanceof PsiFile)) {
                         if (OpenapiTypesUtil.isLoop(parent)) {
                             ++nestingLevel;
 

@@ -62,6 +62,8 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         functionsSet.add("class_exists");
         functionsSet.add("interface_exists");
         functionsSet.add("trait_exists");
+        functionsSet.add("is_a");
+        functionsSet.add("is_subclass_of");
 
         functionsSet.add("defined");
         functionsSet.add("is_array");
@@ -69,7 +71,11 @@ public class NotOptimalIfConditionsInspection extends BasePhpInspection {
         functionsSet.add("is_callable");
         functionsSet.add("is_countable");
         functionsSet.add("is_float");
+        functionsSet.add("is_double");
+        functionsSet.add("is_real");
         functionsSet.add("is_int");
+        functionsSet.add("is_integer");
+        functionsSet.add("is_long");
         functionsSet.add("is_iterable");
         functionsSet.add("is_null");
         functionsSet.add("is_numeric");

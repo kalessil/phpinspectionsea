@@ -37,6 +37,22 @@ if (property_exists($y, 'p') && $y->p)       {}
 if (class_exists('Clazz') && $y->p)          {}
 if (interface_exists('Contract') && $y->p)   {}
 if (trait_exists('CopyPaste') && $y->p)      {}
+if (is_array($x) && $y)                      {}
+if (is_object($x) && $y)                     {}
+if (is_bool($x) && $y)                       {}
+if (is_int($x) && $y)                        {}
+if (is_integer($x) && $y)                    {}
+if (is_long($x) && $y)                       {}
+if (is_float($x) && $y)                      {}
+if (is_double($x) && $y)                     {}
+if (is_real($x) && $y)                       {}
+if (is_numeric($x) && $y)                    {}
+if (is_string($x) && $y)                     {}
+if (is_scalar($x) && $y)                     {}
+if (is_callable($x) && $y)                   {}
+if ($x instanceof Clazz && $y)               {}
+if (is_a($x, Clazz::class) && $y)            {}
+if (is_subclass_of($x, Clazz::class) && $y)  {}
 
 /* duplicate calls: variable gets overridden */
 if (!call($mixed)) {

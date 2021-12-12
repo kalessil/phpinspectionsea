@@ -3,7 +3,10 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.AssignmentExpression;
+import com.jetbrains.php.lang.psi.elements.FieldReference;
+import com.jetbrains.php.lang.psi.elements.MemberReference;
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import org.jetbrains.annotations.Nullable;
 
 /*

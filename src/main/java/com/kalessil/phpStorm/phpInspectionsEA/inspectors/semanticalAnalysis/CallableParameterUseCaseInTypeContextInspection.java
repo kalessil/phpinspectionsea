@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
@@ -127,9 +126,7 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
 
                     /* now find instructions operating on the parameter and perform analysis */
                     final String parameterName = parameter.getName();
-                    final PhpAccessVariableInstruction[] usages
-                        = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, parameterName, false);
-                    for (final PhpAccessVariableInstruction instruction : usages) {
+                    for (final PhpAccessVariableInstruction instruction : OpenapiControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, parameterName)) {
                         final PsiElement parent        = instruction.getAnchor().getParent();
                         final PsiElement callCandidate = null == parent ? null : parent.getParent();
 

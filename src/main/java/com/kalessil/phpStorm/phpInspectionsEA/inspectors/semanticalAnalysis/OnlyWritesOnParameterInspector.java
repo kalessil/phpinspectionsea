@@ -6,8 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.codeInsight.PhpScopeHolder;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
@@ -132,7 +130,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                         }
 
                         if (OpenapiTypesUtil.is(previous, PhpTokenTypes.opBIT_AND)) {
-                            if (this.getVariableUsages(parameterName, function).length == 0) {
+                            if (OpenapiControlFlowUtil.getFollowingVariableAccessInstructions(function.getControlFlow().getEntryPoint(), parameterName).isEmpty()) {
                                 holder.registerProblem(
                                         variable,
                                         MessagesPresentationUtil.prefixWithEa(messageUnused),
@@ -151,9 +149,9 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
             }
 
             private int analyzeAndReturnUsagesCount(@NotNull String parameterName, @NotNull Function function) {
-                final PhpAccessVariableInstruction[] usages = this.getVariableUsages(parameterName, function);
-                if (usages.length == 0) {
-                    return usages.length;
+                final List<PhpAccessVariableInstruction> usages = OpenapiControlFlowUtil.getFollowingVariableAccessInstructions(function.getControlFlow().getEntryPoint(), parameterName);
+                if (usages.isEmpty()) {
+                    return 0;
                 }
 
                 final List<PsiElement> targetExpressions = new ArrayList<>();
@@ -270,7 +268,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                                     isReference = true;
                                 }
                                 /* false-negative: inline assignment result has been used */
-                                if (usages.length == 2 && usages[0].getAnchor() == usages[1].getAnchor()) {
+                                if (usages.size() == 2 && usages.get(0).getAnchor() == usages.get(1).getAnchor()) {
                                     holder.registerProblem(
                                             assignmentVariableCandidate,
                                             MessagesPresentationUtil.prefixWithEa(messageUnused),
@@ -331,7 +329,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                 }
                 targetExpressions.clear();
 
-                return usages.length;
+                return usages.size();
             }
 
             private boolean isAnySuppressed(@NotNull List<PsiElement> expressions) {
@@ -359,18 +357,6 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                     return PsiTreeUtil.findChildOfType(body, Include.class) != null;
                 }
                 return false;
-            }
-
-            @NotNull
-            private PhpAccessVariableInstruction[] getVariableUsages(
-                    @NotNull String parameterName,
-                    @NotNull PhpScopeHolder scopeHolder
-            ) {
-                return PhpControlFlowUtil.getFollowingVariableAccessInstructions(
-                        scopeHolder.getControlFlow().getEntryPoint(),
-                        parameterName,
-                        false
-                );
             }
         };
     }

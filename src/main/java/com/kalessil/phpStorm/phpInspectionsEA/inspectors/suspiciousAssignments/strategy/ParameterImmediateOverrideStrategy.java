@@ -3,14 +3,16 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiControlFlowUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -39,15 +41,15 @@ final public class ParameterImmediateOverrideStrategy {
                 continue;
             }
 
-            final String parameterName          = param.getName();
-            PhpAccessVariableInstruction[] uses = PhpControlFlowUtil.getFollowingVariableAccessInstructions(start, parameterName, false);
+            final String parameterName              = param.getName();
+            List<PhpAccessVariableInstruction> uses = OpenapiControlFlowUtil.getFollowingVariableAccessInstructions(start, parameterName);
             /* at least 2 uses expected: override and any other operation */
-            if (uses.length < 2) {
+            if (uses.size() < 2) {
                 continue;
             }
 
             /* first use should be a write directly in function body */
-            final PhpPsiElement expression = uses[0].getAnchor();
+            final PhpPsiElement expression = uses.get(0).getAnchor();
             final PsiElement parent        = expression.getParent();
             if (OpenapiTypesUtil.isAssignment(parent) && expression == ((AssignmentExpression) parent).getVariable()) {
                 /* the assignment must be directly in the body, no conditional/in-loop overrides are checked */

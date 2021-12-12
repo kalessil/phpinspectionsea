@@ -8,9 +8,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
-import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocVariable;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
@@ -114,12 +112,9 @@ public class OneTimeUseVariablesInspector extends BasePhpInspection {
                         /* heavy part, find usage inside function/method to analyze multiple writes */
                         final PhpScopeHolder parentScope = ExpressionSemanticUtil.getScope(assign);
                         if (null != parentScope) {
-                            final PhpEntryPointInstruction entryPoint   = parentScope.getControlFlow().getEntryPoint();
-                            final PhpAccessVariableInstruction[] usages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entryPoint, variableName, false);
-
                             int countWrites = 0;
                             int countReads  = 0;
-                            for (final PhpAccessVariableInstruction oneCase: usages) {
+                            for (final PhpAccessVariableInstruction oneCase: OpenapiControlFlowUtil.getFollowingVariableAccessInstructions(parentScope.getControlFlow().getEntryPoint(), variableName)) {
                                 final boolean isWrite = oneCase.getAccess().isWrite();
                                 if (isWrite) {
                                     /* false-positives: type specification */

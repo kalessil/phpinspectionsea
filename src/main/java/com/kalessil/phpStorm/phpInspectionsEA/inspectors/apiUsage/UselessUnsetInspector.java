@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.codeInsight.PhpScopeHolder;
-import com.jetbrains.php.codeInsight.controlFlow.PhpControlFlowUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpEntryPointInstruction;
 import com.jetbrains.php.lang.psi.elements.Function;
@@ -15,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.PhpUnset;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiControlFlowUtil;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -63,12 +63,12 @@ public class UselessUnsetInspector extends BasePhpInspection {
                     for (final Parameter parameter : parameters) {
                         final String parameterName = parameter.getName();
                         if (!parameterName.isEmpty()) {
-                            final PhpAccessVariableInstruction[] usages = PhpControlFlowUtil.getFollowingVariableAccessInstructions(entry, parameterName, false);
-                            for (final PhpAccessVariableInstruction usage : usages) {
+                            for (final PhpAccessVariableInstruction usage : OpenapiControlFlowUtil.getFollowingVariableAccessInstructions(entry, parameterName)) {
                                 final PsiElement expression = usage.getAnchor();
-                                if (expression.getParent() instanceof PhpUnset) {
-                                    int unsetParametersCount = ((PhpUnset) expression.getParent()).getArguments().length;
-                                    final PsiElement target  = (unsetParametersCount == 1 ? expression.getParent() : expression);
+                                final PsiElement parent     = expression.getParent();
+                                if (parent instanceof PhpUnset) {
+                                    int unsetParametersCount = ((PhpUnset) parent).getArguments().length;
+                                    final PsiElement target  = (unsetParametersCount == 1 ? parent : expression);
                                     holder.registerProblem(
                                             target,
                                             MessagesPresentationUtil.prefixWithEa(message),

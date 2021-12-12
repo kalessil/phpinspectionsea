@@ -18,8 +18,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.intellij.codeInspection.LocalInspectionEP.LOCAL_INSPECTION;
 import static com.intellij.codeInspection.InspectionEP.GLOBAL_INSPECTION;
+import static com.intellij.codeInspection.LocalInspectionEP.LOCAL_INSPECTION;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.

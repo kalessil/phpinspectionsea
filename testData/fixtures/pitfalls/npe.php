@@ -153,6 +153,12 @@ class CasesHolder {
         }
     }
 
+    public function npeSafeInstanceofCase(?CasesHolder $first) {
+        if ($first instanceof CasesHolder) {
+            return $first->nonExistingField;
+        }
+    }
+
     public function npeSafeChecks(?CasesHolder $first, ?CasesHolder $second) {
         if ($first) {
             return $first->nonExistingField;

@@ -55,20 +55,20 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                 /* check conflict with own fields */
                 for (final Field ownField : clazz.getOwnFields()) {
                     final String ownFieldName = ownField.getName();
-                    if (!ownFieldName.isEmpty() && !ownField.isConstant()) {
+                    if (! ownFieldName.isEmpty() && ! ownField.isConstant() && ! this.isDocBlockProperty(ownField, clazz)) {
                         final PhpModifier modifier = ownField.getModifier();
-                        if (!modifier.isAbstract() && !this.isAnnotated(ownField)) {
+                        if (! modifier.isAbstract() && ! this.isAnnotated(ownField)) {
                             final PsiElement ownFieldDefault = OpenapiResolveUtil.resolveDefaultValue(ownField);
                             for (final PhpClass trait : traits) {
                                 final Field traitField = OpenapiResolveUtil.resolveField(trait, ownFieldName);
-                                if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
+                                if (traitField != null && ! this.isDocBlockProperty(traitField, trait)) {
                                     final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
 
                                     final boolean isError;
                                     if (ownFieldDefault == null || traitFieldDefault == null) {
                                         isError = traitFieldDefault != ownFieldDefault;
                                     } else {
-                                        isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, ownFieldDefault);
+                                        isError = ! OpenapiEquivalenceUtil.areEqual(traitFieldDefault, ownFieldDefault);
                                     }
 
                                     /* error case already covered by the IDEs */
@@ -91,7 +91,7 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                 final Map<PhpClass, PsiElement> useReportTargets = new HashMap<>();
                 for (final PsiElement child: clazz.getChildren()) {
                     if (child instanceof PhpUseList) {
-                        for (ClassReference reference :PsiTreeUtil.findChildrenOfType(child, ClassReference.class)) {
+                        for (final ClassReference reference: PsiTreeUtil.findChildrenOfType(child, ClassReference.class)) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                             if (resolved instanceof PhpClass) {
                                 useReportTargets.putIfAbsent((PhpClass) resolved, reference);
@@ -108,20 +108,20 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
                 /* iterate parent non-private fields to find conflicting properties */
                 for (final Field parentField : parent.getFields()) {
                     final String parentFieldName = parentField.getName();
-                    if (!parentFieldName.isEmpty() && !parentField.isConstant()) {
+                    if (! parentFieldName.isEmpty() && ! parentField.isConstant() && ! this.isDocBlockProperty(parentField, parent)) {
                         final PhpModifier modifier = parentField.getModifier();
-                        if (!modifier.isPrivate() && !modifier.isAbstract()) {
+                        if (! modifier.isPrivate() && ! modifier.isAbstract()) {
                             final PsiElement parentFieldDefault = OpenapiResolveUtil.resolveDefaultValue(parentField);
                             for (final PhpClass trait : traits) {
                                 final Field traitField = OpenapiResolveUtil.resolveField(trait, parentFieldName);
-                                if (traitField != null && ExpressionSemanticUtil.getBlockScope(traitField) == trait) {
+                                if (traitField != null && ! this.isDocBlockProperty(traitField, trait)) {
                                     final PsiElement traitFieldDefault = OpenapiResolveUtil.resolveDefaultValue(traitField);
 
                                     final boolean isError;
                                     if (parentFieldDefault == null || traitFieldDefault == null) {
                                         isError = traitFieldDefault != parentFieldDefault;
                                     } else {
-                                        isError = !OpenapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);
+                                        isError = ! OpenapiEquivalenceUtil.areEqual(traitFieldDefault, parentFieldDefault);
                                     }
 
                                     final PsiElement reportTarget = useReportTargets.get(trait);
@@ -143,7 +143,11 @@ public class TraitsPropertiesConflictsInspector extends BasePhpInspection {
 
             private boolean isAnnotated(@NotNull Field ownField) {
                 final PhpDocTag[] tags = PsiTreeUtil.getChildrenOfType(ownField.getDocComment(), PhpDocTag.class);
-                return tags != null && Arrays.stream(tags).anyMatch(t -> !t.getName().equals(t.getName().toLowerCase()));
+                return tags != null && Arrays.stream(tags).anyMatch(t -> ! t.getName().equals(t.getName().toLowerCase()));
+            }
+
+            private boolean isDocBlockProperty(@NotNull Field field, @NotNull PhpClass clazz) {
+                return ExpressionSemanticUtil.getBlockScope(field) != clazz;
             }
         };
     }

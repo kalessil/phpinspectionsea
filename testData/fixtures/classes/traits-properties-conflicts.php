@@ -12,12 +12,14 @@ trait PropertiesTraitForBase2 {
  * @property $privatePhpdocProperty
  * @property $protectedPhpdocProperty
  * @property $publicPhpdocProperty
+ * @property $phpdocPropertyInBoth
  */
 trait PropertiesTrait {
     /** @Id */
-    public $sameAnnotated     = true;
-    public $same              = true;
-    private $different        = false;
+    public $sameAnnotated        = true;
+    public $same                 = true;
+    private $different           = false;
+    private $traitHostedProperty = true;
 }
 
 class BasePropertiesExample {
@@ -26,6 +28,11 @@ class BasePropertiesExample {
 
     protected $baseDifferent2 = true;
 }
+
+/**
+ * @property $traitHostedProperty
+ * @property $phpdocPropertyInBoth
+ */
 class PropertiesExample extends BasePropertiesExample {
     use
         <weak_warning descr="[EA] 'PropertiesExample' and 'PropertiesTraitForBase1' define the same property ($baseSame).">PropertiesTraitForBase1</weak_warning>,

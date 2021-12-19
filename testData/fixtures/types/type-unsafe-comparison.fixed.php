@@ -46,3 +46,7 @@
     $result = $x != '0';
     $result = $x == $y;
     $result = $x != $y;
+    $result = $x == '0.0';
+    $result = $x == '.0';
+    $result = $x == '-0';
+    $result = $x == '+0';

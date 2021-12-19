@@ -46,3 +46,7 @@
     $result = <weak_warning descr="[EA] Please consider using more strict '!==' here (hidden types casting will not be applied anymore).">$x != '0'</weak_warning>;
     $result = <weak_warning descr="[EA] Please consider using more strict '===' here (hidden types casting will not be applied anymore).">$x == $y</weak_warning>;
     $result = <weak_warning descr="[EA] Please consider using more strict '!==' here (hidden types casting will not be applied anymore).">$x != $y</weak_warning>;
+    $result = <weak_warning descr="[EA] Please consider using more strict '===' here (hidden types casting will not be applied anymore).">$x == '0.0'</weak_warning>;
+    $result = <weak_warning descr="[EA] Please consider using more strict '===' here (hidden types casting will not be applied anymore).">$x == '.0'</weak_warning>;
+    $result = <weak_warning descr="[EA] Please consider using more strict '===' here (hidden types casting will not be applied anymore).">$x == '-0'</weak_warning>;
+    $result = <weak_warning descr="[EA] Please consider using more strict '===' here (hidden types casting will not be applied anymore).">$x == '+0'</weak_warning>;

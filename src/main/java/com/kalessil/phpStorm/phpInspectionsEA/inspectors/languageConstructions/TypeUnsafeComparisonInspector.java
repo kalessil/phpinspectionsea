@@ -103,7 +103,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                     }
 
                     /* string literal is numeric or empty, no strict compare possible */
-                    if (!literalValue.isEmpty() && !literalValue.matches("^[0-9+-]+$")) {
+                    if (! literalValue.isEmpty() && ! literalValue.matches("^[+-]?[0-9]*\\.?[0-9]+$")) {
                         holder.registerProblem(
                                 subject,
                                 String.format(MessagesPresentationUtil.prefixWithEa(patternCompareStrict), targetOperator),
@@ -113,10 +113,10 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
                     }
                 }
 
-                /* some of objects supporting direct comparison: search for .compare_objects in PHP sources */
+                /* some objects supporting direct comparison: search for .compare_objects in PHP sources */
                 if (left != null && right != null) {
                     final boolean isComparableObject = this.isComparableObject(left) || this.isComparableObject(right);
-                    if (!isComparableObject) {
+                    if (! isComparableObject) {
                         holder.registerProblem(
                                 subject,
                                 String.format(MessagesPresentationUtil.prefixWithEa(patternHarden), targetOperator),
@@ -180,7 +180,7 @@ public class TypeUnsafeComparisonInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target instanceof BinaryExpression && !project.isDisposed()) {
+            if (target instanceof BinaryExpression && ! project.isDisposed()) {
                 final PsiElement operation   = ((BinaryExpression) target).getOperation();
                 final PsiElement replacement = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, operator);
                 if (operation != null && replacement != null) {

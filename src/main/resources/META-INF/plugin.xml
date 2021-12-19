@@ -360,10 +360,6 @@
          groupName="Security"                                      enabledByDefault="true" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureParseStrUsageInspector"/>
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
-         shortName="NonSecureExtractUsageInspection"               displayName="Insecure 'extract(...)' usage (Variable extract Vulnerability)"
-         groupName="Security"                                      enabledByDefault="true" level="ERROR"
-         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.NonSecureExtractUsageInspector"/>
-    <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
          shortName="UntrustedInclusionInspection"                  displayName="Untrusted files inclusion"
          groupName="Security"                                      enabledByDefault="false" level="ERROR"
          implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.UntrustedInclusionInspector"/>

@@ -212,7 +212,6 @@ Inspections Lists (Security)
 | Group                | Short Name                                         | Full Name                                                         | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------       | :---------------------------------------------------------------- | --: | --: | ---: | --: |
 | Security             | NonSecureUniqidUsageInspection                     | Insecure 'uniqid(...)' usage (Insufficient Entropy Vulnerability) | yes | yes | yes  | n/a |
-| Security             | NonSecureExtractUsageInspection                    | Insecure 'extract(...)' usage (Variable extract Vulnerability)    | n/a | yes | n/a  | yes |
 | Security             | NonSecureParseStrUsageInspection                   | Insecure 'parse_str(...)' usage (Variable extract Vulnerability)  | n/a | yes | n/a  | yes |
 | Security             | UntrustedInclusionInspection                       | Untrusted files inclusion                                         | n/a | yes | n/a  | yes |
 | Security             | SecurityAdvisoriesInspection                       | Security advisories for Composer packages                         | yes | yes | yes  | yes |

@@ -66,11 +66,17 @@ public class UnnecessarySemicolonInspector extends BasePhpInspection {
                 if (! OpenapiTypesUtil.is(echo.getFirstChild(), PhpTokenTypes.kwECHO)) {
                     final PsiElement last = echo.getLastChild();
                     if (OpenapiTypesUtil.is(last, PhpTokenTypes.opSEMICOLON)) {
-                        holder.registerProblem(
-                                last,
-                                MessagesPresentationUtil.prefixWithEa(message),
-                                new DropUnnecessarySemicolonFix()
-                        );
+                        PsiElement next = echo.getNextSibling();
+                        if (next instanceof PsiWhiteSpace) {
+                            next = next.getNextSibling();
+                        }
+                        if (! (next instanceof PhpPsiElement)) {
+                            holder.registerProblem(
+                                    last,
+                                    MessagesPresentationUtil.prefixWithEa(message),
+                                    new DropUnnecessarySemicolonFix()
+                            );
+                        }
                     }
                 }
             }

@@ -15,3 +15,4 @@
 ?>
 
 <?= $value<weak_warning descr="[EA] Unnecessary semicolon.">;</weak_warning> ?>
+<?= $value; $value = ''; ?>

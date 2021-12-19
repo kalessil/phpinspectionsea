@@ -70,7 +70,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                         final String fieldName = ref.getName();
                         if (fieldName != null && privateFields.containsKey(fieldName)) {
                             final PsiElement resolved = OpenapiResolveUtil.resolveReference(ref);
-                            if (resolved instanceof Field && privateFields.containsValue(resolved)) {
+                            if (resolved == null || (resolved instanceof Field && privateFields.containsValue(resolved))) {
                                 filteredReferences.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(ref);
                             }
                         }
@@ -97,17 +97,15 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
 
                 /* find references */
                 for (final Method method : methodsToCheck) {
-                    if (method == constructor) {
-                        continue;
-                    }
-
-                    final Map<String, List<FieldReference>> innerReferences = getFieldReferences(method, privateFields);
-                    if (!innerReferences.isEmpty()) {
-                        /* merge method's scan results into common container */
-                        innerReferences.forEach((fieldName, references) -> {
-                            filteredReferences.computeIfAbsent(fieldName, name -> new ArrayList<>()).addAll(references);
-                            references.clear();
-                        });
+                    if (method != constructor) {
+                        final Map<String, List<FieldReference>> innerReferences = getFieldReferences(method, privateFields);
+                        if (! innerReferences.isEmpty()) {
+                            /* merge method's scan results into common container */
+                            innerReferences.forEach((fieldName, references) -> {
+                                filteredReferences.computeIfAbsent(fieldName, name -> new ArrayList<>()).addAll(references);
+                                references.clear();
+                            });
+                        }
                         innerReferences.clear();
                     }
                 }
@@ -140,7 +138,7 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
 
                 /* === intensive part : extract references === */
                 final Map<String, List<FieldReference>> constructorsReferences = getFieldReferences(constructor, clazzPrivateFields);
-                if (!constructorsReferences.isEmpty()) {
+                if (! constructorsReferences.isEmpty()) {
                     /* constructor's references being identified */
                     final Map<String, List<FieldReference>> otherReferences = getMethodsFieldReferences(clazz, constructor, clazzPrivateFields);
                     /* methods's references being identified, time to re-visit constructor's references */
@@ -157,9 +155,8 @@ public class UnusedConstructorDependenciesInspector extends BasePhpInspection {
                     /* release references found in the methods */
                     otherReferences.values().forEach(List::clear);
                     otherReferences.clear();
-                    /* release references found in the constructor */
-                    constructorsReferences.clear();
                 }
+                constructorsReferences.clear();
             }
 
             private void doReport(@NotNull ProblemsHolder holder, @NotNull List<FieldReference> fields) {

@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -46,38 +47,43 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
-                final List<String> variables = new ArrayList<>();
-                for (final PsiElement pairCandidate : expression.getChildren()) {
-                    /* match array structure */
-                    if (!(pairCandidate instanceof ArrayHashElement)) {
-                        return;
-                    }
-                    /* match pair structure */
-                    final ArrayHashElement pair = (ArrayHashElement) pairCandidate;
-                    final PhpPsiElement key     = pair.getKey();
-                    final PhpPsiElement value   = pair.getValue();
-                    if (!(key instanceof StringLiteralExpression) || !(value instanceof Variable)) {
-                        return;
-                    }
-                    /* match index and variable */
-                    final String index    = ((StringLiteralExpression) key).getContents();
-                    final String variable = value.getName();
-                    if (variable == null || !variable.equals(index)) {
-                        return;
+                final PsiElement parent       = expression.getParent();
+                final boolean isTargetContext = ! OpenapiTypesUtil.isAssignment(parent) ||
+                                                ((AssignmentExpression) parent).getValue() == expression;
+                if (isTargetContext) {
+                    final List<String> variables = new ArrayList<>();
+                    for (final PsiElement pairCandidate : expression.getChildren()) {
+                        /* match array structure */
+                        if (! (pairCandidate instanceof ArrayHashElement)) {
+                            return;
+                        }
+                        /* match pair structure */
+                        final ArrayHashElement pair = (ArrayHashElement) pairCandidate;
+                        final PhpPsiElement key     = pair.getKey();
+                        final PhpPsiElement value   = pair.getValue();
+                        if (! (key instanceof StringLiteralExpression) || ! (value instanceof Variable)) {
+                            return;
+                        }
+                        /* match index and variable */
+                        final String index    = ((StringLiteralExpression) key).getContents();
+                        final String variable = value.getName();
+                        if (variable == null || ! variable.equals(index)) {
+                            return;
+                        }
+
+                        variables.add(key.getText());
                     }
 
-                    variables.add(key.getText());
+                    if (variables.size() > 1) {
+                        final String replacement = String.format("compact(%s)", String.join(", ", variables));
+                        holder.registerProblem(
+                                expression.getFirstChild(),
+                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
+                                new UseCompactFix(replacement)
+                        );
+                    }
+                    variables.clear();
                 }
-
-                if (variables.size() > 1) {
-                    final String replacement = String.format("compact(%s)", String.join(", ", variables));
-                    holder.registerProblem(
-                            expression.getFirstChild(),
-                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
-                            new UseCompactFix(replacement)
-                    );
-                }
-                variables.clear();
             }
         };
     }
@@ -107,7 +113,7 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target     = descriptor.getPsiElement();
             final PsiElement expression = target == null ? null : target.getParent();
-            if (expression != null && !project.isDisposed()) {
+            if (expression != null && ! project.isDisposed()) {
                 expression.replace(PhpPsiElementFactory.createPhpPsiFromText(project, FunctionReference.class, replacement));
             }
         }

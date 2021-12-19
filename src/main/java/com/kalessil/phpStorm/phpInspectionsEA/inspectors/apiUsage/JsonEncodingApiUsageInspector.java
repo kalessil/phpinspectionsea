@@ -17,9 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -39,6 +37,12 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
 
     private static final String messageResultType     = "Please specify the second argument (clarifies decoding into array or object).";
     private static final String messageErrorsHandling = "Please consider taking advantage of JSON_THROW_ON_ERROR flag for this call options.";
+
+    private static final Map<String, String> strictHandlingFlags = new HashMap<>();
+    static {
+        strictHandlingFlags.put("JSON_THROW_ON_ERROR", "4194304");
+        strictHandlingFlags.put("JSON_PARTIAL_OUTPUT_ON_ERROR", "512");
+    }
 
     @NotNull
     @Override
@@ -76,7 +80,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                             );
                         }
                         if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
-                            final boolean hasFlag = arguments.length >= 4 && this.hasThrowOnErrorFlag(arguments[3]);
+                            final boolean hasFlag = arguments.length >= 4 && this.hasStricterHandlingFlags(arguments[3]);
                             if (! hasFlag) {
                                 final String replacement = String.format(
                                         "%sjson_decode(%s, %s, %s, %s)",
@@ -96,7 +100,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                     } else if (functionName.equals("json_encode") && this.isFromRootNamespace(reference)) {
                         if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
                             final PsiElement[] arguments = reference.getParameters();
-                            final boolean hasFlag        = arguments.length >= 2 && this.hasThrowOnErrorFlag(arguments[1]);
+                            final boolean hasFlag        = arguments.length >= 2 && this.hasStricterHandlingFlags(arguments[1]);
                             if (!hasFlag && arguments.length > 0) {
                                 final String replacement;
                                 if (arguments.length > 2) {
@@ -126,7 +130,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                 }
             }
 
-            private boolean hasThrowOnErrorFlag(@NotNull PsiElement argument) {
+            private boolean hasStricterHandlingFlags(@NotNull PsiElement argument) {
                 boolean hasFlag               = false;
                 final Set<PsiElement> options = argument instanceof ConstantReference
                                                     ? new HashSet<>(Collections.singletonList(argument))
@@ -134,14 +138,15 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                 if (options.size() == 1) {
                     final PsiElement option = options.iterator().next();
                     if (OpenapiTypesUtil.isNumber(option)) {
-                        /* JSON_THROW_ON_ERROR constant value gets resolved */
-                        hasFlag = option.getText().equals("4194304");
+                        /* properly resolved value */
+                        hasFlag = strictHandlingFlags.containsValue(option.getText());
                     } else if (option instanceof ConstantReference) {
-                        /* JSON_THROW_ON_ERROR constant values is not getting resolved (no clue why, but happens) */
-                        hasFlag = "JSON_THROW_ON_ERROR".equals(((ConstantReference) option).getName());
+                        /* constant value resolution fails for some reason */
+                        hasFlag = strictHandlingFlags.containsKey(((ConstantReference) option).getName());
                     } else {
                         /* a complex case like local variable or implicit flags combination */
-                        hasFlag = PsiTreeUtil.findChildrenOfType(option, ConstantReference.class).stream().anyMatch(r -> "JSON_THROW_ON_ERROR".equals(r.getName()));
+                        hasFlag = PsiTreeUtil.findChildrenOfType(option, ConstantReference.class).stream()
+                                .anyMatch(r -> strictHandlingFlags.containsKey(r.getName()));
                     }
                 }
                 options.clear();

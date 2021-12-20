@@ -5,7 +5,7 @@ namespace {
     class ClazzTwo extends ClazzOne{}
     class ClazzThree {}
 
-    define(DEFAULT_LIFETIME,  3600 * 24);
+    define('DEFAULT_LIFETIME',  3600 * 24);
 
     abstract class CasesHolder {
         const DEFAULT_LIFETIME = 3600 * 24;

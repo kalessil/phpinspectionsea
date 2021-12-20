@@ -8,7 +8,9 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.parser.parsing.classes.ClassConstant;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.impl.ClassConstImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +122,17 @@ final public class OpenapiResolveUtil {
     static public PhpType resolveType(@NotNull PhpTypedElement expression, @NotNull Project project) {
         PhpType result = null;
         try {
-            if (expression instanceof FunctionReference) {
+            if (expression instanceof StringLiteralExpression) {
+                result = new PhpType().add(PhpType.STRING);
+            } else if (expression instanceof ClassConstantReference) {
+                final PsiElement resolved = resolveReference((ClassConstantReference) expression);
+                if (resolved instanceof Field && ((Field) resolved).isConstant()) {
+                    final PsiElement defaultValue = ((Field) resolved).getDefaultValue();
+                    if (defaultValue instanceof PhpTypedElement) {
+                        result = resolveType((PhpTypedElement) defaultValue, project);
+                    }
+                }
+            } else if (expression instanceof FunctionReference) {
                 /* resolve function and get it's type or fallback to empty type */
                 final FunctionReference reference = (FunctionReference) expression;
                 final PsiElement function         = resolveReference(reference);
@@ -308,6 +320,7 @@ final public class OpenapiResolveUtil {
                     result = resolveType((PhpTypedElement) value, project);
                 }
             } else if (expression instanceof FieldReference) {
+                // TODO: name is not empty
                 final FieldReference reference = (FieldReference) expression;
                 final PsiElement base          = reference.getClassReference();
                 if (base instanceof Variable && ((Variable) base).getName().equals("this")) {

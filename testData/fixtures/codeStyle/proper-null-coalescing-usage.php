@@ -5,6 +5,8 @@ namespace {
     class ClazzTwo extends ClazzOne{}
     class ClazzThree {}
 
+    define(DEFAULT_LIFETIME,  3600 * 24);
+
     abstract class CasesHolder {
         const DEFAULT_LIFETIME = 3600 * 24;
 
@@ -28,6 +30,7 @@ namespace {
                 $string ?? null,
 
                 $integer ?? ( time() + self::DEFAULT_LIFETIME ),
+                $integer ?? ( time() + DEFAULT_LIFETIME ),
             ];
         }
     }

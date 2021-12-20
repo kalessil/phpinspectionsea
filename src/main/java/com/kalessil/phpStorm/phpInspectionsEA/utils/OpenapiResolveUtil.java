@@ -8,9 +8,7 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
-import com.jetbrains.php.lang.parser.parsing.classes.ClassConstant;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.elements.impl.ClassConstImpl;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.ifs.utils.ExpressionCostEstimateUtil;
 import org.jetbrains.annotations.NotNull;
@@ -124,12 +122,28 @@ final public class OpenapiResolveUtil {
         try {
             if (expression instanceof StringLiteralExpression) {
                 result = new PhpType().add(PhpType.STRING);
+            } else if (expression instanceof ConstantReference) {
+                final ConstantReference reference = (ConstantReference) expression;
+                final String referenceName        = reference.getName();
+                if (referenceName != null && ! referenceName.isEmpty()) {
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                    if (resolved instanceof PhpDefine) {
+                       final PsiElement value = ((PhpDefine) resolved).getValue();
+                        if (value instanceof PhpTypedElement) {
+                            result = resolveType((PhpTypedElement) value, project);
+                        }
+                    }
+                }
             } else if (expression instanceof ClassConstantReference) {
-                final PsiElement resolved = resolveReference((ClassConstantReference) expression);
-                if (resolved instanceof Field && ((Field) resolved).isConstant()) {
-                    final PsiElement defaultValue = ((Field) resolved).getDefaultValue();
-                    if (defaultValue instanceof PhpTypedElement) {
-                        result = resolveType((PhpTypedElement) defaultValue, project);
+                final ClassConstantReference reference = (ClassConstantReference) expression;
+                final String referenceName             = reference.getName();
+                if (referenceName != null && ! referenceName.isEmpty()) {
+                    final PsiElement resolved = resolveReference(reference);
+                    if (resolved instanceof Field && ((Field) resolved).isConstant()) {
+                        final PsiElement value = ((Field) resolved).getDefaultValue();
+                        if (value instanceof PhpTypedElement) {
+                            result = resolveType((PhpTypedElement) value, project);
+                        }
                     }
                 }
             } else if (expression instanceof FunctionReference) {
@@ -146,7 +160,7 @@ final public class OpenapiResolveUtil {
                     if (name != null && functionReturnTypes.containsKey(name)) {
                         result = functionReturnTypes.get(name);
                     }
-                    /* some of replacement function result can be narrowed from arguments type */
+                    /* some replacement functions result can be narrowed from arguments type */
                     if (name != null && functionToNarrow.containsKey(name)) {
                         final int targetPosition     = functionToNarrow.get(name);
                         final PsiElement[] arguments = reference.getParameters();
@@ -320,15 +334,17 @@ final public class OpenapiResolveUtil {
                     result = resolveType((PhpTypedElement) value, project);
                 }
             } else if (expression instanceof FieldReference) {
-                // TODO: name is not empty
                 final FieldReference reference = (FieldReference) expression;
-                final PsiElement base          = reference.getClassReference();
-                if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
-                    final PsiElement resolvedField = OpenapiResolveUtil.resolveReference(reference);
-                    if (resolvedField instanceof Field) {
-                        final PhpType declaredType = resolveDeclaredType((Field) resolvedField);
-                        if (! declaredType.isEmpty()) {
-                            result = declaredType;
+                final String referenceName     = reference.getName();
+                if (referenceName != null && ! referenceName.isEmpty()) {
+                    final PsiElement base          = reference.getClassReference();
+                    if (base instanceof Variable && ((Variable) base).getName().equals("this")) {
+                        final PsiElement resolvedField = OpenapiResolveUtil.resolveReference(reference);
+                        if (resolvedField instanceof Field) {
+                            final PhpType declaredType = resolveDeclaredType((Field) resolvedField);
+                            if (! declaredType.isEmpty()) {
+                                result = declaredType;
+                            }
                         }
                     }
                 }

@@ -6,12 +6,14 @@ namespace {
     class ClazzThree {}
 
     abstract class CasesHolder {
+        const DEFAULT_LIFETIME = 3600 * 24;
+
         /** @var CasesHolder|null */
         private $property;
 
         abstract function method();
 
-        public function cases(ClazzOne $one, ClazzTwo $two, ClazzThree $three, string $string) {
+        public function cases(ClazzOne $one, ClazzTwo $two, ClazzThree $three, string $string = null, int $integer = null) {
             return [
                 <weak_warning descr="[EA] It possible to use '$this->method()' instead (reduces cognitive load).">$this->method() ?? null</weak_warning>,
 
@@ -24,6 +26,8 @@ namespace {
                 (string) ($one ?? $three),
 
                 $string ?? null,
+
+                $integer ?? ( time() + self::DEFAULT_LIFETIME ),
             ];
         }
     }

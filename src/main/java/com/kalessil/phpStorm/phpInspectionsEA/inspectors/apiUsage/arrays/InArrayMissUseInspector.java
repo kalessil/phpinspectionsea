@@ -170,7 +170,7 @@ public class InArrayMissUseInspector extends BasePhpInspection {
 
     public JComponent createOptionsPanel() {
         return OptionsComponent.create((component) ->
-                component.addCheckbox("Use strict comparison only", FORCE_STRICT_COMPARISON, (isSelected) -> FORCE_STRICT_COMPARISON = isSelected)
+                component.addCheckbox("Force strict comparisons", FORCE_STRICT_COMPARISON, (isSelected) -> FORCE_STRICT_COMPARISON = isSelected)
         );
     }
 }

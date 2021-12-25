@@ -15,9 +15,11 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
+import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,9 @@ import java.util.List;
 
 public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
     private static final String message = "This closure can be declared as static (better scoping; in some cases can improve performance).";
+
+    // Inspection options.
+    public boolean SUGGEST_FOR_SHORT_FUNCTIONS = true;
 
     @NotNull
     @Override
@@ -67,32 +72,37 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
             private boolean canBeStatic(@NotNull Function function) {
                 final boolean isArrowFunction = ! OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwFUNCTION);
                 final PsiElement body         = isArrowFunction ? function : ExpressionSemanticUtil.getGroupStatement(function);
-                if (body != null && (isArrowFunction || ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) body) > 0)) {
-                    /* check if $this or parent:: being used */
-                    for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
-                        if (element instanceof Variable) {
-                            final Variable variable = (Variable) element;
-                            if (variable.getName().equals("this")) {
-                                return false;
-                            }
-                        } else {
-                            final MethodReference reference = (MethodReference) element;
-                            final PsiElement base           = reference.getFirstChild();
-                            if (base instanceof ClassReference && base.getText().equals("parent")) {
-                                final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                if (resolved instanceof Method && ! ((Method) resolved).isStatic()) {
+                if (body != null) {
+                    final boolean isTargetClosure = (isArrowFunction && SUGGEST_FOR_SHORT_FUNCTIONS) ||
+                                                    ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) body) > 0;
+                    if (isTargetClosure) {
+                        /* check if $this or parent:: being used */
+                        for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
+                            if (element instanceof Variable) {
+                                if (((Variable) element).getName().equals("this")) {
                                     return false;
+                                }
+                            } else {
+                                final MethodReference reference = (MethodReference) element;
+                                final PsiElement base           = reference.getFirstChild();
+                                if (base instanceof ClassReference && base.getText().equals("parent")) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof Method && ! ((Method) resolved).isStatic()) {
+                                        return false;
+                                    }
                                 }
                             }
                         }
-                    }
-                    /* check usages: perhaps bound to closure or returned -> then we can not promote */
-                    /* Closure::bind(, null, ) -> can be static */
-                    if (! this.canBeStatic(this.usages(function))) {
-                        return false;
+                        /* check usages: perhaps bound to closure or returned -> then we can not promote */
+                        /* Closure::bind(, null, ) -> can be static */
+                        if (! this.canBeStatic(this.usages(function))) {
+                            return false;
+                        }
+
+                        return true;
                     }
                 }
-                return body != null;
+                return false;
             }
 
             private List<PsiElement> usages(@NotNull Function function) {
@@ -217,5 +227,11 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                 }
             }
         }
+    }
+
+    public JComponent createOptionsPanel() {
+        return OptionsComponent.create((component) ->
+                component.addCheckbox("Suggest for short functions", SUGGEST_FOR_SHORT_FUNCTIONS, (isSelected) -> SUGGEST_FOR_SHORT_FUNCTIONS = isSelected)
+        );
     }
 }

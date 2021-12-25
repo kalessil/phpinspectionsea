@@ -22,11 +22,12 @@ final public class StaticClosureCanBeUsedInspectorTest extends PhpCodeInsightFix
         final PhpLanguageLevel level = PhpLanguageLevel.parse("7.4");
         if (level != null && level.getVersionString().equals("7.4")) {
             /* looks like 7.4 feature were introduced in multiple batches */
-            final boolean hasArrowFunctions = Arrays.stream(PhpLanguageFeature.class.getEnumConstants())
-                    .anyMatch(f -> f.toString().contains("Arrow function"));
+            final boolean hasArrowFunctions = Arrays.stream(PhpLanguageFeature.class.getEnumConstants()).anyMatch(f -> f.toString().contains("Arrow function"));
             if (hasArrowFunctions) {
                 PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
-                myFixture.enableInspections(new StaticClosureCanBeUsedInspector());
+                final StaticClosureCanBeUsedInspector inspection = new StaticClosureCanBeUsedInspector();
+                inspection.SUGGEST_FOR_SHORT_FUNCTIONS           = true;
+                myFixture.enableInspections(inspection);
                 myFixture.configureByFile("testData/fixtures/codeStyle/static-closure-use.php74.php");
                 myFixture.testHighlighting(true, false, true);
             }

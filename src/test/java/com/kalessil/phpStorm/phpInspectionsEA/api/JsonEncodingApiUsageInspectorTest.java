@@ -38,4 +38,21 @@ final public class JsonEncodingApiUsageInspectorTest extends PhpCodeInsightFixtu
             myFixture.checkResultByFile("testData/fixtures/api/json-encoding-errors-handling.fixed.php");
         }
     }
+    public void testItRecognizesNameIdentifierFlags() {
+        final PhpLanguageLevel level = PhpLanguageLevel.parse("8.0");
+        if (level != null && level.getVersionString().equals("8.0")) {
+            PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(level);
+            final JsonEncodingApiUsageInspector inspector = new JsonEncodingApiUsageInspector();
+            inspector.HARDEN_DECODING_RESULT_TYPE = false;
+            inspector.HARDEN_ERRORS_HANDLING      = true;
+
+            myFixture.enableInspections(inspector);
+            myFixture.configureByFile("testData/fixtures/api/json-encoding-errors-handling.80.php");
+            myFixture.testHighlighting(true, false, true);
+
+            myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+            myFixture.setTestDataPath(".");
+            myFixture.checkResultByFile("testData/fixtures/api/json-encoding-errors-handling.80.fixed.php");
+        }
+    }
 }

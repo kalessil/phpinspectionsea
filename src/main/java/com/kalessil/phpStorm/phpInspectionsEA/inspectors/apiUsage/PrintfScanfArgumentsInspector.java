@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 
 public class PrintfScanfArgumentsInspector extends BasePhpInspection {
     private static final String messagePattern    = "Pattern seems to be not valid.";
-    private static final String messageParameters = "Amount of expected parameters is %c%.";
+    private static final String messageParameters = "Number of expected parameters is %c%.";
 
     @NotNull
     @Override

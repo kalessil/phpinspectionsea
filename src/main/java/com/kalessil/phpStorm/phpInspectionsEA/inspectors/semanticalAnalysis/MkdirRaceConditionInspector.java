@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
  */
 
 public class MkdirRaceConditionInspector extends BasePhpInspection {
-    private static final String patternDirectCall       = "Following construct should be used: 'if (!mkdir(%s) && !is_dir(...)) { ... }'.";
-    private static final String patternFailAndCondition = "Some check are missing: '!mkdir(%s) && !is_dir(...)'.";
-    private static final String patternFailOrCondition  = "Some check are missing: 'mkdir(%s) || is_dir(...)'.";
+    private static final String patternDirectCall       = "Following construct should be used: 'if (!is_dir(%s) && !mkdir(...)) { ... }'.";
+    private static final String patternFailAndCondition = "Some check are missing: '!is_dir(%s) && !mkdir(...)'.";
+    private static final String patternFailOrCondition  = "Some check are missing: 'is_dir(%s) || mkdir(...)'.";
 
     @NotNull
     @Override
@@ -226,11 +226,11 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 final String code;
                 if (this.withVariable) {
                     final String throwPart = "throw new \\RuntimeException(sprintf('Directory \"%s\" was not created', $concurrentDirectory));";
-                    final String pattern   = "if (!mkdir($concurrentDirectory = %s) && !is_dir($concurrentDirectory)) { %s }";
+                    final String pattern   = "if (!is_dir($concurrentDirectory = %s) && !mkdir($concurrentDirectory)) { %s }";
                     code                   = String.format(pattern, this.arguments, throwPart);
                 } else {
                     final String throwPart = "throw new \\RuntimeException(sprintf('Directory \"%%s\" was not created', %s));";
-                    final String pattern   = "if (!mkdir(%s) && !is_dir(%s)) { %s }";
+                    final String pattern   = "if (!is_dir(%s) && !mkdir(%s)) { %s }";
                     code                   = String.format(pattern, this.arguments, this.resource, String.format(throwPart, this.resource));
                 }
                 target.replace(PhpPsiElementFactory.createPhpPsiFromText(project, If.class, code));
@@ -274,15 +274,15 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     final String code;
                     if (this.withVariable) {
                         if (this.isInverted) {
-                            code = String.format("(!mkdir($concurrentDirectory = %s) && !is_dir($concurrentDirectory))", this.arguments);
+                            code = String.format("(!is_dir($concurrentDirectory = %s) && !mkdir($concurrentDirectory))", this.arguments);
                         } else {
-                            code = String.format("(mkdir($concurrentDirectory = %s) || !is_dir($concurrentDirectory)", this.arguments);
+                            code = String.format("(is_dir($concurrentDirectory = %s) || !mkdir($concurrentDirectory)", this.arguments);
                         }
                     } else {
                         if (this.isInverted) {
-                            code = String.format("(!mkdir(%s) && !is_dir(%s))", this.arguments, this.resource);
+                            code = String.format("(!is_dir(%s) && !mkdir(%s))", this.arguments, this.resource);
                         } else {
-                            code = String.format("(mkdir(%s) || is_dir(%s))", this.arguments, this.resource);
+                            code = String.format("(is_dir(%s) || mkdir(%s))", this.arguments, this.resource);
                         }
                     }
                     target.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
@@ -293,17 +293,17 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     if (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation)) {
                         final String code;
                         if (this.withVariable) {
-                            code = String.format("(%s && !mkdir($concurrentDirectory = %s) && !is_dir($concurrentDirectory))", conditions, this.arguments);
+                            code = String.format("(%s && !is_dir($concurrentDirectory = %s) && !mkdir($concurrentDirectory))", conditions, this.arguments);
                         } else {
-                            code = String.format("(%s && !mkdir(%s) && !is_dir(%s))", conditions, this.arguments, this.resource);
+                            code = String.format("(%s && !is_dir(%s) && !mkdir(%s))", conditions, this.arguments, this.resource);
                         }
                         parent.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
                     } else if (PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)) {
                         final String code;
                         if (this.withVariable) {
-                            code = String.format("(%s || mkdir($concurrentDirectory = %s) || is_dir($concurrentDirectory))", conditions, this.arguments);
+                            code = String.format("(%s || is_dir($concurrentDirectory = %s) || mkdir($concurrentDirectory))", conditions, this.arguments);
                         } else {
-                            code = String.format("(%s || mkdir(%s) || is_dir(%s))", conditions, this.arguments, this.resource);
+                            code = String.format("(%s || is_dir(%s) || mkdir(%s))", conditions, this.arguments, this.resource);
                         }
                         parent.replace(PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument());
                     }

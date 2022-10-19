@@ -226,7 +226,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 final String code;
                 if (this.withVariable) {
                     final String throwPart = "throw new \\RuntimeException(sprintf('Directory \"%s\" was not created', $concurrentDirectory));";
-                    final String pattern   = "if (!is_dir($concurrentDirectory = %s) && !mkdir($concurrentDirectory)) { %s }";
+                    final String pattern   = "if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory = %s)) { %s }";
                     code                   = String.format(pattern, this.arguments, throwPart);
                 } else {
                     final String throwPart = "throw new \\RuntimeException(sprintf('Directory \"%%s\" was not created', %s));";
@@ -274,9 +274,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     final String code;
                     if (this.withVariable) {
                         if (this.isInverted) {
-                            code = String.format("(!is_dir($concurrentDirectory = %s) && !mkdir($concurrentDirectory))", this.arguments);
+                            code = String.format("(!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory = %s))", this.arguments);
                         } else {
-                            code = String.format("(is_dir($concurrentDirectory = %s) || !mkdir($concurrentDirectory)", this.arguments);
+                            code = String.format("(is_dir($concurrentDirectory) || !mkdir($concurrentDirectory = %s)", this.arguments);
                         }
                     } else {
                         if (this.isInverted) {
@@ -293,7 +293,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     if (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation)) {
                         final String code;
                         if (this.withVariable) {
-                            code = String.format("(%s && !is_dir($concurrentDirectory = %s) && !mkdir($concurrentDirectory))", conditions, this.arguments);
+                            code = String.format("(%s && !is_dir($concurrentDirectory) && !mkdir($concurrentDirectory = %s))", conditions, this.arguments);
                         } else {
                             code = String.format("(%s && !is_dir(%s) && !mkdir(%s))", conditions, this.arguments, this.resource);
                         }
@@ -301,7 +301,7 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                     } else if (PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)) {
                         final String code;
                         if (this.withVariable) {
-                            code = String.format("(%s || is_dir($concurrentDirectory = %s) || mkdir($concurrentDirectory))", conditions, this.arguments);
+                            code = String.format("(%s || is_dir($concurrentDirectory) || mkdir($concurrentDirectory = %s))", conditions, this.arguments);
                         } else {
                             code = String.format("(%s || is_dir(%s) || mkdir(%s))", conditions, this.arguments, this.resource);
                         }

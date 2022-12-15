@@ -17,7 +17,7 @@ alternative is to use the [dirname()](http://php.net/manual/en/function.dirname.
     
     /* after */
     define ('PROJECT_ROOT', dirname(__DIR__) . '/');
-    require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+    require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 ```
 
 ## Forgotten debug statements

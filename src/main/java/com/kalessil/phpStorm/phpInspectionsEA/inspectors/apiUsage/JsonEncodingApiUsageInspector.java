@@ -84,7 +84,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                         );
                     }
 
-                    if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
+                    if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP800)) {
                         final boolean hasFlag = arguments.length >= 2 && this.hasStricterHandlingFlags(arguments);
                         if (! hasFlag) {
                             final String replacement;
@@ -132,7 +132,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                         }
                     }
                 } else if (functionName.equals("json_encode") && this.isFromRootNamespace(reference)) {
-                    if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
+                    if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP800)) {
                         final PsiElement[] arguments = reference.getParameters();
                         final boolean hasFlag        = arguments.length >= 2 && this.hasStricterHandlingFlags(arguments);
                         if (hasFlag || arguments.length <= 0) {

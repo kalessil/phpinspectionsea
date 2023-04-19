@@ -4,56 +4,51 @@ buildscript {
     repositories {
         mavenCentral()
 
-        maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
+        maven { url "https://www.jetbrains.com/intellij-repository/releases" }
+        maven { url "https://cache-redirector.jetbrains.com/intellij-dependencies" }
         maven { url 'https://jitpack.io' }
-        maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
     }
 }
 
 plugins {
-    id "org.jetbrains.intellij"   version "0.7.3"
+    id "org.jetbrains.intellij"   version "1.13.2"
     id 'com.palantir.git-version' version "0.11.0"
+    id 'java'
 }
+
+sourceCompatibility = 11
+targetCompatibility = 11
 
 group 'com.kalessil.phpStorm.phpInspectionsEA'
 
 def htmlFixer = { htmlFile -> file(htmlFile).text.replace('<html>', '').replace('</html>', '') }
 
 intellij {
-    version    ideaVersion
-    pluginName 'Php Inspections (EA Extended)'
+    version    = ideaVersion
+    pluginName = 'Php Inspections (EA Extended)'
+
+    instrumentCode = false
 
     repositories {
         mavenCentral()
     }
     dependencies {
-        compileOnly 'org.jetbrains:annotations:19.0.0'
+        compileOnly 'org.jetbrains:annotations:24.0.1'
+        implementation 'org.apache.httpcomponents:fluent-hc:4.5.14'
     }
 
-    def versionParts = ideaVersion.replace('IU-', '').split('\\.')
-    if ((Integer.parseInt(versionParts[0]) == 2019 && Integer.parseInt(versionParts[1]) >= 2) || Integer.parseInt(versionParts[0]) > 2019) {
-        /* since 2019.2 Java is a separate plugin, hence we have to specify it implicitly */
-        plugins = [
-                'java',
-                "com.jetbrains.php:${phpPluginVersion}",
-                'CSS',
-                'java-i18n',
-                'properties',
-                'yaml',
-        ]
-    } else {
-        plugins = [
-                "com.jetbrains.php:${phpPluginVersion}",
-                'CSS',
-                'java-i18n',
-                'properties',
-                'yaml',
-        ]
-    }
+    plugins = [
+            'java',
+            "com.jetbrains.php:${phpPluginVersion}",
+            'com.intellij.css',
+            'java-i18n',
+            'properties',
+            'yaml',
+    ]
 }
 
 patchPluginXml {
-    sinceBuild        = "162.1889"
+    sinceBuild        = "211"
     untilBuild        = ""
     changeNotes       = htmlFixer('src/main/resources/META-INF/change-notes.html')
     pluginDescription = htmlFixer('src/main/resources/META-INF/description.html')
@@ -68,11 +63,18 @@ sourceSets {
 }
 
 wrapper {
-    gradleVersion '4.8'
+    gradleVersion '8.0'
 }
 
 jar {
-    baseName = "PhpInspectionsEA"
+    archiveBaseName = "PhpInspectionsEA"
+}
+
+runPluginVerifier {
+    ideVersions = [
+            'PS-2021.3.3',
+            'PS-2022.3.2',
+    ]
 }
 
 test.testLogging.exceptionFormat = TestExceptionFormat.FULL

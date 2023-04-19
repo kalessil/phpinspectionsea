@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.kalessil.phpStorm.phpInspectionsEA.settings.ComparisonStyle;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-@State(name = "EASettings", storages = @Storage(file = "$APP_CONFIG$/ea_extended.xml"))
+@State(name = "EASettings", storages = @Storage("$APP_CONFIG$/ea_extended.xml"))
 public class EASettings implements PersistentStateComponent<Element> {
     private ComparisonStyle comparisonStyle;
     private String sendCrashReports;
@@ -21,7 +21,7 @@ public class EASettings implements PersistentStateComponent<Element> {
     private String uuid;
 
     public static EASettings getInstance() {
-        return ServiceManager.getService(EASettings.class);
+        return ApplicationManager.getApplication().getService(EASettings.class);
     }
 
     @Nullable

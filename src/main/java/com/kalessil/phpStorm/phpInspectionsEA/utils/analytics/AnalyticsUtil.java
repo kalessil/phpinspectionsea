@@ -11,7 +11,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.analytics;
 
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
 import com.intellij.util.Consumer;
-import org.apache.http.client.fluent.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,10 +89,14 @@ final public class AnalyticsUtil {
             ;
             SubmittedReportInfo.SubmissionStatus status = SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
             try {
+                /*
+                // "org.apache.http.client.fluent.Request"
+                // there build it libs to send a request
                 Request.Post(COLLECTOR_URL)
                         .bodyByteArray(payload.toString().getBytes())
                         .connectTimeout(3000)
                         .execute();
+                 */
             } catch (Exception failed) {
                 /* we do nothing here - this happens in background and not mission critical */
                 status = SubmittedReportInfo.SubmissionStatus.FAILED;

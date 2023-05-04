@@ -134,7 +134,7 @@ public final class OptionsComponent {
         @NotNull final Class configurableClass
     ) {
         addHyperlink(label, hyperlinkEvent ->
-            DataManager.getInstance().getDataContextFromFocus().doWhenDone((com.intellij.util.Consumer<DataContext>) context -> {
+            DataManager.getInstance().getDataContextFromFocusAsync().onSuccess(context -> {
                 if (context != null) {
                     final Settings settings = Settings.KEY.getData(context);
                     if (settings != null) {

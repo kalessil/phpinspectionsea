@@ -1,14 +1,14 @@
 <idea-plugin require-restart="true">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>4.0.7.1</version>
+  <version>5.0.0.0</version>
   <vendor email="ea.inspections.team@gmail.com">EA Inspections Team</vendor>
 
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
 
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="162.1889" />
+  <idea-version since-build="231" />
 
   <description><![CDATA[
   Replaced by description.html .....................
@@ -761,22 +761,12 @@
 
     <applicationService serviceImplementation="com.kalessil.phpStorm.phpInspectionsEA.EASettings"/>
     <applicationConfigurable instance="com.kalessil.phpStorm.phpInspectionsEA.EAApplicationConfiguration"/>
+    <errorHandler implementation="com.kalessil.phpStorm.phpInspectionsEA.EAErrorReporter"/>
+    <postStartupActivity implementation="com.kalessil.phpStorm.phpInspectionsEA.EAStartupActivity"/>
+    <notificationGroup id="Php Inspections (EA Extended) Update Notification" displayType="STICKY_BALLOON"/>
   </extensions>
-
-  <application-components>
-      <component>
-          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAApplicationComponent</implementation-class>
-      </component>
-  </application-components>
-
-  <project-components>
-      <component>
-          <implementation-class>com.kalessil.phpStorm.phpInspectionsEA.EAUpdateComponent</implementation-class>
-      </component>
-  </project-components>
 
   <actions>
     <!-- Add your actions here -->
   </actions>
-
 </idea-plugin>

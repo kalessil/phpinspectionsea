@@ -9,7 +9,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.utils.analytics;
  * file that was distributed with this source code.
  */
 
-import org.apache.http.client.fluent.Request;
+import com.intellij.openapi.diagnostic.SubmittedReportInfo;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +41,7 @@ final public class AnalyticsUtil {
     final static private String COLLECTOR_URL   = "https://www.google-analytics.com/collect"; /* or /debug/collect */
     private static final String pluginNamespace = "com.kalessil.phpStorm.phpInspectionsEA";
 
-    public static void registerLoggedException(@Nullable String version, @Nullable String uuid, @Nullable Throwable error) {
+    public static void registerLoggedException(@Nullable String version, @Nullable String uuid, @Nullable Throwable error, @NotNull Consumer<? super SubmittedReportInfo> consumer) {
         if (error != null) {
             /* ignore IO-errors, that's not something we can handle */
             final Throwable cause = error.getCause();
@@ -67,14 +68,14 @@ final public class AnalyticsUtil {
                         error.getMessage(),
                         error.getClass().getName()
                     );
-                    invokeExceptionReporting(uuid, description);
+                    invokeExceptionReporting(uuid, description, consumer);
                 }
                 related.clear();
             }
         }
     }
 
-    static private void invokeExceptionReporting(@Nullable String uuid, @NotNull String description) {
+    static private void invokeExceptionReporting(@Nullable String uuid, @NotNull String description, @NotNull Consumer<? super SubmittedReportInfo> consumer) {
         new Thread(() -> {
             /* See https://developers.google.com/analytics/devguides/collection/analyticsjs/exceptions */
             final StringBuilder payload = new StringBuilder();
@@ -86,14 +87,21 @@ final public class AnalyticsUtil {
                     .append("&exd=").append(description)                        // Exception description.
                     .append("&exf=1")                                           // Exception is fatal?
             ;
+            SubmittedReportInfo.SubmissionStatus status = SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
             try {
+                /*
+                // "org.apache.http.client.fluent.Request"
+                // there build it libs to send a request
                 Request.Post(COLLECTOR_URL)
                         .bodyByteArray(payload.toString().getBytes())
                         .connectTimeout(3000)
                         .execute();
+                 */
             } catch (Exception failed) {
                 /* we do nothing here - this happens in background and not mission critical */
+                status = SubmittedReportInfo.SubmissionStatus.FAILED;
             }
+            consumer.consume(new SubmittedReportInfo(status));
         }).start();
     }
 }

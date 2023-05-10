@@ -111,6 +111,9 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         advancedOpcode.add("constant");
         advancedOpcode.add("define");
         advancedOpcode.add("array_key_exists");
+        advancedOpcode.add("is_scalar");
+        advancedOpcode.add("sizeof");
+        advancedOpcode.add("ini_get");
     }
 
     final private static Condition<PsiElement> PARENT_NAMESPACE = new Condition<PsiElement>() {

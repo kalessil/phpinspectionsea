@@ -2,7 +2,7 @@
 
     /*
     TODO: (configurable) call_user_func's first parameter validation
-    TODO: (configurable) amount of arguments validation for resolved methods/functions
+    TODO: (configurable) number of arguments validation for resolved methods/functions
     */
 
     class ClassVFParent {

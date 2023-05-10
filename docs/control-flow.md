@@ -77,7 +77,7 @@ Php Inspections (EA Extended) friendly way:
 ## If-return-return could be simplified
 
 The inspection finds places where conditional return-statements can be simplified (by Quick-Fixing), reducing code 
-complexity metrics and amount of maintainable codebase. 
+complexity metrics and size of maintainable codebase.
 
 ```php
     /* before */

@@ -11,20 +11,20 @@ class aClass {
         $pattern6 = '%*s %s';
 
         /* all function reported */
-        echo <error descr="[EA] Amount of expected parameters is 3.">printf</error> ($pattern4, $arg);
-        echo <error descr="[EA] Amount of expected parameters is 3.">sprintf</error> ($pattern4, $arg);
-        echo <error descr="[EA] Amount of expected parameters is 4.">fprintf</error> ($handle, $pattern4, $arg);
-        echo <error descr="[EA] Amount of expected parameters is 4.">sscanf</error> ($arg, $pattern4, $arg);
-        echo <error descr="[EA] Amount of expected parameters is 4.">fscanf</error> ($handle, $pattern4, $arg);
+        echo <error descr="[EA] Number of expected parameters is 3.">printf</error> ($pattern4, $arg);
+        echo <error descr="[EA] Number of expected parameters is 3.">sprintf</error> ($pattern4, $arg);
+        echo <error descr="[EA] Number of expected parameters is 4.">fprintf</error> ($handle, $pattern4, $arg);
+        echo <error descr="[EA] Number of expected parameters is 4.">sscanf</error> ($arg, $pattern4, $arg);
+        echo <error descr="[EA] Number of expected parameters is 4.">fscanf</error> ($handle, $pattern4, $arg);
 
         /* sscanf/fscanf with partially provided containers */
-        list($first, $second) = <error descr="[EA] Amount of expected parameters is 4.">sscanf</error> ($arg, $pattern4, $first);
-        list($first, $second) = <error descr="[EA] Amount of expected parameters is 4.">fscanf</error> ($handle, $pattern4, $first);
+        list($first, $second) = <error descr="[EA] Number of expected parameters is 4.">sscanf</error> ($arg, $pattern4, $first);
+        list($first, $second) = <error descr="[EA] Number of expected parameters is 4.">fscanf</error> ($handle, $pattern4, $first);
 
         /* test resolving string literal */
-        echo <error descr="[EA] Amount of expected parameters is 3.">sprintf</error> (self::PATTERN1, $arg);
-        echo <error descr="[EA] Amount of expected parameters is 3.">sprintf</error> (self::$pattern2, $arg);
-        echo <error descr="[EA] Amount of expected parameters is 3.">sprintf</error> ($this->pattern3, $arg);
+        echo <error descr="[EA] Number of expected parameters is 3.">sprintf</error> (self::PATTERN1, $arg);
+        echo <error descr="[EA] Number of expected parameters is 3.">sprintf</error> (self::$pattern2, $arg);
+        echo <error descr="[EA] Number of expected parameters is 3.">sprintf</error> ($this->pattern3, $arg);
         echo sprintf(<error descr="[EA] Pattern seems to be not valid.">'%'</error>, $arg);
 
 

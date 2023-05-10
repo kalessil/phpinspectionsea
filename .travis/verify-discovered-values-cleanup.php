@@ -10,7 +10,7 @@
             $fileContent = file_get_contents($file->getPathname());
             preg_match_all('/([ ]+)(final[ ]+)?[a-z<>]+[ ]+([a-z]+)[ ]+=\s+PossibleValuesDiscoveryUtil\s*\.\s*discover\(/ims', $fileContent, $discovery);
             if ($discovery[0] !== []) {
-                /* match amount of calls */
+                /* match number of calls */
                 preg_match_all('/([ ]+)('.implode('|', $discovery[3]).')\.clear\(/ims', $fileContent, $clearing);
                 if (count($discovery[0]) !== count($clearing[0])) {
                     $missingClear []= $file->getFilename();

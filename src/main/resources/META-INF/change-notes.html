@@ -1,20 +1,17 @@
 <html>
-Bug-fix and new features release:<br/>
+Compatibility release:<br/>
 <br/>
-- PhpStorm 2021.3 compatibility fixes<br/>
-- 'array_is_list(...)' can be used: implemented<br/>
-- 'empty(...)' usage: added new setting (suggest null comparison for scalars)<br/>
+- PhpStorm 2023.1.1+ compatibility fixes<br/>
+- Static closure can be used: new settings (Suggest for short functions)<br/>
+- Insecure 'extract(...)' usage (Variable extract Vulnerability): dropped<br/>
+- 'in_array(...)' misused: new settings (Use strict comparison only)<br/>
 <br/>
-- Callable parameter usage violates definition: resolved false-positives (multiple cases)<br/>
-- Cascading 'str_replace(...)' calls: multiple code generation bug-fixes<br/>
-- Class property initialization flaws: resolved false-positives (multiple cases)<br/>
-- Isset operations variables existence: fixed a false-positive (goto handling)<br/>
-- Non-optimal if conditions: resolved false-positives (multiple cases)<br/>
-- One-time use variables: resolved false-positives (multiple cases)<br/>
-- PHPUnit: API deprecations: address deprecations in PHPUnit 9.1<br/>
-- PHPUnit: bugs and best practices: address deprecations in PHPUnit 9.1<br/>
-- Referencing objects: resolved false-positives (multiple cases)<br/>
-- Unnecessary type casting: resolved a false-positive (string type handling)<br/>
+- JSON encoding API usage: resolved a false-positive (JSON_PARTIAL_OUTPUT_ON_ERROR).<br/>
+- Traits properties conflicts resolution: resolved false-positives (multiple cases)<br/>
+- Type unsafe comparison: resolved a false-positives (multiple cases).<br/>
+- Unnecessary semicolon: resolved a false-positive (valid html-injections).<br/>
+- Unused constructor dependencies: resolved a false-positive (multi-resolve issue).
+- 'compact(...)' can be used: resolved false-positives (array destructing)<br/>
 <br/>
 <hr/>
 </html>

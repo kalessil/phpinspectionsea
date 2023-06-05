@@ -73,6 +73,7 @@ tasks {
         sinceBuild.set(properties("pluginSinceBuild"))
         untilBuild.set(properties("pluginUntilBuild"))
         changeNotes.set(file("src/main/resources/META-INF/change-notes.html").readText().replace("<html>", "").replace("</html>", ""))
+        pluginDescription.set(file("src/main/resources/META-INF/description.html").readText().replace("<html>", "").replace("</html>", ""))
 
         // Get the latest available change notes from the changelog file
         // changeNotes.set(provider {

@@ -115,6 +115,9 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
         list.add("\\Illuminate\\Support\\Debug\\Dumper::dump");
         list.add("dd");
         list.add("dump");
+        /* Buggregator related functions */
+        list.add("\\Buggregator\\Trap\\Client\\TrapHandle::fromArray");
+        list.add("trap");
         /* Core-php debug functions */
         list.add("debug_print_backtrace");
         list.add("debug_zval_dump");

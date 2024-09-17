@@ -123,7 +123,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             final Method nestedMethod          = (Method) referenceResolved;
                             final Parameter[] parentParameters = nestedMethod.getParameters();
 
-                            /* verify amount of parameters, visibility, static, abstract, final */
+                            /* verify number of parameters, visibility, static, abstract, final */
                             if (
                                 parentParameters.length   == methodParameters.length &&
                                 nestedMethod.isAbstract() == method.isAbstract() &&

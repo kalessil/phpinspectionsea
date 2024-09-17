@@ -49,7 +49,7 @@ public abstract class BasePhpElementVisitor extends PhpElementVisitor {
     public void visitPhpShellCommand(@NotNull PhpShellCommandExpression expression) {}
     public void visitPhpThrowExpression(@NotNull PhpThrowExpression expression)     {}
 
-    /* overrides to reduce amount of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
+    /* overrides to reduce number of 'com.jetbrains.php.lang.psi.visitors.PhpElementVisitor.visitElement' calls */
     @Override public void visitPhpFile(PhpFile PhpFile)        {}
     @Override public void visitWhiteSpace(PsiWhiteSpace space) {}
 

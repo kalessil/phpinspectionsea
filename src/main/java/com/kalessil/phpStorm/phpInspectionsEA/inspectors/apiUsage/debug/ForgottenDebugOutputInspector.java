@@ -185,7 +185,7 @@ public class ForgottenDebugOutputInspector extends BasePhpInspection {
 
     private static final Map<String, Integer> functionsRequirements = new HashMap<>();
     static {
-        /* function name => amount of arguments considered legal */
+        /* function name => number of arguments considered legal */
         functionsRequirements.put("debug_print_backtrace", -1);
         functionsRequirements.put("debug_zval_dump",       -1);
         functionsRequirements.put("phpinfo",                1);

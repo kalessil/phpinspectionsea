@@ -27,6 +27,7 @@ final public class WillReturnStrategy {
         methodsMapping.put("returnValueMap", "willReturnMap");
         methodsMapping.put("returnCallback", "willReturnCallback");
         methodsMapping.put("returnValue",    "willReturn");
+        methodsMapping.put("returnArgument", "willReturnArgument");
     }
 
     static public void apply(@NotNull String methodName, @NotNull MethodReference reference, @NotNull ProblemsHolder holder) {

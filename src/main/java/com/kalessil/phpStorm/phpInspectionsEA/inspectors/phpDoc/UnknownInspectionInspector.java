@@ -39,7 +39,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
 
     final static private Pattern inspectionsShortNames;
     static {
-        inspectionsShortNames = Pattern.compile("(?:[A-Z][a-z]+)+");
+        inspectionsShortNames = Pattern.compile("(?:[A-Z][a-z]+){2,}");
     }
 
     final private static Set<String> inspections = new HashSet<>();

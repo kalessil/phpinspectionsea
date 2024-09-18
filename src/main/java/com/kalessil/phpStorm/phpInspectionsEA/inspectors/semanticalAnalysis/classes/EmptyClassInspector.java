@@ -22,7 +22,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class EmptyClassInspector extends BasePhpInspection {
-    private static final String message = "Class does not contain any properties or methods.";
+    private static final String messageClass = "Class does not contain any properties or methods.";
+    private static final String messageEnum  = "Enum does not contain any values or methods.";
 
     @NotNull
     @Override
@@ -42,8 +43,11 @@ public class EmptyClassInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpClass(@NotNull PhpClass clazz) {
-                if (!clazz.isInterface() && !clazz.isDeprecated() && !clazz.isAnonymous()) {
-                    final boolean isEmpty = clazz.getOwnFields().length == 0 && clazz.getOwnMethods().length == 0 && clazz.getTraits().length == 0;
+                if (! clazz.isInterface() && ! clazz.isDeprecated() && ! clazz.isAnonymous()) {
+                    final boolean isEmpty = clazz.getOwnFields().length == 0 &&
+                                            clazz.getOwnMethods().length == 0 &&
+                                            clazz.getTraits().length == 0 &&
+                                            clazz.getEnumCases().isEmpty();
                     if (isEmpty) {
                         final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
                         if (parent != null) {
@@ -57,7 +61,7 @@ public class EmptyClassInspector extends BasePhpInspection {
                         if (nameNode != null) {
                             holder.registerProblem(
                                     nameNode,
-                                    MessagesPresentationUtil.prefixWithEa(message)
+                                    MessagesPresentationUtil.prefixWithEa(clazz.isEnum() ? messageEnum : messageClass )
                             );
                         }
                     }

@@ -4,6 +4,7 @@ class ClassWithAProperty { public $property; }
 class ClassWithAMethod   { public function __construct() {} }
 
 class <weak_warning descr="[EA] Class does not contain any properties or methods.">AnEmptyClass</weak_warning> {}
+enum <weak_warning descr="[EA] Enum does not contain any values or methods.">AnEmptyEnum</weak_warning> {}
 
 /* false-positives: empty interface */
 interface EmptyInterface {}

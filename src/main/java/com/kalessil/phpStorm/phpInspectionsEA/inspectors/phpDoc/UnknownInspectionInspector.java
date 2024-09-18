@@ -5,6 +5,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -15,6 +17,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,6 +36,11 @@ import static com.intellij.codeInspection.LocalInspectionEP.LOCAL_INSPECTION;
 
 public class UnknownInspectionInspector extends BasePhpInspection {
     private static final String message = "Unknown inspection: %s.";
+
+    final static private Pattern inspectionsShortNames;
+    static {
+        inspectionsShortNames = Pattern.compile("(?:[A-Z][a-z]+)+");
+    }
 
     final private static Set<String> inspections = new HashSet<>();
     static {
@@ -63,10 +72,28 @@ public class UnknownInspectionInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpDocTag(@NotNull PhpDocTag tag) {
-                if (tag.getName().equals("@noinspection")) {
-                    final String[] candidates = tag.getTagValue().replaceAll("[^\\p{L}\\p{Nd}]+", " ").trim().split("\\s+");
-                    if (candidates.length > 0) {
-                        final List<String> unknown = Stream.of(candidates[0])
+                if ("@noinspection".equals(tag.getName())) {
+                    final Set<String> candidates = new HashSet<>();
+
+                    // Newer version of IDE better parsing the element, try leveraging this.
+                    Stream.of(tag.getChildren())
+                            .filter(c -> c instanceof PhpDocRef )
+                            .map(c -> ((PhpDocRef) c).getName())
+                            .filter(c -> c != null && ! c.isEmpty() )
+                            .forEach(candidates::add);
+                    // Older version of IDE, we have to parse ourselves.
+                    if (candidates.isEmpty()) {
+                        final Matcher regexMatcher = inspectionsShortNames.matcher(tag.getTagValue().trim());
+                        while (regexMatcher.find()) {
+                            final String shortName = regexMatcher.group(0);
+                            if (shortName != null) {
+                                candidates.add(shortName);
+                            }
+                        }
+                    }
+
+                    if (! candidates.isEmpty()) {
+                        final List<String> unknown = candidates.stream()
                                 .filter(c -> ! inspections.contains(c) && ! inspections.contains(c + "Inspection"))
                                 .collect(Collectors.toList());
                         if (! unknown.isEmpty()) {

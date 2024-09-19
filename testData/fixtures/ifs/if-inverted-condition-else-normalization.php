@@ -1,11 +1,14 @@
 <?php
 
-if (!expr())
+function returnsBool(): bool { return true; }
+function returnsNullableBool(): ?bool { return true; }
+
+if (!returnsBool())
 { a(); b(); }
 <weak_warning descr="[EA] The if-else workflow is driven by inverted conditions, consider avoiding invertions.">else</weak_warning>
 { c(); d(); }
 
-if ( ! expr() )
+if ( ! returnsBool() )
 { a(); b(); }
 <weak_warning descr="[EA] The if-else workflow is driven by inverted conditions, consider avoiding invertions.">else</weak_warning>
 { c(); d(); }
@@ -29,7 +32,7 @@ if (!(true === true))
 <weak_warning descr="[EA] The if-else workflow is driven by inverted conditions, consider avoiding invertions.">else</weak_warning>
 { c(); d(); }
 
-if (false === expr())
+if (false === returnsBool())
 { a(); b(); }
 <weak_warning descr="[EA] The if-else workflow is driven by inverted conditions, consider avoiding invertions.">else</weak_warning>
 { c(); d(); }
@@ -48,3 +51,8 @@ else {}
 
 if (!empty([])) {}
 else {}
+
+if (false === returnsNullableBool())
+{ a(); b(); }
+else
+{ c(); d(); }

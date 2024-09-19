@@ -11,12 +11,10 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.PhpLanguageUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -92,11 +90,20 @@ public class InvertedIfElseConstructsInspector extends BasePhpInspection {
                                     }
                                     /* if managed to extract condition, then proceed with reporting */
                                     if (extractedCondition != null) {
+                                        final Project project = holder.getProject();
+                                        /* false-positive: variable return types or failing to resolve types */
+                                        if (extractedCondition instanceof PhpTypedElement) {
+                                            final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) extractedCondition, project);
+                                            if (resolved == null || resolved.size() != 1) {
+                                                return;
+                                            }
+                                        }
+
                                         final String newCondition = String.format("%s !== %s", left.getText(), right.getText());
                                         holder.registerProblem(
                                                 elseStatement.getFirstChild(),
                                                 MessagesPresentationUtil.prefixWithEa(message),
-                                                new NormalizeWorkflowFix(holder.getProject(), (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
+                                                new NormalizeWorkflowFix(project, (GroupStatement) ifBody, (GroupStatement) elseBody, extractedCondition, newCondition)
                                         );
                                     }
                                 }

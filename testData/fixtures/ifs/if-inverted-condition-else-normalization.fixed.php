@@ -1,9 +1,12 @@
 <?php
 
-if (expr()) { c(); d(); }
+function returnsBool(): bool { return true; }
+function returnsNullableBool(): ?bool { return true; }
+
+if (returnsBool()) { c(); d(); }
 else { a(); b(); }
 
-if (expr()) { c(); d(); }
+if (returnsBool()) { c(); d(); }
 else { a(); b(); }
 
 if (!true)
@@ -19,7 +22,7 @@ else { c(); d(); }
 if (true === true) { c(); d(); }
 else { a(); b(); }
 
-if (false !== expr()) { c(); d(); }
+if (false !== returnsBool()) { c(); d(); }
 else { a(); b(); }
 
 /* not supported: must follow PSR and use `{}` */
@@ -36,3 +39,8 @@ else {}
 
 if (!empty([])) {}
 else {}
+
+if (false === returnsNullableBool())
+{ a(); b(); }
+else
+{ c(); d(); }

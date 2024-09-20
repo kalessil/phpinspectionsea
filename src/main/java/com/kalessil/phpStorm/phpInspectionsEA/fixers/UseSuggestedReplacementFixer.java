@@ -48,7 +48,18 @@ public class UseSuggestedReplacementFixer implements LocalQuickFix {
                     .createPhpPsiFromText(project, ParenthesizedExpression.class, '(' + this.expression + ')')
                     .getArgument();
             if (replacement != null && !project.isDisposed()) {
-                expression.replace(replacement);
+                try {
+                    expression.replace(replacement);
+                } catch (final Throwable failure) {
+                    /*
+                     *  It were multiple reports pointing to exceptions which might be related to blade support implementation.
+                     *  The best we can do is to make it less disruptive for blade files and keep exception for other files.
+                     */
+                    final boolean isBladeFile = descriptor.getPsiElement().getContainingFile().getVirtualFile().getName().endsWith(".blade.php");
+                    if (! isBladeFile) {
+                        throw failure;
+                    }
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-This EULA is concluded between You and the Developer with respect to the Plugin.
+**This EULA is concluded between You and the Developer with respect to the Plugin.**
 
 **1. Definitions**
 

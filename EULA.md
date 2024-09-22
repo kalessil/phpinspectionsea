@@ -40,19 +40,16 @@ This EULA is concluded between You and the Developer with respect to the Plugin.
 
 2.1. License. The Developer hereby grants You a limited, worldwide, non-exclusive, non-transferable license to use the Plugin (including any generally available updates and upgrades released during your rightful use of the Plugin) as long as the use is in line with Your Confirmation, the Documentation, and the limits set out in this Standard EULA. You may:
 
-    install the Plugin;
-
-    use the Plugin subject to the limits described in Your Confirmation (if any); and
-
-    make backup copies of the Plugin for archival purposes.
+- install the Plugin;
+- use the Plugin subject to the limits described in Your Confirmation (if any); and
+- make backup copies of the Plugin for archival purposes.
 
 2.2. Restrictions. You may not modify, reverse-engineer, decompile, or disassemble the Plugin in whole or in part, or create any derivative works from the Plugin, or sublicense any rights to the Plugin, unless otherwise expressly authorized in writing by the Developer.
 
 2.3. Duration of License. The license granted under this Standard EULA can be provided as:
 
-    perpetual in case of Free Plugins or Paid Plugins for which You are charged a one-time license fee, and
-
-    time-limited for the duration of your Subscription Period, in case of Paid Plugins for which You pay an annual or monthly Subscription fee.
+- perpetual in case of Free Plugins or Paid Plugins for which You are charged a one-time license fee, and
+- time-limited for the duration of your Subscription Period, in case of Paid Plugins for which You pay an annual or monthly Subscription fee.
 
 For more details about the type of Paid Plugin, see the information in Your Confirmation.
 

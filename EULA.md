@@ -55,11 +55,11 @@ For more details about the type of Paid Plugin, see the information in Your Conf
 
 **3. Subscription**
 
-3.1. Subscription Limits. If You purchased a Plugin Subscription, You must use the Paid Plugin in accordance with the limits described in Your subscription plan (e.g., You must ensure that the maximum number of Plugin Users does not exceed the number of Plugin Users for which You have purchased the Subscription).
+**3.1. Subscription Limits.** If You purchased a Plugin Subscription, You must use the Paid Plugin in accordance with the limits described in Your subscription plan (e.g., You must ensure that the maximum number of Plugin Users does not exceed the number of Plugin Users for which You have purchased the Subscription).
 
-3.2. Subscription Period. The Subscription Period can be either annual or monthly.
+**3.2. Subscription Period.** The Subscription Period can be either annual or monthly.
 
-3.3. Fallback License. If the Plugin is provided with a Fallback license according to the Confirmation, following the expiration of the Subscription Period without a renewal, Your license to use the Plugin as stipulated in Section 2 shall continue on a perpetual, royalty-free, non-exclusive, and non-transferable basis with respect to the Fallback Version of the Plugin (including all limitations). The granting of the Fallback license is expressly contingent upon Your compliance with this EULA, including Your payment of the applicable Subscription fees for at least the preceding 12 months in full and without interruptions.
+**3.3. Fallback License.** If the Plugin is provided with a Fallback license according to the Confirmation, following the expiration of the Subscription Period without a renewal, Your license to use the Plugin as stipulated in Section 2 shall continue on a perpetual, royalty-free, non-exclusive, and non-transferable basis with respect to the Fallback Version of the Plugin (including all limitations). The granting of the Fallback license is expressly contingent upon Your compliance with this EULA, including Your payment of the applicable Subscription fees for at least the preceding 12 months in full and without interruptions.
 
 **4. Intellectual Property**
 

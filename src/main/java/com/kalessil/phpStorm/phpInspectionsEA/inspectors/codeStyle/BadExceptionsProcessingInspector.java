@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class BadExceptionsProcessingInspector extends BasePhpInspection {
-    private static final String messagePattern          = "Consider moving non-related statements (%c% in total) outside the try-block or refactoring the try-body into a function/method.";
+    private static final String messagePattern          = "It is possible that some of the statements contained in the try block can be extracted into their own methods or functions (we recommend that you do not include more than three statements per try block).";
     private static final String messageFailSilently     = "The exception being ignored, please don't fail silently and at least log it.";
     private static final String messageChainedException = "The exception being ignored, please log it or use chained exceptions.";
 

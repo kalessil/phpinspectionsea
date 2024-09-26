@@ -10,7 +10,7 @@
         throw new RuntimeException('...');
     }
 
-    <weak_warning descr="[EA] Consider moving non-related statements (4 in total) outside the try-block or refactoring the try-body into a function/method.">try</weak_warning> {
+    <weak_warning descr="[EA] It is possible that some of the statements contained in the try block can be extracted into their own methods or functions (we recommend that you do not include more than three statements per try block).">try</weak_warning> {
         echo 1;
         echo 2;
         echo 3;

@@ -1,7 +1,7 @@
 <idea-plugin require-restart="true">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>5.0.0.0</version>
+  <version>5.1.0</version>
   <vendor email="ea.inspections.team@gmail.com">EA Inspections Team</vendor>
 
   <depends>com.jetbrains.php</depends>

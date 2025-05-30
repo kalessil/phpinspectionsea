@@ -11,4 +11,5 @@ namespace {
 
     call_user_func('uniqid');
     uniqid('', true);
+    uniqid(more_entropy: true);
 }

@@ -65,8 +65,8 @@ public class NonSecureUniqidUsageInspector extends BasePhpInspection {
                 final String functionName = reference.getName();
                 if (functionName != null) {
                     if (functionName.equals("uniqid")) {
-                        final PsiElement[] arguments = reference.getParameters();
-                        if (arguments.length < 2 && this.isFromRootNamespace(reference)) {
+                        final boolean moreEntropySpecified = reference.getParameter("more_entropy", 1) != null;
+                        if (! moreEntropySpecified && this.isFromRootNamespace(reference)) {
                             holder.registerProblem(
                                     reference,
                                     MessagesPresentationUtil.prefixWithEa(message),

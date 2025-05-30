@@ -1,14 +1,14 @@
 <idea-plugin require-restart="true">
   <id>com.kalessil.phpStorm.phpInspectionsEA</id>
   <name>Php Inspections (EA Extended)</name>
-  <version>5.1.0</version>
+  <version>5.2.0</version>
   <vendor email="ea.inspections.team@gmail.com">EA Inspections Team</vendor>
 
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
 
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="223" />
+  <idea-version since-build="241" />
 
   <description><![CDATA[
   Replaced by description.html .....................

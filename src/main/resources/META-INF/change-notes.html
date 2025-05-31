@@ -1,19 +1,10 @@
 <html>
 Bug-fix release:<br/>
 <br/>
-- PhpStorm compatibility fixes (org.jetbrains.intellij v1.13.1) (thank you, @s0lus).<br/>
-- Documentation (and codebase): fix incorrect usage of "amount" instead of "number". (#1842) (thank you, @TravisCarden).<br/>
-- Documentation: improve docs for `Phar-incompatible 'realpath()' usage` (#1866) (thank you, @jdreesen).<br/>
-- Quick-fixes enhancements: harden against runtime exceptions in blade files.<br/>
+- PhpStorm compatibility and deprecation fixes.<br/>
 <br/>
-- Badly organized exception handling: updated messages.<br/>
-- Empty class: resolved false positives (enums).<br/>
-- Forgotten debug statements: new symbols (Buggregator) (thank you, @k2gl).<br/>
-- Inverted 'if-else' constructs: resolved false positives (operands types are not considered).<br/>
-- PHPUnit: bugs and best practices: new patterns (willReturnArgument) (thank you, @reedy).<br/>
-- Statement could be decoupled from foreach: disabled by default.<br/>
-- Unqualified function/constant reference: new patterns (is_scalar, sizeof, ini_get) (thank you, @jdreesen).<br/>
-- Unknown inspection suppression: resolved false positives (reported inspection name is empty).<br/>
+- JSON encoding API usage: resolved false-positives (named arguments)<br/>
+- Insecure 'uniqid(...)' usage: resolved false-positives (named arguments)<br/>
 <br/>
 <hr/>
 </html>

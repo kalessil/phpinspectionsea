@@ -8,7 +8,7 @@ Php Inspections (EA Extended)
 ---
 <img src="docs/images/ea-logo.png" alt="Php Inspections (EA Extended)" height="100" />
 
-This project is an OSS Static Code Analysis [tool](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-) for PhpStorm (2016.2+) and Idea Ultimate.
+This project is an OSS Static Code Analysis [tool](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-) for PhpStorm (2024.1+) and Idea Ultimate.
 
 It covers:
 - architecture related issues

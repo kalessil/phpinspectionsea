@@ -17,6 +17,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -297,7 +298,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 if (comma != null && marker != null) {
                     if (from instanceof ArrayCreationExpression) {
                         final PsiElement[] values = from.getChildren();
-                        Collections.reverse(Arrays.asList(values));
+                        ArrayUtils.reverse(values);
                         Arrays.stream(values).forEach(value -> {
                             to.addAfter(comma, marker);
                             to.addAfter(value.copy(), marker);
@@ -317,7 +318,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     final PsiElement marker                   = firstValue == null ? null : firstValue.getPrevSibling();
                     if (comma != null && marker != null) {
                         final PsiElement[] values = from.getChildren();
-                        Collections.reverse(Arrays.asList(values));
+                        ArrayUtils.reverse(values);
                         Arrays.stream(values).forEach(value -> {
                             replacement.addAfter(comma, marker);
                             replacement.addAfter(value.copy(), marker);

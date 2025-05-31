@@ -4,6 +4,7 @@ import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -114,7 +115,7 @@ public class PrettyListControl {
             list.clearSelection();
 
             if (moveDelta == 1) {
-                Collections.reverse(Arrays.asList(selectedIndices));
+                ArrayUtils.reverse(selectedIndices);
             }
 
             for (final int selectedIndex : selectedIndices) {

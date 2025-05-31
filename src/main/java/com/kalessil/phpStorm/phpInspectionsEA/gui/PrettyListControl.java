@@ -3,7 +3,6 @@ package com.kalessil.phpStorm.phpInspectionsEA.gui;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,8 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class PrettyListControl {
@@ -115,7 +114,7 @@ public class PrettyListControl {
             list.clearSelection();
 
             if (moveDelta == 1) {
-                ArrayUtils.reverse(selectedIndices);
+                Collections.reverse(Arrays.asList(selectedIndices));
             }
 
             for (final int selectedIndex : selectedIndices) {

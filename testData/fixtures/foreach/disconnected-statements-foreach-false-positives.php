@@ -71,10 +71,12 @@ foreach ($files as & $file9) {
     }
 }
 
-/* loop with unpacking array into multiple variables */
-foreach ([[], [], []] as list($a, $b, $c)) {
-    if ($b === $count) {
-        unset($a, $b, $c);
+function test_loop_unpack_into_multiple() {
+    /* loop with unpacking array into multiple variables */
+    foreach ([[], [], []] as list($a, $b, $c)) {
+        if ($b === $count) {
+            unset($a, $b, $c);
+        }
     }
 }
 

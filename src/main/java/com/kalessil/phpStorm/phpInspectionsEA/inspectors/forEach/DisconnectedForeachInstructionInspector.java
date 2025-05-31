@@ -13,15 +13,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
-import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 /*
@@ -235,7 +231,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                         } else if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
                             /* php will create variable, if it is by reference */
                             final FunctionReference reference = (FunctionReference) grandParent;
-                            final int position                = ArrayUtils.indexOf(reference.getParameters(), variable);
+                            final int position                = Arrays.asList(reference.getParameters()).indexOf(variable);
                             if (position != -1) {
                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
                                 if (resolved instanceof Function) {

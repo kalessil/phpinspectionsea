@@ -66,64 +66,95 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
                 if (functionName != null) {
                     if (functionName.equals("json_decode") && this.isFromRootNamespace(reference)) {
                         final PsiElement[] arguments = reference.getParameters();
-                        if (HARDEN_DECODING_RESULT_TYPE && arguments.length == 1) {
-                            final String replacement = String.format(
-                                    "%sjson_decode(%s, %s)",
-                                    reference.getImmediateNamespaceName(),
-                                    arguments[0].getText(),
-                                    DECODE_AS_ARRAY ? "true" : "false"
-                            );
-                            holder.registerProblem(
-                                    reference,
-                                    MessagesPresentationUtil.prefixWithEa(messageResultType),
-                                    DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement)
-                            );
-                        }
-                        if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
-                            final boolean hasFlag = arguments.length >= 4 && this.hasStricterHandlingFlags(arguments[3]);
-                            if (! hasFlag) {
+
+                        if (HARDEN_DECODING_RESULT_TYPE && arguments.length > 0) {
+                            final PsiElement returnTypeArgument = reference.getParameter("associative", 1);
+                            if (returnTypeArgument == null) {
                                 final String replacement = String.format(
-                                        "%sjson_decode(%s, %s, %s, %s)",
+                                        "%sjson_decode(%s, %s)",
                                         reference.getImmediateNamespaceName(),
                                         arguments[0].getText(),
-                                        arguments.length > 1 ? arguments[1].getText() : (HARDEN_DECODING_RESULT_TYPE && DECODE_AS_ARRAY ? "true" : "false"),
-                                        arguments.length > 2 ? arguments[2].getText() : "512",
-                                        arguments.length > 3 ? "JSON_THROW_ON_ERROR | " + arguments[3].getText() : "JSON_THROW_ON_ERROR"
+                                        DECODE_AS_ARRAY ? "true" : "false"
                                 );
                                 holder.registerProblem(
                                         reference,
-                                        MessagesPresentationUtil.prefixWithEa(messageErrorsHandling),
-                                        new HardenErrorsHandlingFix(replacement)
+                                        MessagesPresentationUtil.prefixWithEa(messageResultType),
+                                        DECODE_AS_ARRAY ? new DecodeIntoArrayFix(replacement) : new DecodeIntoObjectFix(replacement)
                                 );
                             }
                         }
-                    } else if (functionName.equals("json_encode") && this.isFromRootNamespace(reference)) {
-                        if (HARDEN_ERRORS_HANDLING && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
-                            final PsiElement[] arguments = reference.getParameters();
-                            final boolean hasFlag        = arguments.length >= 2 && this.hasStricterHandlingFlags(arguments[1]);
-                            if (!hasFlag && arguments.length > 0) {
-                                final String replacement;
-                                if (arguments.length > 2) {
-                                    replacement = String.format(
-                                            "%sjson_encode(%s, %s, %s)",
+
+                        if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
+                            final PsiElement jsonArgument  = reference.getParameter("json", 0);
+                            final PsiElement flagsArgument = reference.getParameter("flags", 3);
+                            final boolean hasFlag          = flagsArgument != null && this.hasStricterHandlingFlags(flagsArgument);
+                            if (! hasFlag && jsonArgument != null) {
+                                // Skip quick-fixes for named arguments as the API has hiccups with mixed named/unnamed arguments
+                                final boolean supportReplacement = reference.getParameter("flags", -1) == null;
+                                if (supportReplacement) {
+                                    final PsiElement returnTypeArgument = reference.getParameter("associative", 1);
+                                    final PsiElement depthArgument      = reference.getParameter("depth", 2);
+                                    final String replacement            = String.format(
+                                            "%sjson_decode(%s, %s, %s, %s)",
                                             reference.getImmediateNamespaceName(),
-                                            arguments[0].getText(),
-                                            "JSON_THROW_ON_ERROR | " + arguments[1].getText(),
-                                            arguments[2].getText()
+                                            jsonArgument.getText(),
+                                            returnTypeArgument != null ? returnTypeArgument.getText() : (HARDEN_DECODING_RESULT_TYPE && DECODE_AS_ARRAY ? "true" : "false"),
+                                            depthArgument != null ? depthArgument.getText() : "512",
+                                            flagsArgument != null ? "JSON_THROW_ON_ERROR | " + flagsArgument.getText() : "JSON_THROW_ON_ERROR"
+                                    );
+                                    holder.registerProblem(
+                                            reference,
+                                            MessagesPresentationUtil.prefixWithEa(messageErrorsHandling),
+                                            new HardenErrorsHandlingFix(replacement)
                                     );
                                 } else {
-                                    replacement = String.format(
-                                            "%sjson_encode(%s, %s)",
-                                            reference.getImmediateNamespaceName(),
-                                            arguments[0].getText(),
-                                            arguments.length > 1 ? "JSON_THROW_ON_ERROR | " + arguments[1].getText() : "JSON_THROW_ON_ERROR"
+                                    holder.registerProblem(
+                                            reference,
+                                            MessagesPresentationUtil.prefixWithEa(messageErrorsHandling)
                                     );
                                 }
-                                holder.registerProblem(
-                                        reference,
-                                        MessagesPresentationUtil.prefixWithEa(messageErrorsHandling),
-                                        new HardenErrorsHandlingFix(replacement)
-                                );
+                            }
+                        }
+                    } else if (functionName.equals("json_encode") && this.isFromRootNamespace(reference)) {
+                        final PsiElement[] arguments = reference.getParameters();
+
+                        if (HARDEN_ERRORS_HANDLING && arguments.length > 0 && PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP730)) {
+                            final PsiElement valueArgument  = reference.getParameter("value", 0);
+                            final PsiElement flagsArgument  = reference.getParameter("flags", 1);
+                            final boolean hasFlag           = flagsArgument != null && this.hasStricterHandlingFlags(flagsArgument);
+                            if (!hasFlag && valueArgument != null) {
+                                // Skip quick-fixes for named arguments as the API has hiccups with mixed named/unnamed arguments
+                                final boolean supportReplacement = reference.getParameter("flags", -1) == null;
+                                if (supportReplacement) {
+                                    final PsiElement depthArgument = reference.getParameter("depth", 2);
+                                    final String replacement;
+                                    if (depthArgument != null) {
+                                        replacement = String.format(
+                                                "%sjson_encode(%s, %s, %s)",
+                                                reference.getImmediateNamespaceName(),
+                                                valueArgument.getText(),
+                                                flagsArgument != null ? "JSON_THROW_ON_ERROR | " + flagsArgument.getText() : "JSON_THROW_ON_ERROR",
+                                                depthArgument.getText()
+                                        );
+                                    } else {
+                                        replacement = String.format(
+                                                "%sjson_encode(%s, %s)",
+                                                reference.getImmediateNamespaceName(),
+                                                valueArgument.getText(),
+                                                flagsArgument != null ? "JSON_THROW_ON_ERROR | " + flagsArgument.getText() : "JSON_THROW_ON_ERROR"
+                                        );
+                                    }
+                                    holder.registerProblem(
+                                            reference,
+                                            MessagesPresentationUtil.prefixWithEa(messageErrorsHandling),
+                                            new HardenErrorsHandlingFix(replacement)
+                                    );
+                                } else {
+                                    holder.registerProblem(
+                                            reference,
+                                            MessagesPresentationUtil.prefixWithEa(messageErrorsHandling)
+                                    );
+                                }
                             }
                         }
                     }

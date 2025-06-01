@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -68,31 +69,29 @@ public class DynamicCallsToScopeIntrospectionInspector extends BasePhpInspection
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP710)) {
                     final String functionName = reference.getName();
-                    if (functionName != null) {
-                        /* discover target element */
-                        final PsiElement target;
-                        if (functionName.isEmpty()) {
-                            final PsiElement[] children = reference.getChildren();
-                            target = children.length == 2 ? children[0] : null;
-                        } else if (callbacksPositions.containsKey(functionName)) {
-                            final int callbackPosition   = callbacksPositions.get(functionName);
-                            final PsiElement[] arguments = reference.getParameters();
-                            target = arguments.length >= callbackPosition + 1 ? arguments[callbackPosition] : null;
-                        } else {
-                            target = null;
-                        }
-                        /* discover the target function */
-                        if (target != null) {
-                            final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(target);
-                            if (literal != null) {
-                                final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
-                                final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
-                                if (targetCalls.containsKey(callback)) {
-                                    holder.registerProblem(
-                                            target,
-                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), callback)
-                                    );
-                                }
+                    /* discover target element */
+                    final PsiElement target;
+                    if (StringUtils.isEmpty(functionName)) {
+                        final PsiElement[] children = reference.getChildren();
+                        target = children.length == 2 ? children[0] : null;
+                    } else if (callbacksPositions.containsKey(functionName)) {
+                        final int callbackPosition   = callbacksPositions.get(functionName);
+                        final PsiElement[] arguments = reference.getParameters();
+                        target = arguments.length >= callbackPosition + 1 ? arguments[callbackPosition] : null;
+                    } else {
+                        target = null;
+                    }
+                    /* discover the target function */
+                    if (target != null) {
+                        final StringLiteralExpression literal = ExpressionSemanticUtil.resolveAsStringLiteral(target);
+                        if (literal != null) {
+                            final String raw      = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                            final String callback = raw.startsWith("\\") ? raw.substring(1) : raw;
+                            if (targetCalls.containsKey(callback)) {
+                                holder.registerProblem(
+                                        target,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), callback)
+                                );
                             }
                         }
                     }

@@ -149,11 +149,18 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         final String message      = messagePattern
                                 .replace("%t%", Types.strVoid)
                                 .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
-                        holder.registerProblem(
-                                target,
-                                MessagesPresentationUtil.prefixWithEa(message),
-                                fixer
-                        );
+                        if (fixer != null) {
+                            holder.registerProblem(
+                                    target,
+                                    MessagesPresentationUtil.prefixWithEa(message),
+                                    fixer
+                            );
+                        } else {
+                            holder.registerProblem(
+                                    target,
+                                    MessagesPresentationUtil.prefixWithEa(message)
+                            );
+                        }
                     }
                 }
                 /* case 2: offer using type */
@@ -172,13 +179,19 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                             final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(isLegitStatic ? "static" : suggestedType);
                             final String message      = messagePattern
                                 .replace("%t%", isLegitStatic ? "static" : suggestedType)
-                                .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
-                            ;
-                            holder.registerProblem(
-                                    target,
-                                    MessagesPresentationUtil.prefixWithEa(message),
-                                    fixer
-                            );
+                                .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
+                            if (fixer != null) {
+                                holder.registerProblem(
+                                        target,
+                                        MessagesPresentationUtil.prefixWithEa(message),
+                                        fixer
+                                );
+                            } else {
+                                holder.registerProblem(
+                                        target,
+                                        MessagesPresentationUtil.prefixWithEa(message)
+                                );
+                            }
                         }
                     }
                 }
@@ -195,13 +208,19 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(typeHint);
                         final String message      = messagePattern
                             .replace("%t%", typeHint)
-                            .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "")
-                        ;
-                        holder.registerProblem(
-                                target,
-                                MessagesPresentationUtil.prefixWithEa(message),
-                                fixer
-                        );
+                            .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
+                        if (fixer != null) {
+                            holder.registerProblem(
+                                    target,
+                                    MessagesPresentationUtil.prefixWithEa(message),
+                                    fixer
+                            );
+                        } else {
+                            holder.registerProblem(
+                                    target,
+                                    MessagesPresentationUtil.prefixWithEa(message)
+                            );
+                        }
                     }
                 }
             }
@@ -354,8 +373,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             final PsiElement expression = descriptor.getPsiElement();
             if (expression != null && !project.isDisposed()) {
                 final PsiElement parent = expression.getParent();
-                if (parent instanceof Method) {
-                    final Method method   = (Method) parent;
+                if (parent instanceof Method method) {
                     final PsiElement body = method.isAbstract() ? method.getLastChild() : ExpressionSemanticUtil.getGroupStatement(method);
                     if (body != null) {
                         PsiElement injectionPoint = body.getPrevSibling();

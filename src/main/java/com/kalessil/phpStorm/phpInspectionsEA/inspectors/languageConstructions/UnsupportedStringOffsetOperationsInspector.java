@@ -79,13 +79,11 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                                 target = target.getParent();
                             }
                             PsiElement context = target.getParent();
+                            if (OpenapiTypesUtil.is(context, PhpElementTypes.ARRAY_VALUE)) {
+                                context = context.getParent();
+                            }
                             if (context instanceof AssignmentExpression) {
                                 isTargetContext = ((AssignmentExpression) context).getValue() != target;
-                            } else if (OpenapiTypesUtil.is(context, PhpElementTypes.ARRAY_VALUE)) {
-                                final PsiElement array = context.getParent();
-                                if ((context = array.getParent()) instanceof AssignmentExpression) {
-                                    isTargetContext = ((AssignmentExpression) context).getValue() != array;
-                                }
                             }
                         }
                         /* case 2: array push operator is not supported by strings */

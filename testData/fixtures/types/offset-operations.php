@@ -44,7 +44,7 @@
             $boolContainer = false;
             <error descr="[EA] '$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[0]</error>
                 = 'a';
-            <error descr="[EA] '$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[explode('', '')]</error>
+            $boolContainer[<error descr="[EA] Resolved index type ([bool]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('', '')</error>]
                 = 'a';
 
             $objOffsetContainer = new OffsetSupport();

@@ -44,7 +44,7 @@
             $boolContainer = false;
             <error descr="[EA] '$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[0]</error>
                 = 'a';
-            $boolContainer[<error descr="[EA] Resolved index type ([bool]) is incompatible with possible [string, int]. Probably just proper type hinting needed.">explode('', '')</error>]
+            <error descr="[EA] '$boolContainer' may not support offset operations (or its type not annotated properly: [bool]).">$boolContainer[explode('', '')]</error>
                 = 'a';
 
             $objOffsetContainer = new OffsetSupport();
@@ -65,9 +65,8 @@
             <error descr="[EA] '$objStdContainer' may not support offset operations (or its type not annotated properly: [\stdClass]).">$objStdContainer[new stdClass()]</error>
                 = 0;
 
-            /* TODO: this needs to be reported */
             $objTestObjectContainer   = new PDO('','','');
-            $objTestObjectContainer[] = "This is a message";
+            <error descr="[EA] '$objTestObjectContainer' may not support offset operations (or its type not annotated properly: [\PDO]).">$objTestObjectContainer[]</error> = "This is a message";
         }
     }
 

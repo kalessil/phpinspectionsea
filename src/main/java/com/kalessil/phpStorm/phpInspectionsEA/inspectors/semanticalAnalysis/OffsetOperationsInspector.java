@@ -11,6 +11,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
+import com.kalessil.phpStorm.phpInspectionsEA.utils.PossibleValuesDiscoveryUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.Types;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,7 +109,20 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
         final Set<String> containerTypes = new HashSet<>();
         if (container instanceof PhpTypedElement) {
-            final PhpType type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
+            PhpType type = null;
+            // Initially, try scope-limited types resolution from the single possible value.
+            final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(container);
+            if (variants.size() == 1) {
+                final PsiElement value = variants.iterator().next();
+                if (value instanceof PhpTypedElement) {
+                    type = OpenapiResolveUtil.resolveType((PhpTypedElement) value, project);
+                }
+            }
+            variants.clear();
+            // As fallback, resort more generic types resolution.
+            if (type == null) {
+                type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
+            }
             if (type != null && !type.hasUnknown()) {
                 type.getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
                 Stream.of(Types.strSelf, Types.strStatic).forEach(containerTypes::remove);

@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ClassReference;
 import com.jetbrains.php.lang.psi.elements.Method;
@@ -20,6 +21,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Collection;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -56,8 +58,7 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
             @Override
             public void visitPhpThrowExpression(@NotNull PhpThrowExpression expression) {
                 final PsiElement argument = expression.getArgument();
-                if (argument instanceof NewExpression) {
-                    final NewExpression newExpression   = (NewExpression) argument;
+                if (argument instanceof NewExpression newExpression) {
                     final ClassReference classReference = newExpression.getClassReference();
                     final String classFqn               = classReference == null ? null : classReference.getFQN();
                     if (classFqn != null) {
@@ -68,8 +69,8 @@ public class ThrowRawExceptionInspector extends BasePhpInspection {
                                     new TheLocalFix()
                             );
                         } else if (REPORT_MISSING_ARGUMENTS && newExpression.getParameters().length == 0) {
-                            final PsiElement resolved = OpenapiResolveUtil.resolveReference(classReference);
-                            if (resolved instanceof PhpClass && this.isTarget((PhpClass) resolved)) {
+                            final Collection<PhpClass> classes = OpenapiResolveUtil.resolveClassesByFQN(classFqn, PhpIndex.getInstance(holder.getProject()));
+                            if (classes.size() == 1 && this.isTarget(classes.iterator().next())) {
                                 holder.registerProblem(
                                         newExpression,
                                         MessagesPresentationUtil.prefixWithEa(messageNoArguments)

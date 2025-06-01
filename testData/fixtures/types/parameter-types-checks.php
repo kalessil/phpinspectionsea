@@ -18,12 +18,12 @@
     };
 
     function variadicTypesOne (string ...$stringVariadicArray) {
-        return is_array($stringVariadicArray) ||
-               <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_string($stringVariadicArray)</warning>;
+        return <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_array($stringVariadicArray)</warning> ||
+               is_string($stringVariadicArray);
     }
     function variadicTypesTwo (...$genericVariadicArray) {
         return is_array($genericVariadicArray) ||
-               <warning descr="[EA] Makes no sense, because it's always false according to resolved type. Ensure the parameter is not reused.">is_string($genericVariadicArray)</warning>;
+               is_string($genericVariadicArray);
     }
 
     function callableTypes (callable $callable) {

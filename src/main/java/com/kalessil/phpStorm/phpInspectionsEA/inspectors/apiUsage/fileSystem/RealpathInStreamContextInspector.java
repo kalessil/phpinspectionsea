@@ -60,11 +60,18 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                 }
                 if (parent instanceof Include) {
                     final String replacement = this.generateReplacement(subject);
-                    holder.registerProblem(
-                            reference,
-                            MessagesPresentationUtil.prefixWithEa(replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement)),
-                            replacement == null ? null : new SecureRealpathFix(replacement)
-                    );
+                    if (replacement != null) {
+                        holder.registerProblem(
+                                reference,
+                                MessagesPresentationUtil.prefixWithEa(String.format(patternUseDirname, replacement)),
+                                new SecureRealpathFix(replacement)
+                        );
+                    } else {
+                        holder.registerProblem(
+                                reference,
+                                MessagesPresentationUtil.prefixWithEa(messageUseDirname)
+                        );
+                    }
                     return;
                 }
 
@@ -72,11 +79,18 @@ public class RealpathInStreamContextInspector extends BasePhpInspection {
                 for (final StringLiteralExpression literal : PsiTreeUtil.findChildrenOfType(reference, StringLiteralExpression.class)) {
                     if (literal.getContents().contains("..")) {
                         final String replacement = this.generateReplacement(subject);
-                        holder.registerProblem(
-                                reference,
-                                MessagesPresentationUtil.prefixWithEa(replacement == null ? messageUseDirname : String.format(patternUseDirname, replacement)),
-                                replacement == null ? null : new SecureRealpathFix(replacement)
-                        );
+                        if (replacement != null) {
+                            holder.registerProblem(
+                                    reference,
+                                    MessagesPresentationUtil.prefixWithEa(String.format(patternUseDirname, replacement)),
+                                    new SecureRealpathFix(replacement)
+                            );
+                        } else {
+                            holder.registerProblem(
+                                    reference,
+                                    MessagesPresentationUtil.prefixWithEa(messageUseDirname)
+                            );
+                        }
                         break;
                     }
                 }

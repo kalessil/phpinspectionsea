@@ -205,7 +205,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                         normalizedTypes.remove(Types.strNull);
                     }
 
-                    if (normalizedTypes.size() == 1) {
+                    if (1 == normalizedTypes.size()) {
                         final String nullableType     = normalizedTypes.iterator().next();
                         final String suggestedType    = isVoidAvailable && voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
                         final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType) || suggestedType.equals("self");

@@ -196,30 +196,38 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
                     }
                 }
                 /* case 3: offer using nullable type */
-                if (supportNullableTypes && 2 == typesCount && normalizedTypes.contains(Types.strNull)) {
-                    normalizedTypes.remove(Types.strNull);
+                if (supportNullableTypes && 2 == typesCount) {
+                    if (normalizedTypes.contains(Types.strVoid)) {
+                        // In newer PhpStorm versions missing return statements contributed to 'void' in resolved type.
+                        normalizedTypes.remove(Types.strVoid);
+                    } else if (normalizedTypes.contains(Types.strNull)) {
+                        // In older PhpStorm versions missing return statements also contributed to 'null' in resolved type.
+                        normalizedTypes.remove(Types.strNull);
+                    }
 
-                    final String nullableType     = normalizedTypes.iterator().next();
-                    final String suggestedType    = isVoidAvailable && voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
-                    final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType) || suggestedType.equals("self");
-                    final boolean isLegitVoid     = ! isLegitNullable && suggestedType.equals(Types.strVoid);
-                    if (isLegitNullable || isLegitVoid) {
-                        final String typeHint     = isLegitVoid ? suggestedType : '?' + suggestedType;
-                        final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(typeHint);
-                        final String message      = messagePattern
-                            .replace("%t%", typeHint)
-                            .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
-                        if (fixer != null) {
-                            holder.registerProblem(
-                                    target,
-                                    MessagesPresentationUtil.prefixWithEa(message),
-                                    fixer
-                            );
-                        } else {
-                            holder.registerProblem(
-                                    target,
-                                    MessagesPresentationUtil.prefixWithEa(message)
-                            );
+                    if (normalizedTypes.size() == 1) {
+                        final String nullableType     = normalizedTypes.iterator().next();
+                        final String suggestedType    = isVoidAvailable && voidTypes.contains(nullableType) ? Types.strVoid : compactType(nullableType, method);
+                        final boolean isLegitNullable = nullableType.startsWith("\\") || returnTypes.contains(nullableType) || suggestedType.equals("self");
+                        final boolean isLegitVoid     = ! isLegitNullable && suggestedType.equals(Types.strVoid);
+                        if (isLegitNullable || isLegitVoid) {
+                            final String typeHint     = isLegitVoid ? suggestedType : '?' + suggestedType;
+                            final LocalQuickFix fixer = this.isMethodOverridden(method) ? null : new DeclareReturnTypeFix(typeHint);
+                            final String message      = messagePattern
+                                .replace("%t%", typeHint)
+                                .replace("%n%", fixer == null ? " (please use change signature intention to fix this)" : "");
+                            if (fixer != null) {
+                                holder.registerProblem(
+                                        target,
+                                        MessagesPresentationUtil.prefixWithEa(message),
+                                        fixer
+                                );
+                            } else {
+                                holder.registerProblem(
+                                        target,
+                                        MessagesPresentationUtil.prefixWithEa(message)
+                                );
+                            }
                         }
                     }
                 }

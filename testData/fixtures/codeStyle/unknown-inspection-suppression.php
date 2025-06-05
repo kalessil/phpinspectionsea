@@ -1,5 +1,6 @@
 <?php
 
+function cases_holder() {
     /* <weak_warning descr="[EA] Unknown inspection: PhpRemovedOrRenamedInspector.">@noinspection</weak_warning> PhpRemovedOrRenamedInspector */
 
     /** <weak_warning descr="[EA] Unknown inspection: PhpRemovedOrRenamedInspector.">@noinspection</weak_warning> PhpRemovedOrRenamedInspector */
@@ -16,3 +17,4 @@
     /** @noinspection SqlAggregates */
     /** @noinspection SqlRedundantOrderingDirection */
     /** @noinspection PhpMultipleClassDeclarationsInspection */
+}

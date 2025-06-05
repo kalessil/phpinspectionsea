@@ -41,6 +41,13 @@ final public class OpenapiResolveUtil {
         functionReturnTypes.put("explode", new PhpType().add(PhpType.ARRAY).add(PhpType.BOOLEAN));
         functionReturnTypes.put("parse_url", new PhpType().add(PhpType.ARRAY).add(PhpType.BOOLEAN));
 
+        // TODO: opportunity to narrow down with array elements types
+        functionReturnTypes.put("current", new PhpType().add(PhpType.MIXED));
+        functionReturnTypes.put("reset", new PhpType().add(PhpType.MIXED));
+        functionReturnTypes.put("next", new PhpType().add(PhpType.MIXED));
+        functionReturnTypes.put("prev", new PhpType().add(PhpType.MIXED));
+        functionReturnTypes.put("end", new PhpType().add(PhpType.MIXED));
+
         functionToNarrow.put("str_replace", 2);
         functionToNarrow.put("str_ireplace", 2);
         functionToNarrow.put("preg_replace", 2);

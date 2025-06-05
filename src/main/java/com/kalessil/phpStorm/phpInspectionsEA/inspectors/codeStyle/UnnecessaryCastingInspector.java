@@ -144,7 +144,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                         final Function referencedFunction = (Function) resolved;
                         final PsiElement returnedType     = OpenapiElementsUtil.getReturnType(referencedFunction);
                         if (returnedType != null) {
-                            result = OpenapiResolveUtil.resolveType(referencedFunction, project);
+                            result = OpenapiResolveUtil.resolveType(expression, project);
                         }
                     }
                 } else {

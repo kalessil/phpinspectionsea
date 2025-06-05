@@ -115,3 +115,8 @@
             (int) ($string / 100),
         ];
     }
+
+    /* false-positives: core APIs */
+    function cases_holder_core_apis() {
+        return (bool) current([]);
+    }

@@ -83,7 +83,7 @@ tasks {
     patchPluginXml {
         version = properties("pluginVersion")
         sinceBuild.set(properties("pluginSinceBuild"))
-        untilBuild.set(properties("pluginUntilBuild"))
+        // untilBuild.set(properties("pluginUntilBuild"))
         changeNotes.set(file("src/main/resources/META-INF/change-notes.html").readText().replace("<html>", "").replace("</html>", ""))
         pluginDescription.set(file("src/main/resources/META-INF/description.html").readText().replace("<html>", "").replace("</html>", ""))
 

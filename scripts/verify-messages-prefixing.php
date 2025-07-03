@@ -21,3 +21,5 @@
         echo 'Following files has un-prefixed messaging: ', PHP_EOL, implode(PHP_EOL, $missingPrefixes), PHP_EOL, count($missingPrefixes), ' in total', PHP_EOL;
         exit(1);
     }
+
+    echo 'Verify messages prefixing: [OK]', PHP_EOL;

@@ -56,3 +56,9 @@ jobs:
           php scripts/orphaned-fixtures-check.php
           php scripts/fixer-verifies-disposed-project-check.php
           php scripts/get-project-traverse-free-check.php
+          php scripts/verify-visitors-stubs.php
+          php scripts/verify-visitors-definitions.php
+          php scripts/verify-messages-prefixing.php
+          php scripts/verify-qickfix-title-prefixing.php
+          php scripts/verify-discovered-values-cleanup.php
+          php scripts/fix-short-and-display-names.php

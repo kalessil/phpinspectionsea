@@ -18,3 +18,5 @@
         echo 'Following files has un-prefixed QF titles: ', PHP_EOL, implode(PHP_EOL, $missingPrefixes), PHP_EOL, count($missingPrefixes), ' in total', PHP_EOL;
         exit(1);
     }
+
+    echo 'Verify QF title prefixing: [OK]', PHP_EOL;

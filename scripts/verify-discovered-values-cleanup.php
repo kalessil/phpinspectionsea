@@ -32,3 +32,5 @@
         echo 'Following files has discovered values cleanup flaws: ', PHP_EOL, implode(PHP_EOL, $missingClear), PHP_EOL, count($missingClear), ' in total', PHP_EOL;
         exit(1);
     }
+
+    echo 'Verify discovered values cleanup: [OK]', PHP_EOL;

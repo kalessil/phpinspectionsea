@@ -23,3 +23,5 @@
         echo 'Following files has un-stubbed visitors: ' . PHP_EOL . implode(PHP_EOL, $needsStubbing) . PHP_EOL;
         exit(1);
     }
+
+    echo 'Verify visitors stubs: [OK]', PHP_EOL;

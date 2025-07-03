@@ -25,3 +25,5 @@
         echo 'Following visitors declaration is incomplete (override, not-null annotations): ' . PHP_EOL . implode(PHP_EOL, $incompleteDefinitions) . PHP_EOL;
         exit(1);
     }
+
+    echo 'Verify visitors definitions: [OK]', PHP_EOL;

@@ -46,3 +46,5 @@
         echo 'Following inspections has outdated short/display name: ' . PHP_EOL . implode(',' . PHP_EOL, $outdatedImplementations) . PHP_EOL;
         exit(1);
     }
+
+    echo 'Short and display names: [OK]', PHP_EOL;

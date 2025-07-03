@@ -1,6 +1,6 @@
 
 [![Version](https://img.shields.io/jetbrains/plugin/v/7622-php-inspections-ea-extended-.svg)](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-)
-[![Build Status](https://travis-ci.org/kalessil/phpinspectionsea.svg?branch=master)](https://travis-ci.org/kalessil/phpinspectionsea)
+[![CI checks](https://github.com/kalessil/phpinspectionsea/actions/workflows/ci.yml/badge.svg)](https://github.com/kalessil/phpinspectionsea/actions/workflows/ci.yml)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/7622-php-inspections-ea-extended-.svg)](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-)
 [![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
 
@@ -8,7 +8,7 @@ Php Inspections (EA Extended)
 ---
 <img src="docs/images/ea-logo.png" alt="Php Inspections (EA Extended)" height="100" />
 
-This project is an OSS Static Code Analysis [tool](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-) for PhpStorm (2024.1+) and Idea Ultimate.
+This project is an OSS Static Code Analysis [tool](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-) for PhpStorm (2024.3+) and Idea Ultimate.
 
 It covers:
 - architecture related issues

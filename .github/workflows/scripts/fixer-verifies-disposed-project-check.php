@@ -38,3 +38,5 @@
         echo 'Some fixers are not checking disposal state: ' . PHP_EOL . implode(',' . PHP_EOL, $missingChecks) . PHP_EOL;
         exit(1);
     }
+
+    echo 'Fixers verify project disposal state: [OK]', PHP_EOL;

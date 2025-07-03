@@ -31,10 +31,6 @@ before_install:
   - "export ORG_GRADLE_PROJECT_phpPluginVersion=${PHP_PLUGIN_VERSION}"
 
 script:
-  - php .travis/rules-list-check.php
-  - php .travis/orphaned-fixtures-check.php
-  - php .travis/fixer-verifies-disposed-project-check.php
-  - php .travis/get-project-traverse-free-check.php
   - php .travis/verify-visitors-stubs.php
   - php .travis/verify-visitors-definitions.php
   - php .travis/verify-messages-prefixing.php

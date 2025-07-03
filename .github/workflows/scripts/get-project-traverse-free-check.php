@@ -24,3 +24,5 @@
         echo 'Please avoid non-holder based getProject() calls (psi up-scans): ' . PHP_EOL . implode(',' . PHP_EOL, $foundViolations) . PHP_EOL;
         exit(1);
     }
+
+    echo 'PSI up-scans due to getProject calls: [OK]', PHP_EOL;

@@ -113,3 +113,5 @@
         echo 'Following descriptions are orphaned: ' . PHP_EOL . implode(',' . PHP_EOL, $orphanedDescriptions) . PHP_EOL;
         exit(1);
     }
+
+    echo 'Rules list: [OK]', PHP_EOL;

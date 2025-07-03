@@ -1,8 +1,7 @@
 
-[![Version](https://img.shields.io/jetbrains/plugin/v/7622-php-inspections-ea-extended-.svg)](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-)
 [![CI checks](https://github.com/kalessil/phpinspectionsea/actions/workflows/ci.yml/badge.svg)](https://github.com/kalessil/phpinspectionsea/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/jetbrains/plugin/v/7622-php-inspections-ea-extended-.svg)](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/7622-php-inspections-ea-extended-.svg)](https://plugins.jetbrains.com/plugin/7622-php-inspections-ea-extended-)
-[![Downloads last month](http://phpstorm.espend.de/badge/7622/last-month)](https://plugins.jetbrains.com/plugin/7622)
 
 Php Inspections (EA Extended)
 ---

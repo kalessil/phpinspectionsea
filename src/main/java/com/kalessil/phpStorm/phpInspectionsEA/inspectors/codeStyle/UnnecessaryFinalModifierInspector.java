@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpPropertyHook;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
@@ -45,7 +46,7 @@ public class UnnecessaryFinalModifierInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
-                if (method.isFinal()) {
+                if (method.isFinal() && ! (method instanceof PhpPropertyHook)) {
                     final PhpClass clazz = method.getContainingClass();
                     if (
                         (clazz != null && clazz.isFinal()) ||

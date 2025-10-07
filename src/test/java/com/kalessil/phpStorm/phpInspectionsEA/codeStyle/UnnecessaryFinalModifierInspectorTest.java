@@ -19,7 +19,7 @@ final public class UnnecessaryFinalModifierInspectorTest extends PhpCodeInsightF
 
     public void testPropertyHooks() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP840);
-        myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
+        myFixture.enableInspections(new UnnecessaryFinalModifierInspector());
         myFixture.configureByFile("testData/fixtures/codeStyle/unnecessary-final-modifier.property-hooks.php");
         myFixture.testHighlighting(true, false, true);
     }

@@ -99,7 +99,7 @@ public class ReturnTypeCanBeDeclaredInspector extends BasePhpInspection {
             public void visitPhpMethod(@NotNull Method method) {
                 final PhpLanguageLevel php = PhpLanguageLevel.get(holder.getProject());
                 if (php.atLeast(PhpLanguageLevel.PHP700) && !magicMethods.contains(method.getName())) {
-                    final boolean isTarget = OpenapiElementsUtil.getReturnType(method) == null;
+                    final boolean isTarget = ! (method instanceof PhpPropertyHook) && OpenapiElementsUtil.getReturnType(method) == null;
                     if (isTarget) {
                         final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
                         if (methodNameNode != null) {

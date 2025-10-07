@@ -24,6 +24,7 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
             false
         );
     }
+
     public void testReturnTypeGeneration() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         final ReturnTypeCanBeDeclaredInspector inspector = new ReturnTypeCanBeDeclaredInspector();
@@ -37,16 +38,25 @@ final public class ReturnTypeCanBeDeclaredInspectorTest extends PhpCodeInsightFi
         myFixture.testHighlighting(true, false, true);
         com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel.set(null);
     }
+
     public void testReturnTypeInfluencedByInterfaces() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
         myFixture.configureByFile("testData/fixtures/lang/typeHints/return-type-hints.inheritance-influence.php");
         myFixture.testHighlighting(true, false, true);
     }
+
     public void testRefactoringTargetIdentification() {
         PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP710);
         myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
         myFixture.configureByFile("testData/fixtures/lang/typeHints/return-type-hints.refactoring-target.php");
+        myFixture.testHighlighting(true, false, true);
+    }
+
+    public void testPropertyHooks() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP840);
+        myFixture.enableInspections(new ReturnTypeCanBeDeclaredInspector());
+        myFixture.configureByFile("testData/fixtures/lang/typeHints/return-type-hints.property-hooks.php");
         myFixture.testHighlighting(true, false, true);
     }
 }

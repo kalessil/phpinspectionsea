@@ -79,7 +79,7 @@ public class TypeUnsafeArraySearchInspector extends BasePhpInspection {
                             }
                         }
 
-                        /* false-positives: array and item types are complimentary */
+                        /* false-positives: array and item types are complementary */
                         if (arguments[0] instanceof PhpTypedElement && arguments[1] instanceof PhpTypedElement) {
                             final Project project        = holder.getProject();
                             final PhpType arrayType      = OpenapiResolveUtil.resolveType((PhpTypedElement) arguments[1], project);

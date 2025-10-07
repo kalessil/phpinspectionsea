@@ -19,12 +19,12 @@ namespace {
             return [
                 <weak_warning descr="[EA] It possible to use '$this->method()' instead (reduces cognitive load).">$this->method() ?? null</weak_warning>,
 
-                <weak_warning descr="[EA] Resolved operands types are not complimentary, while they should be ([\CasesHolder] vs [array]).">$this->property ?? []</weak_warning>,
+                <weak_warning descr="[EA] Resolved operands types are not complementary, while they should be ([\CasesHolder] vs [array]).">$this->property ?? []</weak_warning>,
                 $this->property ?? null,
 
                 $one ?? $two,
                 $two ?? $one,
-                <weak_warning descr="[EA] Resolved operands types are not complimentary, while they should be ([\ClazzOne] vs [\ClazzThree]).">$one ?? $three</weak_warning>,
+                <weak_warning descr="[EA] Resolved operands types are not complementary, while they should be ([\ClazzOne] vs [\ClazzThree]).">$one ?? $three</weak_warning>,
                 (string) ($one ?? $three),
 
                 $string ?? null,

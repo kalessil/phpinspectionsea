@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.phpInspectionsEA.classes;
 import com.jetbrains.php.config.PhpLanguageLevel;
 import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
+import com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions.ReturnTypeCanBeDeclaredInspector;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AccessModifierPresentedInspector;
 
 final public class AccessModifierPresentedInspectorTest extends PhpCodeInsightFixtureTestCase {
@@ -31,5 +32,12 @@ final public class AccessModifierPresentedInspectorTest extends PhpCodeInsightFi
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
         myFixture.setTestDataPath(".");
         myFixture.checkResultByFile("testData/fixtures/classes/access-modifiers.710.fixed.php");
+    }
+
+    public void testPropertyHooks() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP840);
+        myFixture.enableInspections(new AccessModifierPresentedInspector());
+        myFixture.configureByFile("testData/fixtures/classes/access-modifiers.property-hooks.php");
+        myFixture.testHighlighting(true, false, true);
     }
 }

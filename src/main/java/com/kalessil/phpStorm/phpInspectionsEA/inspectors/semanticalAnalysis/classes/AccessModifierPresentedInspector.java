@@ -68,7 +68,7 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                     final PsiElement methodName = NamedElementUtil.getNameIdentifier(method);
                     if (methodName != null && method.getAccess().isPublic()) {
                         final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(method, PhpModifierList.class);
-                        if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
+                        if (modifiers != null && ! modifiers.getText().toLowerCase().contains("public")) {
                             holder.registerProblem(
                                     methodName,
                                     MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, method.getName())),
@@ -95,12 +95,17 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                             }
                         } else {
                             final PhpModifierList modifiers = PsiTreeUtil.findChildOfType(field.getParent(), PhpModifierList.class);
-                            if (modifiers != null && !modifiers.getText().toLowerCase().contains("public")) {
-                                holder.registerProblem(
-                                        fieldName,
-                                        MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, field.getName())),
-                                        new MemberVisibilityFix(holder.getProject(), modifiers)
-                                );
+                            if (modifiers != null) {
+                                final String modifiersAsText = modifiers.getText().toLowerCase();
+                                /* regular property: checking for public would be sufficient */
+                                /* property hooks: might declare non-public hooks access level */
+                                if (! modifiersAsText.contains("public") && ! modifiersAsText.contains("protected") && ! modifiersAsText.contains("private")) {
+                                    holder.registerProblem(
+                                            fieldName,
+                                            MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, field.getName())),
+                                            new MemberVisibilityFix(holder.getProject(), modifiers)
+                                    );
+                                }
                             }
                         }
                     }

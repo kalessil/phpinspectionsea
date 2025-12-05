@@ -4,6 +4,11 @@ import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.SuspiciousAssignmentsInspector;
 
 final public class SuspiciousAssignmentsInspectorTest extends PhpCodeInsightFixtureTestCase {
+    public void testAssignmentPatterns() {
+        myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousAssignments/suspicious-assignments.php");
+        myFixture.enableInspections(new SuspiciousAssignmentsInspector());
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testSwitchFallThroughPatterns() {
         myFixture.enableInspections(new SuspiciousAssignmentsInspector());
         myFixture.configureByFile("testData/fixtures/pitfalls/suspiciousAssignments/suspicious-assignments-switch.php");

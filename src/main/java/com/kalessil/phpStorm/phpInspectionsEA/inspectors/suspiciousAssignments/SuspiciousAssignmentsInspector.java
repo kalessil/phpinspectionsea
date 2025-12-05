@@ -1,7 +1,9 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.suspiciousAssignments.strategy.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -65,6 +67,18 @@ public class SuspiciousAssignmentsInspector extends BasePhpInspection {
                 if (OpenapiTypesUtil.isAssignment(assignment)) {
                     SuspiciousOperatorFormattingStrategy.apply(assignment, holder);
                     SequentialAssignmentsStrategy.apply(assignment, holder);
+                }
+            }
+
+            @Override
+            public void visitPhpMultiassignmentExpression(@NotNull MultiassignmentExpression assignment) {
+                final PsiElement parent = assignment.getParent();
+                // Use-case: array destructuring
+                if (OpenapiTypesUtil.isStatementImpl(parent)) {
+                    final PsiElement firstChild = assignment.getFirstChild();
+                    if (firstChild instanceof ArrayCreationExpression || OpenapiTypesUtil.is(firstChild, PhpTokenTypes.kwLIST)) {
+                        SuspiciousArrayDestructuringStrategy.apply(assignment, holder);
+                    }
                 }
             }
         };

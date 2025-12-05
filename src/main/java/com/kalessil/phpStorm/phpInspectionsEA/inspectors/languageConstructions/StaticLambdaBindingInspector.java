@@ -20,6 +20,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -55,36 +58,49 @@ public class StaticLambdaBindingInspector extends PhpInspection {
                 if (PhpLanguageLevel.get(project).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
                     final boolean isTarget = OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
                     if (isTarget) {
-                        final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(function);
+                        // Extract variables and methods references
+                        final GroupStatement body               = ExpressionSemanticUtil.getGroupStatement(function);
+                        final Collection<PsiElement> candidates = new ArrayList<>();
                         if (body != null) {
-                            for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
-                                if (element instanceof Variable) {
-                                    final Variable variable = (Variable) element;
-                                    if (variable.getName().equals("this") && function == ExpressionSemanticUtil.getScope(variable)) {
+                            // Extracting from a regular closure
+                            candidates.addAll(PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class));
+                        } else {
+                            // Extracting from an arrow function
+                            final PsiElement last = function.getLastChild();
+                            if (null != last) {
+                                candidates.add(last);
+                                candidates.addAll(PsiTreeUtil.findChildrenOfAnyType(last, Variable.class, MethodReference.class));
+                            }
+                        }
+                        // Analyze the collected entries
+                        for (final PsiElement element : candidates) {
+                            if (element instanceof Variable) {
+                                final Variable variable = (Variable) element;
+                                if (variable.getName().equals("this") && function == ExpressionSemanticUtil.getScope(variable)) {
+                                    holder.registerProblem(
+                                            variable,
+                                            MessagesPresentationUtil.prefixWithEa(messageThis),
+                                            new TurnClosureIntoNonStaticFix(project, function.getFirstChild())
+                                    );
+                                    break;
+                                }
+                            } else if (element instanceof MethodReference) {
+                                final MethodReference reference = (MethodReference) element;
+                                final PsiElement base           = reference.getFirstChild();
+                                if (base instanceof ClassReference && base.getText().equals("parent")) {
+                                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                                    if (resolved instanceof Method && !((Method) resolved).isStatic()) {
                                         holder.registerProblem(
-                                                variable,
-                                                MessagesPresentationUtil.prefixWithEa(messageThis),
+                                                reference,
+                                                MessagesPresentationUtil.prefixWithEa(messageParent),
                                                 new TurnClosureIntoNonStaticFix(project, function.getFirstChild())
                                         );
-                                        return;
-                                    }
-                                } else {
-                                    final MethodReference reference = (MethodReference) element;
-                                    final PsiElement base           = reference.getFirstChild();
-                                    if (base instanceof ClassReference && base.getText().equals("parent")) {
-                                        final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                        if (resolved instanceof Method && !((Method) resolved).isStatic()) {
-                                            holder.registerProblem(
-                                                    reference,
-                                                    MessagesPresentationUtil.prefixWithEa(messageParent),
-                                                    new TurnClosureIntoNonStaticFix(project, function.getFirstChild())
-                                            );
-                                            return;
-                                        }
+                                        break;
                                     }
                                 }
                             }
                         }
+                        candidates.clear();
                     }
                 }
             }

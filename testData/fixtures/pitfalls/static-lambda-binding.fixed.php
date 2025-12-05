@@ -12,10 +12,12 @@ class CasesHolder extends ParentClass {
         return [
             function() { return $this->property; },
             function() { return $this->property; },
+            fn() => $this->property,
 
             static function() { return function () { return $this->property; }; },
 
             function() { parent::dynamicMethod(); },
+            fn() => parent::dynamicMethod(),
             static function() { parent::staticMethod(); },
         ];
     }

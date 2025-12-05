@@ -25,7 +25,7 @@ public class NormallyCallsParentMethodStrategy {
 
     static public void apply(@NotNull Method method, @NotNull ProblemsHolder holder) {
         final PhpClass clazz = method.getContainingClass();
-        if (clazz != null) {
+        if (clazz != null && method.getAttributes("\\Override").isEmpty()) {
             final String methodName           = method.getName();
             final PhpClass parentClazz        = OpenapiResolveUtil.resolveSuperClass(clazz);
             final Method   parentMethod       = parentClazz == null ? null : OpenapiResolveUtil.resolveMethod(parentClazz, methodName);

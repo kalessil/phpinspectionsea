@@ -33,3 +33,15 @@ class PresentedImplementation extends PresentedParent {
         parent::__construct();
     }
 }
+
+/* false-positive: "Override" attribute */
+class OverrideAttributeParent {
+    public function __construct() {}
+    public function __clone() {}
+}
+class OverrideAttributeImplementation extends OverrideAttributeParent {
+    #[Override]
+    public function __construct() {}
+    #[\Override]
+    public function __clone() {}
+}

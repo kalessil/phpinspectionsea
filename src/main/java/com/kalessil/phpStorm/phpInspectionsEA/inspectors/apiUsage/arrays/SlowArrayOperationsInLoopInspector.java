@@ -79,13 +79,24 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                     if (arguments.length > 1 && !(arguments[0] instanceof ArrayAccessExpression)) {
                         PsiElement parent = reference.getParent();
                         if (parent instanceof AssignmentExpression) {
-                            /* false-positives: return/break as last group statement expression */
                             boolean canLoop = true;
                             if (OpenapiTypesUtil.isStatementImpl(parent = parent.getParent())) {
                                 final PsiElement grandParent = parent.getParent();
                                 if (grandParent instanceof GroupStatement) {
-                                    final PsiElement last = ExpressionSemanticUtil.getLastStatement((GroupStatement) grandParent);
-                                    canLoop = !(last instanceof PhpBreak) && !(last instanceof PhpReturn);
+                                    if (canLoop) {
+                                        /* false-positives: return/break as last group statement expression */
+                                        final PsiElement last = ExpressionSemanticUtil.getLastStatement((GroupStatement) grandParent);
+                                        if (last instanceof PhpBreak || last instanceof PhpReturn) {
+                                            canLoop = false;
+                                        }
+                                    }
+                                    if (canLoop) {
+                                        /* false-positive: belongs to if/elseif's group statement */
+                                        final PsiElement grandGrandParent = grandParent.getParent();
+                                        if (grandGrandParent instanceof If || grandGrandParent instanceof ElseIf || grandGrandParent instanceof Else) {
+                                            canLoop = false;
+                                        }
+                                    }
                                 }
                             }
                             while (canLoop && parent != null && !(parent instanceof PhpFile) && !(parent instanceof Function)) {

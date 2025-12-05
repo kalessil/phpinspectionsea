@@ -17,13 +17,21 @@ function false_positives_holder() {
     $result = array_merge($result, $collection);
 
     foreach ([] as $collection) {
-        $result = array_merge($result, $collection);
+        if ([] !== $collection) {
+            $result = array_merge($result, $collection);
+        } elseif ([] !== $result) {
+            $result = array_merge($result, $collection);
+        } else {
+            $result = array_merge($result, $collection);
+        }
+    }
+
+    foreach ([] as $collection) {
         $result = array_merge($result, $collection);
         break;
     }
 
     foreach ([] as $collection) {
-        $result = array_merge($result, $collection);
         $result = array_merge($result, $collection);
         return;
     }

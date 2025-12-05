@@ -34,7 +34,7 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
     private static final String useRequireDev = "Dev-packages have no security guaranties, invoke the package via require-dev instead.";
 
     // Inspection options.
-    public boolean REPORT_MISSING_ROAVE_ADVISORIES = true;
+    public boolean REPORT_MISSING_ROAVE_ADVISORIES = false;
     public boolean REPORT_MISPLACED_DEPENDENCIES   = true;
     public final List<String> optionConfiguration  = new ArrayList<>();
 

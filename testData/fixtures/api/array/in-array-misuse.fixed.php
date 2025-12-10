@@ -36,6 +36,10 @@ function cases_holder() {
     $x = '1' === '2';
     $x = '1' == '2';
 
+    /* quick-fix correctness */
+    $x = ($x ?? '1') == '2';
+    $x = ($x ?: '1') == '2';
+
     /* array_key_exists equivalent cases */
     $y = !array_key_exists('0', ['item']);
     $y = array_key_exists('0', ['item']);

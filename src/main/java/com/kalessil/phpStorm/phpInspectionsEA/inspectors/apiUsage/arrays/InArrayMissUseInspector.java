@@ -32,8 +32,8 @@ public class InArrayMissUseInspector extends BasePhpInspection {
     // Inspection options.
     public boolean FORCE_STRICT_COMPARISON = false;
 
-    private static final String patternComparison = "'%s' should be used instead.";
-    private static final String patternKeyExists  = "'%s' should be used instead. It is safe to refactor for type-safe code when the indexes are integers/strings only.";
+    private static final String patternComparison = "This can be simplified to '%s'.";
+    private static final String patternKeyExists  = "This can be simplified to '%s'. It is safe to refactor for type-safe code when the indexes are integers/strings only.";
 
     @NotNull
     @Override
@@ -125,10 +125,14 @@ public class InArrayMissUseInspector extends BasePhpInspection {
                         }
 
                         final boolean isStrict   = FORCE_STRICT_COMPARISON || (arguments.length == 3 && PhpLanguageUtil.isTrue(arguments[2]));
-                        final String  comparison = (checkExists ? "==" : "!=") + (isStrict ? "=" : "");
+                        final String  operator   = (checkExists ? "==" : "!=") + (isStrict ? "=" : "");
+                        final String  argument   = (arguments[0] instanceof BinaryExpression || arguments[0] instanceof TernaryExpression)
+                                                    ? ("(" + arguments[0].getText() + ")")
+                                                    : arguments[0].getText();
+                        final String  literal    = lastItem.getText();
                         final String replacement = ComparisonStyle.isRegular()
-                                                   ? String.format("%s %s %s", arguments[0].getText(), comparison, lastItem.getText())
-                                                   : String.format("%s %s %s", lastItem.getText(), comparison, arguments[0].getText());
+                                                   ? String.format("%s %s %s", argument, operator, literal)
+                                                   : String.format("%s %s %s", literal, operator, argument);
                         holder.registerProblem(
                                 target,
                                 MessagesPresentationUtil.prefixWithEa(String.format(patternComparison, replacement)),

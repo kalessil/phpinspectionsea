@@ -72,20 +72,26 @@
     class Clazz implements ChildInterface            {}
     class ChildClass extends Clazz                   {}
 
-    function inheritedTypes (ParentInterface $first = null, ChildClass $second = null) {
+    function inheritedTypes (ParentInterface $first = null, ChildClass $second = null, ChildClass $third = null) {
         $first = $first ?? new Clazz();
         $first = $first ?: new Clazz();
         if (null === $first) {
             $first = new Clazz();
         }
 
-        $second = <warning descr="[EA] New value type (\Clazz) is not matching the resolved parameter type and might introduce types-related false-positives.">$second ?? new Clazz()</warning>;
-        $second = <warning descr="[EA] New value type (\Clazz) is not matching the resolved parameter type and might introduce types-related false-positives.">$second ?: new Clazz()</warning>;
+        $second = $second ?? new Clazz();
+        $second = $second ?: new Clazz();
         if (null === $second) {
-            $second = <warning descr="[EA] New value type (\Clazz) is not matching the resolved parameter type and might introduce types-related false-positives.">new Clazz()</warning>;
+            $second = new Clazz();
         }
 
-        return [ $first, $second ];
+        $third = <warning descr="[EA] New value type (\stdClass) is not matching the resolved parameter type and might introduce types-related false-positives.">$third ?? new stdClass()</warning>;
+        $third = <warning descr="[EA] New value type (\stdClass) is not matching the resolved parameter type and might introduce types-related false-positives.">$third ?: new stdClass()</warning>;
+        if (null === $third) {
+            $third = <warning descr="[EA] New value type (\stdClass) is not matching the resolved parameter type and might introduce types-related false-positives.">new stdClass()</warning>;
+        }
+
+        return [ $first, $second, $third ];
     }
 
 

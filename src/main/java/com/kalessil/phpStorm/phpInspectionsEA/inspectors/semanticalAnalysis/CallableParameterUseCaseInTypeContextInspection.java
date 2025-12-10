@@ -314,26 +314,44 @@ public class CallableParameterUseCaseInTypeContextInspection extends BasePhpInsp
             }
 
             private boolean isTypeCompatibleWith(
-                    @NotNull String type,
+                    @NotNull String typeToEvaluate,
                     @NotNull Collection<String> allowedTypes,
                     @NotNull PhpIndex index
             ) {
-                /* first case: implicit match */
-                if (allowedTypes.contains(type)) {
+                /* first case: implicit match for classes and scalar types */
+                if (allowedTypes.contains(typeToEvaluate)) {
                     return true;
                 }
 
-                /* second case: inherited classes/interfaces */
-                final Set<String> possibleTypes = new HashSet<>();
-                if (type.startsWith("\\")) {
-                    index.getAnyByFQN(type)
-                        .forEach(clazz ->
-                            InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true)
-                                .forEach(c -> possibleTypes.add(c.getFQN()))
-                        );
+                /* second case: match via inheritance tree */
+                final Set<String> normalizedTypesToEvaluate = new HashSet<>();
+                final Set<String> normalizedAllowedTypes    = new HashSet<>();
+                if (typeToEvaluate.startsWith("\\")) {
+                    // Expand the type under evaluation: add classes and interfaces from its inheritance tree.
+                    index.getAnyByFQN(typeToEvaluate).forEach(
+                        clazz -> InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).forEach(c -> normalizedTypesToEvaluate.add(c.getFQN()))
+                    );
+
+                    if (! normalizedTypesToEvaluate.isEmpty()) {
+                        // Expand allowed types: add classes and interfaces from its inheritance tree.
+                        allowedTypes.stream()
+                            .filter(allowedType -> allowedType.startsWith("\\"))
+                            .forEach(allowedType ->
+                                index.getAnyByFQN(allowedType).forEach(
+                                    clazz -> InterfacesExtractUtil.getCrawlInheritanceTree(clazz, true).forEach(c -> normalizedAllowedTypes.add(c.getFQN()))
+                                )
+                            );
+
+                        final boolean isCompatible = normalizedAllowedTypes.stream().anyMatch(normalizedTypesToEvaluate::contains);
+
+                        normalizedTypesToEvaluate.clear();
+                        normalizedAllowedTypes.clear();
+
+                        return isCompatible;
+                    }
                 }
 
-                return !possibleTypes.isEmpty() && allowedTypes.stream().anyMatch(possibleTypes::contains);
+                return false;
             }
         };
     }

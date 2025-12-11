@@ -70,7 +70,6 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                     );
                 }
 
-
                 /* Case 2: report missing 2nd argument */
                 final boolean hasSecondArgument = arguments.length == 2;
                 if (!hasSecondArgument) {
@@ -80,7 +79,6 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }
-
 
                 /* Case 3: unchecked generation result */
                 /* TODO: get parent thru parentheses and silence operator - util method */
@@ -92,18 +90,21 @@ public class CryptographicallySecureRandomnessInspector extends BasePhpInspectio
                         parent = parent.getParent();
                     }
                 }
-                /* check if result has been saved and verified against false */
-                boolean resultVerified = false;
-                if (parent instanceof AssignmentExpression) {
-                    final PsiElement variable = ((AssignmentExpression) parent).getVariable();
-                    resultVerified            = variable == null || isCheckedForFalse(variable);
-                }
-                if (!resultVerified) {
-                    holder.registerProblem(
-                            reference,
-                            MessagesPresentationUtil.prefixWithEa(messageVerifyBytes),
-                            ProblemHighlightType.GENERIC_ERROR
-                    );
+
+                /* check if result has been saved and verified against false; relevant to PHP version below 7.4 */
+                if (PhpLanguageLevel.get(holder.getProject()).below(PhpLanguageLevel.PHP740)) {
+                    boolean resultVerified = false;
+                    if (parent instanceof AssignmentExpression) {
+                        final PsiElement variable = ((AssignmentExpression) parent).getVariable();
+                        resultVerified            = variable == null || isCheckedForFalse(variable);
+                    }
+                    if (!resultVerified) {
+                        holder.registerProblem(
+                                reference,
+                                MessagesPresentationUtil.prefixWithEa(messageVerifyBytes),
+                                ProblemHighlightType.GENERIC_ERROR
+                        );
+                    }
                 }
 
                 /* Case 4: is 2nd argument verified/strong enough */

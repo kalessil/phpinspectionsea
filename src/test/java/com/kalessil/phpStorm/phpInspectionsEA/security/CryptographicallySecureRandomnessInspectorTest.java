@@ -7,6 +7,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.security.Cryptographica
 
 final public class CryptographicallySecureRandomnessInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP560);
         myFixture.enableInspections(new CryptographicallySecureRandomnessInspector());
         myFixture.configureByFile("testData/fixtures/security/crypto-secure-randomness.php");
         myFixture.testHighlighting(true, false, true);

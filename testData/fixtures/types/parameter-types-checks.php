@@ -194,3 +194,12 @@
         $int    = parse_url($string, PHP_URL_PORT) ?: 80;
         $string = parse_url($string, PHP_URL_PATH) ?: '/';
     }
+
+    /* false-positives: abs behaviour */
+    function abs_behaviour(int $int, float $float, string $string) {
+        $int    = <warning descr="[EA] New value type (float) is not matching the resolved parameter type and might introduce types-related false-positives.">abs($float)</warning>;
+        $float  = abs($float);
+
+        // Fails at runtime, so the false-positive is acceptable as it brings attention to invalid code.
+        $string = <warning descr="[EA] New value type (float) is not matching the resolved parameter type and might introduce types-related false-positives.">abs($string)</warning>;
+    }

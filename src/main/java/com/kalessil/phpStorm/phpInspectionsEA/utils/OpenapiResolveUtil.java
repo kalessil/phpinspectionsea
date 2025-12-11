@@ -207,6 +207,14 @@ final public class OpenapiResolveUtil {
                             } else {
                                 result = new PhpType().add(PhpType.INT);
                             }
+                        } else if (name.equals("abs")) {
+                            final PsiElement[] arguments = reference.getParameters();
+                            if (arguments.length == 1 && arguments[0] instanceof PhpTypedElement) {
+                                final PhpType argumentType = resolveType((PhpTypedElement) arguments[0], project);
+                                if (argumentType != null && ! argumentType.isEmpty() && PhpType.FLOAT_INT.containsAll(argumentType)) {
+                                    result = new PhpType().add(argumentType);
+                                }
+                            }
                         }
                     }
                 }

@@ -67,23 +67,17 @@
     }
 
 
+    trait ClazzTrait                                 {}
     interface ParentInterface                        {}
     interface ChildInterface extends ParentInterface {}
-    class Clazz implements ChildInterface            {}
+    class Clazz implements ChildInterface            { use ClazzTrait; }
     class ChildClass extends Clazz                   {}
 
     function inheritedTypes (ParentInterface $first = null, ChildClass $second = null, ChildClass $third = null) {
-        $first = $first ?? new Clazz();
-        $first = $first ?: new Clazz();
-        if (null === $first) {
-            $first = new Clazz();
-        }
-
+        $first  = $first ?? new Clazz();
         $second = $second ?? new Clazz();
-        $second = $second ?: new Clazz();
-        if (null === $second) {
-            $second = new Clazz();
-        }
+        /** @var ClazzTrait $trait */
+        $third  = $trait;
 
         $third = <warning descr="[EA] New value type (\stdClass) is not matching the resolved parameter type and might introduce types-related false-positives.">$third ?? new stdClass()</warning>;
         $third = <warning descr="[EA] New value type (\stdClass) is not matching the resolved parameter type and might introduce types-related false-positives.">$third ?: new stdClass()</warning>;

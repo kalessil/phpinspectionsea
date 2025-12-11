@@ -34,8 +34,9 @@ final public class InterfacesExtractUtil {
                 return;
             }
 
-            /* re-delegate interface handling */
+            /* re-delegate interface and trait handling */
             OpenapiResolveUtil.resolveImplementedInterfaces(clazz).forEach(i -> processInterface(i, processedItems));
+            OpenapiResolveUtil.resolveImplementedTraits(clazz).forEach(i -> processTrait(i, processedItems));
 
             /* handle parent class */
             final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
@@ -48,6 +49,12 @@ final public class InterfacesExtractUtil {
     private static void processInterface(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems) {
         if (clazz.isInterface() && processedItems.add(clazz)) {
             OpenapiResolveUtil.resolveImplementedInterfaces(clazz).forEach(i -> processInterface(i, processedItems));
+        }
+    }
+
+    private static void processTrait(@NotNull PhpClass clazz, @NotNull Set<PhpClass> processedItems) {
+        if (clazz.isTrait() && processedItems.add(clazz)) {
+            OpenapiResolveUtil.resolveImplementedTraits(clazz).forEach(t -> processTrait(t, processedItems));
         }
     }
 }

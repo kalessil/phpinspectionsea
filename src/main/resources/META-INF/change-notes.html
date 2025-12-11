@@ -1,11 +1,16 @@
 <html>
-Bug-fix release:<br/>
+Bug-fix and new features release:<br/>
 <br/>
-- Access modifiers shall be defined: resolved false-positives (property hooks)<br/>
-- Return type hint can be used: resolved false-positives (property hooks)<br/>
-- Unnecessary final modifiers: resolved false-positives (property hooks)<br/>
+- Static lambdas binding: new patterns<br/>
+- Suspicious assignments: new patterns<br/>
 <br/>
-- Housekeeping: use complementary over complimentary across the codebase<br/>
+- Callable parameter usage violates definition: resolved a false-positive (multiple cases)<br/>
+- Cryptographically secure randomness: resolved a false-positive (openssl_random_pseudo_bytes signature change since 7.4)<br/>
+- Magic methods validity: resolved a false-positive (Override attribute)<br/>
+- Security advisories for Composer packages: do not suggest adding roave/security-advisories by default (Composer v2.9: Automatic Security Blocking)<br/>
+- Slow array function used in loop: resolved a false-positive (conditional invocation of the greedy functions)<br/>
+- Variable functions usage: resolved a false-positive (array destructuring into variadic syntax transformation)<br/>
+- 'in_array(...)' misused: QF code generation fix (binary expression as an argument)<br/>
 <hr/>
 </html>
 

@@ -72,9 +72,11 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                         final PsiElement[] arguments = reference.getParameters();
                         if (arguments.length == 2 && arguments[1] instanceof ArrayCreationExpression) {
                             final List<PsiElement> dispatched = this.extract((ArrayCreationExpression) arguments[1]);
-                            if (!dispatched.isEmpty()) {
-                                final boolean hasByReferences = dispatched.stream().anyMatch(argument -> this.argumentAsString(argument).startsWith("&"));
-                                if (!hasByReferences) {
+                            if (! dispatched.isEmpty()) {
+                                final boolean skip = dispatched.stream()
+                                    .map(this::argumentAsString)
+                                    .anyMatch(argument -> (argument.startsWith("&") || argument.startsWith("...")));
+                                if (! skip) {
                                     final String replacement = String.format(
                                             "%s(%s, %s)",
                                             arrayFunctionsMapping.get(functionName),
@@ -97,7 +99,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                             final List<PsiElement> callable = new ArrayList<>();
                             if (arguments[0] instanceof ArrayCreationExpression) {
                                 final List<PsiElement> extracted = this.extract((ArrayCreationExpression) arguments[0]);
-                                if (!extracted.isEmpty()) {
+                                if (! extracted.isEmpty()) {
                                     /* false-positive: first part must not be a string - '<string>->...' is invalid code */
                                     final PsiElement candidate = extracted.get(0);
                                     if (candidate instanceof Variable) {
@@ -123,13 +125,13 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                                 callable.add(arguments[0]);
                             }
 
-                            final PsiElement first  = !callable.isEmpty() ? callable.get(0) : null;
+                            final PsiElement first  = ! callable.isEmpty() ? callable.get(0) : null;
                             final PsiElement second = callable.size() > 1 ? callable.get(1) : null;
                             final Couple<String> suggestedCallable = this.callable(first, second);
                             if (suggestedCallable.getFirst() != null) {
                                 final String replacement;
                                 if (suggestedCallable.getSecond() != null) {
-                                    final boolean useScopeResolution = (!(first instanceof Variable) || functionName.equals("forward_static_call"));
+                                    final boolean useScopeResolution = (! (first instanceof Variable) || functionName.equals("forward_static_call"));
                                     replacement = String.format(
                                             "%s%s%s(%s)",
                                             suggestedCallable.getFirst(),
@@ -163,8 +165,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 /* check second part: in some cases it overrides the first one completely */
                 if (second != null) {
                     callable[1] =  '{' + second.getText() + '}';
-                    if (second instanceof StringLiteralExpression) {
-                        final StringLiteralExpression literal = (StringLiteralExpression) second;
+                    if (second instanceof StringLiteralExpression literal) {
                         if (literal.getFirstPsiChild() == null) {
                             final String content = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                             /* false-positives: relative invocation */
@@ -184,8 +185,7 @@ public class VariableFunctionsUsageInspector extends BasePhpInspection {
                 }
 
                 /* the first part should be a variable or string literal without injections */
-                if (first instanceof StringLiteralExpression) {
-                    final StringLiteralExpression literal = (StringLiteralExpression) first;
+                if (first instanceof StringLiteralExpression literal) {
                     if (literal.getFirstPsiChild() == null) {
                         callable[0] = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
                     }

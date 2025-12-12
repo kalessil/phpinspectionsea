@@ -71,7 +71,8 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         callbacksPositions.put("array_walk", 1);
         callbacksPositions.put("array_reduce", 1);
 
-        /* https://github.com/php/php-src/blob/f2db305fa4e9bd7d04d567822687ec714aedcdb5/Zend/zend_compile.c#L3872 */
+        // https://github.com/php/php-src/blob/f2db305fa4e9bd7d04d567822687ec714aedcdb5/Zend/zend_compile.c#L3872
+        // Note: last checked on December 12, 2025; the original list changes over time so here we have cumulative snapshot (we just add new entries, maintaining per-PHP version lists is overkill for us)
         advancedOpcode.add("array_slice");
         advancedOpcode.add("assert");
         advancedOpcode.add("boolval");
@@ -115,6 +116,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         advancedOpcode.add("sizeof");
         advancedOpcode.add("ini_get");
         advancedOpcode.add("sprintf");
+        advancedOpcode.add("printf");
     }
 
     final private static Condition<PsiElement> PARENT_NAMESPACE = new Condition<PsiElement>() {
@@ -141,7 +143,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && !functionName.isEmpty()) {
+                if (functionName != null && ! functionName.isEmpty()) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
                     if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                         if (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(functionName)) {
@@ -157,7 +159,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
             @Override
             public void visitPhpConstantReference(@NotNull ConstantReference reference) {
                 final String constantName = reference.getName();
-                if (constantName != null && !constantName.isEmpty() && REPORT_CONSTANTS) {
+                if (constantName != null && ! constantName.isEmpty() && REPORT_CONSTANTS) {
                     /* ensure php version is at least PHP 7.0; makes sense only with PHP7+ opcode */
                     if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP700)) {
                         this.analyzeReference(reference, constantName);
@@ -169,20 +171,17 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                 final PsiElement[] arguments = reference.getParameters();
                 if (arguments.length >= 2) {
                     final Integer callbackPosition = callbacksPositions.get(functionName);
-                    if (arguments[callbackPosition] instanceof StringLiteralExpression) {
-                        final StringLiteralExpression callback = (StringLiteralExpression) arguments[callbackPosition];
-                        if (callback.getFirstPsiChild() == null) {
-                            final String function     = callback.getContents();
-                            final boolean isCandidate = !function.startsWith("\\") && !function.contains("::");
-                            if (isCandidate && (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(function))) {
-                                final PhpIndex index = PhpIndex.getInstance(holder.getProject());
-                                if (!index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
-                                    holder.registerProblem(
-                                            callback,
-                                            String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), function),
-                                            new TheLocalFix()
-                                    );
-                                }
+                    if (arguments[callbackPosition] instanceof StringLiteralExpression callback && callback.getFirstPsiChild() == null) {
+                        final String function     = callback.getContents();
+                        final boolean isCandidate = ! function.startsWith("\\") && ! function.contains("::");
+                        if (isCandidate && (REPORT_ALL_FUNCTIONS || advancedOpcode.contains(function))) {
+                            final PhpIndex index = PhpIndex.getInstance(holder.getProject());
+                            if (! index.getFunctionsByFQN('\\' + functionName).isEmpty()) {
+                                holder.registerProblem(
+                                        callback,
+                                        String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), function),
+                                        new TheLocalFix()
+                                );
                             }
                         }
                     }
@@ -234,7 +233,7 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
                             }
                             imports.clear();
 
-                            if (!isImported) {
+                            if (! isImported) {
                                 holder.registerProblem(
                                         reference,
                                         String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), referenceName + (isFunction ? "(...)" : "")),
@@ -285,16 +284,15 @@ public class UnqualifiedReferenceInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target != null && !project.isDisposed()) {
+            if (target != null && ! project.isDisposed()) {
                 if (target instanceof FunctionReference || target instanceof ConstantReference) {
                     final PsiElement rootNs   = PhpPsiElementFactory.createNamespaceReference(project, "\\ ", false);
                     final PsiElement nameNode = target.getFirstChild();
                     nameNode.getParent().addBefore(rootNs, nameNode);
-                } else if (target instanceof StringLiteralExpression) {
-                    final StringLiteralExpression expression = (StringLiteralExpression) target;
-                    final String quote                       = expression.isSingleQuote() ? "'" : "\"";
-                    final String rootNs                      = expression.isSingleQuote() ? "\\" : "\\\\";
-                    final String pattern                     = quote + rootNs + expression.getContents() + quote;
+                } else if (target instanceof StringLiteralExpression expression) {
+                    final String quote   = expression.isSingleQuote() ? "'" : "\"";
+                    final String rootNs  = expression.isSingleQuote() ? "\\" : "\\\\";
+                    final String pattern = quote + rootNs + expression.getContents() + quote;
                     final StringLiteralExpression replacement
                             = PhpPsiElementFactory.createPhpPsiFromText(project, StringLiteralExpression.class, pattern);
                     target.replace(replacement);

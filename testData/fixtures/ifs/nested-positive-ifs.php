@@ -84,7 +84,22 @@ function cases_holder_operations_priority() {
 
 function preserve_comments_in_fix() {
     if ($a) {
-        // comment
-        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {}
+        // comment one/1
+        // comment one/2
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {
+            // comment two/1
+            // comment two/2
+        }
+    }
+
+    if ($a) {
+        // comment three
+    } else {
+        // comment four/1
+        // comment four/2
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {
+            // comment five/1
+            // comment five/2
+        }
     }
 }

@@ -64,6 +64,19 @@ function cases_holder_operations_priority() {
 }
 
 function preserve_comments_in_fix() {
-    // comment
-    if ($a && $b) {}
+    if ($a && $b) {
+        // comment one/1
+        // comment one/2
+        // comment two/1
+        // comment two/2
+    }
+
+    if ($a) {
+        // comment three
+    } else if ($b) {
+        // comment four/1
+        // comment four/2
+        // comment five/1
+        // comment five/2
+    }
 }

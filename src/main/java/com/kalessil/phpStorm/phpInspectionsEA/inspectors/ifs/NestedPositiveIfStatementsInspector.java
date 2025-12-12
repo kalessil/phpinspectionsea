@@ -150,8 +150,31 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
             if (target != null && parent != null && ! project.isDisposed()) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(parent);
                 if (body != null) {
+                    this.preserveComments(target);
                     body.replace(target);
                 }
+            }
+        }
+
+        private void preserveComments(@NotNull If target) {
+            final List<PsiElement> comments = new ArrayList<>();
+            PsiElement candidate = target.getPrevSibling();
+            while (candidate != null) {
+                if (candidate instanceof PsiComment) {
+                    comments.add(candidate);
+                }
+                candidate = candidate.getPrevSibling();
+            }
+            if (! comments.isEmpty()) {
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(target);
+                if (body != null) {
+                    final PsiElement openingBracket = body.getFirstChild();
+                    comments.forEach(comment -> {
+                        body.addAfter(comment, openingBracket);
+                        body.addAfter(comment.getPrevSibling(), openingBracket);
+                    });
+                }
+                comments.clear();
             }
         }
     }
@@ -200,8 +223,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                         final String code        = String.format(wrap ? "((%s) && %s)" : "(%s && %s)", parentCondition.getText(), condition.getText());
                         final PsiElement implant = PhpPsiElementFactory.createPhpPsiFromText(project, ParenthesizedExpression.class, code).getArgument();
                         if (implant != null) {
-                            this.preserveComments(target, parent);
-
+                            this.preserveComments(target);
                             parentBody.replace(body);
                             parentCondition.replace(implant);
                         }
@@ -210,7 +232,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
             }
         }
 
-        private void preserveComments(@NotNull If target, @NotNull If parent) {
+        private void preserveComments(@NotNull If target) {
             final List<PsiElement> comments = new ArrayList<>();
             PsiElement candidate = target.getPrevSibling();
             while (candidate != null) {
@@ -220,8 +242,14 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                 candidate = candidate.getPrevSibling();
             }
             if (! comments.isEmpty()) {
-                Collections.reverse(comments);
-                comments.forEach(comment -> parent.getParent().addBefore(comment, parent));
+                final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(target);
+                if (body != null) {
+                    final PsiElement openingBracket = body.getFirstChild();
+                    comments.forEach(comment -> {
+                        body.addAfter(comment, openingBracket);
+                        body.addAfter(comment.getPrevSibling(), openingBracket);
+                    });
+                }
                 comments.clear();
             }
         }

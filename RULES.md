@@ -91,36 +91,36 @@ Inspections Lists (Code style)
 ---
 | Group                | Short Name                                      | Full Name                                           | QF  | UTs | QFTs | Doc  |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------- | --: | --: | ---: | ---: |
-| Code Style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes | yes | yes  | n/a  |
-| Code Style           | MissingOrEmptyGroupStatementInspection          | Missing or empty conditionals group statement       | yes | yes | yes  | n/a |
-| Code Style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | yes  | yes |
-| Code Style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | yes | yes | yes  | no  |
-| Code Style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes | yes | yes  | n/a |
-| Code Style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes | yes | yes  | n/a |
-| Code Style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes | yes | yes  | n/a |
-| Code Style           | UnnecessaryUseAliasInspection                   | Unnecessary use aliases                             | yes | yes | yes  | no  |
-| Code Style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes | yes | yes  | no  |
-| Code Style           | IncrementDecrementOperationEquivalentInspection | Increment/decrement operation equivalent            | yes | yes | yes  | no  |
-| Code Style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes | yes | yes  | no  |
-| Code Style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes | yes | yes  | no  |
-| Code Style           | UsingInclusionReturnValueInspection             | Usage of inclusion return value                     | n/a | yes | n/a  | no  |
-| Code Style           | ShortOpenTagUsageInspection                     | PHP short open tag usage                            | yes | yes | yes  | no  |
-| Code Style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes | yes | yes  | no  |
-| Code Style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
-| Code Style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
-| Code Style           | MisorderedModifiersInspection                   | PSR-compliant modifiers order                       | yes | yes | yes  | no  |
-| Code Style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | n/a | yes | n/a  | no  |
-| Code Style           | UnnecessaryCastingInspection                    | Unnecessary type casting                            | yes | yes | yes  | no  |
-| Code Style           | SelfClassReferencingInspection                  | Self class referencing                              | yes | yes | yes  | no  |
-| Code Style           | MissUsingParentKeywordInspection                | 'parent' keyword misused                            | yes | yes | yes  | no  |
-| Code Style           | NestedAssignmentsUsageInspection                | Nested assignments usage                            | yes | yes | yes  | no  |
-| Code Style           | ProperNullCoalescingOperatorUsageInspection     | Proper null-coalescing operator usage               | yes | yes | yes  | no  |
-| Code Style           | StaticClosureCanBeUsedInspection                | Static closure can be used                          | yes | yes | yes  | no  |
-| Code Style           | ImplodeArgumentsOrderInspection                 | 'implode(...)' arguments order                      | yes | yes | yes  | no  |
-| Code Style           | ShortEchoTagCanBeUsedInspection                 | Short echo tag can be used                          | yes | yes | yes  | no  |
-| Code Style           | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
-| Code Style           | UnsetConstructsCanBeMergedInspection            | 'unset(...)' constructs can be merged               | yes | yes | yes  | yes |
-| Code Style           | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | yes | yes | yes  | yes |
+| Code style           | UnNecessaryDoubleQuotesInspection               | Unnecessary double quotes                           | yes | yes | yes  | n/a  |
+| Code style           | MissingOrEmptyGroupStatementInspection          | Missing or empty conditionals group statement       | yes | yes | yes  | n/a |
+| Code style           | AccessModifierPresentedInspection               | Access modifiers shall be defined                   | yes | yes | yes  | yes |
+| Code style           | NestedPositiveIfStatementsInspection            | Nested positive ifs                                 | yes | yes | yes  | no  |
+| Code style           | StaticInvocationViaThisInspection               | Static methods invocation via '->'                  | yes | yes | yes  | n/a |
+| Code style           | DynamicInvocationViaScopeResolutionInspection   | Dynamic methods invocation via '::'                 | yes | yes | yes  | n/a |
+| Code style           | UnnecessarySemicolonInspection                  | Unnecessary semicolon                               | yes | yes | yes  | n/a |
+| Code style           | UnnecessaryUseAliasInspection                   | Unnecessary use aliases                             | yes | yes | yes  | no  |
+| Code style           | NestedNotOperatorsInspection                    | Nested not operators usage                          | yes | yes | yes  | no  |
+| Code style           | IncrementDecrementOperationEquivalentInspection | Increment/decrement operation equivalent            | yes | yes | yes  | no  |
+| Code style           | OpAssignShortSyntaxInspection                   | Short syntax for applied operation                  | yes | yes | yes  | no  |
+| Code style           | UnnecessaryFinalModifierInspection              | Unnecessary final modifiers                         | yes | yes | yes  | no  |
+| Code style           | UsingInclusionReturnValueInspection             | Usage of inclusion return value                     | n/a | yes | n/a  | no  |
+| Code style           | ShortOpenTagUsageInspection                     | PHP short open tag usage                            | yes | yes | yes  | no  |
+| Code style           | ComparisonOperandsOrderInspection               | Yoda/regular conditions style usage                 | yes | yes | yes  | no  |
+| Code style           | UnknownInspectionInspection                     | Unknown inspection suppression                      | n/a | yes | n/a  | no  |
+| Code style           | ParameterDefaultValueIsNotNullInspection        | Non-null parameters default value                   | n/a | yes | n/a  | yes |
+| Code style           | MisorderedModifiersInspection                   | PSR-compliant modifiers order                       | yes | yes | yes  | no  |
+| Code style           | DisallowWritingIntoStaticPropertiesInspection   | Disallow writing into static properties             | n/a | yes | n/a  | no  |
+| Code style           | UnnecessaryCastingInspection                    | Unnecessary type casting                            | yes | yes | yes  | no  |
+| Code style           | SelfClassReferencingInspection                  | Self class referencing                              | yes | yes | yes  | no  |
+| Code style           | MissUsingParentKeywordInspection                | 'parent' keyword misused                            | yes | yes | yes  | no  |
+| Code style           | NestedAssignmentsUsageInspection                | Nested assignments usage                            | yes | yes | yes  | no  |
+| Code style           | ProperNullCoalescingOperatorUsageInspection     | Proper null-coalescing operator usage               | yes | yes | yes  | no  |
+| Code style           | StaticClosureCanBeUsedInspection                | Static closure can be used                          | yes | yes | yes  | no  |
+| Code style           | ImplodeArgumentsOrderInspection                 | 'implode(...)' arguments order                      | yes | yes | yes  | no  |
+| Code style           | ShortEchoTagCanBeUsedInspection                 | Short echo tag can be used                          | yes | yes | yes  | no  |
+| Code style           | IsNullFunctionUsageInspection                   | 'null === ...' can be used                          | yes | yes | yes  | no  |
+| Code style           | UnsetConstructsCanBeMergedInspection            | 'unset(...)' constructs can be merged               | yes | yes | yes  | yes |
+| Code style           | IsEmptyFunctionUsageInspection                  | 'empty(...)' usage                                  | yes | yes | yes  | yes |
 
 Inspections Lists (Language level migration)
 ---

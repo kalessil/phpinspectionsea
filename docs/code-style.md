@@ -1,4 +1,4 @@
-# Code Styles
+# Code style
 
 ## Non-null default value parameters
 

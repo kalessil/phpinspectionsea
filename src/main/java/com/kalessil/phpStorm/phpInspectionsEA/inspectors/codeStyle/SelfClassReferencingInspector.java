@@ -31,7 +31,8 @@ import javax.swing.*;
  */
 
 public class SelfClassReferencingInspector extends BasePhpInspection {
-    private static final String messagePattern = "Class reference '%s' could be replaced by '%s'";
+    private static final String messagePatternUseClassName = "Class reference '%s' should be replaced by '%s' according to project code style";
+    private static final String messagePatternUseSelf      = "Replace class reference '%s' with '%s' for better readability and easier refactoring";
 
     // Inspection options.
     public boolean PREFER_CLASS_NAMES = false;
@@ -55,7 +56,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
             @Override
             public void visitPhpMethod(@NotNull Method method) {
                 final PhpClass clazz = method.getContainingClass();
-                if (clazz != null && !clazz.isAnonymous() && !clazz.isTrait() && !method.isAbstract()) {
+                if (clazz != null && ! clazz.isAnonymous() && ! clazz.isTrait() && ! method.isAbstract()) {
                     final String targetReference   = PREFER_CLASS_NAMES ? "self" : clazz.getName();
                     final String targetReplacement = PREFER_CLASS_NAMES ? clazz.getName() : "self";
                     final GroupStatement body      = ExpressionSemanticUtil.getGroupStatement(method);
@@ -69,20 +70,21 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                             .forEach(reference -> {
                                 final PsiElement parent = reference.getParent();
 
-                                if (!PREFER_CLASS_NAMES && parent instanceof ClassConstantReference) {
+                                if (! PREFER_CLASS_NAMES && parent instanceof ClassConstantReference) {
                                     final String constantName = ((ClassConstantReference) parent).getName();
                                     if (constantName != null && constantName.equals("class")) {
-                                        final String replacement = "__CLASS__";
+                                        final String replacement    = "__CLASS__";
                                         problemsHolder.registerProblem(
                                                 parent,
-                                                MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, parent.getText(), replacement)),
+                                                MessagesPresentationUtil.prefixWithEa(String.format( messagePatternUseSelf, parent.getText(), replacement)),
                                                 new NormalizeReferenceFix(replacement)
                                         );
                                         return;
                                     }
                                 }
 
-                                if (!(parent instanceof ExtendsList)) {
+                                if (! (parent instanceof ExtendsList)) {
+                                    final String messagePattern = PREFER_CLASS_NAMES ? messagePatternUseClassName : messagePatternUseSelf;
                                     problemsHolder.registerProblem(
                                             reference,
                                             MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, targetReference, targetReplacement)),
@@ -101,7 +103,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                                     final String replacement = targetReplacement + "::class";
                                     problemsHolder.registerProblem(
                                             reference,
-                                            MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, reference.getText(), replacement)),
+                                            MessagesPresentationUtil.prefixWithEa(String.format(messagePatternUseClassName, reference.getText(), replacement)),
                                             new NormalizeReferenceFix(replacement)
                                     );
                                 });
@@ -141,10 +143,9 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
             final PsiElement target = descriptor.getPsiElement();
-            if (target != null && !project.isDisposed()) {
+            if (target != null && ! project.isDisposed()) {
                 if (replacement.endsWith("::class")) {
-                    final PsiElement replacement
-                            = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, this.replacement + ';');
+                    final PsiElement replacement = PhpPsiElementFactory.createFromText(project, ClassConstantReference.class, this.replacement + ';');
                     if (replacement != null) {
                         target.replace(replacement);
                     }

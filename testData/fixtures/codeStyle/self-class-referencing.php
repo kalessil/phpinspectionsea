@@ -3,12 +3,12 @@
 class MyClass
 {
     public function method() {
-        new <weak_warning descr="[EA] Class reference 'MyClass' could be replaced by 'self'">MyClass</weak_warning>;
-        <weak_warning descr="[EA] Class reference 'MyClass' could be replaced by 'self'">MyClass</weak_warning>::CONSTANT;
-        <weak_warning descr="[EA] Class reference 'MyClass' could be replaced by 'self'">MyClass</weak_warning>::staticMethod();
-        <weak_warning descr="[EA] Class reference 'MyClass' could be replaced by 'self'">MyClass</weak_warning>::$staticProperty;
+        new <weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning>;
+        <weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning>::CONSTANT;
+        <weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning>::staticMethod();
+        <weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning>::$staticProperty;
 
-        <weak_warning descr="[EA] Class reference 'MyClass::class' could be replaced by '__CLASS__'">MyClass::class</weak_warning>;
+        <weak_warning descr="[EA] Replace class reference 'MyClass::class' with '__CLASS__' for better readability and easier refactoring">MyClass::class</weak_warning>;
 
         (new self)::staticMethod();
 

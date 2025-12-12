@@ -4,13 +4,13 @@ class MyClass
 {
     public function method()
     {
-        new <weak_warning descr="[EA] Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>;
-        <weak_warning descr="[EA] Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>::CONSTANT;
-        <weak_warning descr="[EA] Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>::staticMethod();
-        <weak_warning descr="[EA] Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>::$staticProperty;
+        new <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>;
+        <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>::CONSTANT;
+        <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>::staticMethod();
+        <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>::$staticProperty;
 
-        <weak_warning descr="[EA] Class reference '__CLASS__' could be replaced by 'MyClass::class'">__CLASS__</weak_warning>;
-        <weak_warning descr="[EA] Class reference 'self' could be replaced by 'MyClass'">self</weak_warning>::class;
+        <weak_warning descr="[EA] Class reference '__CLASS__' should be replaced by 'MyClass::class' according to project code style">__CLASS__</weak_warning>;
+        <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>::class;
 
         (new MyClass)::staticMethod();
 

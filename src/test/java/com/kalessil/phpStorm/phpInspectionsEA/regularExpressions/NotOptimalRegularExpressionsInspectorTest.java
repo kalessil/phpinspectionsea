@@ -1,5 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.regularExpressions;
 
+import com.jetbrains.php.config.PhpLanguageLevel;
+import com.jetbrains.php.config.PhpProjectConfigurationFacade;
 import com.kalessil.phpStorm.phpInspectionsEA.PhpCodeInsightFixtureTestCase;
 import com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.NotOptimalRegularExpressionsInspector;
 
@@ -25,6 +27,7 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.testHighlighting(true, false, true);
     }
     public void testProblematicModifiers() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP820);
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
         myFixture.configureByFile("testData/fixtures/regularExpressions/problematic-modifiers.php");
         myFixture.testHighlighting(true, false, true);

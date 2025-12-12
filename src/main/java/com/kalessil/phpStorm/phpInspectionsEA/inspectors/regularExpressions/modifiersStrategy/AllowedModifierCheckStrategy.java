@@ -2,7 +2,8 @@ package com.kalessil.phpStorm.phpInspectionsEA.inspectors.regularExpressions.mod
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.intellij.psi.PsiElement;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,16 +17,20 @@ import org.jetbrains.annotations.Nullable;
  * file that was distributed with this source code.
  */
 
-public class AllowedModifierCheckStrategy {
+final public class AllowedModifierCheckStrategy {
     private static final String message = "Unknown modifier '%s'.";
 
-    static public void apply(@NotNull String functionName, @Nullable String modifiers, @NotNull StringLiteralExpression target, @NotNull ProblemsHolder holder) {
-        if (modifiers != null && !modifiers.isEmpty() && !functionName.equals("preg_quote")) {
-            for (char modifier : modifiers.toCharArray()) {
-                if ("eimsuxADJSUX".indexOf(modifier) == -1) {
+    private static final String modifiersSince56 = "eimsuxADJSUX";
+    private static final String modifiersSince82 = "eimsuxADJSUXn";
+
+    static public void apply(@NotNull String functionName, @Nullable String modifiers, @NotNull PsiElement target, @NotNull ProblemsHolder holder) {
+        if (modifiers != null && ! modifiers.isEmpty() && ! functionName.equals("preg_quote")) {
+            final String allowedModifiers = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP820) ? modifiersSince82 : modifiersSince56;
+            for (final char modifier : modifiers.toCharArray()) {
+                if (allowedModifiers.indexOf(modifier) == -1) {
                     holder.registerProblem(
                             target,
-                            String.format(MessagesPresentationUtil.prefixWithEa(message), String.valueOf(modifier)),
+                            String.format(MessagesPresentationUtil.prefixWithEa(message), modifier),
                             ProblemHighlightType.GENERIC_ERROR
                     );
                 }

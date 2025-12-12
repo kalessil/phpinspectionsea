@@ -13,17 +13,17 @@ function cases_holder_if_merge() {
     }
 
     if ($a) {
-       <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b) {
+       <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {
        }
     }
 
     if ($a && $b) {
-       <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($c) {
+       <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($c) {
        }
     }
 
     if ($a) {
-       <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b && $c) {
+       <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b && $c) {
        }
     }
 
@@ -46,19 +46,19 @@ function cases_holder_if_merge() {
 function cases_holder_else_merge() {
     if ($a) {}
     else {
-        <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {}
     }
 
     if ($a) {}
     else {
-        <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {}
         else {}
     }
 }
 
 function cases_holder_same_else_merge() {
     if ($a) {
-        <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {}
         else {}
     } else {}
 
@@ -70,21 +70,21 @@ function cases_holder_same_else_merge() {
 
 function cases_holder_operations_priority() {
     if ($a = 0) {
-        <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {}
     }
 
     if ($a ?: 0) {
-        <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {}
     }
 
     if ($a ?? 0) {
-        <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {}
     }
 }
 
 function preserve_comments_in_fix() {
     if ($a) {
         // comment
-        <weak_warning descr="[EA] If construct can be merged with parent one.">if</weak_warning> ($b) {}
+        <weak_warning descr="[EA] We can merge this statement with the parent to improve readability and reduce code complexity.">if</weak_warning> ($b) {}
     }
 }

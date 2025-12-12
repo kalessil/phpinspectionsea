@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  */
 
 public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
-    private static final String message = "If construct can be merged with parent one.";
+    private static final String message = "We can merge this statement with the parent to improve readability and reduce code complexity.";
 
     @NotNull
     @Override
@@ -53,11 +53,9 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
             @Override
             public void visitPhpIf(@NotNull If expression) {
                 final PsiElement parent = expression.getParent();
-                if (parent instanceof GroupStatement) {
-                    final GroupStatement parentBody  = (GroupStatement) parent;
+                if (parent instanceof GroupStatement parentBody) {
                     final PsiElement parentConstruct = parentBody.getParent();
-                    if (parentConstruct instanceof If) {
-                        final If parentIf = (If) parentConstruct;
+                    if (parentConstruct instanceof If parentIf) {
                         if (this.worthMergingConditions(expression.getCondition(), parentIf.getCondition())) {
                             final boolean isTarget = ExpressionSemanticUtil.countExpressionsInGroup(parentBody) == 1 &&
                                                      this.worthMergingIfs(expression, parentIf);
@@ -149,7 +147,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final If target   = this.target.getElement();
             final Else parent = this.parent.getElement();
-            if (target != null && parent != null && !project.isDisposed()) {
+            if (target != null && parent != null && ! project.isDisposed()) {
                 final GroupStatement body = ExpressionSemanticUtil.getGroupStatement(parent);
                 if (body != null) {
                     body.replace(target);
@@ -188,7 +186,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final If target = this.target.getElement();
             final If parent = this.parent.getElement();
-            if (target != null && parent != null && !project.isDisposed()) {
+            if (target != null && parent != null && ! project.isDisposed()) {
                 final PsiElement condition       = target.getCondition();
                 final PsiElement parentCondition = parent.getCondition();
                 if (condition != null && parentCondition != null) {
@@ -196,7 +194,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                     final PsiElement parentBody = parent.getStatement();
                     if (body != null && parentBody != null) {
                         boolean wrap = parentCondition instanceof AssignmentExpression || parentCondition instanceof TernaryExpression;
-                        if (!wrap && parentCondition instanceof BinaryExpression) {
+                        if (! wrap && parentCondition instanceof BinaryExpression) {
                             wrap = ((BinaryExpression) parentCondition).getOperationType() != PhpTokenTypes.opAND;
                         }
                         final String code        = String.format(wrap ? "((%s) && %s)" : "(%s && %s)", parentCondition.getText(), condition.getText());
@@ -221,7 +219,7 @@ public class NestedPositiveIfStatementsInspector extends BasePhpInspection {
                 }
                 candidate = candidate.getPrevSibling();
             }
-            if (!comments.isEmpty()) {
+            if (! comments.isEmpty()) {
                 Collections.reverse(comments);
                 comments.forEach(comment -> parent.getParent().addBefore(comment, parent));
                 comments.clear();

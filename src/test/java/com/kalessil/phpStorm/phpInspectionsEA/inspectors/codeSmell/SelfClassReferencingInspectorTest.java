@@ -5,9 +5,7 @@ import com.kalessil.phpStorm.phpInspectionsEA.inspectors.codeStyle.SelfClassRefe
 
 final public class SelfClassReferencingInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testDefault() {
-        SelfClassReferencingInspector selfClassReferencingInspector = new SelfClassReferencingInspector();
-        selfClassReferencingInspector.PREFER_CLASS_NAMES            = false;
-        myFixture.enableInspections(selfClassReferencingInspector);
+        myFixture.enableInspections(new SelfClassReferencingInspector());
         myFixture.configureByFile("testData/fixtures/codeStyle/self-class-referencing.php");
         myFixture.testHighlighting(true, false, true);
 

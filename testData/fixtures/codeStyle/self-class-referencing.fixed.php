@@ -2,7 +2,8 @@
 
 class MyClass
 {
-    public function method() {
+    public function method(self $parameter): self
+    {
         new self;
         self::CONSTANT;
         self::staticMethod();

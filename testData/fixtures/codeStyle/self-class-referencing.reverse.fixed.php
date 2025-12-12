@@ -2,7 +2,7 @@
 
 class MyClass
 {
-    public function method()
+    public function method(MyClass $parameter): MyClass
     {
         new MyClass;
         MyClass::CONSTANT;

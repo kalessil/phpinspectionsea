@@ -12,7 +12,6 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.options.OptionsComponent;
-import com.kalessil.phpStorm.phpInspectionsEA.utils.ExpressionSemanticUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,7 @@ import javax.swing.*;
  */
 
 public class SelfClassReferencingInspector extends BasePhpInspection {
-    private static final String messagePatternUseClassName = "Class reference '%s' should be replaced by '%s' according to project code style";
+    private static final String messagePatternUseClassName = "Replace class reference '%s' with '%s' to follow common code style. Also, check the inspection settings to promote using 'self' instead.";
     private static final String messagePatternUseSelf      = "Replace class reference '%s' with '%s' for better readability and easier refactoring";
 
     // Inspection options.
@@ -59,9 +58,8 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                 if (clazz != null && ! clazz.isAnonymous() && ! clazz.isTrait() && ! method.isAbstract()) {
                     final String targetReference   = PREFER_CLASS_NAMES ? "self" : clazz.getName();
                     final String targetReplacement = PREFER_CLASS_NAMES ? clazz.getName() : "self";
-                    final GroupStatement body      = ExpressionSemanticUtil.getGroupStatement(method);
 
-                    PsiTreeUtil.findChildrenOfType(body, ClassReference.class).stream()
+                    PsiTreeUtil.findChildrenOfType(method, ClassReference.class).stream()
                             .filter(reference  ->
                                 targetReference.equals(reference.getName()) &&
                                 method == PsiTreeUtil.getParentOfType(reference, Function.class) &&
@@ -94,7 +92,7 @@ public class SelfClassReferencingInspector extends BasePhpInspection {
                             });
 
                     if (PREFER_CLASS_NAMES) {
-                        PsiTreeUtil.findChildrenOfType(body, ConstantReference.class).stream()
+                        PsiTreeUtil.findChildrenOfType(method, ConstantReference.class).stream()
                                 .filter(reference  ->
                                     "__CLASS__".equals(reference.getName()) &&
                                     method == PsiTreeUtil.getParentOfType(reference, Function.class)

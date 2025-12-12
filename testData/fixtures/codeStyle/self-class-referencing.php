@@ -2,7 +2,7 @@
 
 class MyClass
 {
-    public function method() {
+    public function method(<weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning> $parameter): <weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning> {
         new <weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning>;
         <weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning>::CONSTANT;
         <weak_warning descr="[EA] Replace class reference 'MyClass' with 'self' for better readability and easier refactoring">MyClass</weak_warning>::staticMethod();

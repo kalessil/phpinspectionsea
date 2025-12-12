@@ -1,16 +1,6 @@
 <html>
     <body>
-        Suggests a replacement from <code>new MyClass</code> to <code>new self</code>.
-
-        <p><strong>Supports to:</strong></p>
-        <ul>
-            <li><code>new MyClass</code>;</li>
-            <li><code>MyClass::CONSTANT</code>;</li>
-            <li><code>MyClass::staticMethod()</code>;</li>
-            <li><code>MyClass::$staticProperty</code>;</li>
-            <li><code>MyClass::class</code> to <code>__CLASS__</code>;</li>
-        </ul>
-
-        <p>The option <strong>prefer class name referencing</strong> will do the opposite effect.</p>
+        <p>Suggests replacing e.g. <code>new ClassNameHere()</code> with <code>new self()</code> to improve readability and make code more refactoring-friendly, such as producing smaller diffs when renaming a class. Or wise-vesa to follow the commonly used code style.</p>
+        <p>Please refer to the 'Prefer class names' inspection setting to configure behavior that best fits your project code style.</p>
     </body>
 </html>

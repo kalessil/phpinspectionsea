@@ -2,15 +2,14 @@
 
 class MyClass
 {
-    public function method()
-    {
-        new <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>;
-        <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>::CONSTANT;
-        <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>::staticMethod();
-        <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>::$staticProperty;
+    public function method(<weak_warning descr="[EA] Replace class reference 'self' with 'MyClass' to follow common code style. Also, check the inspection settings to promote using 'self' instead.">self</weak_warning> $parameter): <weak_warning descr="[EA] Replace class reference 'self' with 'MyClass' to follow common code style. Also, check the inspection settings to promote using 'self' instead.">self</weak_warning> {
+        new <weak_warning descr="[EA] Replace class reference 'self' with 'MyClass' to follow common code style. Also, check the inspection settings to promote using 'self' instead.">self</weak_warning>;
+        <weak_warning descr="[EA] Replace class reference 'self' with 'MyClass' to follow common code style. Also, check the inspection settings to promote using 'self' instead.">self</weak_warning>::CONSTANT;
+        <weak_warning descr="[EA] Replace class reference 'self' with 'MyClass' to follow common code style. Also, check the inspection settings to promote using 'self' instead.">self</weak_warning>::staticMethod();
+        <weak_warning descr="[EA] Replace class reference 'self' with 'MyClass' to follow common code style. Also, check the inspection settings to promote using 'self' instead.">self</weak_warning>::$staticProperty;
 
-        <weak_warning descr="[EA] Class reference '__CLASS__' should be replaced by 'MyClass::class' according to project code style">__CLASS__</weak_warning>;
-        <weak_warning descr="[EA] Class reference 'self' should be replaced by 'MyClass' according to project code style">self</weak_warning>::class;
+        <weak_warning descr="[EA] Replace class reference '__CLASS__' with 'MyClass::class' to follow common code style. Also, check the inspection settings to promote using 'self' instead.">__CLASS__</weak_warning>;
+        <weak_warning descr="[EA] Replace class reference 'self' with 'MyClass' to follow common code style. Also, check the inspection settings to promote using 'self' instead.">self</weak_warning>::class;
 
         (new MyClass)::staticMethod();
 

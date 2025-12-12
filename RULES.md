@@ -19,31 +19,31 @@ Inspections Lists (Control flow)
 ---
 | Group                | Short Name                                      | Full Name                                                                         | QF  | UTs | QFTs | Doc |
 | :------------------- | :-------------------------------------------    | :-------------------------------------------------------------------------------- | --: | --: | ---: | --: |
-| Control Flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | yes | yes | yes  | no  |
-| Control Flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | yes |
-| Control Flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | yes  | yes |
-| Control Flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a | yes | n/a  | yes |
-| Control Flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | yes |
-| Control Flow         | ThrowRawExceptionInspection                     | General exception is thrown                                                       | yes | yes | yes  | yes |
-| Control Flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | yes |
-| Control Flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a | yes | n/a  | yes |
-| Control Flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | yes |
-| Control Flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | yes |
-| Control Flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | yes |
-| Control Flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a | yes | n/a  | yes |
-| Control Flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'                                 | yes | yes | yes  | yes |
-| Control Flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                          | yes | yes | yes  | yes |
-| Control Flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | yes | yes | yes  | yes |
-| Control Flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | yes | yes | yes  | yes |
-| Control Flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | yes  | yes |
-| Control Flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | yes  | yes |
-| Control Flow         | InvertedIfElseConstructsInspection              | Inverted 'if-else' constructs                                                     | yes | yes | yes  | yes |
-| Control Flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | yes |
-| Control Flow         | ArrayUniqueCanBeUsedInspection                  | 'array_unique(...)' can be used                                                   | yes | yes | yes  | yes |
-| Control Flow         | CompactCanBeUsedInspection                      | 'compact(...)' can be used                                                        | yes | yes | yes  | yes |
-| Control Flow         | IssetConstructsCanBeMergedInspection            | 'isset(...)' constructs can be merged                                             | yes | yes | yes  | yes |
-| Control Flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | yes |
-| Control Flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | yes |
+| Control flow         | UnSafeIsSetOverArrayInspection                  | 'isset(...)' usage                                                                | yes | yes | yes  | no  |
+| Control flow         | TernaryOperatorSimplifyInspection               | Ternary operator could be simplified                                              | yes | yes | yes  | yes |
+| Control flow         | IfReturnReturnSimplificationInspection          | If-return-return could be simplified                                              | yes | yes | yes  | yes |
+| Control flow         | NotOptimalIfConditionsInspection                | Non-optimal if conditions                                                         | n/a | yes | n/a  | yes |
+| Control flow         | LoopWhichDoesNotLoopInspection                  | Loop which does not loop                                                          | n/a | yes | n/a  | yes |
+| Control flow         | ThrowRawExceptionInspection                     | General exception is thrown                                                       | yes | yes | yes  | yes |
+| Control flow         | DisconnectedForeachInstructionInspection        | Statement could be decoupled from foreach                                         | n/a | yes | n/a  | yes |
+| Control flow         | DegradedSwitchInspection                        | Switch-case could be simplified                                                   | n/a | yes | n/a  | yes |
+| Control flow         | ForeachInvariantsInspection                     | Foreach usage possible                                                            | yes | yes | yes  | yes |
+| Control flow         | PdoApiUsageInspection                           | PDO API usage                                                                     | yes | yes | yes  | yes |
+| Control flow         | OneTimeUseVariablesInspection                   | One-time use variables                                                            | yes | yes | yes  | yes |
+| Control flow         | MultiAssignmentUsageInspection                  | 'list(...) = ' usage possible                                                     | n/a | yes | n/a  | yes |
+| Control flow         | GetTypeMissUseInspection                        | 'gettype(...)' could be replaced with 'is_*(...)'                                 | yes | yes | yes  | yes |
+| Control flow         | ArraySearchUsedAsInArrayInspection              | 'array_search(...)' could be replaced by 'in_array(...)'                          | yes | yes | yes  | yes |
+| Control flow         | StrTrUsageAsStrReplaceInspection                | 'strtr(...)' could be replaced with 'str_replace(...)'                            | yes | yes | yes  | yes |
+| Control flow         | SubStrUsedAsStrPosInspection                    | 'substr(...)' could be replaced with 'strpos(...)'                                | yes | yes | yes  | yes |
+| Control flow         | StringNormalizationInspection                   | Strings normalization                                                             | yes | yes | yes  | yes |
+| Control flow         | RedundantElseClauseInspection                   | Redundant 'else' keyword                                                          | yes | yes | yes  | yes |
+| Control flow         | InvertedIfElseConstructsInspection              | Inverted 'if-else' constructs                                                     | yes | yes | yes  | yes |
+| Control flow         | StringCaseManipulationInspection                | Unnecessary string case manipulation                                              | yes | yes | yes  | yes |
+| Control flow         | ArrayUniqueCanBeUsedInspection                  | 'array_unique(...)' can be used                                                   | yes | yes | yes  | yes |
+| Control flow         | CompactCanBeUsedInspection                      | 'compact(...)' can be used                                                        | yes | yes | yes  | yes |
+| Control flow         | IssetConstructsCanBeMergedInspection            | 'isset(...)' constructs can be merged                                             | yes | yes | yes  | yes |
+| Control flow         | StrlenInEmptyStringCheckContextInspection       | 'strlen(...)' misused                                                             | yes | yes | yes  | yes |
+| Control flow         | ObGetCleanCanBeUsedInspection                   | 'ob_get_clean()' can be used                                                      | yes | yes | yes  | yes |
 
 Inspections Lists (PHPUnit)
 ---

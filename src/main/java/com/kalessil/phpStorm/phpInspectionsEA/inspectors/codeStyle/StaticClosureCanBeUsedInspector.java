@@ -57,15 +57,25 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
             @Override
             public void visitPhpFunction(@NotNull Function function) {
                 if (PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP540) && OpenapiTypesUtil.isLambda(function)) {
-                    final boolean isTarget = ! OpenapiTypesUtil.is(function.getFirstChild(), PhpTokenTypes.kwSTATIC);
-                    if (isTarget && this.canBeStatic(function)) {
+                    // Verify if the "static" modifier is present
+                    PsiElement child             = function.getFirstChild();
+                    boolean hasStaticDeclaration = false;
+                    while ( ! hasStaticDeclaration && child != null) {
+                        hasStaticDeclaration = OpenapiTypesUtil.is(child, PhpTokenTypes.kwSTATIC);
+                        child                = child.getNextSibling();
+                        // Stop scanning as reached the parameters list for faster scanning
+                        if (child instanceof ParameterList) {
+                            break;
+                        }
+                    }
+                    // Perform the analysis
+                    if (! hasStaticDeclaration && this.canBeStatic(function)) {
                         holder.registerProblem(
                                 function.getFirstChild(),
                                 MessagesPresentationUtil.prefixWithEa(message),
                                 new MakeClosureStaticFix()
                         );
                     }
-                    /* learning currently is not feasible: influence of co-dispatched arguments */
                 }
             }
 

@@ -13,6 +13,7 @@ class CasesHolder extends ParentClass {
             array_filter([], <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { return null; }),
             array_filter([], function() { return $this->property; }),
             array_filter([], static function() { return null; }),
+            array_filter([], #[Pure] static function() { return null; }),
 
             array_filter([], <weak_warning descr="[EA] This closure can be declared as static (better scoping; in some cases can improve performance).">function</weak_warning>() { return parent::staticMethod(); }),
             array_filter([], function() { return parent::dynamicMethod(); }),

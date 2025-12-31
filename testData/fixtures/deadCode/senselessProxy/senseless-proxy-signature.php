@@ -30,19 +30,19 @@ class SPSChild extends SPSParent {
         parent::method2($a);
     }
     public function method3($a = []) {   // default value modified
-        parent::method2($a);
+        parent::method3($a);
     }
 
     /**
      * @psalm-pure
      */
-    public function method4($a) {
-        return $a;
+    public function <weak_warning descr="[EA] The 'method4' method only calls its parent method, so it can be removed to simplify the code.">method4</weak_warning>($a) {
+        parent::method4($a);
     }
     /**
      * @psalm-pure
      */
     public function method5($a) {
-        return $a;
+        parent::method5($a);
     }
 }

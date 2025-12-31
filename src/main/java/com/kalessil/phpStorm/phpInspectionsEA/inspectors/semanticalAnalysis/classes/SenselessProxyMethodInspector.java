@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.DropMethodFix;
@@ -26,7 +27,7 @@ import java.util.Set;
  */
 
 public class SenselessProxyMethodInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s%' method can be dropped, as it only calls parent's one.";
+    private static final String messagePattern = "The '%s%' method only calls its parent method, so it can be removed to simplify the code.";
 
     final private static Set<String> constants = new HashSet<>();
     static {
@@ -85,14 +86,14 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     } else {
                         parentReferenceCandidate = lastStatement.getFirstChild();
                     }
-                    if (!(parentReferenceCandidate instanceof MethodReference)) {
+                    if (! (parentReferenceCandidate instanceof MethodReference)) {
                         continue;
                     }
 
                     final MethodReference reference = (MethodReference) parentReferenceCandidate;
                     final String referenceVariable  = reference.getFirstChild().getText().trim();
                     final String referenceName      = reference.getName();
-                    if (null == referenceName || !referenceVariable.equals("parent") || !referenceName.equals(method.getName())) {
+                    if (null == referenceName || ! referenceVariable.equals("parent") || ! referenceName.equals(method.getName())) {
                         continue;
                     }
 
@@ -105,8 +106,8 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                         /* ensure parameters re-dispatched in the same order and state */
                         for (int index = 0; index < givenParams.length; ++index) {
                             if (
-                                !(givenParams[index] instanceof Variable) ||
-                                !((Variable) givenParams[index]).getName().equals(methodParameters[index].getName())
+                                ! (givenParams[index] instanceof Variable) ||
+                                ! ((Variable) givenParams[index]).getName().equals(methodParameters[index].getName())
                             ) {
                                 isDispatchingWithoutModifications = false;
                                 break;
@@ -143,7 +144,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                             isChangingSignature = true;
                                             break;
                                         }
-                                        if (methodDefault != null && !OpenapiEquivalenceUtil.areEqual(parentDefault, methodDefault)) {
+                                        if (methodDefault != null && ! OpenapiEquivalenceUtil.areEqual(parentDefault, methodDefault)) {
                                             isChangingSignature = true;
                                             break;
                                         }
@@ -159,7 +160,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                         /* type definition changes */
                                         final PhpType parentType = OpenapiResolveUtil.resolveDeclaredType(parentParameters[index]);
                                         final PhpType methodType = OpenapiResolveUtil.resolveDeclaredType(methodParameters[index]);
-                                        if (!parentType.equals(methodType)) {
+                                        if (! parentType.equals(methodType)) {
                                             isChangingSignature = true;
                                             break;
                                         }
@@ -167,13 +168,42 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                 }
 
                                 /* verify returned type declaration */
-                                if (!isChangingSignature) {
+                                if (! isChangingSignature) {
                                     final PsiElement methodReturn = OpenapiElementsUtil.getReturnType(method);
                                     final PsiElement parentReturn = OpenapiElementsUtil.getReturnType(nestedMethod);
                                     if (methodReturn != parentReturn) {
                                         isChangingSignature =
                                                 methodReturn == null || parentReturn == null ||
-                                                !OpenapiEquivalenceUtil.areEqual(methodReturn, parentReturn);
+                                                ! OpenapiEquivalenceUtil.areEqual(methodReturn, parentReturn);
+                                    }
+                                }
+
+                                /* Verify if doc-block changes annotations */
+                                if (! isChangingSignature) {
+                                    // Extract doc-block annotations and verify against the parent annotations
+                                    final PhpDocComment comment       = method.getDocComment();
+                                    final Set<PsiElement> annotations = new HashSet<>();
+                                    if (comment != null) {
+                                        annotations.addAll(Set.of(comment.getChildren()));
+
+                                        final PhpDocComment parentComment       = nestedMethod.getDocComment();
+                                        final Set<PsiElement> parentAnnotations = new HashSet<>();
+                                        if (parentComment != null) {
+                                            parentAnnotations.addAll(Set.of(parentComment.getChildren()));
+                                        }
+
+                                        if (annotations.size() != parentAnnotations.size()) {
+                                            // Clear mismatch, fast-fail execution branch
+                                            isChangingSignature = true;
+                                        } else {
+                                            // Compare annotations, slower execution branch
+                                            for (final PsiElement annotation : annotations) {
+                                                if (parentAnnotations.stream().noneMatch( subject -> OpenapiEquivalenceUtil.areEqual(subject, annotation))) {
+                                                    isChangingSignature = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             } else {
@@ -187,7 +217,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     }
 
                     /* decide if need to report any issues */
-                    if (isDispatchingWithoutModifications && !isChangingSignature) {
+                    if (isDispatchingWithoutModifications && ! isChangingSignature) {
                         holder.registerProblem(
                                 methodNameNode,
                                 MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%s%", method.getName())),

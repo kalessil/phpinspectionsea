@@ -20,6 +20,10 @@ class SPSParent {
     public function method5($a) {
         return $a;
     }
+
+    public function method6($a) {
+        return $a;
+    }
 }
 
 class SPSChild extends SPSParent {
@@ -44,5 +48,9 @@ class SPSChild extends SPSParent {
      */
     public function method5($a) {
         parent::method5($a);
+    }
+
+    public function method6(#[Autowire] $a) {
+        parent::method6($a);
     }
 }

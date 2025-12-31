@@ -164,6 +164,12 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                             isChangingSignature = true;
                                             break;
                                         }
+
+                                        /* Attributes usage: side effects are difficult to inflict reliably, hence treat as signature change */
+                                        if (! methodParameters[index].getAttributes().isEmpty()) {
+                                            isChangingSignature = true;
+                                            break;
+                                        }
                                     }
                                 }
 

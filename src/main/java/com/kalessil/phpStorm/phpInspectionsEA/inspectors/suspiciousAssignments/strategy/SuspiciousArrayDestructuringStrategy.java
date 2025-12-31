@@ -38,7 +38,7 @@ final public class SuspiciousArrayDestructuringStrategy {
                 resolvedType.filterUnknown().getTypes().forEach(t -> resolved.add(Types.getType(t)));
             }
             if (! resolved.isEmpty()) {
-                if (! resolved.contains(Types.strArray)) {
+                if (! resolved.contains(Types.strArray) && ! resolved.contains(Types.strMixed)) {
                     holder.registerProblem(
                             expression,
                             String.format(MessagesPresentationUtil.prefixWithEa(message))

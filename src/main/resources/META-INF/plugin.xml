@@ -286,10 +286,13 @@
         shortName="AutoloadingIssuesInspection"                   displayName="Class autoloading correctness"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.classes.AutoloadingIssuesInspector"/>
+    <!--
+    Disable this inspection, as it has reached its maximum reliability. Disabling it will help reduce unnecessary bug reports until the underlying APIs are improved.
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="NullPointerExceptionInspection"                displayName="Null reference"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"
         implementationClass="com.kalessil.phpStorm.phpInspectionsEA.inspectors.semanticalAnalysis.npe.NullPointerExceptionInspector"/>
+    -->
     <localInspection language="PHP" groupPath="PHP,Php Inspections (EA Extended)"
         shortName="IssetArgumentExistenceInspection"              displayName="Isset operations variables existence"
         groupName="Probable bugs"                                 enabledByDefault="true" level="WARNING"

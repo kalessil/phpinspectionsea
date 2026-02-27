@@ -36,6 +36,7 @@
     echo <weak_warning descr="[EA] '$array[$index]->property ?? null' can be used instead (reduces cognitive load).">!empty($array[$index]) ? $array[$index]->property : null</weak_warning>;
     echo <weak_warning descr="[EA] '$object->string->property ?? null' can be used instead (reduces cognitive load).">!empty($object->string) ? $object->string->property : null</weak_warning>;
     echo $object ? $object->nullable : '...';
+    echo $object ? $object::class : null;
     echo $unknown ? $unknown->nullable : '...';
 
     /* false-positives */

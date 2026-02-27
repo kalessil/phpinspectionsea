@@ -36,6 +36,7 @@
     echo $array[$index]->property ?? null;
     echo $object->string->property ?? null;
     echo $object ? $object->nullable : '...';
+    echo $object ? $object::class : null;
     echo $unknown ? $unknown->nullable : '...';
 
     /* false-positives */

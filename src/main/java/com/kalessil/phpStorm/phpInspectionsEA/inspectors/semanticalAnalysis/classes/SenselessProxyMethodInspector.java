@@ -68,6 +68,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     if (null == methodNameNode) {
                         continue;
                     }
+                    final String methodName = method.getName();
 
                     /* Attributes usage: side effects are difficult to inflict reliably, hence treat as signature change */
                     if (method.isAbstract() || method.getAccess().isPrivate() || ! method.getAttributes().isEmpty()) {
@@ -98,7 +99,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     final MethodReference reference = (MethodReference) parentReferenceCandidate;
                     final String referenceVariable  = reference.getFirstChild().getText().trim();
                     final String referenceName      = reference.getName();
-                    if (null == referenceName || ! referenceVariable.equals("parent") || ! referenceName.equals(method.getName())) {
+                    if (null == referenceName || ! referenceVariable.equals("parent") || ! referenceName.equals(methodName)) {
                         continue;
                     }
 
@@ -139,6 +140,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                             ) {
                                 /* analyze if parameters definition has been changed (only ignore naming changes) */
                                 if (methodParameters.length > 0) {
+                                    final boolean isConstructor = "__construct".equals(methodName);
                                     for (int index = 0; index < parentParameters.length; ++index) {
                                         /* by-reference declaration changes: not allowed by PHP, hence not checked */
 
@@ -174,6 +176,16 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                                         if (! methodParameters[index].getAttributes().isEmpty()) {
                                             isChangingSignature = true;
                                             break;
+                                        }
+
+                                        /* Property promotion via constructor is involved */
+                                        if (isConstructor && (methodParameters[index].isPromotedField() || parentParameters[index].isPromotedField())) {
+                                            final boolean isPromotionChanged = methodParameters[index].isPromotedField() != parentParameters[index].isPromotedField();
+                                            final boolean isAccessChanged    = ! methodParameters[index].getPromotedFieldAccess().equals(parentParameters[index].getPromotedFieldAccess());
+                                            if (isPromotionChanged || isAccessChanged) {
+                                                isChangingSignature = true;
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -231,7 +243,7 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
                     if (isDispatchingWithoutModifications && ! isChangingSignature) {
                         holder.registerProblem(
                                 methodNameNode,
-                                MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%s%", method.getName())),
+                                MessagesPresentationUtil.prefixWithEa(messagePattern.replace("%s%", methodName)),
                                 ProblemHighlightType.WEAK_WARNING,
                                 new DropMethodFix()
                         );

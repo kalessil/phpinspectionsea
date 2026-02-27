@@ -1,6 +1,9 @@
 <?php
 
 class SPSParent {
+    public function __construct(string $string) {
+    }
+
     public function method1($a) {
         return $a;
     }
@@ -31,6 +34,9 @@ class SPSParent {
 }
 
 class SPSChild extends SPSParent {
+    public function __construct(protected string $string) {
+    }
+
     public function <weak_warning descr="[EA] The 'method1' method only calls its parent method, so it can be removed to simplify the code.">method1</weak_warning>($b) {
         parent::method1($b);
     }

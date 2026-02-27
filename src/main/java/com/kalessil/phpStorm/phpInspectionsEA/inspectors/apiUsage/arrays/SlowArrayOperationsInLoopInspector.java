@@ -141,7 +141,6 @@ public class SlowArrayOperationsInLoopInspector extends BasePhpInspection {
                                 holder.registerProblem(
                                         condition,
                                         String.format(MessagesPresentationUtil.prefixWithEa(messageSlowPattern), functionName),
-                                        ProblemHighlightType.GENERIC_ERROR,
                                         new ReduceRepetitiveCallsInForFix(holder.getProject(), forStatement, condition)
                                 );
                             }

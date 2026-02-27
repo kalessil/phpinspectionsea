@@ -7,6 +7,7 @@
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.json</depends>
   <depends>com.intellij.modules.platform</depends>
+  <incompatible-with>com.kalessil.phpStorm.phpInspectionsUltimate-mp</incompatible-with>
 
   <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
   <idea-version since-build="243" />

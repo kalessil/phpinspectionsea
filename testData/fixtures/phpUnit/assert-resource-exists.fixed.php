@@ -6,25 +6,25 @@ class TestAssertResourceExists
     {
         $this->assertFileExists('...');
         $this->assertFileExists('...');
-        $this->assertFileNotExists('...');
-        $this->assertFileNotExists('...');
+        $this->assertFileDoesNotExist('...');
+        $this->assertFileDoesNotExist('...');
 
         $this->assertDirectoryExists('...');
         $this->assertDirectoryExists('...');
-        $this->assertDirectoryNotExists('...');
-        $this->assertDirectoryNotExists('...');
+        $this->assertDirectoryDoesNotExist('...');
+        $this->assertDirectoryDoesNotExist('...');
     }
 
     public function testWithMessages()
     {
         $this->assertFileExists('...', '');
         $this->assertFileExists('...', '');
-        $this->assertFileNotExists('...', '');
-        $this->assertFileNotExists('...', '');
+        $this->assertFileDoesNotExist('...', '');
+        $this->assertFileDoesNotExist('...', '');
 
         $this->assertDirectoryExists('...', '');
         $this->assertDirectoryExists('...', '');
-        $this->assertDirectoryNotExists('...', '');
-        $this->assertDirectoryNotExists('...', '');
+        $this->assertDirectoryDoesNotExist('...', '');
+        $this->assertDirectoryDoesNotExist('...', '');
     }
 }

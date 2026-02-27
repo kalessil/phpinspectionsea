@@ -65,7 +65,8 @@ public class SenselessProxyMethodInspector extends BasePhpInspection {
 
                 for (final Method method : clazz.getOwnMethods()) {
                     final PsiElement methodNameNode = NamedElementUtil.getNameIdentifier(method);
-                    if (null == methodNameNode || method.isAbstract() || method.getAccess().isPrivate()) {
+                    /* Attributes usage: side effects are difficult to inflict reliably, hence treat as signature change */
+                    if (null == methodNameNode || method.isAbstract() || method.getAccess().isPrivate() || ! method.getAttributes().isEmpty() ) {
                         continue;
                     }
 

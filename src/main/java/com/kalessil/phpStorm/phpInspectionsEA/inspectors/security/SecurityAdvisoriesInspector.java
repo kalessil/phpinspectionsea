@@ -54,7 +54,6 @@ public class SecurityAdvisoriesInspector extends LocalInspectionTool {
         /* frameworks: Symfony, ZF2, Yii2, Laravel */
         developmentPackages.add("symfony/phpunit-bridge");
         developmentPackages.add("symfony/debug");
-        developmentPackages.add("symfony/var-dumper");
         developmentPackages.add("symfony/maker-bundle");
         developmentPackages.add("zendframework/zend-test");
         developmentPackages.add("zendframework/zend-debug");

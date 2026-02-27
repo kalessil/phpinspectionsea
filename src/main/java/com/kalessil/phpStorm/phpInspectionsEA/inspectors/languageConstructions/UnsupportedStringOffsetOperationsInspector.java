@@ -105,21 +105,11 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                     /* type verification and reporting phase */
                     if (isTargetContext && ExpressionSemanticUtil.getScope(target) != null) {
                         final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, project);
-                        if (resolved != null) {
-                            final Set<String> resolvedTypes = new HashSet<>();
-                            resolved.getTypes().forEach(type -> resolvedTypes.add(Types.getType(type)));
-
-                            /* Deeply nested array structures has platform-level types resolution hiccups for individual elements */
-                            boolean canBeFalsePositive = false;
-                            if (resolvedTypes.size() == 2) {
-                                canBeFalsePositive = resolvedTypes.contains(Types.strString) && resolvedTypes.contains(Types.strArray);
-                            }
-
-                            if (resolvedTypes.contains(Types.strString) && ! canBeFalsePositive) {
+                        if (resolved != null && resolved.size() == 1) {
+                            final boolean isString = resolved.getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strString));
+                            if (isString) {
                                 holder.registerProblem(target, MessagesPresentationUtil.prefixWithEa(message));
                             }
-
-                            resolvedTypes.clear();
                         }
                     }
                 }

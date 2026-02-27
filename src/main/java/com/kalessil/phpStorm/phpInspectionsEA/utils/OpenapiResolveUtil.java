@@ -372,12 +372,7 @@ final public class OpenapiResolveUtil {
                 /* Incorrect type inference for variadic parameters */
                 final Parameter parameter = (Parameter) expression;
                 if (parameter.isVariadic()) {
-                    final PhpType resolved = parameter.getDeclaredType();
-                    if (resolved.isEmpty()) {
-                        result = new PhpType().add(PhpType.ARRAY);
-                    } else if (resolved.size() == 1 && ! Types.getType(resolved.getTypes().iterator().next()).equals(Types.strArray)) {
-                        result = new PhpType().add(String.format("%s[]", resolved.getTypes().iterator().next()));
-                    }
+                    result = new PhpType().add(PhpType.ARRAY);
                 }
             }
 
@@ -497,12 +492,7 @@ final public class OpenapiResolveUtil {
             final PhpType resolved = parameter.getDeclaredType();
             /* Incorrect type inference for variadic parameters */
             if (parameter.isVariadic()) {
-                if (resolved.isEmpty()) {
-                    return new PhpType().add(PhpType.ARRAY);
-                }
-                if (resolved.size() == 1 && ! Types.getType(resolved.getTypes().iterator().next()).equals(Types.strArray)) {
-                    return new PhpType().add(String.format("%s[]", resolved.getTypes().iterator().next()));
-                }
+                return new PhpType().add(PhpType.ARRAY);
             }
             return resolved;
         } catch (final Throwable error) {

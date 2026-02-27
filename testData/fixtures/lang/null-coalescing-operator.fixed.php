@@ -37,6 +37,7 @@
     echo $object->string->property ?? null;
     echo $object ? $object->nullable : '...';
     echo $object ? $object::class : null;
+    echo $object ? $object::CONSTANT : null;
     echo $unknown ? $unknown->nullable : '...';
 
     /* false-positives */

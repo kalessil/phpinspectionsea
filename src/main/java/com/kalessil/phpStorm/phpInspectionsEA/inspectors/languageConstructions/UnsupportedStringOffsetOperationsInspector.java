@@ -15,6 +15,9 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Php Inspections (EA Extended) package.
  *
@@ -103,14 +106,20 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                     if (isTargetContext && ExpressionSemanticUtil.getScope(target) != null) {
                         final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) candidate, project);
                         if (resolved != null) {
-                            final boolean isTarget = resolved.filterUnknown().getTypes().stream().anyMatch(type -> Types.getType(type).equals(Types.strString));
-                            if (isTarget) {
-                                holder.registerProblem(
-                                        target,
-                                        MessagesPresentationUtil.prefixWithEa(message),
-                                        ProblemHighlightType.GENERIC_ERROR
-                                );
+                            final Set<String> resolvedTypes = new HashSet<>();
+                            resolved.getTypes().forEach(type -> resolvedTypes.add(Types.getType(type)));
+
+                            /* Deeply nested array structures has platform-level types resolution hiccups for individual elements */
+                            boolean canBeFalsePositive = false;
+                            if (resolvedTypes.size() == 2) {
+                                canBeFalsePositive = resolvedTypes.contains(Types.strString) && resolvedTypes.contains(Types.strArray);
                             }
+
+                            if (resolvedTypes.contains(Types.strString) && ! canBeFalsePositive) {
+                                holder.registerProblem(target, MessagesPresentationUtil.prefixWithEa(message));
+                            }
+
+                            resolvedTypes.clear();
                         }
                     }
                 }

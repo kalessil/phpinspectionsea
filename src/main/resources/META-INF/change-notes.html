@@ -1,16 +1,17 @@
 <html>
-Bug-fix and new features release:<br/>
+Bug-fix release focusing on gaps in PHP 8.0 to 8.4 support:<br/>
 <br/>
-- Inspections group naming updated: "Control Flow" to "Control flow" and "Code Style" to "Code style"<br/>
-- Self class referencing: new patterns<br/>
+- Declare incompatibility with the ultimate version (setups with both plugins active experience varying side effects)<br/>
+- Null reference: disabled (unstable, and we are limited by the platform APIs)<br/>
 <br/>
-- Nested positive ifs: quick-fixes rework and bug-fixes<br/>
-- Non-optimal regular expression: resolved a false-positive (n-modifier)<br/>
+- Callable parameter usage violates definition: resolved a false-positive (variadic types handling)<br/>
+- Exploiting unserialize (PHP Object Injection Vulnerability): resolved a false-positive (user-space function)<br/>
+- Null coalescing operator can be used: resolved a false-positive (multiple cases)<br/>
+- PHPUnit: bugs and best practices: correct assertion names (file/directory)<br/>
+- Security advisories for Composer packages: remove symfony/var-dumper from dev-packages<br/>
 - Senseless proxy function: resolved a false-positive (multiple cases)<br/>
-- Static closure can be used: resolved a false-positive (attributes)<br/>
-- Suspicious assignments: resolved a false-positive (assigning mixed type)<br/>
-- Unqualified function/constant reference: housekeeping and functions list update<br/>
-<hr/>
+- Slow array function used in loop: respect user-configured severity level<br/>
+- Unnecessary type casting: resolved a false-positive (deeply nested null-safe operator)<br/>
+- Unsupported string offset operations: resolved a false-positive (multiple cases)<br/><hr/>
 </html>
-
 

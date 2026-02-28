@@ -97,8 +97,8 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     if (typesMapping.containsKey(operator)) {
                         final Set<String> types = this.resolveStrictly((PhpTypedElement) argument).getTypes();
                         if (types.size() == 1 && typesMapping.get(operator).equals(Types.getType(types.iterator().next()))) {
-                            if (!(argument instanceof Variable) || !this.isWeakTypedParameter((Variable) argument)) {
-                                final boolean isTarget = !this.isNullCoalescingOnly(argument);
+                            if (! (argument instanceof Variable) || ! this.isWeakTypedParameter((Variable) argument)) {
+                                final boolean isTarget = ! this.isNullCoalescingOnly(argument);
                                 if (isTarget) {
                                     holder.registerProblem(
                                             operation,
@@ -155,11 +155,10 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                 if (result != null && ! result.isEmpty()) {
                     result = result.filterUnknown();
                     /* When `?->` operator is used, add null */
-                    if (expression instanceof MemberReference) {
-                        final MemberReference reference = (MemberReference) expression;
-                        final PsiElement operator       = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                        if (OpenapiTypesUtil.is(operator, PhpTokenTypes.ARROW) && OpenapiTypesUtil.isNullSafeMemberReferenceOperator(operator)) {
-                            result = new PhpType().add(result.filterNull()).add(PhpType.NULL);
+                    if (expression instanceof MemberReference reference && ! result.containsAll(PhpType.NULL)) {
+                        final boolean isNullable = reference.hasNullSafeDereference();
+                        if (isNullable) {
+                            result = new PhpType().add(result).add(PhpType.NULL);
                         }
                     }
                     return result;
@@ -203,7 +202,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
         @Override
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             final PsiElement expression = descriptor.getPsiElement().getParent();
-            if (expression instanceof UnaryExpression && !project.isDisposed()) {
+            if (expression instanceof UnaryExpression && ! project.isDisposed()) {
                 final PsiElement argument = ((UnaryExpression) expression).getValue();
                 if (argument != null) {
                     expression.replace(argument.copy());

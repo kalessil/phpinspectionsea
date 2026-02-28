@@ -27,10 +27,14 @@ $a = [$x >= 'y']; // <- left operand is not a string, hence not reported
 /* a bug: misplaced operator */
 class MisplacedOperations
 {
-    public function method(bool $one) {
+    public function method1(bool $one) {
         if (count($one <error descr="[EA] This operator is probably misplaced.">></error> 0)) {}
 
-        if ($this->method($one > 0)) {}
+        if ($this->method1($one > 0)) {}
+    }
+
+    public function method2(?MisplacedOperations $object) {
+        return $object?->method1() === null;
     }
 }
 

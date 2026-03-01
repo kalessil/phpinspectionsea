@@ -50,3 +50,21 @@ class ChildEntity extends ParentEntity {
     /** @ORM\Column("...") */
     protected $id;
 }
+
+/* False-positive: final constructor */
+class ParentEntityWithFinalConstructor {
+    protected $id;
+    final public function __construct() {}
+}
+class ChildOfParentEntityWithFinalConstructor extends ParentEntityWithFinalConstructor {
+    protected $id;
+}
+
+/* False-positive: private constructor */
+class ParentEntityWithPrivateConstructor {
+    protected $id;
+    private function __construct() {}
+}
+class ChildOfParentEntityWithPrivateConstructor extends ParentEntityWithPrivateConstructor {
+    protected $id;
+}

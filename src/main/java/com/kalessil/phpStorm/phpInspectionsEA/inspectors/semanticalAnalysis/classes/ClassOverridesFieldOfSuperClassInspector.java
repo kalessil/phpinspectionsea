@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.jetbrains.php.lang.psi.elements.Field;
+import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
@@ -76,7 +77,15 @@ public class ClassOverridesFieldOfSuperClassInspector extends BasePhpInspection 
                     return;
                 }
 
-                final PhpClass parent     = OpenapiResolveUtil.resolveSuperClass(clazz);
+                /* False-positive: parent class has final or private constructor for some reason */
+                final PhpClass parent = OpenapiResolveUtil.resolveSuperClass(clazz);
+                if (parent != null) {
+                    final Method constructor = parent.getConstructor();
+                    if (constructor != null && (constructor.isFinal() || constructor.getAccess().isPrivate())) {
+                        return;
+                    }
+                }
+
                 final String ownFieldName = ownField.getName();
                 final Field parentField   = parent == null ? null : OpenapiResolveUtil.resolveField(parent, ownFieldName);
                 if (parentField != null) {

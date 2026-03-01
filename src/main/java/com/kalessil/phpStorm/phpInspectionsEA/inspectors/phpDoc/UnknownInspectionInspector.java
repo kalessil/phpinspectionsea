@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocPsiElement;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
@@ -95,6 +94,7 @@ public class UnknownInspectionInspector extends BasePhpInspection {
                     if (! candidates.isEmpty()) {
                         final List<String> unknown = candidates.stream()
                                 .filter(c -> ! inspections.contains(c) && ! inspections.contains(c + "Inspection"))
+                                .filter(c -> c.startsWith("Php") || c.endsWith("Inspection") || c.endsWith("Inspector"))
                                 .collect(Collectors.toList());
                         if (! unknown.isEmpty()) {
                             final PsiElement target = tag.getFirstChild();

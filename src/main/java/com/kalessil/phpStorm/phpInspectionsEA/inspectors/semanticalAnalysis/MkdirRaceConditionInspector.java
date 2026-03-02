@@ -21,9 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -82,9 +80,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                 final PsiElement context = target.getParent();
                 // case 1: if ([!]mkdir(...) [===|!== true|false])
                 if (context instanceof If || OpenapiTypesUtil.isStatementImpl(context)) {
-                    final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
-                    final String binary               = searchResult.isInverted ? patternFailAndCondition : patternFailOrCondition;
-                    final String messagePattern       = (context instanceof If ? binary : patternDirectCall);
+                    final String fixerArguments = reference.getParameterList().getText();
+                    final String binary         = searchResult.isInverted ? patternFailAndCondition : patternFailOrCondition;
+                    final String messagePattern = (context instanceof If ? binary : patternDirectCall);
                     holder.registerProblem(
                             context instanceof If ? target : context,
                             MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, String.join(", ", fixerArguments))),
@@ -127,8 +125,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
 
                     /* report when needed */
                     if (!isSecondExistenceCheckExists) {
-                        final List<String> fixerArguments = Arrays.stream(arguments).map(PsiElement::getText).collect(Collectors.toList());
-                        final String messagePattern       = (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(binary.getOperationType()) ? patternFailAndCondition : patternFailOrCondition);
+                        final String fixerArguments = reference.getParameterList().getText();
+                        final String messagePattern = (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(binary.getOperationType()) ? patternFailAndCondition : patternFailOrCondition);
                          holder.registerProblem(
                                 target,
                                 MessagesPresentationUtil.prefixWithEa(String.format(messagePattern, String.join(", ", fixerArguments), arguments[0].getText())),
@@ -154,9 +152,8 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
                             this.locateExpression(parent, status);
                         }
                     }
-                } else if (parent instanceof BinaryExpression) {
-                    final BinaryExpression binary = (BinaryExpression) parent;
-                    final IElementType operation  = binary.getOperationType();
+                } else if (parent instanceof BinaryExpression binary) {
+                    final IElementType operation = binary.getOperationType();
                     if (PhpTokenTypes.tsSHORT_CIRCUIT_AND_OPS.contains(operation) || PhpTokenTypes.tsSHORT_CIRCUIT_OR_OPS.contains(operation)) {
                         status.setReportingTarget(expression);
                     } else {
@@ -213,9 +210,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
             return getName();
         }
 
-        ThrowExceptionFix(@Nullable PsiElement directory, @NotNull List<String> arguments) {
-            this.arguments    = String.join(", ", arguments);
-            this.resource     = arguments.get(0);
+        ThrowExceptionFix(@Nullable PsiElement directory, @NotNull String mkdirArguments) {
+            this.arguments    = mkdirArguments;
+            this.resource     = directory == null ? "" : directory.getText();
             this.withVariable = !(directory instanceof Variable) && !(directory instanceof StringLiteralExpression);
         }
 
@@ -258,9 +255,9 @@ public class MkdirRaceConditionInspector extends BasePhpInspection {
             return getName();
         }
 
-        HardenConditionFix(@Nullable PsiElement directory, @NotNull List<String> arguments, boolean isInverted) {
-            this.arguments    = String.join(", ", arguments);
-            this.resource     = arguments.get(0);
+        HardenConditionFix(@Nullable PsiElement directory, @NotNull String mkdirArguments, boolean isInverted) {
+            this.arguments    = mkdirArguments;
+            this.resource     = directory == null ? "" : directory.getText();
             this.withVariable = !(directory instanceof Variable) && !(directory instanceof StringLiteralExpression);
             this.isInverted   = isInverted;
         }

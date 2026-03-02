@@ -84,7 +84,7 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                 final PsiElement body         = isArrowFunction ? function : ExpressionSemanticUtil.getGroupStatement(function);
                 if (body != null) {
                     final boolean isTargetClosure = (isArrowFunction && SUGGEST_FOR_SHORT_FUNCTIONS) ||
-                                                    ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) body) > 0;
+                                                    (! isArrowFunction && ExpressionSemanticUtil.countExpressionsInGroup((GroupStatement) body) > 0);
                     if (isTargetClosure) {
                         /* check if $this or parent:: being used */
                         for (final PsiElement element : PsiTreeUtil.findChildrenOfAnyType(body, Variable.class, MethodReference.class)) {
@@ -161,10 +161,9 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                 for (final PsiElement context : usages) {
                     if (context instanceof ParameterList) {
                         final PsiElement referenceCandidate = context.getParent();
-                        if (referenceCandidate instanceof MethodReference) {
+                        if (referenceCandidate instanceof MethodReference reference) {
                             /* case: Closure::bind() */
-                            final MethodReference reference = (MethodReference) referenceCandidate;
-                            final String methodName         = reference.getName();
+                            final String methodName = reference.getName();
                             if (methodName != null && methodName.equals("bind")) {
                                 final PsiElement[] arguments = reference.getParameters();
                                 if (arguments.length > 1 && PhpLanguageUtil.isNull(arguments[1])) {
@@ -186,10 +185,9 @@ public class StaticClosureCanBeUsedInspector extends BasePhpInspection {
                                 continue;
                             }
                         }
-                    } else if (context instanceof MethodReference) {
+                    } else if (context instanceof MethodReference reference) {
                         /* case: $closure->bindTo() */
-                        final MethodReference reference = (MethodReference) context;
-                        final String methodName         = reference.getName();
+                        final String methodName = reference.getName();
                         if (methodName != null && methodName.equals("bindTo")) {
                             final PsiElement[] arguments = reference.getParameters();
                             if (arguments.length > 0 && PhpLanguageUtil.isNull(arguments[0])) {

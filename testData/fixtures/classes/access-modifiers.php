@@ -10,6 +10,7 @@ class classAM1
     public    $publicProperty;
     protected $protectedProperty;
     private   $privateProperty;
+    readonly  <weak_warning descr="[EA] 'readonlyProperty' should be declared with access modifier.">$readonlyProperty</weak_warning>;
 
     public function publicVisibilityMethod()       {}
     protected function protectedVisibilityMethod() {}

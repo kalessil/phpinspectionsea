@@ -10,6 +10,7 @@ class classAM1
     public    $publicProperty;
     protected $protectedProperty;
     private   $privateProperty;
+    public readonly  $readonlyProperty;
 
     public function publicVisibilityMethod()       {}
     protected function protectedVisibilityMethod() {}

@@ -151,7 +151,8 @@ public class AccessModifierPresentedInspector extends BasePhpInspection {
                 final String modifierFinal    = modifiers.hasFinal() ? "final " : "";
                 final String modifierAbstract = modifiers.hasAbstract() ? "abstract " : "";
                 final String modifierStatic   = modifiers.hasStatic() ? " static" : "";
-                final String pattern          = String.format("%s%spublic%s function x(){}", modifierFinal, modifierAbstract, modifierStatic);
+                final String modifierReadonly = modifiers.hasReadonly() ? " readonly" : "";
+                final String pattern          = String.format("%s%spublic%s%s function x(){}", modifierFinal, modifierAbstract, modifierStatic, modifierReadonly);
 
                 final Method donor            = PhpPsiElementFactory.createMethod(project, pattern);
                 final PhpModifierList implant = PsiTreeUtil.findChildOfType(donor, PhpModifierList.class);

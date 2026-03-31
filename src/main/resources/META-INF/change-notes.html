@@ -1,17 +1,11 @@
 <html>
-Bug-fix release focusing on gaps in PHP 8.0 to 8.4 support:<br/>
+Bug-fix release:<br/>
 <br/>
-- Declare incompatibility with the ultimate version (setups with both plugins active experience varying side effects)<br/>
-- Null reference: disabled (unstable, and we are limited by the platform APIs)<br/>
-<br/>
-- Callable parameter usage violates definition: resolved a false-positive (variadic types handling)<br/>
-- Exploiting unserialize (PHP Object Injection Vulnerability): resolved a false-positive (user-space function)<br/>
-- Null coalescing operator can be used: resolved a false-positive (multiple cases)<br/>
-- PHPUnit: bugs and best practices: correct assertion names (file/directory)<br/>
-- Security advisories for Composer packages: remove symfony/var-dumper from dev-packages<br/>
-- Senseless proxy function: resolved a false-positive (multiple cases)<br/>
-- Slow array function used in loop: respect user-configured severity level<br/>
-- Unnecessary type casting: resolved a false-positive (deeply nested null-safe operator)<br/>
-- Unsupported string offset operations: resolved a false-positive (multiple cases)<br/><hr/>
+- Access modifiers shall be defined: QF bug-fix (readonly keyword support)<br/>
+- Class overrides a field of a parent class: resolved a false-positive (parent constructor is final)<br/>
+- Static closure can be used: harden against the reported exception<br/>
+- Unknown inspection suppression: resolved a false-positive (SSR-inspections)<br/>
+- 'mkdir(...)' race condition: QF bug-fix (named arguments)<br/>
+<hr/>
 </html>
 

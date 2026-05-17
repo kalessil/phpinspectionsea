@@ -179,7 +179,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             ((AssignmentExpression) objTopSemanticExpression).getVariable() == objLastSemanticExpression
                         ) {
                             intCountWriteAccesses++;
-                            if (isReference) {
+                            if (isReference || objTopSemanticExpression instanceof SelfAssignmentExpression) {
                                 /* when modifying the reference it's link READ and linked WRITE semantics */
                                 intCountReadAccesses++;
                             } else {

@@ -47,6 +47,9 @@ class Container {
 
         $local2 = &$array[0];
         ++$local2;
+
+        $local3 = [];
+        $local3[0] ??= 0;
     }
 
     public function method4() {

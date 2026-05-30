@@ -47,6 +47,12 @@ final public class NotOptimalRegularExpressionsInspectorTest extends PhpCodeInsi
         myFixture.configureByFile("testData/fixtures/regularExpressions/senseless-s-modifier.php");
         myFixture.testHighlighting(true, false, true);
     }
+    public void testSenselessCaselessRestrictModifier() {
+        PhpProjectConfigurationFacade.getInstance(myFixture.getProject()).setLanguageLevel(PhpLanguageLevel.PHP840);
+        myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
+        myFixture.configureByFile("testData/fixtures/regularExpressions/senseless-r-modifier.php");
+        myFixture.testHighlighting(true, false, true);
+    }
     public void testUnnecessaryCaseManipulation() {
         myFixture.enableInspections(new NotOptimalRegularExpressionsInspector());
         myFixture.configureByFile("testData/fixtures/regularExpressions/unnecessary-case-manipulation.php");

@@ -189,8 +189,10 @@ public class NotOptimalRegularExpressionsInspector extends BasePhpInspection {
                  * Probably bugs:
                  *  - nested tags check without /s
                  *  - unicode characters without /u
+                 *  - r-modifier without /i or /u
                  */
                 MissingDotAllCheckStrategy.apply(modifiers, regex, target, holder);
+                MissingCaselessRestrictStrategy.apply(modifiers, regex, target, holder);
                 MissingUnicodeModifierStrategy.apply(functionName, modifiers, regex, target, holder);
             }
 

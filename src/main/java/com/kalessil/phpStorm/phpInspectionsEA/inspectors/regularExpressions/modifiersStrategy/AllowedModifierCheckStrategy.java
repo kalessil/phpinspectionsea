@@ -22,10 +22,14 @@ final public class AllowedModifierCheckStrategy {
 
     private static final String modifiersSince56 = "eimsuxADJSUX";
     private static final String modifiersSince82 = "eimsuxADJSUXn";
+    private static final String modifiersSince84 = "eimsuxADJSUXnr";
 
     static public void apply(@NotNull String functionName, @Nullable String modifiers, @NotNull PsiElement target, @NotNull ProblemsHolder holder) {
         if (modifiers != null && ! modifiers.isEmpty() && ! functionName.equals("preg_quote")) {
-            final String allowedModifiers = PhpLanguageLevel.get(holder.getProject()).atLeast(PhpLanguageLevel.PHP820) ? modifiersSince82 : modifiersSince56;
+            final PhpLanguageLevel level = PhpLanguageLevel.get(holder.getProject());
+            String allowedModifiers      = modifiersSince56;
+            allowedModifiers             = level.atLeast(PhpLanguageLevel.PHP820) ? modifiersSince82 : allowedModifiers;
+            allowedModifiers             = level.atLeast(PhpLanguageLevel.PHP840) ? modifiersSince84 : allowedModifiers;
             for (final char modifier : modifiers.toCharArray()) {
                 if (allowedModifiers.indexOf(modifier) == -1) {
                     holder.registerProblem(

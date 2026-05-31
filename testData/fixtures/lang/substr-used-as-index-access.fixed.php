@@ -2,9 +2,9 @@
 
 function cases_holder(string $string, int $position, int $offset)
 {
-    $string[$position];
-    $string[strlen($string) - 1];
-    $string[strlen($string) - $offset];
+    ($string[$position] ?? '');
+    ($string[strlen($string) - 1] ?? '');
+    ($string[strlen($string) - $offset] ?? '');
 
     /* false-positives: ms_substr */
     mb_substr($string, $position, 1);

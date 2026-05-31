@@ -1,6 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.apiUsage.strings;
 
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -8,6 +9,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import com.kalessil.phpStorm.phpInspectionsEA.fixers.UseSuggestedReplacementFixer;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpElementVisitor;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
+import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiResolveUtil;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiTypesUtil;
@@ -24,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' might be used instead (invalid index accesses might show up).";
+    private static final String messagePatternGeneric  = "'%s' might be used instead (invalid index accesses might show up).";
+    private static final String messagePatternHardened = "'%s' might be used instead.";
 
     @NotNull
     @Override
@@ -56,19 +59,28 @@ public class SubStrUsedAsArrayAccessInspector extends BasePhpInspection {
                                                           arguments[0] instanceof FieldReference;
                             if (isValidSource) {
                                 final PhpTypedElement container = (PhpTypedElement) arguments[0];
-                                final PhpType resolvedType      = OpenapiResolveUtil.resolveType(container, holder.getProject());
+                                final Project project           = holder.getProject();
+                                final PhpType resolvedType      = OpenapiResolveUtil.resolveType(container, project);
                                 if (resolvedType != null) {
                                     final boolean isValidType = resolvedType.filterUnknown().getTypes().stream()
                                             .anyMatch(t -> Types.getType(t).equals(Types.strString));
                                     if (isValidType) {
-                                        final String source      = arguments[0].getText();
-                                        final String offset      = arguments[1].getText();
-                                        final String replacement = offset.startsWith("-")
+                                        final String source = arguments[0].getText();
+                                        final String offset = arguments[1].getText();
+                                        String replacement  = offset.startsWith("-")
                                                 ? String.format("%s[strlen(%s) %s]", source, source, offset.replaceFirst("-", "- "))
                                                 : String.format( "%s[%s]", source, offset);
+                                        String message = messagePatternGeneric;
+
+                                        // With a language level 7.0 or higher, we can generate replacements that maintain identical behavior.
+                                        if (PhpLanguageLevel.get(project).below(PhpLanguageLevel.PHP700)) {
+                                            replacement = String.format("( %s ?? '' )", replacement);
+                                            message     = messagePatternHardened;
+                                        }
+
                                         holder.registerProblem(
                                                 reference,
-                                                String.format(MessagesPresentationUtil.prefixWithEa(messagePattern), replacement),
+                                                String.format(MessagesPresentationUtil.prefixWithEa(message), replacement),
                                                 new TheLocalFix(replacement)
                                         );
                                     }

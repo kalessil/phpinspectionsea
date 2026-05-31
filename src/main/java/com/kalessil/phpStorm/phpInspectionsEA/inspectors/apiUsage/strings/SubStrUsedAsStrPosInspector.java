@@ -28,7 +28,7 @@ import java.util.Set;
  */
 
 public class SubStrUsedAsStrPosInspector extends BasePhpInspection {
-    private static final String messagePattern = "'%s' can be used instead (improves maintainability).";
+    private static final String messagePattern = "'%s' can be used instead (improves maintainability; the replacement is a commonly used invariant).";
 
     private static final Set<String> substringFunctions = new HashSet<>();
     private static final Set<String> lengthFunctions    = new HashSet<>();

@@ -6,4 +6,7 @@ function cases_holder($x, $y) {
     $array = array('x' => $x);
     $array = array('_x' => $x);
     $array = array('x'  => $array['x']);
+
+    // False-positive: php array destructuring
+    ['x' => $x, 'y' => $y] = $array;
 }

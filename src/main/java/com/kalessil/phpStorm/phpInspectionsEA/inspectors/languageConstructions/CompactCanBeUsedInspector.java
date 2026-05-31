@@ -47,31 +47,20 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
-                final PsiElement parent       = expression.getParent();
-                final boolean isTargetContext = ! OpenapiTypesUtil.isAssignment(parent) ||
-                                                ((AssignmentExpression) parent).getValue() == expression;
-                if (isTargetContext) {
+                final boolean isRecipient = ( expression.getParent() instanceof AssignmentExpression assignment && assignment.getVariable() == expression );
+                if (! isRecipient) {
                     final List<String> variables = new ArrayList<>();
                     for (final PsiElement pairCandidate : expression.getChildren()) {
-                        /* match array structure */
-                        if (! (pairCandidate instanceof ArrayHashElement)) {
-                            return;
-                        }
-                        /* match pair structure */
-                        final ArrayHashElement pair = (ArrayHashElement) pairCandidate;
-                        final PhpPsiElement key     = pair.getKey();
-                        final PhpPsiElement value   = pair.getValue();
-                        if (! (key instanceof StringLiteralExpression) || ! (value instanceof Variable)) {
-                            return;
-                        }
-                        /* match index and variable */
-                        final String index    = ((StringLiteralExpression) key).getContents();
-                        final String variable = value.getName();
-                        if (variable == null || ! variable.equals(index)) {
-                            return;
-                        }
+                        if (pairCandidate instanceof ArrayHashElement pair) {
+                            if (pair.getKey() instanceof StringLiteralExpression key && pair.getValue() instanceof Variable value) {
+                                final String index = key.getContents();
+                                if (! index.equals(value.getName())) {
+                                    return;
+                                }
 
-                        variables.add(key.getText());
+                                variables.add(key.getText());
+                            }
+                        }
                     }
 
                     if (variables.size() > 1) {

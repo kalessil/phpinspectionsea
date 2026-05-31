@@ -47,7 +47,7 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
         return new BasePhpElementVisitor() {
             @Override
             public void visitPhpArrayCreationExpression(@NotNull ArrayCreationExpression expression) {
-                final boolean isRecipient = ( expression.getParent() instanceof AssignmentExpression assignment && assignment.getVariable() == expression );
+                final boolean isRecipient = ( expression.getParent() instanceof AssignmentExpression assignment && assignment.getValue() != expression );
                 if (! isRecipient) {
                     final List<String> variables = new ArrayList<>();
                     for (final PsiElement pairCandidate : expression.getChildren()) {
@@ -59,8 +59,13 @@ public class CompactCanBeUsedInspector extends BasePhpInspection {
                                 }
 
                                 variables.add(key.getText());
+                                continue;
                             }
                         }
+
+                        // Stop analysis if array structure is not as expected.
+                        variables.clear();
+                        return;
                     }
 
                     if (variables.size() > 1) {

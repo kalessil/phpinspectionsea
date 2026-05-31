@@ -1,5 +1,18 @@
 <?php
 
+class CasesHolder {
+    const FLAGS = JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT;
+
+    function method($encoded, $options) {
+        define('FLAGS', JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+
+        return [
+            json_encode([], FLAGS),
+            json_encode([], self::FLAGS),
+        ];
+    }
+}
+
 function cases_holder($encoded, $options) {
     $local = JSON_THROW_ON_ERROR;
 

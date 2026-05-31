@@ -163,9 +163,7 @@ public class JsonEncodingApiUsageInspector extends BasePhpInspection {
 
             private boolean hasStricterHandlingFlags(@NotNull PsiElement argument) {
                 boolean hasFlag               = false;
-                final Set<PsiElement> options = argument instanceof ConstantReference
-                                                    ? new HashSet<>(Collections.singletonList(argument))
-                                                    : PossibleValuesDiscoveryUtil.discover(argument);
+                final Set<PsiElement> options = PossibleValuesDiscoveryUtil.discover(argument);
                 if (options.size() == 1) {
                     final PsiElement option = options.iterator().next();
                     if (OpenapiTypesUtil.isNumber(option)) {

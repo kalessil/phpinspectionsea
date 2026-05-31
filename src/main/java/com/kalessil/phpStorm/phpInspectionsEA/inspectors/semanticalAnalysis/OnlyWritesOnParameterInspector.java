@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessInstruction;
 import com.jetbrains.php.codeInsight.controlFlow.instructions.PhpAccessVariableInstruction;
@@ -225,6 +226,14 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
                             ++intCountReadAccesses;
                         }
                         continue;
+                    }
+
+                    /* ?? operation */
+                    if (parent instanceof BinaryExpression binary) {
+                        final IElementType operation = binary.getOperationType();
+                        if (operation == PhpTokenTypes.opCOALESCE) {
+                            ++intCountReadAccesses;
+                        }
                     }
 
                     if (parent instanceof SelfAssignmentExpression) {

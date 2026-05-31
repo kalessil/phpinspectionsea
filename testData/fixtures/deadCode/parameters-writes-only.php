@@ -77,6 +77,15 @@ class Container {
         include $file;
     }
 
+    public function writes_only_with_null_coalescing_operator($variable) {
+        if ($variable) {
+            $local = '';
+            $local .= '...';
+        }
+
+        return $local ?? '';
+    }
+
     public function unused_in_assignments_as_array_index(&$a) {
         $a[<weak_warning descr="[EA] The variable seems to be not used.">$index</weak_warning> = '...'] = '...';
 

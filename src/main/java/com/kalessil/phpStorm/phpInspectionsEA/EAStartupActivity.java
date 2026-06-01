@@ -1,7 +1,7 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.extensions.PluginId;
@@ -24,7 +24,7 @@ public class EAStartupActivity implements StartupActivity {
     @Override
     public void runActivity(@NotNull Project project) {
         final PluginId pluginId           = PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA");
-        final IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginId);
+        final IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
         if (plugin != null) {
             final EASettings settings  = EASettings.getInstance();
             final String pluginVersion = plugin.getVersion();

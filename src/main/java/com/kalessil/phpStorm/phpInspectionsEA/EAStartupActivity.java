@@ -1,8 +1,10 @@
 package com.kalessil.phpStorm.phpInspectionsEA;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.OpenapiPlatformUtil;
@@ -10,10 +12,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+/*
+ * This file is part of the Php Inspections (EA Extended) package.
+ *
+ * (c) Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 public class EAStartupActivity implements StartupActivity {
     @Override
     public void runActivity(@NotNull Project project) {
-        final IdeaPluginDescriptor plugin = OpenapiPlatformUtil.getPluginById("com.kalessil.phpStorm.phpInspectionsEA");
+        PluginId pluginId           = PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA");
+        IdeaPluginDescriptor plugin = PluginManager.getInstance().findEnabledPlugin(pluginId);
         if (null == plugin) {
             return;
         }

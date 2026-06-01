@@ -27,13 +27,4 @@ final public class OpenapiPlatformUtil {
         try { classes.put("PhpThrow", (Class<? extends PsiElement>) Class.forName("com.jetbrains.php.lang.psi.elements.PhpThrow"));           } catch (final ClassNotFoundException e) {}
         try { classes.put("PhpThrow", (Class<? extends PsiElement>) Class.forName("com.jetbrains.php.lang.psi.elements.PhpThrowExpression")); } catch (final ClassNotFoundException e) {}
     }
-
-    @Nullable
-    public static IdeaPluginDescriptor getPluginById(@NotNull String id) {
-        final PluginId pluginId = PluginId.getId(id);
-        return Arrays.stream(PluginManagerCore.getPlugins())
-                .filter(descriptor -> pluginId.equals(descriptor.getPluginId()))
-                .findFirst()
-                .orElse(null);
-    }
 }

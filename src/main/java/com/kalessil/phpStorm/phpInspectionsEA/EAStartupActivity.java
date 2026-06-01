@@ -26,27 +26,20 @@ public class EAStartupActivity implements StartupActivity {
     public void runActivity(@NotNull Project project) {
         PluginId pluginId           = PluginId.getId("com.kalessil.phpStorm.phpInspectionsEA");
         IdeaPluginDescriptor plugin = PluginManager.getInstance().findEnabledPlugin(pluginId);
-        if (null == plugin) {
-            return;
-        }
+        if (plugin != null) {
+            final EASettings settings  = EASettings.getInstance();
+            final String pluginVersion = plugin.getVersion();
+            if (! pluginVersion.equals(settings.getVersion())) {
+                settings.setVersion(pluginVersion);
 
-        final EASettings settings = EASettings.getInstance();
-
-        /* dump new plugin version */
-        final String pluginVersion = plugin.getVersion();
-
-        if (!pluginVersion.equals(settings.getVersion())) {
-            settings.setVersion(pluginVersion);
-
-            final String pluginName = plugin.getName();
-            final String popupTitle = String.format("<b>%s</b> update v%s", pluginName, pluginVersion);
-            final String popupContent = Optional.ofNullable(plugin.getChangeNotes()).orElse("");
-
-            NotificationGroupManager.getInstance()
-                    .getNotificationGroup("Php Inspections (EA Extended) Update Notification")
-                    .createNotification(popupContent, NotificationType.INFORMATION)
-                    .setTitle(popupTitle)
-                    .notify(project);
+                final String popupTitle  = String.format("<b>%s</b> update v%s", plugin.getName(), pluginVersion);
+                final String popupContent = Optional.ofNullable(plugin.getChangeNotes()).orElse("");
+                NotificationGroupManager.getInstance()
+                        .getNotificationGroup("Php Inspections (EA Extended) Update Notification")
+                        .createNotification(popupContent, NotificationType.INFORMATION)
+                        .setTitle(popupTitle)
+                        .notify(project);
+            }
         }
     }
 }

@@ -78,12 +78,19 @@ class Container {
     }
 
     public function writes_only_with_null_coalescing_operator($variable) {
+        $local = '';
         if ($variable) {
-            $local = '';
             $local .= '...';
         }
-
         return $local ?? '';
+    }
+
+    public function writes_only_with_binary_expression($variable) {
+        $local = '';
+        if ($variable) {
+            $local .= '...';
+        }
+        return $local . '';
     }
 
     public function unused_in_assignments_as_array_index(&$a) {

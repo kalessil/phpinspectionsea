@@ -230,10 +230,7 @@ public class OnlyWritesOnParameterInspector extends BasePhpInspection {
 
                     /* ?? operation */
                     if (parent instanceof BinaryExpression binary) {
-                        final IElementType operation = binary.getOperationType();
-                        if (operation == PhpTokenTypes.opCOALESCE) {
-                            ++intCountReadAccesses;
-                        }
+                        ++intCountReadAccesses;
                     }
 
                     if (parent instanceof SelfAssignmentExpression) {

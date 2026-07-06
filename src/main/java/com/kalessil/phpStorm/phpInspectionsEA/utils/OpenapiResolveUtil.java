@@ -141,13 +141,13 @@ final public class OpenapiResolveUtil {
                         }
                     }
                 }
-            } else if (expression instanceof ClassConstantReference) {
-                final ClassConstantReference reference = (ClassConstantReference) expression;
-                final String referenceName             = reference.getName();
+            } else if (expression instanceof ClassConstantReference reference) {
+                final String referenceName = reference.getName();
                 if (referenceName != null && ! referenceName.isEmpty()) {
-                    final PsiElement resolved = resolveReference(reference);
-                    if (resolved instanceof Field && ((Field) resolved).isConstant()) {
-                        final PsiElement value = ((Field) resolved).getDefaultValue();
+                    if (referenceName.equals("class")) {
+                        result = new PhpType().add(Types.strString);
+                    } else if (resolveReference(reference) instanceof Field field && field.isConstant()) {
+                        final PsiElement value = field.getDefaultValue();
                         if (value instanceof PhpTypedElement) {
                             result = resolveType((PhpTypedElement) value, project);
                         }

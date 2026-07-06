@@ -67,8 +67,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                     final PsiElement parent = expression.getParent();
                     if (operator == PhpTokenTypes.opSTRING_CAST) {
                         /* case 1: concatenation `... . (string)...` */
-                        if (parent instanceof BinaryExpression) {
-                            final BinaryExpression binary = (BinaryExpression) parent;
+                        if (parent instanceof BinaryExpression binary) {
                             if (binary.getOperationType() == PhpTokenTypes.opCONCAT) {
                                 holder.registerProblem(
                                         operation,
@@ -80,8 +79,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                             }
                         }
                         /* case 2: self assign with `... .=  (string)...` */
-                        else if (parent instanceof SelfAssignmentExpression) {
-                            final SelfAssignmentExpression assignment = (SelfAssignmentExpression) parent;
+                        else if (parent instanceof SelfAssignmentExpression assignment) {
                             if (assignment.getOperationType() == PhpTokenTypes.opCONCAT_ASGN) {
                                 holder.registerProblem(
                                         operation,
@@ -118,8 +116,8 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
                 final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(argument);
                 if (variants.size() == 1) {
                     final PsiElement candidate = variants.iterator().next().getParent();
-                    if (candidate instanceof BinaryExpression) {
-                        result = ((BinaryExpression) candidate).getOperationType() == PhpTokenTypes.opCOALESCE;
+                    if (candidate instanceof BinaryExpression binary) {
+                        result = binary.getOperationType() == PhpTokenTypes.opCOALESCE;
                     }
                 }
                 variants.clear();
@@ -130,19 +128,17 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
             private PhpType resolveStrictly(@NotNull PhpTypedElement expression) {
                 final Project project = holder.getProject();
                 PhpType result        = null;
-                if (expression instanceof FieldReference) { /* fields has no type hints, hence private only */
-                    final PsiElement resolved = OpenapiResolveUtil.resolveReference((FieldReference) expression);
-                    if (resolved instanceof Field) {
-                        final Field referencedField = (Field) resolved;
+                if (expression instanceof FieldReference reference) { /* fields has no type hints, hence private only */
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                    if (resolved instanceof Field referencedField) {
                         if (referencedField.getModifier().isPrivate()) {
                             result = OpenapiResolveUtil.resolveType(referencedField, project);
                         }
                     }
-                } else if (expression instanceof FunctionReference) { /* requires implicit return type declaration */
-                    final PsiElement resolved = OpenapiResolveUtil.resolveReference((FunctionReference) expression);
-                    if (resolved instanceof Function) {
-                        final Function referencedFunction = (Function) resolved;
-                        final PsiElement returnedType     = OpenapiElementsUtil.getReturnType(referencedFunction);
+                } else if (expression instanceof FunctionReference reference) { /* requires implicit return type declaration */
+                    final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
+                    if (resolved instanceof Function function) {
+                        final PsiElement returnedType = OpenapiElementsUtil.getReturnType(function);
                         if (returnedType != null) {
                             result = OpenapiResolveUtil.resolveType(expression, project);
                         }
@@ -185,7 +181,7 @@ public class UnnecessaryCastingInspector extends BasePhpInspection {
     }
 
     private static final class ReplaceWithArgumentFix implements LocalQuickFix {
-        private static final String title = "Remove unnecessary casting";
+        private static final String title = "Remove unnecessary type casting";
 
         @NotNull
         @Override

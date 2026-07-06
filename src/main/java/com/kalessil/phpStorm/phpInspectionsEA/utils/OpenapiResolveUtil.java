@@ -250,10 +250,13 @@ final public class OpenapiResolveUtil {
                         }
                     }
                 }
-            } else if (expression instanceof BinaryExpression) {
-                final BinaryExpression binary = (BinaryExpression) expression;
-                final IElementType operator   = binary.getOperationType();
-                if (operator == PhpTokenTypes.opPLUS || operator == PhpTokenTypes.opMINUS || operator == PhpTokenTypes.opMUL) {
+            } else if (expression instanceof BinaryExpression binary) {
+                final IElementType operator = binary.getOperationType();
+                if (
+                        operator == PhpTokenTypes.opPLUS || operator == PhpTokenTypes.opMINUS ||
+                        operator == PhpTokenTypes.opMUL || operator == PhpTokenTypes.opDIV ||
+                        operator == PhpTokenTypes.opEXP
+                ) {
                     /* workaround for https://youtrack.jetbrains.com/issue//WI-37466 & co */
                     boolean hasFloat      = true;
                     boolean hasArray      = false;

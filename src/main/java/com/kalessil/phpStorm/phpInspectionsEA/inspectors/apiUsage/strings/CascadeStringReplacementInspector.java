@@ -83,11 +83,9 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     final FunctionReference previousCall = previous == null ? null : this.getFunctionReference(previous);
                     if (previousCall != null) {
                         final PsiElement transitionVariable = previous.getVariable();
-                        if (transitionVariable instanceof Variable && arguments[2] instanceof Variable) {
-                            final Variable callSubject         = (Variable) arguments[2];
-                            final Variable previousVariable    = (Variable) transitionVariable;
-                            final PsiElement callResultStorage = expression instanceof AssignmentExpression
-                                                                    ? ((AssignmentExpression) expression).getVariable()
+                        if (transitionVariable instanceof Variable previousVariable && arguments[2] instanceof Variable callSubject) {
+                            final PsiElement callResultStorage = expression instanceof AssignmentExpression assignment
+                                                                    ? assignment.getVariable()
                                                                     : callSubject;
                             if (
                                 callResultStorage != null && callSubject.getName().equals(previousVariable.getName()) &&
@@ -109,8 +107,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                     /* case: search simplification */
                     if (arguments[1] instanceof StringLiteralExpression){
                         final PsiElement search = arguments[0];
-                        if (search instanceof ArrayCreationExpression) {
-                            this.checkForSimplification((ArrayCreationExpression) search);
+                        if (search instanceof ArrayCreationExpression create) {
+                            this.checkForSimplification(create);
                         }
                     }
                 }
@@ -119,8 +117,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             private void checkForSimplification(@NotNull ArrayCreationExpression candidate) {
                 final Set<String> replacements = new HashSet<>();
                 for (final PsiElement oneReplacement : candidate.getChildren()) {
-                    if (oneReplacement instanceof PhpPsiElement) {
-                        final PhpPsiElement item = ((PhpPsiElement) oneReplacement).getFirstPsiChild();
+                    if (oneReplacement instanceof PhpPsiElement replacement) {
+                        final PhpPsiElement item = replacement.getFirstPsiChild();
                         if (! (item instanceof StringLiteralExpression)) {
                             replacements.clear();
                             return;
@@ -142,8 +140,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             private void checkNestedCalls(@NotNull Project project, @NotNull PsiElement callCandidate, @NotNull FunctionReference parentCall) {
                 if (OpenapiTypesUtil.isFunctionReference(callCandidate)) {
                     final FunctionReference functionCall = (FunctionReference) callCandidate;
-                    final String functionName            = functionCall.getName();
-                    if (functionName != null && functionName.equals("str_replace") && this.canMergeArguments(functionCall, parentCall)) {
+                    if ("str_replace".equals(functionCall.getName()) && this.canMergeArguments(functionCall, parentCall)) {
                         holder.registerProblem(
                                 callCandidate,
                                 MessagesPresentationUtil.prefixWithEa(messageNesting),
@@ -181,7 +178,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 final PsiElement value = ExpressionSemanticUtil.getExpressionTroughParenthesis(assignment.getValue());
                 if (OpenapiTypesUtil.isFunctionReference(value)) {
                     final String functionName = ((FunctionReference) value).getName();
-                    if (functionName != null && functionName.equals("str_replace")) {
+                    if ("str_replace".equals(functionName)) {
                         result = (FunctionReference) value;
                     }
                 }
@@ -194,7 +191,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 final PsiElement value   = ExpressionSemanticUtil.getExpressionTroughParenthesis(ExpressionSemanticUtil.getReturnValue(phpReturn));
                 if (OpenapiTypesUtil.isFunctionReference(value)) {
                     final String functionName = ((FunctionReference) value).getName();
-                    if (functionName != null && functionName.equals("str_replace")) {
+                    if ("str_replace".equals(functionName)) {
                         result = (FunctionReference) value;
                     }
                 }
@@ -205,8 +202,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             private AssignmentExpression getPreviousAssignment(@NotNull PsiElement returnOrAssignment) {
                 /* get previous non-comment, non-php-doc expression */
                 PsiElement previous = null;
-                if (returnOrAssignment instanceof PhpReturn) {
-                    previous = ((PhpReturn) returnOrAssignment).getPrevPsiSibling();
+                if (returnOrAssignment instanceof PhpReturn phpReturn) {
+                    previous = phpReturn.getPrevPsiSibling();
                 } else if (returnOrAssignment instanceof AssignmentExpression) {
                     previous = returnOrAssignment.getParent().getPrevSibling();
                 }
@@ -218,8 +215,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
                 }
                 /* grab the target assignment */
                 final AssignmentExpression result;
-                if (previous != null && previous.getFirstChild() instanceof AssignmentExpression) {
-                    result = (AssignmentExpression) previous.getFirstChild();
+                if (previous != null && previous.getFirstChild() instanceof AssignmentExpression assignment) {
+                    result = assignment;
                 } else {
                     result = null;
                 }
@@ -292,8 +289,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
         private void mergeArguments(@NotNull Project project, @NotNull PsiElement to, @NotNull PsiElement from) {
             final PsiElement comma = PhpPsiElementFactory.createFromText(project, LeafPsiElement.class, ",");
-            if (to instanceof ArrayCreationExpression) {
-                final PsiElement firstValue = ((ArrayCreationExpression) to).getFirstPsiChild();
+            if (to instanceof ArrayCreationExpression createTo) {
+                final PsiElement firstValue = createTo.getFirstPsiChild();
                 final PsiElement marker     = firstValue == null ? null : firstValue.getPrevSibling();
                 if (comma != null && marker != null) {
                     if (from instanceof ArrayCreationExpression) {
@@ -338,8 +335,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
 
         private boolean needsDestructuring(@NotNull Project project, @NotNull PsiElement argument) {
             // Based on analysis pre-requisites we consider the destructuring available
-            if (argument instanceof PhpTypedElement && ! (argument instanceof ArrayCreationExpression)) {
-                final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) argument, project);
+            if (argument instanceof PhpTypedElement typed && ! (argument instanceof ArrayCreationExpression)) {
+                final PhpType resolved = OpenapiResolveUtil.resolveType(typed, project);
                 if (resolved != null) {
                     final Set<String> types = resolved.filterUnknown().getTypes().stream().map(Types::getType).collect(Collectors.toSet());
                     return types.contains(Types.strArray) && ! types.contains(Types.strString);
@@ -393,7 +390,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             }
 
             if (needsFurtherFixing) {
-                /* in order to perform the proper merging we'll need to expand short-hand replacement definitions */
+                /* in order to perform the proper merging we'll need to expand shorthand replacement definitions */
                 this.expandReplacement(project, to);
                 this.expandReplacement(project, from);
                 this.mergeArguments(project, to.getParameters()[1], from.getParameters()[1]);
@@ -434,8 +431,8 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
         private void applyArraySyntax(@NotNull Project project, @NotNull FunctionReference patch, boolean useShortSyntax) {
             final List<String> arguments = new ArrayList<>();
             for (final PsiElement argument : patch.getParameters()) {
-                if (argument instanceof ArrayCreationExpression) {
-                    if (((ArrayCreationExpression) argument).isShortSyntax() != useShortSyntax) {
+                if (argument instanceof ArrayCreationExpression create) {
+                    if (create.isShortSyntax() != useShortSyntax) {
                         arguments.add(
                                 String.format(
                                         useShortSyntax ? "[%s]" : "array(%s)",

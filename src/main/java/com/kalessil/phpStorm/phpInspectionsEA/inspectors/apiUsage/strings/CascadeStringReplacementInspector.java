@@ -401,7 +401,7 @@ public class CascadeStringReplacementInspector extends BasePhpInspection {
             final PsiElement[] arguments = call.getParameters();
             final PsiElement search      = arguments[0];
             final PsiElement replace     = arguments[1];
-            if (this.unboxIfConstant(replace) instanceof StringLiteralExpression && search instanceof ArrayCreationExpression) {
+            if (! ( this.unboxIfConstant(replace) instanceof ArrayCreationExpression ) && search instanceof ArrayCreationExpression) {
                 final int searchesCount = search.getChildren().length;
                 if (searchesCount > 1) {
                     final List<String> replaces = Collections.nCopies(searchesCount, replace.getText());

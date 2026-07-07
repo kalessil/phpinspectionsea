@@ -51,5 +51,9 @@
 
         $thirteen = str_replace([$one, $two, $three], [$one, $two, $three], '___');
 
-        $fourteen = str_replace(['prefix', 'fragment-1', 'fragment-2'], ['', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR], '...');
+        $fourteen = str_replace([$one, $two, $three], [$one, $one, $three], '___');
+
+        $fifteen = str_replace([$one, $two, $three], [$one, $three, $three], '___');
+
+        $sixteen = str_replace(['prefix', 'fragment-1', 'fragment-2'], ['', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR], '...');
     }

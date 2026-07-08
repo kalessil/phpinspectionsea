@@ -48,7 +48,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
             @Override
             public void visitPhpFunctionCall(@NotNull FunctionReference reference) {
                 final String functionName = reference.getName();
-                if (functionName != null && (functionName.equals("strlen") || functionName.equals("mb_strlen"))) {
+                if ("strlen".equals(functionName) || "mb_strlen".equals(functionName)) {
                     final PsiElement[] arguments = reference.getParameters();
                     if (arguments.length > 0 && ExpressionSemanticUtil.getBlockScope(reference) != null) {
                         boolean isMatchedPattern = false;
@@ -57,8 +57,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                         /* check explicit numbers comparisons */
                         final PsiElement parent = reference.getParent();
-                        if (parent instanceof BinaryExpression) {
-                            final BinaryExpression binary  = (BinaryExpression) parent;
+                        if (parent instanceof BinaryExpression binary) {
                             final PsiElement left          = binary.getLeftOperand();
                             final PsiElement secondOperand = OpenapiElementsUtil.getSecondOperand(binary, reference);
                             /* second operand should be a number */
@@ -78,7 +77,7 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                                 }
 
                                 /* check cases when checking equality to 0 */
-                                if (!isMatchedPattern && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
+                                if (! isMatchedPattern && OpenapiTypesUtil.tsCOMPARE_EQUALITY_OPS.contains(operator)) {
                                     isMatchedPattern = number.equals("0");
                                     target           = binary;
                                     isEmptyString    = operator == PhpTokenTypes.opIDENTICAL || operator == PhpTokenTypes.opEQUAL;
@@ -87,10 +86,10 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
                         }
 
                         /* checks NON-implicit boolean comparison patterns */
-                        if (!isMatchedPattern && ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
+                        if (! isMatchedPattern && ExpressionSemanticUtil.isUsedAsLogicalOperand(reference)) {
                             isMatchedPattern           = true;
                             target                     = reference;
-                            final PsiElement operation = parent instanceof UnaryExpression ? ((UnaryExpression) parent).getOperation() : null;
+                            final PsiElement operation = parent instanceof UnaryExpression unary ? unary.getOperation() : null;
                             if (operation != null) {
                                 isEmptyString = OpenapiTypesUtil.is(operation, PhpTokenTypes.opNOT);
                                 target        = parent;
@@ -117,8 +116,8 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
             }
 
             private boolean canApplyIdentityOperator(@NotNull PsiElement value) {
-                if (value instanceof PhpTypedElement) {
-                    final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) value, holder.getProject());
+                if (value instanceof PhpTypedElement typed) {
+                    final PhpType resolved = OpenapiResolveUtil.resolveType(typed, holder.getProject());
                     if (resolved != null && resolved.size() == 1) {
                         return Types.strString.equals(Types.getType(resolved.getTypes().iterator().next()));
                     }

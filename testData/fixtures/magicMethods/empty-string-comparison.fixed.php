@@ -1,11 +1,16 @@
 <?php
 
-function cases_holder(string $string, float $float, int $int)
+function cases_holder(string $string, ?string $nullableString, float $float, int $int)
 {
     if ('' !== $string)  {}
     if ('' === $string) {}
     if ('' !== $string)     {}
     if ('' === $string)    {}
+
+    if ('' != $nullableString)  {}
+    if ('' == $nullableString) {}
+    if ('' != $nullableString)     {}
+    if ('' == $nullableString)    {}
 
     if ('' === $string)  {}
     if ('' !== $string)  {}

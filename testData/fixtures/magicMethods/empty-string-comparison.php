@@ -1,11 +1,16 @@
 <?php
 
-function cases_holder(string $string, float $float, int $int)
+function cases_holder(string $string, ?string $nullableString, float $float, int $int)
 {
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">mb_strlen($string)</weak_warning>)  {}
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">!mb_strlen($string)</weak_warning>) {}
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>)     {}
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">!strlen($string)</weak_warning>)    {}
+
+    if (<weak_warning descr="[EA] ''' != $nullableString' would make more sense here (it also slightly faster).">mb_strlen($nullableString)</weak_warning>)  {}
+    if (<weak_warning descr="[EA] ''' == $nullableString' would make more sense here (it also slightly faster).">!mb_strlen($nullableString)</weak_warning>) {}
+    if (<weak_warning descr="[EA] ''' != $nullableString' would make more sense here (it also slightly faster).">strlen($nullableString)</weak_warning>)     {}
+    if (<weak_warning descr="[EA] ''' == $nullableString' would make more sense here (it also slightly faster).">!strlen($nullableString)</weak_warning>)    {}
 
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">strlen($string) == 0</weak_warning>)  {}
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string) != 0</weak_warning>)  {}

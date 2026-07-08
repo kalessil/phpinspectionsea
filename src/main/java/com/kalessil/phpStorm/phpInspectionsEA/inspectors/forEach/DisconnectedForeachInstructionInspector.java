@@ -195,20 +195,18 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                                 individualDependencies.add(variableName);
                                 continue;
                             }
-                        } else {
-                            if (parentAssignment.getVariable() == valueContainer) {
-                                /* we are modifying the variable */
-                                allModifiedVariables.add(variableName);
-                                /* self-assignment and field assignment counted as the variable dependent on itself  */
-                                if (parentAssignment instanceof SelfAssignmentExpression || valueContainer instanceof FieldReference) {
-                                    individualDependencies.add(variableName);
-                                }
-                                /* assignments as call arguments counted as the variable dependent on itself */
-                                if (grandParent instanceof ParameterList) {
-                                    individualDependencies.add(variableName);
-                                }
-                                continue;
+                        } else if (parentAssignment.getVariable() == valueContainer) {
+                            /* we are modifying the variable */
+                            allModifiedVariables.add(variableName);
+                            /* self-assignment and field assignment counted as the variable dependent on itself  */
+                            if (parentAssignment instanceof SelfAssignmentExpression || valueContainer instanceof FieldReference) {
+                                individualDependencies.add(variableName);
                             }
+                            /* assignments as call arguments counted as the variable dependent on itself */
+                            if (grandParent instanceof ParameterList) {
+                                individualDependencies.add(variableName);
+                            }
+                            continue;
                         }
                     }
 
@@ -220,11 +218,24 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                     if (parent instanceof ParameterList) {
                         if (grandParent instanceof MethodReference reference) {
-                            /* an object consumes the variable, perhaps modification takes place */
+                            /* Methods calls can cause mutation of the underlying data structure. */
                             final PsiElement referenceOperator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                            if (OpenapiTypesUtil.is(referenceOperator, PhpTokenTypes.ARROW) && reference.getFirstPsiChild() instanceof Variable candidate) {
-                                allModifiedVariables.add(candidate.getName());
-                                continue;
+                            if (OpenapiTypesUtil.is(referenceOperator, PhpTokenTypes.ARROW)) {
+                                // Investigate which container is subject of the potential mtation.
+                                PsiElement base = reference.getClassReference();
+                                while (base instanceof ParenthesizedExpression || base instanceof FieldReference || base instanceof ArrayAccessExpression) {
+                                    if (base instanceof ParenthesizedExpression) {
+                                        base = ExpressionSemanticUtil.getExpressionTroughParenthesis(base);
+                                    } else if (base instanceof FieldReference fieldReference) {
+                                        base = fieldReference.getClassReference();
+                                    } else if (base instanceof ArrayAccessExpression access) {
+                                        base = access.getValue();
+                                    }
+                                }
+                                if (base instanceof Variable candidate) {
+                                    allModifiedVariables.add(candidate.getName());
+                                    continue;
+                                }
                             }
                         } else if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
                             /* php will create variable, if it is by reference */

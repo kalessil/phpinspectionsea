@@ -97,9 +97,15 @@ foreach ($links as $link) {
 
 /* false-positives: object modifications */
 foreach ([] as $item) {
-    $object1->method1($item);
-    $object2->method2($object1);
-    $object3->method3($object2);
+    $object1->track($item);
+    $object2->track($object1);
+    $object3->track($object2);
+
+    $object4->property->track($item);
+    $object4->property->flush();
+
+    $array[$index]->property->track($item);
+    $array[$index]->property->flush();
 }
 
 /* false-positives: compact function usage */

@@ -98,12 +98,13 @@ public class StrlenInEmptyStringCheckContextInspection extends BasePhpInspection
 
                         /* investigate possible issues */
                         if (isMatchedPattern) {
-                            final boolean isRegular  = ComparisonStyle.isRegular();
-                            final String operator    = (isEmptyString ? "=" : "!") + (this.canApplyIdentityOperator(arguments[0]) ? "==" : "=");
-                            final String replacement = String.format(
+                            final boolean isRegular    = ComparisonStyle.isRegular();
+                            final String stringCasting = this.canApplyIdentityOperator(arguments[0]) ? "" : "(string) ";
+                            final String operator      = isEmptyString ? "===" : "!==";
+                            final String replacement   = String.format(
                                     isRegular ? "%s %s ''" : "'' %s %s",
-                                    isRegular ? arguments[0].getText() : operator,
-                                    isRegular ? operator : arguments[0].getText()
+                                    isRegular ? (stringCasting + arguments[0].getText()) : operator,
+                                    isRegular ? operator : (stringCasting + arguments[0].getText())
                             );
                             holder.registerProblem(
                                     target,

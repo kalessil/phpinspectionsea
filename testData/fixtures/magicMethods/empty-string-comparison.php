@@ -7,10 +7,10 @@ function cases_holder(string $string, ?string $nullableString, float $float, int
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string)</weak_warning>)     {}
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">!strlen($string)</weak_warning>)    {}
 
-    if (<weak_warning descr="[EA] ''' != $nullableString' would make more sense here (it also slightly faster).">mb_strlen($nullableString)</weak_warning>)  {}
-    if (<weak_warning descr="[EA] ''' == $nullableString' would make more sense here (it also slightly faster).">!mb_strlen($nullableString)</weak_warning>) {}
-    if (<weak_warning descr="[EA] ''' != $nullableString' would make more sense here (it also slightly faster).">strlen($nullableString)</weak_warning>)     {}
-    if (<weak_warning descr="[EA] ''' == $nullableString' would make more sense here (it also slightly faster).">!strlen($nullableString)</weak_warning>)    {}
+    if (<weak_warning descr="[EA] ''' !== (string) $nullableString' would make more sense here (it also slightly faster).">mb_strlen($nullableString)</weak_warning>)  {}
+    if (<weak_warning descr="[EA] ''' === (string) $nullableString' would make more sense here (it also slightly faster).">!mb_strlen($nullableString)</weak_warning>) {}
+    if (<weak_warning descr="[EA] ''' !== (string) $nullableString' would make more sense here (it also slightly faster).">strlen($nullableString)</weak_warning>)     {}
+    if (<weak_warning descr="[EA] ''' === (string) $nullableString' would make more sense here (it also slightly faster).">!strlen($nullableString)</weak_warning>)    {}
 
     if (<weak_warning descr="[EA] ''' === $string' would make more sense here (it also slightly faster).">strlen($string) == 0</weak_warning>)  {}
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string) != 0</weak_warning>)  {}
@@ -26,8 +26,8 @@ function cases_holder(string $string, ?string $nullableString, float $float, int
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string) >= 1</weak_warning>)  {}
     if (<weak_warning descr="[EA] ''' !== $string' would make more sense here (it also slightly faster).">strlen($string) > 0</weak_warning>) {}
 
-    if (<weak_warning descr="[EA] ''' != $float' would make more sense here (it also slightly faster).">strlen($float) > 0</weak_warning>) {}
-    if (<weak_warning descr="[EA] ''' != $int' would make more sense here (it also slightly faster).">strlen($int) > 0</weak_warning>) {}
+    if (<weak_warning descr="[EA] ''' !== (string) $float' would make more sense here (it also slightly faster).">strlen($float) > 0</weak_warning>) {}
+    if (<weak_warning descr="[EA] ''' !== (string) $int' would make more sense here (it also slightly faster).">strlen($int) > 0</weak_warning>) {}
 
     /* not yet supported */
     if (1 >  strlen($string)) {}

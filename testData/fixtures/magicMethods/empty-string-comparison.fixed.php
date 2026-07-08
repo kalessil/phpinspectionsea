@@ -7,10 +7,10 @@ function cases_holder(string $string, ?string $nullableString, float $float, int
     if ('' !== $string)     {}
     if ('' === $string)    {}
 
-    if ('' != $nullableString)  {}
-    if ('' == $nullableString) {}
-    if ('' != $nullableString)     {}
-    if ('' == $nullableString)    {}
+    if ('' !== (string)$nullableString)  {}
+    if ('' === (string)$nullableString) {}
+    if ('' !== (string)$nullableString)     {}
+    if ('' === (string)$nullableString)    {}
 
     if ('' === $string)  {}
     if ('' !== $string)  {}
@@ -26,8 +26,8 @@ function cases_holder(string $string, ?string $nullableString, float $float, int
     if ('' !== $string)  {}
     if ('' !== $string) {}
 
-    if ('' != $float) {}
-    if ('' != $int) {}
+    if ('' !== (string)$float) {}
+    if ('' !== (string)$int) {}
 
     /* not yet supported */
     if (1 >  strlen($string)) {}

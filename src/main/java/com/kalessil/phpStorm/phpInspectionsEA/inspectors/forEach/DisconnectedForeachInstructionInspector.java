@@ -79,16 +79,16 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     final Map<PsiElement, Set<String>> instructionDependencies = new HashMap<>();
                     /* iteration 1 - investigate what are dependencies and influence */
                     for (final PsiElement oneInstruction : statements) {
-                        if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
+                        if (oneInstruction instanceof PhpPsiElement element && ! (oneInstruction instanceof PsiComment)) {
                             final Set<String> individualDependencies = new HashSet<>();
                             instructionDependencies.put(oneInstruction, individualDependencies);
-                            investigateInfluence((PhpPsiElement) oneInstruction, individualDependencies, allModifiedVariables);
+                            investigateInfluence(element, individualDependencies, allModifiedVariables);
                         }
                     }
 
                     /* iteration 2 - analyse dependencies */
                     for (final PsiElement oneInstruction : statements) {
-                        if (oneInstruction instanceof PhpPsiElement && !(oneInstruction instanceof PsiComment)) {
+                        if (oneInstruction instanceof PhpPsiElement && ! (oneInstruction instanceof PsiComment)) {
                             boolean isDependOnModified = false;
 
                             /* check if any dependency is overridden */
@@ -155,9 +155,9 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
             private Set<String> collectCurrentAndOuterLoopVariables(@NotNull ForeachStatement foreach) {
                 final Set<String> variables = new HashSet<>();
                 PsiElement current          = foreach;
-                while (current != null && !(current instanceof Function) && !(current instanceof PsiFile)) {
-                    if (current instanceof ForeachStatement) {
-                        ((ForeachStatement) current).getVariables().forEach(v -> variables.add(v.getName()));
+                while (current != null && ! (current instanceof Function) && ! (current instanceof PsiFile)) {
+                    if (current instanceof ForeachStatement loop) {
+                        loop.getVariables().forEach(v -> variables.add(v.getName()));
                     }
                     current = current.getParent();
                 }
@@ -187,22 +187,20 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     final PsiElement grandParent = parent.getParent();
 
                     /* writing into variable */
-                    if (parent instanceof AssignmentExpression) {
+                    if (parent instanceof AssignmentExpression parentAssignment) {
                         /* php-specific `list(...) =` , `[...] =` construction */
-                        if (parent instanceof MultiassignmentExpression) {
-                            final MultiassignmentExpression assignment = (MultiassignmentExpression) parent;
+                        if (parent instanceof MultiassignmentExpression assignment) {
                             if (assignment.getValue() != variable) {
                                 allModifiedVariables.add(variableName);
                                 individualDependencies.add(variableName);
                                 continue;
                             }
                         } else {
-                            final AssignmentExpression assignment = (AssignmentExpression) parent;
-                            if (assignment.getVariable() == valueContainer) {
+                            if (parentAssignment.getVariable() == valueContainer) {
                                 /* we are modifying the variable */
                                 allModifiedVariables.add(variableName);
                                 /* self-assignment and field assignment counted as the variable dependent on itself  */
-                                if (assignment instanceof SelfAssignmentExpression || valueContainer instanceof FieldReference) {
+                                if (parentAssignment instanceof SelfAssignmentExpression || valueContainer instanceof FieldReference) {
                                     individualDependencies.add(variableName);
                                 }
                                 /* assignments as call arguments counted as the variable dependent on itself */
@@ -215,22 +213,18 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     }
 
                     /* adding into an arrays; we both depend and modify the container */
-                    if (parent instanceof ArrayAccessExpression && valueContainer == ((ArrayAccessExpression) parent).getValue()) {
+                    if (parent instanceof ArrayAccessExpression access && valueContainer == access.getValue()) {
                         allModifiedVariables.add(variableName);
                         individualDependencies.add(variableName);
                     }
 
                     if (parent instanceof ParameterList) {
-                        if (grandParent instanceof MethodReference) {
+                        if (grandParent instanceof MethodReference reference) {
                             /* an object consumes the variable, perhaps modification takes place */
-                            final MethodReference reference    = (MethodReference) grandParent;
                             final PsiElement referenceOperator = OpenapiPsiSearchUtil.findResolutionOperator(reference);
-                            if (OpenapiTypesUtil.is(referenceOperator, PhpTokenTypes.ARROW)) {
-                                final PsiElement variableCandidate = reference.getFirstPsiChild();
-                                if (variableCandidate instanceof Variable) {
-                                    allModifiedVariables.add(((Variable) variableCandidate).getName());
-                                    continue;
-                                }
+                            if (OpenapiTypesUtil.is(referenceOperator, PhpTokenTypes.ARROW) && reference.getFirstPsiChild() instanceof Variable candidate) {
+                                allModifiedVariables.add(candidate.getName());
+                                continue;
                             }
                         } else if (OpenapiTypesUtil.isFunctionReference(grandParent)) {
                             /* php will create variable, if it is by reference */
@@ -238,8 +232,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                             final int position                = ArrayUtils.indexOf(reference.getParameters(), variable);
                             if (position != -1) {
                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(reference);
-                                if (resolved instanceof Function) {
-                                    final Parameter[] parameters = ((Function) resolved).getParameters();
+                                if (resolved instanceof Function function) {
+                                    final Parameter[] parameters = function.getParameters();
                                     if (parameters.length > position && parameters[position].isPassByRef()) {
                                         allModifiedVariables.add(variableName);
                                         individualDependencies.add(variableName);
@@ -264,15 +258,12 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
 
                 /* handle compact function usage */
                 for (final FunctionReference reference : PsiTreeUtil.findChildrenOfType(oneInstruction, FunctionReference.class)) {
-                    if (OpenapiTypesUtil.isFunctionReference(reference)) {
-                        final String functionName = reference.getName();
-                        if (functionName != null && functionName.equals("compact")) {
-                            for (final PsiElement argument : reference.getParameters()) {
-                                if (argument instanceof StringLiteralExpression) {
-                                    final String compactedVariableName = ((StringLiteralExpression) argument).getContents();
-                                    if (!compactedVariableName.isEmpty()) {
-                                        individualDependencies.add(compactedVariableName);
-                                    }
+                    if (OpenapiTypesUtil.isFunctionReference(reference) && "compact".equals(reference.getName())) {
+                        for (final PsiElement argument : reference.getParameters()) {
+                            if (argument instanceof StringLiteralExpression literal) {
+                                final String compactedVariableName = literal.getContents();
+                                if (! compactedVariableName.isEmpty()) {
+                                    individualDependencies.add(compactedVariableName);
                                 }
                             }
                         }
@@ -292,8 +283,8 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 }
 
                 /* unary operations */
-                if (expression instanceof UnaryExpression) {
-                    final PsiElement operation = ((UnaryExpression) expression).getOperation();
+                if (expression instanceof UnaryExpression unary) {
+                    final PsiElement operation = unary.getOperation();
                     if (OpenapiTypesUtil.is(operation, PhpTokenTypes.opINCREMENT)) {
                         return ExpressionType.INCREMENT;
                     }
@@ -303,26 +294,20 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                 }
 
                 /* different types of assignments */
-                if (expression instanceof AssignmentExpression) {
-                    final AssignmentExpression assignment = (AssignmentExpression) expression;
-                    final PsiElement variable             = assignment.getVariable();
+                if (expression instanceof AssignmentExpression assignment) {
+                    final PsiElement variable = assignment.getVariable();
                     if (variable instanceof Variable) {
                         final PsiElement value = assignment.getValue();
                         if (value instanceof NewExpression) {
                             return ExpressionType.NEW;
-                        } else if (value instanceof UnaryExpression) {
-                            if (OpenapiTypesUtil.is(((UnaryExpression) value).getOperation(), PhpTokenTypes.kwCLONE)) {
+                        } else if (value instanceof UnaryExpression unary) {
+                            if (OpenapiTypesUtil.is(unary.getOperation(), PhpTokenTypes.kwCLONE)) {
                                 return ExpressionType.CLONE;
                             }
-                        } else if (value instanceof MethodReference) {
-                            final MethodReference call = (MethodReference) value;
-                            final String methodName    = call.getName();
-                            if (methodName != null && methodName.equals("createElement")) {
+                        } else if (value instanceof MethodReference call) {
+                            if ("createElement".equals(call.getName())) {
                                 final PsiElement resolved = OpenapiResolveUtil.resolveReference(call);
-                                if (
-                                    resolved instanceof Method &&
-                                    ((Method) resolved).getFQN().equals("\\DOMDocument.createElement")
-                                ) {
+                                if (resolved instanceof Method method && method.getFQN().equals("\\DOMDocument.createElement")) {
                                     return ExpressionType.DOM_ELEMENT_CREATE;
                                 }
                             }
@@ -333,8 +318,7 @@ public class DisconnectedForeachInstructionInspector extends BasePhpInspection {
                     }
 
                     /* accumulating something in external container */
-                    if (variable instanceof ArrayAccessExpression) {
-                        final ArrayAccessExpression storage = (ArrayAccessExpression) variable;
+                    if (variable instanceof ArrayAccessExpression storage) {
                         if (null == storage.getIndex() || null == storage.getIndex().getValue()) {
                             return ExpressionType.ACCUMULATE_IN_ARRAY;
                         }

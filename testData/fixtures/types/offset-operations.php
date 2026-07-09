@@ -89,3 +89,19 @@
             $array[1 + $key + 1]['...'] = null;
         }
     }
+
+    /**
+    * @param mixed $mixed
+    * @param null|array $nullableArray
+    * @param \stdClass|array $supportingOffset
+    * @param \stdClass|array|null|void $mixedBag
+    */
+    function false_positives_various($mixed, $nullableArray, $supportingOffset, $mixedBag) {
+        return [
+            $mixed['...'],
+            $nullableArray['...'],
+            $supportingOffset['...'],
+            $mixedBag['...'],
+        ];
+    }
+

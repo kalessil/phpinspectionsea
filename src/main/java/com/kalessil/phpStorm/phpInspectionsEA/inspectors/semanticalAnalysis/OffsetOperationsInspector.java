@@ -148,6 +148,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             containerTypes.add(Types.strString);
         }
         containerTypes.remove(Types.strNull);     // don't process nulls
+        containerTypes.remove(Types.strVoid);     // don't process void
         containerTypes.remove(Types.strObject);   // don't process generalized objects
         containerTypes.remove(Types.strEmptySet); // don't process mysterious empty set type
 

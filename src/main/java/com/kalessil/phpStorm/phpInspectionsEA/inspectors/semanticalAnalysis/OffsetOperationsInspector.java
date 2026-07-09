@@ -60,10 +60,10 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
                 // ensure offsets operations are supported, do nothing if no types were resolved
                 final Set<String> allowedIndexTypes = new HashSet<>();
-                if (!isContainerSupportsArrayAccess(holder.getProject(), expression, allowedIndexTypes) && !allowedIndexTypes.isEmpty()) {
+                if (! isContainerSupportsArrayAccess(holder.getProject(), expression, allowedIndexTypes) && ! allowedIndexTypes.isEmpty()) {
                     holder.registerProblem(
                             expression,
-                            String.format(MessagesPresentationUtil.prefixWithEa(patternNoOffsetSupport), expression.getValue().getText(), allowedIndexTypes.toString())
+                            String.format(MessagesPresentationUtil.prefixWithEa(patternNoOffsetSupport), expression.getValue().getText(), allowedIndexTypes)
                     );
 
                     allowedIndexTypes.clear();
@@ -72,19 +72,19 @@ public class OffsetOperationsInspector extends BasePhpInspection {
 
                 // ensure index is one of (string, float, bool, null) when we acquired possible types information
                 // TODO: hash-elements e.g. array initialization
-                if (!allowedIndexTypes.isEmpty() && expression.getIndex() != null) {
+                if (! allowedIndexTypes.isEmpty() && expression.getIndex() != null) {
                     final PhpPsiElement indexValue = expression.getIndex().getValue();
-                    if (indexValue instanceof PhpTypedElement) {
-                        final PhpType resolved = OpenapiResolveUtil.resolveType((PhpTypedElement) indexValue, holder.getProject());
+                    if (indexValue instanceof PhpTypedElement typed) {
+                        final PhpType resolved = OpenapiResolveUtil.resolveType(typed, holder.getProject());
                         if (resolved != null) {
                             final Set<String> indexTypes = new HashSet<>();
                             resolved.filterUnknown().getTypes().forEach(t -> indexTypes.add(Types.getType(t)));
-                            if (!indexTypes.isEmpty()) {
+                            if (! indexTypes.isEmpty()) {
                                 filterPossibleTypesWhichAreNotAllowed(indexTypes, allowedIndexTypes);
-                                if (!indexTypes.isEmpty()) {
+                                if (! indexTypes.isEmpty()) {
                                     holder.registerProblem(
                                             indexValue,
-                                            String.format(MessagesPresentationUtil.prefixWithEa(patternInvalidIndex), indexTypes.toString(), allowedIndexTypes.toString())
+                                            String.format(MessagesPresentationUtil.prefixWithEa(patternInvalidIndex), indexTypes, allowedIndexTypes)
                                     );
                                     indexTypes.clear();
                                 }
@@ -108,22 +108,22 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         }
 
         final Set<String> containerTypes = new HashSet<>();
-        if (container instanceof PhpTypedElement) {
+        if (container instanceof PhpTypedElement typedContainer) {
             PhpType type = null;
             // Initially, try scope-limited types resolution from the single possible value.
             final Set<PsiElement> variants = PossibleValuesDiscoveryUtil.discover(container);
             if (variants.size() == 1) {
                 final PsiElement value = variants.iterator().next();
-                if (value instanceof PhpTypedElement) {
-                    type = OpenapiResolveUtil.resolveType((PhpTypedElement) value, project);
+                if (value instanceof PhpTypedElement typedValue) {
+                    type = OpenapiResolveUtil.resolveType(typedValue, project);
                 }
             }
             variants.clear();
             // As fallback, resort more generic types resolution.
             if (type == null) {
-                type = OpenapiResolveUtil.resolveType((PhpTypedElement) container, project);
+                type = OpenapiResolveUtil.resolveType(typedContainer, project);
             }
-            if (type != null && !type.hasUnknown()) {
+            if (type != null && ! type.hasUnknown()) {
                 type.getTypes().forEach(t -> containerTypes.add(Types.getType(t)));
                 Stream.of(Types.strSelf, Types.strStatic).forEach(containerTypes::remove);
             }
@@ -171,7 +171,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
             }
 
             // some of possible types are scalars, what's wrong
-            if (!typeToCheck.isEmpty() && typeToCheck.charAt(0) != '\\') {
+            if (! typeToCheck.isEmpty() && typeToCheck.charAt(0) != '\\') {
                 supportsOffsets = false;
                 break;
             }
@@ -206,7 +206,7 @@ public class OffsetOperationsInspector extends BasePhpInspection {
         }
 
         // when might not support offset access, reuse types container to report back why
-        if (!supportsOffsets) {
+        if (! supportsOffsets) {
             indexTypesSupported.clear();
             indexTypesSupported.addAll(containerTypes);
         }
@@ -233,14 +233,14 @@ public class OffsetOperationsInspector extends BasePhpInspection {
                 continue;
             }
 
-            if (isAnyObjectAllowed && !possibleType.isEmpty() && possibleType.charAt(0) == '\\') {
+            if (isAnyObjectAllowed && ! possibleType.isEmpty() && possibleType.charAt(0) == '\\') {
                 continue;
             }
 
             // TODO: check classes relations
 
             // scalar types, check if mixed allowed
-            if (!isAnyScalarAllowed) {
+            if (! isAnyScalarAllowed) {
                 secureIterator.add(possibleType);
             }
         }

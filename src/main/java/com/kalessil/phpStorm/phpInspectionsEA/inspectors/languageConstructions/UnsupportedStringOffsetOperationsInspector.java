@@ -1,6 +1,5 @@
 package com.kalessil.phpStorm.phpInspectionsEA.inspectors.languageConstructions;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -14,9 +13,6 @@ import com.kalessil.phpStorm.phpInspectionsEA.openApi.BasePhpInspection;
 import com.kalessil.phpStorm.phpInspectionsEA.openApi.PhpLanguageLevel;
 import com.kalessil.phpStorm.phpInspectionsEA.utils.*;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /*
  * This file is part of the Php Inspections (EA Extended) package.
@@ -63,12 +59,11 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                     ) {
                         /* false-positives: pushing to pre-defined globals */
                         PsiElement possiblyValue = candidate;
-                        while (possiblyValue instanceof ArrayAccessExpression) {
-                            possiblyValue = ((ArrayAccessExpression) possiblyValue).getValue();
+                        while (possiblyValue instanceof ArrayAccessExpression access) {
+                            possiblyValue = access.getValue();
                         }
-                        if (possiblyValue instanceof Variable) {
-                            final String variableName = ((Variable) possiblyValue).getName();
-                            if (ExpressionCostEstimateUtil.predefinedVars.contains(variableName)) {
+                        if (possiblyValue instanceof Variable variable) {
+                            if (ExpressionCostEstimateUtil.predefinedVars.contains(variable.getName())) {
                                 return;
                             }
                         }
@@ -85,20 +80,17 @@ public class UnsupportedStringOffsetOperationsInspector extends BasePhpInspectio
                             if (OpenapiTypesUtil.is(context, PhpElementTypes.ARRAY_VALUE)) {
                                 context = context.getParent();
                             }
-                            if (context instanceof AssignmentExpression) {
-                                isTargetContext = ((AssignmentExpression) context).getValue() != target;
+                            if (context instanceof AssignmentExpression assignment) {
+                                isTargetContext = assignment.getValue() != target;
                             }
                         }
                         /* case 2: array push operator is not supported by strings */
                         else {
                             final ArrayIndex index = expression.getIndex();
-                            if (index == null || index.getValue() == null) {
-                                final PsiElement context = expression.getParent();
-                                if (context instanceof AssignmentExpression) {
-                                    message         = messagePush;
-                                    target          = expression;
-                                    isTargetContext = ((AssignmentExpression) context).getValue() != expression;
-                                }
+                            if ((index == null || index.getValue() == null) && expression.getParent() instanceof AssignmentExpression assignment) {
+                                message         = messagePush;
+                                target          = expression;
+                                isTargetContext = assignment.getValue() != expression;
                             }
                         }
                     }

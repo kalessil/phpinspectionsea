@@ -2,7 +2,7 @@
 
 abstract class Clazz implements ArrayAccess {}
 
-function array_destructuring(string $string, array $array, mixed $mixed, Clazz $clazz)
+function array_destructuring(string $string, ?array $array, mixed $mixed, ?Clazz $clazz)
 {
     list($a, $b) = $array;
     [$c, $d]     = $array;
@@ -15,4 +15,8 @@ function array_destructuring(string $string, array $array, mixed $mixed, Clazz $
 
     [$i, $j]     = $clazz;
     <error descr="[EA] This assignment doesn't make any sense here, as the assigned value isn't an array.">[$k, $l]     = new \stdClass()</error>;
+
+    /* false-positives */
+    list($a, $b) = null;
+    [$c, $d]     = null;
 }

@@ -1,13 +1,13 @@
 <html>
 Bug-fix release:<br/>
 <br/>
-- 'compact(...)' can be used: resolved a false-positive (array destructuring)<br/>
-- 'substr(...)' could be replaced with 'strpos(...)': enhance the message<br/>
-- 'substr(...)' used as index-based access: enhance the replacement generation<br/>
-- JSON encoding API usage: resolved a false-positive (constants resolution)<br/>
-- Non-optimal regular expression: new patterns (r-modifier)<br/>
-- Parameter/variable is not used: resolved a false-positive (?? operator)<br/>
-- Suspicious assignments: resolved a false-positive (array destructuring for classes)<br/>
+- 'strlen(...)' misused: use strict comparison replacements only<br/>
+- Array and string offset validity: resolved a false-positive (void type)<br/>
+- Cascading 'str_replace(...)' calls: QF bug-fix (replacements merging)<br/>
+- Parameter/variable is not used: resolved false-positives introduced in #1940<br/>
+- Statement could be decoupled from foreach: resolved a false-positive (multiple cases)<br/>
+- Unnecessary type casting: resolved a false-positive (exponentiation operator)<br/>
 <hr/>
 </html>
+
 

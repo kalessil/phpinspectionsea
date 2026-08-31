@@ -56,7 +56,7 @@ final public class SuspiciousArrayDestructuringStrategy {
     static private boolean isSupportingArrayDestructuring(@NotNull Set<String> resolved, @NotNull ProblemsHolder holder) {
         return resolved.stream().allMatch( t -> {
             boolean isSupporting = false;
-            if (t.equals(Types.strArray) || t.equals(Types.strMixed)) {
+            if (t.equals(Types.strArray) || t.equals(Types.strMixed) || t.equals(Types.strNull)) {
                 isSupporting = true;
             } else if (t.startsWith("\\")) {
                 final List<PhpClass> classes = OpenapiResolveUtil.resolveClassesAndInterfacesByFQN(t, PhpIndex.getInstance(holder.getProject()));
